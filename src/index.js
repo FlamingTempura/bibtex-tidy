@@ -35,8 +35,6 @@ const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab
 		journals = {},
 		indent = tab ? '\t' : Array(space).fill(' ').join('');
 
-	console.log(result)
-
 	entries.forEach(entry => {
 		if (entry.properties.booktitle) { inc(proceedings, entry.properties.booktitle.value); }
 		if (entry.properties.journal) { inc(journals, entry.properties.journal.value); }
