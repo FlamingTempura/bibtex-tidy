@@ -11,6 +11,9 @@ const argv = require('yargs')
 	.array('omit')
 	.describe('omit', 'Properties to remove (eg. abstract)')
 	.default('omit', [])
+	.boolean('sort')
+	.describe('sort', 'Sort entries alphabetically by id')
+	.default('sort', false)
 	.boolean('curly')
 	.describe('curly', 'Enclose property values in curly brackets')
 	.default('curly', false)
@@ -50,6 +53,7 @@ console.log('Tidying...');
 const bibtex = fs.readFileSync(input, 'utf8');
 const result = tidy.tidy(bibtex, {
 	omit: argv.omit,
+	sort: argv.sort,
 	curly: argv.curly,
 	numeric: argv.numeric,
 	space: argv.space,

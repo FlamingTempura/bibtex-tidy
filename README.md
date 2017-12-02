@@ -55,6 +55,7 @@ Usage: bibtex-tidy <file.bib> [options]
 Options:
   --version    Show version number
   --omit       Properties to remove (eg. abstract keywords)
+  --sort       Sort entries alphabetically by id
   --curly      Enclose property values in curly brackets
   --numeric    Don't enclose numeric/month values
   --space      Indent using n spaces (default: 2)
@@ -64,7 +65,6 @@ Options:
   --stats      Print statistics about entries
   --help       Show help
 ```
-
 
 ### Programmatic usage
 
