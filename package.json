@@ -1,7 +1,8 @@
 {
   "name": "bibtex-tidy",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Tidy bibtex files",
+  "homepage": "https://github.com/FlamingTempura/bibtex-tidy",
   "main": "./bibtex-tidy.js",
   "bin": {
     "bibtex-tidy": "./bin/bibtex-tidy"
