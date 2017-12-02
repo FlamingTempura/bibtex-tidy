@@ -1,0 +1,24 @@
+{
+  "name": "bibtex-tidy",
+  "version": "0.1.1",
+  "description": "Tidy bibtex files",
+  "main": "./lib/index.js",
+  "bin": {
+    "bibtex-tidy": "./bin/bibtex-tidy"
+  },
+  "dependencies": {
+    "yargs": "^10.0.3"
+  },
+  "devDependencies": {
+    "bibtex-parse": "^0.1.0",
+    "rollup": "^0.52.0",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-node-resolve": "^3.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c"
+  },
+  "author": "FlamingTempura",
+  "license": "MIT"
+}

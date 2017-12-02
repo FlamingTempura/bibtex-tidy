@@ -1,0 +1,14 @@
+logs
+*.log
+npm-debug.log*
+pids
+*.pid
+*.seed
+*.pid.lock
+lib-cov
+coverage
+.nyc_output
+node_modules/
+.npm
+*.tgz
+package-lock.json

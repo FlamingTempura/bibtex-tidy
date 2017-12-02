@@ -1,0 +1,78 @@
+#!/usr/bin/env node
+/* jshint node: true, esversion: 6 */
+'use strict';
+
+const tidy = require('../bibtex-tidy.js');
+const fs = require('fs');
+const path = require('path');
+const argv = require('yargs')
+	.usage('Usage: $0 <file.bib> [options]')
+	.demandCommand(1)
+	.array('omit')
+	.describe('omit', 'Properties to remove (eg. abstract)')
+	.default('omit', [])
+	.boolean('curly')
+	.describe('curly', 'Enclose property values in curly brackets')
+	.default('curly', false)
+	.boolean('numeric')
+	.describe('numeric', 'Don\'t enclose numeric/month values')
+	.default('numeric', false)
+	.number('space')
+	.describe('space', 'Indent using n spaces')
+	.default('space', 2)
+	.boolean('tab')
+	.describe('tab', 'Indent using tabs')
+	.default('tab', false)
+	.boolean('metadata')
+	.describe('metadata', 'Generate metadata for each entry')
+	.default('metadata', false)
+	.boolean('citations')
+	.describe('citations', 'In metadata, count citations within tex files in this directory')
+	.default('citations', false)
+	.boolean('stats')
+	.describe('stats', 'Print statistics about entries')
+	.default('stats', false)
+	.help('help')
+	.argv;
+const input = argv._[0];
+
+const readTexInDir = dir => {
+	return fs.readdirSync(dir).map(f => {
+		const p = `${dir}/${f}`;
+		return fs.statSync(p).isDirectory() ? readTexInDir(p) : p.endsWith('.tex') ? fs.readFileSync(p) : '';
+	}).join('');
+};
+const idx = str => str.toLowerCase().replace(/^the /, '');
+const alphabetical = (a, b) => idx(a) < idx(b) ? -1 : idx(a) > idx(b) ? 1 : 0;
+
+console.log('Tidying...');
+
+const bibtex = fs.readFileSync(input, 'utf8');
+const result = tidy.tidy(bibtex, {
+	omit: argv.omit,
+	curly: argv.curly,
+	numeric: argv.numeric,
+	space: argv.space,
+	tab: argv.tab,
+	metadata: argv.metadata,
+	citations: argv.citations,
+	tex: readTexInDir(path.dirname(input))
+});
+
+console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
+if (argv.citations) {
+	console.log(`${result.entries.filter(e => e.citations > 0).length} of which have been cited at least once`);
+}
+
+if (argv.stats) {
+	console.log('Statistics:');
+	[['proceedings', result.proceedings], ['publishers', result.publishers], ['journals', result.journals]].forEach(([key, counts]) => {
+		console.log(`${Object.keys(counts).length} ${key}:`);
+		Object.keys(counts)
+			.sort(alphabetical)
+			.forEach(name => console.log(' [' + ' '.repeat(Math.max(0, 5 - String(counts[name]).length)) + counts[name] + '] ' + name));
+	});
+}
+
+fs.writeFileSync(`${input}.original`, bibtex, 'utf8');
+fs.writeFileSync(input, result.bibtex, 'utf8');
