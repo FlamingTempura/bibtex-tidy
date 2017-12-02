@@ -1,7 +1,7 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
-	(global['bibtex-tidy'] = factory());
+	(global.bibtexTidy = factory());
 }(this, (function () { 'use strict';
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -1026,7 +1026,7 @@ const occurrences = (string = '', subString = '') => {
 	return n;
 };
 
-const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab = false, tex = '', metadata = false, sort = false }) => {
+const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab = false, tex = '', metadata = false, sort = false } = {}) => {
 	let entries = bibtexParse.parse(input),
 		proceedings = {},
 		publishers = {},

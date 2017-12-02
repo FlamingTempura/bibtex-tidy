@@ -3,7 +3,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
  
 export default {
-	name: 'bibtex-tidy',
+	name: 'bibtexTidy',
 	input: 'src/index.js',
 	plugins: [commonjs(), nodeResolve()],
 	output: {
