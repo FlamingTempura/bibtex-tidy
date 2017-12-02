@@ -27,7 +27,7 @@ const occurrences = (string = '', subString = '') => {
 	return n;
 };
 
-const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab = false, tex = '', metadata = false, sort = false }) => {
+const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab = false, tex = '', metadata = false, sort = false } = {}) => {
 	let entries = parser.parse(input),
 		proceedings = {},
 		publishers = {},
