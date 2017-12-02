@@ -28,11 +28,14 @@ const occurrences = (string = '', subString = '') => {
 };
 
 const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab = false, tex = '', metadata = false, sort = false } = {}) => {
-	let entries = parser.parse(input),
+	let result = parser.parse(input),
+		entries = result.entries,
 		proceedings = {},
 		publishers = {},
 		journals = {},
 		indent = tab ? '\t' : Array(space).fill(' ').join('');
+
+	console.log(result)
 
 	entries.forEach(entry => {
 		if (entry.properties.booktitle) { inc(proceedings, entry.properties.booktitle.value); }
@@ -47,8 +50,15 @@ const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab
 			return a < b ? -1 : a > b ? 1 : 0;
 		});
 	}
+	let bibtex = '';
+	bibtex += result.commentsBefore.map(c => `%${c}\n`).join('');
 
-	let bibtex = entries.map(entry => {
+	if (result.preamble) {
+		let braced = result.preamble.brace === 'curly' ? `{${result.preamble.value}}` : `"${result.preamble.value}"`;
+		bibtex += `@preamble{${braced}}\n`;
+	}
+
+	bibtex += entries.map(entry => {
 		entry.citations = occurrences(tex, entry.id);
 		if (metadata) {
 			entry.properties.metadata = {
@@ -72,8 +82,11 @@ const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab
 				}
 				return `${indent}${k}${space}= ${braced}`;
 			});
-		return `@${entry.type.toLowerCase()}{${entry.id},\n${props.join(',\n')}\n}`;
+		return entry.comments.map(c => `%${c}\n`).join('') +
+			`@${entry.type.toLowerCase()}{${entry.id},\n${props.join(',\n')}\n}`;
 	}).join('\n');
+
+	bibtex += result.commentsAfter.map(c => `%${c}\n`).join('');
 
 	return { entries, bibtex, proceedings, publishers, journals };
 };
