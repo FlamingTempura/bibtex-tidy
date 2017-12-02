@@ -1,6 +1,6 @@
 ## bibtex-tidy
 
-Tidy bibtex files
+Tidy bibtex files. [Try it out](https://flamingtempura.github.io/bibtex-tidy/).
 
 ```sh
 npm install -g bibtex-tidy
@@ -75,4 +75,19 @@ npm install bibtex-tidy
 const tidy = require('bibtex-tidy');
 const bibtex = fs.readFileSync('references.bib', 'utf8');
 tidy.tidy(bibtex, { curly: true }); // options are identical to command line usage
+```
+
+### Browser
+
+```html
+<script src="https://unpkg.com/bibtex-tidy"></script>
+<script>
+var bibtex = document.getElementById('input').value;
+var result = bibtexTidy.tidy(bibtex);
+console.log(result.bibtex); // the tidied bibtex
+```
+
+Also available on bower
+```sh
+bower install bibtex-tidy
 ```

@@ -1,6 +1,6 @@
 {
   "name": "bibtex-tidy",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Tidy bibtex files",
   "main": "./bibtex-tidy.js",
   "bin": {
