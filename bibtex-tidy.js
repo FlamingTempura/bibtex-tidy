@@ -1398,7 +1398,6 @@ const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab
 				authorTitle: (val(entry, 'author') ? entry.properties.author.value.match(/([^\s]+)\s*(,|and |et |$)/)[1] : '') + ':' + // surname (comes before comma or 'and')
 					(val(entry, 'title') || '').slice(0, 50)
 			};
-			console.log(hash.authorTitle);
 			let duplicate = hashes.find(h => {
 				return hash.doi && hash.doi === h.doi ||
 					hash.abstract && hash.abstract === h.abstract ||
