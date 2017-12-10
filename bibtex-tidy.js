@@ -336,7 +336,7 @@ var bibtexParse = createCommonjsModule(function (module, exports) {
     }
 
     function peg$parsestart() {
-      var s0, s1, s2, s3, s4, s5;
+      var s0, s1, s2, s3, s4, s5, s6;
 
       s0 = peg$currPos;
       s1 = [];
@@ -365,8 +365,19 @@ var bibtexParse = createCommonjsModule(function (module, exports) {
               s5 = peg$parsecomment();
             }
             if (s4 !== peg$FAILED) {
-              s1 = peg$c0(s1, s2, s3, s4);
-              s0 = s1;
+              s5 = [];
+              s6 = peg$parse_();
+              while (s6 !== peg$FAILED) {
+                s5.push(s6);
+                s6 = peg$parse_();
+              }
+              if (s5 !== peg$FAILED) {
+                s1 = peg$c0(s1, s2, s3, s4);
+                s0 = s1;
+              } else {
+                peg$currPos = s0;
+                s0 = peg$FAILED;
+              }
             } else {
               peg$currPos = s0;
               s0 = peg$FAILED;
