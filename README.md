@@ -60,6 +60,7 @@ Options:
   --numeric    Don't enclose numeric/month values
   --space      Indent using n spaces (default: 2)
   --tab        Indent using tabs
+  --merge      Merge duplicates
   --metadata   Generate metadata for each entry
   --citations  In metadata, count citations within tex files in this directory
   --stats      Print statistics about entries

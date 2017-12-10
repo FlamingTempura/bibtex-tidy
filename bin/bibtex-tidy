@@ -26,6 +26,9 @@ const argv = require('yargs')
 	.boolean('tab')
 	.describe('tab', 'Indent using tabs')
 	.default('tab', false)
+	.boolean('merge')
+	.describe('merge', 'Merge duplicate entries')
+	.default('merge', false)
 	.boolean('metadata')
 	.describe('metadata', 'Generate metadata for each entry')
 	.default('metadata', false)
@@ -60,6 +63,7 @@ const result = tidy.tidy(bibtex, {
 	tab: argv.tab,
 	metadata: argv.metadata,
 	citations: argv.citations,
+	merge: argv.merge,
 	tex: readTexInDir(path.dirname(input))
 });
 
@@ -67,7 +71,10 @@ console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
 if (argv.citations) {
 	console.log(`${result.entries.filter(e => e.citations > 0).length} of which have been cited at least once`);
 }
-
+if (argv.merge) {
+	console.log(`${result.duplicates.length} merged:`);
+	result.duplicates.forEach(dupe => console.log(` ${dupe.entry.id} merged into ${dupe.duplicateOf.id}:`));
+}
 if (argv.stats) {
 	console.log('Statistics:');
 	[['proceedings', result.proceedings], ['publishers', result.publishers], ['journals', result.journals]].forEach(([key, counts]) => {
@@ -77,6 +84,5 @@ if (argv.stats) {
 			.forEach(name => console.log(' [' + ' '.repeat(Math.max(0, 5 - String(counts[name]).length)) + counts[name] + '] ' + name));
 	});
 }
-
 fs.writeFileSync(`${input}.original`, bibtex, 'utf8');
 fs.writeFileSync(input, result.bibtex, 'utf8');
