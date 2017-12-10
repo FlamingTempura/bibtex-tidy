@@ -73,7 +73,7 @@ if (argv.citations) {
 }
 if (argv.merge) {
 	console.log(`${result.duplicates.length} merged:`);
-	result.duplicates.forEach(dupe => console.log(` ${dupe.entry.id} merged into ${dupe.duplicateOf.id}:`));
+	result.duplicates.forEach(dupe => console.log(` ${dupe.entry.id} merged into ${dupe.duplicateOf.id}`));
 }
 if (argv.stats) {
 	console.log('Statistics:');
@@ -81,7 +81,7 @@ if (argv.stats) {
 		console.log(`${Object.keys(counts).length} ${key}:`);
 		Object.keys(counts)
 			.sort(alphabetical)
-			.forEach(name => console.log(' [' + ' '.repeat(Math.max(0, 5 - String(counts[name]).length)) + counts[name] + '] ' + name));
+			.forEach(name => console.log(` [${String(counts[name]).padStart(5)}] ${name}`));
 	});
 }
 fs.writeFileSync(`${input}.original`, bibtex, 'utf8');
