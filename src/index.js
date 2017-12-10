@@ -69,16 +69,19 @@ const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab
 		}
 		let props = Object.keys(entry.properties)
 			.filter(k => !omit.includes(k))
-			.sort((a, b) => keyOrder.includes(b) && keyOrder.includes(a) ? keyOrder.indexOf(a) - keyOrder.indexOf(b) : 0)
+			.sort((a, b) => {
+				return keyOrder.includes(a) && keyOrder.includes(b) ? keyOrder.indexOf(a) - keyOrder.indexOf(b) :
+						keyOrder.includes(a) ? -1 :
+						keyOrder.includes(b) ? 1 : 0;
+			})
 			.map(k => {
 				let v = entry.properties[k],
 					val = String(v.value).replace(/\n/g, ' '),
-					braced = v.brace === 'curly' || curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val,
-					space = ' '.repeat(Math.max(0, 14 - k.length));
+					braced = v.brace === 'curly' || curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
 				if (numeric && (String(Number(val)) === val || k === 'month')) {
-					braced = val;
+					braced = String(val).toLowerCase();
 				}
-				return `${indent}${k}${space}= ${braced}`;
+				return `${indent}${k.padEnd(14)}= ${braced}`;
 			});
 		return entry.comments.map(c => `%${c}\n`).join('') +
 			`@${entry.type.toLowerCase()}{${entry.id},\n${props.join(',\n')}\n}`;
