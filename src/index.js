@@ -105,7 +105,7 @@ const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab
 					let v = entry.properties[k],
 						val = String(v.value).replace(/\n/g, ' '),
 						braced = v.brace === 'curly' || curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
-					if (numeric && (String(Number(val)) === val || k === 'month')) {
+					if (numeric && (val.match(/^[0-9]+$/) || k === 'month')) {
 						braced = String(val).toLowerCase();
 					}
 					return `${indent}${k.padEnd(14)}= ${braced}`;
