@@ -11,13 +11,15 @@
     "yargs": "^10.0.3"
   },
   "devDependencies": {
-    "bibtex-parse": "^0.2.5",
+    "bibtex-parse": "^0.2.7",
     "rollup": "^0.52.0",
     "rollup-plugin-commonjs": "^8.2.6",
-    "rollup-plugin-node-resolve": "^3.0.0"
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "tap": "^12.0.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "rollup -c && tap test",
+    "cover": "rollup -c && tap -j6 --cov --coverage-report=lcov test",
     "build": "rollup -c"
   },
   "repository": {
