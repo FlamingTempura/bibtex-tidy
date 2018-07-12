@@ -39,3 +39,18 @@ test('tidy (tabs, metadata)', t => {
 
 	t.same(tidied.bibtex, expected);
 });
+
+
+test('escape characters', t => {
+	t.plan(1);
+
+	let bibtex = `@article{a,
+  booktitle     = {bl%ah}
+}`;
+
+	let bibtexClean = `@article{a,
+  booktitle     = {bl\\%ah}
+}`;
+
+	t.same(tidy(bibtex).bibtex, bibtexClean);
+});

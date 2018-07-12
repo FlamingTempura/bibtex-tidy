@@ -1371,6 +1371,8 @@
 		'urldate', 'copyright', 'category', 'note', 'metadata'
 	];
 
+	const escape = str => str.replace(/([^\\])%/g, '$1\\%');
+
 	const val = (e, prop) => e.properties[prop] && e.properties[prop].value ? e.properties[prop].value.replace(/\W/g, '').toLowerCase() : null;
 
 	const inc = (collection, key) => collection[key] = (collection[key] || 0) + 1;
@@ -1464,7 +1466,7 @@
 					})
 					.map(k => {
 						let v = entry.properties[k],
-							val = String(v.value).replace(/\n/g, ' '),
+							val = escape(String(v.value).replace(/\n/g, ' ')),
 							braced = v.brace === 'curly' || curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
 						if (numeric && (val.match(/^[0-9]+$/) || k === 'month')) {
 							braced = String(val).toLowerCase();
