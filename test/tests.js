@@ -12,6 +12,7 @@ test('tidy (curly, numeric, merge, sort, omit)', t => {
 		numeric: true,
 		merge: true,
 		sort: true,
+		sortProperties: true,
 		omit: ['weird-key']
 	};
 
@@ -30,7 +31,8 @@ test('tidy (tabs, metadata)', t => {
 		tab: true,
 		metadata: true,
 		merge: false,
-		numeric: false
+		numeric: false,
+		sortProperties: true
 	};
 
 	let bib = fs.readFileSync(path.join(__dirname, '../example/input.bib'), 'utf8'),
@@ -50,9 +52,9 @@ test('escape characters', t => {
 }`;
 
 	let bibtexClean = `@article{a,
+  booktitle     = {bl\\%ah},
   title         = {bl\\@ah},
-  author        = {bl\\&ah},
-  booktitle     = {bl\\%ah}
+  author        = {bl\\&ah}
 }`;
 
 	t.same(tidy(bibtex).bibtex, bibtexClean);
@@ -63,13 +65,15 @@ test('strip enclosing nested brace', t => {
 
 	let bibtex = `@article{a,
   booktitle     = {{blah}},
+  journal     = {not {blah}},
   month = {{nov}},
   thing = {BLAH BLAH 1990}
 }`;
 
 	let bibtexClean = `@article{a,
-  month         = nov,
   booktitle     = {blah},
+  journal       = {not {blah}},
+  month         = nov,
   thing         = {Blah Blah 1990}
 }`;
 	const options = {

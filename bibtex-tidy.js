@@ -1364,6 +1364,24 @@
 
 	/* jshint node: true, esversion: 6, unused: true */
 
+	const options = { 
+		omit: { description: 'Properties to remove (eg. abstract)', value: [] },
+		curly: { description: 'Enclose property values in curly brackets', value: false },
+		numeric: { description: 'Don\'t enclose numeric/month values', value: false },
+		space: { description: 'Indent using n spaces', value: 2 },
+		tab: { description: 'Indent using tabs', value: false },
+		tex: { description: 'LaTeX contents to search for occurences within', value: '' },
+		metadata: { description: 'Generate metadata for each entry', value: false },
+		sort: { description: 'Sort entries alphabetically by id', value: false },
+		merge: { description: 'Merge duplicate entries', value: false },
+		stripEnclosingBraces: { description: 'Where an entire value is enclosed in double braces, remove the extra braces', value: false },
+		dropAllCaps: { description: 'Where values are all caps, make them title case', value: false },
+		sortProperties: { description: 'Sort the properties within entries', value: false }
+	};
+
+	const defaults = {};
+	Object.entries(options).forEach(([k, { value }]) => defaults[k] = value);
+
 	const keyOrder = [
 		'title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal',
 		'booktitle', 'location', 'on',  'publisher', 'address', 'series',
@@ -1393,21 +1411,22 @@
 		return n;
 	};
 
-	const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab = false, tex = '', metadata = false, sort = false, merge = false, stripEnclosingBraces = false, dropAllCaps = false } = {}) => {
+	const tidy = (input, options = {}) => {
+		options = Object.assign({}, defaults, options);
 		let result = bibtexParse.parse(input),
 			entries = result.entries,
 			proceedings = {},
 			publishers = {},
 			journals = {},
 			duplicates = [],
-			indent = tab ? '\t' : Array(space).fill(' ').join('');
+			indent = options.tab ? '\t' : Array(options.space).fill(' ').join('');
 
 		let hashes = [];
 		entries.forEach(entry => {
 			if (entry.properties.booktitle) { inc(proceedings, entry.properties.booktitle.value); }
 			if (entry.properties.journal) { inc(journals, entry.properties.journal.value); }
 			if (entry.properties.publisher) { inc(publishers, entry.properties.publisher.value); }
-			if (merge) {
+			if (options.merge) {
 				let hash = {
 					entry,
 					doi: val(entry, 'doi'),
@@ -1431,7 +1450,7 @@
 			}
 		});
 
-		if (sort) {
+		if (options.sort) {
 			entries = entries.sort((a, b) => {
 				a = a.id.toLowerCase();
 				b = b.id.toLowerCase();
@@ -1449,8 +1468,8 @@
 		bibtex += entries
 			.filter(entry => !duplicates.find(d => d.entry === entry))
 			.map(entry => {
-				entry.citations = occurrences(tex, entry.id);
-				if (metadata) {
+				entry.citations = occurrences(options.tex, entry.id);
+				if (options.metadata) {
 					entry.properties.metadata = {
 						brace: 'curly',
 						value: `citations: ${entry.citations}`
@@ -1460,23 +1479,27 @@
 					if (entry.properties.publisher) { entry.properties.metadata.value += `, publishercount: ${publishers[entry.properties.publisher.value]}`; }
 				}
 				let props = Object.keys(entry.properties)
-					.filter(k => !omit.includes(k))
-					.sort((a, b) => {
-						return keyOrder.includes(a) && keyOrder.includes(b) ? keyOrder.indexOf(a) - keyOrder.indexOf(b) :
-								keyOrder.includes(a) ? -1 :
-								keyOrder.includes(b) ? 1 : 0;
-					})
+					.filter(k => !options.omit.includes(k));
+				if (options.sortProperties) {
+					props = props
+						.sort((a, b) => {
+							return keyOrder.includes(a) && keyOrder.includes(b) ? keyOrder.indexOf(a) - keyOrder.indexOf(b) :
+									keyOrder.includes(a) ? -1 :
+									keyOrder.includes(b) ? 1 : 0;
+						});
+				}
+				props = props
 					.map(k => {
 						let v = entry.properties[k],
 							val = escape(String(v.value).replace(/\n/g, ' '));
-						if (stripEnclosingBraces) {
-							val = val.replace(/^\{|\}$/g, '');
+						if (options.stripEnclosingBraces) {
+							val = val.replace(/^\{(.*)\}$/g, '$1');
 						}
-						if (dropAllCaps && val.match(/^[^a-z]+$/)) {
+						if (options.dropAllCaps && val.match(/^[^a-z]+$/)) {
 							val = titleCase(val);
 						}
-						let braced = v.brace === 'curly' || curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
-						if (numeric && (val.match(/^[0-9]+$/) || (k === 'month' && val.match(/^\w+$/)))) {
+						let braced = v.brace === 'curly' || options.curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
+						if (options.numeric && (val.match(/^[0-9]+$/) || (k === 'month' && val.match(/^\w+$/)))) {
 							braced = String(val).toLowerCase();
 						}
 						return `${indent}${k.padEnd(14)}= ${braced}`;
@@ -1491,7 +1514,7 @@
 		return { entries, bibtex, proceedings, publishers, journals, duplicates };
 	};
 
-	var index = { tidy };
+	var index = { tidy, options };
 
 	return index;
 
