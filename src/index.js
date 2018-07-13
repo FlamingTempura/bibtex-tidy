@@ -12,6 +12,8 @@ const keyOrder = [
 
 const escape = str => str.replace(/([^\\])([%&@])/g, '$1\\$2');
 
+const titleCase = str => str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+
 const val = (e, prop) => e.properties[prop] && e.properties[prop].value ? e.properties[prop].value.replace(/\W/g, '').toLowerCase() : null;
 
 const inc = (collection, key) => collection[key] = (collection[key] || 0) + 1;
@@ -30,7 +32,7 @@ const occurrences = (string = '', subString = '') => {
 	return n;
 };
 
-const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab = false, tex = '', metadata = false, sort = false, merge = false, stripEnclosingBraces = false } = {}) => {
+const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab = false, tex = '', metadata = false, sort = false, merge = false, stripEnclosingBraces = false, dropAllCaps = false } = {}) => {
 	let result = parser.parse(input),
 		entries = result.entries,
 		proceedings = {},
@@ -108,6 +110,9 @@ const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab
 						val = escape(String(v.value).replace(/\n/g, ' '));
 					if (stripEnclosingBraces) {
 						val = val.replace(/^\{|\}$/g, '');
+					}
+					if (dropAllCaps && val.match(/^[^a-z]+$/)) {
+						val = titleCase(val);
 					}
 					let braced = v.brace === 'curly' || curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
 					if (numeric && (val.match(/^[0-9]+$/) || (k === 'month' && val.match(/^\w+$/)))) {

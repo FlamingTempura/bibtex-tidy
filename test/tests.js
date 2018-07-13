@@ -63,15 +63,18 @@ test('strip enclosing nested brace', t => {
 
 	let bibtex = `@article{a,
   booktitle     = {{blah}},
-  month = {{nov}}
+  month = {{nov}},
+  thing = {BLAH BLAH 1990}
 }`;
 
 	let bibtexClean = `@article{a,
   month         = nov,
-  booktitle     = {blah}
+  booktitle     = {blah},
+  thing         = {Blah Blah 1990}
 }`;
 	const options = {
 		stripEnclosingBraces: true,
+		dropAllCaps: true,
 		numeric: true
 	};
 
@@ -80,7 +83,7 @@ test('strip enclosing nested brace', t => {
 
 test('invalid month', t => {
 	t.plan(1);
-	
+
 	let bibtex = `@article{a,
   month = {nov 12}
 }`;
