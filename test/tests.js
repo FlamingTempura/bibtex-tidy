@@ -40,7 +40,6 @@ test('tidy (tabs, metadata)', t => {
 	t.same(tidied.bibtex, expected);
 });
 
-
 test('escape characters', t => {
 	t.plan(1);
 
@@ -53,4 +52,24 @@ test('escape characters', t => {
 }`;
 
 	t.same(tidy(bibtex).bibtex, bibtexClean);
+});
+
+test('strip enclosing nested brace', t => {
+	t.plan(1);
+
+	let bibtex = `@article{a,
+  booktitle     = {{blah}},
+  month = {{nov}}
+}`;
+
+	let bibtexClean = `@article{a,
+  month         = nov,
+  booktitle     = {blah}
+}`;
+	const options = {
+		stripEnclosingBraces: true,
+		numeric: true
+	};
+
+	t.same(tidy(bibtex, options).bibtex, bibtexClean);
 });

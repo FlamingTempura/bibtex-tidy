@@ -30,7 +30,7 @@ const occurrences = (string = '', subString = '') => {
 	return n;
 };
 
-const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab = false, tex = '', metadata = false, sort = false, merge = true } = {}) => {
+const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab = false, tex = '', metadata = false, sort = false, merge = false, stripEnclosingBraces = false } = {}) => {
 	let result = parser.parse(input),
 		entries = result.entries,
 		proceedings = {},
@@ -105,8 +105,11 @@ const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab
 				})
 				.map(k => {
 					let v = entry.properties[k],
-						val = escape(String(v.value).replace(/\n/g, ' ')),
-						braced = v.brace === 'curly' || curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
+						val = escape(String(v.value).replace(/\n/g, ' '));
+					if (stripEnclosingBraces) {
+						val = val.replace(/^\{|\}$/g, '');
+					}
+					let braced = v.brace === 'curly' || curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
 					if (numeric && (val.match(/^[0-9]+$/) || k === 'month')) {
 						braced = String(val).toLowerCase();
 					}
