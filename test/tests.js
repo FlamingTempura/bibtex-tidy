@@ -44,10 +44,14 @@ test('escape characters', t => {
 	t.plan(1);
 
 	let bibtex = `@article{a,
-  booktitle     = {bl%ah}
+  booktitle     = {bl%ah},
+  title         = {bl@ah},
+  author        = {bl&ah}
 }`;
 
 	let bibtexClean = `@article{a,
+  title         = {bl\\@ah},
+  author        = {bl\\&ah},
   booktitle     = {bl\\%ah}
 }`;
 

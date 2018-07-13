@@ -1371,7 +1371,7 @@
 		'urldate', 'copyright', 'category', 'note', 'metadata'
 	];
 
-	const escape = str => str.replace(/([^\\])%/g, '$1\\%');
+	const escape = str => str.replace(/([^\\])([%&@])/g, '$1\\$2');
 
 	const val = (e, prop) => e.properties[prop] && e.properties[prop].value ? e.properties[prop].value.replace(/\W/g, '').toLowerCase() : null;
 
