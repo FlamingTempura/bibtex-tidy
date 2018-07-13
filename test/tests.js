@@ -77,3 +77,17 @@ test('strip enclosing nested brace', t => {
 
 	t.same(tidy(bibtex, options).bibtex, bibtexClean);
 });
+
+test('invalid month', t => {
+	t.plan(1);
+	
+	let bibtex = `@article{a,
+  month = {nov 12}
+}`;
+
+	let bibtexClean = `@article{a,
+  month         = {nov 12}
+}`;
+
+	t.same(tidy(bibtex, { numeric: true }).bibtex, bibtexClean);
+});

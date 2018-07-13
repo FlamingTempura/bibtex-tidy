@@ -110,7 +110,7 @@ const tidy = (input, { omit = [], curly = false, numeric = false, space = 2, tab
 						val = val.replace(/^\{|\}$/g, '');
 					}
 					let braced = v.brace === 'curly' || curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
-					if (numeric && (val.match(/^[0-9]+$/) || k === 'month')) {
+					if (numeric && (val.match(/^[0-9]+$/) || (k === 'month' && val.match(/^\w+$/)))) {
 						braced = String(val).toLowerCase();
 					}
 					return `${indent}${k.padEnd(14)}= ${braced}`;
