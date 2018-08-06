@@ -49,21 +49,23 @@ test('escape characters', t => {
   booktitle     = {bl%ah},
   title         = {bl@ah},
   author        = {bl&ah},
-  thing         = {blæh}
+  thing         = {blæh},
+  thinga        = {bl\\@h}
 }`;
 
 	let bibtexClean = `@article{a,
   booktitle     = {bl\\%ah},
   title         = {bl\\@ah},
   author        = {bl\\&ah},
-  thing         = {bl\\ae{}h}
+  thing         = {bl\\ae{}h},
+  thinga        = {bl\\@h}
 }`;
 
 	t.same(tidy(bibtex).bibtex, bibtexClean);
 });
 
 test('strip enclosing nested brace', t => {
-	t.plan(1);
+	t.plan(2);
 
 	let bibtex = `@article{a,
   booktitle     = {{blah}},
@@ -84,7 +86,10 @@ test('strip enclosing nested brace', t => {
 		numeric: true
 	};
 
-	t.same(tidy(bibtex, options).bibtex, bibtexClean);
+	bibtex = tidy(bibtex, options).bibtex;
+	t.same(bibtex, bibtexClean);
+	bibtex = tidy(bibtex, options).bibtex; // run again to check not re-escaping things
+	t.same(bibtex, bibtexClean);
 });
 
 test('invalid month', t => {
@@ -99,4 +104,24 @@ test('invalid month', t => {
 }`;
 
 	t.same(tidy(bibtex, { numeric: true }).bibtex, bibtexClean);
+});
+
+test('multiple runs should have same result', t => {
+	t.plan(2);
+
+	const options = {
+		tab: true,
+		metadata: true,
+		merge: false,
+		numeric: false,
+		sortProperties: true
+	};
+
+	let bib = fs.readFileSync(path.join(__dirname, '../example/input.bib'), 'utf8'),
+		expected = fs.readFileSync(path.join(__dirname, 'expected-output2.bib'), 'utf8'),
+		tidied = tidy(bib, options),
+		tidied2 = tidy(tidied.bibtex, options);
+
+	t.same(tidied.bibtex, expected);
+	t.same(tidied2.bibtex, expected);
 });

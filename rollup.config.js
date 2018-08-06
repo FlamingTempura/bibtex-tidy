@@ -5,7 +5,7 @@ import dsv from 'rollup-plugin-dsv';
 
 const tsv = {
 	processRow(row) {
-		return [new RegExp(`\\u{${row.unicode}}`, 'gu'), row.latex];
+		return [new RegExp(`([^\\\\])\\u{${row.unicode}}`, 'gu'), `$1${row.latex}`];
 	}
 };
 
