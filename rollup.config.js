@@ -1,12 +1,19 @@
 /* jshint node: true, esversion: 6, unused: true */
 import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
- 
+import dsv from 'rollup-plugin-dsv';
+
+const tsv = {
+	processRow(row) {
+		return [new RegExp(`\\u{${row.unicode}}`, 'gu'), row.latex];
+	}
+};
+
 export default {
-	name: 'bibtexTidy',
 	input: 'src/index.js',
-	plugins: [commonjs(), nodeResolve()],
+	plugins: [dsv(tsv), commonjs(), nodeResolve()],
 	output: {
+		name: 'bibtexTidy',
 		file: 'bibtex-tidy.js',
 		format: 'umd'
 	}

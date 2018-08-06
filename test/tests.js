@@ -48,13 +48,15 @@ test('escape characters', t => {
 	let bibtex = `@article{a,
   booktitle     = {bl%ah},
   title         = {bl@ah},
-  author        = {bl&ah}
+  author        = {bl&ah},
+  thing         = {blæh}
 }`;
 
 	let bibtexClean = `@article{a,
   booktitle     = {bl\\%ah},
   title         = {bl\\@ah},
-  author        = {bl\\&ah}
+  author        = {bl\\&ah},
+  thing         = {bl\\ae{}h}
 }`;
 
 	t.same(tidy(bibtex).bibtex, bibtexClean);

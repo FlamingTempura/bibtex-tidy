@@ -2,6 +2,7 @@
 'use strict';
 
 import parser from 'bibtex-parse';
+import unicode from './unicode.tsv'; // source: https://raw.githubusercontent.com/pkgw/worklog-tools/master/unicode_to_latex.py
 
 const options = { 
 	omit: { description: 'Properties to remove (eg. abstract)', value: [] },
@@ -15,6 +16,7 @@ const options = {
 	merge: { description: 'Merge duplicate entries', value: false },
 	stripEnclosingBraces: { description: 'Where an entire value is enclosed in double braces, remove the extra braces', value: false },
 	dropAllCaps: { description: 'Where values are all caps, make them title case', value: false },
+	escapeSpecialCharacters: { description: 'Escape special characters, such as umlaut', value: true },
 	sortProperties: { description: 'Sort the properties within entries', value: false }
 };
 
@@ -28,7 +30,12 @@ const keyOrder = [
 	'urldate', 'copyright', 'category', 'note', 'metadata'
 ];
 
-const escape = str => str.replace(/([^\\])([%&@])/g, '$1\\$2');
+const escapeSpecialCharacters = str => {
+	unicode.forEach(([regexp, latex]) => {
+		str = str.replace(regexp, latex);
+	});
+	return str;
+};
 
 const titleCase = str => str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 
@@ -130,12 +137,15 @@ const tidy = (input, options = {}) => {
 			props = props
 				.map(k => {
 					let v = entry.properties[k],
-						val = escape(String(v.value).replace(/\n/g, ' '));
+						val = String(v.value).replace(/\n/g, ' ');
 					if (options.stripEnclosingBraces) {
 						val = val.replace(/^\{(.*)\}$/g, '$1');
 					}
 					if (options.dropAllCaps && val.match(/^[^a-z]+$/)) {
 						val = titleCase(val);
+					}
+					if (options.escapeSpecialCharacters) {
+						val = escapeSpecialCharacters(val);
 					}
 					let braced = v.brace === 'curly' || options.curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
 					if (options.numeric && (val.match(/^[0-9]+$/) || (k === 'month' && val.match(/^\w+$/)))) {
