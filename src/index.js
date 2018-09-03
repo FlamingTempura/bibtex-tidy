@@ -30,6 +30,9 @@ const keyOrder = [
 	'urldate', 'copyright', 'category', 'note', 'metadata'
 ];
 
+const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun',
+                'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
 const escapeSpecialCharacters = str => {
 	unicode.forEach(([regexp, latex]) => {
 		str = str.replace(regexp, latex);
@@ -137,7 +140,7 @@ const tidy = (input, options = {}) => {
 			props = props
 				.map(k => {
 					let v = entry.properties[k],
-						val = String(v.value).replace(/\n/g, ' ');
+						val = String(v.value).replace(/\n/g, ' ').trim();
 					if (options.stripEnclosingBraces) {
 						val = val.replace(/^\{(.*)\}$/g, '$1');
 					}
@@ -147,9 +150,16 @@ const tidy = (input, options = {}) => {
 					if (options.escapeSpecialCharacters) {
 						val = escapeSpecialCharacters(val);
 					}
+					if (k === 'pages') {
+						val = val.replace(/(\d)\s*-\s*(\d)/, '$1--$2'); // replace single dash with double dash in page range
+					}
 					let braced = v.brace === 'curly' || options.curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
-					if (options.numeric && (val.match(/^[0-9]+$/) || (k === 'month' && val.match(/^\w+$/)))) {
-						braced = String(val).toLowerCase();
+					if (options.numeric) {
+						if (val.match(/^[0-9]+$/)) {
+							braced = String(Number(val)).toLowerCase();
+						} else if (k === 'month' && months.includes(val.slice(0, 3).toLowerCase())) {
+							braced = val.slice(0, 3).toLowerCase();
+						}
 					}
 					return `${indent}${k.padEnd(14)}= ${braced}`;
 				});

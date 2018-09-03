@@ -1380,12 +1380,8 @@
 	    "$1\\^{}" ],
 	  [ /([^\\])\u{005F}/gu,
 	    "$1\\_" ],
-	  [ /([^\\])\u{0060}/gu,
-	    "$1\\textasciigrave{}" ],
 	  [ /([^\\])\u{007C}/gu,
 	    "$1\\vert{}" ],
-	  [ /([^\\])\u{007E}/gu,
-	    "$1\\textasciitilde{}" ],
 	  [ /([^\\])\u{00A0}/gu,
 	    "$1~" ],
 	  [ /([^\\])\u{00A1}/gu,
@@ -2590,10 +2586,8 @@
 	    "$1\\mkern1mu{}" ],
 	  [ /([^\\])\u{2010}/gu,
 	    "$1-" ],
-	  [ /([^\\])\u{2013}/gu,
-	    "$1\\textendash{}" ],
 	  [ /([^\\])\u{2014}/gu,
-	    "$1\\textemdash{}" ],
+	    "$1--" ],
 	  [ /([^\\])\u{2015}/gu,
 	    "$1\\rule{1em}{1pt}" ],
 	  [ /([^\\])\u{2016}/gu,
@@ -2605,9 +2599,9 @@
 	  [ /([^\\])\u{201B}/gu,
 	    "$1\\Elzreapos{}" ],
 	  [ /([^\\])\u{201C}/gu,
-	    "$1\\textquotedblleft{}" ],
+	    "$1``" ],
 	  [ /([^\\])\u{201D}/gu,
-	    "$1\\textquotedblright{}" ],
+	    "$1''" ],
 	  [ /([^\\])\u{201E}/gu,
 	    "$1,," ],
 	  [ /([^\\])\u{2020}/gu,
@@ -6049,6 +6043,9 @@
 		'urldate', 'copyright', 'category', 'note', 'metadata'
 	];
 
+	const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun',
+	                'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
 	const escapeSpecialCharacters = str => {
 		unicode.forEach(([regexp, latex]) => {
 			str = str.replace(regexp, latex);
@@ -6156,7 +6153,7 @@
 				props = props
 					.map(k => {
 						let v = entry.properties[k],
-							val = String(v.value).replace(/\n/g, ' ');
+							val = String(v.value).replace(/\n/g, ' ').trim();
 						if (options.stripEnclosingBraces) {
 							val = val.replace(/^\{(.*)\}$/g, '$1');
 						}
@@ -6166,9 +6163,16 @@
 						if (options.escapeSpecialCharacters) {
 							val = escapeSpecialCharacters(val);
 						}
+						if (k === 'pages') {
+							val = val.replace(/(\d)\s*-\s*(\d)/, '$1--$2'); // replace single dash with double dash in page range
+						}
 						let braced = v.brace === 'curly' || options.curly ? `{${val}}` : v.brace === 'quote' ? `"${val}"` : val;
-						if (options.numeric && (val.match(/^[0-9]+$/) || (k === 'month' && val.match(/^\w+$/)))) {
-							braced = String(val).toLowerCase();
+						if (options.numeric) {
+							if (val.match(/^[0-9]+$/)) {
+								braced = String(Number(val)).toLowerCase();
+							} else if (k === 'month' && months.includes(val.slice(0, 3).toLowerCase())) {
+								braced = val.slice(0, 3).toLowerCase();
+							}
 						}
 						return `${indent}${k.padEnd(14)}= ${braced}`;
 					});

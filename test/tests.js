@@ -97,10 +97,16 @@ test('invalid month', t => {
 
 	let bibtex = `@article{a,
   month = {nov 12}
+}
+@article{a,
+  month = {enero}
 }`;
 
 	let bibtexClean = `@article{a,
-  month         = {nov 12}
+  month         = nov
+}
+@article{a,
+  month         = {enero}
 }`;
 
 	t.same(tidy(bibtex, { numeric: true }).bibtex, bibtexClean);
