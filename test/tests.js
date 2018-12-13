@@ -112,6 +112,30 @@ test('invalid month', t => {
 	t.same(tidy(bibtex, { numeric: true }).bibtex, bibtexClean);
 });
 
+test('sort by type', t => {
+	t.plan(1);
+
+	let bibtex = `
+		@misc{a,year=1}
+		@article{c,year=1}
+		@book{d,year=1}
+		@article{b,year=1}`;
+
+	let bibtexClean = `@article{b,
+  year          = 1
+}
+@article{c,
+  year          = 1
+}
+@book{d,
+  year          = 1
+}
+@misc{a,
+  year          = 1
+}`;
+	t.same(tidy(bibtex, { sort: ['type', 'id'] }).bibtex, bibtexClean);
+});
+
 test('multiple runs should have same result', t => {
 	t.plan(2);
 

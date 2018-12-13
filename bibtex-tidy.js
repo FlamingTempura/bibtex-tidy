@@ -6075,6 +6075,11 @@
 
 	const tidy = (input, options = {}) => {
 		options = Object.assign({}, defaults, options);
+
+		if (options.sort === true) { // if set to true, just sort by id
+			options.sort = ['id'];
+		}
+
 		let result = bibtexParse.parse(input),
 			entries = result.entries,
 			proceedings = {},
@@ -6110,15 +6115,21 @@
 					hashes.push(hash);
 				}
 			}
+			if (options.sort) {
+				entry.sortIndex = options.sort.map(k => {
+					if (k === 'id' || k === 'type') {
+						return entry[k].toLowerCase();
+					} else {
+						return (val(entry, k) || '').toLowerCase();
+					}
+				}).join(' ');
+			}
 		});
 
-		if (options.sort) {
-			entries = entries.sort((a, b) => {
-				a = a.id.toLowerCase();
-				b = b.id.toLowerCase();
-				return a < b ? -1 : a > b ? 1 : 0;
-			});
+		if (options.sort) { // accepts an array of keys to sort by
+			entries = entries.sort((a, b) => a.sortIndex < b.sortIndex ? -1 : a.sortIndex > b.sortIndex ? 1 : 0);
 		}
+
 		let bibtex = '';
 		bibtex += result.commentsBefore.map(c => `%${c}\n`).join('');
 
