@@ -6164,7 +6164,7 @@
 				props = props
 					.map(k => {
 						let v = entry.properties[k],
-							val = String(v.value).replace(/\n/g, ' ').trim();
+							val = String(v.value).replace(/\s*\n\s*/g, ' ').trim();
 						if (options.stripEnclosingBraces) {
 							val = val.replace(/^\{(.*)\}$/g, '$1');
 						}
