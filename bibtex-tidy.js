@@ -1,8 +1,8 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
-	(global.bibtexTidy = factory());
-}(this, (function () { 'use strict';
+	(global = global || self, global.bibtexTidy = factory());
+}(this, function () { 'use strict';
 
 	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -6201,4 +6201,4 @@
 
 	return index;
 
-})));
+}));
