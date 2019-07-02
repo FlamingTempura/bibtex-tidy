@@ -23,13 +23,11 @@ test('tidy (curly, numeric, merge, sort, omit)', t => {
 	t.same(tidied.bibtex, expected);
 });
 
-
-test('tidy (tabs, metadata)', t => {
+test('tidy (tabs, no sort)', t => {
 	t.plan(1);
 
 	const options = {
 		tab: true,
-		metadata: true,
 		merge: false,
 		numeric: false,
 		sortProperties: true
@@ -40,6 +38,24 @@ test('tidy (tabs, metadata)', t => {
 		tidied = tidy(bib, options);
 
 	t.same(tidied.bibtex, expected);
+});
+
+test('input 2 (strings, unusual comments, preambles)', t => {
+	t.plan(1);
+
+	const options = {
+		//curly: true,
+		//numeric: true,
+		//sort: true,
+		//sortProperties: true
+	};
+
+	let bib = fs.readFileSync(path.join(__dirname, 'input2.bib'), 'utf8'),
+		expected = fs.readFileSync(path.join(__dirname, 'expected-output3.bib'), 'utf8'),
+		tidied = tidy(bib, options);
+
+	t.same(tidied.bibtex, expected);
+
 });
 
 test('escape characters', t => {
@@ -59,7 +75,8 @@ test('escape characters', t => {
   author        = {bl\\&ah},
   thing         = {bl\\ae{}h},
   thinga        = {bl\\@h}
-}`;
+}
+`;
 
 	t.same(tidy(bibtex).bibtex, bibtexClean);
 });
@@ -79,7 +96,8 @@ test('strip enclosing nested brace', t => {
   journal       = {not {blah}},
   month         = nov,
   thing         = {Blah Blah 1990}
-}`;
+}
+`;
 	const options = {
 		stripEnclosingBraces: true,
 		dropAllCaps: true,
@@ -107,7 +125,8 @@ test('invalid month', t => {
 }
 @article{a,
   month         = {enero}
-}`;
+}
+`;
 
 	t.same(tidy(bibtex, { numeric: true }).bibtex, bibtexClean);
 });
@@ -132,7 +151,8 @@ test('sort by type', t => {
 }
 @misc{a,
   year          = 1
-}`;
+}
+`;
 	t.same(tidy(bibtex, { sort: ['type', 'id'] }).bibtex, bibtexClean);
 });
 
