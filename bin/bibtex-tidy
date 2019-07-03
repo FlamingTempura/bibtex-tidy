@@ -4,37 +4,24 @@
 
 const tidy = require('../bibtex-tidy.js');
 const fs = require('fs');
-const path = require('path');
+
+const options = {};
+
+const unCamelCase = str => str.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`);
+const camelCase = str => str.replace(/-[a-z]/g, c => c.charAt(1).toUpperCase());
+
+for (let k of Object.keys(tidy.options)) {
+	options[unCamelCase(k)] = {
+		description: tidy.options[k].description,
+		type: tidy.options[k].type,
+		default: tidy.options[k].value
+	};
+}
+
 const argv = require('yargs')
 	.usage('Usage: $0 <file.bib> [options]')
 	.demandCommand(1)
-	.array('omit')
-	.describe('omit', tidy.options.omit.description)
-	.default('omit', tidy.options.omit.value)
-	.boolean('sort')
-	.describe('sort', tidy.options.sort.description)
-	.default('sort', tidy.options.sort.value)
-	.boolean('curly')
-	.describe('curly', tidy.options.curly.description)
-	.default('curly', tidy.options.curly.value)
-	.boolean('numeric')
-	.describe('numeric', tidy.options.numeric.description)
-	.default('numeric', tidy.options.numeric.value)
-	.number('space')
-	.describe('space', tidy.options.space.description)
-	.default('space', tidy.options.space.value)
-	.boolean('tab')
-	.describe('tab', tidy.options.tab.description)
-	.default('tab', tidy.options.tab.value)
-	.boolean('merge')
-	.describe('merge', tidy.options.merge.description)
-	.default('merge', tidy.options.merge.value)
-	.boolean('metadata')
-	.describe('metadata', tidy.options.metadata.description)
-	.default('metadata', tidy.options.metadata.value)
-	.boolean('citations')
-	.describe('citations', 'In metadata, count citations within tex files in this directory')
-	.default('citations', false)
+	.options(options)
 	.boolean('stats')
 	.describe('stats', 'Print statistics about entries')
 	.default('stats', false)
@@ -42,30 +29,24 @@ const argv = require('yargs')
 	.argv;
 const input = argv._[0];
 
-const readTexInDir = dir => {
-	return fs.readdirSync(dir).map(f => {
-		const p = `${dir}/${f}`;
-		return fs.statSync(p).isDirectory() ? readTexInDir(p) : p.endsWith('.tex') ? fs.readFileSync(p) : '';
-	}).join('');
-};
 const idx = str => str.toLowerCase().replace(/^the /, '');
 const alphabetical = (a, b) => idx(a) < idx(b) ? -1 : idx(a) > idx(b) ? 1 : 0;
 
 console.log('Tidying...');
 
 const bibtex = fs.readFileSync(input, 'utf8');
-const result = tidy.tidy(bibtex, {
-	omit: argv.omit,
-	sort: argv.sort,
-	curly: argv.curly,
-	numeric: argv.numeric,
-	space: argv.space,
-	tab: argv.tab,
-	metadata: argv.metadata,
-	citations: argv.citations,
-	merge: argv.merge,
-	tex: readTexInDir(path.dirname(input))
-});
+
+let opts = {};
+for (let k of Object.keys(argv)) {
+	opts[camelCase(k)] = argv[k];
+}
+
+if (opts.sort && opts.sort.length === 0) { opts.sort = true; }
+if (opts.sort && typeof opts.sort[0] === 'boolean') { opts.sort = opts.sort[0]; }
+if (opts.sortProperties && opts.sortProperties.length === 0) { opts.sortProperties = true; }
+if (opts.sortProperties && typeof opts.sortProperties[0] === 'boolean') { opts.sortProperties = opts.sortProperties[0]; }
+
+const result = tidy.tidy(bibtex, opts);
 
 console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
 if (argv.citations) {
