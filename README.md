@@ -53,18 +53,19 @@ After `bibtex-tidy references.bib --curly --numeric`:
 Usage: bibtex-tidy <file.bib> [options]
 
 Options:
-  --version    Show version number
-  --omit       Properties to remove (eg. abstract keywords)
-  --sort       Sort entries alphabetically by id
-  --curly      Enclose property values in curly brackets
-  --numeric    Don't enclose numeric/month values
-  --space      Indent using n spaces (default: 2)
-  --tab        Indent using tabs
-  --merge      Merge duplicates
-  --metadata   Generate metadata for each entry
-  --citations  In metadata, count citations within tex files in this directory
-  --stats      Print statistics about entries
-  --help       Show help
+  --omit                    Provide a list of properties which should be removed from every bibliography entry.
+  --curly                   Setting this to true will cause all property values to be enclosed in braces. Quoted values will be converted to braces.
+  --numeric                 Setting this to true will strip quotes and braces from numeric/month values. For example, {1998} will become 1998.
+  --space                   Providing a number causes all properties to be prefixed with the corresponding number of spaces. This is ignored if tab is true.
+  --tab                     If this is set then all properties will be prefixed with a tab.
+  --align                   Insert whitespace between properties and values so that values are visually aligned.
+  --sort                    Sort entries alphabetically by id (or other provided properties).
+  --merge                   Two entries are considered duplicates in the following cases: (a) their DOIs are identical, (b) their abstracts are identical, or (c) their authors and titles are both identical. The firstmost entry is kept and any extra properties from duplicate entries are incorporated.
+  --strip-enclosing-braces  Where an entire value is enclosed in double braces, remove the extra braces. For example, convert {{Journal of Tea}} to {Journal of Tea}.
+  --drop-all-caps           Where values are all caps, make them title case. For example, convert {JOURNAL OF TEA} to {Journal of Tea}.
+  --escape                  Escape special characters, such as umlaut. This ensures correct typesetting with latex.
+  --sort-properties         Sort the properties within entries. The default sort order is title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively you can specify space delimited properties.
+  --strip-comments          Remove all comments from the bibtex source.
 ```
 
 #### Merging duplicates
