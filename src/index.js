@@ -4,7 +4,7 @@
 import parser from 'bibtex-parse';
 import unicode from './unicode.tsv'; // source: https://raw.githubusercontent.com/pkgw/worklog-tools/master/unicode_to_latex.py
 
-const defaultPropertyOrder = [
+const defaultFieldOrder = [
 	'title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal',
 	'booktitle', 'location', 'on',  'publisher', 'address', 'series',
 	'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 
@@ -13,8 +13,8 @@ const defaultPropertyOrder = [
 
 const options = { 
 	omit: {
-		name: 'Remove specified properties',
-		description: 'Provide a list of properties which should be removed from every bibliography entry.',
+		name: 'Remove specified fields',
+		description: 'Provide a list of fields which should be removed from every bibliography entry.',
 		type: 'array',
 		value: []
 	},
@@ -32,25 +32,25 @@ const options = {
 	},
 	space: { 
 		title: 'Indent with spaces',
-		description: 'Providing a number causes all properties to be prefixed with the corresponding number of spaces. This is ignored if tab is true.',
+		description: 'Providing a number causes all fields to be prefixed with the corresponding number of spaces. This is ignored if tab is true.',
 		type: 'number',
 		value: 2
 	},
 	tab: { 
 		name: 'Indent with tabs',
-		description: 'If this is set then all properties will be prefixed with a tab.',
+		description: 'If this is set then all fields will be prefixed with a tab.',
 		type: 'boolean',
 		value: false
 	},
 	align: {
 		name: 'Align values',
-		description: 'Insert whitespace between properties and values so that values are visually aligned.',
+		description: 'Insert whitespace between fields and values so that values are visually aligned.',
 		type: 'number',
 		value: 14
 	},
 	sort: {
 		name: 'Sort bibliography entries',
-		description: 'Sort entries alphabetically by id (or other provided properties).',
+		description: 'Sort entries alphabetically by id (or other provided fields).',
 		type: 'array',
 		value: false
 	},
@@ -78,9 +78,9 @@ const options = {
 		type: 'boolean',
 		value: true
 	},
-	sortProperties: {
-		name: 'Sort properties',
-		description: `Sort the properties within entries. The default sort order is ${defaultPropertyOrder.join(', ')}. Alternatively you can specify space delimited properties.`,
+	sortFields: {
+		name: 'Sort fields',
+		description: `Sort the fields within entries. The default sort order is ${defaultFieldOrder.join(', ')}. Alternatively you can specify space delimited properties.`,
 		type: 'array',
 		value: false
 	},
@@ -89,6 +89,18 @@ const options = {
 		description: 'Remove all comments from the bibtex source.',
 		type: 'boolean',
 		value: false
+	},
+	encodeUrls: {
+		name: 'Encode URLs',
+		description: 'Replace invalid URL characters with percent encoded values.',
+		type: 'boolean',
+		value: false
+	},
+	tidyComments: {
+		name: 'Tidy comments',
+		description: 'Remove whitespace surrounding comments.',
+		type: 'boolean',
+		value: true
 	}
 };
 
@@ -109,111 +121,130 @@ const escapeSpecialCharacters = str => {
 
 const titleCase = str => str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 
-const val = (e, prop) => e.properties[prop] && e.properties[prop].value ? e.properties[prop].value.replace(/\W/g, '').toLowerCase() : null;
+const stripWhitespace = str => String(str).replace(/\W/g, '').toLowerCase();
 
-const inc = (collection, key) => collection[key] = (collection[key] || 0) + 1;
+const get = (item, name) => {
+	let field = item.fields.find(f => f.name.toUpperCase() === name.toUpperCase());
+	return field ? field : null;
+};
+
+const getValue = (item, name) => {
+	let field = get(item, name);
+	return field ? field.value : null;
+};
 
 const tidy = (input, options = {}) => {
 	options = { ...defaults, ...options }; // make a copy of options with defaults
 
 	if (options.sort === true) {
-		options.sort = ['id'];
+		options.sort = ['key'];
 	}
-	if (options.sortProperties === true) {
-		options.sortProperties = defaultPropertyOrder;
+	if (options.space === true) {
+		options.space = 2;
 	}
-	if (options.omit === false) {
+	if (options.sortProperties) {
+		options.sortFields = options.sortProperties;
+	}
+	if (options.sortFields === true) {
+		options.sortFields = defaultFieldOrder;
+	}
+	if (options.omit === false || (!(options.omit instanceof Array))) {
 		options.omit = [];
 	}
 	if (options.align === false) {
 		options.align = 1;
 	}
 
-	let entries = parser.parse(input),
-		bibtex = '',
-		duplicates = [],
-		indent = options.tab ? '\t' : Array(options.space).fill(' ').join(''),
+	let items = parser.parse(input),
 		hashes = [],
-		proceedings = {},
-		publishers = {},
-		journals = {};
-	for (let entry of entries) {
-		if (entry.hasOwnProperty('id')) { // ie. not a comment, preamble, or string
-			if (entry.properties.booktitle) { inc(proceedings, entry.properties.booktitle.value); }
-			if (entry.properties.journal) { inc(journals, entry.properties.journal.value); }
-			if (entry.properties.publisher) { inc(publishers, entry.properties.publisher.value); }
-			if (options.sort) {
-				entry.sortIndex = options.sort.map(k => (entry[k] || val(entry, k) || '\ufff0').toLowerCase()).join(' ') + '9999999999'; // \ufff0 ensures entry will sorted last
+		keys = [],
+		warnings = [],
+		preceedingMeta = []; // comments, preambles, and strings which should be kept with an entry
+	for (let item of items) {
+		if (item.itemtype !== 'entry') {// if string, preamble, or comment, then use sortIndex of previous entry
+			preceedingMeta.push(item);
+		} else {
+
+			if (!item.key) {
+				warnings.push({ code: 'MISSING_KEY', message: `${item.key} does not have an entry key.`, entry: item });
+			} else if (keys.includes(item.key)) {
+				warnings.push({ code: 'DUPLICATE_KEY', message: `${item.key} is a duplicate entry key.`, entry: item });
 			}
+			keys.push(item.key);
+
 			if (options.merge) {
 				let hash = {
-						entry,
-						doi: val(entry, 'doi'),
-						abstract: val(entry, 'abstract') ? val(entry, 'abstract').slice(0, 100) : null,
-						authorTitle: (val(entry, 'author') ? entry.properties.author.value.match(/([^\s]+)\s*(,|and |et |$)/)[1] : '') + ':' + // surname (comes before comma or 'and')
-							(val(entry, 'title') || '').slice(0, 50)
+						entry: item,
+						doi: get(item, 'doi') ? stripWhitespace(getValue(item, 'doi')) : null,
+						abstract: get(item, 'abstract') ? stripWhitespace(getValue(item, 'abstract')).slice(0, 100) : null,
+						authorTitle: (get(item, 'author') ? String(getValue(item, 'author')).match(/([^\s]+)\s*(,|and |et |$)/)[1] : '') + ':' + // surname (comes before comma or 'and')
+							(stripWhitespace(getValue(item, 'title')) || '').slice(0, 50)
 					},
-					duplicate = hashes.find(h => hash.doi && hash.doi === h.doi ||
-							hash.abstract && hash.abstract === h.abstract ||
-							hash.authorTitle === h.authorTitle);
+					duplicate = hashes.find(h => {
+						return hash.doi ? hash.doi === h.doi :
+							hash.abstract ? hash.abstract === h.abstract :
+							hash.authorTitle === h.authorTitle;
+					});
 				if (duplicate) {
-					duplicates.push({ entry, duplicateOf: duplicate.entry });
-					for (let k of Object.keys(entry.properties)) {
-						if (!duplicate.entry.properties[k]) {
-							duplicate.entry.properties[k] = entry.properties[k];
-						}
-					}
+					warnings.push({ code:'DUPLICATE_ENTRY', message: `${item.key} appears to be a duplicate of ${duplicate.entry.key} and was removed.`, entry: item, duplicateOf: duplicate.entry });
+					duplicate.entry.fields.push(...item.fields);
+					item.duplicate = true;
 				} else {
 					hashes.push(hash);
 				}
 			}
-		}
-	}
 
-	if (options.sort) { // accepts an array of keys to sort by
-		let sortIndex;
-		entries = entries.reverse()
-			.map((entry, i) => {
-				if (entry.sortIndex) {
-					sortIndex = entry.sortIndex;
-				} else {
-					entry.sortIndex = sortIndex ? sortIndex.slice(0, -10) + (10000000-i) : 'z';
+			if (options.sort) {
+				let sortIndex = options.sort
+					.map(k => String(item[k] || getValue(item, k) || '\ufff0').toLowerCase()) // if no value, then use \ufff0 so entry will be last
+					.join(' ');
+				for (let i in preceedingMeta) {
+					preceedingMeta[i].sortIndex = `${sortIndex} ${i}`;
 				}
-				return entry;
-			})
-			.sort((a, b) => a.sortIndex < b.sortIndex ? -1 : a.sortIndex > b.sortIndex ? 1 : 0);
+				item.sortIndex = `${sortIndex} ${preceedingMeta.length}`;
+				preceedingMeta = [];
+			}
+		}
 	}
 
-	for (let entry of entries) {
-		if (duplicates.find(d => d.entry === entry)) {
-			continue;
-		}
-		if (entry.type === 'string') {
-			bibtex += `@string{${entry.raw}}\n`; // keep strings as they were
-		} else if (entry.type === 'preamble') {
-			bibtex += `@preamble{${entry.raw}}\n`; // keep preambles as they were
-		} else if (entry.type === 'comment') {
-			let comment = entry.comment.trim();
+	if (options.sort) { // an array of keys to sort by
+		items = items.sort((a, b) => a.sortIndex < b.sortIndex ? -1 : a.sortIndex > b.sortIndex ? 1 : 0);
+	}
+
+	let bibtex = '',
+		indent = options.tab ? '\t' : Array(options.space).fill(' ').join('');
+	for (let item of items) {
+		if (item.duplicate) { continue; }
+		if (item.itemtype === 'string') {
+			bibtex += `@string{${item.name} = ${item.raw}}\n`; // keep strings as they were
+		} else if (item.itemtype === 'preamble') {
+			bibtex += `@preamble{${item.raw}}\n`; // keep preambles as they were
+		} else if (item.itemtype === 'comment') {
+			let comment = options.tidyComments ? item.comment.trim() : item.comment.replace(/^[ \t]*\n|\n[ \t]*$/g, '');
 			if (comment && !options.stripComments) {
 				bibtex += `${comment}\n`;
 			}
 		} else { // entry
-			let props = Object.keys(entry.properties).filter(k => !options.omit.includes(k));
+			let props = item.fields
+				.map(field => field.name.toLowerCase())
+				.filter(k => !options.omit.includes(k));
 
-			if (options.sortProperties) {
+			props = Array.from(new Set(props)); // remove duplicate properties
+
+			if (options.sortFields) {
 				props = props.sort((a, b) => {
-					let indexA = options.sortProperties.indexOf(a),
-						indexB = options.sortProperties.indexOf(b);
+					let indexA = options.sortFields.indexOf(a),
+						indexB = options.sortFields.indexOf(b);
 					return indexA > -1 && indexB > -1 ? indexA - indexB : indexA > -1 ? -1 : indexB > -1 ? 1 : 0;
 				});
 			}
 			props = props.map(k => {
-				let v = entry.properties[k],
+				let v = get(item, k),
 					output;
-				if (v.concatinate) {
-					output = v.concatinate.map(({ value, enclosed }) => enclosed ? `"${value}"` : value).join(' # ');
+				if (v.datatype === 'concatinate') {
+					output = v.value.map(({ value, datatype }) => renderValue(value, datatype)).join(' # ');
 				} else {
-					let val = String(v.value).replace(/\s*\n\s*/g, ' ').trim();
+					let val = String(v.value).replace(/\s*\n\s*/g, ' ').trim(); // remove whitespace
 					if (options.stripEnclosingBraces) {
 						val = val.replace(/^\{(.*)\}$/g, '$1');
 					}
@@ -223,10 +254,13 @@ const tidy = (input, options = {}) => {
 					if (options.escape) {
 						val = escapeSpecialCharacters(val);
 					}
+					if (k === 'url' && options.encodeUrls) {
+						val = val.replace(/\\_/g, '%5F');
+					}
 					if (k === 'pages') {
 						val = val.replace(/(\d)\s*-\s*(\d)/, '$1--$2'); // replace single dash with double dash in page range
 					}
-					output = v.enclosed === 'curly' || options.curly ? `{${val}}` : v.enclosed === 'quote' ? `"${val}"` : val;
+					output = renderValue(val, v.datatype, options.curly);
 					if (options.numeric) {
 						if (val.match(/^[0-9]+$/)) {
 							output = String(Number(val)).toLowerCase();
@@ -238,11 +272,18 @@ const tidy = (input, options = {}) => {
 				return `${indent}${k.padEnd(options.align - 1)} = ${output}`;
 			});
 
-			bibtex += `@${entry.type.toLowerCase()}{${entry.id},\n${props.join(',\n')}\n}\n`;
+			bibtex += `@${item.type.toLowerCase()}{${item.key ? `${item.key},` : ''}\n${props.join(',\n')}\n}\n`;
 		}
 	}
 
-	return { bibtex, duplicates, entries: entries.filter(d => d.id), proceedings, publishers, journals };
+	let entries = items.filter(item => item.itemtype === 'entry');
+
+	return { bibtex, warnings, entries };
+};
+
+const renderValue = (value, datatype, forceBrace) => {
+	return datatype === 'braced' || forceBrace ? `{${value}}` :
+		datatype === 'quoted' ? `"${value}"` : value;
 };
 
 export default { tidy, options };

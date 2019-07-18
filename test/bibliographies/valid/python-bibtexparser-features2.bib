@@ -1,0 +1,27 @@
+@string{CoOl = "Cool"}
+@string{stuff = "Stuff"}
+@string{myTitle = cool # " " # stuff}
+
+@string{int = "International"}
+@string{myconf = "My "#int#" Conference"}
+
+@string{myname = "Doe"}
+
+@String {firstname = "John"}
+@String {lastname  = myname}
+@String {domain  = "example"}
+@String {tld  = "com"}
+
+@String {foo = "1--10"}
+@String {BaR = FOO}
+@String {pages = baR}
+
+@inproceedings{mykey,
+  author = "John " # mynamE,
+  title = mytitle,
+  booktitle = myconf,
+  pages = pages,
+  year = 2014,
+  note = "Email: " # firstname # "." # lastname #
+          "@" # domain # "." # tld,
+}

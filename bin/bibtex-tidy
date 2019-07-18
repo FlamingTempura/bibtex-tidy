@@ -29,6 +29,8 @@ const argv = require('yargs')
 	.argv;
 const input = argv._[0];
 
+//console.log(argv._);
+
 const idx = str => str.toLowerCase().replace(/^the /, '');
 const alphabetical = (a, b) => idx(a) < idx(b) ? -1 : idx(a) > idx(b) ? 1 : 0;
 
@@ -38,32 +40,33 @@ const bibtex = fs.readFileSync(input, 'utf8');
 
 let opts = {};
 for (let k of Object.keys(argv)) {
-	opts[camelCase(k)] = argv[k];
+	let def = options[k];
+	if (!def) { continue; }
+	if (def.type === 'number') {
+		opts[camelCase(k)] = argv[k] === undefined ? def.default : argv[k];
+	} else {
+		opts[camelCase(k)] = argv[k];
+	}
+	
 }
+
+//console.log(opts);
 
 if (opts.sort && opts.sort.length === 0) { opts.sort = true; }
 if (opts.sort && typeof opts.sort[0] === 'boolean') { opts.sort = opts.sort[0]; }
-if (opts.sortProperties && opts.sortProperties.length === 0) { opts.sortProperties = true; }
-if (opts.sortProperties && typeof opts.sortProperties[0] === 'boolean') { opts.sortProperties = opts.sortProperties[0]; }
+if (opts.sortFields && opts.sortFields.length === 0) { opts.sortFields = true; }
+if (opts.sortFields && typeof opts.sortFields[0] === 'boolean') { opts.sortFields = opts.sortFields[0]; }
 
 const result = tidy.tidy(bibtex, opts);
 
+for (let warning of result.warnings) {
+	console.error(warning.code + ': ' + warning.message);
+}
+
 console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
-if (argv.citations) {
-	console.log(`${result.entries.filter(e => e.citations > 0).length} of which have been cited at least once`);
-}
 if (argv.merge) {
-	console.log(`${result.duplicates.length} merged:`);
-	result.duplicates.forEach(dupe => console.log(` ${dupe.entry.id} merged into ${dupe.duplicateOf.id}`));
-}
-if (argv.stats) {
-	console.log('Statistics:');
-	[['proceedings', result.proceedings], ['publishers', result.publishers], ['journals', result.journals]].forEach(([key, counts]) => {
-		console.log(`${Object.keys(counts).length} ${key}:`);
-		Object.keys(counts)
-			.sort(alphabetical)
-			.forEach(name => console.log(` [${String(counts[name]).padStart(5)}] ${name}`));
-	});
+	let dupes = result.warnings.filter(w => w.code === 'DUPLICATE_ENTRY');
+	console.log(`${dupes.length} entries merged`);
 }
 fs.writeFileSync(`${input}.original`, bibtex, 'utf8');
 fs.writeFileSync(input, result.bibtex, 'utf8');

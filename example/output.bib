@@ -1,5 +1,12 @@
+@conference_at{4,
+  a__           = {{Caroline JA Smith}},
+  _#bo          = {Q{Uantum} {s}omethings},
+  key with spaces = {thing}
+}
+% test duplicate (DOI)
 %references
-article{feinberg1983technique,
+@preamble{{abc}}
+@article{feinberg1983technique,
   number        = 1,
   title         = {A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
   author        = {Feinberg, Andrew P and Vogelstein, Bert},
@@ -9,7 +16,12 @@ article{feinberg1983technique,
   year          = 1983,
   publisher     = {Elsevier}
 }
-article{miles1984qualitative,
+@book{IP:1990,
+  author        = {Prince, Ian},
+  year          = 1990,
+  title         = {Methods for Research}
+}
+@article{miles1984qualitative,
   title         = {Qualitative data analysis: A sourcebook},
   author        = {Miles, Matthew B and Huberman, A Michael and Saldana, J},
   journal       = {Beverly Hills},
@@ -17,27 +29,19 @@ article{miles1984qualitative,
   doi           = {1.1},
   booktitle     = {things}
 }
-inproceedings{Smith2009,
+% another comment
+@inproceedings{Smith2009,
   author        = {Caroline JA Smith},
   year          = 2009,
   month         = dec,
   title         = {{Quantum somethings}},
   journal       = {Journal of {B}lah},
   booktitle     = {blah}
-}% test duplicate (author and title)
-
-book{IP:1990,
-  author        = {Prince, Ian},
-  year          = 1990,
-  title         = {Methods for Research}
-}% test duplicate (DOI)
+}
+% test duplicate (author and title)
 % boo!
-article{thing_a,
+@article{thing_a,
   title         = {blah}
-}% another comment
-conference_at{4,
-  a__           = {{Caroline JA Smith}},
-  _#bo          = {Q{Uantum} {s}omethings},
-  key with spaces= {thing}
-}% last thing
+}
+% last thing
 % another last thing

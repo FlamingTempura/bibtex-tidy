@@ -1,0 +1,18 @@
+@comment{ignore this line!}
+@Comment{ignore this line too!}
+@COMMENT{and ignore this line too!}
+
+@preamble{ "\makeatletter" }
+@preamble{ "\@ifundefined{url}{\def\url#1{\texttt{#1}}}{}" }
+@preamble{ "\makeatother" }
+
+@string{mystring = "Hello"}
+@string{myconf = "My International Conference"}
+@string{myname = "Doe"}
+
+@inproceedings{mykey,
+  author = "John",
+  title = {Cool Stuff},
+  booktitle = myconf,
+  year = 2014,
+}

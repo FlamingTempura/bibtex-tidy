@@ -1,0 +1,132 @@
+% From biber test data : t/tdata/crossrefs.bib
+% Kept initial comment but not for our purpose
+
+% Testing mincrossrefs. cr1 and cr2 crossrefs should trigger inclusion of cr_m and also
+% the crossref fields in both of them
+% Also a test of some aliases
+@INBOOK{cr1,
+  AUTHOR        = {Graham Gullam},
+  TITLE         = {Great and Good Graphs},
+  ORIGDATE      = {1955},
+  ARCHIVEPREFIX = {SomEPrFiX},
+  PRIMARYCLASS  = {SOMECLASS},
+  CROSSREF      = {cr_m}
+}
+
+@INBOOK{cr2,
+  AUTHOR      = {Frederick Fumble},
+  TITLE       = {Fabulous Fourier Forms},
+  SCHOOL      = {School},
+  INSTITUTION = {Institution},
+  ORIGDATE    = {1943},
+  CROSSREF    = {cr_m}
+}
+
+@BOOK{cr_m,
+  EDITOR    = {Edgar Erbriss},
+  TITLE     = {Graphs of the Continent},
+  PUBLISHER = {Grimble},
+  YEAR      = {1974}
+}
+
+% Testing explicit cite of crossref parent. Should trigger inclusion of child crossref field
+@INBOOK{cr3,
+  AUTHOR        = {Arthur Aptitude},
+  TITLE         = {Arrangements of All Articles},
+  ORIGDATE      = {1934},
+  ARCHIVEPREFIX = {SomEPrFiX},
+  EPRINTTYPE    = {sometype},
+  CROSSREF      = {crt}
+}
+
+@BOOK{crt,
+  EDITOR    = {Mark Monkley},
+  TITLE     = {Beasts of the Burbling Burns},
+  PUBLISHER = {Rancour},
+  YEAR      = {1996}
+}
+
+% Testing mincrossrefs not reached. cr4 is cited, cr5 isn't, therefore mincrossrefs (2) for
+% crn not reached
+@INBOOK{cr4,
+  AUTHOR    = {Morris Mumble},
+  TITLE     = {Enterprising Entities},
+  ORIGDATE  = {1911},
+  CROSSREF  = {crn}
+}
+
+@INBOOK{cr5,
+  AUTHOR    = {Oliver Ordinary},
+  TITLE     = {Questionable Quidities},
+  ORIGDATE  = {1919},
+  CROSSREF  = {crn}
+}
+
+@BOOK{crn,
+  EDITOR    = {Jeremy Jermain},
+  TITLE     = {Vanquished, Victor, Vandal},
+  PUBLISHER = {Pillsbury},
+  YEAR      = {1945}
+}
+
+% Testing inheritance of event information
+@PROCEEDINGS{cr6i,
+  AUTHOR     = {Spurious Author},
+  ADDRESS    = {Address},
+  TITLE      = {Title of proceeding},
+  EDITOR     = {Editor},
+  PUBLISHER  = {Publisher of proceeding},
+  EVENTDATE  = {2009-08-21/2009-08-24},
+  EVENTTITLE = {Title of the event},
+  VENUE      = {Location of event},
+  YEAR       = {2009}
+}
+
+@INPROCEEDINGS{cr6,
+  AUTHOR     = {Author, Firstname},
+  CROSSREF   = {cr6i},
+  PAGES      = {123--},
+  TITLE      = {Title of inproceeding},
+  BOOKTITLE  = {Manual booktitle},
+  YEAR       = {2009},
+}
+
+% Testing inheritance of special fields (booktitle, bookauthor etc.)
+@BOOK{cr7i,
+  AUTHOR     = {Brian Bookauthor},
+  TITLE      = {Book Title},
+  SUBTITLE   = {Book Subtitle},
+  TITLEADDON = {Book Titleaddon},
+  PUBLISHER  = {Publisher of proceeding},
+  YEAR       = {2009},
+  VERBA      = {String},
+}
+
+@INBOOK{cr7,
+  AUTHOR     = {Author, Firstname},
+  CROSSREF   = {cr7i},
+  PAGES      = {123--126},
+  TITLE      = {Title of Book bit},
+  YEAR       = {2010}
+}
+
+% Testing supression of default inheritance
+@COLLECTION{cr8i,
+  EDITOR     = {Brian Editor},
+  TITLE      = {Book Title},
+  SUBTITLE   = {Book Subtitle},
+  TITLEADDON = {Book Titleaddon},
+  PUBLISHER  = {Publisher of Collection},
+  YEAR       = {2009}
+}
+
+@INCOLLECTION{cr8,
+  AUTHOR     = {Smith, Firstname},
+  CROSSREF   = {cr8i},
+  PAGES      = {1--12},
+  TITLE      = {Title of Collection bit},
+  YEAR       = {2010}
+}
+
+
+
