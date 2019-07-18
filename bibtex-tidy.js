@@ -6912,7 +6912,7 @@
 			value: false
 		},
 		space: { 
-			title: 'Indent with spaces',
+			name: 'Indent with spaces',
 			description: 'Providing a number causes all fields to be prefixed with the corresponding number of spaces. This is ignored if tab is true.',
 			type: 'number',
 			value: 2
@@ -6936,7 +6936,7 @@
 			value: false
 		},
 		merge: { 
-			title: 'Merge duplicate entries',
+			name: 'Merge duplicate entries',
 			description: 'Two entries are considered duplicates in the following cases: (a) their DOIs are identical, (b) their abstracts are identical, or (c) their authors and titles are both identical. The firstmost entry is kept and any extra properties from duplicate entries are incorporated.',
 			type: 'boolean',
 			value: false
