@@ -64,7 +64,7 @@ Options:
   --strip-enclosing-braces  Where an entire value is enclosed in double braces, remove the extra braces. For example, convert {{Journal of Tea}} to {Journal of Tea}.
   --drop-all-caps           Where values are all caps, make them title case. For example, convert {JOURNAL OF TEA} to {Journal of Tea}.
   --escape                  Escape special characters, such as umlaut. This ensures correct typesetting with latex.
-  --sort-properties         Sort the properties within entries. The default sort order is title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively you can specify space delimited properties.
+  --sort-fields             Sort the properties within entries. The default sort order is title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively you can specify space delimited properties.
   --strip-comments          Remove all comments from the bibtex source.
 ```
 
