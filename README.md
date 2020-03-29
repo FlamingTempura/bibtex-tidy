@@ -11,7 +11,7 @@ bibtex-tidy references.bib
 
 Before:
 
-```latex
+```bibtex
 @ARTICLE {feinberg1983technique,
   title={A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
 author="Feinberg, Andrew P and Vogelstein, Bert",
@@ -31,7 +31,7 @@ author="Feinberg, Andrew P and Vogelstein, Bert",
 
 After `bibtex-tidy references.bib --curly --numeric`:
 
-```latex
+```bibtex
 @article{feinberg1983technique,
   title         = {A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
   author        = {Feinberg, Andrew P and Vogelstein, Bert},
@@ -53,7 +53,7 @@ After `bibtex-tidy references.bib --curly --numeric`:
 ### Options
 
 ```
-Usage: bibtex-tidy [OPTION]... FILE.BIB
+Usage: ./bin/bibtex-tidy [OPTION]... FILE.BIB
 BibTeX Tidy - cleaner and formatter for BibTeX files.
 Options:
   --help                   Show help
