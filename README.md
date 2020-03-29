@@ -97,3 +97,18 @@ Also available on bower
 ```sh
 bower install bibtex-tidy
 ```
+
+
+## Building and Testing
+
+To build bibtex-tidy, run:
+
+```sh
+npm run build
+```
+
+Unit tests can be run using:
+
+```sh
+npm test
+```
