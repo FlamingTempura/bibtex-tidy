@@ -5,67 +5,123 @@
 const tidy = require('../bibtex-tidy.js');
 const fs = require('fs');
 
-const options = {};
+const options = {
+	help: {
+		description: 'Show help',
+		type: 'boolean'
+	}
+};
 
-const unCamelCase = str => str.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`);
-const camelCase = str => str.replace(/-[a-z]/g, c => c.charAt(1).toUpperCase());
-
-for (let k of Object.keys(tidy.options)) {
-	options[unCamelCase(k)] = {
-		description: tidy.options[k].description,
-		type: tidy.options[k].type,
-		default: tidy.options[k].value
-	};
+for (const [key, option] of Object.entries(tidy.options)) {
+	const arg = key.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`); // convert camelCase to --dash-argument
+	options[arg] = { key, ...option };
 }
 
-const argv = require('yargs')
-	.usage('Usage: $0 <file.bib> [options]')
-	.demandCommand(1)
-	.options(options)
-	.boolean('stats')
-	.describe('stats', 'Print statistics about entries')
-	.default('stats', false)
-	.help('help')
-	.argv;
-const input = argv._[0];
+const args = {};
+let input;
 
-//console.log(argv._);
+class NoSuchOption extends Error {}
 
-const idx = str => str.toLowerCase().replace(/^the /, '');
-const alphabetical = (a, b) => idx(a) < idx(b) ? -1 : idx(a) > idx(b) ? 1 : 0;
+try {
+	let option;
+	for (let i = 2; i < process.argv.length; i++) {
+		const arg = process.argv[i];
+		let [key, val] = arg.split('=');
+		if (key.startsWith('--no-')) {
+			option = options[key.slice(5)];
+			if (!option) throw new NoSuchOption(option);
+			args[option.key] = false;
+		} else if (key.startsWith('--')) {
+			option = options[key.slice(2)];
+			if (!option) throw new NoSuchOption(option);
+			if (option.type === 'array' && val !== undefined) val = val.split(',');
+			if (option.type === 'number' && val !== undefined) val = Number(val);
+			args[option.key] = val === undefined ? true : val;
+		} else if (option && (i < process.argv.length - 1 || input)) {
+			switch (option.type) {
+				case 'array':
+					key = key.split(',');
+					args[option.key] =
+						args[option.key] === true ? key : [...args[option.key], ...key];
+					break;
+				case 'number':
+					args[option.key] = Number(key);
+					option = null;
+					break;
+				default:
+					args[option.key] = key;
+					option = null;
+			}
+		} else {
+			input = arg;
+		}
+	}
+} catch (e) {
+	if (e instanceof NoSuchOption) {
+		console.error(`No option "${e.message}"`);
+		process.exit(1);
+	} else throw e;
+}
+
+const BREAK_LINE = 84;
+const LEFT_MARGIN = 27;
+
+const splitLines = (line, limit) => {
+	const words = line.split(' ');
+	const lines = [''];
+	for (const word of words) {
+		if (lines[lines.length - 1].length + word.length + 1 > limit)
+			lines.push('');
+		lines[lines.length - 1] += word + ' ';
+	}
+	return lines;
+};
+
+if (!input || args.help) {
+	console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
+	console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.');
+	console.log('Options:');
+	for (const [key, opt] of Object.entries(options)) {
+		const lines = splitLines(`${opt.description}`, BREAK_LINE - LEFT_MARGIN);
+		if (opt.cliExamples) {
+			const margin = BREAK_LINE - LEFT_MARGIN;
+			const examples = opt.cliExamples.join(' ');
+			lines.push(...splitLines(`Examples: ${examples}`, margin));
+		}
+		for (let i = 0; i < lines.length; i++) {
+			let prefix = '';
+			if (i === 0) {
+				let keyval = key;
+				if (opt.type === 'array') keyval += '=x,y,z';
+				if (opt.type === 'number') keyval += '=NUMBER';
+				prefix = `  --${keyval}`.padEnd(LEFT_MARGIN, ' ');
+			} else if (i === 1 && opt.default === true) {
+				prefix = `  --no-${key}`.padEnd(LEFT_MARGIN, ' ');
+			} else {
+				prefix = ' '.repeat(LEFT_MARGIN);
+			}
+			console.log(prefix + (lines[i] || ''));
+		}
+		console.log('');
+	}
+	console.log(
+		'Full documentation <https://github.com/FlamingTempura/bibtex-tidy>'
+	);
+	process.exit(1);
+}
 
 console.log('Tidying...');
 
 const bibtex = fs.readFileSync(input, 'utf8');
-
-let opts = {};
-for (let k of Object.keys(argv)) {
-	let def = options[k];
-	if (!def) { continue; }
-	if (def.type === 'number') {
-		opts[camelCase(k)] = argv[k] === undefined ? def.default : argv[k];
-	} else {
-		opts[camelCase(k)] = argv[k];
-	}
-	
-}
-
-//console.log(opts);
-
-if (opts.sort && opts.sort.length === 0) { opts.sort = true; }
-if (opts.sort && typeof opts.sort[0] === 'boolean') { opts.sort = opts.sort[0]; }
-if (opts.sortFields && opts.sortFields.length === 0) { opts.sortFields = true; }
-if (opts.sortFields && typeof opts.sortFields[0] === 'boolean') { opts.sortFields = opts.sortFields[0]; }
-
-const result = tidy.tidy(bibtex, opts);
+const result = tidy.tidy(bibtex, args);
 
 for (let warning of result.warnings) {
 	console.error(warning.code + ': ' + warning.message);
 }
 
 console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
-if (argv.merge) {
-	let dupes = result.warnings.filter(w => w.code === 'DUPLICATE_ENTRY');
+if (args.merge) {
+	const dupes = result.warnings.filter(w => w.code === 'DUPLICATE_ENTRY');
 	console.log(`${dupes.length} entries merged`);
 }
 fs.writeFileSync(`${input}.original`, bibtex, 'utf8');
