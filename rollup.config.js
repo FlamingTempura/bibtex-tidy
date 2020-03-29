@@ -1,7 +1,7 @@
 /* jshint node: true, esversion: 6, unused: true */
-import commonjs from 'rollup-plugin-commonjs';
-import nodeResolve from 'rollup-plugin-node-resolve';
-import dsv from 'rollup-plugin-dsv';
+import commonjs from '@rollup/plugin-commonjs';
+import nodeResolve from '@rollup/plugin-node-resolve';
+import dsv from '@rollup/plugin-dsv';
 
 const tsv = {
 	processRow(row) {

@@ -8,19 +8,18 @@
     "bibtex-tidy": "./bin/bibtex-tidy"
   },
   "dependencies": {
-    "yargs": "^12.0.1"
+    "bibtex-parse": "^2.1.0"
   },
   "devDependencies": {
-    "bibtex-parse": "^2.0.0",
-    "rollup": "^1.17.0",
-    "rollup-plugin-commonjs": "^9.1.6",
-    "rollup-plugin-dsv": "^1.2.0",
-    "rollup-plugin-node-resolve": "^4.0.0",
-    "tap": "^12.0.1"
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-dsv": "^2.0.1",
+    "@rollup/plugin-node-resolve": "^7.1.1",
+    "rollup": "^2.0.2",
+    "tap": "^14.10.6"
   },
   "scripts": {
-    "test": "rollup -c && tap -t0 test/",
-    "cover": "rollup -c && tap -t0 -j6 --cov --coverage-report=lcov test/",
+    "test": "rollup -c && tap -t60 --bail --no-coverage test/",
+    "cover": "rollup -c && tap -t60 -j6 --coverage --coverage-report=lcov test/",
     "build": "rollup -c"
   },
   "repository": {
