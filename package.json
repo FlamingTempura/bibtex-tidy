@@ -1,31 +1,31 @@
 {
-  "name": "bibtex-tidy",
-  "version": "1.2.0",
-  "description": "Tidy bibtex files",
-  "homepage": "https://github.com/FlamingTempura/bibtex-tidy",
-  "main": "./bibtex-tidy.js",
-  "bin": {
-    "bibtex-tidy": "./bin/bibtex-tidy"
-  },
-  "dependencies": {
-    "bibtex-parse": "^2.1.0"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^11.0.2",
-    "@rollup/plugin-dsv": "^2.0.1",
-    "@rollup/plugin-node-resolve": "^7.1.1",
-    "rollup": "^2.2.0",
-    "tap": "^14.10.7"
-  },
-  "scripts": {
-    "test": "rollup -c && tap -t60 --bail --no-coverage test/",
-    "cover": "rollup -c && tap -t60 -j6 --coverage --coverage-report=lcov test/",
-    "build": "rollup -c"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/FlamingTempura/bibtex-tidy.git"
-  },
-  "author": "FlamingTempura",
-  "license": "MIT"
+	"name": "bibtex-tidy",
+	"version": "1.2.0",
+	"description": "Tidy bibtex files",
+	"homepage": "https://github.com/FlamingTempura/bibtex-tidy",
+	"main": "./bibtex-tidy.js",
+	"bin": {
+		"bibtex-tidy": "./bin/bibtex-tidy"
+	},
+	"dependencies": {
+		"bibtex-parse": "^2.1.0"
+	},
+	"devDependencies": {
+		"@rollup/plugin-commonjs": "^11.0.2",
+		"@rollup/plugin-dsv": "^2.0.1",
+		"@rollup/plugin-node-resolve": "^7.1.1",
+		"rollup": "^2.2.0",
+		"tap": "^14.10.7"
+	},
+	"scripts": {
+		"test": "rollup -c && tap -t60 --no-coverage --test-regex=test/.*\\.spec\\.js",
+		"cover": "npm test --coverage-report=lcov",
+		"build": "rollup -c"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/FlamingTempura/bibtex-tidy.git"
+	},
+	"author": "FlamingTempura",
+	"license": "MIT"
 }

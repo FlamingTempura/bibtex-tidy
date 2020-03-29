@@ -227,7 +227,8 @@ const generateHash = item => {
 		entry: item,
 		doi: doi ? justAlphaNum(doi) : null,
 		abstract: abstract ? justAlphaNum(abstract).slice(0, 100) : null,
-		authorTitle: firstAuthorSurname + ':' + justAlphaNum(title).slice(0, 50)
+		authorTitle:
+			justAlphaNum(firstAuthorSurname) + ':' + justAlphaNum(title).slice(0, 50)
 	};
 };
 
@@ -346,11 +347,16 @@ const tidy = (input, options = {}) => {
 		} else if (item.itemtype === 'preamble') {
 			bibtex += `@preamble{${item.raw}}\n`; // keep preambles as they were
 		} else if (item.itemtype === 'comment') {
-			const comment = options.tidyComments
-				? item.comment.trim()
-				: item.comment.replace(/^[ \t]*\n|\n[ \t]*$/g, '');
+			let comment;
+			if (options.tidyComments) {
+				if (item.comment.trim()) {
+					comment = item.comment.trim() + '\n';
+				}
+			} else {
+				comment = item.comment.replace(/^[ \t]*\n|[ \t]*$/g, '');
+			}
 			if (comment && !options.stripComments) {
-				bibtex += `${comment}\n`;
+				bibtex += comment;
 			}
 		} else {
 			// entry
@@ -418,6 +424,8 @@ const tidy = (input, options = {}) => {
 	}
 
 	const entries = items.filter(item => item.itemtype === 'entry');
+
+	if (!bibtex.endsWith('\n')) bibtex += '\n';
 
 	return { bibtex, warnings, entries };
 };
