@@ -14,8 +14,11 @@
 		"@rollup/plugin-commonjs": "^11.0.2",
 		"@rollup/plugin-dsv": "^2.0.1",
 		"@rollup/plugin-node-resolve": "^7.1.1",
+		"@rollup/plugin-typescript": "^4.0.0",
 		"rollup": "^2.2.0",
-		"tap": "^14.10.7"
+		"tap": "^14.10.7",
+		"tslib": "^1.11.1",
+		"typescript": "^3.8.3"
 	},
 	"scripts": {
 		"test": "rollup -c && tap -t60 --no-coverage --test-regex=test/.*\\.spec\\.js",

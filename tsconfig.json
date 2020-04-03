@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"module": "es6",
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"noImplicitAny": true,
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"baseUrl": ".",
+
+		"lib": ["ESNext", "DOM"],
+		"target": "ES6",
+
+		"paths": {
+			"*": ["../node_modules/*"]
+		},
+		"typeRoots": ["./declarations.d.ts"],
+		"rootDir": "./src"
+	},
+	"include": ["./**/*"]
+}

@@ -2,6 +2,7 @@
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import dsv from '@rollup/plugin-dsv';
+import typescript from '@rollup/plugin-typescript';
 import { version } from './package.json';
 
 const tsv = {
@@ -19,8 +20,8 @@ const banner = `/**
  **/`;
 
 export default {
-	input: 'src/index.js',
-	plugins: [dsv(tsv), commonjs(), nodeResolve()],
+	input: 'src/index.ts',
+	plugins: [typescript(), dsv(tsv), commonjs(), nodeResolve()],
 	output: {
 		name: 'bibtexTidy',
 		file: 'bibtex-tidy.js',

@@ -12,10 +12,41 @@ const options = {
 	}
 };
 
-for (const [key, option] of Object.entries(tidy.options)) {
-	const arg = key.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`); // convert camelCase to --dash-argument
-	options[arg] = { key, ...option };
-}
+const ts = require('typescript');
+
+let program = ts.createProgram(['./src/index.ts'], {
+	target: ts.ScriptTarget.ES5,
+	module: ts.ModuleKind.CommonJS
+});
+
+let checker = program.getTypeChecker();
+
+const sourceFile = program
+	.getSourceFiles()
+	.find(({ path }) => path.endsWith('/src/index.ts'));
+
+ts.forEachChild(sourceFile, node => {
+	delete node.parent;
+	let symbol = checker.getSymbolAtLocation(node.name);
+	if (symbol && symbol.escapedName === 'Options') {
+		const members = symbol.declarations[0].type.members;
+		members.forEach(member => {
+			const key = member.name.escapedText;
+			const arg = key.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`); // convert camelCase to --dash-argument
+			options[arg] = {
+				key,
+				description: member.jsDoc[0].comment.replace(/\s+/g, ' '),
+				examples: (member.jsDoc[0].tags || []).map(m => m.comment),
+				type: checker.typeToString(
+					checker.getTypeOfSymbolAtLocation(
+						member.symbol,
+						member.symbol.valueDeclaration
+					)
+				)
+			};
+		});
+	}
+});
 
 const args = {};
 let input;
@@ -83,9 +114,9 @@ if (!input || args.help) {
 	console.log('Options:');
 	for (const [key, opt] of Object.entries(options)) {
 		const lines = splitLines(`${opt.description}`, BREAK_LINE - LEFT_MARGIN);
-		if (opt.cliExamples) {
+		if (opt.examples) {
 			const margin = BREAK_LINE - LEFT_MARGIN;
-			const examples = opt.cliExamples.join(' ');
+			const examples = opt.examples.join(' ');
 			lines.push(...splitLines(`Examples: ${examples}`, margin));
 		}
 		for (let i = 0; i < lines.length; i++) {
