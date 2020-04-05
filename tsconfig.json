@@ -1,20 +1,20 @@
 {
 	"compilerOptions": {
-		"module": "es6",
+		"module": "ES6",
 		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"noImplicitAny": true,
-		"moduleResolution": "node",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitReturns": true,
+		"strict": true,
+		"removeComments": true,
+		"moduleResolution": "Node",
 		"sourceMap": true,
 		"baseUrl": ".",
-
 		"lib": ["ESNext", "DOM"],
 		"target": "ES6",
-
 		"paths": {
 			"*": ["../node_modules/*"]
 		},
-		"typeRoots": ["./declarations.d.ts"],
+		"typeRoots": ["./declarations.d.ts", "./node_modules/@types"],
 		"rootDir": "./src"
 	},
 	"include": ["./**/*"]

@@ -1,6 +1,6 @@
 {
 	"name": "bibtex-tidy",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "Tidy bibtex files",
 	"homepage": "https://github.com/FlamingTempura/bibtex-tidy",
 	"main": "./bibtex-tidy.js",
@@ -17,6 +17,7 @@
 		"@rollup/plugin-dsv": "^2.0.1",
 		"@rollup/plugin-node-resolve": "^7.1.1",
 		"@rollup/plugin-typescript": "^4.0.0",
+		"@types/node": "^13.11.0",
 		"rollup": "^2.2.0",
 		"rollup-plugin-babel": "^4.4.0",
 		"tap": "^14.10.7",

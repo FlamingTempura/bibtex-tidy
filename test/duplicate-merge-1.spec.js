@@ -47,7 +47,7 @@ title = {Methods for Research}
 
 % test duplicate (DOI)
 @article{dupe1,
-    title={Qualitative data analysis: A sourcebook},
+    title={Qualitative data analysis: A sourcebooka},
     booktitle={things},
     doi = {1.1},
     }
@@ -124,7 +124,7 @@ const output = bibtex`
 
 test('merge duplicates', (t, tidy) => {
 	const tidied = tidy(input, { merge: true });
-	const warnings = tidied.warnings.filter(w => w.code === 'DUPLICATE_ENTRY');
+	const warnings = tidied.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
 	checkSame(t, tidied.bibtex, output);
 	checkSame(t, warnings.length, 3);
 });

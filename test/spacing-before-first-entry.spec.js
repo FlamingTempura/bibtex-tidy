@@ -2,29 +2,29 @@ import { bibtex, test, checkSame } from './utils';
 
 const input = bibtex`
 
-	@article{
+	@article{a,
 	  title = {Something},
     }
 
-@article{
+@article{b,
     title = {Something},
 }
 
-	@article{
+	@article{c,
 	  title = {Something},
 	}
 `;
 
 const output = bibtex`
-@article{
+@article{a,
   title         = {Something}
 }
 
-@article{
+@article{b,
   title         = {Something}
 }
 
-@article{
+@article{c,
   title         = {Something}
 }
 `;

@@ -72,7 +72,7 @@ title = {Methods for Research}
 % another last thing`;
 
 test(
-	'duplicate ID warnings',
+	'duplicate key warnings',
 	(t, tidy) => {
 		const tidied = tidy(input, { escape: true }),
 			warnings = [
@@ -87,32 +87,32 @@ test(
 								name: 'author',
 								raw: '"Caroline JA Smith"',
 								value: 'Caroline JA Smith',
-								datatype: 'quoted'
+								datatype: 'quoted',
 							},
 							{ name: 'year', raw: '2009', value: 2009, datatype: 'number' },
 							{
 								name: 'month',
 								raw: 'dec',
 								value: 'dec',
-								datatype: 'identifier'
+								datatype: 'identifier',
 							},
 							{
 								name: 'title',
 								raw: '{{Quantum somethings}}',
 								value: '{Quantum somethings}',
-								datatype: 'braced'
+								datatype: 'braced',
 							},
 							{
 								name: 'journal',
 								raw: '{Journal of {B}lah}',
 								value: 'Journal of {B}lah',
-								datatype: 'braced'
-							}
-						]
+								datatype: 'braced',
+							},
+						],
 					},
 					code: 'DUPLICATE_KEY',
-					message: 'Smith2009 is a duplicate entry key.'
-				}
+					message: 'Smith2009 is a duplicate entry key.',
+				},
 			];
 		delete tidied.warnings[0].entry.raw;
 		t.same(tidied.warnings, warnings);

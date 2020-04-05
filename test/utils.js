@@ -9,7 +9,8 @@ const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'bibtex-tidy-'));
 const TMP_FILE = path.join(TMP_DIR, 'tmp.bib');
 const DIFFTOOL = process.env.DIFFTOOL || 'meld';
 
-const unCamelCase = str => str.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`);
+const unCamelCase = (str) =>
+	str.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 
 const cli = (bibtex, options = {}) => {
 	const inputFirst = Math.random() > 0.5; // <input> [options] rather than [options] <input>
@@ -45,13 +46,13 @@ const cli = (bibtex, options = {}) => {
 	console.log('./bin/bibtex-tidy ' + args.join(' '));
 
 	const proc = spawnSync(path.resolve(__dirname, '../bin/bibtex-tidy'), args, {
-		timeout: 100000
+		timeout: 100000,
 	});
 	const tidied = fs.readFileSync(TMP_FILE, 'utf8');
 	const warnings = (proc.stderr.toString() || '')
 		.split('\n')
-		.filter(line => line.includes(': '))
-		.map(line => {
+		.filter((line) => line.includes(': '))
+		.map((line) => {
 			let [code, message] = line.split(': ');
 			return { code, message };
 		});
@@ -60,7 +61,7 @@ const cli = (bibtex, options = {}) => {
 };
 
 // Allows \ to be used and removes the empty line at the start
-export const bibtex = str => String.raw(str).slice(1);
+export const bibtex = (str) => String.raw(str).slice(1);
 
 export const checkSame = (t, a, b, message = 'Incorrect output') => {
 	if (a !== b) {
@@ -109,12 +110,12 @@ export const test = (title, cb, { apiOnly } = {}) => {
 			}
 		});
 	};
-	tap.test(`JS API: ${title}`, t => stablecb(t, bibtexTidy.tidy), {
-		autoend: true
+	tap.test(`JS API: ${title}`, (t) => stablecb(t, bibtexTidy.tidy), {
+		autoend: true,
 	});
 	if (!apiOnly) {
-		tap.test(`CLI: ${title}`, t => stablecb(t, cli), {
-			autoend: true
+		tap.test(`CLI: ${title}`, (t) => stablecb(t, cli), {
+			autoend: true,
 		});
 	}
 };

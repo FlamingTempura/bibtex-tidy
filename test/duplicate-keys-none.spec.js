@@ -13,7 +13,7 @@ const input = bibtex`
     publisher={Elsevier},}`;
 
 test(
-	'duplicate ID warnings (no duplicates)',
+	'duplicate key warnings (no duplicates)',
 	(t, tidy) => {
 		const tidied = tidy(input, { escape: false });
 		t.same(tidied.warnings, []);
