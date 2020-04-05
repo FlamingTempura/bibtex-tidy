@@ -4,11 +4,12 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import dsv from '@rollup/plugin-dsv';
 import typescript from '@rollup/plugin-typescript';
 import { version } from './package.json';
+import babel from 'rollup-plugin-babel';
 
 const tsv = {
 	processRow(row) {
 		return [row.unicode, row.latex];
-	}
+	},
 };
 
 const banner = `/**
@@ -19,13 +20,29 @@ const banner = `/**
  * using \`npm run build\`. Edit files in './src' then rebuild.
  **/`;
 
+const babelcfg = {
+	presets: [
+		[
+			'@babel/env',
+			{
+				targets: {
+					edge: '17',
+					firefox: '60',
+					chrome: '67',
+					safari: '11.1',
+				},
+			},
+		],
+	],
+};
+
 export default {
 	input: 'src/index.ts',
-	plugins: [typescript(), dsv(tsv), commonjs(), nodeResolve()],
+	plugins: [typescript(), dsv(tsv), commonjs(), nodeResolve(), babel(babelcfg)],
 	output: {
 		name: 'bibtexTidy',
 		file: 'bibtex-tidy.js',
 		format: 'umd',
-		banner
-	}
+		banner,
+	},
 };
