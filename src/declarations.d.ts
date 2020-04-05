@@ -1,16 +1,23 @@
-type BibTeXFieldDatatype = 'concatinate' | 'braced' | 'quoted';
-type BibTexValue = number | string | BigInt | SingleField[];
+type BibTeXFieldDatatype =
+	| 'concatinate'
+	| 'braced'
+	| 'quoted'
+	| 'number'
+	| 'identifier';
+type BibTexValue = number | string | bigint | SingleField[];
 
 type SingleField = {
 	name: string;
-	value: number | string | BigInt;
-	datatype: 'braced' | 'quoted';
+	datatype: Exclude<BibTeXFieldDatatype, 'concatinate'>;
+	value: Exclude<BibTexValue, SingleField[]>;
+	raw: string;
 };
 
 type ConcatField = {
 	name: string;
 	datatype: 'concatinate';
 	value: SingleField[];
+	raw: string;
 };
 
 type BibTexField = SingleField | ConcatField;
@@ -28,12 +35,22 @@ type BibTeXPreamble = {
 	itemtype: 'preamble';
 	raw: string;
 };
-type BibTeXEntry = {
+interface BibTeXEntry {
 	itemtype: 'entry';
-	key: string;
+	key?: string;
 	type: string;
 	fields: BibTexField[];
-};
+}
+
+interface BibTeXEntry {
+	fieldMap: Map<string, ValueString>;
+	duplicate?: boolean;
+}
+
+interface ValueString {
+	value: string;
+	datatype: BibTeXFieldDatatype;
+}
 
 type BibTeXItem = BibTeXString | BibTeXEntry | BibTeXPreamble | BibTeXComment;
 

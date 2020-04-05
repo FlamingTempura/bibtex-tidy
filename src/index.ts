@@ -1,14 +1,7 @@
 import parser from 'bibtex-parse';
 import unicode from './unicode.tsv'; // source: https://raw.githubusercontent.com/pkgw/worklog-tools/master/unicode_to_latex.py
 
-type EntryHash = {
-	entry: BibTeXEntry;
-	doi: string | null;
-	abstract: string | null;
-	authorTitle: string;
-};
-
-type Index = { [key: string]: string };
+type SortIndex = Map<string, string>;
 
 type DuplicateKeyWarning = {
 	code: 'DUPLICATE_KEY';
@@ -30,6 +23,9 @@ type DuplicateEntryWarning = {
 };
 
 type Warning = DuplicateKeyWarning | MissingKeyWarning | DuplicateEntryWarning;
+
+type UniqueKey = 'doi' | 'key' | 'abstract' | 'citation';
+type MergeStrategy = 'first' | 'last' | 'combine' | 'overwrite';
 
 type Options = {
 	/**
@@ -72,19 +68,30 @@ type Options = {
 	 * @example --sort=name,year'
 	 * */
 	sort?: boolean | string[];
-	/** Merge duplicate entries - Two entries are considered duplicates in the
-	 *	following cases: (a) their DOIs are identical, (b) their abstracts are
-	 *	identical, or (c) their authors and titles are both identical. The
-	 *	firstmost entry is kept and any extra properties from duplicate entries
-	 *	are incorporated.
-	 *	@example --merge (merge using any strategy)
-	 *	@example --merge doi (merge only if DOIs are identicals)
-	 *	@example --merge key (merge only if IDs are identicals)
-	 *	@example --merge abstract (merge only if abstracts are similar)
-	 *	@example --merge citation (merge only if author and titles are similar)
-	 *	@example --merge doi, key (use doi and key strategies)
+	/**
+	 * Merge duplicate entries - Two entries are considered duplicates in the
+	 * following cases: (a) their DOIs are identical, (b) their abstracts are
+	 * identical, or (c) their authors and titles are both identical. The
+	 * firstmost entry is kept and any extra properties from duplicate entries
+	 * are incorporated.
+	 * @example --merge (merge using any strategy)
+	 * @example --merge doi (merge only if DOIs are identicals)
+	 * @example --merge key (merge only if IDs are identicals)
+	 * @example --merge abstract (merge only if abstracts are similar)
+	 * @example --merge citation (merge only if author and titles are similar)
+	 * @example --merge doi, key (use doi and key strategies)
 	 * */
-	merge?: boolean | ('doi' | 'key' | 'abstract' | 'citation')[];
+	merge?: boolean | UniqueKey[];
+	/**
+	 * Merge strategy - How duplicate entries should be merged.
+	 * - first: only keep the original entry
+	 * - last: only keep the last found duplicate
+	 * - combine: keep original entry and merge in fields of duplicates if they
+	 *   do not already exist
+	 * - overwrite: keep original entry and merge in fields of duplicates,
+	 *   overwriting existing fields if they exist
+	 */
+	mergeStrategy?: MergeStrategy;
 	/**
 	 * Strip double-braced values - Where an entire value is enclosed in double
 	 * braces, remove the extra braces. For example, {{Journal of Tea}} will
@@ -112,6 +119,7 @@ type Options = {
 	sortFields?: boolean | string[];
 	/**
 	 * Alias of sort fields (legacy)
+	 * @deprecated
 	 */
 	sortProperties?: boolean | string[];
 	/**
@@ -128,23 +136,8 @@ type Options = {
 	tidyComments?: boolean;
 };
 
-const DEFAULTS: Options = {
-	omit: [],
-	curly: false,
-	numeric: false,
-	space: 2,
-	tab: false,
-	align: 14,
-	sort: false,
-	merge: false,
-	stripEnclosingBraces: false,
-	dropAllCaps: false,
-	escape: true,
-	sortFields: false,
-	stripComments: false,
-	encodeUrls: false,
-	tidyComments: true
-};
+const DEFAULT_ENTRY_ORDER: string[] = ['key']; // if sort = true
+const DEFAULT_INDEX_STRATEGY: UniqueKey[] = ['doi', 'citation', 'abstract'];
 
 //prettier-ignore
 const DEFAULT_FIELD_ORDER: string[] = [
@@ -163,7 +156,7 @@ const specialCharacters = new Map(unicode);
 
 const escapeSpecialCharacters = (str: string): string => {
 	let newstr: string = '';
-	let escapeMode: boolean;
+	let escapeMode: boolean = false;
 	for (let i = 0; i < str.length; i++) {
 		if (escapeMode) {
 			escapeMode = false;
@@ -176,10 +169,7 @@ const escapeSpecialCharacters = (str: string): string => {
 			continue;
 		}
 		// iterate through each character and if it's a special char replace with latex code
-		const c = str
-			.charCodeAt(i)
-			.toString(16)
-			.padStart(4, '0');
+		const c = str.charCodeAt(i).toString(16).padStart(4, '0');
 		newstr += specialCharacters.get(c) || str[i];
 	}
 	return newstr;
@@ -192,273 +182,290 @@ const titleCase = (str: string): string => {
 };
 
 // remove all non-alphanumeric characters
-const justAlphaNum = (str: string = ''): string => {
+const alphaNum = (str?: string): string | undefined => {
+	if (typeof str === 'undefined') return undefined;
 	return String(str)
 		.replace(/[^0-9A-Za-z]/g, '')
 		.toLocaleLowerCase();
 };
 
-const getValueStr = (item: BibTeXEntry, name: string): string => {
-	const field = item.fields.find((f: BibTexField) => {
-		return f.name.toLocaleUpperCase() === name.toLocaleUpperCase();
-	});
-	return String(field?.value || '');
-};
-
-const stringifyValue = (
-	field: BibTexField,
-	opts: {
-		stripEnclosingBraces: boolean;
-		dropAllCaps: boolean;
-		encodeUrls: boolean;
-		curly: boolean;
-		escape: boolean;
-		numeric: boolean;
-		doubledash: boolean;
-		month: boolean;
-	}
-): string => {
-	let output;
-	if (field.datatype === 'concatinate') {
-		return field.value
-			.map((field: BibTexField) => stringifyValue(field, opts))
-			.join(' # ');
-	}
-	let val = String(field.value)
-		.replace(/\s*\n\s*/g, ' ')
-		.trim(); // remove whitespace
-
-	// if a field's value has double braces {{blah}}, lose the inner brace
-	if (opts.stripEnclosingBraces) val = val.replace(/^\{([^{}]*)\}$/g, '$1');
-
-	// if a field's value is all caps, convert it to title case
-	if (opts.dropAllCaps && val.match(/^[^a-z]+$/)) val = titleCase(val);
-
-	// url encode must happen before escape special characters
-	if (opts.encodeUrls) val = val.replace(/\\?_/g, '\\%5F');
-
-	// escape special characters like %
-	if (opts.escape) val = escapeSpecialCharacters(val);
-
-	// replace single dash with double dash in page range
-	if (opts.doubledash) val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
-
-	val = val.trim();
-
-	if (opts.numeric) {
-		const dig3 = val.slice(0, 3).toLowerCase();
-		if (val.match(/^[1-9][0-9]*$/)) {
-			return val;
-		} else if (opts.month && MONTHS.has(dig3)) {
-			return dig3.toLowerCase();
-		}
-	}
-
-	if (field.datatype === 'braced' || opts.curly) return `{${val}}`;
-	if (field.datatype === 'quoted') return `"${val}"`;
-
-	return val;
-};
-
-const generateHash = (entry: BibTeXEntry): EntryHash => {
-	const doi = getValueStr(entry, 'doi');
-	const abstract = getValueStr(entry, 'abstract');
-	const title = getValueStr(entry, 'title');
-	const firstAuthorSurname = getValueStr(entry, 'author').split(/,| and/)[0];
-	// console.log(
-	// 	doi ?? justAlphaNum(doi),
-	// 	justAlphaNum(firstAuthorSurname) + ':' + justAlphaNum(title).slice(0, 50)
-	// );
-	return {
-		entry,
-		doi: doi ?? justAlphaNum(doi),
-		abstract: abstract ?? justAlphaNum(abstract).slice(0, 100),
-		authorTitle:
-			justAlphaNum(firstAuthorSurname) + ':' + justAlphaNum(title).slice(0, 50)
-	};
-};
-
 const tidy = (
 	input: string,
-	options: Options = {}
+	{
+		omit = [],
+		curly = false,
+		numeric = false,
+		tab = false,
+		align = 14,
+		sort = false,
+		merge = false,
+		stripEnclosingBraces = false,
+		dropAllCaps = false,
+		escape = true,
+		sortFields = false,
+		stripComments = false,
+		encodeUrls = false,
+		tidyComments = true,
+		space = 2,
+		mergeStrategy = 'combine',
+		sortProperties,
+	}: Options = {}
 ): {
 	bibtex: string;
 	warnings: Warning[];
 	entries: BibTeXEntry[];
 } => {
-	options = { ...DEFAULTS, ...options }; // make a copy of options with defaults
+	if (sort === true) sort = DEFAULT_ENTRY_ORDER;
+	if (space === true) space = 2;
+	if (sortProperties) sortFields = sortProperties;
+	if (sortFields === true) sortFields = DEFAULT_FIELD_ORDER;
+	if (merge === true) merge = DEFAULT_INDEX_STRATEGY;
+	if (align === false) align = 1;
+	const indent: string = tab ? '\t' : ' '.repeat(space);
+	const uniqCheck: Map<UniqueKey, boolean> = new Map();
 
-	if (options.sort === true) options.sort = ['key'];
-	if (options.space === true) options.space = 2;
-	if (options.sortProperties) options.sortFields = options.sortProperties;
-	if (options.sortFields === true) options.sortFields = DEFAULT_FIELD_ORDER;
+	if (merge) {
+		for (const key of merge) {
+			uniqCheck.set(key, true);
+		}
+	}
+	if (!uniqCheck.has('key')) {
+		// always check of key uniqueness
+		uniqCheck.set('key', false);
+	}
 
-	const indent: string = options.tab ? '\t' : ' '.repeat(options.space);
-	const align: number = options.align === false ? 1 : options.align;
-	const sort: string[] | null = options.sort || null;
-	const sortFields: string[] | null = options.sortFields || null;
-	const omit: Set<string> = new Set(options.omit || []);
-	const curly: boolean = options.curly;
-	const numeric: boolean = options.numeric;
-	const merge: boolean = !!options.merge;
-	const stripEnclosingBraces: boolean = options.stripEnclosingBraces;
-	const dropAllCaps: boolean = options.dropAllCaps;
-	const escape: boolean = options.escape;
-	const encodeUrls: boolean = options.encodeUrls;
-	const stripComments: boolean = options.stripComments;
-	const tidyComments: boolean = options.tidyComments;
-
+	const omitFields: Set<string> = new Set(omit);
+	// Parse the bibtex and retrieve the items (includes comments, entries, strings, preambles)
 	const items: BibTeXItem[] = parser.parse(input);
-	const indexes: Map<BibTeXItem, Index> = new Map();
-	const duplicates: Set<BibTeXItem> = new Set();
+	// Set of entry keys, used to check for duplicate key warnings
+	const keys: Map<string, BibTeXEntry> = new Map();
+	const dois: Map<string, BibTeXEntry> = new Map();
+	const citations: Map<string, BibTeXEntry> = new Map();
+	const abstracts: Map<string, BibTeXEntry> = new Map();
 
-	const hashes = [];
-	const keys = new Set();
+	// Map of items to sort values e.g. { year: 2009, author: 'West', ... }
+	const sortIndexes: Map<BibTeXItem, SortIndex> = new Map();
+	// Map of hashes to entries, used for checking if an entry is a duplicate
+	//const uniqIndex: Map<string, BibTeXEntry> = new Map();
+	// Warnings to be output at the end
 	const warnings: Warning[] = [];
-	let preceedingMeta: BibTeXItem[] = []; // comments, preambles, and strings which should be kept with an entry
 
 	for (const item of items) {
-		if (item.itemtype !== 'entry') {
-			// if string, preamble, or comment, then use sort index of previous entry
-			preceedingMeta.push(item);
-			continue;
-		}
+		if (item.itemtype !== 'entry') continue;
 		if (!item.key) {
 			warnings.push({
 				code: 'MISSING_KEY',
 				message: `${item.key} does not have an entry key.`,
-				entry: item
-			});
-		} else if (keys.has(item.key)) {
-			warnings.push({
-				code: 'DUPLICATE_KEY',
-				message: `${item.key} is a duplicate entry key.`,
-				entry: item
+				entry: item,
 			});
 		}
-		keys.add(item.key);
 
-		if (merge) {
-			const hash = generateHash(item);
-			const duplicate = hashes.find(
-				h =>
-					(hash.doi ? hash.doi === h.doi : false) ||
-					(hash.abstract ? hash.abstract === h.abstract : false) ||
-					hash.authorTitle === h.authorTitle
-			);
-			if (duplicate) {
+		// Create a map of field to stringified value for quick lookups
+		item.fieldMap = new Map<string, ValueString>();
+		for (const field of item.fields) {
+			const lname = field.name.toLocaleLowerCase();
+			if (omitFields.has(lname) || item.fieldMap.has(lname)) continue;
+			let val: string;
+			if (field.datatype === 'concatinate') {
+				val = field.raw;
+			} else {
+				val = String(field.value)
+					.replace(/\s*\n\s*/g, ' ')
+					.trim(); // remove whitespace
+				// if a field's value has double braces {{blah}}, lose the inner brace
+				if (stripEnclosingBraces) val = val.replace(/^\{([^{}]*)\}$/g, '$1');
+				// if a field's value is all caps, convert it to title case
+				if (dropAllCaps && val.match(/^[^a-z]+$/)) val = titleCase(val);
+				// url encode must happen before escape special characters
+				if (lname === 'url' && encodeUrls) val = val.replace(/\\?_/g, '\\%5F');
+				// escape special characters like %
+				if (escape) val = escapeSpecialCharacters(val);
+				// replace single dash with double dash in page range
+				if (lname === 'pages') val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+			}
+			item.fieldMap.set(lname, {
+				value: val.trim(),
+				datatype: field.datatype,
+			});
+		}
+
+		for (const [key, merge] of uniqCheck) {
+			let duplicateOf: BibTeXEntry | undefined;
+			switch (key) {
+				case 'key':
+					if (!item.key) continue;
+					duplicateOf = keys.get(item.key);
+					if (!duplicateOf) keys.set(item.key, item);
+					break;
+				case 'doi':
+					const doi = alphaNum(item.fieldMap.get('doi')?.value);
+					if (!doi) continue;
+					duplicateOf = dois.get(doi);
+					if (!duplicateOf) dois.set(doi, item);
+					break;
+				case 'citation':
+					const ttl = item.fieldMap.get('title')?.value;
+					const aut = item.fieldMap.get('author')?.value;
+					if (!ttl || !aut) continue;
+					const cit: string =
+						alphaNum(aut.split(/,| and/)[0]) +
+						':' +
+						alphaNum(ttl)?.slice(0, 50);
+					duplicateOf = citations.get(cit);
+					if (!duplicateOf) citations.set(cit, item);
+					break;
+				case 'abstract':
+					const abstract = alphaNum(item.fieldMap.get('abstract')?.value);
+					const abs = abstract?.slice(0, 100);
+					if (!abs) continue;
+					duplicateOf = abstracts.get(abs);
+					if (!duplicateOf) abstracts.set(abs, item);
+					break;
+			}
+			if (!duplicateOf) continue;
+			if (merge) {
+				item.duplicate = true;
 				warnings.push({
 					code: 'DUPLICATE_ENTRY',
-					message: `${item.key} appears to be a duplicate of ${duplicate.entry.key} and was removed.`,
+					message: `${item.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`,
 					entry: item,
-					duplicateOf: duplicate.entry
+					duplicateOf,
 				});
-				duplicate.entry.fields.push(...item.fields);
-				duplicates.add(item);
+				if (mergeStrategy === 'last') {
+					duplicateOf.fields = item.fields;
+				}
+				if (mergeStrategy === 'combine') {
+					for (const [k, v] of item.fieldMap) {
+						if (!duplicateOf.fieldMap.has(k)) duplicateOf.fieldMap.set(k, v);
+					}
+				}
+				if (mergeStrategy === 'overwrite') {
+					for (const [k, v] of item.fieldMap) {
+						duplicateOf.fieldMap.set(k, v);
+					}
+				}
 			} else {
-				hashes.push(hash);
+				warnings.push({
+					code: 'DUPLICATE_KEY',
+					message: `${item.key} is a duplicate entry key.`,
+					entry: item,
+				});
 			}
-		}
-
-		if (sort) {
-			const index: Index = {};
-			for (let key of sort) {
-				// dash prefix indicates descending order, deal with this later
-				if (key.startsWith('-')) key = key.slice(1);
-				const value: string =
-					key === 'key'
-						? item.key
-						: key === 'type'
-						? item.type
-						: getValueStr(item, key);
-				// if no value, then use \ufff0 so entry will be last
-				index[key] = value.toLowerCase() || '\ufff0';
-			}
-			indexes.set(item, index);
-			// update comments above to this index
-			while (preceedingMeta.length > 0) {
-				indexes.set(preceedingMeta.pop(), index);
-			}
+			break;
 		}
 	}
 
+	// sort needs to happen after merging all entries is complete
 	if (sort) {
+		// comments, preambles, and strings which should be kept with an entry
+		const preceedingMeta: BibTeXItem[] = [];
+
+		// first, create sort indexes
+		for (const item of items) {
+			if (item.itemtype !== 'entry') {
+				// if string, preamble, or comment, then use sort index of previous entry
+				preceedingMeta.push(item);
+				continue;
+			}
+			const sortIndex: SortIndex = new Map();
+			for (let key of sort) {
+				// dash prefix indicates descending order, deal with this later
+				if (key.startsWith('-')) key = key.slice(1);
+				let val: string;
+				if (key === 'key') {
+					val = item.key || '';
+				} else if (key === 'type') {
+					val = item.type;
+				} else {
+					val = String(item.fieldMap?.get(key)?.value ?? '');
+				}
+				sortIndex.set(key, val.toLowerCase());
+			}
+			sortIndexes.set(item, sortIndex);
+			// update comments above to this index
+			while (preceedingMeta.length > 0) {
+				sortIndexes.set(preceedingMeta.pop()!, sortIndex);
+			}
+		}
+
+		// Now iterate through sort keys and sort entries
 		for (let i = sort.length - 1; i >= 0; i--) {
 			const desc = sort[i].startsWith('-');
 			const key = desc ? sort[i].slice(1) : sort[i];
-			items.sort((a: BibTeXEntry, b: BibTeXEntry) => {
-				const ia = indexes.get(a)?.[key] || '\ufff0';
-				const ib = indexes.get(b)?.[key] || '\ufff0';
+			items.sort((a: BibTeXItem, b: BibTeXItem) => {
+				// if no value, then use \ufff0 so entry will be last
+				const ia = sortIndexes.get(a)?.get(key) ?? '\ufff0';
+				const ib = sortIndexes.get(b)?.get(key) ?? '\ufff0';
 				return (desc ? ib : ia).localeCompare(desc ? ia : ib);
 			});
 		}
 	}
 
+	// output the tidied bibtex
 	let bibtex: string = '';
 	for (const item of items) {
-		if (duplicates.has(item)) continue;
-		if (item.itemtype === 'string') {
-			bibtex += `@string{${item.name} = ${item.raw}}\n`; // keep strings as they were
-		} else if (item.itemtype === 'preamble') {
-			bibtex += `@preamble{${item.raw}}\n`; // keep preambles as they were
-		} else if (item.itemtype === 'comment') {
-			let comment;
-			if (tidyComments) {
-				if (item.comment.trim()) {
-					comment = item.comment.trim() + '\n';
+		switch (item.itemtype) {
+			case 'string':
+				// keep strings as they were
+				bibtex += `@string{${item.name} = ${item.raw}}\n`;
+				break;
+
+			case 'preamble':
+				// keep preambles as they were
+				bibtex += `@preamble{${item.raw}}\n`;
+				break;
+
+			case 'comment':
+				if (stripComments) continue;
+				if (tidyComments) {
+					// tidy comments by trimming whitespace and ending with one newline
+					bibtex += item.comment.trim() ? item.comment.trim() + '\n' : '';
+				} else {
+					// make sure that comment whitespace does not flow into the first line of an entry
+					bibtex += item.comment.replace(/^[ \t]*\n|[ \t]*$/g, '');
 				}
-			} else {
-				comment = item.comment.replace(/^[ \t]*\n|[ \t]*$/g, '');
-			}
-			if (comment && !stripComments) {
-				bibtex += comment;
-			}
-		} else if (item.itemtype === 'entry') {
-			const fields: Map<string, BibTexField> = new Map();
-			for (const field of item.fields) {
-				const lname = field.name.toLocaleLowerCase();
-				if (omit.has(lname) || fields.has(lname)) continue;
-				fields.set(lname, field);
-			}
+				break;
 
-			let fieldnames: string[] = [...fields.keys()];
-			if (sortFields) {
-				fieldnames = fieldnames.sort((a: string, b: string) => {
-					const indexA = sortFields.indexOf(a);
-					const indexB = sortFields.indexOf(b);
-					if (indexA > -1 && indexB > -1) return indexA - indexB;
-					if (indexA > -1) return -1;
-					if (indexB > -1) return 1;
-					return 0;
-				});
-			}
-
-			const fieldstrings = fieldnames.map((k: string) => {
-				const field = fields.get(k);
-				let val = stringifyValue(field, {
-					stripEnclosingBraces,
-					encodeUrls: k === 'url' && encodeUrls,
-					curly,
-					doubledash: k === 'pages',
-					dropAllCaps,
-					escape,
-					numeric,
-					month: k === 'month'
-				});
-				return `${indent}${k.padEnd(align - 1)} = ${val}`;
-			});
-
-			bibtex += `@${item.type.toLowerCase()}{${
-				item.key ? `${item.key},` : ''
-			}\n${fieldstrings.join(',\n')}\n}\n`;
+			case 'entry':
+				if (item.duplicate) continue;
+				bibtex += `@${item.type.toLowerCase()}{`;
+				if (item.key) bibtex += `${item.key}`;
+				// Create ordered list of fields to output, beginning with those
+				// specified in sortFields option, followed by fields in entry.
+				// Use Set to prevent duplicates and keep insertion order.
+				const sortedFieldNames: Set<string> = new Set([
+					...(sortFields || []),
+					...item.fieldMap.keys(),
+				]);
+				for (const k of sortedFieldNames) {
+					const field = item.fieldMap.get(k);
+					if (!field) continue;
+					bibtex += `,\n${indent}${k.padEnd((align as number) - 1)} = `;
+					const val = field.value;
+					const dig3 = String(val).slice(0, 3).toLowerCase();
+					if (numeric && val.match(/^[1-9][0-9]*$/)) {
+						bibtex += val;
+					} else if (numeric && k === 'month' && MONTHS.has(dig3)) {
+						bibtex += dig3;
+					} else if (field.datatype === 'braced' || curly) {
+						bibtex += `{${val}}`;
+					} else if (field.datatype === 'quoted') {
+						bibtex += `"${val}"`;
+					} else {
+						bibtex += val;
+					}
+				}
+				bibtex += `\n}\n`;
+				delete item.fieldMap; // don't return the map
+				break;
 		}
 	}
+
+	if (!bibtex.endsWith('\n')) bibtex += '\n';
 
 	const entries = items.filter(
 		(item: BibTeXItem) => item.itemtype === 'entry'
 	) as BibTeXEntry[];
-
-	if (!bibtex.endsWith('\n')) bibtex += '\n';
 
 	return { bibtex, warnings, entries };
 };
