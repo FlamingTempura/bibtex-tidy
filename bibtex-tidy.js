@@ -11,6 +11,154 @@
   (global = global || self, global.bibtexTidy = factory());
 }(this, (function () { 'use strict';
 
+  var options = [
+    {
+      "key": "omit",
+      "cli": "omit",
+      "description": "Remove fields - Remove specified fields from bibliography entries.",
+      "examples": [
+        "--omit=id,name"
+      ],
+      "type": "string[]"
+    },
+    {
+      "key": "curly",
+      "cli": "curly",
+      "description": "Enclose values in curly braces - Enclose all property values in braces. Quoted values will be converted to braces. For example, \"Journal of Tea\" will become {Journal of Tea}.",
+      "examples": [],
+      "type": "boolean"
+    },
+    {
+      "key": "numeric",
+      "cli": "numeric",
+      "description": "Use numeric values where possible - Strip quotes and braces from numeric/month values. For example, {1998} will become 1998.",
+      "examples": [],
+      "type": "boolean"
+    },
+    {
+      "key": "space",
+      "cli": "space",
+      "description": "Indent with spaces - Prefix all fields with the specified number of spaces (ignored if tab is set).",
+      "examples": [
+        "--space=2 (default)",
+        "--space=4"
+      ],
+      "type": "number | true"
+    },
+    {
+      "key": "tab",
+      "cli": "tab",
+      "description": "Indent with tabs - Prefix all fields with a tab.",
+      "examples": [],
+      "type": "boolean"
+    },
+    {
+      "key": "align",
+      "cli": "align",
+      "description": "Align values - Insert whitespace between fields and values so that values are visually aligned.",
+      "examples": [
+        "--align=14 (default)",
+        "--no-align'"
+      ],
+      "type": "number | false"
+    },
+    {
+      "key": "sort",
+      "cli": "sort",
+      "description": "Sort bibliography entries - Sort entries by specified fields. For descending order, prefix the field with a dash (-).",
+      "examples": [
+        "(sort by id)',",
+        "--sort=-year,name (sort year descending then name ascending)',",
+        "--sort=name,year'"
+      ],
+      "type": "boolean | string[]"
+    },
+    {
+      "key": "merge",
+      "cli": "merge",
+      "description": "Merge duplicate entries - Two entries are considered duplicates in the following cases: (a) their DOIs are identical, (b) their abstracts are identical, or (c) their authors and titles are both identical. The firstmost entry is kept and any extra properties from duplicate entries are incorporated.",
+      "examples": [
+        "--merge (merge using any strategy)",
+        "--merge doi (merge only if DOIs are identicals)",
+        "--merge key (merge only if IDs are identicals)",
+        "--merge abstract (merge only if abstracts are similar)",
+        "--merge citation (merge only if author and titles are similar)",
+        "--merge doi, key (use doi and key strategies)"
+      ],
+      "type": "boolean | any[]"
+    },
+    {
+      "key": "mergeStrategy",
+      "cli": "merge-strategy",
+      "description": "Merge strategy - How duplicate entries should be merged. - first: only keep the original entry - last: only keep the last found duplicate - combine: keep original entry and merge in fields of duplicates if they do not already exist - overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist",
+      "examples": [],
+      "type": "any"
+    },
+    {
+      "key": "stripEnclosingBraces",
+      "cli": "strip-enclosing-braces",
+      "description": "Strip double-braced values - Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}.",
+      "examples": [],
+      "type": "boolean"
+    },
+    {
+      "key": "dropAllCaps",
+      "cli": "drop-all-caps",
+      "description": "Drop all caps - Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.",
+      "examples": [],
+      "type": "boolean"
+    },
+    {
+      "key": "escape",
+      "cli": "escape",
+      "description": "Escape special characters - Escape special characters, such as umlaut. This ensures correct typesetting with latex.",
+      "examples": [
+        "--escape (default)",
+        "--no-escape"
+      ],
+      "type": "boolean"
+    },
+    {
+      "key": "sortFields",
+      "cli": "sort-fields",
+      "description": "Sort fields - Sort the fields within entries. The default sort order is XXX. Alternatively, you can specify field names delimed by spaces or commas.",
+      "examples": [
+        "--sort-fields=name,author"
+      ],
+      "type": "boolean | string[]"
+    },
+    {
+      "key": "sortProperties",
+      "cli": "sort-properties",
+      "description": "Alias of sort fields (legacy)",
+      "examples": [
+        null
+      ],
+      "type": "boolean | string[]"
+    },
+    {
+      "key": "stripComments",
+      "cli": "strip-comments",
+      "description": "Remove comments - Remove all comments from the bibtex source",
+      "examples": [],
+      "type": "boolean"
+    },
+    {
+      "key": "encodeUrls",
+      "cli": "encode-urls",
+      "description": "Encode URLs - Replace invalid URL characters with percent encoded values.",
+      "examples": [],
+      "type": "boolean"
+    },
+    {
+      "key": "tidyComments",
+      "cli": "tidy-comments",
+      "description": "Tidy comments - Remove whitespace surrounding",
+      "examples": [],
+      "type": "boolean"
+    }
+  ];
+
   function _defineProperty(obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
@@ -7864,7 +8012,7 @@
       const entries = items.filter((item) => item.itemtype === 'entry');
       return { bibtex, warnings, entries };
   };
-  var index = { tidy };
+  var index = { tidy, options };
 
   return index;
 

@@ -8014,7 +8014,7 @@ const tidy = (input, { omit = [], curly = false, numeric = false, tab = false, a
     const entries = items.filter((item) => item.itemtype === 'entry');
     return { bibtex, warnings, entries };
 };
-var tidy$1 = { tidy };
+var tidy$1 = { tidy, options: OPTIONS };
 
 const BREAK_LINE = 84;
 const LEFT_MARGIN = 27;

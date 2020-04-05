@@ -99,6 +99,7 @@ export default [
 		input: 'src/index.ts',
 		plugins: [
 			typescript(),
+			docsResolve,
 			dsv(tsv),
 			commonjs(),
 			nodeResolve(),
