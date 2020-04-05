@@ -74,23 +74,23 @@
       "type": "boolean | string[]"
     },
     {
-      "key": "merge",
-      "cli": "merge",
-      "description": "Merge duplicate entries - Two entries are considered duplicates in the following cases: (a) their DOIs are identical, (b) their abstracts are identical, or (c) their authors and titles are both identical. The firstmost entry is kept and any extra properties from duplicate entries are incorporated.",
+      "key": "duplicates",
+      "cli": "duplicates",
+      "description": "Check for duplicates and output warnings if found. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases: (a) their DOIs are identical, (b) their abstracts are identical, or (c) their authors and titles are both identical. The firstmost entry is kept and any extra properties from duplicate entries are incorporated.",
       "examples": [
-        "--merge (merge using any strategy)",
-        "--merge doi (merge only if DOIs are identicals)",
-        "--merge key (merge only if IDs are identicals)",
-        "--merge abstract (merge only if abstracts are similar)",
-        "--merge citation (merge only if author and titles are similar)",
-        "--merge doi, key (use doi and key strategies)"
+        "--duplicates (warn if sharing doi, key, abstract, or citation)",
+        "--duplicates doi (warn if DOIs are identicals)",
+        "--duplicates key (warn if IDs are identicals)",
+        "--duplicates abstract (warn if abstracts are similar)",
+        "--duplicates citation (warn if author and titles are similar)",
+        "--duplicates doi, key (warn if DOI or keys are identical)"
       ],
       "type": "boolean | any[]"
     },
     {
-      "key": "mergeStrategy",
-      "cli": "merge-strategy",
-      "description": "Merge strategy - How duplicate entries should be merged. - first: only keep the original entry - last: only keep the last found duplicate - combine: keep original entry and merge in fields of duplicates if they do not already exist - overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist",
+      "key": "merge",
+      "cli": "merge",
+      "description": "Merge duplicate entries - Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge: - first: only keep the original entry - last: only keep the last found duplicate - combine: keep original entry and merge in fields of duplicates if they do not already exist - overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist",
       "examples": [],
       "type": "any"
     },
@@ -7724,7 +7724,7 @@
       "\\mathtt{9}" ] ];
 
   const DEFAULT_ENTRY_ORDER = ['key'];
-  const DEFAULT_INDEX_STRATEGY = ['doi', 'citation', 'abstract'];
+  const DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
   const DEFAULT_FIELD_ORDER = [
       'title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal',
       'booktitle', 'location', 'on', 'publisher', 'address', 'series',
@@ -7766,7 +7766,7 @@
           .replace(/[^0-9A-Za-z]/g, '')
           .toLocaleLowerCase();
   };
-  const tidy = (input, { omit = [], curly = false, numeric = false, tab = false, align = 14, sort = false, merge = false, stripEnclosingBraces = false, dropAllCaps = false, escape = true, sortFields = false, stripComments = false, encodeUrls = false, tidyComments = true, space = 2, mergeStrategy = 'combine', sortProperties, } = {}) => {
+  const tidy = (input, { omit = [], curly = false, numeric = false, tab = false, align = 14, sort = false, merge = false, stripEnclosingBraces = false, dropAllCaps = false, escape = true, sortFields = false, stripComments = false, encodeUrls = false, tidyComments = true, space = 2, duplicates = false, sortProperties, } = {}) => {
       var _a, _b, _c, _d, _e, _f, _g, _h;
       if (sort === true)
           sort = DEFAULT_ENTRY_ORDER;
@@ -7777,13 +7777,17 @@
       if (sortFields === true)
           sortFields = DEFAULT_FIELD_ORDER;
       if (merge === true)
-          merge = DEFAULT_INDEX_STRATEGY;
+          merge = 'combine';
+      if (duplicates === true)
+          duplicates = DEFAULT_MERGE_CHECK;
       if (align === false)
           align = 1;
       const indent = tab ? '\t' : ' '.repeat(space);
       const uniqCheck = new Map();
       if (merge) {
-          for (const key of merge) {
+          if (!duplicates)
+              duplicates = DEFAULT_MERGE_CHECK;
+          for (const key of duplicates) {
               uniqCheck.set(key, true);
           }
       }
@@ -7837,7 +7841,7 @@
                   datatype: field.datatype,
               });
           }
-          for (const [key, merge] of uniqCheck) {
+          for (const [key, doMerge] of uniqCheck) {
               let duplicateOf;
               switch (key) {
                   case 'key':
@@ -7878,7 +7882,7 @@
               }
               if (!duplicateOf)
                   continue;
-              if (merge) {
+              if (doMerge) {
                   item.duplicate = true;
                   warnings.push({
                       code: 'DUPLICATE_ENTRY',
@@ -7886,16 +7890,16 @@
                       entry: item,
                       duplicateOf,
                   });
-                  if (mergeStrategy === 'last') {
+                  if (merge === 'last') {
                       duplicateOf.fields = item.fields;
                   }
-                  if (mergeStrategy === 'combine') {
+                  if (merge === 'combine') {
                       for (const [k, v] of item.fieldMap) {
                           if (!duplicateOf.fieldMap.has(k))
                               duplicateOf.fieldMap.set(k, v);
                       }
                   }
-                  if (mergeStrategy === 'overwrite') {
+                  if (merge === 'overwrite') {
                       for (const [k, v] of item.fieldMap) {
                           duplicateOf.fieldMap.set(k, v);
                       }

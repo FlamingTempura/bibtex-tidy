@@ -121,7 +121,7 @@ const parseArguments = (): Arguments => {
 			case '--no-sort':
 				options.sort = false;
 				break;
-			case '--merge':
+			case '--duplicates':
 				const uniqs = valStr?.split(',') || nextList();
 				if (!uniqs) {
 					options.merge = true;
@@ -137,30 +137,30 @@ const parseArguments = (): Arguments => {
 							process.exit(1);
 						}
 					}
-					options.merge = (valStr || uniqs) as UniqueKey[];
+					options.duplicates = (valStr || uniqs) as UniqueKey[];
 				}
 				break;
 			case '--no-merge':
 				options.merge = false;
 				break;
-			case '--merge-strategy':
+			case '--merge':
 				const list = valStr?.split(',') || nextList();
 				if (!list) {
-					console.error(`Expected a merge strategy`);
-					process.exit(1);
-				}
-				for (const i of list) {
-					if (
-						i !== 'first' &&
-						i !== 'last' &&
-						i !== 'combine' &&
-						i !== 'overwrite'
-					) {
-						console.error(`Invalid merge strategy: "${i}"`);
-						process.exit(1);
+					options.merge = true;
+				} else {
+					for (const i of list) {
+						if (
+							i !== 'first' &&
+							i !== 'last' &&
+							i !== 'combine' &&
+							i !== 'overwrite'
+						) {
+							console.error(`Invalid merge strategy: "${i}"`);
+							process.exit(1);
+						}
 					}
+					options.merge = (valStr || list) as MergeStrategy;
 				}
-				options.mergeStrategy = (valStr || list) as MergeStrategy;
 				break;
 			case '--strip-enclosing-braces':
 				options.stripEnclosingBraces = true;

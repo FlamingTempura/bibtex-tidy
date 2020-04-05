@@ -47,9 +47,14 @@ const cli = (bibtex, options = {}) => {
 
 	const proc = spawnSync(path.resolve(__dirname, '../bin/bibtex-tidy'), args, {
 		timeout: 100000,
+		encoding: 'utf8',
 	});
+	if (proc.code > 0) {
+		console.error(proc.stderr);
+		throw new Error('CLI failed');
+	}
 	const tidied = fs.readFileSync(TMP_FILE, 'utf8');
-	const warnings = (proc.stderr.toString() || '')
+	const warnings = (proc.stderr || '')
 		.split('\n')
 		.filter((line) => line.includes(': '))
 		.map((line) => {

@@ -40,29 +40,32 @@ type Options = {
 	 * */
 	sort?: boolean | string[];
 	/**
-	 * Merge duplicate entries - Two entries are considered duplicates in the
-	 * following cases: (a) their DOIs are identical, (b) their abstracts are
-	 * identical, or (c) their authors and titles are both identical. The
-	 * firstmost entry is kept and any extra properties from duplicate entries
-	 * are incorporated.
-	 * @example --merge (merge using any strategy)
-	 * @example --merge doi (merge only if DOIs are identicals)
-	 * @example --merge key (merge only if IDs are identicals)
-	 * @example --merge abstract (merge only if abstracts are similar)
-	 * @example --merge citation (merge only if author and titles are similar)
-	 * @example --merge doi, key (use doi and key strategies)
-	 * */
-	merge?: boolean | UniqueKey[];
+	 * Check for duplicates and output warnings if found. When using with the
+	 * `merge` option, this determines which entries to merge. Two entries are
+	 * considered duplicates in the following cases: (a) their DOIs are
+	 * identical, (b) their abstracts are identical, or (c) their authors and
+	 * titles are both identical. The firstmost entry is kept and any extra
+	 * properties from duplicate entries are incorporated.
+	 * @example --duplicates (warn if sharing doi, key, abstract, or citation)
+	 * @example --duplicates doi (warn if DOIs are identicals)
+	 * @example --duplicates key (warn if IDs are identicals)
+	 * @example --duplicates abstract (warn if abstracts are similar)
+	 * @example --duplicates citation (warn if author and titles are similar)
+	 * @example --duplicates doi, key (warn if DOI or keys are identical)
+	 */
+	duplicates?: boolean | UniqueKey[];
 	/**
-	 * Merge strategy - How duplicate entries should be merged.
+	 * Merge duplicate entries - Merge duplicates entries. How duplicates are
+	 * identified can be set using the `duplicates` option. There are different
+	 * ways to merge:
 	 * - first: only keep the original entry
 	 * - last: only keep the last found duplicate
 	 * - combine: keep original entry and merge in fields of duplicates if they
 	 *   do not already exist
 	 * - overwrite: keep original entry and merge in fields of duplicates,
 	 *   overwriting existing fields if they exist
-	 */
-	mergeStrategy?: MergeStrategy;
+	 * */
+	merge?: boolean | MergeStrategy;
 	/**
 	 * Strip double-braced values - Where an entire value is enclosed in double
 	 * braces, remove the extra braces. For example, {{Journal of Tea}} will

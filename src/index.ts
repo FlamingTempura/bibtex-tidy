@@ -3,7 +3,7 @@ import parser from 'bibtex-parse';
 import unicode from './unicode.tsv'; // source: https://raw.githubusercontent.com/pkgw/worklog-tools/master/unicode_to_latex.py
 
 const DEFAULT_ENTRY_ORDER: string[] = ['key']; // if sort = true
-const DEFAULT_INDEX_STRATEGY: UniqueKey[] = ['doi', 'citation', 'abstract'];
+const DEFAULT_MERGE_CHECK: UniqueKey[] = ['doi', 'citation', 'abstract'];
 
 //prettier-ignore
 const DEFAULT_FIELD_ORDER: string[] = [
@@ -73,7 +73,7 @@ const tidy = (
 		encodeUrls = false,
 		tidyComments = true,
 		space = 2,
-		mergeStrategy = 'combine',
+		duplicates = false,
 		sortProperties,
 	}: Options = {}
 ): {
@@ -85,18 +85,20 @@ const tidy = (
 	if (space === true) space = 2;
 	if (sortProperties) sortFields = sortProperties;
 	if (sortFields === true) sortFields = DEFAULT_FIELD_ORDER;
-	if (merge === true) merge = DEFAULT_INDEX_STRATEGY;
+	if (merge === true) merge = 'combine';
+	if (duplicates === true) duplicates = DEFAULT_MERGE_CHECK;
 	if (align === false) align = 1;
 	const indent: string = tab ? '\t' : ' '.repeat(space);
 	const uniqCheck: Map<UniqueKey, boolean> = new Map();
 
 	if (merge) {
-		for (const key of merge) {
+		if (!duplicates) duplicates = DEFAULT_MERGE_CHECK;
+		for (const key of duplicates) {
 			uniqCheck.set(key, true);
 		}
 	}
 	if (!uniqCheck.has('key')) {
-		// always check of key uniqueness
+		// always check key uniqueness
 		uniqCheck.set('key', false);
 	}
 
@@ -155,7 +157,7 @@ const tidy = (
 			});
 		}
 
-		for (const [key, merge] of uniqCheck) {
+		for (const [key, doMerge] of uniqCheck) {
 			let duplicateOf: BibTeXEntry | undefined;
 			switch (key) {
 				case 'key':
@@ -189,7 +191,7 @@ const tidy = (
 					break;
 			}
 			if (!duplicateOf) continue;
-			if (merge) {
+			if (doMerge) {
 				item.duplicate = true;
 				warnings.push({
 					code: 'DUPLICATE_ENTRY',
@@ -197,15 +199,15 @@ const tidy = (
 					entry: item,
 					duplicateOf,
 				});
-				if (mergeStrategy === 'last') {
+				if (merge === 'last') {
 					duplicateOf.fields = item.fields;
 				}
-				if (mergeStrategy === 'combine') {
+				if (merge === 'combine') {
 					for (const [k, v] of item.fieldMap) {
 						if (!duplicateOf.fieldMap.has(k)) duplicateOf.fieldMap.set(k, v);
 					}
 				}
-				if (mergeStrategy === 'overwrite') {
+				if (merge === 'overwrite') {
 					for (const [k, v] of item.fieldMap) {
 						duplicateOf.fieldMap.set(k, v);
 					}
