@@ -91,12 +91,13 @@ const tidy = (
 	const indent: string = tab ? '\t' : ' '.repeat(space);
 	const uniqCheck: Map<UniqueKey, boolean> = new Map();
 
-	if (merge) {
-		if (!duplicates) duplicates = DEFAULT_MERGE_CHECK;
+	if (merge && !duplicates) duplicates = DEFAULT_MERGE_CHECK;
+	if (duplicates) {
 		for (const key of duplicates) {
-			uniqCheck.set(key, true);
+			uniqCheck.set(key, !!merge);
 		}
 	}
+
 	if (!uniqCheck.has('key')) {
 		// always check key uniqueness
 		uniqCheck.set('key', false);
@@ -199,18 +200,22 @@ const tidy = (
 					entry: item,
 					duplicateOf,
 				});
-				if (merge === 'last') {
-					duplicateOf.fields = item.fields;
-				}
-				if (merge === 'combine') {
-					for (const [k, v] of item.fieldMap) {
-						if (!duplicateOf.fieldMap.has(k)) duplicateOf.fieldMap.set(k, v);
-					}
-				}
-				if (merge === 'overwrite') {
-					for (const [k, v] of item.fieldMap) {
-						duplicateOf.fieldMap.set(k, v);
-					}
+				switch (merge) {
+					case 'last':
+						duplicateOf.key = item.key;
+						duplicateOf.fieldMap = item.fieldMap;
+						break;
+					case 'combine':
+						for (const [k, v] of item.fieldMap) {
+							if (!duplicateOf.fieldMap.has(k)) duplicateOf.fieldMap.set(k, v);
+						}
+						break;
+					case 'overwrite':
+						duplicateOf.key = item.key;
+						for (const [k, v] of item.fieldMap) {
+							duplicateOf.fieldMap.set(k, v);
+						}
+						break;
 				}
 			} else {
 				warnings.push({

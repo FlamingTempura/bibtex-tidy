@@ -76,7 +76,7 @@
     {
       "key": "duplicates",
       "cli": "duplicates",
-      "description": "Check for duplicates and output warnings if found. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases: (a) their DOIs are identical, (b) their abstracts are identical, or (c) their authors and titles are both identical. The firstmost entry is kept and any extra properties from duplicate entries are incorporated.",
+      "description": "Check for duplicates - If there are duplicates, output warnings. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases: (a) their DOIs are identical, (b) their abstracts are identical, or (c) their authors and titles are both identical. The firstmost entry is kept and any extra properties from duplicate entries are incorporated.",
       "examples": [
         "--duplicates (warn if sharing doi, key, abstract, or citation)",
         "--duplicates doi (warn if DOIs are identicals)",
@@ -7784,11 +7784,11 @@
           align = 1;
       const indent = tab ? '\t' : ' '.repeat(space);
       const uniqCheck = new Map();
-      if (merge) {
-          if (!duplicates)
-              duplicates = DEFAULT_MERGE_CHECK;
+      if (merge && !duplicates)
+          duplicates = DEFAULT_MERGE_CHECK;
+      if (duplicates) {
           for (const key of duplicates) {
-              uniqCheck.set(key, true);
+              uniqCheck.set(key, !!merge);
           }
       }
       if (!uniqCheck.has('key')) {
@@ -7890,19 +7890,23 @@
                       entry: item,
                       duplicateOf,
                   });
-                  if (merge === 'last') {
-                      duplicateOf.fields = item.fields;
-                  }
-                  if (merge === 'combine') {
-                      for (const [k, v] of item.fieldMap) {
-                          if (!duplicateOf.fieldMap.has(k))
+                  switch (merge) {
+                      case 'last':
+                          duplicateOf.key = item.key;
+                          duplicateOf.fieldMap = item.fieldMap;
+                          break;
+                      case 'combine':
+                          for (const [k, v] of item.fieldMap) {
+                              if (!duplicateOf.fieldMap.has(k))
+                                  duplicateOf.fieldMap.set(k, v);
+                          }
+                          break;
+                      case 'overwrite':
+                          duplicateOf.key = item.key;
+                          for (const [k, v] of item.fieldMap) {
                               duplicateOf.fieldMap.set(k, v);
-                      }
-                  }
-                  if (merge === 'overwrite') {
-                      for (const [k, v] of item.fieldMap) {
-                          duplicateOf.fieldMap.set(k, v);
-                      }
+                          }
+                          break;
                   }
               }
               else {

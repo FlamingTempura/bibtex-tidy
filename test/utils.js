@@ -21,7 +21,7 @@ const cli = (bibtex, options = {}) => {
 		let key = '--' + unCamelCase(k);
 		const vals = [];
 
-		if (typeof options[k] === 'number') {
+		if (typeof options[k] === 'number' || typeof options[k] === 'string') {
 			vals.push(options[k]);
 		} else if (options[k] instanceof Array) {
 			vals.push(...options[k]);
@@ -49,6 +49,7 @@ const cli = (bibtex, options = {}) => {
 		timeout: 100000,
 		encoding: 'utf8',
 	});
+	console.log(proc.stdout);
 	if (proc.code > 0) {
 		console.error(proc.stderr);
 		throw new Error('CLI failed');

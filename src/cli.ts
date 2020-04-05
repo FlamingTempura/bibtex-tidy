@@ -67,6 +67,11 @@ const parseArguments = (): Arguments => {
 		if (!args[0] || args[0].startsWith('--')) return;
 		return Number(args.shift());
 	};
+	const nextString = (): string | undefined => {
+		if (args.length === 1 && !input) return; // do not consume the input argument
+		if (!args[0] || args[0].startsWith('--')) return;
+		return args.shift()!;
+	};
 
 	const nextList = (): string[] | undefined => {
 		if (args.length === 1 && !input) return; // do not consume the input argument
@@ -144,22 +149,20 @@ const parseArguments = (): Arguments => {
 				options.merge = false;
 				break;
 			case '--merge':
-				const list = valStr?.split(',') || nextList();
-				if (!list) {
+				const uniq = valStr || nextString();
+				if (!uniq) {
 					options.merge = true;
 				} else {
-					for (const i of list) {
-						if (
-							i !== 'first' &&
-							i !== 'last' &&
-							i !== 'combine' &&
-							i !== 'overwrite'
-						) {
-							console.error(`Invalid merge strategy: "${i}"`);
-							process.exit(1);
-						}
+					if (
+						uniq !== 'first' &&
+						uniq !== 'last' &&
+						uniq !== 'combine' &&
+						uniq !== 'overwrite'
+					) {
+						console.error(`Invalid merge strategy: "${uniq}"`);
+						process.exit(1);
 					}
-					options.merge = (valStr || list) as MergeStrategy;
+					options.merge = (valStr || uniq) as MergeStrategy;
 				}
 				break;
 			case '--strip-enclosing-braces':

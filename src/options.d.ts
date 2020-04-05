@@ -40,12 +40,12 @@ type Options = {
 	 * */
 	sort?: boolean | string[];
 	/**
-	 * Check for duplicates and output warnings if found. When using with the
-	 * `merge` option, this determines which entries to merge. Two entries are
-	 * considered duplicates in the following cases: (a) their DOIs are
-	 * identical, (b) their abstracts are identical, or (c) their authors and
-	 * titles are both identical. The firstmost entry is kept and any extra
-	 * properties from duplicate entries are incorporated.
+	 * Check for duplicates - If there are duplicates, output warnings. When
+	 * using with the `merge` option, this determines which entries to merge.
+	 * Two entries are considered duplicates in the following cases: (a) their
+	 * DOIs are identical, (b) their abstracts are identical, or (c) their
+	 * authors and titles are both identical. The firstmost entry is kept and
+	 * any extra properties from duplicate entries are incorporated.
 	 * @example --duplicates (warn if sharing doi, key, abstract, or citation)
 	 * @example --duplicates doi (warn if DOIs are identicals)
 	 * @example --duplicates key (warn if IDs are identicals)
