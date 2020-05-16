@@ -177,9 +177,7 @@ const tidy = (
 					const aut = item.fieldMap.get('author')?.value;
 					if (!ttl || !aut) continue;
 					const cit: string =
-						alphaNum(aut.split(/,| and/)[0]) +
-						':' +
-						alphaNum(ttl)?.slice(0, 50);
+						alphaNum(aut.split(/,| and/)[0]) + ':' + alphaNum(ttl);
 					duplicateOf = citations.get(cit);
 					if (!duplicateOf) citations.set(cit, item);
 					break;
