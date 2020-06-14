@@ -158,6 +158,23 @@ var OPTIONS = [
     "description": "Tidy comments - Remove whitespace surrounding",
     "examples": [],
     "type": "boolean"
+  },
+  {
+    "key": "quiet",
+    "cli": "quiet",
+    "description": "Suppress logs and warnings.",
+    "examples": [],
+    "type": "true"
+  },
+  {
+    "key": "backup",
+    "cli": "backup",
+    "description": "Make a backup <filename>.original",
+    "examples": [
+      "--backup (default)",
+      "--no-backup (do not create a backup)"
+    ],
+    "type": "boolean"
   }
 ];
 
@@ -8035,6 +8052,11 @@ const splitLines = (line, limit) => {
     }
     return lines;
 };
+const fromCamelCase = (str) => {
+    return str.replace(/[A-Z]/g, (c) => {
+        return '-' + c.toLowerCase();
+    });
+};
 const printHelp = () => {
     console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
     console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.');
@@ -8050,7 +8072,7 @@ const printHelp = () => {
         for (let i = 0; i < lines.length; i++) {
             let prefix = '';
             if (i === 0) {
-                let keyval = opt.key;
+                let keyval = fromCamelCase(opt.key);
                 if (opt.type === 'array')
                     keyval += '=x,y,z';
                 if (opt.type === 'number')
@@ -8070,7 +8092,9 @@ const printHelp = () => {
     console.log('Full documentation <https://github.com/FlamingTempura/bibtex-tidy>');
 };
 const parseArguments = () => {
-    const options = {};
+    const options = {
+        backup: true,
+    };
     const help = process.argv.includes('--help') || process.argv.includes('-h');
     const args = process.argv.slice(2);
     let input;
@@ -8220,6 +8244,15 @@ const parseArguments = () => {
             case '--no-tidy-comments':
                 options.tidyComments = false;
                 break;
+            case '--backup':
+                options.backup = true;
+                break;
+            case '--no-backup':
+                options.backup = false;
+                break;
+            case '--quiet':
+                options.quiet = true;
+                break;
             default:
                 if (argName.startsWith('--')) {
                     console.error(`No option "${argName}"`);
@@ -8240,6 +8273,10 @@ const run = () => {
         printHelp();
         process.exit(1);
     }
+    if (options.quiet) {
+        console.log = () => { };
+        console.error = () => { };
+    }
     console.log('Tidying...');
     const bibtex = fs.readFileSync(input, 'utf8');
     const result = tidy$1.tidy(bibtex, options);
@@ -8251,7 +8288,9 @@ const run = () => {
         const dupes = result.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
         console.log(`${dupes.length} entries merged`);
     }
-    fs.writeFileSync(`${input}.original`, bibtex, 'utf8');
+    if (options.backup) {
+        fs.writeFileSync(`${input}.original`, bibtex, 'utf8');
+    }
     fs.writeFileSync(input, result.bibtex, 'utf8');
 };
 run();

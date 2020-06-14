@@ -156,6 +156,23 @@
       "description": "Tidy comments - Remove whitespace surrounding",
       "examples": [],
       "type": "boolean"
+    },
+    {
+      "key": "quiet",
+      "cli": "quiet",
+      "description": "Suppress logs and warnings.",
+      "examples": [],
+      "type": "true"
+    },
+    {
+      "key": "backup",
+      "cli": "backup",
+      "description": "Make a backup <filename>.original",
+      "examples": [
+        "--backup (default)",
+        "--no-backup (do not create a backup)"
+      ],
+      "type": "boolean"
     }
   ];
 

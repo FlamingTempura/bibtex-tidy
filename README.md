@@ -53,67 +53,100 @@ After `bibtex-tidy references.bib --curly --numeric`:
 ### Options
 
 ```
-Usage: ./bin/bibtex-tidy [OPTION]... FILE.BIB
+Usage: bibtex-tidy [OPTION]... FILE.BIB
 BibTeX Tidy - cleaner and formatter for BibTeX files.
 Options:
   --help                   Show help
-
-  --omit=x,y,z             Remove specified fields from bibliography entries.
+  --omit                   Remove fields - Remove specified fields from
+                           bibliography entries.
                            Examples: --omit=id,name
 
-  --curly                  Enclose all property values in braces. Quoted values
-                           will be converted to braces. For example, "Journal of
-                           Tea" will become {Journal of Tea}.
+  --curly                  Enclose values in curly braces - Enclose all property
+                           values in braces. Quoted values will be converted to
+                           braces. For example, "Journal of Tea" will become
+                           {Journal of Tea}.
 
-  --numeric                Strip quotes and braces from numeric/month values. For
-                           example, {1998} will become 1998.
+  --numeric                Use numeric values where possible - Strip quotes and
+                           braces from numeric/month values. For example, {1998}
+                           will become 1998.
 
-  --space=NUMBER           Prefix all fields with the specified number of spaces
-                           (ignored if tab is set).
+  --space                  Indent with spaces - Prefix all fields with the
+                           specified number of spaces (ignored if tab is set).
                            Examples: --space=2 (default) --space=4
 
-  --tab                    Prefix all fields with a tab.
+  --tab                    Indent with tabs - Prefix all fields with a tab.
 
-  --align=NUMBER           Insert whitespace between fields and values so that
-                           values are visually aligned.
-                           Examples: --align=14 (default) --no-align
+  --align                  Align values - Insert whitespace between fields and
+                           values so that values are visually aligned.
+                           Examples: --align=14 (default) --no-align'
 
-  --sort=x,y,z             Sort entries by specified fields. For descending order,
-                           prefix the field with a dash (-).
-                           Examples: --sort (sort by id) --sort=-year,name (sort
-                           year descending then name ascending) --sort=name,year
+  --sort                   Sort bibliography entries - Sort entries by specified
+                           fields. For descending order, prefix the field with a
+                           dash (-).
+                           Examples: (sort by id)', --sort=-year,name (sort year
+                           descending then name ascending)', --sort=name,year'
 
-  --merge                  Two entries are considered duplicates in the following
-                           cases: (a) their DOIs are identical, (b) their abstracts
-                           are identical, or (c) their authors and titles are both
-                           identical. The firstmost entry is kept and any extra
-                           properties from duplicate entries are incorporated.
+  --duplicates             Check for duplicates - If there are duplicates, output
+                           warnings. When using with the `merge` option, this
+                           determines which entries to merge. Two entries are
+                           considered duplicates in the following cases: (a) their
+                           DOIs are identical, (b) their abstracts are identical,
+                           or (c) their authors and titles are both identical. The
+                           firstmost entry is kept and any extra properties from
+                           duplicate entries are incorporated.
+                           Examples: --duplicates (warn if sharing doi, key,
+                           abstract, or citation) --duplicates doi (warn if DOIs
+                           are identicals) --duplicates key (warn if IDs are
+                           identicals) --duplicates abstract (warn if abstracts are
+                           similar) --duplicates citation (warn if author and
+                           titles are similar) --duplicates doi, key (warn if DOI
+                           or keys are identical)
 
-  --strip-enclosing-braces Where an entire value is enclosed in double braces,
-                           remove the extra braces. For example, {{Journal of Tea}}
-                           will become {Journal of Tea}.
+  --merge                  Merge duplicate entries - Merge duplicates entries. How
+                           duplicates are identified can be set using the
+                           `duplicates` option. There are different ways to merge:
+                           - first: only keep the original entry - last: only keep
+                           the last found duplicate - combine: keep original entry
+                           and merge in fields of duplicates if they do not already
+                           exist - overwrite: keep original entry and merge in
+                           fields of duplicates, overwriting existing fields if
+                           they exist
 
-  --drop-all-caps          Where values are all caps, make them title case. For
-                           example, {JOURNAL OF TEA} will become {Journal of Tea}.
+  --strip-enclosing-braces Strip double-braced values - Where an entire value is
+                           enclosed in double braces, remove the extra braces. For
+                           example, {{Journal of Tea}} will become {Journal of
+                           Tea}.
 
-  --escape                 Escape special characters, such as umlaut. This ensures
-                           correct typesetting with latex.
+  --drop-all-caps          Drop all caps - Where values are all caps, make them
+                           title case. For example, {JOURNAL OF TEA} will become
+                           {Journal of Tea}.
+
+  --escape                 Escape special characters - Escape special characters,
+                           such as umlaut. This ensures correct typesetting with
+                           latex.
                            Examples: --escape (default) --no-escape
 
-  --sort-fields=x,y,z      Sort the fields within entries. The default sort order
-                           is title, shorttitle, author, year, month, day, journal,
-                           booktitle, location, on, publisher, address, series,
-                           volume, number, pages, doi, isbn, issn, url, urldate,
-                           copyright, category, note, metadata. Alternatively, you
-                           can specify field names delimed by spaces or commas.
+  --sort-fields            Sort fields - Sort the fields within entries. The
+                           default sort order is XXX. Alternatively, you can
+                           specify field names delimed by spaces or commas.
                            Examples: --sort-fields=name,author
 
-  --strip-comments         Remove all comments from the bibtex source.
+  --sort-properties        Alias of sort fields (legacy)
+                           Examples:
 
-  --encode-urls            Replace invalid URL characters with percent encoded
-                           values.
+  --strip-comments         Remove comments - Remove all comments from the bibtex
+                           source
 
-  --tidy-comments          Remove whitespace surrounding comments.
+  --encode-urls            Encode URLs - Replace invalid URL characters with
+                           percent encoded values.
+
+  --tidy-comments          Tidy comments - Remove whitespace surrounding
+
+  --quiet                  Suppress logs and warnings.
+
+  --backup                 Make a backup <filename>.original
+                           Examples: --backup (default) --no-backup (do not create
+                           a backup)
 ```
 
 #### Merging duplicates

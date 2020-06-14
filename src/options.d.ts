@@ -108,4 +108,14 @@ type Options = {
 	 * Tidy comments - Remove whitespace surrounding
 	 * */
 	tidyComments?: boolean;
+	/**
+	 * Suppress logs and warnings.
+	 */
+	quiet?: true;
+	/**
+	 * Make a backup <filename>.original
+	 * @example --backup (default)
+	 * @example --no-backup (do not create a backup)
+	 */
+	backup?: boolean;
 };

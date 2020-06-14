@@ -23,6 +23,12 @@ const splitLines = (line: string, limit: number): string[] => {
 	return lines;
 };
 
+const fromCamelCase = (str: string): string => {
+	return str.replace(/[A-Z]/g, (c: string) => {
+		return '-' + c.toLowerCase();
+	});
+};
+
 const printHelp = (): void => {
 	console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
 	console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.');
@@ -38,7 +44,7 @@ const printHelp = (): void => {
 		for (let i = 0; i < lines.length; i++) {
 			let prefix = '';
 			if (i === 0) {
-				let keyval = opt.key;
+				let keyval = fromCamelCase(opt.key);
 				if (opt.type === 'array') keyval += '=x,y,z';
 				if (opt.type === 'number') keyval += '=NUMBER';
 				prefix = `  --${keyval}`.padEnd(LEFT_MARGIN, ' ');
@@ -57,7 +63,10 @@ const printHelp = (): void => {
 };
 
 const parseArguments = (): Arguments => {
-	const options: Options = {};
+	const options: Options = {
+		// By default make a backup
+		backup: true,
+	};
 	const help = process.argv.includes('--help') || process.argv.includes('-h');
 	const args: string[] = process.argv.slice(2);
 	let input: string | undefined;
@@ -207,6 +216,15 @@ const parseArguments = (): Arguments => {
 			case '--no-tidy-comments':
 				options.tidyComments = false;
 				break;
+			case '--backup':
+				options.backup = true;
+				break;
+			case '--no-backup':
+				options.backup = false;
+				break;
+			case '--quiet':
+				options.quiet = true;
+				break;
 			default:
 				if (argName.startsWith('--')) {
 					console.error(`No option "${argName}"`);
@@ -228,6 +246,10 @@ const run = (): void => {
 		printHelp();
 		process.exit(1);
 	}
+	if (options.quiet) {
+		console.log = () => {};
+		console.error = () => {};
+	}
 	console.log('Tidying...');
 	const bibtex = fs.readFileSync(input, 'utf8');
 	const result = tidy.tidy(bibtex, options);
@@ -239,7 +261,9 @@ const run = (): void => {
 		const dupes = result.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
 		console.log(`${dupes.length} entries merged`);
 	}
-	fs.writeFileSync(`${input}.original`, bibtex, 'utf8');
+	if (options.backup) {
+		fs.writeFileSync(`${input}.original`, bibtex, 'utf8');
+	}
 	fs.writeFileSync(input, result.bibtex, 'utf8');
 };
 
