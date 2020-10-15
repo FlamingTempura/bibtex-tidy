@@ -4,7 +4,7 @@ import fs from 'fs';
 import process from 'process';
 
 type Arguments = {
-	input: string | undefined;
+	inputFiles: string[];
 	options: Options;
 	help: boolean;
 };
@@ -69,21 +69,21 @@ const parseArguments = (): Arguments => {
 	};
 	const help = process.argv.includes('--help') || process.argv.includes('-h');
 	const args: string[] = process.argv.slice(2);
-	let input: string | undefined;
+	let inputFiles: string[] = [];
 
 	const nextNumber = (): number | undefined => {
-		if (args.length === 1 && !input) return; // do not consume the input argument
+		if (args.length === 1 && inputFiles.length === 0) return; // do not consume the input argument
 		if (!args[0] || args[0].startsWith('--')) return;
 		return Number(args.shift());
 	};
 	const nextString = (): string | undefined => {
-		if (args.length === 1 && !input) return; // do not consume the input argument
+		if (args.length === 1 && inputFiles.length === 0) return; // do not consume the input argument
 		if (!args[0] || args[0].startsWith('--')) return;
 		return args.shift()!;
 	};
 
 	const nextList = (): string[] | undefined => {
-		if (args.length === 1 && !input) return; // do not consume the input argument
+		if (args.length === 1 && inputFiles.length === 0) return; // do not consume the input argument
 		if (!args[0] || args[0].startsWith('--')) return;
 		return [args.shift()!, ...(nextList() || [])];
 	};
@@ -239,19 +239,15 @@ const parseArguments = (): Arguments => {
 					console.error(`No option "${argName}"`);
 					process.exit(1);
 				}
-				if (input) {
-					console.error(`Too many arguments`);
-					process.exit(1);
-				}
-				input = arg;
+				inputFiles.push(arg);
 		}
 	}
-	return { input, options, help };
+	return { inputFiles, options, help };
 };
 
 const run = (): void => {
-	const { input, options, help } = parseArguments();
-	if (!input || help) {
+	const { inputFiles, options, help } = parseArguments();
+	if (inputFiles.length === 0 || help) {
 		printHelp();
 		process.exit(1);
 	}
@@ -260,20 +256,22 @@ const run = (): void => {
 		console.error = () => {};
 	}
 	console.log('Tidying...');
-	const bibtex = fs.readFileSync(input, 'utf8');
-	const result = tidy.tidy(bibtex, options);
-	for (let warning of result.warnings) {
-		console.error(warning.code + ': ' + warning.message);
+	for (const inputFile of inputFiles) {
+		const bibtex = fs.readFileSync(inputFile, 'utf8');
+		const result = tidy.tidy(bibtex, options);
+		for (let warning of result.warnings) {
+			console.error(warning.code + ': ' + warning.message);
+		}
+		console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
+		if (options.merge) {
+			const dupes = result.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
+			console.log(`${dupes.length} entries merged`);
+		}
+		if (options.backup) {
+			fs.writeFileSync(`${inputFile}.original`, bibtex, 'utf8');
+		}
+		fs.writeFileSync(inputFile, result.bibtex, 'utf8');
 	}
-	console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
-	if (options.merge) {
-		const dupes = result.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
-		console.log(`${dupes.length} entries merged`);
-	}
-	if (options.backup) {
-		fs.writeFileSync(`${input}.original`, bibtex, 'utf8');
-	}
-	fs.writeFileSync(input, result.bibtex, 'utf8');
 };
 
 run();

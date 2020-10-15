@@ -7359,23 +7359,23 @@ const parseArguments = () => {
     };
     const help = process__default['default'].argv.includes('--help') || process__default['default'].argv.includes('-h');
     const args = process__default['default'].argv.slice(2);
-    let input;
+    let inputFiles = [];
     const nextNumber = () => {
-        if (args.length === 1 && !input)
+        if (args.length === 1 && inputFiles.length === 0)
             return;
         if (!args[0] || args[0].startsWith('--'))
             return;
         return Number(args.shift());
     };
     const nextString = () => {
-        if (args.length === 1 && !input)
+        if (args.length === 1 && inputFiles.length === 0)
             return;
         if (!args[0] || args[0].startsWith('--'))
             return;
         return args.shift();
     };
     const nextList = () => {
-        if (args.length === 1 && !input)
+        if (args.length === 1 && inputFiles.length === 0)
             return;
         if (!args[0] || args[0].startsWith('--'))
             return;
@@ -7529,18 +7529,14 @@ const parseArguments = () => {
                     console.error(`No option "${argName}"`);
                     process__default['default'].exit(1);
                 }
-                if (input) {
-                    console.error(`Too many arguments`);
-                    process__default['default'].exit(1);
-                }
-                input = arg;
+                inputFiles.push(arg);
         }
     }
-    return { input, options, help };
+    return { inputFiles, options, help };
 };
 const run = () => {
-    const { input, options, help } = parseArguments();
-    if (!input || help) {
+    const { inputFiles, options, help } = parseArguments();
+    if (inputFiles.length === 0 || help) {
         printHelp();
         process__default['default'].exit(1);
     }
@@ -7549,19 +7545,21 @@ const run = () => {
         console.error = () => { };
     }
     console.log('Tidying...');
-    const bibtex = fs__default['default'].readFileSync(input, 'utf8');
-    const result = tidy$1.tidy(bibtex, options);
-    for (let warning of result.warnings) {
-        console.error(warning.code + ': ' + warning.message);
+    for (const inputFile of inputFiles) {
+        const bibtex = fs__default['default'].readFileSync(inputFile, 'utf8');
+        const result = tidy$1.tidy(bibtex, options);
+        for (let warning of result.warnings) {
+            console.error(warning.code + ': ' + warning.message);
+        }
+        console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
+        if (options.merge) {
+            const dupes = result.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
+            console.log(`${dupes.length} entries merged`);
+        }
+        if (options.backup) {
+            fs__default['default'].writeFileSync(`${inputFile}.original`, bibtex, 'utf8');
+        }
+        fs__default['default'].writeFileSync(inputFile, result.bibtex, 'utf8');
     }
-    console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
-    if (options.merge) {
-        const dupes = result.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
-        console.log(`${dupes.length} entries merged`);
-    }
-    if (options.backup) {
-        fs__default['default'].writeFileSync(`${input}.original`, bibtex, 'utf8');
-    }
-    fs__default['default'].writeFileSync(input, result.bibtex, 'utf8');
 };
 run();
