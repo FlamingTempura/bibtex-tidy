@@ -8,7 +8,7 @@ for (const file of validfiles) {
 	test(`valid bib: ${file}`, (t, tidy) => {
 		// try to tidy the file. if there's an error, the test handler with fail.
 		tidy(bibtex, {
-			omit: Math.random > 0.5 ? ['author'] : null,
+			omit: Math.random() > 0.5 ? ['author'] : undefined,
 			escape: Math.random() > 0.5,
 			curly: Math.random() > 0.5,
 			numeric: Math.random() > 0.5,
@@ -22,7 +22,7 @@ for (const file of validfiles) {
 			sortFields: Math.random() > 0.5,
 			stripComments: Math.random() > 0.5,
 			encodeUrls: Math.random() > 0.5,
-			tidyComments: Math.random() > 0.5
+			tidyComments: Math.random() > 0.5,
 		});
 	});
 }

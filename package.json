@@ -18,6 +18,7 @@
 		"@rollup/plugin-node-resolve": "^9.0.0",
 		"@rollup/plugin-typescript": "^6.0.0",
 		"@types/node": "^14.11.8",
+		"@types/tap": "^14.10.1",
 		"rollup": "^2.31.0",
 		"rollup-plugin-babel": "^4.4.0",
 		"tap": "^14.10.7",
@@ -25,9 +26,10 @@
 		"typescript": "^4.0.3"
 	},
 	"scripts": {
-		"test": "rollup -c && tap -t60 --no-coverage --test-regex=test/.*\\.spec\\.js",
+		"test": "rollup -c && tsc -p test/tsconfig.json && tap -t60 --no-coverage --test-regex=.test/test/.*\\.spec\\.js",
 		"cover": "npm test --coverage-report=lcov",
-		"build": "rollup -c"
+		"build": "rollup -c",
+		"typecheck": "tsc --noEmit"
 	},
 	"repository": {
 		"type": "git",

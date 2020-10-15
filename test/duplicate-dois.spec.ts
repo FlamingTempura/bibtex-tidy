@@ -1,4 +1,4 @@
-const { bibtex, test } = require('./utils');
+import { bibtex, test } from './utils';
 
 const input = bibtex`
 @article{a,

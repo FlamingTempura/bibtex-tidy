@@ -78,11 +78,7 @@ const tidy = (
 		removeEmptyFields = false,
 		sortProperties,
 	}: Options = {}
-): {
-	bibtex: string;
-	warnings: Warning[];
-	entries: BibTeXEntry[];
-} => {
+): BibTeXTidyResult => {
 	if (sort === true) sort = DEFAULT_ENTRY_ORDER;
 	if (space === true) space = 2;
 	if (sortProperties) sortFields = sortProperties;
@@ -335,6 +331,7 @@ const tidy = (
 					bibtex += ',';
 				}
 				bibtex += `\n}\n`;
+				// @ts-ignore
 				delete item.fieldMap; // don't return the map
 				break;
 		}

@@ -106,3 +106,9 @@ declare module 'DOCS' {
 	const options: OptionDescription[];
 	export default options;
 }
+
+type BibTeXTidyResult = {
+	bibtex: string;
+	warnings: Warning[];
+	entries: BibTeXEntry[];
+};

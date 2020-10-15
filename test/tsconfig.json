@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"module": "ES6",
+		"esModuleInterop": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitReturns": true,
+		"strict": true,
+		"removeComments": true,
+		"moduleResolution": "Node",
+		"sourceMap": true,
+		"baseUrl": ".",
+		"lib": ["ESNext", "DOM"],
+		"target": "ES6",
+		"paths": {
+			"*": ["../node_modules/*"]
+		},
+		"typeRoots": ["../declarations.d.ts", "../node_modules/@types"],
+		"rootDir": "../",
+		"outDir": "../.test"
+	},
+	"include": ["../**/*"]
+}

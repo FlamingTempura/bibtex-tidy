@@ -1,4 +1,4 @@
-const { bibtex, test } = require('./utils');
+import { bibtex, test } from './utils';
 
 const input = bibtex`
 %references
@@ -114,6 +114,8 @@ test(
 					message: 'Smith2009 is a duplicate entry key.',
 				},
 			];
+
+		// @ts-ignore
 		delete tidied.warnings[0].entry.raw;
 		t.same(tidied.warnings, warnings);
 	},
