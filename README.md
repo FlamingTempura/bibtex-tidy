@@ -137,10 +137,17 @@ Options:
   --strip-comments         Remove comments - Remove all comments from the bibtex
                            source
 
+  --trailing-commas        End the last key value pair in each entry with a comma
+
   --encode-urls            Encode URLs - Replace invalid URL characters with
                            percent encoded values.
 
   --tidy-comments          Tidy comments - Remove whitespace surrounding
+
+  --remove-empty-fields    Remove any fields that have empty values
+
+  --lowercase              Make field names and entry type lowercase. On by
+                           default.
 
   --quiet                  Suppress logs and warnings.
 
