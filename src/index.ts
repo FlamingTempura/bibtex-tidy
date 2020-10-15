@@ -75,6 +75,7 @@ const tidy = (
 		space = 2,
 		duplicates = false,
 		trailingCommas = false,
+		removeEmptyFields = false,
 		sortProperties,
 	}: Options = {}
 ): {
@@ -153,10 +154,13 @@ const tidy = (
 				// replace single dash with double dash in page range
 				if (lname === 'pages') val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
 			}
-			item.fieldMap.set(lname, {
-				value: val.trim(),
-				datatype: field.datatype,
-			});
+			val = val.trim();
+			if (val || !removeEmptyFields) {
+				item.fieldMap.set(lname, {
+					value: val,
+					datatype: field.datatype,
+				});
+			}
 		}
 
 		for (const [key, doMerge] of uniqCheck) {

@@ -165,6 +165,13 @@
       "type": "boolean"
     },
     {
+      "key": "removeEmptyFields",
+      "cli": "remove-empty-fields",
+      "description": "Remove any fields that have empty values",
+      "examples": [],
+      "type": "boolean"
+    },
+    {
       "key": "quiet",
       "cli": "quiet",
       "description": "Suppress logs and warnings.",
@@ -7800,7 +7807,7 @@
           .replace(/[^0-9A-Za-z]/g, '')
           .toLocaleLowerCase();
   };
-  const tidy = (input, { omit = [], curly = false, numeric = false, tab = false, align = 14, sort = false, merge = false, stripEnclosingBraces = false, dropAllCaps = false, escape = true, sortFields = false, stripComments = false, encodeUrls = false, tidyComments = true, space = 2, duplicates = false, trailingCommas = false, sortProperties, } = {}) => {
+  const tidy = (input, { omit = [], curly = false, numeric = false, tab = false, align = 14, sort = false, merge = false, stripEnclosingBraces = false, dropAllCaps = false, escape = true, sortFields = false, stripComments = false, encodeUrls = false, tidyComments = true, space = 2, duplicates = false, trailingCommas = false, removeEmptyFields = false, sortProperties, } = {}) => {
       var _a, _b, _c, _d, _e, _f, _g;
       if (sort === true)
           sort = DEFAULT_ENTRY_ORDER;
@@ -7870,10 +7877,13 @@
                   if (lname === 'pages')
                       val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
               }
-              item.fieldMap.set(lname, {
-                  value: val.trim(),
-                  datatype: field.datatype,
-              });
+              val = val.trim();
+              if (val || !removeEmptyFields) {
+                  item.fieldMap.set(lname, {
+                      value: val,
+                      datatype: field.datatype,
+                  });
+              }
           }
           for (const [key, doMerge] of uniqCheck) {
               let duplicateOf;

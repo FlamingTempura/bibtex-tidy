@@ -219,6 +219,9 @@ const parseArguments = (): Arguments => {
 			case '--trailing-commas':
 				options.trailingCommas = true;
 				break;
+			case '--remove-empty-fields':
+				options.removeEmptyFields = true;
+				break;
 			case '--backup':
 				options.backup = true;
 				break;

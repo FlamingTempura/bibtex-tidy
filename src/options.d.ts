@@ -113,6 +113,10 @@ type Options = {
 	 * */
 	tidyComments?: boolean;
 	/**
+	 * Remove any fields that have empty values
+	 */
+	removeEmptyFields?: boolean;
+	/**
 	 * Suppress logs and warnings.
 	 */
 	quiet?: true;
