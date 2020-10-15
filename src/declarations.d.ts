@@ -4,7 +4,7 @@ type BibTeXFieldDatatype =
 	| 'quoted'
 	| 'number'
 	| 'identifier';
-type BibTexValue = number | string | bigint | SingleField[];
+type BibTexValue = string | bigint | SingleField[];
 
 type SingleField = {
 	name: string;

@@ -1,19 +1,3 @@
-{
-  const parseNumber = str => {
-    switch (options.number) {
-      case 'string':
-        return str;
-      case 'number':
-        return parseInt(str, 10);
-      case 'bigint':
-        return BigInt(str);
-      default:
-        const n = parseInt(str, 10);
-        if (n > Number.MAX_SAFE_INTEGER) return BigInt(str);
-        return n;
-    }
-  }
-}
 // A bibtex file comprises a series of prambles, strings, entries, and comments.
 START
   = items:ITEM* {
@@ -122,7 +106,7 @@ IDENTIFIER_LEFT "key for assignment"
   = $(IDENTIFIER ([# ]+ IDENTIFIER_LEFT)?)
 
 NUMBER "number"
-  = [0-9]+ { return parseNumber(text()); }
+  = [0-9]+ { return BigInt(text()); }
 
 // Braces are allowed within braced values as long as they are closed
 BRACED "braced value"

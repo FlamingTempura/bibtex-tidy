@@ -428,7 +428,7 @@
           peg$c76 = peg$otherExpectation("number"),
           peg$c77 = /^[0-9]/,
           peg$c78 = peg$classExpectation([["0", "9"]], false, false),
-          peg$c79 = function() { return parseNumber(text()); },
+          peg$c79 = function() { return BigInt(text()); },
           peg$c80 = peg$otherExpectation("braced value"),
           peg$c81 = /^[^{}]/,
           peg$c82 = peg$classExpectation(["{", "}"], true, false),
@@ -2312,23 +2312,6 @@
 
         return s0;
       }
-
-
-        const parseNumber = str => {
-          switch (options.number) {
-            case 'string':
-              return str;
-            case 'number':
-              return parseInt(str, 10);
-            case 'bigint':
-              return BigInt(str);
-            default:
-              const n = parseInt(str, 10);
-              if (n > Number.MAX_SAFE_INTEGER) return BigInt(str);
-              return n;
-          }
-        };
-
 
       peg$result = peg$startRuleFunction();
 
