@@ -117,6 +117,10 @@ type Options = {
 	 */
 	removeEmptyFields?: boolean;
 	/**
+	 * Make field names and entry type lowercase. On by default.
+	 */
+	lowercase?: boolean;
+	/**
 	 * Suppress logs and warnings.
 	 */
 	quiet?: true;

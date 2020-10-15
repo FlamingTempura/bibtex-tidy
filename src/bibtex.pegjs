@@ -76,7 +76,7 @@ ENTRY "entry"
         '{' _ body:ENTRY_BODY _ '}' { return { enclosed: 'braces', ...body }; }
       / '(' _ body:ENTRY_BODY _ ')' { return { enclosed: 'parentheses', ...body }; }
     )
-    { return { type: type.toLowerCase(), ...body, raw: text() }; }
+    { return { type, ...body, raw: text() }; }
 
 // An entry should be OK without a key
 ENTRY_BODY

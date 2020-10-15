@@ -222,6 +222,9 @@ const parseArguments = (): Arguments => {
 			case '--remove-empty-fields':
 				options.removeEmptyFields = true;
 				break;
+			case '--no-lowercase':
+				options.lowercase = false;
+				break;
 			case '--backup':
 				options.backup = true;
 				break;

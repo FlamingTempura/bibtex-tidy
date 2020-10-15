@@ -172,6 +172,13 @@
       "type": "boolean"
     },
     {
+      "key": "lowercase",
+      "cli": "lowercase",
+      "description": "Make field names and entry type lowercase. On by default.",
+      "examples": [],
+      "type": "boolean"
+    },
+    {
       "key": "quiet",
       "cli": "quiet",
       "description": "Suppress logs and warnings.",
@@ -388,7 +395,7 @@
           peg$c43 = peg$literalExpectation("string", true),
           peg$c44 = function(type, body) { return { enclosed: 'braces', ...body }; },
           peg$c45 = function(type, body) { return { enclosed: 'parentheses', ...body }; },
-          peg$c46 = function(type, body) { return { type: type.toLowerCase(), ...body, raw: text() }; },
+          peg$c46 = function(type, body) { return { type, ...body, raw: text() }; },
           peg$c47 = ",",
           peg$c48 = peg$literalExpectation(",", false),
           peg$c49 = function(key) { return key; },
@@ -7044,7 +7051,7 @@
           .replace(/[^0-9A-Za-z]/g, '')
           .toLocaleLowerCase();
   };
-  const tidy = (input, { omit = [], curly = false, numeric = false, tab = false, align = 14, sort = false, merge = false, stripEnclosingBraces = false, dropAllCaps = false, escape = true, sortFields = false, stripComments = false, encodeUrls = false, tidyComments = true, space = 2, duplicates = false, trailingCommas = false, removeEmptyFields = false, sortProperties, } = {}) => {
+  const tidy = (input, { omit = [], curly = false, numeric = false, tab = false, align = 14, sort = false, merge = false, stripEnclosingBraces = false, dropAllCaps = false, escape = true, sortFields = false, stripComments = false, encodeUrls = false, tidyComments = true, space = 2, duplicates = false, trailingCommas = false, removeEmptyFields = false, lowercase = true, sortProperties, } = {}) => {
       var _a, _b, _c, _d, _e, _f, _g;
       if (sort === true)
           sort = DEFAULT_ENTRY_ORDER;
@@ -7092,8 +7099,9 @@
           }
           item.fieldMap = new Map();
           for (const field of item.fields) {
-              const lname = field.name.toLocaleLowerCase();
-              if (omitFields.has(lname) || item.fieldMap.has(lname))
+              const fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
+              const lname = fieldName.toLocaleLowerCase();
+              if (omitFields.has(fieldName) || item.fieldMap.has(fieldName))
                   continue;
               let val;
               if (field.datatype === 'concatinate') {
@@ -7116,7 +7124,7 @@
               }
               val = val.trim();
               if (val || !removeEmptyFields) {
-                  item.fieldMap.set(lname, {
+                  item.fieldMap.set(fieldName, {
                       value: val,
                       datatype: field.datatype,
                   });
@@ -7260,7 +7268,8 @@
               case 'entry':
                   if (item.duplicate)
                       continue;
-                  bibtex += `@${item.type.toLowerCase()}{`;
+                  const itemType = lowercase ? item.type.toLocaleLowerCase() : item.type;
+                  bibtex += `@${itemType}{`;
                   if (item.key)
                       bibtex += `${item.key}`;
                   const sortedFieldNames = new Set([

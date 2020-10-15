@@ -76,6 +76,7 @@ const tidy = (
 		duplicates = false,
 		trailingCommas = false,
 		removeEmptyFields = false,
+		lowercase = true,
 		sortProperties,
 	}: Options = {}
 ): BibTeXTidyResult => {
@@ -130,8 +131,9 @@ const tidy = (
 		// Create a map of field to stringified value for quick lookups
 		item.fieldMap = new Map<string, ValueString>();
 		for (const field of item.fields) {
-			const lname = field.name.toLocaleLowerCase();
-			if (omitFields.has(lname) || item.fieldMap.has(lname)) continue;
+			const fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
+			const lname = fieldName.toLocaleLowerCase();
+			if (omitFields.has(fieldName) || item.fieldMap.has(fieldName)) continue;
 			let val: string;
 			if (field.datatype === 'concatinate') {
 				val = field.raw;
@@ -152,7 +154,7 @@ const tidy = (
 			}
 			val = val.trim();
 			if (val || !removeEmptyFields) {
-				item.fieldMap.set(lname, {
+				item.fieldMap.set(fieldName, {
 					value: val,
 					datatype: field.datatype,
 				});
@@ -300,7 +302,8 @@ const tidy = (
 
 			case 'entry':
 				if (item.duplicate) continue;
-				bibtex += `@${item.type.toLowerCase()}{`;
+				const itemType = lowercase ? item.type.toLocaleLowerCase() : item.type;
+				bibtex += `@${itemType}{`;
 				if (item.key) bibtex += `${item.key}`;
 				// Create ordered list of fields to output, beginning with those
 				// specified in sortFields option, followed by fields in entry.
