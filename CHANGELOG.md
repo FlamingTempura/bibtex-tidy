@@ -7,3 +7,15 @@
 ### v1.3.0
 
 - Duplicate checking now checks whole title rather than just the first 50 characters.
+
+### v1.3.1
+
+- #12 Added --quiet and --no-backup
+
+### v1.4.0
+
+- #13 Allow multiple files on CLI. This will output multiple tidied files (ie this does not combine them) e.g. bibtex-tidy file1.bib file2.bib
+- #14 Add .pre-commit-hooks.yaml
+- #15 Add option for trailing commas
+- #16 Option to remove empty fields
+- Add --no-lowercase option to prevent bibtex-tidy from changing case of field names and entry types
