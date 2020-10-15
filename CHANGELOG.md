@@ -19,3 +19,7 @@
 - #15 Add option for trailing commas
 - #16 Option to remove empty fields
 - Add --no-lowercase option to prevent bibtex-tidy from changing case of field names and entry types
+
+### v1.4.1
+
+No changes, aside from correcting version number at top of bibtex-tidy.js
