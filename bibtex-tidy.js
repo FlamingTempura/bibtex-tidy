@@ -241,17 +241,17 @@
 
   var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-  function unwrapExports (x) {
+  function getDefaultExportFromCjs (x) {
   	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
   }
 
   function createCommonjsModule(fn, basedir, module) {
   	return module = {
-  	  path: basedir,
-  	  exports: {},
-  	  require: function (path, base) {
-        return commonjsRequire(path, (base === undefined || base === null) ? module.path : base);
-      }
+  		path: basedir,
+  		exports: {},
+  		require: function (path, base) {
+  			return commonjsRequire(path, (base === undefined || base === null) ? module.path : base);
+  		}
   	}, fn(module, module.exports), module.exports;
   }
 
@@ -3109,7 +3109,7 @@
       });
     });
   });
-  var parser = /*@__PURE__*/unwrapExports(bibtexParse);
+  var parser = /*@__PURE__*/getDefaultExportFromCjs(bibtexParse);
 
   var unicode = [ [ "0023",
       "\\#" ],
