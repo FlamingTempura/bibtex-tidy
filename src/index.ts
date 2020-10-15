@@ -74,6 +74,7 @@ const tidy = (
 		tidyComments = true,
 		space = 2,
 		duplicates = false,
+		trailingCommas = false,
 		sortProperties,
 	}: Options = {}
 ): {
@@ -325,6 +326,9 @@ const tidy = (
 					} else {
 						bibtex += val;
 					}
+				}
+				if (trailingCommas) {
+					bibtex += ','
 				}
 				bibtex += `\n}\n`;
 				delete item.fieldMap; // don't return the map

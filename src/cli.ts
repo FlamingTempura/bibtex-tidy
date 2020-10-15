@@ -216,6 +216,9 @@ const parseArguments = (): Arguments => {
 			case '--no-tidy-comments':
 				options.tidyComments = false;
 				break;
+			case '--trailing-commas':
+				options.trailingCommas = true;
+				break;
 			case '--backup':
 				options.backup = true;
 				break;

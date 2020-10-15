@@ -101,6 +101,10 @@ type Options = {
 	 * */
 	stripComments?: boolean;
 	/**
+	 * End the last key value pair in each entry with a comma
+	 */
+	trailingCommas?: boolean;
+	/**
 	 * Encode URLs - Replace invalid URL characters with percent encoded values.
 	 * */
 	encodeUrls?: boolean;
