@@ -87,7 +87,7 @@ declare module '*.tsv' {
 	export default value;
 }
 
-declare module 'bibtex-parse' {
+declare module '*.pegjs' {
 	export function parse(input: string): BibTeXItem[];
 }
 

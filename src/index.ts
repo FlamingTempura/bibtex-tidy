@@ -1,5 +1,5 @@
 import options from 'DOCS';
-import parser from 'bibtex-parse';
+import parser from './bibtex.pegjs';
 import unicode from './unicode.tsv'; // source: https://raw.githubusercontent.com/pkgw/worklog-tools/master/unicode_to_latex.py
 
 const DEFAULT_ENTRY_ORDER: string[] = ['key']; // if sort = true
