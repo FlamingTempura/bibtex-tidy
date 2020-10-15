@@ -1,4 +1,4 @@
-import { bibtex, test, checkSame } from "./utils";
+import { bibtex, test, checkSame } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -24,7 +24,7 @@ const output = bibtex`
 }
 `;
 
-test("remove empty fields", (t, tidy) => {
-  const tidied = tidy(input, { removeEmptyFields: true });
-  checkSame(t, tidied.bibtex, output);
+test('remove empty fields', (t, tidy) => {
+	const tidied = tidy(input, { removeEmptyFields: true });
+	checkSame(t, tidied.bibtex, output);
 });

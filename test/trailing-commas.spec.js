@@ -1,4 +1,4 @@
-import { bibtex, test, checkSame } from "./utils";
+import { bibtex, test, checkSame } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test("trailing commas", (t, tidy) => {
-  const tidied = tidy(input, { trailingCommas: true });
-  checkSame(t, tidied.bibtex, output);
+test('trailing commas', (t, tidy) => {
+	const tidied = tidy(input, { trailingCommas: true });
+	checkSame(t, tidied.bibtex, output);
 });

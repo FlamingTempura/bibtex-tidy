@@ -430,7 +430,7 @@ test('merge duplicates 2', (t, tidy) => {
 		tab: true,
 		align: false,
 		encodeUrls: false,
-		escape: false
+		escape: false,
 	});
 	checkSame(t, tidied.bibtex, output);
 	//checkSame(t, tidied.warnings, 0);

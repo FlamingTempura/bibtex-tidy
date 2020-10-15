@@ -332,7 +332,7 @@ const tidy = (
 					}
 				}
 				if (trailingCommas) {
-					bibtex += ','
+					bibtex += ',';
 				}
 				bibtex += `\n}\n`;
 				delete item.fieldMap; // don't return the map
