@@ -1,0 +1,6 @@
+- id: bibtex-tidy
+  name: bibtex-tidy
+  entry: bibtex-tidy
+  language: node
+  types: ['bib']
+  files: ''
