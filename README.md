@@ -2,10 +2,9 @@
 
 Tidy bibtex files. [Try it out](https://flamingtempura.github.io/bibtex-tidy/).
 
-```sh
-npm install -g bibtex-tidy
-bibtex-tidy references.bib
-```
+![Screen Recording 2020-10-23 at 16 25 26(1)](https://user-images.githubusercontent.com/1085434/97023051-dcbcf180-154c-11eb-9185-6f6de7c2fc68.gif)
+
+bibtex-tidy is free to use at https://flamingtempura.github.io/bibtex-tidy/
 
 ### Example
 
@@ -14,22 +13,22 @@ Before:
 ```bibtex
 @ARTICLE {feinberg1983technique,
   title={A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
-author="Feinberg, Andrew P and Vogelstein, Bert",
+author={Feinberg, Andrew P and Vogelstein, Bert},
   journal    = {Analytical biochemistry},
   volume = 132,
-  number={1},
+  number=1,
   pages={6--13},
-  year={1983},
+  year=1983,
   publisher={Elsevier},}
 @article{miles1984qualitative,
     title={Qualitative data analysis: A sourcebook},
     author={Miles, Matthew B and Huberman, A Michael and Saldana, J},
     journal={Beverly Hills},
-    year={1984}
+    year=1984
 }
 ```
 
-After `bibtex-tidy references.bib --curly --numeric`:
+After `bibtex-tidy references.bib`:
 
 ```bibtex
 @article{feinberg1983technique,
@@ -50,7 +49,12 @@ After `bibtex-tidy references.bib --curly --numeric`:
 }
 ```
 
-### Options
+### Installation
+
+```sh
+npm install -g bibtex-tidy
+bibtex-tidy references.bib
+```
 
 ```
 Usage: bibtex-tidy [OPTION]... FILE.BIB
@@ -169,35 +173,7 @@ npm install bibtex-tidy
 ```js
 const tidy = require('bibtex-tidy');
 const bibtex = fs.readFileSync('references.bib', 'utf8');
-tidy.tidy(bibtex, { curly: true }); // options are identical to command line usage
+tidy.tidy(bibtex, { curly: true });
 ```
 
-### Browser
-
-```html
-<script src="https://unpkg.com/bibtex-tidy"></script>
-<script>
-var bibtex = document.getElementById('input').value;
-var result = bibtexTidy.tidy(bibtex);
-console.log(result.bibtex); // the tidied bibtex
-```
-
-Also available on bower
-
-```sh
-bower install bibtex-tidy
-```
-
-## Building and Testing
-
-To build bibtex-tidy, run:
-
-```sh
-npm run build
-```
-
-Unit tests can be run using:
-
-```sh
-npm test
-```
+Documentation for the options can be found [here](https://github.com/FlamingTempura/bibtex-tidy/blob/master/src/options.d.ts)
