@@ -31,15 +31,22 @@ const fromCamelCase = (str: string): string => {
 
 const printHelp = (): void => {
 	console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
-	console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.');
+	console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.\n');
 	console.log('Options:');
-	console.log('  --help'.padEnd(LEFT_MARGIN, ' ') + 'Show help');
+	console.log('  --help'.padEnd(LEFT_MARGIN, ' ') + 'Show help\n');
 	for (const opt of OPTIONS) {
-		const lines = splitLines(`${opt.description}`, BREAK_LINE - LEFT_MARGIN);
+		if (opt.deprecated) continue;
+		const lines = opt.description
+			.split('\n')
+			.flatMap((line) => splitLines(line, BREAK_LINE - LEFT_MARGIN));
 		if (opt.examples && opt.examples.length > 0) {
 			const margin = BREAK_LINE - LEFT_MARGIN;
-			const examples = opt.examples.join(' ');
-			lines.push(...splitLines(`Examples: ${examples}`, margin));
+			lines.push(
+				'Examples:',
+				...opt.examples
+					.filter((example) => example)
+					.flatMap((example) => splitLines(example, margin))
+			);
 		}
 		for (let i = 0; i < lines.length; i++) {
 			let prefix = '';

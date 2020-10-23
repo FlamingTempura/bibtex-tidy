@@ -52,9 +52,17 @@ const docsResolve = {
 					options.push({
 						key,
 						cli: key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`), // convert camelCase to --dash-argument
-						description: member.jsDoc[0].comment.replace(/\s+/g, ' '),
-						examples: (member.jsDoc[0].tags || []).map((m) => m.comment),
+						description: member.jsDoc[0].comment.replace(
+							/([\w,.;:])\s+([A-Za-z])/g,
+							'$1 $2'
+						),
+						examples: (member.jsDoc[0].tags || [])
+							.filter((tag) => tag.tagName.escapedText === 'example')
+							.map((m) => m.comment),
 						type: typeToString(member),
+						deprecated: (member.jsDoc[0].tags || []).some(
+							(tag) => tag.tagName.escapedText === 'deprecated'
+						),
 					});
 				});
 			}

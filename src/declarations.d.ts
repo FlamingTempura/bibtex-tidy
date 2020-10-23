@@ -100,6 +100,7 @@ type OptionDescription = {
 	examples?: string[];
 	type: 'array' | 'number' | 'boolean';
 	default: OptionValue;
+	deprecated: boolean;
 };
 
 declare module 'DOCS' {

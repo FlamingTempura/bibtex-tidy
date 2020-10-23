@@ -19,38 +19,43 @@
       "examples": [
         "--omit=id,name"
       ],
-      "type": "string[]"
+      "type": "string[]",
+      "deprecated": false
     },
     {
       "key": "curly",
       "cli": "curly",
-      "description": "Enclose values in curly braces - Enclose all property values in braces. Quoted values will be converted to braces. For example, \"Journal of Tea\" will become {Journal of Tea}.",
+      "description": "Enclose values in curly braces - Enclose all property values in braces. Quoted values will be converted to braces. For example, \"Journal of Tea\"\nwill become {Journal of Tea}.",
       "examples": [],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "numeric",
       "cli": "numeric",
       "description": "Use numeric values where possible - Strip quotes and braces from numeric/month values. For example, {1998} will become 1998.",
       "examples": [],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "space",
       "cli": "space",
-      "description": "Indent with spaces - Prefix all fields with the specified number of spaces (ignored if tab is set).",
+      "description": "Indent with spaces - Prefix all fields with the specified number of spaces\n(ignored if tab is set).",
       "examples": [
         "--space=2 (default)",
         "--space=4"
       ],
-      "type": "number | true"
+      "type": "number | true",
+      "deprecated": false
     },
     {
       "key": "tab",
       "cli": "tab",
       "description": "Indent with tabs - Prefix all fields with a tab.",
       "examples": [],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "align",
@@ -58,55 +63,61 @@
       "description": "Align values - Insert whitespace between fields and values so that values are visually aligned.",
       "examples": [
         "--align=14 (default)",
-        "--no-align'"
+        "--no-align"
       ],
-      "type": "number | false"
+      "type": "number | false",
+      "deprecated": false
     },
     {
       "key": "sort",
       "cli": "sort",
       "description": "Sort bibliography entries - Sort entries by specified fields. For descending order, prefix the field with a dash (-).",
       "examples": [
-        "(sort by id)',",
-        "--sort=-year,name (sort year descending then name ascending)',",
-        "--sort=name,year'"
+        "--sort (sort by id)",
+        "--sort=-year,name (sort year descending then name ascending)",
+        "--sort=name,year"
       ],
-      "type": "boolean | string[]"
+      "type": "boolean | string[]",
+      "deprecated": false
     },
     {
       "key": "duplicates",
       "cli": "duplicates",
-      "description": "Check for duplicates - If there are duplicates, output warnings. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases: (a) their DOIs are identical, (b) their abstracts are identical, or (c) their authors and titles are both identical. The firstmost entry is kept and any extra properties from duplicate entries are incorporated.",
+      "description": "Check for duplicates - If there are duplicates, output warnings. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases:\n- their DOIs are identical,\n- their abstracts are identical, or\n- their authors and titles are both identical. The first-most entry is kept and any extra properties from duplicate entries are incorporated.",
       "examples": [
         "--duplicates (warn if sharing doi, key, abstract, or citation)",
-        "--duplicates doi (warn if DOIs are identicals)",
-        "--duplicates key (warn if IDs are identicals)",
+        "--duplicates doi (warn if DOIs are identical)",
+        "--duplicates key (warn if IDs are identical)",
         "--duplicates abstract (warn if abstracts are similar)",
         "--duplicates citation (warn if author and titles are similar)",
         "--duplicates doi, key (warn if DOI or keys are identical)"
       ],
-      "type": "boolean | any[]"
+      "type": "boolean | any[]",
+      "deprecated": false
     },
     {
       "key": "merge",
       "cli": "merge",
-      "description": "Merge duplicate entries - Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge: - first: only keep the original entry - last: only keep the last found duplicate - combine: keep original entry and merge in fields of duplicates if they do not already exist - overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist",
+      "description": "Merge duplicate entries - Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge:\n- first: only keep the original entry\n- last: only keep the last found duplicate\n- combine: keep original entry and merge in fields of duplicates if they do not already exist\n- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist",
       "examples": [],
-      "type": "any"
+      "type": "any",
+      "deprecated": false
     },
     {
       "key": "stripEnclosingBraces",
       "cli": "strip-enclosing-braces",
       "description": "Strip double-braced values - Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}.",
       "examples": [],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "dropAllCaps",
       "cli": "drop-all-caps",
       "description": "Drop all caps - Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.",
       "examples": [],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "escape",
@@ -116,74 +127,85 @@
         "--escape (default)",
         "--no-escape"
       ],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "sortFields",
       "cli": "sort-fields",
-      "description": "Sort fields - Sort the fields within entries. The default sort order is XXX. Alternatively, you can specify field names delimed by spaces or commas.",
+      "description": "Sort fields - Sort the fields within entries. If sort-fields is specified without fields, fields will be sorted as follows: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively, you can specify field names delimited by spaces or commas.",
       "examples": [
         "--sort-fields=name,author"
       ],
-      "type": "boolean | string[]"
+      "type": "boolean | string[]",
+      "deprecated": false
     },
     {
       "key": "sortProperties",
       "cli": "sort-properties",
       "description": "Alias of sort fields (legacy)",
-      "examples": [
-        null
-      ],
-      "type": "boolean | string[]"
+      "examples": [],
+      "type": "boolean | string[]",
+      "deprecated": true
     },
     {
       "key": "stripComments",
       "cli": "strip-comments",
       "description": "Remove comments - Remove all comments from the bibtex source",
       "examples": [],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "trailingCommas",
       "cli": "trailing-commas",
       "description": "End the last key value pair in each entry with a comma",
       "examples": [],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "encodeUrls",
       "cli": "encode-urls",
       "description": "Encode URLs - Replace invalid URL characters with percent encoded values.",
       "examples": [],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "tidyComments",
       "cli": "tidy-comments",
       "description": "Tidy comments - Remove whitespace surrounding",
       "examples": [],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "removeEmptyFields",
       "cli": "remove-empty-fields",
       "description": "Remove any fields that have empty values",
       "examples": [],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "lowercase",
       "cli": "lowercase",
-      "description": "Make field names and entry type lowercase. On by default.",
-      "examples": [],
-      "type": "boolean"
+      "description": "Make field names and entry type lowercase.",
+      "examples": [
+        "--lowercase (default)",
+        "--no-lowercase (keep original case)"
+      ],
+      "type": "boolean",
+      "deprecated": false
     },
     {
       "key": "quiet",
       "cli": "quiet",
       "description": "Suppress logs and warnings.",
       "examples": [],
-      "type": "true"
+      "type": "true",
+      "deprecated": false
     },
     {
       "key": "backup",
@@ -193,7 +215,8 @@
         "--backup (default)",
         "--no-backup (do not create a backup)"
       ],
-      "type": "boolean"
+      "type": "boolean",
+      "deprecated": false
     }
   ];
 
