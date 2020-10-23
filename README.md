@@ -160,10 +160,6 @@ Options:
                            a backup)
 ```
 
-#### Merging duplicates
-
-Using --merge will cause bibtex-tidy to merge any entries which share the same DOI, have identical abstracts, or have identical authors and title.
-
 ### Programmatic usage
 
 ```
