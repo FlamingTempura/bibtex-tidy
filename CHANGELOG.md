@@ -23,3 +23,8 @@
 ### v1.4.1
 
 No changes, aside from correcting version number at top of bibtex-tidy.js
+
+### v1.4.2
+
+- #17 Restore --help option
+- Support for older browsers and node versions
