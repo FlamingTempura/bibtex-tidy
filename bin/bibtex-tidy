@@ -7385,7 +7385,7 @@ const parseArguments = () => {
     const options = {
         backup: true,
     };
-    const help = process__default['default'].argv.includes('--help') || process__default['default'].argv.includes('-h');
+    let help = false;
     const args = process__default['default'].argv.slice(2);
     let inputFiles = [];
     const nextNumber = () => {
@@ -7414,6 +7414,10 @@ const parseArguments = () => {
         const argName = arg.split('=')[0];
         const valStr = arg.split('=')[1] || undefined;
         switch (argName) {
+            case '--help':
+            case '-h':
+                help = true;
+                break;
             case '--omit':
                 const omit = (valStr === null || valStr === void 0 ? void 0 : valStr.split(',')) || nextList();
                 if (!omit) {

@@ -74,7 +74,7 @@ const parseArguments = (): Arguments => {
 		// By default make a backup
 		backup: true,
 	};
-	const help = process.argv.includes('--help') || process.argv.includes('-h');
+	let help: boolean = false;
 	const args: string[] = process.argv.slice(2);
 	let inputFiles: string[] = [];
 
@@ -101,6 +101,10 @@ const parseArguments = (): Arguments => {
 		const valStr: string | undefined = arg.split('=')[1] || undefined;
 
 		switch (argName) {
+			case '--help':
+			case '-h':
+				help = true;
+				break;
 			case '--omit':
 				const omit = valStr?.split(',') || nextList();
 				if (!omit) {
