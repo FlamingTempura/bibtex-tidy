@@ -7,7 +7,6 @@
 		"strict": true,
 		"removeComments": true,
 		"moduleResolution": "Node",
-		"sourceMap": true,
 		"baseUrl": ".",
 		"lib": ["ESNext", "DOM"],
 		"target": "ES6",
