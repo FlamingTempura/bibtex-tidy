@@ -7,6 +7,7 @@ import babel from 'rollup-plugin-babel';
 import ts from 'typescript';
 import fs from 'fs';
 import pegjs from 'rollup-plugin-pegjs';
+import { builtinModules } from 'module';
 
 const tsv = {
 	processRow(row) {
@@ -132,6 +133,7 @@ export default [
 	},
 	{
 		input: 'src/cli.ts',
+		external: builtinModules,
 		plugins: [
 			typescript(),
 			docsResolve,
