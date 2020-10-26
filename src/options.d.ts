@@ -130,6 +130,13 @@ type Options = {
 	 * @example --no-lowercase (keep original case)
 	 */
 	lowercase?: boolean;
+};
+
+type CLIOptions = Options & {
+	/**
+	 * Show help
+	 */
+	help?: true;
 	/**
 	 * Suppress logs and warnings.
 	 */

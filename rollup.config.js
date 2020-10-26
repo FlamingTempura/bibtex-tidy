@@ -42,31 +42,39 @@ const docsResolve = {
 				console.error(member, e);
 			}
 		};
-		const options = [];
+
+		const members = [];
 		ts.forEachChild(sourceFile, (node) => {
 			const symbol = checker.getSymbolAtLocation(node.name);
-			if (symbol && symbol.escapedName === 'Options') {
-				const members = symbol.declarations[0].type.members;
-				members.forEach((member) => {
-					const key = member.name.escapedText;
-					options.push({
-						key,
-						cli: key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`), // convert camelCase to --dash-argument
-						description: member.jsDoc[0].comment.replace(
-							/([\w,.;:])\s+([A-Za-z])/g,
-							'$1 $2'
-						),
-						examples: (member.jsDoc[0].tags || [])
-							.filter((tag) => tag.tagName.escapedText === 'example')
-							.map((m) => m.comment),
-						type: typeToString(member),
-						deprecated: (member.jsDoc[0].tags || []).some(
-							(tag) => tag.tagName.escapedText === 'deprecated'
-						),
-					});
-				});
+			if (!symbol) return;
+			if (symbol.escapedName === 'Options') {
+				members.push(...symbol.declarations[0].type.members);
+			} else if (symbol.escapedName === 'CLIOptions') {
+				// Make sure these are at the top, e.g. --help, --quiet
+				members.push(...symbol.declarations[0].type.types[1].members);
 			}
 		});
+
+		const options = members
+			.sort((a, b) => (a.name.escapedText === 'help' ? -1 : 0))
+			.map((member) => {
+				const key = member.name.escapedText;
+				return {
+					key,
+					cli: key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`), // convert camelCase to --dash-argument
+					description: member.jsDoc[0].comment.replace(
+						/([\w,.;:])\s+([A-Za-z])/g,
+						'$1 $2'
+					),
+					examples: (member.jsDoc[0].tags || [])
+						.filter((tag) => tag.tagName.escapedText === 'example')
+						.map((m) => m.comment),
+					type: typeToString(member),
+					deprecated: (member.jsDoc[0].tags || []).some(
+						(tag) => tag.tagName.escapedText === 'deprecated'
+					),
+				};
+			});
 		return 'export default ' + JSON.stringify(options, null, 2) + ';';
 	},
 };

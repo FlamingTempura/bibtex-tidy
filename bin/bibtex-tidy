@@ -13,10 +13,17 @@ var process = require('process');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 var process__default = /*#__PURE__*/_interopDefaultLegacy(process);
 
 var OPTIONS = [
+  {
+    "key": "help",
+    "cli": "help",
+    "description": "Show help",
+    "examples": [],
+    "type": "true",
+    "deprecated": false
+  },
   {
     "key": "omit",
     "cli": "omit",
@@ -7346,7 +7353,6 @@ const printHelp = () => {
     console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
     console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.\n');
     console.log('Options:');
-    console.log('  --help'.padEnd(LEFT_MARGIN, ' ') + 'Show help\n');
     for (const opt of OPTIONS) {
         if (opt.deprecated)
             continue;
@@ -7381,13 +7387,13 @@ const printHelp = () => {
     }
     console.log('Full documentation <https://github.com/FlamingTempura/bibtex-tidy>');
 };
-const parseArguments = () => {
+function parseArguments() {
     const options = {
         backup: true,
     };
     let help = false;
     const args = process__default['default'].argv.slice(2);
-    let inputFiles = [];
+    const inputFiles = [];
     const nextNumber = () => {
         if (args.length === 1 && inputFiles.length === 0)
             return;
@@ -7565,8 +7571,8 @@ const parseArguments = () => {
         }
     }
     return { inputFiles, options, help };
-};
-const run = () => {
+}
+function start() {
     const { inputFiles, options, help } = parseArguments();
     if (inputFiles.length === 0 || help) {
         printHelp();
@@ -7578,10 +7584,10 @@ const run = () => {
     }
     console.log('Tidying...');
     for (const inputFile of inputFiles) {
-        const bibtex = fs__default['default'].readFileSync(inputFile, 'utf8');
+        const bibtex = fs.readFileSync(inputFile, 'utf8');
         const result = tidy$1.tidy(bibtex, options);
-        for (let warning of result.warnings) {
-            console.error(warning.code + ': ' + warning.message);
+        for (const warning of result.warnings) {
+            console.error(`${warning.code}: ${warning.message}`);
         }
         console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
         if (options.merge) {
@@ -7589,9 +7595,9 @@ const run = () => {
             console.log(`${dupes.length} entries merged`);
         }
         if (options.backup) {
-            fs__default['default'].writeFileSync(`${inputFile}.original`, bibtex, 'utf8');
+            fs.writeFileSync(`${inputFile}.original`, bibtex, 'utf8');
         }
-        fs__default['default'].writeFileSync(inputFile, result.bibtex, 'utf8');
+        fs.writeFileSync(inputFile, result.bibtex, 'utf8');
     }
-};
-run();
+}
+start();

@@ -13,6 +13,14 @@
 
   var options = [
     {
+      "key": "help",
+      "cli": "help",
+      "description": "Show help",
+      "examples": [],
+      "type": "true",
+      "deprecated": false
+    },
+    {
       "key": "omit",
       "cli": "omit",
       "description": "Remove fields - Remove specified fields from bibliography entries.",

@@ -1,11 +1,11 @@
 import OPTIONS from 'DOCS';
 import tidy from './index';
-import fs from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import process from 'process';
 
 type Arguments = {
 	inputFiles: string[];
-	options: Options;
+	options: CLIOptions;
 	help: boolean;
 };
 
@@ -33,7 +33,6 @@ const printHelp = (): void => {
 	console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
 	console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.\n');
 	console.log('Options:');
-	console.log('  --help'.padEnd(LEFT_MARGIN, ' ') + 'Show help\n');
 	for (const opt of OPTIONS) {
 		if (opt.deprecated) continue;
 		const lines = opt.description
@@ -69,14 +68,14 @@ const printHelp = (): void => {
 	);
 };
 
-const parseArguments = (): Arguments => {
-	const options: Options = {
+function parseArguments(): Arguments {
+	const options: CLIOptions = {
 		// By default make a backup
 		backup: true,
 	};
 	let help: boolean = false;
 	const args: string[] = process.argv.slice(2);
-	let inputFiles: string[] = [];
+	const inputFiles: string[] = [];
 
 	const nextNumber = (): number | undefined => {
 		if (args.length === 1 && inputFiles.length === 0) return; // do not consume the input argument
@@ -254,9 +253,9 @@ const parseArguments = (): Arguments => {
 		}
 	}
 	return { inputFiles, options, help };
-};
+}
 
-const run = (): void => {
+function start(): void {
 	const { inputFiles, options, help } = parseArguments();
 	if (inputFiles.length === 0 || help) {
 		printHelp();
@@ -268,10 +267,10 @@ const run = (): void => {
 	}
 	console.log('Tidying...');
 	for (const inputFile of inputFiles) {
-		const bibtex = fs.readFileSync(inputFile, 'utf8');
+		const bibtex = readFileSync(inputFile, 'utf8');
 		const result = tidy.tidy(bibtex, options);
-		for (let warning of result.warnings) {
-			console.error(warning.code + ': ' + warning.message);
+		for (const warning of result.warnings) {
+			console.error(`${warning.code}: ${warning.message}`);
 		}
 		console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
 		if (options.merge) {
@@ -279,10 +278,10 @@ const run = (): void => {
 			console.log(`${dupes.length} entries merged`);
 		}
 		if (options.backup) {
-			fs.writeFileSync(`${inputFile}.original`, bibtex, 'utf8');
+			writeFileSync(`${inputFile}.original`, bibtex, 'utf8');
 		}
-		fs.writeFileSync(inputFile, result.bibtex, 'utf8');
+		writeFileSync(inputFile, result.bibtex, 'utf8');
 	}
-};
+}
 
-run();
+start();
