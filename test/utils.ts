@@ -18,14 +18,16 @@ const unCamelCase = (str: string): string =>
 const api = (bibtexs: string[], options: Options = {}): BibTeXTidyResult =>
 	bibtexTidy.tidy(bibtexs[0], options);
 
+type CLIOptions = Options & { help?: boolean; h?: boolean };
+
 /**
  * Run bibtex-tidy through command line. Unlike API, this accepts multiple
  * bibtex files.
  */
 const cli = (
 	bibtexs: string[],
-	options: Options = {}
-): BibTeXTidyResult & { bibtexs: string[] } => {
+	options: CLIOptions = {}
+): BibTeXTidyResult & { bibtexs: string[]; stdout: string; stderr: string } => {
 	const inputFirst = Math.random() > 0.5; // <input> [options] rather than [options] <input>
 	const useEquals = Math.random() > 0.5; // --sort=name,year rather than --sort name year
 
@@ -70,12 +72,14 @@ const cli = (
 			encoding: 'utf8',
 		}
 	);
-	console.log(proc.stdout);
-	if (proc.status !== 0) {
-		console.error(proc.stderr, proc.error);
-		throw new Error('CLI failed');
+	const tidiedOutputs: string[] = [];
+
+	if (proc.status === 0) {
+		tmpFiles.forEach((tmpFile) =>
+			tidiedOutputs.push(fs.readFileSync(tmpFile, 'utf8'))
+		);
 	}
-	const tidied = tmpFiles.map((tmpFile) => fs.readFileSync(tmpFile, 'utf8'));
+
 	const warnings = (proc.stderr || '')
 		.split('\n')
 		.filter((line) => line.includes(': '))
@@ -88,8 +92,17 @@ const cli = (
 				duplicateOf: {} as BibTeXItem,
 			};
 		});
+
 	tmpFiles.forEach((tmpFile) => fs.unlinkSync(tmpFile));
-	return { bibtex: tidied[0], bibtexs: tidied, entries: [], warnings };
+
+	return {
+		bibtex: tidiedOutputs[0] || '',
+		bibtexs: tidiedOutputs,
+		entries: [],
+		warnings,
+		stdout: proc.stdout,
+		stderr: proc.stderr,
+	};
 };
 
 // Allows \ to be used and removes the empty line at the start
@@ -140,8 +153,8 @@ type TestOptions = {
 type TestCallback = (
 	t: TapTest,
 	cb: (
-		bibtexInput: string | string[],
-		tidyOptions?: Options
+		bibtexInput: string | string[] | undefined,
+		tidyOptions?: Options | CLIOptions
 	) => ReturnType<Tidy>
 ) => void;
 
@@ -151,14 +164,14 @@ export const test = (
 	{ apiOnly, cliOnly }: TestOptions = {}
 ) => {
 	const stablecb = (t: TapTest, tidy: Tidy) => {
-		cb(t, (bibtexInput, tidyOptions) => {
+		cb(t, (bibtexInput = [], tidyOptions) => {
 			const inputs =
 				typeof bibtexInput === 'string' ? [bibtexInput] : bibtexInput;
 
 			const a = tidy(inputs, tidyOptions);
 			try {
 				// Re-tidy output from tidy to check that output is stable
-				const b = tidy([a.bibtex], tidyOptions);
+				const b = tidy(bibtexInput.length > 0 ? [a.bibtex] : [], tidyOptions);
 				checkSame(
 					t,
 					a.bibtex,
@@ -173,10 +186,11 @@ export const test = (
 			}
 		});
 	};
+	const testOptions = { autoend: true };
 	if (!cliOnly) {
-		tap.test(`JS API: ${title}`, { autoend: true }, (t) => stablecb(t, api));
+		tap.test(`JS API: ${title}`, testOptions, (t) => stablecb(t, api));
 	}
 	if (!apiOnly) {
-		tap.test(`CLI: ${title}`, { autoend: true }, (t) => stablecb(t, cli));
+		tap.test(`CLI: ${title}`, testOptions, (t) => stablecb(t, cli));
 	}
 };
