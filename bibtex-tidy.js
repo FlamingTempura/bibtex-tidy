@@ -7024,309 +7024,341 @@
 
   const DEFAULT_ENTRY_ORDER = ['key'];
   const DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
-  const DEFAULT_FIELD_ORDER = [
-      'title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal',
-      'booktitle', 'location', 'on', 'publisher', 'address', 'series',
-      'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url',
-      'urldate', 'copyright', 'category', 'note', 'metadata'
-  ];
-  const MONTHS = new Set([
-      'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
-  ]);
+  const DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'];
+  const MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
   const specialCharacters = new Map(unicode);
-  const escapeSpecialCharacters = (str) => {
-      let newstr = '';
-      let escapeMode = false;
-      for (let i = 0; i < str.length; i++) {
-          if (escapeMode) {
-              escapeMode = false;
-              newstr += str[i];
-              continue;
-          }
-          if (str[i] === '\\') {
-              escapeMode = true;
-              newstr += str[i];
-              continue;
-          }
-          const c = str.charCodeAt(i).toString(16).padStart(4, '0');
-          newstr += specialCharacters.get(c) || str[i];
+
+  const escapeSpecialCharacters = str => {
+    let newstr = '';
+    let escapeMode = false;
+
+    for (let i = 0; i < str.length; i++) {
+      if (escapeMode) {
+        escapeMode = false;
+        newstr += str[i];
+        continue;
       }
-      return newstr;
-  };
-  const titleCase = (str) => {
-      return str.replace(/(\w)(\S*)/g, (u, first, rest) => {
-          return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
-      });
-  };
-  const alphaNum = (str) => {
-      if (typeof str === 'undefined')
-          return undefined;
-      return String(str)
-          .replace(/[^0-9A-Za-z]/g, '')
-          .toLocaleLowerCase();
-  };
-  const tidy = (input, { omit = [], curly = false, numeric = false, tab = false, align = 14, sort = false, merge = false, stripEnclosingBraces = false, dropAllCaps = false, escape = true, sortFields = false, stripComments = false, encodeUrls = false, tidyComments = true, space = 2, duplicates = false, trailingCommas = false, removeEmptyFields = false, lowercase = true, sortProperties, } = {}) => {
-      var _a, _b, _c, _d, _e, _f, _g;
-      if (sort === true)
-          sort = DEFAULT_ENTRY_ORDER;
-      if (space === true)
-          space = 2;
-      if (sortProperties)
-          sortFields = sortProperties;
-      if (sortFields === true)
-          sortFields = DEFAULT_FIELD_ORDER;
-      if (merge === true)
-          merge = 'combine';
-      if (duplicates === true)
-          duplicates = DEFAULT_MERGE_CHECK;
-      if (align === false)
-          align = 1;
-      const indent = tab ? '\t' : ' '.repeat(space);
-      const uniqCheck = new Map();
-      if (merge && !duplicates)
-          duplicates = DEFAULT_MERGE_CHECK;
-      if (duplicates) {
-          for (const key of duplicates) {
-              uniqCheck.set(key, !!merge);
-          }
+
+      if (str[i] === '\\') {
+        escapeMode = true;
+        newstr += str[i];
+        continue;
       }
-      if (!uniqCheck.has('key')) {
-          uniqCheck.set('key', false);
+
+      const c = str.charCodeAt(i).toString(16).padStart(4, '0');
+      newstr += specialCharacters.get(c) || str[i];
+    }
+
+    return newstr;
+  };
+
+  const titleCase = str => {
+    return str.replace(/(\w)(\S*)/g, (u, first, rest) => {
+      return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
+    });
+  };
+
+  const alphaNum = str => {
+    if (typeof str === 'undefined') return undefined;
+    return String(str).replace(/[^0-9A-Za-z]/g, '').toLocaleLowerCase();
+  };
+
+  const tidy = function tidy(input) {
+    var _item$fieldMap$get, _item$fieldMap$get2, _item$fieldMap$get3, _item$fieldMap$get4;
+
+    let {
+      omit = [],
+      curly = false,
+      numeric = false,
+      tab = false,
+      align = 14,
+      sort = false,
+      merge = false,
+      stripEnclosingBraces = false,
+      dropAllCaps = false,
+      escape = true,
+      sortFields = false,
+      stripComments = false,
+      encodeUrls = false,
+      tidyComments = true,
+      space = 2,
+      duplicates = false,
+      trailingCommas = false,
+      removeEmptyFields = false,
+      lowercase = true,
+      sortProperties
+    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    if (sort === true) sort = DEFAULT_ENTRY_ORDER;
+    if (space === true) space = 2;
+    if (sortProperties) sortFields = sortProperties;
+    if (sortFields === true) sortFields = DEFAULT_FIELD_ORDER;
+    if (merge === true) merge = 'combine';
+    if (duplicates === true) duplicates = DEFAULT_MERGE_CHECK;
+    if (align === false) align = 1;
+    const indent = tab ? '\t' : ' '.repeat(space);
+    const uniqCheck = new Map();
+    if (merge && !duplicates) duplicates = DEFAULT_MERGE_CHECK;
+
+    if (duplicates) {
+      for (const key of duplicates) {
+        uniqCheck.set(key, !!merge);
       }
-      const omitFields = new Set(omit);
-      const items = parser.parse(input);
-      const keys = new Map();
-      const dois = new Map();
-      const citations = new Map();
-      const abstracts = new Map();
-      const sortIndexes = new Map();
-      const warnings = [];
-      for (const item of items) {
-          if (item.itemtype !== 'entry')
-              continue;
-          if (!item.key) {
-              warnings.push({
-                  code: 'MISSING_KEY',
-                  message: `${item.key} does not have an entry key.`,
-                  entry: item,
-              });
-          }
-          item.fieldMap = new Map();
-          for (const field of item.fields) {
-              const fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
-              const lname = fieldName.toLocaleLowerCase();
-              if (omitFields.has(fieldName) || item.fieldMap.has(fieldName))
-                  continue;
-              let val;
-              if (field.datatype === 'concatinate') {
-                  val = field.raw;
+    }
+
+    if (!uniqCheck.has('key')) {
+      uniqCheck.set('key', false);
+    }
+
+    const omitFields = new Set(omit);
+    const items = parser.parse(input);
+    const keys = new Map();
+    const dois = new Map();
+    const citations = new Map();
+    const abstracts = new Map();
+    const sortIndexes = new Map();
+    const warnings = [];
+
+    for (const item of items) {
+      if (item.itemtype !== 'entry') continue;
+
+      if (!item.key) {
+        warnings.push({
+          code: 'MISSING_KEY',
+          message: "".concat(item.key, " does not have an entry key."),
+          entry: item
+        });
+      }
+
+      item.fieldMap = new Map();
+
+      for (const field of item.fields) {
+        const fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
+        const lname = fieldName.toLocaleLowerCase();
+        if (omitFields.has(fieldName) || item.fieldMap.has(fieldName)) continue;
+        let val;
+
+        if (field.datatype === 'concatinate') {
+          val = field.raw;
+        } else {
+          val = String(field.value).replace(/\s*\n\s*/g, ' ').trim();
+          if (stripEnclosingBraces) val = val.replace(/^\{([^{}]*)\}$/g, '$1');
+          if (dropAllCaps && val.match(/^[^a-z]+$/)) val = titleCase(val);
+          if (lname === 'url' && encodeUrls) val = val.replace(/\\?_/g, '\\%5F');
+          if (escape) val = escapeSpecialCharacters(val);
+          if (lname === 'pages') val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+        }
+
+        val = val.trim();
+
+        if (val || !removeEmptyFields) {
+          item.fieldMap.set(fieldName, {
+            value: val,
+            datatype: field.datatype
+          });
+        }
+      }
+
+      for (const [key, doMerge] of uniqCheck) {
+        let duplicateOf;
+
+        switch (key) {
+          case 'key':
+            if (!item.key) continue;
+            duplicateOf = keys.get(item.key);
+            if (!duplicateOf) keys.set(item.key, item);
+            break;
+
+          case 'doi':
+            const doi = alphaNum((_item$fieldMap$get = item.fieldMap.get('doi')) === null || _item$fieldMap$get === void 0 ? void 0 : _item$fieldMap$get.value);
+            if (!doi) continue;
+            duplicateOf = dois.get(doi);
+            if (!duplicateOf) dois.set(doi, item);
+            break;
+
+          case 'citation':
+            const ttl = (_item$fieldMap$get2 = item.fieldMap.get('title')) === null || _item$fieldMap$get2 === void 0 ? void 0 : _item$fieldMap$get2.value;
+            const aut = (_item$fieldMap$get3 = item.fieldMap.get('author')) === null || _item$fieldMap$get3 === void 0 ? void 0 : _item$fieldMap$get3.value;
+            if (!ttl || !aut) continue;
+            const cit = alphaNum(aut.split(/,| and/)[0]) + ':' + alphaNum(ttl);
+            duplicateOf = citations.get(cit);
+            if (!duplicateOf) citations.set(cit, item);
+            break;
+
+          case 'abstract':
+            const abstract = alphaNum((_item$fieldMap$get4 = item.fieldMap.get('abstract')) === null || _item$fieldMap$get4 === void 0 ? void 0 : _item$fieldMap$get4.value);
+            const abs = abstract === null || abstract === void 0 ? void 0 : abstract.slice(0, 100);
+            if (!abs) continue;
+            duplicateOf = abstracts.get(abs);
+            if (!duplicateOf) abstracts.set(abs, item);
+            break;
+        }
+
+        if (!duplicateOf) continue;
+
+        if (doMerge) {
+          item.duplicate = true;
+          warnings.push({
+            code: 'DUPLICATE_ENTRY',
+            message: "".concat(item.key, " appears to be a duplicate of ").concat(duplicateOf.key, " and was removed."),
+            entry: item,
+            duplicateOf
+          });
+
+          switch (merge) {
+            case 'last':
+              duplicateOf.key = item.key;
+              duplicateOf.fieldMap = item.fieldMap;
+              break;
+
+            case 'combine':
+              for (const [k, v] of item.fieldMap) {
+                if (!duplicateOf.fieldMap.has(k)) duplicateOf.fieldMap.set(k, v);
               }
-              else {
-                  val = String(field.value)
-                      .replace(/\s*\n\s*/g, ' ')
-                      .trim();
-                  if (stripEnclosingBraces)
-                      val = val.replace(/^\{([^{}]*)\}$/g, '$1');
-                  if (dropAllCaps && val.match(/^[^a-z]+$/))
-                      val = titleCase(val);
-                  if (lname === 'url' && encodeUrls)
-                      val = val.replace(/\\?_/g, '\\%5F');
-                  if (escape)
-                      val = escapeSpecialCharacters(val);
-                  if (lname === 'pages')
-                      val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+
+              break;
+
+            case 'overwrite':
+              duplicateOf.key = item.key;
+
+              for (const [k, v] of item.fieldMap) {
+                duplicateOf.fieldMap.set(k, v);
               }
-              val = val.trim();
-              if (val || !removeEmptyFields) {
-                  item.fieldMap.set(fieldName, {
-                      value: val,
-                      datatype: field.datatype,
-                  });
-              }
-          }
-          for (const [key, doMerge] of uniqCheck) {
-              let duplicateOf;
-              switch (key) {
-                  case 'key':
-                      if (!item.key)
-                          continue;
-                      duplicateOf = keys.get(item.key);
-                      if (!duplicateOf)
-                          keys.set(item.key, item);
-                      break;
-                  case 'doi':
-                      const doi = alphaNum((_a = item.fieldMap.get('doi')) === null || _a === void 0 ? void 0 : _a.value);
-                      if (!doi)
-                          continue;
-                      duplicateOf = dois.get(doi);
-                      if (!duplicateOf)
-                          dois.set(doi, item);
-                      break;
-                  case 'citation':
-                      const ttl = (_b = item.fieldMap.get('title')) === null || _b === void 0 ? void 0 : _b.value;
-                      const aut = (_c = item.fieldMap.get('author')) === null || _c === void 0 ? void 0 : _c.value;
-                      if (!ttl || !aut)
-                          continue;
-                      const cit = alphaNum(aut.split(/,| and/)[0]) + ':' + alphaNum(ttl);
-                      duplicateOf = citations.get(cit);
-                      if (!duplicateOf)
-                          citations.set(cit, item);
-                      break;
-                  case 'abstract':
-                      const abstract = alphaNum((_d = item.fieldMap.get('abstract')) === null || _d === void 0 ? void 0 : _d.value);
-                      const abs = abstract === null || abstract === void 0 ? void 0 : abstract.slice(0, 100);
-                      if (!abs)
-                          continue;
-                      duplicateOf = abstracts.get(abs);
-                      if (!duplicateOf)
-                          abstracts.set(abs, item);
-                      break;
-              }
-              if (!duplicateOf)
-                  continue;
-              if (doMerge) {
-                  item.duplicate = true;
-                  warnings.push({
-                      code: 'DUPLICATE_ENTRY',
-                      message: `${item.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`,
-                      entry: item,
-                      duplicateOf,
-                  });
-                  switch (merge) {
-                      case 'last':
-                          duplicateOf.key = item.key;
-                          duplicateOf.fieldMap = item.fieldMap;
-                          break;
-                      case 'combine':
-                          for (const [k, v] of item.fieldMap) {
-                              if (!duplicateOf.fieldMap.has(k))
-                                  duplicateOf.fieldMap.set(k, v);
-                          }
-                          break;
-                      case 'overwrite':
-                          duplicateOf.key = item.key;
-                          for (const [k, v] of item.fieldMap) {
-                              duplicateOf.fieldMap.set(k, v);
-                          }
-                          break;
-                  }
-              }
-              else {
-                  warnings.push({
-                      code: 'DUPLICATE_KEY',
-                      message: `${item.key} is a duplicate entry key.`,
-                      entry: item,
-                  });
-              }
+
               break;
           }
+        } else {
+          warnings.push({
+            code: 'DUPLICATE_KEY',
+            message: "".concat(item.key, " is a duplicate entry key."),
+            entry: item
+          });
+        }
+
+        break;
       }
-      if (sort) {
-          const preceedingMeta = [];
-          for (const item of items) {
-              if (item.itemtype !== 'entry') {
-                  preceedingMeta.push(item);
-                  continue;
-              }
-              const sortIndex = new Map();
-              for (let key of sort) {
-                  if (key.startsWith('-'))
-                      key = key.slice(1);
-                  let val;
-                  if (key === 'key') {
-                      val = item.key || '';
-                  }
-                  else if (key === 'type') {
-                      val = item.type;
-                  }
-                  else {
-                      val = String((_g = (_f = (_e = item.fieldMap) === null || _e === void 0 ? void 0 : _e.get(key)) === null || _f === void 0 ? void 0 : _f.value) !== null && _g !== void 0 ? _g : '');
-                  }
-                  sortIndex.set(key, val.toLowerCase());
-              }
-              sortIndexes.set(item, sortIndex);
-              while (preceedingMeta.length > 0) {
-                  sortIndexes.set(preceedingMeta.pop(), sortIndex);
-              }
-          }
-          for (let i = sort.length - 1; i >= 0; i--) {
-              const desc = sort[i].startsWith('-');
-              const key = desc ? sort[i].slice(1) : sort[i];
-              items.sort((a, b) => {
-                  var _a, _b, _c, _d;
-                  const ia = (_b = (_a = sortIndexes.get(a)) === null || _a === void 0 ? void 0 : _a.get(key)) !== null && _b !== void 0 ? _b : '\ufff0';
-                  const ib = (_d = (_c = sortIndexes.get(b)) === null || _c === void 0 ? void 0 : _c.get(key)) !== null && _d !== void 0 ? _d : '\ufff0';
-                  return (desc ? ib : ia).localeCompare(desc ? ia : ib);
-              });
-          }
-      }
-      let bibtex = '';
+    }
+
+    if (sort) {
+      const preceedingMeta = [];
+
       for (const item of items) {
-          switch (item.itemtype) {
-              case 'string':
-                  bibtex += `@string{${item.name} = ${item.raw}}\n`;
-                  break;
-              case 'preamble':
-                  bibtex += `@preamble{${item.raw}}\n`;
-                  break;
-              case 'comment':
-                  if (stripComments)
-                      continue;
-                  if (tidyComments) {
-                      bibtex += item.comment.trim() ? item.comment.trim() + '\n' : '';
-                  }
-                  else {
-                      bibtex += item.comment.replace(/^[ \t]*\n|[ \t]*$/g, '');
-                  }
-                  break;
-              case 'entry':
-                  if (item.duplicate)
-                      continue;
-                  const itemType = lowercase ? item.type.toLocaleLowerCase() : item.type;
-                  bibtex += `@${itemType}{`;
-                  if (item.key)
-                      bibtex += `${item.key}`;
-                  const sortedFieldNames = new Set([
-                      ...(sortFields || []),
-                      ...item.fieldMap.keys(),
-                  ]);
-                  for (const k of sortedFieldNames) {
-                      const field = item.fieldMap.get(k);
-                      if (!field)
-                          continue;
-                      bibtex += `,\n${indent}${k.padEnd(align - 1)} = `;
-                      const val = field.value;
-                      const dig3 = String(val).slice(0, 3).toLowerCase();
-                      if (numeric && val.match(/^[1-9][0-9]*$/)) {
-                          bibtex += val;
-                      }
-                      else if (numeric && k === 'month' && MONTHS.has(dig3)) {
-                          bibtex += dig3;
-                      }
-                      else if (field.datatype === 'braced' || curly) {
-                          bibtex += `{${val}}`;
-                      }
-                      else if (field.datatype === 'quoted') {
-                          bibtex += `"${val}"`;
-                      }
-                      else {
-                          bibtex += val;
-                      }
-                  }
-                  if (trailingCommas) {
-                      bibtex += ',';
-                  }
-                  bibtex += `\n}\n`;
-                  delete item.fieldMap;
-                  break;
+        if (item.itemtype !== 'entry') {
+          preceedingMeta.push(item);
+          continue;
+        }
+
+        const sortIndex = new Map();
+
+        for (let key of sort) {
+          if (key.startsWith('-')) key = key.slice(1);
+          let val;
+
+          if (key === 'key') {
+            val = item.key || '';
+          } else if (key === 'type') {
+            val = item.type;
+          } else {
+            var _item$fieldMap$get$va, _item$fieldMap, _item$fieldMap$get5;
+
+            val = String((_item$fieldMap$get$va = (_item$fieldMap = item.fieldMap) === null || _item$fieldMap === void 0 ? void 0 : (_item$fieldMap$get5 = _item$fieldMap.get(key)) === null || _item$fieldMap$get5 === void 0 ? void 0 : _item$fieldMap$get5.value) !== null && _item$fieldMap$get$va !== void 0 ? _item$fieldMap$get$va : '');
           }
+
+          sortIndex.set(key, val.toLowerCase());
+        }
+
+        sortIndexes.set(item, sortIndex);
+
+        while (preceedingMeta.length > 0) {
+          sortIndexes.set(preceedingMeta.pop(), sortIndex);
+        }
       }
-      if (!bibtex.endsWith('\n'))
-          bibtex += '\n';
-      const entries = items.filter((item) => item.itemtype === 'entry');
-      return { bibtex, warnings, entries };
+
+      for (let i = sort.length - 1; i >= 0; i--) {
+        const desc = sort[i].startsWith('-');
+        const key = desc ? sort[i].slice(1) : sort[i];
+        items.sort((a, b) => {
+          var _sortIndexes$get$get, _sortIndexes$get, _sortIndexes$get$get2, _sortIndexes$get2;
+
+          const ia = (_sortIndexes$get$get = (_sortIndexes$get = sortIndexes.get(a)) === null || _sortIndexes$get === void 0 ? void 0 : _sortIndexes$get.get(key)) !== null && _sortIndexes$get$get !== void 0 ? _sortIndexes$get$get : '\ufff0';
+          const ib = (_sortIndexes$get$get2 = (_sortIndexes$get2 = sortIndexes.get(b)) === null || _sortIndexes$get2 === void 0 ? void 0 : _sortIndexes$get2.get(key)) !== null && _sortIndexes$get$get2 !== void 0 ? _sortIndexes$get$get2 : '\ufff0';
+          return (desc ? ib : ia).localeCompare(desc ? ia : ib);
+        });
+      }
+    }
+
+    let bibtex = '';
+
+    for (const item of items) {
+      switch (item.itemtype) {
+        case 'string':
+          bibtex += "@string{".concat(item.name, " = ").concat(item.raw, "}\n");
+          break;
+
+        case 'preamble':
+          bibtex += "@preamble{".concat(item.raw, "}\n");
+          break;
+
+        case 'comment':
+          if (stripComments) continue;
+
+          if (tidyComments) {
+            bibtex += item.comment.trim() ? item.comment.trim() + '\n' : '';
+          } else {
+            bibtex += item.comment.replace(/^[ \t]*\n|[ \t]*$/g, '');
+          }
+
+          break;
+
+        case 'entry':
+          if (item.duplicate) continue;
+          const itemType = lowercase ? item.type.toLocaleLowerCase() : item.type;
+          bibtex += "@".concat(itemType, "{");
+          if (item.key) bibtex += "".concat(item.key);
+          const sortedFieldNames = new Set([...(sortFields || []), ...item.fieldMap.keys()]);
+
+          for (const k of sortedFieldNames) {
+            const field = item.fieldMap.get(k);
+            if (!field) continue;
+            bibtex += ",\n".concat(indent).concat(k.padEnd(align - 1), " = ");
+            const val = field.value;
+            const dig3 = String(val).slice(0, 3).toLowerCase();
+
+            if (numeric && val.match(/^[1-9][0-9]*$/)) {
+              bibtex += val;
+            } else if (numeric && k === 'month' && MONTHS.has(dig3)) {
+              bibtex += dig3;
+            } else if (field.datatype === 'braced' || curly) {
+              bibtex += "{".concat(val, "}");
+            } else if (field.datatype === 'quoted') {
+              bibtex += "\"".concat(val, "\"");
+            } else {
+              bibtex += val;
+            }
+          }
+
+          if (trailingCommas) {
+            bibtex += ',';
+          }
+
+          bibtex += "\n}\n";
+          delete item.fieldMap;
+          break;
+      }
+    }
+
+    if (!bibtex.endsWith('\n')) bibtex += '\n';
+    const entries = items.filter(item => item.itemtype === 'entry');
+    return {
+      bibtex,
+      warnings,
+      entries
+    };
   };
-  var index = { tidy, options };
+
+  var index = {
+    tidy,
+    options
+  };
 
   return index;
 

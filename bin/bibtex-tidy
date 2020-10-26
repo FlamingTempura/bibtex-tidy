@@ -15,6 +15,135 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 
 var process__default = /*#__PURE__*/_interopDefaultLegacy(process);
 
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+}
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+}
+
+function _iterableToArrayLimit(arr, i) {
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _createForOfIteratorHelper(o, allowArrayLike) {
+  var it;
+
+  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
+      var i = 0;
+
+      var F = function () {};
+
+      return {
+        s: F,
+        n: function () {
+          if (i >= o.length) return {
+            done: true
+          };
+          return {
+            done: false,
+            value: o[i++]
+          };
+        },
+        e: function (e) {
+          throw e;
+        },
+        f: F
+      };
+    }
+
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
+  var normalCompletion = true,
+      didErr = false,
+      err;
+  return {
+    s: function () {
+      it = o[Symbol.iterator]();
+    },
+    n: function () {
+      var step = it.next();
+      normalCompletion = step.done;
+      return step;
+    },
+    e: function (e) {
+      didErr = true;
+      err = e;
+    },
+    f: function () {
+      try {
+        if (!normalCompletion && it.return != null) it.return();
+      } finally {
+        if (didErr) throw err;
+      }
+    }
+  };
+}
+
 var OPTIONS = [
   {
     "key": "help",
@@ -7026,578 +7155,869 @@ var unicode = [ [ "0023",
   [ "d7ff",
     "\\mathtt{9}" ] ];
 
-const DEFAULT_ENTRY_ORDER = ['key'];
-const DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
-const DEFAULT_FIELD_ORDER = [
-    'title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal',
-    'booktitle', 'location', 'on', 'publisher', 'address', 'series',
-    'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url',
-    'urldate', 'copyright', 'category', 'note', 'metadata'
-];
-const MONTHS = new Set([
-    'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
-]);
-const specialCharacters = new Map(unicode);
-const escapeSpecialCharacters = (str) => {
-    let newstr = '';
-    let escapeMode = false;
-    for (let i = 0; i < str.length; i++) {
-        if (escapeMode) {
-            escapeMode = false;
-            newstr += str[i];
-            continue;
-        }
-        if (str[i] === '\\') {
-            escapeMode = true;
-            newstr += str[i];
-            continue;
-        }
-        const c = str.charCodeAt(i).toString(16).padStart(4, '0');
-        newstr += specialCharacters.get(c) || str[i];
-    }
-    return newstr;
-};
-const titleCase = (str) => {
-    return str.replace(/(\w)(\S*)/g, (u, first, rest) => {
-        return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
-    });
-};
-const alphaNum = (str) => {
-    if (typeof str === 'undefined')
-        return undefined;
-    return String(str)
-        .replace(/[^0-9A-Za-z]/g, '')
-        .toLocaleLowerCase();
-};
-const tidy = (input, { omit = [], curly = false, numeric = false, tab = false, align = 14, sort = false, merge = false, stripEnclosingBraces = false, dropAllCaps = false, escape = true, sortFields = false, stripComments = false, encodeUrls = false, tidyComments = true, space = 2, duplicates = false, trailingCommas = false, removeEmptyFields = false, lowercase = true, sortProperties, } = {}) => {
-    var _a, _b, _c, _d, _e, _f, _g;
-    if (sort === true)
-        sort = DEFAULT_ENTRY_ORDER;
-    if (space === true)
-        space = 2;
-    if (sortProperties)
-        sortFields = sortProperties;
-    if (sortFields === true)
-        sortFields = DEFAULT_FIELD_ORDER;
-    if (merge === true)
-        merge = 'combine';
-    if (duplicates === true)
-        duplicates = DEFAULT_MERGE_CHECK;
-    if (align === false)
-        align = 1;
-    const indent = tab ? '\t' : ' '.repeat(space);
-    const uniqCheck = new Map();
-    if (merge && !duplicates)
-        duplicates = DEFAULT_MERGE_CHECK;
-    if (duplicates) {
-        for (const key of duplicates) {
-            uniqCheck.set(key, !!merge);
-        }
-    }
-    if (!uniqCheck.has('key')) {
-        uniqCheck.set('key', false);
-    }
-    const omitFields = new Set(omit);
-    const items = parser.parse(input);
-    const keys = new Map();
-    const dois = new Map();
-    const citations = new Map();
-    const abstracts = new Map();
-    const sortIndexes = new Map();
-    const warnings = [];
-    for (const item of items) {
-        if (item.itemtype !== 'entry')
-            continue;
-        if (!item.key) {
-            warnings.push({
-                code: 'MISSING_KEY',
-                message: `${item.key} does not have an entry key.`,
-                entry: item,
-            });
-        }
-        item.fieldMap = new Map();
-        for (const field of item.fields) {
-            const fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
-            const lname = fieldName.toLocaleLowerCase();
-            if (omitFields.has(fieldName) || item.fieldMap.has(fieldName))
-                continue;
-            let val;
-            if (field.datatype === 'concatinate') {
-                val = field.raw;
-            }
-            else {
-                val = String(field.value)
-                    .replace(/\s*\n\s*/g, ' ')
-                    .trim();
-                if (stripEnclosingBraces)
-                    val = val.replace(/^\{([^{}]*)\}$/g, '$1');
-                if (dropAllCaps && val.match(/^[^a-z]+$/))
-                    val = titleCase(val);
-                if (lname === 'url' && encodeUrls)
-                    val = val.replace(/\\?_/g, '\\%5F');
-                if (escape)
-                    val = escapeSpecialCharacters(val);
-                if (lname === 'pages')
-                    val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
-            }
-            val = val.trim();
-            if (val || !removeEmptyFields) {
-                item.fieldMap.set(fieldName, {
-                    value: val,
-                    datatype: field.datatype,
-                });
-            }
-        }
-        for (const [key, doMerge] of uniqCheck) {
-            let duplicateOf;
-            switch (key) {
-                case 'key':
-                    if (!item.key)
-                        continue;
-                    duplicateOf = keys.get(item.key);
-                    if (!duplicateOf)
-                        keys.set(item.key, item);
-                    break;
-                case 'doi':
-                    const doi = alphaNum((_a = item.fieldMap.get('doi')) === null || _a === void 0 ? void 0 : _a.value);
-                    if (!doi)
-                        continue;
-                    duplicateOf = dois.get(doi);
-                    if (!duplicateOf)
-                        dois.set(doi, item);
-                    break;
-                case 'citation':
-                    const ttl = (_b = item.fieldMap.get('title')) === null || _b === void 0 ? void 0 : _b.value;
-                    const aut = (_c = item.fieldMap.get('author')) === null || _c === void 0 ? void 0 : _c.value;
-                    if (!ttl || !aut)
-                        continue;
-                    const cit = alphaNum(aut.split(/,| and/)[0]) + ':' + alphaNum(ttl);
-                    duplicateOf = citations.get(cit);
-                    if (!duplicateOf)
-                        citations.set(cit, item);
-                    break;
-                case 'abstract':
-                    const abstract = alphaNum((_d = item.fieldMap.get('abstract')) === null || _d === void 0 ? void 0 : _d.value);
-                    const abs = abstract === null || abstract === void 0 ? void 0 : abstract.slice(0, 100);
-                    if (!abs)
-                        continue;
-                    duplicateOf = abstracts.get(abs);
-                    if (!duplicateOf)
-                        abstracts.set(abs, item);
-                    break;
-            }
-            if (!duplicateOf)
-                continue;
-            if (doMerge) {
-                item.duplicate = true;
-                warnings.push({
-                    code: 'DUPLICATE_ENTRY',
-                    message: `${item.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`,
-                    entry: item,
-                    duplicateOf,
-                });
-                switch (merge) {
-                    case 'last':
-                        duplicateOf.key = item.key;
-                        duplicateOf.fieldMap = item.fieldMap;
-                        break;
-                    case 'combine':
-                        for (const [k, v] of item.fieldMap) {
-                            if (!duplicateOf.fieldMap.has(k))
-                                duplicateOf.fieldMap.set(k, v);
-                        }
-                        break;
-                    case 'overwrite':
-                        duplicateOf.key = item.key;
-                        for (const [k, v] of item.fieldMap) {
-                            duplicateOf.fieldMap.set(k, v);
-                        }
-                        break;
-                }
-            }
-            else {
-                warnings.push({
-                    code: 'DUPLICATE_KEY',
-                    message: `${item.key} is a duplicate entry key.`,
-                    entry: item,
-                });
-            }
-            break;
-        }
-    }
-    if (sort) {
-        const preceedingMeta = [];
-        for (const item of items) {
-            if (item.itemtype !== 'entry') {
-                preceedingMeta.push(item);
-                continue;
-            }
-            const sortIndex = new Map();
-            for (let key of sort) {
-                if (key.startsWith('-'))
-                    key = key.slice(1);
-                let val;
-                if (key === 'key') {
-                    val = item.key || '';
-                }
-                else if (key === 'type') {
-                    val = item.type;
-                }
-                else {
-                    val = String((_g = (_f = (_e = item.fieldMap) === null || _e === void 0 ? void 0 : _e.get(key)) === null || _f === void 0 ? void 0 : _f.value) !== null && _g !== void 0 ? _g : '');
-                }
-                sortIndex.set(key, val.toLowerCase());
-            }
-            sortIndexes.set(item, sortIndex);
-            while (preceedingMeta.length > 0) {
-                sortIndexes.set(preceedingMeta.pop(), sortIndex);
-            }
-        }
-        for (let i = sort.length - 1; i >= 0; i--) {
-            const desc = sort[i].startsWith('-');
-            const key = desc ? sort[i].slice(1) : sort[i];
-            items.sort((a, b) => {
-                var _a, _b, _c, _d;
-                const ia = (_b = (_a = sortIndexes.get(a)) === null || _a === void 0 ? void 0 : _a.get(key)) !== null && _b !== void 0 ? _b : '\ufff0';
-                const ib = (_d = (_c = sortIndexes.get(b)) === null || _c === void 0 ? void 0 : _c.get(key)) !== null && _d !== void 0 ? _d : '\ufff0';
-                return (desc ? ib : ia).localeCompare(desc ? ia : ib);
-            });
-        }
-    }
-    let bibtex = '';
-    for (const item of items) {
-        switch (item.itemtype) {
-            case 'string':
-                bibtex += `@string{${item.name} = ${item.raw}}\n`;
-                break;
-            case 'preamble':
-                bibtex += `@preamble{${item.raw}}\n`;
-                break;
-            case 'comment':
-                if (stripComments)
-                    continue;
-                if (tidyComments) {
-                    bibtex += item.comment.trim() ? item.comment.trim() + '\n' : '';
-                }
-                else {
-                    bibtex += item.comment.replace(/^[ \t]*\n|[ \t]*$/g, '');
-                }
-                break;
-            case 'entry':
-                if (item.duplicate)
-                    continue;
-                const itemType = lowercase ? item.type.toLocaleLowerCase() : item.type;
-                bibtex += `@${itemType}{`;
-                if (item.key)
-                    bibtex += `${item.key}`;
-                const sortedFieldNames = new Set([
-                    ...(sortFields || []),
-                    ...item.fieldMap.keys(),
-                ]);
-                for (const k of sortedFieldNames) {
-                    const field = item.fieldMap.get(k);
-                    if (!field)
-                        continue;
-                    bibtex += `,\n${indent}${k.padEnd(align - 1)} = `;
-                    const val = field.value;
-                    const dig3 = String(val).slice(0, 3).toLowerCase();
-                    if (numeric && val.match(/^[1-9][0-9]*$/)) {
-                        bibtex += val;
-                    }
-                    else if (numeric && k === 'month' && MONTHS.has(dig3)) {
-                        bibtex += dig3;
-                    }
-                    else if (field.datatype === 'braced' || curly) {
-                        bibtex += `{${val}}`;
-                    }
-                    else if (field.datatype === 'quoted') {
-                        bibtex += `"${val}"`;
-                    }
-                    else {
-                        bibtex += val;
-                    }
-                }
-                if (trailingCommas) {
-                    bibtex += ',';
-                }
-                bibtex += `\n}\n`;
-                delete item.fieldMap;
-                break;
-        }
-    }
-    if (!bibtex.endsWith('\n'))
-        bibtex += '\n';
-    const entries = items.filter((item) => item.itemtype === 'entry');
-    return { bibtex, warnings, entries };
-};
-var tidy$1 = { tidy, options: OPTIONS };
+var DEFAULT_ENTRY_ORDER = ['key'];
+var DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
+var DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'];
+var MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
+var specialCharacters = new Map(unicode);
 
-const BREAK_LINE = 84;
-const LEFT_MARGIN = 27;
-const splitLines = (line, limit) => {
-    const words = line.split(' ');
-    const lines = [''];
-    for (const word of words) {
-        if (lines[lines.length - 1].length + word.length + 1 > limit)
-            lines.push('');
-        lines[lines.length - 1] += word + ' ';
+var escapeSpecialCharacters = function escapeSpecialCharacters(str) {
+  var newstr = '';
+  var escapeMode = false;
+
+  for (var i = 0; i < str.length; i++) {
+    if (escapeMode) {
+      escapeMode = false;
+      newstr += str[i];
+      continue;
     }
-    return lines;
-};
-const fromCamelCase = (str) => {
-    return str.replace(/[A-Z]/g, (c) => {
-        return '-' + c.toLowerCase();
-    });
-};
-const printHelp = () => {
-    console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
-    console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.\n');
-    console.log('Options:');
-    for (const opt of OPTIONS) {
-        if (opt.deprecated)
-            continue;
-        const lines = opt.description
-            .split('\n')
-            .flatMap((line) => splitLines(line, BREAK_LINE - LEFT_MARGIN));
-        if (opt.examples && opt.examples.length > 0) {
-            const margin = BREAK_LINE - LEFT_MARGIN;
-            lines.push('Examples:', ...opt.examples
-                .filter((example) => example)
-                .flatMap((example) => splitLines(example, margin)));
-        }
-        for (let i = 0; i < lines.length; i++) {
-            let prefix = '';
-            if (i === 0) {
-                let keyval = fromCamelCase(opt.key);
-                if (opt.type === 'array')
-                    keyval += '=x,y,z';
-                if (opt.type === 'number')
-                    keyval += '=NUMBER';
-                prefix = `  --${keyval}`.padEnd(LEFT_MARGIN, ' ');
-            }
-            else if (i === 1 && opt.default === true) {
-                prefix = `  --no-${opt.key}`.padEnd(LEFT_MARGIN, ' ');
-            }
-            else {
-                prefix = ' '.repeat(LEFT_MARGIN);
-            }
-            console.log(prefix + (lines[i] || ''));
-        }
-        console.log('');
+
+    if (str[i] === '\\') {
+      escapeMode = true;
+      newstr += str[i];
+      continue;
     }
-    console.log('Full documentation <https://github.com/FlamingTempura/bibtex-tidy>');
+
+    var c = str.charCodeAt(i).toString(16).padStart(4, '0');
+    newstr += specialCharacters.get(c) || str[i];
+  }
+
+  return newstr;
 };
+
+var titleCase = function titleCase(str) {
+  return str.replace(/(\w)(\S*)/g, function (u, first, rest) {
+    return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
+  });
+};
+
+var alphaNum = function alphaNum(str) {
+  if (typeof str === 'undefined') return undefined;
+  return String(str).replace(/[^0-9A-Za-z]/g, '').toLocaleLowerCase();
+};
+
+var tidy = function tidy(input) {
+  var _item$fieldMap$get2, _item$fieldMap$get3, _item$fieldMap$get4, _item$fieldMap$get5;
+
+  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      _ref$omit = _ref.omit,
+      omit = _ref$omit === void 0 ? [] : _ref$omit,
+      _ref$curly = _ref.curly,
+      curly = _ref$curly === void 0 ? false : _ref$curly,
+      _ref$numeric = _ref.numeric,
+      numeric = _ref$numeric === void 0 ? false : _ref$numeric,
+      _ref$tab = _ref.tab,
+      tab = _ref$tab === void 0 ? false : _ref$tab,
+      _ref$align = _ref.align,
+      align = _ref$align === void 0 ? 14 : _ref$align,
+      _ref$sort = _ref.sort,
+      sort = _ref$sort === void 0 ? false : _ref$sort,
+      _ref$merge = _ref.merge,
+      merge = _ref$merge === void 0 ? false : _ref$merge,
+      _ref$stripEnclosingBr = _ref.stripEnclosingBraces,
+      stripEnclosingBraces = _ref$stripEnclosingBr === void 0 ? false : _ref$stripEnclosingBr,
+      _ref$dropAllCaps = _ref.dropAllCaps,
+      dropAllCaps = _ref$dropAllCaps === void 0 ? false : _ref$dropAllCaps,
+      _ref$escape = _ref.escape,
+      escape = _ref$escape === void 0 ? true : _ref$escape,
+      _ref$sortFields = _ref.sortFields,
+      sortFields = _ref$sortFields === void 0 ? false : _ref$sortFields,
+      _ref$stripComments = _ref.stripComments,
+      stripComments = _ref$stripComments === void 0 ? false : _ref$stripComments,
+      _ref$encodeUrls = _ref.encodeUrls,
+      encodeUrls = _ref$encodeUrls === void 0 ? false : _ref$encodeUrls,
+      _ref$tidyComments = _ref.tidyComments,
+      tidyComments = _ref$tidyComments === void 0 ? true : _ref$tidyComments,
+      _ref$space = _ref.space,
+      space = _ref$space === void 0 ? 2 : _ref$space,
+      _ref$duplicates = _ref.duplicates,
+      duplicates = _ref$duplicates === void 0 ? false : _ref$duplicates,
+      _ref$trailingCommas = _ref.trailingCommas,
+      trailingCommas = _ref$trailingCommas === void 0 ? false : _ref$trailingCommas,
+      _ref$removeEmptyField = _ref.removeEmptyFields,
+      removeEmptyFields = _ref$removeEmptyField === void 0 ? false : _ref$removeEmptyField,
+      _ref$lowercase = _ref.lowercase,
+      lowercase = _ref$lowercase === void 0 ? true : _ref$lowercase,
+      sortProperties = _ref.sortProperties;
+
+  if (sort === true) sort = DEFAULT_ENTRY_ORDER;
+  if (space === true) space = 2;
+  if (sortProperties) sortFields = sortProperties;
+  if (sortFields === true) sortFields = DEFAULT_FIELD_ORDER;
+  if (merge === true) merge = 'combine';
+  if (duplicates === true) duplicates = DEFAULT_MERGE_CHECK;
+  if (align === false) align = 1;
+  var indent = tab ? '\t' : ' '.repeat(space);
+  var uniqCheck = new Map();
+  if (merge && !duplicates) duplicates = DEFAULT_MERGE_CHECK;
+
+  if (duplicates) {
+    var _iterator = _createForOfIteratorHelper(duplicates),
+        _step;
+
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var key = _step.value;
+        uniqCheck.set(key, !!merge);
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+  }
+
+  if (!uniqCheck.has('key')) {
+    uniqCheck.set('key', false);
+  }
+
+  var omitFields = new Set(omit);
+  var items = parser.parse(input);
+  var keys = new Map();
+  var dois = new Map();
+  var citations = new Map();
+  var abstracts = new Map();
+  var sortIndexes = new Map();
+  var warnings = [];
+
+  var _iterator2 = _createForOfIteratorHelper(items),
+      _step2;
+
+  try {
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var _item = _step2.value;
+      if (_item.itemtype !== 'entry') continue;
+
+      if (!_item.key) {
+        warnings.push({
+          code: 'MISSING_KEY',
+          message: `${_item.key} does not have an entry key.`,
+          entry: _item
+        });
+      }
+
+      _item.fieldMap = new Map();
+
+      var _iterator6 = _createForOfIteratorHelper(_item.fields),
+          _step6;
+
+      try {
+        for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+          var field = _step6.value;
+          var fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
+          var lname = fieldName.toLocaleLowerCase();
+          if (omitFields.has(fieldName) || _item.fieldMap.has(fieldName)) continue;
+
+          var _val = void 0;
+
+          if (field.datatype === 'concatinate') {
+            _val = field.raw;
+          } else {
+            _val = String(field.value).replace(/\s*\n\s*/g, ' ').trim();
+            if (stripEnclosingBraces) _val = _val.replace(/^\{([^{}]*)\}$/g, '$1');
+            if (dropAllCaps && _val.match(/^[^a-z]+$/)) _val = titleCase(_val);
+            if (lname === 'url' && encodeUrls) _val = _val.replace(/\\?_/g, '\\%5F');
+            if (escape) _val = escapeSpecialCharacters(_val);
+            if (lname === 'pages') _val = _val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+          }
+
+          _val = _val.trim();
+
+          if (_val || !removeEmptyFields) {
+            _item.fieldMap.set(fieldName, {
+              value: _val,
+              datatype: field.datatype
+            });
+          }
+        }
+      } catch (err) {
+        _iterator6.e(err);
+      } finally {
+        _iterator6.f();
+      }
+
+      var _iterator7 = _createForOfIteratorHelper(uniqCheck),
+          _step7;
+
+      try {
+        for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+          var _step7$value = _slicedToArray(_step7.value, 2),
+              _key2 = _step7$value[0],
+              doMerge = _step7$value[1];
+
+          var duplicateOf = void 0;
+
+          switch (_key2) {
+            case 'key':
+              if (!_item.key) continue;
+              duplicateOf = keys.get(_item.key);
+              if (!duplicateOf) keys.set(_item.key, _item);
+              break;
+
+            case 'doi':
+              var doi = alphaNum((_item$fieldMap$get2 = _item.fieldMap.get('doi')) === null || _item$fieldMap$get2 === void 0 ? void 0 : _item$fieldMap$get2.value);
+              if (!doi) continue;
+              duplicateOf = dois.get(doi);
+              if (!duplicateOf) dois.set(doi, _item);
+              break;
+
+            case 'citation':
+              var ttl = (_item$fieldMap$get3 = _item.fieldMap.get('title')) === null || _item$fieldMap$get3 === void 0 ? void 0 : _item$fieldMap$get3.value;
+              var aut = (_item$fieldMap$get4 = _item.fieldMap.get('author')) === null || _item$fieldMap$get4 === void 0 ? void 0 : _item$fieldMap$get4.value;
+              if (!ttl || !aut) continue;
+              var cit = alphaNum(aut.split(/,| and/)[0]) + ':' + alphaNum(ttl);
+              duplicateOf = citations.get(cit);
+              if (!duplicateOf) citations.set(cit, _item);
+              break;
+
+            case 'abstract':
+              var abstract = alphaNum((_item$fieldMap$get5 = _item.fieldMap.get('abstract')) === null || _item$fieldMap$get5 === void 0 ? void 0 : _item$fieldMap$get5.value);
+              var abs = abstract === null || abstract === void 0 ? void 0 : abstract.slice(0, 100);
+              if (!abs) continue;
+              duplicateOf = abstracts.get(abs);
+              if (!duplicateOf) abstracts.set(abs, _item);
+              break;
+          }
+
+          if (!duplicateOf) continue;
+
+          if (doMerge) {
+            _item.duplicate = true;
+            warnings.push({
+              code: 'DUPLICATE_ENTRY',
+              message: `${_item.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`,
+              entry: _item,
+              duplicateOf
+            });
+
+            switch (merge) {
+              case 'last':
+                duplicateOf.key = _item.key;
+                duplicateOf.fieldMap = _item.fieldMap;
+                break;
+
+              case 'combine':
+                var _iterator8 = _createForOfIteratorHelper(_item.fieldMap),
+                    _step8;
+
+                try {
+                  for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+                    var _step8$value = _slicedToArray(_step8.value, 2),
+                        k = _step8$value[0],
+                        v = _step8$value[1];
+
+                    if (!duplicateOf.fieldMap.has(k)) duplicateOf.fieldMap.set(k, v);
+                  }
+                } catch (err) {
+                  _iterator8.e(err);
+                } finally {
+                  _iterator8.f();
+                }
+
+                break;
+
+              case 'overwrite':
+                duplicateOf.key = _item.key;
+
+                var _iterator9 = _createForOfIteratorHelper(_item.fieldMap),
+                    _step9;
+
+                try {
+                  for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+                    var _step9$value = _slicedToArray(_step9.value, 2),
+                        _k = _step9$value[0],
+                        _v = _step9$value[1];
+
+                    duplicateOf.fieldMap.set(_k, _v);
+                  }
+                } catch (err) {
+                  _iterator9.e(err);
+                } finally {
+                  _iterator9.f();
+                }
+
+                break;
+            }
+          } else {
+            warnings.push({
+              code: 'DUPLICATE_KEY',
+              message: `${_item.key} is a duplicate entry key.`,
+              entry: _item
+            });
+          }
+
+          break;
+        }
+      } catch (err) {
+        _iterator7.e(err);
+      } finally {
+        _iterator7.f();
+      }
+    }
+  } catch (err) {
+    _iterator2.e(err);
+  } finally {
+    _iterator2.f();
+  }
+
+  if (sort) {
+    var preceedingMeta = [];
+
+    var _iterator3 = _createForOfIteratorHelper(items),
+        _step3;
+
+    try {
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var item = _step3.value;
+
+        if (item.itemtype !== 'entry') {
+          preceedingMeta.push(item);
+          continue;
+        }
+
+        var sortIndex = new Map();
+
+        var _iterator4 = _createForOfIteratorHelper(sort),
+            _step4;
+
+        try {
+          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+            var _key = _step4.value;
+            if (_key.startsWith('-')) _key = _key.slice(1);
+            var val = void 0;
+
+            if (_key === 'key') {
+              val = item.key || '';
+            } else if (_key === 'type') {
+              val = item.type;
+            } else {
+              var _item$fieldMap$get$va, _item$fieldMap, _item$fieldMap$get;
+
+              val = String((_item$fieldMap$get$va = (_item$fieldMap = item.fieldMap) === null || _item$fieldMap === void 0 ? void 0 : (_item$fieldMap$get = _item$fieldMap.get(_key)) === null || _item$fieldMap$get === void 0 ? void 0 : _item$fieldMap$get.value) !== null && _item$fieldMap$get$va !== void 0 ? _item$fieldMap$get$va : '');
+            }
+
+            sortIndex.set(_key, val.toLowerCase());
+          }
+        } catch (err) {
+          _iterator4.e(err);
+        } finally {
+          _iterator4.f();
+        }
+
+        sortIndexes.set(item, sortIndex);
+
+        while (preceedingMeta.length > 0) {
+          sortIndexes.set(preceedingMeta.pop(), sortIndex);
+        }
+      }
+    } catch (err) {
+      _iterator3.e(err);
+    } finally {
+      _iterator3.f();
+    }
+
+    var _loop = function _loop(i) {
+      var desc = sort[i].startsWith('-');
+      var key = desc ? sort[i].slice(1) : sort[i];
+      items.sort(function (a, b) {
+        var _sortIndexes$get$get, _sortIndexes$get, _sortIndexes$get$get2, _sortIndexes$get2;
+
+        var ia = (_sortIndexes$get$get = (_sortIndexes$get = sortIndexes.get(a)) === null || _sortIndexes$get === void 0 ? void 0 : _sortIndexes$get.get(key)) !== null && _sortIndexes$get$get !== void 0 ? _sortIndexes$get$get : '\ufff0';
+        var ib = (_sortIndexes$get$get2 = (_sortIndexes$get2 = sortIndexes.get(b)) === null || _sortIndexes$get2 === void 0 ? void 0 : _sortIndexes$get2.get(key)) !== null && _sortIndexes$get$get2 !== void 0 ? _sortIndexes$get$get2 : '\ufff0';
+        return (desc ? ib : ia).localeCompare(desc ? ia : ib);
+      });
+    };
+
+    for (var i = sort.length - 1; i >= 0; i--) {
+      _loop(i);
+    }
+  }
+
+  var bibtex = '';
+
+  var _iterator5 = _createForOfIteratorHelper(items),
+      _step5;
+
+  try {
+    for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+      var _item2 = _step5.value;
+
+      switch (_item2.itemtype) {
+        case 'string':
+          bibtex += `@string{${_item2.name} = ${_item2.raw}}\n`;
+          break;
+
+        case 'preamble':
+          bibtex += `@preamble{${_item2.raw}}\n`;
+          break;
+
+        case 'comment':
+          if (stripComments) continue;
+
+          if (tidyComments) {
+            bibtex += _item2.comment.trim() ? _item2.comment.trim() + '\n' : '';
+          } else {
+            bibtex += _item2.comment.replace(/^[ \t]*\n|[ \t]*$/g, '');
+          }
+
+          break;
+
+        case 'entry':
+          if (_item2.duplicate) continue;
+          var itemType = lowercase ? _item2.type.toLocaleLowerCase() : _item2.type;
+          bibtex += `@${itemType}{`;
+          if (_item2.key) bibtex += `${_item2.key}`;
+          var sortedFieldNames = new Set([].concat(_toConsumableArray(sortFields || []), _toConsumableArray(_item2.fieldMap.keys())));
+
+          var _iterator10 = _createForOfIteratorHelper(sortedFieldNames),
+              _step10;
+
+          try {
+            for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+              var _k2 = _step10.value;
+
+              var _field = _item2.fieldMap.get(_k2);
+
+              if (!_field) continue;
+              bibtex += `,\n${indent}${_k2.padEnd(align - 1)} = `;
+              var _val2 = _field.value;
+              var dig3 = String(_val2).slice(0, 3).toLowerCase();
+
+              if (numeric && _val2.match(/^[1-9][0-9]*$/)) {
+                bibtex += _val2;
+              } else if (numeric && _k2 === 'month' && MONTHS.has(dig3)) {
+                bibtex += dig3;
+              } else if (_field.datatype === 'braced' || curly) {
+                bibtex += `{${_val2}}`;
+              } else if (_field.datatype === 'quoted') {
+                bibtex += `"${_val2}"`;
+              } else {
+                bibtex += _val2;
+              }
+            }
+          } catch (err) {
+            _iterator10.e(err);
+          } finally {
+            _iterator10.f();
+          }
+
+          if (trailingCommas) {
+            bibtex += ',';
+          }
+
+          bibtex += `\n}\n`;
+          delete _item2.fieldMap;
+          break;
+      }
+    }
+  } catch (err) {
+    _iterator5.e(err);
+  } finally {
+    _iterator5.f();
+  }
+
+  if (!bibtex.endsWith('\n')) bibtex += '\n';
+  var entries = items.filter(function (item) {
+    return item.itemtype === 'entry';
+  });
+  return {
+    bibtex,
+    warnings,
+    entries
+  };
+};
+
+var tidy$1 = {
+  tidy,
+  options: OPTIONS
+};
+
+var BREAK_LINE = 84;
+var LEFT_MARGIN = 27;
+
+var splitLines = function splitLines(line, limit) {
+  var words = line.split(' ');
+  var lines = [''];
+
+  var _iterator = _createForOfIteratorHelper(words),
+      _step;
+
+  try {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var word = _step.value;
+      if (lines[lines.length - 1].length + word.length + 1 > limit) lines.push('');
+      lines[lines.length - 1] += word + ' ';
+    }
+  } catch (err) {
+    _iterator.e(err);
+  } finally {
+    _iterator.f();
+  }
+
+  return lines;
+};
+
+var fromCamelCase = function fromCamelCase(str) {
+  return str.replace(/[A-Z]/g, function (c) {
+    return '-' + c.toLowerCase();
+  });
+};
+
+var printHelp = function printHelp() {
+  console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
+  console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.\n');
+  console.log('Options:');
+
+  var _iterator2 = _createForOfIteratorHelper(OPTIONS),
+      _step2;
+
+  try {
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var opt = _step2.value;
+      if (opt.deprecated) continue;
+      var lines = opt.description.split('\n').flatMap(function (line) {
+        return splitLines(line, BREAK_LINE - LEFT_MARGIN);
+      });
+
+      if (opt.examples && opt.examples.length > 0) {
+        (function () {
+          var margin = BREAK_LINE - LEFT_MARGIN;
+          lines.push.apply(lines, ['Examples:'].concat(_toConsumableArray(opt.examples.filter(function (example) {
+            return example;
+          }).flatMap(function (example) {
+            return splitLines(example, margin);
+          }))));
+        })();
+      }
+
+      for (var i = 0; i < lines.length; i++) {
+        var prefix = '';
+
+        if (i === 0) {
+          var keyval = fromCamelCase(opt.key);
+          if (opt.type === 'array') keyval += '=x,y,z';
+          if (opt.type === 'number') keyval += '=NUMBER';
+          prefix = `  --${keyval}`.padEnd(LEFT_MARGIN, ' ');
+        } else if (i === 1 && opt.default === true) {
+          prefix = `  --no-${opt.key}`.padEnd(LEFT_MARGIN, ' ');
+        } else {
+          prefix = ' '.repeat(LEFT_MARGIN);
+        }
+
+        console.log(prefix + (lines[i] || ''));
+      }
+
+      console.log('');
+    }
+  } catch (err) {
+    _iterator2.e(err);
+  } finally {
+    _iterator2.f();
+  }
+
+  console.log('Full documentation <https://github.com/FlamingTempura/bibtex-tidy>');
+};
+
 function parseArguments() {
-    const options = {
-        backup: true,
-    };
-    let help = false;
-    const args = process__default['default'].argv.slice(2);
-    const inputFiles = [];
-    const nextNumber = () => {
-        if (args.length === 1 && inputFiles.length === 0)
-            return;
-        if (!args[0] || args[0].startsWith('--'))
-            return;
-        return Number(args.shift());
-    };
-    const nextString = () => {
-        if (args.length === 1 && inputFiles.length === 0)
-            return;
-        if (!args[0] || args[0].startsWith('--'))
-            return;
-        return args.shift();
-    };
-    const nextList = () => {
-        if (args.length === 1 && inputFiles.length === 0)
-            return;
-        if (!args[0] || args[0].startsWith('--'))
-            return;
-        return [args.shift(), ...(nextList() || [])];
-    };
-    while (args.length > 0) {
-        const arg = args.shift();
-        const argName = arg.split('=')[0];
-        const valStr = arg.split('=')[1] || undefined;
-        switch (argName) {
-            case '--help':
-            case '-h':
-                help = true;
-                break;
-            case '--omit':
-                const omit = (valStr === null || valStr === void 0 ? void 0 : valStr.split(',')) || nextList();
-                if (!omit) {
-                    console.error(`Expected a omit list`);
-                    process__default['default'].exit(1);
-                }
-                options.omit = omit;
-                break;
-            case '--curly':
-                options.curly = true;
-                break;
-            case '--no-curly':
-                options.curly = false;
-                break;
-            case '--numeric':
-                options.numeric = true;
-                break;
-            case '--no-numeric':
-                options.numeric = true;
-                break;
-            case '--space':
-                options.space = valStr ? Number(valStr) : nextNumber();
-                break;
-            case '--tab':
-                options.tab = true;
-                break;
-            case '--no-tab':
-                options.tab = false;
-                break;
-            case '--align':
-                options.align = valStr ? Number(valStr) : nextNumber();
-                break;
-            case '--no-align':
-                options.align = false;
-                break;
-            case '--sort':
-                options.sort = valStr ? valStr.split(',') : nextList() || true;
-                break;
-            case '--no-sort':
-                options.sort = false;
-                break;
-            case '--duplicates':
-                const uniqs = (valStr === null || valStr === void 0 ? void 0 : valStr.split(',')) || nextList();
-                if (!uniqs) {
-                    options.merge = true;
-                }
-                else {
-                    for (const i of uniqs) {
-                        if (i !== 'doi' &&
-                            i !== 'key' &&
-                            i !== 'abstract' &&
-                            i !== 'citation') {
-                            console.error(`Invalid key for merge option: "${i}"`);
-                            process__default['default'].exit(1);
-                        }
-                    }
-                    options.duplicates = (valStr || uniqs);
-                }
-                break;
-            case '--no-merge':
-                options.merge = false;
-                break;
-            case '--merge':
-                const uniq = valStr || nextString();
-                if (!uniq) {
-                    options.merge = true;
-                }
-                else {
-                    if (uniq !== 'first' &&
-                        uniq !== 'last' &&
-                        uniq !== 'combine' &&
-                        uniq !== 'overwrite') {
-                        console.error(`Invalid merge strategy: "${uniq}"`);
-                        process__default['default'].exit(1);
-                    }
-                    options.merge = (valStr || uniq);
-                }
-                break;
-            case '--strip-enclosing-braces':
-                options.stripEnclosingBraces = true;
-                break;
-            case '--no-strip-enclosing-braces':
-                options.stripEnclosingBraces = true;
-                break;
-            case '--drop-all-caps':
-                options.dropAllCaps = true;
-                break;
-            case '--no-drop-all-caps':
-                options.dropAllCaps = false;
-                break;
-            case '--escape':
-                options.escape = true;
-                break;
-            case '--no-escape':
-                options.escape = false;
-                break;
-            case '--sort-fields':
-                options.sortFields = valStr ? valStr.split(',') : nextList() || true;
-                break;
-            case '--no-sort-fields':
-                options.sortFields = false;
-                break;
-            case '--strip-comments':
-                options.stripComments = true;
-                break;
-            case '--no-strip-comments':
-                options.stripComments = false;
-                break;
-            case '--encode-urls':
-                options.encodeUrls = true;
-                break;
-            case '--no-encode-urls':
-                options.encodeUrls = false;
-                break;
-            case '--tidy-comments':
-                options.tidyComments = true;
-                break;
-            case '--no-tidy-comments':
-                options.tidyComments = false;
-                break;
-            case '--trailing-commas':
-                options.trailingCommas = true;
-                break;
-            case '--remove-empty-fields':
-                options.removeEmptyFields = true;
-                break;
-            case '--no-lowercase':
-                options.lowercase = false;
-                break;
-            case '--backup':
-                options.backup = true;
-                break;
-            case '--no-backup':
-                options.backup = false;
-                break;
-            case '--quiet':
-                options.quiet = true;
-                break;
-            default:
-                if (argName.startsWith('--')) {
-                    console.error(`No option "${argName}"`);
-                    process__default['default'].exit(1);
-                }
-                inputFiles.push(arg);
+  var options = {
+    backup: true
+  };
+  var help = false;
+  var args = process__default['default'].argv.slice(2);
+  var inputFiles = [];
+
+  var nextNumber = function nextNumber() {
+    if (args.length === 1 && inputFiles.length === 0) return;
+    if (!args[0] || args[0].startsWith('--')) return;
+    return Number(args.shift());
+  };
+
+  var nextString = function nextString() {
+    if (args.length === 1 && inputFiles.length === 0) return;
+    if (!args[0] || args[0].startsWith('--')) return;
+    return args.shift();
+  };
+
+  var nextList = function nextList() {
+    if (args.length === 1 && inputFiles.length === 0) return;
+    if (!args[0] || args[0].startsWith('--')) return;
+    return [args.shift()].concat(_toConsumableArray(nextList() || []));
+  };
+
+  while (args.length > 0) {
+    var arg = args.shift();
+    var argName = arg.split('=')[0];
+    var valStr = arg.split('=')[1] || undefined;
+
+    switch (argName) {
+      case '--help':
+      case '-h':
+        help = true;
+        break;
+
+      case '--omit':
+        var omit = (valStr === null || valStr === void 0 ? void 0 : valStr.split(',')) || nextList();
+
+        if (!omit) {
+          console.error(`Expected a omit list`);
+          process__default['default'].exit(1);
         }
+
+        options.omit = omit;
+        break;
+
+      case '--curly':
+        options.curly = true;
+        break;
+
+      case '--no-curly':
+        options.curly = false;
+        break;
+
+      case '--numeric':
+        options.numeric = true;
+        break;
+
+      case '--no-numeric':
+        options.numeric = true;
+        break;
+
+      case '--space':
+        options.space = valStr ? Number(valStr) : nextNumber();
+        break;
+
+      case '--tab':
+        options.tab = true;
+        break;
+
+      case '--no-tab':
+        options.tab = false;
+        break;
+
+      case '--align':
+        options.align = valStr ? Number(valStr) : nextNumber();
+        break;
+
+      case '--no-align':
+        options.align = false;
+        break;
+
+      case '--sort':
+        options.sort = valStr ? valStr.split(',') : nextList() || true;
+        break;
+
+      case '--no-sort':
+        options.sort = false;
+        break;
+
+      case '--duplicates':
+        var uniqs = (valStr === null || valStr === void 0 ? void 0 : valStr.split(',')) || nextList();
+
+        if (!uniqs) {
+          options.merge = true;
+        } else {
+          var _iterator3 = _createForOfIteratorHelper(uniqs),
+              _step3;
+
+          try {
+            for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+              var i = _step3.value;
+
+              if (i !== 'doi' && i !== 'key' && i !== 'abstract' && i !== 'citation') {
+                console.error(`Invalid key for merge option: "${i}"`);
+                process__default['default'].exit(1);
+              }
+            }
+          } catch (err) {
+            _iterator3.e(err);
+          } finally {
+            _iterator3.f();
+          }
+
+          options.duplicates = valStr || uniqs;
+        }
+
+        break;
+
+      case '--no-merge':
+        options.merge = false;
+        break;
+
+      case '--merge':
+        var uniq = valStr || nextString();
+
+        if (!uniq) {
+          options.merge = true;
+        } else {
+          if (uniq !== 'first' && uniq !== 'last' && uniq !== 'combine' && uniq !== 'overwrite') {
+            console.error(`Invalid merge strategy: "${uniq}"`);
+            process__default['default'].exit(1);
+          }
+
+          options.merge = valStr || uniq;
+        }
+
+        break;
+
+      case '--strip-enclosing-braces':
+        options.stripEnclosingBraces = true;
+        break;
+
+      case '--no-strip-enclosing-braces':
+        options.stripEnclosingBraces = true;
+        break;
+
+      case '--drop-all-caps':
+        options.dropAllCaps = true;
+        break;
+
+      case '--no-drop-all-caps':
+        options.dropAllCaps = false;
+        break;
+
+      case '--escape':
+        options.escape = true;
+        break;
+
+      case '--no-escape':
+        options.escape = false;
+        break;
+
+      case '--sort-fields':
+        options.sortFields = valStr ? valStr.split(',') : nextList() || true;
+        break;
+
+      case '--no-sort-fields':
+        options.sortFields = false;
+        break;
+
+      case '--strip-comments':
+        options.stripComments = true;
+        break;
+
+      case '--no-strip-comments':
+        options.stripComments = false;
+        break;
+
+      case '--encode-urls':
+        options.encodeUrls = true;
+        break;
+
+      case '--no-encode-urls':
+        options.encodeUrls = false;
+        break;
+
+      case '--tidy-comments':
+        options.tidyComments = true;
+        break;
+
+      case '--no-tidy-comments':
+        options.tidyComments = false;
+        break;
+
+      case '--trailing-commas':
+        options.trailingCommas = true;
+        break;
+
+      case '--remove-empty-fields':
+        options.removeEmptyFields = true;
+        break;
+
+      case '--no-lowercase':
+        options.lowercase = false;
+        break;
+
+      case '--backup':
+        options.backup = true;
+        break;
+
+      case '--no-backup':
+        options.backup = false;
+        break;
+
+      case '--quiet':
+        options.quiet = true;
+        break;
+
+      default:
+        if (argName.startsWith('--')) {
+          console.error(`No option "${argName}"`);
+          process__default['default'].exit(1);
+        }
+
+        inputFiles.push(arg);
     }
-    return { inputFiles, options, help };
+  }
+
+  return {
+    inputFiles,
+    options,
+    help
+  };
 }
+
 function start() {
-    const { inputFiles, options, help } = parseArguments();
-    if (inputFiles.length === 0 || help) {
-        printHelp();
-        process__default['default'].exit(1);
-    }
-    if (options.quiet) {
-        console.log = () => { };
-        console.error = () => { };
-    }
-    console.log('Tidying...');
-    for (const inputFile of inputFiles) {
-        const bibtex = fs.readFileSync(inputFile, 'utf8');
-        const result = tidy$1.tidy(bibtex, options);
-        for (const warning of result.warnings) {
-            console.error(`${warning.code}: ${warning.message}`);
+  var _parseArguments = parseArguments(),
+      inputFiles = _parseArguments.inputFiles,
+      options = _parseArguments.options,
+      help = _parseArguments.help;
+
+  if (inputFiles.length === 0 || help) {
+    printHelp();
+    process__default['default'].exit(1);
+  }
+
+  if (options.quiet) {
+    console.log = function () {};
+
+    console.error = function () {};
+  }
+
+  console.log('Tidying...');
+
+  var _iterator4 = _createForOfIteratorHelper(inputFiles),
+      _step4;
+
+  try {
+    for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+      var inputFile = _step4.value;
+      var bibtex = fs.readFileSync(inputFile, 'utf8');
+      var result = tidy$1.tidy(bibtex, options);
+
+      var _iterator5 = _createForOfIteratorHelper(result.warnings),
+          _step5;
+
+      try {
+        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+          var warning = _step5.value;
+          console.error(`${warning.code}: ${warning.message}`);
         }
-        console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
-        if (options.merge) {
-            const dupes = result.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
-            console.log(`${dupes.length} entries merged`);
-        }
-        if (options.backup) {
-            fs.writeFileSync(`${inputFile}.original`, bibtex, 'utf8');
-        }
-        fs.writeFileSync(inputFile, result.bibtex, 'utf8');
+      } catch (err) {
+        _iterator5.e(err);
+      } finally {
+        _iterator5.f();
+      }
+
+      console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
+
+      if (options.merge) {
+        var dupes = result.warnings.filter(function (w) {
+          return w.code === 'DUPLICATE_ENTRY';
+        });
+        console.log(`${dupes.length} entries merged`);
+      }
+
+      if (options.backup) {
+        fs.writeFileSync(`${inputFile}.original`, bibtex, 'utf8');
+      }
+
+      fs.writeFileSync(inputFile, result.bibtex, 'utf8');
     }
+  } catch (err) {
+    _iterator4.e(err);
+  } finally {
+    _iterator4.f();
+  }
 }
+
 start();

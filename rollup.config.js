@@ -1,13 +1,14 @@
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import dsv from '@rollup/plugin-dsv';
-import typescript from '@rollup/plugin-typescript';
 import { version } from './package.json';
-import babel from 'rollup-plugin-babel';
 import ts from 'typescript';
 import fs from 'fs';
 import pegjs from 'rollup-plugin-pegjs';
 import { builtinModules } from 'module';
+import babel from '@rollup/plugin-babel';
+
+const extensions = ['.ts', '.js'];
 
 const tsv = {
 	processRow(row) {
@@ -96,33 +97,33 @@ const banner = `/**
  * using \`npm run build\`. Edit files in './src' then rebuild.
  **/`;
 
-const babelcfg = {
-	presets: [
-		[
-			'@babel/env',
-			{
-				targets: {
-					edge: '17',
-					firefox: '60',
-					chrome: '67',
-					safari: '11.1',
-				},
-			},
-		],
-	],
+const browserTargets = {
+	edge: '17',
+	firefox: '60',
+	chrome: '67',
+	safari: '11.1',
 };
+const cliTargets = { node: '4.0.0' };
 
 export default [
 	{
 		input: 'src/index.ts',
 		plugins: [
-			typescript(),
 			docsResolve,
 			pegjs(),
 			dsv(tsv),
 			commonjs(),
-			nodeResolve(),
-			babel(babelcfg),
+			nodeResolve({ extensions }),
+			babel({
+				extensions,
+				babelHelpers: 'bundled',
+				// see https://babeljs.io/docs/en/usage/#configuration
+				presets: [
+					'@babel/typescript',
+					['@babel/env', { targets: browserTargets }],
+				],
+				comments: false,
+			}),
 		],
 		output: {
 			name: 'bibtexTidy',
@@ -135,13 +136,17 @@ export default [
 		input: 'src/cli.ts',
 		external: builtinModules,
 		plugins: [
-			typescript(),
 			docsResolve,
 			pegjs(),
 			dsv(tsv),
 			commonjs(),
-			nodeResolve(),
-			babel(babelcfg),
+			nodeResolve({ extensions }),
+			babel({
+				extensions,
+				babelHelpers: 'bundled',
+				presets: ['@babel/typescript', ['@babel/env', { targets: cliTargets }]],
+				comments: false,
+			}),
 			makeExecutable,
 		],
 		output: {
