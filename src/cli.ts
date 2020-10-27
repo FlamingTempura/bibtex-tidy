@@ -8,7 +8,6 @@ import { splitLines, fromCamelCase } from './utils';
 type Arguments = {
 	inputFiles: string[];
 	options: CLIOptions;
-	help: boolean;
 };
 
 const BREAK_LINE = 84;
@@ -58,7 +57,6 @@ function parseArguments(): Arguments {
 		// By default make a backup
 		backup: true,
 	};
-	let help: boolean = false;
 	const args: string[] = process.argv.slice(2);
 	const inputFiles: string[] = [];
 
@@ -87,7 +85,7 @@ function parseArguments(): Arguments {
 		switch (argName) {
 			case '--help':
 			case '-h':
-				help = true;
+				options.help = true;
 				break;
 			case '--omit':
 				const omit = valStr?.split(',') || nextList();
@@ -237,12 +235,12 @@ function parseArguments(): Arguments {
 				inputFiles.push(arg);
 		}
 	}
-	return { inputFiles, options, help };
+	return { inputFiles, options };
 }
 
 function start(): void {
-	const { inputFiles, options, help } = parseArguments();
-	if (inputFiles.length === 0 || help) {
+	const { inputFiles, options } = parseArguments();
+	if (inputFiles.length === 0 || options.help) {
 		printHelp();
 		process.exit(1);
 	}

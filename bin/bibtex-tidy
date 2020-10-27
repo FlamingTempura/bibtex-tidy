@@ -7724,7 +7724,6 @@ function parseArguments() {
   var options = {
     backup: true
   };
-  var help = false;
   var args = process__default['default'].argv.slice(2);
   var inputFiles = [];
 
@@ -7754,7 +7753,7 @@ function parseArguments() {
     switch (argName) {
       case '--help':
       case '-h':
-        help = true;
+        options.help = true;
         break;
 
       case '--omit':
@@ -7953,18 +7952,16 @@ function parseArguments() {
 
   return {
     inputFiles,
-    options,
-    help
+    options
   };
 }
 
 function start() {
   var _parseArguments = parseArguments(),
       inputFiles = _parseArguments.inputFiles,
-      options = _parseArguments.options,
-      help = _parseArguments.help;
+      options = _parseArguments.options;
 
-  if (inputFiles.length === 0 || help) {
+  if (inputFiles.length === 0 || options.help) {
     printHelp();
     process__default['default'].exit(1);
   }
