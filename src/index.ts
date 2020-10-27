@@ -162,10 +162,10 @@ function tidy(
 		item.fieldMap = new Map<string, ValueString>();
 		for (const field of item.fields) {
 			const fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
-			const lname = fieldName.toLocaleLowerCase();
+			const nameLowerCase = fieldName.toLocaleLowerCase();
 			if (omitFields.has(fieldName) || item.fieldMap.has(fieldName)) continue;
 			let val: string;
-			if (field.datatype === 'concatinate') {
+			if (field.datatype === 'concatenate') {
 				val = field.raw;
 			} else {
 				val = String(field.value)
@@ -176,11 +176,13 @@ function tidy(
 				// if a field's value is all caps, convert it to title case
 				if (dropAllCaps && val.match(/^[^a-z]+$/)) val = titleCase(val);
 				// url encode must happen before escape special characters
-				if (lname === 'url' && encodeUrls) val = val.replace(/\\?_/g, '\\%5F');
+				if (nameLowerCase === 'url' && encodeUrls)
+					val = val.replace(/\\?_/g, '\\%5F');
 				// escape special characters like %
 				if (escape) val = escapeSpecialCharacters(val);
 				// replace single dash with double dash in page range
-				if (lname === 'pages') val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+				if (nameLowerCase === 'pages')
+					val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
 			}
 			val = val.trim();
 			if (val || !removeEmptyFields) {
@@ -262,13 +264,13 @@ function tidy(
 	// sort needs to happen after merging all entries is complete
 	if (sort) {
 		// comments, preambles, and strings which should be kept with an entry
-		const preceedingMeta: BibTeXItem[] = [];
+		const precedingMeta: BibTeXItem[] = [];
 
 		// first, create sort indexes
 		for (const item of items) {
 			if (item.itemtype !== 'entry') {
 				// if string, preamble, or comment, then use sort index of previous entry
-				preceedingMeta.push(item);
+				precedingMeta.push(item);
 				continue;
 			}
 			const sortIndex: SortIndex = new Map();
@@ -287,8 +289,8 @@ function tidy(
 			}
 			sortIndexes.set(item, sortIndex);
 			// update comments above to this index
-			while (preceedingMeta.length > 0) {
-				sortIndexes.set(preceedingMeta.pop()!, sortIndex);
+			while (precedingMeta.length > 0) {
+				sortIndexes.set(precedingMeta.pop()!, sortIndex);
 			}
 		}
 

@@ -2,7 +2,7 @@
 import parser from './bibtex.pegjs';
 
 type BibTeXFieldDatatype =
-	| 'concatinate'
+	| 'concatenate'
 	| 'braced'
 	| 'quoted'
 	| 'number'
@@ -12,14 +12,14 @@ type BibTexValue = string | bigint | SingleField[];
 
 type SingleField = {
 	name: string;
-	datatype: Exclude<BibTeXFieldDatatype, 'concatinate'>;
+	datatype: Exclude<BibTeXFieldDatatype, 'concatenate'>;
 	value: Exclude<BibTexValue, SingleField[]>;
 	raw: string;
 };
 
 type ConcatField = {
 	name: string;
-	datatype: 'concatinate';
+	datatype: 'concatenate';
 	value: SingleField[];
 	raw: string;
 };
