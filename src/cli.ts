@@ -13,7 +13,7 @@ type Arguments = {
 const BREAK_LINE = 84;
 const LEFT_MARGIN = 27;
 
-const splitLines = (line: string, limit: number): string[] => {
+function splitLines(line: string, limit: number): string[] {
 	const words = line.split(' ');
 	const lines = [''];
 	for (const word of words) {
@@ -22,15 +22,15 @@ const splitLines = (line: string, limit: number): string[] => {
 		lines[lines.length - 1] += word + ' ';
 	}
 	return lines;
-};
+}
 
-const fromCamelCase = (str: string): string => {
+function fromCamelCase(str: string): string {
 	return str.replace(/[A-Z]/g, (c: string) => {
 		return '-' + c.toLowerCase();
 	});
-};
+}
 
-const printHelp = (): void => {
+function printHelp(): void {
 	console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
 	console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.\n');
 	console.log('Options:');
@@ -67,7 +67,7 @@ const printHelp = (): void => {
 	console.log(
 		'Full documentation <https://github.com/FlamingTempura/bibtex-tidy>'
 	);
-};
+}
 
 function parseArguments(): Arguments {
 	const options: CLIOptions = {

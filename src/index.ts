@@ -50,7 +50,7 @@ const MONTHS: Set<string> = new Set([
 
 const specialCharacters = new Map(unicode);
 
-const escapeSpecialCharacters = (str: string): string => {
+function escapeSpecialCharacters(str: string): string {
 	let newstr: string = '';
 	let escapeMode: boolean = false;
 	for (let i = 0; i < str.length; i++) {
@@ -69,23 +69,23 @@ const escapeSpecialCharacters = (str: string): string => {
 		newstr += specialCharacters.get(c) || str[i];
 	}
 	return newstr;
-};
+}
 
-const titleCase = (str: string): string => {
+function titleCase(str: string): string {
 	return str.replace(/(\w)(\S*)/g, (u, first, rest) => {
 		return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
 	});
-};
+}
 
 // remove all non-alphanumeric characters
-const alphaNum = (str?: string): string | undefined => {
+function alphaNum(str?: string): string | undefined {
 	if (typeof str === 'undefined') return undefined;
 	return String(str)
 		.replace(/[^0-9A-Za-z]/g, '')
 		.toLocaleLowerCase();
-};
+}
 
-const tidy = (
+function tidy(
 	input: string,
 	{
 		omit = [],
@@ -109,7 +109,7 @@ const tidy = (
 		lowercase = true,
 		sortProperties,
 	}: Options = {}
-): BibTeXTidyResult => {
+): BibTeXTidyResult {
 	if (sort === true) sort = DEFAULT_ENTRY_ORDER;
 	if (space === true) space = 2;
 	if (sortProperties) sortFields = sortProperties;
@@ -377,7 +377,7 @@ const tidy = (
 	) as BibTeXEntry[];
 
 	return { bibtex, warnings, entries };
-};
+}
 
 export default { tidy, options: optionDocs };
 

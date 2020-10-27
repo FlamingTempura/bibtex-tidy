@@ -13,22 +13,26 @@ const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'bibtex-tidy-'));
 
 const DIFFTOOL = process.env.DIFFTOOL || 'meld';
 
-const getTmpPath = (i: number = 0) => path.join(TMP_DIR, `tmp${i}.bib`);
+function getTmpPath(i: number = 0): string {
+	return path.join(TMP_DIR, `tmp${i}.bib`);
+}
 
-const unCamelCase = (str: string): string =>
-	str.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+function unCamelCase(str: string): string {
+	return str.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+}
 
-const api = (bibtexs: string[], options: Options = {}): BibTeXTidyResult =>
-	bibtexTidy.tidy(bibtexs[0], options);
+function api(bibtexs: string[], options: Options = {}): BibTeXTidyResult {
+	return bibtexTidy.tidy(bibtexs[0], options);
+}
 
 /**
  * Run bibtex-tidy through command line. Unlike API, this accepts multiple
  * bibtex files.
  */
-const cli = (
+function cli(
 	bibtexs: string[],
 	options: CLIOptions = {}
-): BibTeXTidyResult & { bibtexs: string[]; stdout: string; stderr: string } => {
+): BibTeXTidyResult & { bibtexs: string[]; stdout: string; stderr: string } {
 	const inputFirst = Math.random() > 0.5; // <input> [options] rather than [options] <input>
 	const useEquals = Math.random() > 0.5; // --sort=name,year rather than --sort name year
 
@@ -104,25 +108,26 @@ const cli = (
 		stdout: proc.stdout,
 		stderr: proc.stderr,
 	};
-};
+}
 
 // Allows \ to be used and removes the empty line at the start
-export const bibtex = (str: TemplateStringsArray): string =>
-	String.raw(str).slice(1);
+export function bibtex(str: TemplateStringsArray): string {
+	return String.raw(str).slice(1);
+}
 
-export const checkSame = (
+export function checkSame(
 	t: TapTest,
 	a: string | number,
 	b: string | number,
 	message = 'Incorrect output'
-) => {
+) {
 	if (a !== b) {
 		launchDifftool(String(a), String(b), message);
 	}
 	t.same(a, b, message);
-};
+}
 
-export const launchDifftool = (a: string, b: string, message: string): void => {
+export function launchDifftool(a: string, b: string, message: string): void {
 	const ps = spawnSync('ps ax', { stdio: 'pipe', shell: true });
 	if (ps.stdout.toString().includes(DIFFTOOL)) {
 		console.log(`${DIFFTOOL} already running, not launching diff`);
@@ -139,7 +144,7 @@ export const launchDifftool = (a: string, b: string, message: string): void => {
 	} catch (e) {
 		console.error(`Failed to launch ${DIFFTOOL} diff tool`);
 	}
-};
+}
 
 type Tidy = typeof cli | typeof api;
 
@@ -159,11 +164,11 @@ type TestCallback = (
 	) => ReturnType<Tidy>
 ) => void;
 
-export const test = (
+export function test(
 	title: string,
 	cb: TestCallback,
 	{ apiOnly, cliOnly }: TestOptions = {}
-) => {
+) {
 	const stablecb = (t: TapTest, tidy: Tidy) => {
 		cb(t, (bibtexInput = [], tidyOptions) => {
 			const inputs =
@@ -194,4 +199,4 @@ export const test = (
 	if (!apiOnly) {
 		tap.test(`CLI: ${title}`, testOptions, (t) => stablecb(t, cli));
 	}
-};
+}
