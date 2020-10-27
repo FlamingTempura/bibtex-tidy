@@ -7161,12 +7161,7 @@ var unicodeFromTSV = [ [ "0023",
 
 var unicode = unicodeFromTSV;
 
-var DEFAULT_ENTRY_ORDER = ['key'];
-var DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
-var DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'];
-var MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
 var specialCharacters = new Map(unicode);
-
 function escapeSpecialCharacters(str) {
   var newstr = '';
   var escapeMode = false;
@@ -7190,17 +7185,46 @@ function escapeSpecialCharacters(str) {
 
   return newstr;
 }
-
 function titleCase(str) {
-  return str.replace(/(\w)(\S*)/g, function (u, first, rest) {
+  return str.replace(/(\w)(\S*)/g, function (_, first, rest) {
     return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
   });
 }
-
 function alphaNum(str) {
   if (typeof str === 'undefined') return undefined;
   return String(str).replace(/[^0-9A-Za-z]/g, '').toLocaleLowerCase();
 }
+function splitLines(line, limit) {
+  var words = line.split(' ');
+  var lines = [''];
+
+  var _iterator = _createForOfIteratorHelper(words),
+      _step;
+
+  try {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var word = _step.value;
+      if (lines[lines.length - 1].length + word.length + 1 > limit) lines.push('');
+      lines[lines.length - 1] += word + ' ';
+    }
+  } catch (err) {
+    _iterator.e(err);
+  } finally {
+    _iterator.f();
+  }
+
+  return lines;
+}
+function fromCamelCase(str) {
+  return str.replace(/[A-Z]/g, function (c) {
+    return '-' + c.toLowerCase();
+  });
+}
+
+var DEFAULT_ENTRY_ORDER = ['key'];
+var DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
+var DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'];
+var MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
 
 function tidy(input) {
   var _item$fieldMap$get2, _item$fieldMap$get3, _item$fieldMap$get4, _item$fieldMap$get5;
@@ -7641,45 +7665,17 @@ var tidy$1 = {
 var BREAK_LINE = 84;
 var LEFT_MARGIN = 27;
 
-function splitLines(line, limit) {
-  var words = line.split(' ');
-  var lines = [''];
-
-  var _iterator = _createForOfIteratorHelper(words),
-      _step;
-
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var word = _step.value;
-      if (lines[lines.length - 1].length + word.length + 1 > limit) lines.push('');
-      lines[lines.length - 1] += word + ' ';
-    }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
-  }
-
-  return lines;
-}
-
-function fromCamelCase(str) {
-  return str.replace(/[A-Z]/g, function (c) {
-    return '-' + c.toLowerCase();
-  });
-}
-
 function printHelp() {
   console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
   console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.\n');
   console.log('Options:');
 
-  var _iterator2 = _createForOfIteratorHelper(optionDocs),
-      _step2;
+  var _iterator = _createForOfIteratorHelper(optionDocs),
+      _step;
 
   try {
-    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-      var opt = _step2.value;
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var opt = _step.value;
       if (opt.deprecated) continue;
       var lines = opt.description.split('\n').flatMap(function (line) {
         return splitLines(line, BREAK_LINE - LEFT_MARGIN);
@@ -7716,9 +7712,9 @@ function printHelp() {
       console.log('');
     }
   } catch (err) {
-    _iterator2.e(err);
+    _iterator.e(err);
   } finally {
-    _iterator2.f();
+    _iterator.f();
   }
 
   console.log('Full documentation <https://github.com/FlamingTempura/bibtex-tidy>');
@@ -7822,12 +7818,12 @@ function parseArguments() {
         if (!uniqs) {
           options.merge = true;
         } else {
-          var _iterator3 = _createForOfIteratorHelper(uniqs),
-              _step3;
+          var _iterator2 = _createForOfIteratorHelper(uniqs),
+              _step2;
 
           try {
-            for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-              var i = _step3.value;
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+              var i = _step2.value;
 
               if (i !== 'doi' && i !== 'key' && i !== 'abstract' && i !== 'citation') {
                 console.error(`Invalid key for merge option: "${i}"`);
@@ -7835,9 +7831,9 @@ function parseArguments() {
               }
             }
           } catch (err) {
-            _iterator3.e(err);
+            _iterator2.e(err);
           } finally {
-            _iterator3.f();
+            _iterator2.f();
           }
 
           options.duplicates = valStr || uniqs;
@@ -7981,27 +7977,27 @@ function start() {
 
   console.log('Tidying...');
 
-  var _iterator4 = _createForOfIteratorHelper(inputFiles),
-      _step4;
+  var _iterator3 = _createForOfIteratorHelper(inputFiles),
+      _step3;
 
   try {
-    for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-      var inputFile = _step4.value;
+    for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+      var inputFile = _step3.value;
       var bibtex = fs.readFileSync(inputFile, 'utf8');
       var result = tidy$1.tidy(bibtex, options);
 
-      var _iterator5 = _createForOfIteratorHelper(result.warnings),
-          _step5;
+      var _iterator4 = _createForOfIteratorHelper(result.warnings),
+          _step4;
 
       try {
-        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-          var warning = _step5.value;
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var warning = _step4.value;
           console.error(`${warning.code}: ${warning.message}`);
         }
       } catch (err) {
-        _iterator5.e(err);
+        _iterator4.e(err);
       } finally {
-        _iterator5.f();
+        _iterator4.f();
       }
 
       console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
@@ -8020,9 +8016,9 @@ function start() {
       fs.writeFileSync(inputFile, result.bibtex, 'utf8');
     }
   } catch (err) {
-    _iterator4.e(err);
+    _iterator3.e(err);
   } finally {
-    _iterator4.f();
+    _iterator3.f();
   }
 }
 

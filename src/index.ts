@@ -1,7 +1,7 @@
 import { optionDocs } from './documentation';
 import { Options, UniqueKey } from './options';
 import { parse, BibTeXItem, BibTeXEntry, ValueString } from './bibtex-parser';
-import { unicode } from './unicode';
+import { titleCase, escapeSpecialCharacters, alphaNum } from './utils';
 
 type SortIndex = Map<string, string>;
 
@@ -47,43 +47,6 @@ const DEFAULT_FIELD_ORDER: string[] = [
 const MONTHS: Set<string> = new Set([
 	'jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'
 ]);
-
-const specialCharacters = new Map(unicode);
-
-function escapeSpecialCharacters(str: string): string {
-	let newstr: string = '';
-	let escapeMode: boolean = false;
-	for (let i = 0; i < str.length; i++) {
-		if (escapeMode) {
-			escapeMode = false;
-			newstr += str[i];
-			continue;
-		}
-		if (str[i] === '\\') {
-			escapeMode = true;
-			newstr += str[i];
-			continue;
-		}
-		// iterate through each character and if it's a special char replace with latex code
-		const c = str.charCodeAt(i).toString(16).padStart(4, '0');
-		newstr += specialCharacters.get(c) || str[i];
-	}
-	return newstr;
-}
-
-function titleCase(str: string): string {
-	return str.replace(/(\w)(\S*)/g, (u, first, rest) => {
-		return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
-	});
-}
-
-// remove all non-alphanumeric characters
-function alphaNum(str?: string): string | undefined {
-	if (typeof str === 'undefined') return undefined;
-	return String(str)
-		.replace(/[^0-9A-Za-z]/g, '')
-		.toLocaleLowerCase();
-}
 
 function tidy(
 	input: string,

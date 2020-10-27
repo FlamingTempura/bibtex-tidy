@@ -7028,12 +7028,7 @@
 
   const unicode = unicodeFromTSV;
 
-  const DEFAULT_ENTRY_ORDER = ['key'];
-  const DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
-  const DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'];
-  const MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
   const specialCharacters = new Map(unicode);
-
   function escapeSpecialCharacters(str) {
     let newstr = '';
     let escapeMode = false;
@@ -7057,17 +7052,18 @@
 
     return newstr;
   }
-
   function titleCase(str) {
-    return str.replace(/(\w)(\S*)/g, (u, first, rest) => {
-      return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
-    });
+    return str.replace(/(\w)(\S*)/g, (_, first, rest) => first.toLocaleUpperCase() + rest.toLocaleLowerCase());
   }
-
   function alphaNum(str) {
     if (typeof str === 'undefined') return undefined;
     return String(str).replace(/[^0-9A-Za-z]/g, '').toLocaleLowerCase();
   }
+
+  const DEFAULT_ENTRY_ORDER = ['key'];
+  const DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
+  const DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'];
+  const MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
 
   function tidy(input) {
     var _item$fieldMap$get, _item$fieldMap$get2, _item$fieldMap$get3, _item$fieldMap$get4;

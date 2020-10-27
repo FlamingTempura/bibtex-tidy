@@ -3,6 +3,7 @@ import tidy from './index';
 import { readFileSync, writeFileSync } from 'fs';
 import process from 'process';
 import { CLIOptions, MergeStrategy, UniqueKey } from './options';
+import { splitLines, fromCamelCase } from './utils';
 
 type Arguments = {
 	inputFiles: string[];
@@ -12,23 +13,6 @@ type Arguments = {
 
 const BREAK_LINE = 84;
 const LEFT_MARGIN = 27;
-
-function splitLines(line: string, limit: number): string[] {
-	const words = line.split(' ');
-	const lines = [''];
-	for (const word of words) {
-		if (lines[lines.length - 1].length + word.length + 1 > limit)
-			lines.push('');
-		lines[lines.length - 1] += word + ' ';
-	}
-	return lines;
-}
-
-function fromCamelCase(str: string): string {
-	return str.replace(/[A-Z]/g, (c: string) => {
-		return '-' + c.toLowerCase();
-	});
-}
 
 function printHelp(): void {
 	console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
