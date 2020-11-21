@@ -1,4 +1,8 @@
-type Options = {
+export type UniqueKey = 'doi' | 'key' | 'abstract' | 'citation';
+
+export type MergeStrategy = 'first' | 'last' | 'combine' | 'overwrite';
+
+export type Options = {
 	/**
 	 * Remove fields - Remove specified fields from bibliography entries.
 	 * @example --omit=id,name
@@ -132,7 +136,7 @@ type Options = {
 	lowercase?: boolean;
 };
 
-type CLIOptions = Options & {
+export type CLIOptions = Options & {
 	/**
 	 * Show help
 	 */

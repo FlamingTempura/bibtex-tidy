@@ -100,7 +100,7 @@
         "--duplicates citation (warn if author and titles are similar)",
         "--duplicates doi, key (warn if DOI or keys are identical)"
       ],
-      "type": "boolean | any[]",
+      "type": "boolean | UniqueKey[]",
       "deprecated": false
     },
     {
@@ -108,7 +108,7 @@
       "cli": "merge",
       "description": "Merge duplicate entries - Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge:\n- first: only keep the original entry\n- last: only keep the last found duplicate\n- combine: keep original entry and merge in fields of duplicates if they do not already exist\n- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist",
       "examples": [],
-      "type": "any",
+      "type": "boolean | \"first\" | \"last\" | \"combine\" | \"overwrite\"",
       "deprecated": false
     },
     {

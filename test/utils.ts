@@ -5,6 +5,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { spawnSync, spawn } from 'child_process';
+import { CLIOptions, Options } from '../src/options.js';
 
 const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'bibtex-tidy-'));
 
@@ -17,8 +18,6 @@ const unCamelCase = (str: string): string =>
 
 const api = (bibtexs: string[], options: Options = {}): BibTeXTidyResult =>
 	bibtexTidy.tidy(bibtexs[0], options);
-
-type CLIOptions = Options & { help?: boolean; h?: boolean };
 
 /**
  * Run bibtex-tidy through command line. Unlike API, this accepts multiple

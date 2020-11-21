@@ -24,14 +24,14 @@ const docsResolve = {
 	},
 	load(id) {
 		if (id !== 'DOCS') return null;
-		const program = ts.createProgram([__dirname + '/src/options.d.ts'], {
+		const program = ts.createProgram([__dirname + '/src/options.ts'], {
 			target: ts.ScriptTarget.ES5,
 			module: ts.ModuleKind.CommonJS,
 		});
 		const checker = program.getTypeChecker();
 		const sourceFile = program
 			.getSourceFiles()
-			.find(({ path }) => path.endsWith('/src/options.d.ts'));
+			.find(({ path }) => path.endsWith('/src/options.ts'));
 		const typeToString = (member) => {
 			try {
 				return checker.typeToString(

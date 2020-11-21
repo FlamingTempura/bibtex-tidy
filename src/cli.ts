@@ -2,6 +2,7 @@ import OPTIONS from 'DOCS';
 import tidy from './index';
 import { readFileSync, writeFileSync } from 'fs';
 import process from 'process';
+import { CLIOptions, MergeStrategy, UniqueKey } from './options';
 
 type Arguments = {
 	inputFiles: string[];

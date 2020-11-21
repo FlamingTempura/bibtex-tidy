@@ -79,9 +79,6 @@ type DuplicateEntryWarning = {
 
 type Warning = DuplicateKeyWarning | MissingKeyWarning | DuplicateEntryWarning;
 
-type UniqueKey = 'doi' | 'key' | 'abstract' | 'citation';
-type MergeStrategy = 'first' | 'last' | 'combine' | 'overwrite';
-
 declare module '*.tsv' {
 	const value: CharacterMapping[];
 	export default value;
@@ -94,7 +91,7 @@ declare module '*.pegjs' {
 type OptionValue = string | boolean | number | string[];
 
 type OptionDescription = {
-	key: keyof Options;
+	key: keyof import('./options').Options;
 	cli: string;
 	description: string;
 	examples?: string[];

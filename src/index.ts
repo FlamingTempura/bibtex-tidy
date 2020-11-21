@@ -1,4 +1,5 @@
 import options from 'DOCS';
+import { Options, UniqueKey } from './options';
 import parser from './bibtex.pegjs';
 import unicode from './unicode.tsv'; // source: https://raw.githubusercontent.com/pkgw/worklog-tools/master/unicode_to_latex.py
 
