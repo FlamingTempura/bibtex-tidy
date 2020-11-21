@@ -54,8 +54,6 @@ interface ValueString {
 
 type BibTeXItem = BibTeXString | BibTeXEntry | BibTeXPreamble | BibTeXComment;
 
-type CharacterMapping = [string, string];
-
 type SortIndex = Map<string, string>;
 
 type DuplicateKeyWarning = {
@@ -78,11 +76,6 @@ type DuplicateEntryWarning = {
 };
 
 type Warning = DuplicateKeyWarning | MissingKeyWarning | DuplicateEntryWarning;
-
-declare module '*.tsv' {
-	const value: CharacterMapping[];
-	export default value;
-}
 
 declare module '*.pegjs' {
 	export function parse(input: string): BibTeXItem[];

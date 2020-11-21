@@ -2504,7 +2504,7 @@ var parser = /*
   };
 })();
 
-var unicode = [ [ "0023",
+var unicodeFromTSV = [ [ "0023",
     "\\#" ],
   [ "0024",
     "\\$" ],
@@ -7156,6 +7156,8 @@ var unicode = [ [ "0023",
     "\\mathtt{8}" ],
   [ "d7ff",
     "\\mathtt{9}" ] ];
+
+var unicode = unicodeFromTSV;
 
 var DEFAULT_ENTRY_ORDER = ['key'];
 var DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];

@@ -2371,7 +2371,7 @@
     };
   })();
 
-  var unicode = [ [ "0023",
+  var unicodeFromTSV = [ [ "0023",
       "\\#" ],
     [ "0024",
       "\\$" ],
@@ -7023,6 +7023,8 @@
       "\\mathtt{8}" ],
     [ "d7ff",
       "\\mathtt{9}" ] ];
+
+  const unicode = unicodeFromTSV;
 
   const DEFAULT_ENTRY_ORDER = ['key'];
   const DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
