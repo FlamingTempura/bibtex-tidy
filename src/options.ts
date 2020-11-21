@@ -134,6 +134,13 @@ export type Options = {
 	 * @example --no-lowercase (keep original case)
 	 */
 	lowercase?: boolean;
+	/**
+	 * Wrap the given fields in double braces, such that case is preserved when
+	 * compiling your document.
+	 * @example --enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})
+	 * @example --enclosing-braces (equivalent to ---enclosing-braces=title)
+	 */
+	enclosingBraces?: boolean | string[];
 };
 
 export type CLIOptions = Options & {

@@ -43,6 +43,8 @@ const DEFAULT_FIELD_ORDER: string[] = [
 	'urldate', 'copyright', 'category', 'note', 'metadata'
 ];
 
+const DEFAULT_ENCLOSING_BRACES_FIELDS: string[] = ['title'];
+
 //prettier-ignore
 const MONTHS: Set<string> = new Set([
 	'jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'
@@ -70,6 +72,7 @@ function tidy(
 		trailingCommas = false,
 		removeEmptyFields = false,
 		lowercase = true,
+		enclosingBraces = false,
 		sortProperties,
 	}: Options = {}
 ): BibTeXTidyResult {
@@ -80,6 +83,8 @@ function tidy(
 	if (merge === true) merge = 'combine';
 	if (duplicates === true) duplicates = DEFAULT_MERGE_CHECK;
 	if (align === false) align = 1;
+	if (enclosingBraces === true)
+		enclosingBraces = DEFAULT_ENCLOSING_BRACES_FIELDS;
 	const indent: string = tab ? '\t' : ' '.repeat(space);
 	const uniqCheck: Map<UniqueKey, boolean> = new Map();
 
@@ -96,6 +101,10 @@ function tidy(
 	}
 
 	const omitFields: Set<string> = new Set(omit);
+	const enclosingBracesFields: Set<string> = new Set(
+		(enclosingBraces || []).map((field) => field.toLocaleLowerCase())
+	);
+
 	// Parse the bibtex and retrieve the items (includes comments, entries, strings, preambles)
 	const items: BibTeXItem[] = parse(input);
 	// Set of entry keys, used to check for duplicate key warnings
@@ -135,7 +144,14 @@ function tidy(
 					.replace(/\s*\n\s*/g, ' ')
 					.trim(); // remove whitespace
 				// if a field's value has double braces {{blah}}, lose the inner brace
-				if (stripEnclosingBraces) val = val.replace(/^\{([^{}]*)\}$/g, '$1');
+				if (stripEnclosingBraces || enclosingBracesFields.has(fieldName))
+					val = val.replace(/^\{([^{}]*)\}$/g, '$1');
+				// if the user requested, wrap the value in braces (this forces bibtex compiler to preserve case)
+				if (
+					enclosingBracesFields.has(fieldName) &&
+					(field.datatype === 'braced' || curly)
+				)
+					val = `{${val}}`;
 				// if a field's value is all caps, convert it to title case
 				if (dropAllCaps && val.match(/^[^a-z]+$/)) val = titleCase(val);
 				// url encode must happen before escape special characters

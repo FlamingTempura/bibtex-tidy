@@ -167,6 +167,11 @@ function parseArguments(): Arguments {
 					options.merge = (valStr || uniq) as MergeStrategy;
 				}
 				break;
+			case '--enclosing-braces':
+				options.enclosingBraces = valStr
+					? valStr.split(',')
+					: nextList() || true;
+				break;
 			case '--strip-enclosing-braces':
 				options.stripEnclosingBraces = true;
 				break;

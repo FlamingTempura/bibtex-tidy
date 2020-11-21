@@ -341,6 +341,17 @@ var optionsDocumentation = [
     "deprecated": false
   },
   {
+    "key": "enclosingBraces",
+    "cli": "enclosing-braces",
+    "description": "Wrap the given fields in double braces, such that case is preserved when compiling your document.",
+    "examples": [
+      "--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})",
+      "--enclosing-braces (equivalent to ---enclosing-braces=title)"
+    ],
+    "type": "boolean | string[]",
+    "deprecated": false
+  },
+  {
     "key": "quiet",
     "cli": "quiet",
     "description": "Suppress logs and warnings.",
@@ -7224,6 +7235,7 @@ function fromCamelCase(str) {
 var DEFAULT_ENTRY_ORDER = ['key'];
 var DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
 var DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'];
+var DEFAULT_ENCLOSING_BRACES_FIELDS = ['title'];
 var MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
 
 function tidy(input) {
@@ -7268,6 +7280,8 @@ function tidy(input) {
       removeEmptyFields = _ref$removeEmptyField === void 0 ? false : _ref$removeEmptyField,
       _ref$lowercase = _ref.lowercase,
       lowercase = _ref$lowercase === void 0 ? true : _ref$lowercase,
+      _ref$enclosingBraces = _ref.enclosingBraces,
+      enclosingBraces = _ref$enclosingBraces === void 0 ? false : _ref$enclosingBraces,
       sortProperties = _ref.sortProperties;
 
   if (sort === true) sort = DEFAULT_ENTRY_ORDER;
@@ -7277,6 +7291,7 @@ function tidy(input) {
   if (merge === true) merge = 'combine';
   if (duplicates === true) duplicates = DEFAULT_MERGE_CHECK;
   if (align === false) align = 1;
+  if (enclosingBraces === true) enclosingBraces = DEFAULT_ENCLOSING_BRACES_FIELDS;
   var indent = tab ? '\t' : ' '.repeat(space);
   var uniqCheck = new Map();
   if (merge && !duplicates) duplicates = DEFAULT_MERGE_CHECK;
@@ -7302,6 +7317,9 @@ function tidy(input) {
   }
 
   var omitFields = new Set(omit);
+  var enclosingBracesFields = new Set((enclosingBraces || []).map(function (field) {
+    return field.toLocaleLowerCase();
+  }));
   var items = parse(input);
   var keys = new Map();
   var dois = new Map();
@@ -7344,7 +7362,8 @@ function tidy(input) {
             _val = field.raw;
           } else {
             _val = String(field.value).replace(/\s*\n\s*/g, ' ').trim();
-            if (stripEnclosingBraces) _val = _val.replace(/^\{([^{}]*)\}$/g, '$1');
+            if (stripEnclosingBraces || enclosingBracesFields.has(fieldName)) _val = _val.replace(/^\{([^{}]*)\}$/g, '$1');
+            if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) _val = `{${_val}}`;
             if (dropAllCaps && _val.match(/^[^a-z]+$/)) _val = titleCase(_val);
             if (nameLowerCase === 'url' && encodeUrls) _val = _val.replace(/\\?_/g, '\\%5F');
             if (escape) _val = escapeSpecialCharacters(_val);
@@ -7858,6 +7877,10 @@ function parseArguments() {
           options.merge = valStr || uniq;
         }
 
+        break;
+
+      case '--enclosing-braces':
+        options.enclosingBraces = valStr ? valStr.split(',') : nextList() || true;
         break;
 
       case '--strip-enclosing-braces':

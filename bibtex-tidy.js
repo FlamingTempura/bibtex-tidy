@@ -208,6 +208,17 @@
       "deprecated": false
     },
     {
+      "key": "enclosingBraces",
+      "cli": "enclosing-braces",
+      "description": "Wrap the given fields in double braces, such that case is preserved when compiling your document.",
+      "examples": [
+        "--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})",
+        "--enclosing-braces (equivalent to ---enclosing-braces=title)"
+      ],
+      "type": "boolean | string[]",
+      "deprecated": false
+    },
+    {
       "key": "quiet",
       "cli": "quiet",
       "description": "Suppress logs and warnings.",
@@ -7063,6 +7074,7 @@
   const DEFAULT_ENTRY_ORDER = ['key'];
   const DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
   const DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'];
+  const DEFAULT_ENCLOSING_BRACES_FIELDS = ['title'];
   const MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
 
   function tidy(input) {
@@ -7088,6 +7100,7 @@
       trailingCommas = false,
       removeEmptyFields = false,
       lowercase = true,
+      enclosingBraces = false,
       sortProperties
     } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     if (sort === true) sort = DEFAULT_ENTRY_ORDER;
@@ -7097,6 +7110,7 @@
     if (merge === true) merge = 'combine';
     if (duplicates === true) duplicates = DEFAULT_MERGE_CHECK;
     if (align === false) align = 1;
+    if (enclosingBraces === true) enclosingBraces = DEFAULT_ENCLOSING_BRACES_FIELDS;
     const indent = tab ? '\t' : ' '.repeat(space);
     const uniqCheck = new Map();
     if (merge && !duplicates) duplicates = DEFAULT_MERGE_CHECK;
@@ -7112,6 +7126,7 @@
     }
 
     const omitFields = new Set(omit);
+    const enclosingBracesFields = new Set((enclosingBraces || []).map(field => field.toLocaleLowerCase()));
     const items = parse(input);
     const keys = new Map();
     const dois = new Map();
@@ -7143,7 +7158,8 @@
           val = field.raw;
         } else {
           val = String(field.value).replace(/\s*\n\s*/g, ' ').trim();
-          if (stripEnclosingBraces) val = val.replace(/^\{([^{}]*)\}$/g, '$1');
+          if (stripEnclosingBraces || enclosingBracesFields.has(fieldName)) val = val.replace(/^\{([^{}]*)\}$/g, '$1');
+          if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) val = "{".concat(val, "}");
           if (dropAllCaps && val.match(/^[^a-z]+$/)) val = titleCase(val);
           if (nameLowerCase === 'url' && encodeUrls) val = val.replace(/\\?_/g, '\\%5F');
           if (escape) val = escapeSpecialCharacters(val);
