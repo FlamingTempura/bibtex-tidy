@@ -88,7 +88,7 @@ EXPRESSION "expression"
     rest:(
       _ '#' _ value:LITERAL { return value; }
     )*
-    { return rest.length > 0 ? { value: [first, ...rest], datatype: 'concatinate', raw: text() } : first; }
+    { return rest.length > 0 ? { value: [first, ...rest], datatype: 'concatenate', raw: text() } : first; }
 
 // A literal can be a string in double quotes, string in curly braces, number, or identifier
 LITERAL "literal"

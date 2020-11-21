@@ -577,7 +577,7 @@ var parser = /*
         peg$c59 = "#",
         peg$c60 = peg$literalExpectation("#", false),
         peg$c61 = function(first, value) { return value; },
-        peg$c62 = function(first, rest) { return rest.length > 0 ? { value: [first, ...rest], datatype: 'concatinate', raw: text() } : first; },
+        peg$c62 = function(first, rest) { return rest.length > 0 ? { value: [first, ...rest], datatype: 'concatenate', raw: text() } : first; },
         peg$c63 = peg$otherExpectation("literal"),
         peg$c64 = "\"",
         peg$c65 = peg$literalExpectation("\"", false),
@@ -7167,7 +7167,7 @@ var DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'da
 var MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
 var specialCharacters = new Map(unicode);
 
-var escapeSpecialCharacters = function escapeSpecialCharacters(str) {
+function escapeSpecialCharacters(str) {
   var newstr = '';
   var escapeMode = false;
 
@@ -7189,20 +7189,20 @@ var escapeSpecialCharacters = function escapeSpecialCharacters(str) {
   }
 
   return newstr;
-};
+}
 
-var titleCase = function titleCase(str) {
+function titleCase(str) {
   return str.replace(/(\w)(\S*)/g, function (u, first, rest) {
     return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
   });
-};
+}
 
-var alphaNum = function alphaNum(str) {
+function alphaNum(str) {
   if (typeof str === 'undefined') return undefined;
   return String(str).replace(/[^0-9A-Za-z]/g, '').toLocaleLowerCase();
-};
+}
 
-var tidy = function tidy(input) {
+function tidy(input) {
   var _item$fieldMap$get2, _item$fieldMap$get3, _item$fieldMap$get4, _item$fieldMap$get5;
 
   var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
@@ -7311,20 +7311,20 @@ var tidy = function tidy(input) {
         for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
           var field = _step6.value;
           var fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
-          var lname = fieldName.toLocaleLowerCase();
+          var nameLowerCase = fieldName.toLocaleLowerCase();
           if (omitFields.has(fieldName) || _item.fieldMap.has(fieldName)) continue;
 
           var _val = void 0;
 
-          if (field.datatype === 'concatinate') {
+          if (field.datatype === 'concatenate') {
             _val = field.raw;
           } else {
             _val = String(field.value).replace(/\s*\n\s*/g, ' ').trim();
             if (stripEnclosingBraces) _val = _val.replace(/^\{([^{}]*)\}$/g, '$1');
             if (dropAllCaps && _val.match(/^[^a-z]+$/)) _val = titleCase(_val);
-            if (lname === 'url' && encodeUrls) _val = _val.replace(/\\?_/g, '\\%5F');
+            if (nameLowerCase === 'url' && encodeUrls) _val = _val.replace(/\\?_/g, '\\%5F');
             if (escape) _val = escapeSpecialCharacters(_val);
-            if (lname === 'pages') _val = _val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+            if (nameLowerCase === 'pages') _val = _val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
           }
 
           _val = _val.trim();
@@ -7467,7 +7467,7 @@ var tidy = function tidy(input) {
   }
 
   if (sort) {
-    var preceedingMeta = [];
+    var precedingMeta = [];
 
     var _iterator3 = _createForOfIteratorHelper(items),
         _step3;
@@ -7477,7 +7477,7 @@ var tidy = function tidy(input) {
         var item = _step3.value;
 
         if (item.itemtype !== 'entry') {
-          preceedingMeta.push(item);
+          precedingMeta.push(item);
           continue;
         }
 
@@ -7512,8 +7512,8 @@ var tidy = function tidy(input) {
 
         sortIndexes.set(item, sortIndex);
 
-        while (preceedingMeta.length > 0) {
-          sortIndexes.set(preceedingMeta.pop(), sortIndex);
+        while (precedingMeta.length > 0) {
+          sortIndexes.set(precedingMeta.pop(), sortIndex);
         }
       }
     } catch (err) {
@@ -7631,7 +7631,7 @@ var tidy = function tidy(input) {
     warnings,
     entries
   };
-};
+}
 
 var tidy$1 = {
   tidy,
@@ -7641,7 +7641,7 @@ var tidy$1 = {
 var BREAK_LINE = 84;
 var LEFT_MARGIN = 27;
 
-var splitLines = function splitLines(line, limit) {
+function splitLines(line, limit) {
   var words = line.split(' ');
   var lines = [''];
 
@@ -7661,15 +7661,15 @@ var splitLines = function splitLines(line, limit) {
   }
 
   return lines;
-};
+}
 
-var fromCamelCase = function fromCamelCase(str) {
+function fromCamelCase(str) {
   return str.replace(/[A-Z]/g, function (c) {
     return '-' + c.toLowerCase();
   });
-};
+}
 
-var printHelp = function printHelp() {
+function printHelp() {
   console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
   console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.\n');
   console.log('Options:');
@@ -7722,7 +7722,7 @@ var printHelp = function printHelp() {
   }
 
   console.log('Full documentation <https://github.com/FlamingTempura/bibtex-tidy>');
-};
+}
 
 function parseArguments() {
   var options = {

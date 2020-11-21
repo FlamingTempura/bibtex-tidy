@@ -444,7 +444,7 @@
           peg$c59 = "#",
           peg$c60 = peg$literalExpectation("#", false),
           peg$c61 = function(first, value) { return value; },
-          peg$c62 = function(first, rest) { return rest.length > 0 ? { value: [first, ...rest], datatype: 'concatinate', raw: text() } : first; },
+          peg$c62 = function(first, rest) { return rest.length > 0 ? { value: [first, ...rest], datatype: 'concatenate', raw: text() } : first; },
           peg$c63 = peg$otherExpectation("literal"),
           peg$c64 = "\"",
           peg$c65 = peg$literalExpectation("\"", false),
@@ -7034,7 +7034,7 @@
   const MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
   const specialCharacters = new Map(unicode);
 
-  const escapeSpecialCharacters = str => {
+  function escapeSpecialCharacters(str) {
     let newstr = '';
     let escapeMode = false;
 
@@ -7056,20 +7056,20 @@
     }
 
     return newstr;
-  };
+  }
 
-  const titleCase = str => {
+  function titleCase(str) {
     return str.replace(/(\w)(\S*)/g, (u, first, rest) => {
       return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
     });
-  };
+  }
 
-  const alphaNum = str => {
+  function alphaNum(str) {
     if (typeof str === 'undefined') return undefined;
     return String(str).replace(/[^0-9A-Za-z]/g, '').toLocaleLowerCase();
-  };
+  }
 
-  const tidy = function tidy(input) {
+  function tidy(input) {
     var _item$fieldMap$get, _item$fieldMap$get2, _item$fieldMap$get3, _item$fieldMap$get4;
 
     let {
@@ -7139,19 +7139,19 @@
 
       for (const field of item.fields) {
         const fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
-        const lname = fieldName.toLocaleLowerCase();
+        const nameLowerCase = fieldName.toLocaleLowerCase();
         if (omitFields.has(fieldName) || item.fieldMap.has(fieldName)) continue;
         let val;
 
-        if (field.datatype === 'concatinate') {
+        if (field.datatype === 'concatenate') {
           val = field.raw;
         } else {
           val = String(field.value).replace(/\s*\n\s*/g, ' ').trim();
           if (stripEnclosingBraces) val = val.replace(/^\{([^{}]*)\}$/g, '$1');
           if (dropAllCaps && val.match(/^[^a-z]+$/)) val = titleCase(val);
-          if (lname === 'url' && encodeUrls) val = val.replace(/\\?_/g, '\\%5F');
+          if (nameLowerCase === 'url' && encodeUrls) val = val.replace(/\\?_/g, '\\%5F');
           if (escape) val = escapeSpecialCharacters(val);
-          if (lname === 'pages') val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+          if (nameLowerCase === 'pages') val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
         }
 
         val = val.trim();
@@ -7245,11 +7245,11 @@
     }
 
     if (sort) {
-      const preceedingMeta = [];
+      const precedingMeta = [];
 
       for (const item of items) {
         if (item.itemtype !== 'entry') {
-          preceedingMeta.push(item);
+          precedingMeta.push(item);
           continue;
         }
 
@@ -7274,8 +7274,8 @@
 
         sortIndexes.set(item, sortIndex);
 
-        while (preceedingMeta.length > 0) {
-          sortIndexes.set(preceedingMeta.pop(), sortIndex);
+        while (precedingMeta.length > 0) {
+          sortIndexes.set(precedingMeta.pop(), sortIndex);
         }
       }
 
@@ -7359,7 +7359,7 @@
       warnings,
       entries
     };
-  };
+  }
 
   var index = {
     tidy,
