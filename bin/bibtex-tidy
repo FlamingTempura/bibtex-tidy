@@ -7361,7 +7361,7 @@ function tidy(input) {
           if (field.datatype === 'concatenate') {
             _val = field.raw;
           } else {
-            _val = String(field.value).replace(/\s*\n\s*/g, ' ').trim();
+            _val = String(field.value).replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>').replace(/\s*\n\s*/g, ' ').replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n').trim();
             if (stripEnclosingBraces || enclosingBracesFields.has(fieldName)) _val = _val.replace(/^\{([^{}]*)\}$/g, '$1');
             if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) _val = `{${_val}}`;
             if (dropAllCaps && _val.match(/^[^a-z]+$/)) _val = titleCase(_val);
@@ -7630,6 +7630,11 @@ function tidy(input) {
               if (!_field) continue;
               bibtex += `,\n${indent}${_k2.padEnd(align - 1)} = `;
               var _val2 = _field.value;
+
+              if (_val2.includes('\n\n')) {
+                _val2 = '\n' + indent.repeat(2) + _val2.replace(/\n\n/g, `\n\n${indent.repeat(2)}`) + '\n' + indent;
+              }
+
               var dig3 = String(_val2).slice(0, 3).toLowerCase();
 
               if (numeric && _val2.match(/^[1-9][0-9]*$/)) {

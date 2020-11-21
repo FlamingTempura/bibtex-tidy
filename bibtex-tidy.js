@@ -7157,7 +7157,7 @@
         if (field.datatype === 'concatenate') {
           val = field.raw;
         } else {
-          val = String(field.value).replace(/\s*\n\s*/g, ' ').trim();
+          val = String(field.value).replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>').replace(/\s*\n\s*/g, ' ').replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n').trim();
           if (stripEnclosingBraces || enclosingBracesFields.has(fieldName)) val = val.replace(/^\{([^{}]*)\}$/g, '$1');
           if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) val = "{".concat(val, "}");
           if (dropAllCaps && val.match(/^[^a-z]+$/)) val = titleCase(val);
@@ -7338,7 +7338,12 @@
             const field = item.fieldMap.get(k);
             if (!field) continue;
             bibtex += ",\n".concat(indent).concat(k.padEnd(align - 1), " = ");
-            const val = field.value;
+            let val = field.value;
+
+            if (val.includes('\n\n')) {
+              val = '\n' + indent.repeat(2) + val.replace(/\n\n/g, "\n\n".concat(indent.repeat(2))) + '\n' + indent;
+            }
+
             const dig3 = String(val).slice(0, 3).toLowerCase();
 
             if (numeric && val.match(/^[1-9][0-9]*$/)) {
