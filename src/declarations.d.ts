@@ -88,23 +88,6 @@ declare module '*.pegjs' {
 	export function parse(input: string): BibTeXItem[];
 }
 
-type OptionValue = string | boolean | number | string[];
-
-type OptionDescription = {
-	key: keyof import('./options').Options;
-	cli: string;
-	description: string;
-	examples?: string[];
-	type: 'array' | 'number' | 'boolean';
-	default: OptionValue;
-	deprecated: boolean;
-};
-
-declare module 'DOCS' {
-	const options: OptionDescription[];
-	export default options;
-}
-
 type BibTeXTidyResult = {
 	bibtex: string;
 	warnings: Warning[];

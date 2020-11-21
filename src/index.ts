@@ -1,4 +1,4 @@
-import options from 'DOCS';
+import { optionDocs } from './documentation';
 import { Options, UniqueKey } from './options';
 import parser from './bibtex.pegjs';
 import unicode from './unicode.tsv'; // source: https://raw.githubusercontent.com/pkgw/worklog-tools/master/unicode_to_latex.py
@@ -350,4 +350,4 @@ const tidy = (
 	return { bibtex, warnings, entries };
 };
 
-export default { tidy, options };
+export default { tidy, options: optionDocs };

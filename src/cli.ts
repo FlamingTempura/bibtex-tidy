@@ -1,4 +1,4 @@
-import OPTIONS from 'DOCS';
+import { optionDocs } from './documentation';
 import tidy from './index';
 import { readFileSync, writeFileSync } from 'fs';
 import process from 'process';
@@ -34,7 +34,7 @@ const printHelp = (): void => {
 	console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
 	console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.\n');
 	console.log('Options:');
-	for (const opt of OPTIONS) {
+	for (const opt of optionDocs) {
 		if (opt.deprecated) continue;
 		const lines = opt.description
 			.split('\n')
