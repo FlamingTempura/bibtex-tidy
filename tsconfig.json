@@ -13,7 +13,6 @@
 		"paths": {
 			"*": ["../node_modules/*"]
 		},
-		"typeRoots": ["./declarations.d.ts", "./node_modules/@types"],
 		"rootDir": "./src"
 	},
 	"include": ["./src/*"]
