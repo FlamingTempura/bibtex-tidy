@@ -48,7 +48,7 @@ export function splitLines(line: string, limit: number): string[] {
 			lines.push('');
 		lines[lines.length - 1] += word + ' ';
 	}
-	return lines;
+	return lines.map((line) => line.trim());
 }
 
 export function fromCamelCase(str: string): string {

@@ -141,6 +141,10 @@ export type Options = {
 	 * @example --enclosing-braces (equivalent to ---enclosing-braces=title)
 	 */
 	enclosingBraces?: boolean | string[];
+	/**
+	 * Wrap values at the given column (80 by default)
+	 */
+	wrap?: boolean | number;
 };
 
 export type CLIOptions = Options & {

@@ -219,6 +219,14 @@
       "deprecated": false
     },
     {
+      "key": "wrap",
+      "cli": "wrap",
+      "description": "Wrap values at the given column (80 by default)",
+      "examples": [],
+      "type": "number | boolean",
+      "deprecated": false
+    },
+    {
       "key": "quiet",
       "cli": "quiet",
       "description": "Suppress logs and warnings.",
@@ -7070,6 +7078,17 @@
     if (typeof str === 'undefined') return undefined;
     return String(str).replace(/[^0-9A-Za-z]/g, '').toLocaleLowerCase();
   }
+  function splitLines(line, limit) {
+    const words = line.split(' ');
+    const lines = [''];
+
+    for (const word of words) {
+      if (lines[lines.length - 1].length + word.length + 1 > limit) lines.push('');
+      lines[lines.length - 1] += word + ' ';
+    }
+
+    return lines.map(line => line.trim());
+  }
 
   const DEFAULT_ENTRY_ORDER = ['key'];
   const DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
@@ -7101,6 +7120,7 @@
       removeEmptyFields = false,
       lowercase = true,
       enclosingBraces = false,
+      wrap = false,
       sortProperties
     } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     if (sort === true) sort = DEFAULT_ENTRY_ORDER;
@@ -7111,6 +7131,7 @@
     if (duplicates === true) duplicates = DEFAULT_MERGE_CHECK;
     if (align === false) align = 1;
     if (enclosingBraces === true) enclosingBraces = DEFAULT_ENCLOSING_BRACES_FIELDS;
+    if (wrap === true) wrap = 80;
     const indent = tab ? '\t' : ' '.repeat(space);
     const uniqCheck = new Map();
     if (merge && !duplicates) duplicates = DEFAULT_MERGE_CHECK;
@@ -7339,11 +7360,6 @@
             if (!field) continue;
             bibtex += ",\n".concat(indent).concat(k.padEnd(align - 1), " = ");
             let val = field.value;
-
-            if (val.includes('\n\n')) {
-              val = '\n' + indent.repeat(2) + val.replace(/\n\n/g, "\n\n".concat(indent.repeat(2))) + '\n' + indent;
-            }
-
             const dig3 = String(val).slice(0, 3).toLowerCase();
 
             if (numeric && val.match(/^[1-9][0-9]*$/)) {
@@ -7351,6 +7367,21 @@
             } else if (numeric && k === 'month' && MONTHS.has(dig3)) {
               bibtex += dig3;
             } else if (field.datatype === 'braced' || curly) {
+              const lineLength = "".concat(indent).concat(align, "{").concat(val, "}").length;
+              const multiLine = val.includes('\n\n');
+
+              if (wrap && lineLength > wrap || multiLine) {
+                let paragraphs = val.split('\n\n');
+                const valIndent = indent.repeat(2);
+
+                if (wrap) {
+                  const wrapCol = wrap;
+                  paragraphs = paragraphs.map(paragraph => splitLines(paragraph, wrapCol - valIndent.length).join('\n' + valIndent));
+                }
+
+                val = '\n' + valIndent + paragraphs.join("\n\n".concat(valIndent)) + '\n' + indent;
+              }
+
               bibtex += "{".concat(val, "}");
             } else if (field.datatype === 'quoted') {
               bibtex += "\"".concat(val, "\"");

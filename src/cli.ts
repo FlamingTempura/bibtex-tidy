@@ -223,6 +223,9 @@ function parseArguments(): Arguments {
 			case '--no-lowercase':
 				options.lowercase = false;
 				break;
+			case '--wrap':
+				options.wrap = valStr ? Number(valStr) : nextNumber();
+				break;
 			case '--backup':
 				options.backup = true;
 				break;

@@ -1,7 +1,12 @@
 import { optionDocs } from './documentation';
 import { Options, UniqueKey } from './options';
 import { parse, BibTeXItem, BibTeXEntry, ValueString } from './bibtex-parser';
-import { titleCase, escapeSpecialCharacters, alphaNum } from './utils';
+import {
+	titleCase,
+	escapeSpecialCharacters,
+	alphaNum,
+	splitLines,
+} from './utils';
 
 type SortIndex = Map<string, string>;
 
@@ -73,6 +78,7 @@ function tidy(
 		removeEmptyFields = false,
 		lowercase = true,
 		enclosingBraces = false,
+		wrap = false,
 		sortProperties,
 	}: Options = {}
 ): BibTeXTidyResult {
@@ -85,6 +91,7 @@ function tidy(
 	if (align === false) align = 1;
 	if (enclosingBraces === true)
 		enclosingBraces = DEFAULT_ENCLOSING_BRACES_FIELDS;
+	if (wrap === true) wrap = 80;
 	const indent: string = tab ? '\t' : ' '.repeat(space);
 	const uniqCheck: Map<UniqueKey, boolean> = new Map();
 
@@ -330,26 +337,40 @@ function tidy(
 					if (!field) continue;
 					bibtex += `,\n${indent}${k.padEnd((align as number) - 1)} = `;
 					let val = field.value;
-					// If the value contains multiple paragraphs, then output the value at a separate indent level, e.g.
-					// abstract     = {
-					//   Paragraph 1
-					//
-					//   Paragraph 2
-					// }
-					if (val.includes('\n\n')) {
-						val =
-							'\n' +
-							indent.repeat(2) +
-							val.replace(/\n\n/g, `\n\n${indent.repeat(2)}`) +
-							'\n' +
-							indent;
-					}
 					const dig3 = String(val).slice(0, 3).toLowerCase();
 					if (numeric && val.match(/^[1-9][0-9]*$/)) {
 						bibtex += val;
 					} else if (numeric && k === 'month' && MONTHS.has(dig3)) {
 						bibtex += dig3;
 					} else if (field.datatype === 'braced' || curly) {
+						const lineLength = `${indent}${align}{${val}}`.length;
+						const multiLine = val.includes('\n\n');
+						// If the value contains multiple paragraphs, then output the value at a separate indent level, e.g.
+						// abstract     = {
+						//   Paragraph 1
+						//
+						//   Paragraph 2
+						// }
+						if ((wrap && lineLength > wrap) || multiLine) {
+							let paragraphs = val.split('\n\n');
+							const valIndent = indent.repeat(2);
+
+							if (wrap) {
+								const wrapCol = wrap;
+								paragraphs = paragraphs.map((paragraph) =>
+									splitLines(paragraph, wrapCol - valIndent.length).join(
+										'\n' + valIndent
+									)
+								);
+							}
+
+							val =
+								'\n' +
+								valIndent +
+								paragraphs.join(`\n\n${valIndent}`) +
+								'\n' +
+								indent;
+						}
 						bibtex += `{${val}}`;
 					} else if (field.datatype === 'quoted') {
 						bibtex += `"${val}"`;
