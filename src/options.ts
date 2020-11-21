@@ -135,14 +135,16 @@ export type Options = {
 	 */
 	lowercase?: boolean;
 	/**
-	 * Wrap the given fields in double braces, such that case is preserved when
-	 * compiling your document.
+	 * Enclose in double braces - Enclose the given fields in double braces, such
+	 * that case is preserved during BibTeX compilation.
 	 * @example --enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})
 	 * @example --enclosing-braces (equivalent to ---enclosing-braces=title)
 	 */
 	enclosingBraces?: boolean | string[];
 	/**
-	 * Wrap values at the given column (80 by default)
+	 * Wrap values - Wrap long values at the given column
+	 * @example --wrap (80 by default)
+	 * @example --wrap=82
 	 */
 	wrap?: boolean | number;
 };

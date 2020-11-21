@@ -343,7 +343,7 @@ var optionsDocumentation = [
   {
     "key": "enclosingBraces",
     "cli": "enclosing-braces",
-    "description": "Wrap the given fields in double braces, such that case is preserved when compiling your document.",
+    "description": "Enclose in double braces - Enclose the given fields in double braces, such that case is preserved during BibTeX compilation.",
     "examples": [
       "--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})",
       "--enclosing-braces (equivalent to ---enclosing-braces=title)"
@@ -354,8 +354,11 @@ var optionsDocumentation = [
   {
     "key": "wrap",
     "cli": "wrap",
-    "description": "Wrap values at the given column (80 by default)",
-    "examples": [],
+    "description": "Wrap values - Wrap long values at the given column",
+    "examples": [
+      "--wrap (80 by default)",
+      "--wrap=82"
+    ],
     "type": "number | boolean",
     "deprecated": false
   },
