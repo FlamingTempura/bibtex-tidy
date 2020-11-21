@@ -28,3 +28,9 @@ No changes, aside from correcting version number at top of bibtex-tidy.js
 
 - #17 Restore --help option
 - Support for older browsers and node versions
+
+### v1.5.0
+
+- Breaking change: paragraphs within field values will now be preserved
+- #18 --enclosing-braces option added to preserve case when compiling BibTeX
+- #19 --wrap option added for wrapping long values

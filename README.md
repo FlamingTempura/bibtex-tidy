@@ -175,14 +175,22 @@ Options:
                            --lowercase (default)
                            --no-lowercase (keep original case)
 
+  --enclosing-braces       Wrap the given fields in double braces, such that case
+                           is preserved when compiling your document.
+                           Examples:
+                           --enclosing-braces=title,journal (output title and
+                           journal fields will be of the form {{This is a title}})
+                           --enclosing-braces (equivalent to
+                           ---enclosing-braces=title)
+
+  --wrap                   Wrap values at the given column (80 by default)
+
   --quiet                  Suppress logs and warnings.
 
   --backup                 Make a backup <filename>.original
                            Examples:
                            --backup (default)
                            --no-backup (do not create a backup)
-
-Full documentation <https://github.com/FlamingTempura/bibtex-tidy>
 ```
 
 ### Programmatic usage
