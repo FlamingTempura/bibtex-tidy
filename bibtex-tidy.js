@@ -2371,6 +2371,8 @@
     };
   })();
 
+  const parse = parser.parse;
+
   var unicodeFromTSV = [ [ "0023",
       "\\#" ],
     [ "0024",
@@ -7114,7 +7116,7 @@
     }
 
     const omitFields = new Set(omit);
-    const items = parser.parse(input);
+    const items = parse(input);
     const keys = new Map();
     const dois = new Map();
     const citations = new Map();

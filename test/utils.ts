@@ -6,6 +6,8 @@ import os from 'os';
 import path from 'path';
 import { spawnSync, spawn } from 'child_process';
 import { CLIOptions, Options } from '../src/options.js';
+import { BibTeXItem } from '../src/bibtex-parser.js';
+import { BibTeXTidyResult, Warning } from '../src/index.js';
 
 const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'bibtex-tidy-'));
 

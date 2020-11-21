@@ -1,7 +1,36 @@
 import { optionDocs } from './documentation';
 import { Options, UniqueKey } from './options';
-import parser from './bibtex.pegjs';
-import { unicode } from './unicode'; // source: https://raw.githubusercontent.com/pkgw/worklog-tools/master/unicode_to_latex.py
+import { parse, BibTeXItem, BibTeXEntry, ValueString } from './bibtex-parser';
+import { unicode } from './unicode';
+
+type SortIndex = Map<string, string>;
+
+type DuplicateKeyWarning = {
+	code: 'DUPLICATE_KEY';
+	message: string;
+	entry: BibTeXItem;
+};
+
+type MissingKeyWarning = {
+	code: 'MISSING_KEY';
+	message: string;
+	entry: BibTeXItem;
+};
+
+type DuplicateEntryWarning = {
+	code: 'DUPLICATE_ENTRY';
+	message: string;
+	entry: BibTeXItem;
+	duplicateOf: BibTeXItem;
+};
+
+type Warning = DuplicateKeyWarning | MissingKeyWarning | DuplicateEntryWarning;
+
+type BibTeXTidyResult = {
+	bibtex: string;
+	warnings: Warning[];
+	entries: BibTeXEntry[];
+};
 
 const DEFAULT_ENTRY_ORDER: string[] = ['key']; // if sort = true
 const DEFAULT_MERGE_CHECK: UniqueKey[] = ['doi', 'citation', 'abstract'];
@@ -105,7 +134,7 @@ const tidy = (
 
 	const omitFields: Set<string> = new Set(omit);
 	// Parse the bibtex and retrieve the items (includes comments, entries, strings, preambles)
-	const items: BibTeXItem[] = parser.parse(input);
+	const items: BibTeXItem[] = parse(input);
 	// Set of entry keys, used to check for duplicate key warnings
 	const keys: Map<string, BibTeXEntry> = new Map();
 	const dois: Map<string, BibTeXEntry> = new Map();
@@ -351,3 +380,5 @@ const tidy = (
 };
 
 export default { tidy, options: optionDocs };
+
+export type { Warning, BibTeXTidyResult };

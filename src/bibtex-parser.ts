@@ -1,9 +1,13 @@
+// @ts-ignore
+import parser from './bibtex.pegjs';
+
 type BibTeXFieldDatatype =
 	| 'concatinate'
 	| 'braced'
 	| 'quoted'
 	| 'number'
 	| 'identifier';
+
 type BibTexValue = string | bigint | SingleField[];
 
 type SingleField = {
@@ -27,62 +31,35 @@ type BibTeXString = {
 	name: string;
 	raw: string;
 };
+
 type BibTeXComment = {
 	itemtype: 'comment';
 	comment: string;
 };
+
 type BibTeXPreamble = {
 	itemtype: 'preamble';
 	raw: string;
 };
-interface BibTeXEntry {
+
+export type BibTeXEntry = {
 	itemtype: 'entry';
 	key?: string;
 	type: string;
 	fields: BibTexField[];
-}
-
-interface BibTeXEntry {
 	fieldMap: Map<string, ValueString>;
 	duplicate?: boolean;
-}
+};
 
-interface ValueString {
+export type ValueString = {
 	value: string;
 	datatype: BibTeXFieldDatatype;
-}
-
-type BibTeXItem = BibTeXString | BibTeXEntry | BibTeXPreamble | BibTeXComment;
-
-type SortIndex = Map<string, string>;
-
-type DuplicateKeyWarning = {
-	code: 'DUPLICATE_KEY';
-	message: string;
-	entry: BibTeXItem;
 };
 
-type MissingKeyWarning = {
-	code: 'MISSING_KEY';
-	message: string;
-	entry: BibTeXItem;
-};
+export type BibTeXItem =
+	| BibTeXString
+	| BibTeXEntry
+	| BibTeXPreamble
+	| BibTeXComment;
 
-type DuplicateEntryWarning = {
-	code: 'DUPLICATE_ENTRY';
-	message: string;
-	entry: BibTeXItem;
-	duplicateOf: BibTeXItem;
-};
-
-type Warning = DuplicateKeyWarning | MissingKeyWarning | DuplicateEntryWarning;
-
-declare module '*.pegjs' {
-	export function parse(input: string): BibTeXItem[];
-}
-
-type BibTeXTidyResult = {
-	bibtex: string;
-	warnings: Warning[];
-	entries: BibTeXEntry[];
-};
+export const parse = parser.parse as (input: string) => BibTeXItem[];
