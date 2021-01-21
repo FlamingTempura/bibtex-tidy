@@ -129,6 +129,10 @@ export type Options = {
 	 */
 	removeEmptyFields?: boolean;
 	/**
+	 * Truncate a list of authors if above a given number into "and others".
+	 */
+	maxAuthors?: number;
+	/**
 	 * Make field names and entry type lowercase.
 	 * @example --lowercase (default)
 	 * @example --no-lowercase (keep original case)

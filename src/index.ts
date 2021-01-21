@@ -79,6 +79,7 @@ function tidy(
 		lowercase = true,
 		enclosingBraces = false,
 		wrap = false,
+		maxAuthors,
 		sortProperties,
 	}: Options = {}
 ): BibTeXTidyResult {
@@ -171,6 +172,12 @@ function tidy(
 				// replace single dash with double dash in page range
 				if (nameLowerCase === 'pages')
 					val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+				if (nameLowerCase === 'author' && maxAuthors) {
+					const authors = val.split(' and ');
+					if (authors.length > maxAuthors) {
+						val = [...authors.slice(0, maxAuthors), 'others'].join(' and ');
+					}
+				}
 			}
 			val = val.trim();
 			if (val || !removeEmptyFields) {

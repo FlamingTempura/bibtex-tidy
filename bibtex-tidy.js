@@ -197,6 +197,14 @@
       "deprecated": false
     },
     {
+      "key": "maxAuthors",
+      "cli": "max-authors",
+      "description": "Truncate a list of authors if above a given number into \"and others\".",
+      "examples": [],
+      "type": "number",
+      "deprecated": false
+    },
+    {
       "key": "lowercase",
       "cli": "lowercase",
       "description": "Make field names and entry type lowercase.",
@@ -7124,6 +7132,7 @@
       lowercase = true,
       enclosingBraces = false,
       wrap = false,
+      maxAuthors,
       sortProperties
     } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     if (sort === true) sort = DEFAULT_ENTRY_ORDER;
@@ -7188,6 +7197,14 @@
           if (nameLowerCase === 'url' && encodeUrls) val = val.replace(/\\?_/g, '\\%5F');
           if (escape) val = escapeSpecialCharacters(val);
           if (nameLowerCase === 'pages') val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+
+          if (nameLowerCase === 'author' && maxAuthors) {
+            const authors = val.split(' and ');
+
+            if (authors.length > maxAuthors) {
+              val = [...authors.slice(0, maxAuthors), 'others'].join(' and ');
+            }
+          }
         }
 
         val = val.trim();

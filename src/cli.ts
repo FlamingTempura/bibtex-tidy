@@ -220,6 +220,9 @@ function parseArguments(): Arguments {
 			case '--remove-empty-fields':
 				options.removeEmptyFields = true;
 				break;
+			case '--max-authors':
+				options.maxAuthors = valStr ? Number(valStr) : nextNumber();
+				break;
 			case '--no-lowercase':
 				options.lowercase = false;
 				break;

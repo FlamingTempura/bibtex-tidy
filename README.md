@@ -170,6 +170,9 @@ Options:
 
   --remove-empty-fields    Remove any fields that have empty values
 
+  --max-authors=NUMBER     Truncate a list of authors if above a given number into
+                           "and others".
+
   --lowercase              Make field names and entry type lowercase.
                            Examples:
                            --lowercase (default)

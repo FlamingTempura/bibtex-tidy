@@ -330,6 +330,14 @@ var optionsDocumentation = [
     "deprecated": false
   },
   {
+    "key": "maxAuthors",
+    "cli": "max-authors",
+    "description": "Truncate a list of authors if above a given number into \"and others\".",
+    "examples": [],
+    "type": "number",
+    "deprecated": false
+  },
+  {
     "key": "lowercase",
     "cli": "lowercase",
     "description": "Make field names and entry type lowercase.",
@@ -7297,6 +7305,7 @@ function tidy(input) {
       enclosingBraces = _ref$enclosingBraces === void 0 ? false : _ref$enclosingBraces,
       _ref$wrap = _ref.wrap,
       wrap = _ref$wrap === void 0 ? false : _ref$wrap,
+      maxAuthors = _ref.maxAuthors,
       sortProperties = _ref.sortProperties;
 
   if (sort === true) sort = DEFAULT_ENTRY_ORDER;
@@ -7384,6 +7393,14 @@ function tidy(input) {
             if (nameLowerCase === 'url' && encodeUrls) _val = _val.replace(/\\?_/g, '\\%5F');
             if (escape) _val = escapeSpecialCharacters(_val);
             if (nameLowerCase === 'pages') _val = _val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+
+            if (nameLowerCase === 'author' && maxAuthors) {
+              var authors = _val.split(' and ');
+
+              if (authors.length > maxAuthors) {
+                _val = [].concat(_toConsumableArray(authors.slice(0, maxAuthors)), ['others']).join(' and ');
+              }
+            }
           }
 
           _val = _val.trim();
@@ -7982,6 +7999,10 @@ function parseArguments() {
 
       case '--remove-empty-fields':
         options.removeEmptyFields = true;
+        break;
+
+      case '--max-authors':
+        options.maxAuthors = valStr ? Number(valStr) : nextNumber();
         break;
 
       case '--no-lowercase':
