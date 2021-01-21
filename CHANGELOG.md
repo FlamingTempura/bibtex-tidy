@@ -34,3 +34,7 @@ No changes, aside from correcting version number at top of bibtex-tidy.js
 - Breaking change: paragraphs within field values will now be preserved
 - #18 --enclosing-braces option added to preserve case when compiling BibTeX
 - #19 --wrap option added for wrapping long values
+
+### v1.6.0
+
+- #20 added --max-authors option for truncating long list of authors
