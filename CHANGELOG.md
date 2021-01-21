@@ -38,3 +38,7 @@ No changes, aside from correcting version number at top of bibtex-tidy.js
 ### v1.6.0
 
 - #20 added --max-authors option for truncating long list of authors
+
+### v1.6.1
+
+- Improve CLI help text for --max-authors

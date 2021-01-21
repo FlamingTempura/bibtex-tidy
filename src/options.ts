@@ -129,7 +129,7 @@ export type Options = {
 	 */
 	removeEmptyFields?: boolean;
 	/**
-	 * Truncate a list of authors if above a given number into "and others".
+	 * Maximum authors - truncates authors if above a given number into "and others".
 	 */
 	maxAuthors?: number;
 	/**
