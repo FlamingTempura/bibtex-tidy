@@ -30,6 +30,7 @@
 		"test": "rollup -c && tsc -p test/tsconfig.json && tap -t60 --no-coverage --test-regex=.test/test/.*\\.spec\\.js",
 		"cover": "npm test --coverage-report=lcov",
 		"build": "rollup -c",
+		"start": "rollup -cw",
 		"typecheck": "tsc --noEmit"
 	},
 	"repository": {

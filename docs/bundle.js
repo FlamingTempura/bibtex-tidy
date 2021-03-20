@@ -21453,20 +21453,29 @@
 	  }]
 	});
 
-	const $ = selector => document.querySelector(selector);
-
-	const $$ = selector => document.querySelectorAll(selector);
-
-	for (const $suboption of $$('.suboptions')) {
-	  const $check = $suboption.parentNode.querySelector('input');
-
-	  const toggle = () => $suboption.style.display = $check.checked ? 'block' : 'none';
-
-	  $check.addEventListener('change', toggle);
-	  toggle();
-	  $('input[name=indent]').addEventListener('change', toggle);
+	function $(selector, parent) {
+	  return (parent !== null && parent !== void 0 ? parent : document).querySelector(selector);
 	}
 
+	function $$(selector, parent) {
+	  return (parent !== null && parent !== void 0 ? parent : document).querySelectorAll(selector);
+	}
+
+	function renderSuboptions() {
+	  for (const suboption of $$('.suboptions')) {
+	    const checkbox = $('input', suboption.parentNode);
+	    suboption.style.display = checkbox.matches(':checked') ? 'block' : 'none';
+	  }
+	}
+
+	for (const input of $$('input, textarea')) {
+	  input.addEventListener('input', () => {
+	    renderSuboptions();
+	    formatCLICommand();
+	  });
+	}
+
+	renderSuboptions();
 	const options = document.forms.options;
 	const cmEditor = codemirror.fromTextArea($('#editor textarea'), {
 	  lineNumbers: true,
@@ -21497,11 +21506,7 @@
 	  $('#feedback').style.display = 'none';
 	  $('#feedback').innerHTML = '';
 	  document.body.classList.toggle('error', false);
-
-	  if (errorHighlight) {
-	    errorHighlight.clear();
-	  }
-
+	  if (errorHighlight) errorHighlight.clear();
 	  const bibtex = cmEditor.getValue();
 	  let result;
 	  const opt = getOptions();
@@ -21509,32 +21514,23 @@
 	    try {
 	      result = bibtexTidy.tidy(bibtex, opt);
 	      cmEditor.setValue(result.bibtex);
-	      $('#feedback').innerHTML += "<strong>Successful!</strong><br>Tidied ".concat(result.entries.length, " entries.<br><br>");
-	      let warnings = result.warnings.filter(w => w.code !== 'DUPLICATE_ENTRY');
-	      $('#feedback').innerHTML += '<ul>' + warnings.map(dupe => "<li>".concat(dupe.message, "</li>")).join('') + '</ul>';
-
-	      if (opt.merge) {
-	        let dupes = result.warnings.filter(w => w.code === 'DUPLICATE_ENTRY');
-	        $('#feedback').innerHTML += "<strong>".concat(dupes.length, " merged").concat(dupes.length > 0 ? ':' : '', "</strong><br>");
-
-	        if (dupes.length > 0) {
-	          $('#feedback').innerHTML += '<ul>' + dupes.map(dupe => "<li>".concat(dupe.message, "</li>")).join('') + '</ul>';
-	        }
-	      }
+	      $('#feedback').innerHTML += formatSuccessMessage(opt, result);
 	    } catch (e) {
 	      console.error('bibtex parse problem:', e);
 	      document.body.classList.toggle('error', true);
-	      $('#feedback').innerHTML = "<strong>There's a problem with the bibtex (".concat(e.name, ")</strong><br>\n\t\t\tLine ").concat(e.location.start.line, " column ").concat(e.location.start.column, "<br>\n\t\t\t").concat(e.message);
-	      let from = {
-	        line: e.location.start.line - 1,
-	        ch: e.location.start.column - 1
-	      },
-	          to = {
-	        line: e.location.end.line - 1,
-	        ch: e.location.end.column + 9
-	      };
-	      errorHighlight = cmEditor.markText(from, to, {
-	        css: 'background: #de3040; color: white; font-weight: bold'
+	      $('#feedback').innerHTML = formatError(e);
+	      const {
+	        start,
+	        end
+	      } = e.location;
+	      errorHighlight = cmEditor.markText({
+	        line: start.line - 1,
+	        ch: start.column - 1
+	      }, {
+	        line: end.line - 1,
+	        ch: end.column + 9
+	      }, {
+	        className: 'bibtex-error'
 	      });
 	    }
 
@@ -21542,9 +21538,26 @@
 	    $('#tidy').removeAttribute('disabled');
 	  }, 100);
 	});
-	$('#dlgclose').addEventListener('click', () => $('#dlg').style.display = 'none');
-	$('#dlg').addEventListener('click', () => $('#dlg').style.display = 'none');
-	$('#dlginner').addEventListener('click', e => e.stopPropagation());
+
+	function formatSuccessMessage(options, result) {
+	  const warnings = result.warnings.filter(w => w.code !== 'DUPLICATE_ENTRY');
+	  return "\n\t\t<strong>Successful!</strong><br>\n\t\tTidied ".concat(result.entries.length, " entries.<br><br>\n\t\t<ul>\n\t\t\t").concat(warnings.map(warning => "<li>".concat(warning.message, "</li>")).join(''), "\n\t\t</ul>\n\t\t").concat(options.merge ? formatDuplicateSummary(result) : '');
+	}
+
+	function formatDuplicateSummary(result) {
+	  const dupes = result.warnings.filter(w => w.code === 'DUPLICATE_ENTRY');
+
+	  if (dupes.length > 0) {
+	    return "No duplicates.";
+	  }
+
+	  return "\n\t\t<strong>".concat(dupes.length, " merged:\n\t\t\t<ul>\n\t\t\t\t").concat(dupes.map(dupe => "<li>".concat(dupe.message, "</li>")).join(''), "\n\t\t\t</ul>\n\t\t</strong>");
+	}
+
+	function formatError(e) {
+	  return "\n\t\t<strong>There's a problem with the bibtex (".concat(e.name, ")</strong><br>\n\t\tLine ").concat(e.location.start.line, " column ").concat(e.location.start.column, "<br>\n\t\t").concat(e.message);
+	}
+
 	window.cmEditor = cmEditor;
 
 	function getOptions() {
@@ -21575,7 +21588,6 @@
 	}
 
 	function formatCLICommand() {
-	  console.log('format');
 	  const options = applyOptionDefaults(getOptions());
 	  const defaults = applyOptionDefaults({});
 	  const defaultsIfTrue = applyOptionDefaults({
@@ -21599,28 +21611,24 @@
 	    enclosingBraces: true,
 	    wrap: true
 	  });
-	  console.log(options, defaults, defaultsIfTrue);
-	  let cli = 'bibtex-tidy ';
-
-	  for (let [k, v] of Object.entries(options)) {
+	  $('#cli').innerHTML = 'bibtex-tidy ' + Object.entries(options).map((_ref) => {
+	    let [k, v] = _ref;
 	    const opt = optionDocs[k].cli;
 	    if (v && JSON.stringify(v) === JSON.stringify(defaultsIfTrue[k])) v = true;
-	    if (v === defaults[k]) continue;
+	    if (v === defaults[k]) return null;
+	    if (v === true) return "<span class=\"opt-name\">--".concat(opt, "</span>");
+	    if (v === false) return "<span class=\"opt-name\">--no-".concat(opt, "</span>");
 
-	    if (v === true) {
-	      cli += "\n\t\t\t\t<span class=\"opt-name\">--".concat(opt, "</span>");
-	    } else if (v === false) {
-	      cli += "\n\t\t\t\t<span class=\"opt-name\">--no-".concat(opt, "</span>");
-	    } else if (Array.isArray(v)) {
-	      cli += "\n\t\t\t\t<span class=\"opt-name\">--".concat(opt, "</span>\n\t\t\t\t<span class=\"opt-val\">").concat(v.join(','), "</span>");
-	    } else if (v !== undefined) {
-	      cli += "\n\t\t\t\t<span class=\"opt-name\">--".concat(opt, "</span>\n\t\t\t\t<span class=\"opt-val\">").concat(v, "</span>");
+	    if (Array.isArray(v)) {
+	      return "\n\t\t\t\t\t\t<span class=\"opt-name\">--".concat(opt, "</span>\n\t\t\t\t\t\t<span class=\"opt-val\">").concat(v.join(','), "</span>");
 	    }
-	  }
 
-	  $('#cli').innerHTML = cli;
+	    if (v !== undefined) {
+	      return "\n\t\t\t\t\t\t<span class=\"opt-name\">--".concat(opt, "</span>\n\t\t\t\t\t\t<span class=\"opt-val\">").concat(v, "</span>");
+	    }
+
+	    return null;
+	  }).filter(s => s).join('');
 	}
-
-	document.body.addEventListener('click', formatCLICommand);
 
 })));

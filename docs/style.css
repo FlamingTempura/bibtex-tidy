@@ -94,6 +94,11 @@ a {
 .CodeMirror .cm-number {
 	color: #71cafd;
 }
+.CodeMirror .bibtex-error {
+	background: #de3040;
+	color: white;
+	font-weight: bold;
+}
 #sidebar {
 	background: rgba(154, 199, 255, 0.2);
 	bottom: 0;
@@ -213,57 +218,6 @@ a {
 }
 #result {
 	opacity: 0;
-}
-.listlink {
-	display: block;
-	font-weight: 700;
-	text-decoration: none;
-}
-.listlink:after {
-	content: '(click to see)';
-	margin-left: 4px;
-	text-decoration: underline;
-}
-#dlg {
-	background: rgba(0, 0, 0, 0.6);
-	bottom: 0;
-	display: none;
-	left: 0;
-	position: fixed;
-	right: 0;
-	top: 0;
-	z-index: 1000;
-}
-#dlginner {
-	background: #fff;
-	border-radius: 5px;
-	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
-	height: 80%;
-	left: 50%;
-	min-height: 300px;
-	min-width: 300px;
-	position: absolute;
-	top: 50%;
-	transform: translateX(-50%) translateY(-50%);
-	width: 50%;
-}
-#dlgcontent {
-	color: #000;
-	overflow: auto;
-	padding: 12px;
-	height: 100%;
-	width: 100%;
-}
-#dlgclose {
-	background: none;
-	border: none;
-	font-size: 30px;
-	height: 50px;
-	position: absolute;
-	right: 0;
-	top: 0;
-	width: 50px;
-	z-index: 10;
 }
 
 #cli {
