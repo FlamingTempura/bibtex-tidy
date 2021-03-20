@@ -21377,7 +21377,6 @@
 	  });
 	});
 
-	const Null = '';
 	codemirror.defineSimpleMode('simplemode', {
 	  start: [{
 	    regex: /.*@comment/i,
@@ -21385,23 +21384,23 @@
 	    push: 'comment'
 	  }, {
 	    regex: /(\s*)(@preamble)(\s*{)/i,
-	    token: [Null, 'variable-2'],
+	    token: ['', 'variable-2'],
 	    push: 'braced'
 	  }, {
 	    regex: /(\s*)(@preamble)(\s*\()/i,
-	    token: [Null, 'variable-2'],
+	    token: ['', 'variable-2'],
 	    push: 'parenthesised'
 	  }, {
 	    regex: /(\s*)(@string)(\s*{)/i,
-	    token: [Null, 'variable-2'],
+	    token: ['', 'variable-2'],
 	    push: 'braced'
 	  }, {
 	    regex: /(\s*)(@string)(\s*\()/i,
-	    token: [Null, 'variable-2'],
+	    token: ['', 'variable-2'],
 	    push: 'parenthesised'
 	  }, {
 	    regex: /(\s*)(@[^=#,{}()[\] \t\n\r]+)(\s*\{\s*)([^=#,{}()[\] \t\n\r]+)(\s*,)/,
-	    token: [Null, 'variable-2', Null, 'variable-3'],
+	    token: ['', 'variable-2', '', 'variable-3'],
 	    push: 'entry'
 	  }, {
 	    regex: /.*/,
@@ -21409,7 +21408,7 @@
 	  }],
 	  entry: [{
 	    regex: /([^=,{}()[\]\t\n\r]+)(\s*)(=)/,
-	    token: ['keyword', Null, 'operator']
+	    token: ['keyword', '', 'operator']
 	  }, {
 	    regex: /"(?:[^\\]|\\.)*?(?:"|$)/,
 	    token: 'string'
