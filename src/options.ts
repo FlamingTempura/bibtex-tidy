@@ -170,7 +170,7 @@ export type CLIOptions = Options & {
 	backup?: boolean;
 };
 
-type OptionsSanitized = Omit<
+export type OptionsSanitized = Omit<
 	Options,
 	| 'sortProperties'
 	| 'duplicates'
@@ -191,18 +191,18 @@ type OptionsSanitized = Omit<
 	enclosingBraces?: string[];
 };
 
-export const DEFAULT_ENTRY_ORDER: string[] = ['key']; // if sort = true
-export const DEFAULT_MERGE_CHECK: UniqueKey[] = ['doi', 'citation', 'abstract'];
+const DEFAULT_ENTRY_ORDER: string[] = ['key']; // if sort = true
+const DEFAULT_MERGE_CHECK: UniqueKey[] = ['doi', 'citation', 'abstract'];
 
 //prettier-ignore
-export const DEFAULT_FIELD_ORDER: string[] = [
+const DEFAULT_FIELD_ORDER: string[] = [
 	'title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal',
 	'booktitle', 'location', 'on', 'publisher', 'address', 'series',
 	'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url',
 	'urldate', 'copyright', 'category', 'note', 'metadata'
 ];
 
-export const DEFAULT_ENCLOSING_BRACES_FIELDS: string[] = ['title'];
+const DEFAULT_ENCLOSING_BRACES_FIELDS: string[] = ['title'];
 
 export function applyOptionDefaults(options: Options): OptionsSanitized {
 	return {
