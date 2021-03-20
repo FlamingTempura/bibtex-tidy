@@ -1,6 +1,6 @@
 import CodeMirror from 'codemirror';
 import bibtexTidy from '../src/index';
-import { UniqueKey } from '../src/options';
+import { applyOptionDefaults, Options, UniqueKey } from '../src/options';
 
 import 'codemirror/addon/mode/simple';
 
@@ -113,45 +113,7 @@ $('#tidy').addEventListener('click', () => {
 	}
 	const bibtex = cmEditor.getValue();
 	let result;
-	const opt = {
-		curly: options.curly.checked,
-		numeric: options.numeric.checked,
-		sort: options.sort.checked && options.sortList.value.split(/[\n\t ,]+/),
-		omit: options.omit.checked
-			? options.omitList.value.split(/[\n\t ,]+/)
-			: undefined,
-		space: Number(options.spaces.value),
-		tab: options.indent.value === 'tabs',
-		align: options.align.checked ? Number(options.alignnum.value) : 0,
-		wrap: options.wrap.checked ? Number(options.wrapnum.value) : false,
-		duplicates: options.duplicates.checked
-			? [
-					options.uniqKEY.checked ? 'key' : null,
-					options.uniqDOI.checked ? 'doi' : null,
-					options.uniqABS.checked ? 'abstract' : null,
-					options.uniqCIT.checked ? 'citation' : null,
-			  ].filter((a): a is UniqueKey => a !== null)
-			: false,
-		merge: options.merge.checked ? options.mergeStrategy.value : false,
-		enclosingBraces:
-			options.enclosingBraces.checked &&
-			options.enclosingBracesList.value.split(/[\n\t ,]+/),
-		stripEnclosingBraces: options.stripEnclosingBraces.checked,
-		dropAllCaps: options.dropAllCaps.checked,
-		sortFields:
-			options.sortFields.checked &&
-			options.sortFieldList.value.split(/[\n\t ,]+/),
-		stripComments: options.stripComments.checked,
-		tidyComments: options.tidyComments.checked,
-		encodeUrls: options.encodeUrls.checked,
-		escape: options.escape.checked,
-		trailingCommas: options.trailingCommas.checked,
-		removeEmptyFields: options.removeEmptyFields.checked,
-		lowercase: options.lowercase.checked,
-		maxAuthors: options.maxAuthors.checked
-			? Number(options.maxAuthorsNum.value)
-			: undefined,
-	};
+	const opt = getOptions();
 	setTimeout(() => {
 		try {
 			result = bibtexTidy.tidy(bibtex, opt);
@@ -211,4 +173,102 @@ $('#dlg').addEventListener('click', () => ($('#dlg').style.display = 'none'));
 $('#dlginner').addEventListener('click', (e) => e.stopPropagation());
 
 // make editor available for tests
+//@ts-ignore
 window.cmEditor = cmEditor;
+
+function getOptions(): Options {
+	return {
+		curly: options.curly.checked,
+		numeric: options.numeric.checked,
+		sort: options.sort.checked && options.sortList.value.split(/[\n\t ,]+/),
+		omit: options.omit.checked
+			? options.omitList.value.split(/[\n\t ,]+/)
+			: undefined,
+		space: Number(options.spaces.value),
+		tab: options.indent.value === 'tabs',
+		align: options.align.checked ? Number(options.alignnum.value) : 0,
+		wrap: options.wrap.checked ? Number(options.wrapnum.value) : false,
+		duplicates: options.duplicates.checked
+			? [
+					options.uniqKEY.checked ? 'key' : null,
+					options.uniqDOI.checked ? 'doi' : null,
+					options.uniqABS.checked ? 'abstract' : null,
+					options.uniqCIT.checked ? 'citation' : null,
+			  ].filter((a): a is UniqueKey => a !== null)
+			: false,
+		merge: options.merge.checked ? options.mergeStrategy.value : false,
+		enclosingBraces:
+			options.enclosingBraces.checked &&
+			options.enclosingBracesList.value.split(/[\n\t ,]+/),
+		stripEnclosingBraces: options.stripEnclosingBraces.checked,
+		dropAllCaps: options.dropAllCaps.checked,
+		sortFields:
+			options.sortFields.checked &&
+			options.sortFieldList.value.split(/[\n\t ,]+/),
+		stripComments: options.stripComments.checked,
+		tidyComments: options.tidyComments.checked,
+		encodeUrls: options.encodeUrls.checked,
+		escape: options.escape.checked,
+		trailingCommas: options.trailingCommas.checked,
+		removeEmptyFields: options.removeEmptyFields.checked,
+		lowercase: options.lowercase.checked,
+		maxAuthors: options.maxAuthors.checked
+			? Number(options.maxAuthorsNum.value)
+			: undefined,
+	};
+}
+
+function formatCLICommand() {
+	console.log('format');
+	const options = applyOptionDefaults(getOptions());
+	const defaults = applyOptionDefaults({}) as any;
+	const defaultsIfTrue = applyOptionDefaults({
+		curly: true,
+		numeric: true,
+		tab: true,
+		sort: true,
+		merge: true,
+		stripEnclosingBraces: true,
+		dropAllCaps: true,
+		escape: true,
+		sortFields: true,
+		stripComments: true,
+		encodeUrls: true,
+		tidyComments: true,
+		space: true,
+		duplicates: true,
+		trailingCommas: true,
+		removeEmptyFields: true,
+		lowercase: true,
+		enclosingBraces: true,
+		wrap: true,
+	}) as any;
+
+	console.log(options, defaults, defaultsIfTrue);
+	let cli = 'bibtex-tidy ';
+	for (let [k, v] of Object.entries(options)) {
+		const opt = optionDocs[k].cli;
+		if (v && JSON.stringify(v) === JSON.stringify(defaultsIfTrue[k])) v = true;
+		if (v === defaults[k]) continue;
+
+		if (v === true) {
+			cli += `
+				<span class="opt-name">--${opt}</span>`;
+		} else if (v === false) {
+			cli += `
+				<span class="opt-name">--no-${opt}</span>`;
+		} else if (Array.isArray(v)) {
+			cli += `
+				<span class="opt-name">--${opt}</span>
+				<span class="opt-val">${v.join(',')}</span>`;
+		} else if (v !== undefined) {
+			cli += `
+				<span class="opt-name">--${opt}</span>
+				<span class="opt-val">${v}</span>`;
+		}
+	}
+	$('#cli').innerHTML = cli;
+}
+
+// TODO: this should fire when a option is changed
+document.body.addEventListener('click', formatCLICommand);

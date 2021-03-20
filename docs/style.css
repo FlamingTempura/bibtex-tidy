@@ -265,3 +265,16 @@ a {
 	width: 50px;
 	z-index: 10;
 }
+
+#cli {
+	display: block;
+	padding: 8px;
+	word-wrap: break-word;
+}
+
+#cli .opt-name {
+	color: #29a950;
+}
+#cli .opt-val {
+	color: #e7a33d;
+}
