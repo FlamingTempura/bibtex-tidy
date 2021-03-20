@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Online BibTeX Tidy - Clean up BibTeX files</title>
+		<meta
+			lang="en"
+			name="description"
+			content="Online tool for cleaning up messy BibTeX files by making spacing consistent, removing duplicates, removing unwanted fields, and sorting entries."
+		/>
+		<link rel="stylesheet" href="lib/codemirror.min.css" />
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<div id="editor">
+			<textarea>
+Click Tidy to clean up the entries below      
+@Book{sweig42,
+  Author =	 { Stefa{n} Sweig },
+  title =	 { The impossible book },
+  publisher =	 { Dead Poet Society},
+  year =	 1942,
+  month =        mar
+}
+@article{steward03,
+  author =	 {Martha Steward},
+  title =	 {Cooking behind bars}, publisher = "Culinary Expert Series",
+  year = {2003}
+}
+@Book{impossible,
+  Author =	 { Stefan Sweig },
+  title =	 { The impossible book },
+  publisher =	 { Dead Poet Society},
+  year =	 1942,
+  month =        mar
+}
+		</textarea
+			>
+		</div>
+
+		<div id="sidebar">
+			<form name="options" onsubmit="return false">
+				<h1>BibTeX Tidy</h1>
+				<p>
+					This tool tidies bibtex files by fixing inconsistent whitespace,
+					removing duplicates, removing unwanted fields, and sorting entries.
+				</p>
+				<p>
+					<a class="btn" href="https://github.com/FlamingTempura/bibtex-tidy"
+						>Github</a
+					>
+					<a
+						class="btn"
+						href="https://github.com/FlamingTempura/bibtex-tidy/issues"
+						>Report a bug</a
+					>
+				</p>
+
+				<details open>
+					<summary>Whitespace</summary>
+					<label data-option="tab">
+						<input name="indent" type="radio" value="tabs" checked="checked" />
+						<span class="name"></span>
+					</label>
+					<label data-option="space">
+						<input name="indent" type="radio" value="spaces" />
+						<span class="name"></span>
+						<div class="suboptions">
+							Spaces: <input name="spaces" type="number" value="2" />
+						</div>
+					</label>
+					<label data-option="align">
+						<input type="checkbox" checked="checked" />
+						<span class="name"></span>
+						<div class="suboptions">
+							Align values at column:
+							<input name="alignnum" type="number" value="13" />
+						</div>
+					</label>
+					<label data-option="wrap">
+						<input type="checkbox" />
+						<span class="name"></span>
+						<div class="suboptions">
+							Wrap values at column:
+							<input name="wrapnum" type="number" value="80" />
+						</div>
+					</label>
+				</details>
+
+				<details open>
+					<summary>Values</summary>
+
+					<label data-option="curly">
+						<input type="checkbox" checked="checked" />
+						<span class="name"></span>
+					</label>
+					<label data-option="numeric">
+						<input type="checkbox" checked="checked" />
+						<span class="name"></span>
+					</label>
+					<label data-option="enclosingBraces">
+						<input type="checkbox" />
+						<span class="name"></span>
+						<div class="suboptions">
+							Fields enclose in double braces: <br />
+							<textarea name="enclosingBracesList">title</textarea><br />
+							Space delimited, e.g: <code>title journal</code>.
+							<code>-year author</code>.
+						</div>
+					</label>
+					<label data-option="stripEnclosingBraces">
+						<input type="checkbox" />
+						<span class="name"></span>
+					</label>
+					<label data-option="dropAllCaps">
+						<input type="checkbox" />
+						<span class="name"></span>
+					</label>
+					<label data-option="escape">
+						<input type="checkbox" />
+						<span class="name"></span>
+					</label>
+					<label data-option="encodeUrls">
+						<input type="checkbox" />
+						<span class="name"></span>
+					</label>
+					<label data-option="removeEmptyFields">
+						<input type="checkbox" />
+						<span class="name"></span>
+					</label>
+					<label data-option="maxAuthors">
+						<input type="checkbox" />
+						<span class="name"></span>
+						<div class="suboptions">
+							<input name="maxAuthorsNum" type="number" /><br />
+							Author lists longer than this will be truncated to "and others".
+						</div>
+					</label>
+				</details>
+
+				<details open>
+					<summary>Sorting</summary>
+
+					<label data-option="sort">
+						<input type="checkbox" />
+						<span class="name"></span>
+						<div class="suboptions">
+							Fields to sort by: <br />
+							<textarea name="sortList">key</textarea><br />
+							Space delimited, e.g: <code>key type publisher author</code>. For
+							descending order, prefix the field name with a dash, e.g.
+							<code>-year author</code>.
+						</div>
+					</label>
+
+					<label data-option="sortFields">
+						<input type="checkbox" checked="checked" />
+						<span class="name"></span>
+						<div class="suboptions">
+							Field order: <br />
+							<textarea name="sortFieldList" value>
+title shorttitle author year month day journal booktitle location on publisher address series volume number pages doi isbn issn url urldate copyright category note metadata</textarea
+							><br />
+							Space delimited, e.g: <code>title author year</code>
+						</div>
+					</label>
+				</details>
+
+				<details open>
+					<summary>Duplicates</summary>
+
+					<label data-option="duplicates">
+						<input type="checkbox" checked="checked" />
+						<span class="name"></span>
+
+						<div class="suboptions">
+							<label>
+								<p>What to check:</p>
+								<label>
+									<input type="checkbox" name="uniqKEY" checked="checked" />
+									Matching Keys
+								</label>
+								<label>
+									<input type="checkbox" name="uniqDOI" />
+									Matching DOIs
+								</label>
+								<label>
+									<input type="checkbox" name="uniqCIT" />
+									Similar author and title
+								</label>
+								<label>
+									<input type="checkbox" name="uniqABS" />
+									Similar abstracts
+								</label>
+							</label>
+						</div>
+					</label>
+
+					<label data-option="merge">
+						<input type="checkbox" />
+						<span class="name"></span>
+						<div class="suboptions">
+							<label>
+								<input
+									name="mergeStrategy"
+									type="radio"
+									value="combine"
+									checked="checked"
+								/>
+								<strong>Combine</strong> (default)<br />
+								<small>
+									Keep original entry and merge in fields of duplicates if they
+									do not already exist
+								</small>
+							</label>
+							<label>
+								<input name="mergeStrategy" type="radio" value="overwrite" />
+								<strong>Overwrite</strong><br />
+								<small>
+									Keep original entry and merge in fields of duplicates,
+									overwriting existing fields if they exist
+								</small>
+							</label>
+							<label>
+								<input name="mergeStrategy" type="radio" value="first" />
+								<strong>First</strong><br />
+								<small>Only keep the original entry</small>
+							</label>
+							<label>
+								<input name="mergeStrategy" type="radio" value="last" />
+								<strong>Last</strong><br />
+								<small>Only keep the last found duplicate</small>
+							</label>
+						</div>
+					</label>
+				</details>
+
+				<details open>
+					<summary>Clean up</summary>
+
+					<label data-option="omit">
+						<input type="checkbox" />
+						<span class="name"></span>
+						<div class="suboptions">
+							Fields to omit: <br />
+							<textarea
+								name="omitList"
+								placeholder="e.g. abstract keywords"
+							></textarea
+							><br />
+							Space delimited, e.g: <code>id type publisher author</code>
+						</div>
+					</label>
+					<label data-option="stripComments">
+						<input type="checkbox" />
+						<span class="name"></span>
+					</label>
+					<label data-option="tidyComments">
+						<input type="checkbox" checked="checked" />
+						<span class="name"></span>
+					</label>
+					<label data-option="lowercase">
+						<input type="checkbox" checked="checked" />
+						<span class="name"></span>
+					</label>
+					<label data-option="trailingCommas">
+						<input type="checkbox" />
+						<span class="name"></span>
+					</label>
+				</details>
+			</form>
+
+			<div class="run">
+				<div id="feedback"></div>
+				<button id="tidy">Tidy</button>
+			</div>
+		</div>
+
+		<div id="dlg">
+			<div id="dlginner">
+				<button id="dlgclose">&times;</button>
+				<div id="dlgcontent"></div>
+			</div>
+		</div>
+
+		<script src="lib/bibtex-tidy.js"></script>
+		<script src="lib/codemirror.min.js"></script>
+		<script src="lib/codemirror.simple.js"></script>
+		<script src="main.js"></script>
+	</body>
+</html>

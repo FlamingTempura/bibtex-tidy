@@ -1,0 +1,267 @@
+* {
+	box-sizing: border-box;
+}
+body {
+	background: #1e272e;
+	color: #eee;
+	font-family: Helvetica, sans-serif;
+	font-size: 15px;
+	line-height: 1.3em;
+	margin: 0;
+}
+h1,
+h3,
+summary {
+	background: rgba(0, 0, 0, 0.2);
+	margin: 12px -12px 8px;
+	padding: 12px;
+}
+h1 {
+	font-size: 16px;
+	margin-top: 0;
+}
+h3,
+summary {
+	font-size: 12px;
+	font-weight: 400;
+	text-transform: uppercase;
+}
+a {
+	color: #fff;
+}
+.btn {
+	background: rgba(255, 255, 255, 0.2);
+	border-radius: 3px;
+	color: #eee;
+	display: inline-block;
+	font-size: 14px;
+	font-weight: 700;
+	margin-right: 6px;
+	padding: 5px 12px;
+	text-decoration: none;
+}
+#editor {
+	bottom: 0;
+	left: 0;
+	position: absolute;
+	right: 320px;
+	top: 0;
+}
+#editor textarea {
+	height: 100%;
+	width: 100%;
+}
+.CodeMirror {
+	background: #1e272e;
+	color: #ffffec;
+	font-size: 13px;
+	height: 100%;
+	line-height: 1.2em;
+	padding: 12px;
+	width: 100%;
+}
+.CodeMirror .CodeMirror-gutters {
+	background: #1e272e;
+	border-right: 14px solid #1e272e;
+}
+.CodeMirror .CodeMirror-linenumber {
+	color: #a9a9a9;
+}
+.CodeMirror .CodeMirror-selected {
+	background: #283655;
+}
+.CodeMirror .CodeMirror-cursor {
+	border-left: 1px solid #ffffec;
+}
+.CodeMirror .cm-comment {
+	color: #696867;
+}
+.CodeMirror .cm-keyword {
+	color: #fff;
+}
+.CodeMirror .cm-variable-2 {
+	color: #d258a1;
+}
+.CodeMirror .cm-variable-3 {
+	color: #e7a33d;
+}
+.CodeMirror .cm-operator {
+	color: #bdbdbd;
+}
+.CodeMirror .cm-string {
+	color: #29a950;
+}
+.CodeMirror .cm-number {
+	color: #71cafd;
+}
+#sidebar {
+	background: rgba(154, 199, 255, 0.2);
+	bottom: 0;
+	box-shadow: 0 0 7px #000;
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 320px;
+	z-index: 10;
+}
+#sidebar form {
+	flex: 1 1 auto;
+	overflow: auto;
+	padding: 0 12px 200px 12px;
+}
+#sidebar .run {
+	flex: 0 0 auto;
+}
+#sidebar #tidy {
+	background: #179fef;
+	border: 0;
+	box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+	color: #fff;
+	font-size: 21px;
+	font-weight: 700;
+	height: 60px;
+	width: 100%;
+}
+#sidebar #tidy[disabled] {
+	background: #999;
+	color: transparent;
+	position: relative;
+}
+#sidebar #tidy[disabled]:after {
+	animation: pulse 0.9s infinite linear;
+	background: #fff;
+	border-radius: 50%;
+	content: '';
+	height: 20px;
+	left: 140px;
+	position: absolute;
+	top: 22px;
+	width: 20px;
+}
+@keyframes pulse {
+	0% {
+		transform: translateX(-80px) scale(0);
+	}
+	35% {
+		transform: translateX(-40px) scale(0.85);
+	}
+	50% {
+		transform: translateX(0px) scale(1);
+	}
+	65% {
+		transform: translateX(40px) scale(0.85);
+	}
+	100% {
+		transform: translateX(80px) scale(0);
+	}
+}
+#sidebar label {
+	display: block;
+	margin: 8px 0;
+	padding-left: 22px;
+	position: relative;
+	width: 100%;
+}
+#sidebar label input[type='checkbox'],
+#sidebar label input[type='radio'] {
+	left: 0;
+	position: absolute;
+	top: 0;
+}
+#sidebar label .suboptions {
+	display: none;
+	font-size: 13px;
+	margin: 4px 0 18px;
+}
+#sidebar code {
+	font-size: 0.9em;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	background: rgba(0, 0, 0, 0.1);
+	color: #bbb;
+	padding: 1px;
+	border-radius: 3px;
+}
+.suboptions textarea {
+	resize: vertical;
+	width: 100%;
+	height: 100px;
+}
+#sidebar input[type='number'] {
+	display: inline-block;
+	width: 62px;
+}
+#sidebar textarea[name='omit'] {
+	height: 50px;
+}
+#sidebar textarea[name='sortkeys'] {
+	height: 25px;
+}
+#sidebar textarea[name='sortpkeys'] {
+	height: 80px;
+}
+#feedback {
+	background: #05c46b;
+	color: #fff;
+	display: none;
+	font-size: 15px;
+	padding: 12px;
+}
+.error #feedback {
+	background: #d91e18;
+}
+#result {
+	opacity: 0;
+}
+.listlink {
+	display: block;
+	font-weight: 700;
+	text-decoration: none;
+}
+.listlink:after {
+	content: '(click to see)';
+	margin-left: 4px;
+	text-decoration: underline;
+}
+#dlg {
+	background: rgba(0, 0, 0, 0.6);
+	bottom: 0;
+	display: none;
+	left: 0;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 1000;
+}
+#dlginner {
+	background: #fff;
+	border-radius: 5px;
+	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
+	height: 80%;
+	left: 50%;
+	min-height: 300px;
+	min-width: 300px;
+	position: absolute;
+	top: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	width: 50%;
+}
+#dlgcontent {
+	color: #000;
+	overflow: auto;
+	padding: 12px;
+	height: 100%;
+	width: 100%;
+}
+#dlgclose {
+	background: none;
+	border: none;
+	font-size: 30px;
+	height: 50px;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 50px;
+	z-index: 10;
+}

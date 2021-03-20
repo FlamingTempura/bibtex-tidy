@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>BibTeX Tidy tests</title>
+		<style>
+			body {
+				font-family: sans-serif;
+				line-height: 1.5em;
+				font-size: 12px;
+				color: #333;
+			}
+			.pass {
+				color: green;
+				margin-left: 20px;
+			}
+			.fail {
+				color: red;
+				margin-left: 20px;
+			}
+			.diff {
+				border: 1px solid rgba(0, 0, 0, 0.2);
+				display: block;
+				overflow-y: auto;
+				max-height: 300px;
+				line-height: 1.4em;
+			}
+			.diff > div {
+				display: flex;
+			}
+			.diff > div > div {
+				flex: 1 1 50%;
+				overflow: hidden;
+				white-space: pre;
+			}
+			.diff > div > div:first-child {
+				border-right: 1px solid rgba(0, 0, 0, 0.2);
+			}
+			.diff > div > div > i {
+				display: inline-block;
+				width: 30px;
+				text-align: right;
+				border-right: 1px solid rgba(0, 0, 0, 0.2);
+				padding-right: 6px;
+			}
+			.diff .highlight {
+				font-weight: bold;
+				background: pink;
+			}
+		</style>
+	</head>
+	<body>
+		<iframe src="../" width="900" height="400"></iframe>
+		<div id="results"></div>
+		<script src="align-20.spec.js" type="module"></script>
+		<script src="at-symbol-in-title.spec.js" type="module"></script>
+		<script src="complex-bib.spec.js" type="module"></script>
+		<script src="defaults.spec.js" type="module"></script>
+		<script src="dont-tidy-comments.spec.js" type="module"></script>
+		<script src="drop-all-caps.spec.js" type="module"></script>
+		<script src="duplicate-abstracts.spec.js" type="module"></script>
+		<script src="duplicate-citations.spec.js" type="module"></script>
+		<script src="duplicate-dois.spec.js" type="module"></script>
+		<script src="duplicate-keys-none.spec.js" type="module"></script>
+		<script src="duplicate-keys.spec.js" type="module"></script>
+		<script src="duplicate-merge-1.spec.js" type="module"></script>
+		<script src="duplicate-merge-2.spec.js" type="module"></script>
+		<script src="duplicate-merge-combine.spec.js" type="module"></script>
+		<script src="duplicate-merge-first.spec.js" type="module"></script>
+		<script src="duplicate-merge-last.spec.js" type="module"></script>
+		<script src="duplicate-merge-overwrite.spec.js" type="module"></script>
+		<script src="encode-urls.spec.js" type="module"></script>
+		<script src="enforce-braces.spec.js" type="module"></script>
+		<script src="enforce-numeric.spec.js" type="module"></script>
+		<script src="escape-off.spec.js" type="module"></script>
+		<script src="escape.spec.js" type="module"></script>
+		<script src="indent-with-4-space.spec.js" type="module"></script>
+		<script src="indent-with-tab.spec.js" type="module"></script>
+		<script src="leading-commas.spec.js" type="module"></script>
+		<script src="multiline-field.spec.js" type="module"></script>
+		<script src="no-alignment.spec.js" type="module"></script>
+		<script src="omit-properties.spec.js" type="module"></script>
+		<script src="one-line-bib.spec.js" type="module"></script>
+		<script src="sort-descending.spec.js" type="module"></script>
+		<script src="sort-key.spec.js" type="module"></script>
+		<script src="sort-multi-key.spec.js" type="module"></script>
+		<script src="sort-props-custom.spec.js" type="module"></script>
+		<script src="sort-props.spec.js" type="module"></script>
+		<script src="sort.spec.js" type="module"></script>
+		<script src="spaces.spec.js" type="module"></script>
+		<script src="spacing-before-first-entry.spec.js" type="module"></script>
+		<script src="strip-comments.spec.js" type="module"></script>
+		<script src="strip-double-brace.spec.js" type="module"></script>
+	</body>
+</html>
