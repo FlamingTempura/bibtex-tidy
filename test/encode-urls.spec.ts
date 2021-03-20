@@ -23,7 +23,7 @@ const output = bibtex`
 }
 `;
 
-test('encode urls', (t, tidy) => {
-	const tidied = tidy(input, { encodeUrls: true });
+test('encode urls', async (t, tidy) => {
+	const tidied = await tidy(input, { encodeUrls: true });
 	checkSame(t, tidied.bibtex, output);
 });

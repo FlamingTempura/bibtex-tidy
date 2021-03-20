@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('sort properties in default order', (t, tidy) => {
-	const tidied = tidy(input, { sortFields: true });
+test('sort properties in default order', async (t, tidy) => {
+	const tidied = await tidy(input, { sortFields: true });
 	checkSame(t, tidied.bibtex, output);
 });

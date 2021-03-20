@@ -78,7 +78,7 @@ const output = bibtex`
 }
 `;
 
-test('sort entries in descending order', (t, tidy) => {
-	const tidied = tidy(input, { sort: ['-year', 'type', 'title'] });
+test('sort entries in descending order', async (t, tidy) => {
+	const tidied = await tidy(input, { sort: ['-year', 'type', 'title'] });
 	checkSame(t, tidied.bibtex, output);
 });

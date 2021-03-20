@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('indent with tabs', (t, tidy) => {
-	const tidied = tidy(input, { tab: true });
+test('indent with tabs', async (t, tidy) => {
+	const tidied = await tidy(input, { tab: true });
 	checkSame(t, tidied.bibtex, output);
 });

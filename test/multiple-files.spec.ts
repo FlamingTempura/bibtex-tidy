@@ -28,8 +28,8 @@ const output2 = bibtex`
 
 test(
 	'multiple files',
-	(t, tidy) => {
-		const tidied = tidy([file1, file2]);
+	async (t, tidy) => {
+		const tidied = await tidy([file1, file2]);
 		if (!('bibtexs' in tidied)) throw new Error('expected multiple bibtexs');
 		checkSame(t, tidied.bibtexs[0], output1);
 		checkSame(t, tidied.bibtexs[1], output2);

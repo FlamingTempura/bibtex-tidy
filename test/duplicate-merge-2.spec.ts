@@ -424,8 +424,8 @@ const output = bibtex`
 }
 `;
 
-test('merge duplicates 2', (t, tidy) => {
-	const tidied = tidy(input, {
+test('merge duplicates 2', async (t, tidy) => {
+	const tidied = await tidy(input, {
 		merge: true,
 		tab: true,
 		align: false,

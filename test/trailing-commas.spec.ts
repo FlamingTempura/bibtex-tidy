@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('trailing commas', (t, tidy) => {
-	const tidied = tidy(input, { trailingCommas: true });
+test('trailing commas', async (t, tidy) => {
+	const tidied = await tidy(input, { trailingCommas: true });
 	checkSame(t, tidied.bibtex, output);
 });

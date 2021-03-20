@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('20 space alignment', (t, tidy) => {
-	const tidied = tidy(input, { align: 20 });
+test('20 space alignment', async (t, tidy) => {
+	const tidied = await tidy(input, { align: 20 });
 	checkSame(t, tidied.bibtex, output);
 });

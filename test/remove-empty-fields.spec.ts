@@ -24,7 +24,7 @@ const output = bibtex`
 }
 `;
 
-test('remove empty fields', (t, tidy) => {
-	const tidied = tidy(input, { removeEmptyFields: true });
+test('remove empty fields', async (t, tidy) => {
+	const tidied = await tidy(input, { removeEmptyFields: true });
 	checkSame(t, tidied.bibtex, output);
 });

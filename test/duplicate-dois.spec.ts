@@ -12,8 +12,8 @@ const input = bibtex`
 
 test(
 	'duplicate doi warnings',
-	(t, tidy) => {
-		const tidied = tidy(input, { duplicates: ['doi'] });
+	async (t, tidy) => {
+		const tidied = await tidy(input, { duplicates: ['doi'] });
 		t.same(tidied.warnings.length, 1);
 	},
 	{ apiOnly: true }

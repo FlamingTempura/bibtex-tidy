@@ -27,8 +27,8 @@ const output = bibtex`
 }
 `;
 
-test('merge duplicates (keep first)', (t, tidy) => {
-	const tidied = tidy(input, { merge: 'first' });
+test('merge duplicates (keep first)', async (t, tidy) => {
+	const tidied = await tidy(input, { merge: 'first' });
 	const warnings = tidied.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
 	checkSame(t, tidied.bibtex, output);
 	checkSame(t, warnings.length, 1);

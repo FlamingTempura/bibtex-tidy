@@ -226,7 +226,7 @@ Book{landru21,
 }
 `;
 
-test('complex bib', (t, tidy) => {
-	const tidied = tidy(input);
+test('complex bib', async (t, tidy) => {
+	const tidied = await tidy(input);
 	checkSame(t, tidied.bibtex, output);
 });

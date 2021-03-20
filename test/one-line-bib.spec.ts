@@ -40,7 +40,7 @@ const output = bibtex`
 }
 `;
 
-test('one line bib', (t, tidy) => {
-	const tidied = tidy(input);
+test('one line bib', async (t, tidy) => {
+	const tidied = await tidy(input);
 	checkSame(t, tidied.bibtex, output);
 });

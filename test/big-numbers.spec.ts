@@ -15,7 +15,7 @@ const output = bibtex`
 }
 `;
 
-test('should not mess up long numbers', (t, tidy) => {
-	const tidied = tidy(input);
+test('should not mess up long numbers', async (t, tidy) => {
+	const tidied = await tidy(input);
 	checkSame(t, tidied.bibtex, output);
 });

@@ -34,8 +34,8 @@ Issue #11 - these should not be flagged as dupelicates
 
 test(
 	'duplicate citation warnings',
-	(t, tidy) => {
-		const tidied = tidy(input, { duplicates: ['citation'] });
+	async (t, tidy) => {
+		const tidied = await tidy(input, { duplicates: ['citation'] });
 		t.same(tidied.warnings.length, 1);
 	},
 	{ apiOnly: true }

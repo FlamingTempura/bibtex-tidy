@@ -11,7 +11,7 @@ const output = bibtex`
 }
 `;
 
-test('maximum number of authors', (t, tidy) => {
-	const tidied = tidy(input, { maxAuthors: 4 });
+test('maximum number of authors', async (t, tidy) => {
+	const tidied = await tidy(input, { maxAuthors: 4 });
 	checkSame(t, tidied.bibtex, output);
 });

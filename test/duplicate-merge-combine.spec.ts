@@ -28,8 +28,8 @@ const output = bibtex`
 }
 `;
 
-test('merge duplicates (combine)', (t, tidy) => {
-	const tidied = tidy(input, { merge: 'combine' });
+test('merge duplicates (combine)', async (t, tidy) => {
+	const tidied = await tidy(input, { merge: 'combine' });
 	const warnings = tidied.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
 	checkSame(t, tidied.bibtex, output);
 	checkSame(t, warnings.length, 1);

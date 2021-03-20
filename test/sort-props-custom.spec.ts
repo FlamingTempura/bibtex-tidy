@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('sort properties in custom order', (t, tidy) => {
-	const tidied = tidy(input, { sortFields: ['year', 'author'] });
+test('sort properties in custom order', async (t, tidy) => {
+	const tidied = await tidy(input, { sortFields: ['year', 'author'] });
 	checkSame(t, tidied.bibtex, output);
 });

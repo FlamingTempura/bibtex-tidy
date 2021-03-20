@@ -78,7 +78,7 @@ const output = bibtex`
 }
 `;
 
-test('sort entries by multiple keys', (t, tidy) => {
-	const tidied = tidy(input, { sort: ['type', 'title'] });
+test('sort entries by multiple keys', async (t, tidy) => {
+	const tidied = await tidy(input, { sort: ['type', 'title'] });
 	checkSame(t, tidied.bibtex, output);
 });

@@ -2,9 +2,9 @@ import { test } from './utils';
 
 test(
 	'CLI help',
-	(t, tidy) => {
-		const tidied1 = tidy(undefined);
-		const tidied2 = tidy(undefined, { help: true });
+	async (t, tidy) => {
+		const tidied1 = await tidy(undefined);
+		const tidied2 = await tidy(undefined, { help: true });
 
 		const stdout1 = 'stdout' in tidied1 && tidied1.stdout;
 		const stdout2 = 'stdout' in tidied2 && tidied2.stdout;

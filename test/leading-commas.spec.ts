@@ -29,7 +29,7 @@ const output = bibtex`
 }
 `;
 
-test('leading commas', (t, tidy) => {
-	const tidied = tidy(input); // leading commas - #48
+test('leading commas', async (t, tidy) => {
+	const tidied = await tidy(input); // leading commas - #48
 	checkSame(t, tidied.bibtex, output);
 });

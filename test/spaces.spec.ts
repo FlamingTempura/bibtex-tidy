@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('indent with default number of spaces', (t, tidy) => {
-	const tidied = tidy(input, { space: true });
+test('indent with default number of spaces', async (t, tidy) => {
+	const tidied = await tidy(input, { space: true });
 	checkSame(t, tidied.bibtex, output);
 });

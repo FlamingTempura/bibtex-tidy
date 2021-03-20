@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('no alignment', (t, tidy) => {
-	const tidied = tidy(input, { align: false });
+test('no alignment', async (t, tidy) => {
+	const tidied = await tidy(input, { align: false });
 	checkSame(t, tidied.bibtex, output);
 });

@@ -19,7 +19,7 @@ const output = bibtex`
 }
 `;
 
-test('multiline fields', (t, tidy) => {
-	const tidied = tidy(input); // #86, #177 (multiline fields), #198 (ACM bibtex)
+test('multiline fields', async (t, tidy) => {
+	const tidied = await tidy(input); // #86, #177 (multiline fields), #198 (ACM bibtex)
 	checkSame(t, tidied.bibtex, output);
 });

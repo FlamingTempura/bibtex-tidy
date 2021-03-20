@@ -24,7 +24,7 @@ const output = bibtex`
 }
 `;
 
-test('omit properties', (t, tidy) => {
-	const tidied = tidy(input, { omit: ['title', 'pages'] });
+test('omit properties', async (t, tidy) => {
+	const tidied = await tidy(input, { omit: ['title', 'pages'] });
 	checkSame(t, tidied.bibtex, output);
 });

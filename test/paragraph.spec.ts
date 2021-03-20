@@ -22,7 +22,7 @@ const output = bibtex`
 }
 `;
 
-test('paragraphs in values', (t, tidy) => {
-	const tidied = tidy(input, { align: 20 });
+test('paragraphs in values', async (t, tidy) => {
+	const tidied = await tidy(input, { align: 20 });
 	checkSame(t, tidied.bibtex, output);
 });

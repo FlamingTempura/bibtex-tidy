@@ -23,7 +23,7 @@ const output = bibtex`
 }
 `;
 
-test('strip double braces', (t, tidy) => {
-	const tidied = tidy(input, { stripEnclosingBraces: true });
+test('strip double braces', async (t, tidy) => {
+	const tidied = await tidy(input, { stripEnclosingBraces: true });
 	checkSame(t, tidied.bibtex, output);
 });

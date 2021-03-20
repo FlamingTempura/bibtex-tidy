@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('keep original casing', (t, tidy) => {
-	const tidied = tidy(input, { lowercase: false });
+test('keep original casing', async (t, tidy) => {
+	const tidied = await tidy(input, { lowercase: false });
 	checkSame(t, tidied.bibtex, output);
 });

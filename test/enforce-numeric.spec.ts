@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('enforce numeric values', (t, tidy) => {
-	const tidied = tidy(input, { numeric: true });
+test('enforce numeric values', async (t, tidy) => {
+	const tidied = await tidy(input, { numeric: true });
 	checkSame(t, tidied.bibtex, output);
 });

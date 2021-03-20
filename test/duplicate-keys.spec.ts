@@ -73,8 +73,8 @@ title = {Methods for Research}
 
 test(
 	'duplicate key warnings',
-	(t, tidy) => {
-		const tidied = tidy(input, { escape: true }),
+	async (t, tidy) => {
+		const tidied = await tidy(input, { escape: true }),
 			warnings = [
 				{
 					entry: {

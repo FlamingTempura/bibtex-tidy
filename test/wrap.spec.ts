@@ -40,7 +40,7 @@ const output = bibtex`
 }
 `;
 
-test('wrap values', (t, tidy) => {
-	const tidied = tidy(input, { wrap: 82 });
+test('wrap values', async (t, tidy) => {
+	const tidied = await tidy(input, { wrap: 82 });
 	checkSame(t, tidied.bibtex, output);
 });

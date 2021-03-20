@@ -144,7 +144,7 @@ const output = bibtex`
 % another last thing
 `;
 
-test('do not tidy comments', (t, tidy) => {
-	const tidied = tidy(input, { tidyComments: false });
+test('do not tidy comments', async (t, tidy) => {
+	const tidied = await tidy(input, { tidyComments: false });
 	checkSame(t, tidied.bibtex, output);
 });

@@ -13,7 +13,7 @@ const output = bibtex`
 }
 `;
 
-test('escape latex charaters', (t, tidy) => {
-	const tidied = tidy(input, { escape: true });
+test('escape latex charaters', async (t, tidy) => {
+	const tidied = await tidy(input, { escape: true });
 	checkSame(t, tidied.bibtex, output);
 });

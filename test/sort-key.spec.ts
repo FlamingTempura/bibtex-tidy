@@ -78,7 +78,7 @@ const output = bibtex`
 }
 `;
 
-test('sort entries by single key', (t, tidy) => {
-	const tidied = tidy(input, { sort: ['year'] });
+test('sort entries by single key', async (t, tidy) => {
+	const tidied = await tidy(input, { sort: ['year'] });
 	checkSame(t, tidied.bibtex, output);
 });

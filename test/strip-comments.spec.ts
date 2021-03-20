@@ -133,7 +133,7 @@ const output = bibtex`
 }
 `;
 
-test('strip comments', (t, tidy) => {
-	const tidied = tidy(input, { stripComments: true });
+test('strip comments', async (t, tidy) => {
+	const tidied = await tidy(input, { stripComments: true });
 	checkSame(t, tidied.bibtex, output);
 });

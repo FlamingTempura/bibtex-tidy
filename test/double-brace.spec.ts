@@ -40,10 +40,10 @@ const output2 = bibtex`
 }
 `;
 
-test('enclosing braces', (t, tidy) => {
-	const tidied1 = tidy(input, { enclosingBraces: ['title', 'journal'] });
+test('enclosing braces', async (t, tidy) => {
+	const tidied1 = await tidy(input, { enclosingBraces: ['title', 'journal'] });
 	checkSame(t, tidied1.bibtex, output1);
 
-	const tidied2 = tidy(input, { enclosingBraces: true });
+	const tidied2 = await tidy(input, { enclosingBraces: true });
 	checkSame(t, tidied2.bibtex, output2);
 });

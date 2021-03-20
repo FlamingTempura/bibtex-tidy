@@ -14,7 +14,7 @@ const output = bibtex`
 }
 `;
 
-test('@ in title', (t, tidy) => {
-	const tidied = tidy(input); // @ in title - #124 (https://github.com/sciunto-org/python-bibtexparser/issues/124)
+test('@ in title', async (t, tidy) => {
+	const tidied = await tidy(input); // @ in title - #124 (https://github.com/sciunto-org/python-bibtexparser/issues/124)
 	checkSame(t, tidied.bibtex, output);
 });

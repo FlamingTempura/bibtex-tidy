@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('defaults', (t, tidy) => {
-	const tidied = tidy(input);
+test('defaults', async (t, tidy) => {
+	const tidied = await tidy(input);
 	checkSame(t, tidied.bibtex, output);
 });

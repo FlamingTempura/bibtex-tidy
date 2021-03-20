@@ -29,7 +29,7 @@ const output = bibtex`
 }
 `;
 
-test('spacing before first entry', (t, tidy) => {
-	const tidied = tidy(input, { tidyComments: false });
+test('spacing before first entry', async (t, tidy) => {
+	const tidied = await tidy(input, { tidyComments: false });
 	checkSame(t, tidied.bibtex, output);
 });

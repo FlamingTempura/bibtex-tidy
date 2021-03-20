@@ -140,7 +140,7 @@ const output = bibtex`
 % another last thing
 `;
 
-test('sort entries by default', (t, tidy) => {
-	const tidied = tidy(input, { sort: true });
+test('sort entries by default', async (t, tidy) => {
+	const tidied = await tidy(input, { sort: true });
 	checkSame(t, tidied.bibtex, output);
 });

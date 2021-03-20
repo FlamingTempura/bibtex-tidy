@@ -23,7 +23,7 @@ const output = bibtex`
 }
 `;
 
-test('drop all caps', (t, tidy) => {
-	const tidied = tidy(input, { dropAllCaps: true });
+test('drop all caps', async (t, tidy) => {
+	const tidied = await tidy(input, { dropAllCaps: true });
 	checkSame(t, tidied.bibtex, output);
 });

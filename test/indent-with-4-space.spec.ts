@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('indent with 4 spaces', (t, tidy) => {
-	const tidied = tidy(input, { space: 4 });
+test('indent with 4 spaces', async (t, tidy) => {
+	const tidied = await tidy(input, { space: 4 });
 	checkSame(t, tidied.bibtex, output);
 });

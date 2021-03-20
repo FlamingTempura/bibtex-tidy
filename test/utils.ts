@@ -161,7 +161,7 @@ type TestCallback = (
 	cb: (
 		bibtexInput: string | string[] | undefined,
 		tidyOptions?: Options | CLIOptions
-	) => ReturnType<Tidy>
+	) => Promise<ReturnType<Tidy>>
 ) => void;
 
 export function test(
@@ -170,7 +170,7 @@ export function test(
 	{ apiOnly, cliOnly }: TestOptions = {}
 ) {
 	const stablecb = (t: TapTest, tidy: Tidy) => {
-		cb(t, (bibtexInput = [], tidyOptions) => {
+		cb(t, async (bibtexInput = [], tidyOptions) => {
 			const inputs =
 				typeof bibtexInput === 'string' ? [bibtexInput] : bibtexInput;
 

@@ -14,8 +14,8 @@ const input = bibtex`
 
 test(
 	'duplicate key warnings (no duplicates)',
-	(t, tidy) => {
-		const tidied = tidy(input, { escape: false });
+	async (t, tidy) => {
+		const tidied = await tidy(input, { escape: false });
 		t.same(tidied.warnings, []);
 	},
 	{ apiOnly: true }
