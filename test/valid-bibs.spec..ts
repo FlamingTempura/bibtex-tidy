@@ -1,13 +1,14 @@
-import { test } from './utils';
+import tap from 'tap';
+import { bibtexTidy } from './utils';
 import fs from 'fs';
 
 const validfiles = fs.readdirSync(`${__dirname}/bibliographies`).slice(0, 10);
 for (const file of validfiles) {
 	if (!file.endsWith('.bib')) continue;
 	const bibtex = fs.readFileSync(`${__dirname}/bibliographies/${file}`, 'utf8');
-	test(`valid bib: ${file}`, async (t, tidy) => {
+	tap.test(`valid bib: ${file}`, async (t) => {
 		// try to tidy the file. if there's an error, the test handler with fail.
-		await tidy(bibtex, {
+		await bibtexTidy(bibtex, {
 			omit: Math.random() > 0.5 ? ['author'] : undefined,
 			escape: Math.random() > 0.5,
 			curly: Math.random() > 0.5,

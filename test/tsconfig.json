@@ -9,7 +9,7 @@
 		"moduleResolution": "Node",
 		"sourceMap": true,
 		"baseUrl": ".",
-		"lib": ["ESNext", "DOM"],
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"target": "ES6",
 		"paths": {
 			"*": ["../node_modules/*"]

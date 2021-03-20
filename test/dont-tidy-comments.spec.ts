@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 %references
@@ -144,7 +145,7 @@ const output = bibtex`
 % another last thing
 `;
 
-test('do not tidy comments', async (t, tidy) => {
-	const tidied = await tidy(input, { tidyComments: false });
-	checkSame(t, tidied.bibtex, output);
+tap.test('do not tidy comments', async (t) => {
+	const tidied = await bibtexTidy(input, { tidyComments: false });
+	t.equal(tidied.bibtex, output);
 });

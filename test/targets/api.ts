@@ -7,5 +7,6 @@ export function testAPI(
 	bibtexs: string[],
 	options: Options = {}
 ): BibTeXTidyResult {
+	if (bibtexs.length > 1) throw new Error('API only supports one input bibtex');
 	return bibtexTidy.tidy(bibtexs[0], options);
 }

@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @ARTICLE {foobar,
@@ -40,7 +41,7 @@ const output = bibtex`
 }
 `;
 
-test('wrap values', async (t, tidy) => {
-	const tidied = await tidy(input, { wrap: 82 });
-	checkSame(t, tidied.bibtex, output);
+tap.test('wrap values', async (t) => {
+	const tidied = await bibtexTidy(input, { wrap: 82 });
+	t.equal(tidied.bibtex, output);
 });

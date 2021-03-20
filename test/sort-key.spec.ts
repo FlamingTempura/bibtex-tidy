@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 
@@ -78,7 +79,7 @@ const output = bibtex`
 }
 `;
 
-test('sort entries by single key', async (t, tidy) => {
-	const tidied = await tidy(input, { sort: ['year'] });
-	checkSame(t, tidied.bibtex, output);
+tap.test('sort entries by single key', async (t) => {
+	const tidied = await bibtexTidy(input, { sort: ['year'] });
+	t.equal(tidied.bibtex, output);
 });

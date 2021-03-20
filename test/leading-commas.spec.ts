@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @ARTICLE{Cesar2013
@@ -29,7 +30,7 @@ const output = bibtex`
 }
 `;
 
-test('leading commas', async (t, tidy) => {
-	const tidied = await tidy(input); // leading commas - #48
-	checkSame(t, tidied.bibtex, output);
+tap.test('leading commas', async (t) => {
+	const tidied = await bibtexTidy(input); // leading commas - #48
+	t.equal(tidied.bibtex, output);
 });

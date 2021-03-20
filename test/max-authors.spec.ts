@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @ARTICLE {test,
@@ -11,7 +12,7 @@ const output = bibtex`
 }
 `;
 
-test('maximum number of authors', async (t, tidy) => {
-	const tidied = await tidy(input, { maxAuthors: 4 });
-	checkSame(t, tidied.bibtex, output);
+tap.test('maximum number of authors', async (t) => {
+	const tidied = await bibtexTidy(input, { maxAuthors: 4 });
+	t.equal(tidied.bibtex, output);
 });

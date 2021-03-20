@@ -1,4 +1,5 @@
-import { bibtex, test } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @article{a,
@@ -10,11 +11,7 @@ const input = bibtex`
     abstract={Something blah blah}
 }`;
 
-test(
-	'duplicate abstract warnings',
-	async (t, tidy) => {
-		const tidied = await tidy(input, { duplicates: ['abstract'] });
-		t.same(tidied.warnings.length, 1);
-	},
-	{ apiOnly: true }
-);
+tap.test('duplicate abstract warnings', async (t) => {
+	const tidied = await bibtexTidy(input, { duplicates: ['abstract'] }, ['api']);
+	t.same(tidied.api?.warnings.length, 1);
+});

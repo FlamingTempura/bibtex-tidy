@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -26,7 +27,7 @@ const output = bibtex`
 }
 `;
 
-test('indent with tabs', async (t, tidy) => {
-	const tidied = await tidy(input, { tab: true });
-	checkSame(t, tidied.bibtex, output);
+tap.test('indent with tabs', async (t) => {
+	const tidied = await bibtexTidy(input, { tab: true });
+	t.equal(tidied.bibtex, output);
 });

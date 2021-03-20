@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @article{ art,
@@ -14,7 +15,7 @@ const output = bibtex`
 }
 `;
 
-test('@ in title', async (t, tidy) => {
-	const tidied = await tidy(input); // @ in title - #124 (https://github.com/sciunto-org/python-bibtexparser/issues/124)
-	checkSame(t, tidied.bibtex, output);
+tap.test('@ in title', async (t) => {
+	const tidied = await bibtexTidy(input); // @ in title - #124 (https://github.com/sciunto-org/python-bibtexparser/issues/124)
+	t.equal(tidied.bibtex, output);
 });

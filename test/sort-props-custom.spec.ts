@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -26,7 +27,7 @@ const output = bibtex`
 }
 `;
 
-test('sort properties in custom order', async (t, tidy) => {
-	const tidied = await tidy(input, { sortFields: ['year', 'author'] });
-	checkSame(t, tidied.bibtex, output);
+tap.test('sort properties in custom order', async (t) => {
+	const tidied = await bibtexTidy(input, { sortFields: ['year', 'author'] });
+	t.equal(tidied.bibtex, output);
 });

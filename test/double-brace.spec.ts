@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -40,10 +41,12 @@ const output2 = bibtex`
 }
 `;
 
-test('enclosing braces', async (t, tidy) => {
-	const tidied1 = await tidy(input, { enclosingBraces: ['title', 'journal'] });
-	checkSame(t, tidied1.bibtex, output1);
+tap.test('enclosing braces', async (t) => {
+	const tidied1 = await bibtexTidy(input, {
+		enclosingBraces: ['title', 'journal'],
+	});
+	t.equal(tidied1.bibtex, output1);
 
-	const tidied2 = await tidy(input, { enclosingBraces: true });
-	checkSame(t, tidied2.bibtex, output2);
+	const tidied2 = await bibtexTidy(input, { enclosingBraces: true });
+	t.equal(tidied2.bibtex, output2);
 });

@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -26,7 +27,7 @@ const output = bibtex`
 }
 `;
 
-test('trailing commas', async (t, tidy) => {
-	const tidied = await tidy(input, { trailingCommas: true });
-	checkSame(t, tidied.bibtex, output);
+tap.test('trailing commas', async (t) => {
+	const tidied = await bibtexTidy(input, { trailingCommas: true });
+	t.equal(tidied.bibtex, output);
 });

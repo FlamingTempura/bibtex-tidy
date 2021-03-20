@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -24,7 +25,7 @@ const output = bibtex`
 }
 `;
 
-test('omit properties', async (t, tidy) => {
-	const tidied = await tidy(input, { omit: ['title', 'pages'] });
-	checkSame(t, tidied.bibtex, output);
+tap.test('omit properties', async (t) => {
+	const tidied = await bibtexTidy(input, { omit: ['title', 'pages'] });
+	t.equal(tidied.bibtex, output);
 });

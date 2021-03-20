@@ -1,18 +1,15 @@
-import { test } from './utils';
+import tap from 'tap';
+import { bibtexTidy } from './utils';
 
-test(
-	'CLI help',
-	async (t, tidy) => {
-		const tidied1 = await tidy(undefined);
-		const tidied2 = await tidy(undefined, { help: true });
+tap.test('CLI help', async (t) => {
+	const tidied1 = await bibtexTidy([], undefined, ['cli']);
+	const tidied2 = await bibtexTidy([], { help: true }, ['cli']);
 
-		const stdout1 = 'stdout' in tidied1 && tidied1.stdout;
-		const stdout2 = 'stdout' in tidied2 && tidied2.stdout;
+	const stdout1 = tidied1.cli?.stdout;
+	const stdout2 = tidied2.cli?.stdout;
 
-		t.same(stdout1, stdout2);
-		t.contains(stdout1, 'cleaner and formatter');
-		t.contains(stdout1, 'Examples');
-		t.contains(stdout1, '--space');
-	},
-	{ cliOnly: true }
-);
+	t.same(stdout1, stdout2);
+	t.contains(stdout1, 'cleaner and formatter');
+	t.contains(stdout1, 'Examples');
+	t.contains(stdout1, '--space');
+});

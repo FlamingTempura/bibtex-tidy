@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @comment{jabref-meta: groupsversion:3;} % zotero export
@@ -226,7 +227,7 @@ Book{landru21,
 }
 `;
 
-test('complex bib', async (t, tidy) => {
-	const tidied = await tidy(input);
-	checkSame(t, tidied.bibtex, output);
+tap.test('complex bib', async (t) => {
+	const tidied = await bibtexTidy(input);
+	t.equal(tidied.bibtex, output);
 });

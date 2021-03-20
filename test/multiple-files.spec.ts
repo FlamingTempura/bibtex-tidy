@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const file1 = bibtex`
 @article{a,
@@ -26,13 +27,8 @@ const output2 = bibtex`
 }
 `;
 
-test(
-	'multiple files',
-	async (t, tidy) => {
-		const tidied = await tidy([file1, file2]);
-		if (!('bibtexs' in tidied)) throw new Error('expected multiple bibtexs');
-		checkSame(t, tidied.bibtexs[0], output1);
-		checkSame(t, tidied.bibtexs[1], output2);
-	},
-	{ cliOnly: true }
-);
+tap.test('multiple files', async (t) => {
+	const tidied = await bibtexTidy([file1, file2], undefined, ['cli']);
+	t.equal(tidied.cli?.bibtexs[0], output1);
+	t.equal(tidied.cli?.bibtexs[1], output2);
+});

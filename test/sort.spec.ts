@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 %references
@@ -140,7 +141,7 @@ const output = bibtex`
 % another last thing
 `;
 
-test('sort entries by default', async (t, tidy) => {
-	const tidied = await tidy(input, { sort: true });
-	checkSame(t, tidied.bibtex, output);
+tap.test('sort entries by default', async (t) => {
+	const tidied = await bibtexTidy(input, { sort: true });
+	t.equal(tidied.bibtex, output);
 });

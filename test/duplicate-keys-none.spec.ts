@@ -1,4 +1,5 @@
-import { bibtex, test } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -12,11 +13,7 @@ const input = bibtex`
     month={aug},
     publisher={Elsevier},}`;
 
-test(
-	'duplicate key warnings (no duplicates)',
-	async (t, tidy) => {
-		const tidied = await tidy(input, { escape: false });
-		t.same(tidied.warnings, []);
-	},
-	{ apiOnly: true }
-);
+tap.test('duplicate key warnings (no duplicates)', async (t) => {
+	const tidied = await bibtexTidy(input, { escape: false }, ['api']);
+	t.same(tidied.api?.warnings, []);
+});

@@ -16,6 +16,12 @@ function unCamelCase(str: string): string {
 	return str.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 }
 
+export type CLIResult = BibTeXTidyResult & {
+	bibtexs: string[];
+	stdout: string;
+	stderr: string;
+};
+
 /**
  * Run bibtex-tidy through command line. Unlike API, this accepts multiple
  * bibtex files.
@@ -23,7 +29,7 @@ function unCamelCase(str: string): string {
 export function testCLI(
 	bibtexs: string[],
 	options: CLIOptions = {}
-): BibTeXTidyResult & { bibtexs: string[]; stdout: string; stderr: string } {
+): CLIResult {
 	const inputFirst = Math.random() > 0.5; // <input> [options] rather than [options] <input>
 	const useEquals = Math.random() > 0.5; // --sort=name,year rather than --sort name year
 

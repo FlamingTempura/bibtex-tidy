@@ -1,4 +1,5 @@
-import { bibtex, test, checkSame } from './utils';
+import tap from 'tap';
+import { bibtex, bibtexTidy } from './utils';
 
 const input = bibtex`
 @book{sweig42,
@@ -28,9 +29,11 @@ const output = bibtex`
 }
 `;
 
-test('merge duplicates (keep last)', async (t, tidy) => {
-	const tidied = await tidy(input, { merge: 'last' });
-	const warnings = tidied.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
-	checkSame(t, tidied.bibtex, output);
-	checkSame(t, warnings.length, 1);
+tap.test('merge duplicates (keep last)', async (t) => {
+	const tidied = await bibtexTidy(input, { merge: 'last' });
+	const warnings = tidied.api?.warnings.filter(
+		(w) => w.code === 'DUPLICATE_ENTRY'
+	);
+	t.equal(tidied.bibtex, output);
+	t.equal(warnings?.length, 1);
 });
