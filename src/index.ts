@@ -1,5 +1,5 @@
 import { optionDocs } from './documentation';
-import { Options, UniqueKey } from './options';
+import { Options, applyOptionDefaults, UniqueKey } from './options';
 import { parse, BibTeXItem, BibTeXEntry, ValueString } from './bibtex-parser';
 import {
 	titleCase,
@@ -37,66 +37,40 @@ type BibTeXTidyResult = {
 	entries: BibTeXEntry[];
 };
 
-const DEFAULT_ENTRY_ORDER: string[] = ['key']; // if sort = true
-const DEFAULT_MERGE_CHECK: UniqueKey[] = ['doi', 'citation', 'abstract'];
-
-//prettier-ignore
-const DEFAULT_FIELD_ORDER: string[] = [
-	'title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal',
-	'booktitle', 'location', 'on', 'publisher', 'address', 'series',
-	'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url',
-	'urldate', 'copyright', 'category', 'note', 'metadata'
-];
-
-const DEFAULT_ENCLOSING_BRACES_FIELDS: string[] = ['title'];
-
 //prettier-ignore
 const MONTHS: Set<string> = new Set([
 	'jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'
 ]);
 
-function tidy(
-	input: string,
-	{
-		omit = [],
-		curly = false,
-		numeric = false,
-		tab = false,
-		align = 14,
-		sort = false,
-		merge = false,
-		stripEnclosingBraces = false,
-		dropAllCaps = false,
-		escape = true,
-		sortFields = false,
-		stripComments = false,
-		encodeUrls = false,
-		tidyComments = true,
-		space = 2,
-		duplicates = false,
-		trailingCommas = false,
-		removeEmptyFields = false,
-		lowercase = true,
-		enclosingBraces = false,
-		wrap = false,
+function tidy(input: string, options: Options = {}): BibTeXTidyResult {
+	const {
+		omit,
+		curly,
+		numeric,
+		tab,
+		align,
+		sort,
+		merge,
+		stripEnclosingBraces,
+		dropAllCaps,
+		escape,
+		sortFields,
+		stripComments,
+		encodeUrls,
+		tidyComments,
+		space,
+		duplicates,
+		trailingCommas,
+		removeEmptyFields,
+		lowercase,
+		enclosingBraces,
+		wrap,
 		maxAuthors,
-		sortProperties,
-	}: Options = {}
-): BibTeXTidyResult {
-	if (sort === true) sort = DEFAULT_ENTRY_ORDER;
-	if (space === true) space = 2;
-	if (sortProperties) sortFields = sortProperties;
-	if (sortFields === true) sortFields = DEFAULT_FIELD_ORDER;
-	if (merge === true) merge = 'combine';
-	if (duplicates === true) duplicates = DEFAULT_MERGE_CHECK;
-	if (align === false) align = 1;
-	if (enclosingBraces === true)
-		enclosingBraces = DEFAULT_ENCLOSING_BRACES_FIELDS;
-	if (wrap === true) wrap = 80;
+	} = applyOptionDefaults(options);
+
 	const indent: string = tab ? '\t' : ' '.repeat(space);
 	const uniqCheck: Map<UniqueKey, boolean> = new Map();
 
-	if (merge && !duplicates) duplicates = DEFAULT_MERGE_CHECK;
 	if (duplicates) {
 		for (const key of duplicates) {
 			uniqCheck.set(key, !!merge);
