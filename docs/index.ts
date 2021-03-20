@@ -1,33 +1,38 @@
-/* jshint esversion: 6 */
+import CodeMirror from 'codemirror';
+import bibtexTidy from '../src/index';
+import { UniqueKey } from '../src/options';
 
-/* global CodeMirror, bibtexTidy */
+import 'codemirror/addon/mode/simple';
+
+const Null = '';
+
 CodeMirror.defineSimpleMode('simplemode', {
 	// bibtex syntax highlighting
 	start: [
 		{ regex: /.*@comment/i, token: 'comment', push: 'comment' },
 		{
 			regex: /(\s*)(@preamble)(\s*{)/i,
-			token: [null, 'variable-2'],
+			token: [Null, 'variable-2'],
 			push: 'braced',
 		},
 		{
 			regex: /(\s*)(@preamble)(\s*\()/i,
-			token: [null, 'variable-2'],
+			token: [Null, 'variable-2'],
 			push: 'parenthesised',
 		},
 		{
 			regex: /(\s*)(@string)(\s*{)/i,
-			token: [null, 'variable-2'],
+			token: [Null, 'variable-2'],
 			push: 'braced',
 		},
 		{
 			regex: /(\s*)(@string)(\s*\()/i,
-			token: [null, 'variable-2'],
+			token: [Null, 'variable-2'],
 			push: 'parenthesised',
 		},
 		{
 			regex: /(\s*)(@[^=#,{}()[\] \t\n\r]+)(\s*\{\s*)([^=#,{}()[\] \t\n\r]+)(\s*,)/,
-			token: [null, 'variable-2', null, 'variable-3'],
+			token: [Null, 'variable-2', Null, 'variable-3'],
 			push: 'entry',
 		},
 		{ regex: /.*/, token: 'comment' },
@@ -35,7 +40,7 @@ CodeMirror.defineSimpleMode('simplemode', {
 	entry: [
 		{
 			regex: /([^=,{}()[\]\t\n\r]+)(\s*)(=)/,
-			token: ['keyword', null, 'operator'],
+			token: ['keyword', Null, 'operator'],
 		},
 		{ regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: 'string' },
 		{ regex: /\d+/i, token: 'number' },
@@ -58,44 +63,48 @@ CodeMirror.defineSimpleMode('simplemode', {
 	],
 });
 
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => document.querySelectorAll(selector);
+const $ = <T extends HTMLElement>(selector: string) =>
+	document.querySelector<T>(selector)!;
+const $$ = <T extends HTMLElement>(selector: string) =>
+	document.querySelectorAll<T>(selector);
 
-for (let $suboption of $$('.suboptions')) {
-	let $check = $suboption.parentNode.querySelector('input'),
-		toggle = () =>
-			($suboption.style.display = $check.checked ? 'block' : 'none');
-	$check.addEventListener('change', toggle);
+for (const $suboption of $$('.suboptions')) {
+	const $check = $suboption.parentNode!.querySelector<HTMLInputElement>(
+		'input'
+	);
+	const toggle = () =>
+		($suboption.style.display = $check!.checked ? 'block' : 'none');
+	$check!.addEventListener('change', toggle);
 	toggle();
 	$('input[name=indent]').addEventListener('change', toggle); // hack
 }
 
-let options = document.forms.options,
-	cmEditor = CodeMirror.fromTextArea($('#editor textarea'), {
-		lineNumbers: true,
-		autofocus: true,
-	}),
-	errorHighlight;
+const options = (document.forms as any).options;
+const cmEditor = CodeMirror.fromTextArea($('#editor textarea'), {
+	lineNumbers: true,
+	autofocus: true,
+});
+let errorHighlight: CodeMirror.TextMarker | undefined;
 
-const optionDocs = {};
+const optionDocs: any = {};
 for (const option of bibtexTidy.options) {
 	optionDocs[option.key] = option;
 }
 
 for (let $label of $$('label[data-option]')) {
-	const key = $label.dataset.option;
+	const key = $label.dataset.option!;
 	const option = optionDocs[key];
 	const $input = $label.querySelector('input');
 	const [name, description] = option.description.split(' - ');
 	$label.setAttribute('title', description);
-	$label.querySelector('.name').textContent = name;
-	if (!$input.getAttribute('name')) {
-		$input.setAttribute('name', key);
+	$label.querySelector('.name')!.textContent = name;
+	if (!$input!.getAttribute('name')) {
+		$input!.setAttribute('name', key);
 	}
 }
 
 $('#tidy').addEventListener('click', () => {
-	$('#tidy').setAttribute('disabled', true);
+	$('#tidy').setAttribute('disabled', 'true');
 	$('#feedback').style.display = 'none';
 	$('#feedback').innerHTML = '';
 	document.body.classList.toggle('error', false);
@@ -121,7 +130,7 @@ $('#tidy').addEventListener('click', () => {
 					options.uniqDOI.checked ? 'doi' : null,
 					options.uniqABS.checked ? 'abstract' : null,
 					options.uniqCIT.checked ? 'citation' : null,
-			  ].filter((a) => a !== null)
+			  ].filter((a): a is UniqueKey => a !== null)
 			: false,
 		merge: options.merge.checked ? options.mergeStrategy.value : false,
 		enclosingBraces:
@@ -139,7 +148,9 @@ $('#tidy').addEventListener('click', () => {
 		trailingCommas: options.trailingCommas.checked,
 		removeEmptyFields: options.removeEmptyFields.checked,
 		lowercase: options.lowercase.checked,
-		maxAuthors: options.maxAuthors.checked ? Number(options.maxAuthorsNum.value) : undefined
+		maxAuthors: options.maxAuthors.checked
+			? Number(options.maxAuthorsNum.value)
+			: undefined,
 	};
 	setTimeout(() => {
 		try {

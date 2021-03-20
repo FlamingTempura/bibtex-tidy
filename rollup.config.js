@@ -156,4 +156,30 @@ export default [
 			banner: '#!/usr/bin/env node\n' + banner,
 		},
 	},
+	{
+		input: 'docs/index.ts',
+		plugins: [
+			docsResolve,
+			pegjs(),
+			dsv(tsv),
+			commonjs(),
+			nodeResolve({ extensions }),
+			babel({
+				extensions,
+				babelHelpers: 'bundled',
+				// see https://babeljs.io/docs/en/usage/#configuration
+				presets: [
+					'@babel/typescript',
+					['@babel/env', { targets: browserTargets }],
+				],
+				comments: false,
+			}),
+		],
+		output: {
+			name: 'bibtexTidy',
+			file: 'docs/bundle.js',
+			format: 'umd',
+			banner,
+		},
+	},
 ];
