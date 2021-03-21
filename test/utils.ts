@@ -1,9 +1,8 @@
 import tap from 'tap';
 import { CLIOptions } from '../src/options.js';
 import { CLIResult, testCLI } from './targets/cli.js';
-import { testAPI } from './targets/api.js';
-import { BibTeXTidyResult } from '../src/index.js';
-import { testWeb } from './targets/web.js';
+import { APIResult, testAPI } from './targets/api.js';
+import { testWeb, WebResult } from './targets/web.js';
 
 // Allows \ to be used and removes the empty line at the start
 export function bibtex(str: TemplateStringsArray): string {
@@ -11,9 +10,9 @@ export function bibtex(str: TemplateStringsArray): string {
 }
 
 type BibTeXTidyRunResult = {
-	api?: BibTeXTidyResult;
+	api?: APIResult;
 	cli?: CLIResult;
-	web?: BibTeXTidyResult;
+	web?: WebResult;
 	bibtex?: string;
 };
 
@@ -41,14 +40,14 @@ export async function bibtexTidy(
 		const cliResult = testCLI(inputs, options);
 		const cliResult2 = testCLI(cliResult.bibtexs, options);
 		tap.same(
-			cliResult.bibtex,
-			cliResult2.bibtex,
+			cliResult.bibtexs,
+			cliResult2.bibtexs,
 			'CLI result should be stable'
 		);
 		result.cli = cliResult;
 		if (result.api) {
 			tap.same(
-				cliResult.bibtex,
+				cliResult.bibtexs[0],
 				result.api.bibtex,
 				'API and CLI outputs should match'
 			);
@@ -74,14 +73,14 @@ export async function bibtexTidy(
 		if (result.cli) {
 			tap.same(
 				webResult.bibtex,
-				result.cli.bibtex,
+				result.cli.bibtexs[0],
 				'Web and CLI outputs should match'
 			);
 		}
 	}
 
 	result.bibtex =
-		result.api?.bibtex ?? result.cli?.bibtex ?? result.web?.bibtex;
+		result.api?.bibtex ?? result.cli?.bibtexs[0] ?? result.web?.bibtex;
 
 	return result;
 }

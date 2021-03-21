@@ -3,7 +3,7 @@ import {
 	Options,
 	OptionsSanitized,
 } from '../../src/options.js';
-import { BibTeXTidyResult } from '../../src/index.js';
+import { BibTeXTidyResult, Warning } from '../../src/index.js';
 import puppeteer, { JSONObject } from 'puppeteer';
 import { join } from 'path';
 
@@ -16,10 +16,15 @@ declare global {
 	}
 }
 
+export type WebResult = {
+	bibtex: string;
+	warnings: Warning[];
+};
+
 export async function testWeb(
 	bibtexs: string[],
 	options: Options = {}
-): Promise<BibTeXTidyResult> {
+): Promise<WebResult> {
 	if (bibtexs.length > 1) throw new Error('Web only supports one input bibtex');
 
 	const input = bibtexs[0];

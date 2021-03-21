@@ -3,7 +3,7 @@ import path from 'path';
 import { spawnSync } from 'child_process';
 import tap from 'tap';
 import { CLIOptions, Options } from '../../src/options.js';
-import { BibTeXTidyResult, Warning } from '../../src/index.js';
+import { Warning } from '../../src/index.js';
 import { BibTeXItem } from '../../src/bibtex-parser.js';
 
 const TMP_DIR = tap.testdir();
@@ -16,8 +16,9 @@ function unCamelCase(str: string): string {
 	return str.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 }
 
-export type CLIResult = BibTeXTidyResult & {
+export type CLIResult = {
 	bibtexs: string[];
+	warnings: Warning[];
 	stdout: string;
 	stderr: string;
 };
@@ -69,10 +70,7 @@ export function testCLI(
 	const proc = spawnSync(
 		path.resolve(__dirname, '../../../bin/bibtex-tidy'),
 		args,
-		{
-			timeout: 100000,
-			encoding: 'utf8',
-		}
+		{ timeout: 100000, encoding: 'utf8' }
 	);
 	const tidiedOutputs: string[] = [];
 
@@ -98,9 +96,7 @@ export function testCLI(
 	tmpFiles.forEach((tmpFile) => fs.unlinkSync(tmpFile));
 
 	return {
-		bibtex: tidiedOutputs[0] || '',
 		bibtexs: tidiedOutputs,
-		entries: [],
 		warnings,
 		stdout: proc.stdout,
 		stderr: proc.stderr,
