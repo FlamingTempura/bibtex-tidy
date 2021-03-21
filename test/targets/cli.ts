@@ -64,7 +64,7 @@ export function testCLI(
 		args.push(...tmpFiles);
 	}
 
-	console.log('./bin/bibtex-tidy ' + args.join(' '));
+	//console.log('./bin/bibtex-tidy ' + args.join(' '));
 
 	const proc = spawnSync(
 		path.resolve(__dirname, '../../../bin/bibtex-tidy'),
