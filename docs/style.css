@@ -1,30 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400&family=Inconsolata:wght@400;600&display=swap');
+
+:root {
+	--header-bg: rgba(0, 0, 0, 0.2);
+	--main-bg: #1e272e;
+	--main-fg: #edf0f3;
+	--red: #de3040;
+	--green: #05c46b;
+	--orange: #f9b653;
+	--pink: #f36eb7;
+	--light-blue: #71cafd;
+	--blue: #179fef;
+	--light-gray: #bdbdbd;
+	--dark-gray: #696867;
+	--mono-normal: 400 14px 'Inconsolata', monospace;
+	--mono-bold: 500 14px 'Inconsolata', monospace;
+	--sans-normal: 300 13px 'IBM Plex Sans', sans-serif;
+	--sans-title: 400 15px 'IBM Plex Sans', sans-serif;
+}
 * {
 	box-sizing: border-box;
 }
 body {
-	background: #1e272e;
-	color: #eee;
-	font-family: Helvetica, sans-serif;
-	font-size: 15px;
-	line-height: 1.3em;
+	background: var(--main-bg);
+	color: var(--main-fg);
+	font: var(--sans-normal);
+	line-height: 1.5em;
 	margin: 0;
 }
-h1,
-h3,
-summary {
-	background: rgba(0, 0, 0, 0.2);
-	margin: 12px -12px 8px;
-	padding: 12px;
-}
 h1 {
-	font-size: 16px;
-	margin-top: 0;
+	font: var(--sans-title);
+	/* font-size: 16px; */
+	padding: 12px;
+	margin: 0px -12px 8px;
+	background: var(--header-bg);
 }
-h3,
+input[type='number'] {
+	-moz-appearance: textfield;
+}
+input[type='number']::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+}
 summary {
-	font-size: 12px;
-	font-weight: 400;
+	font: var(--sans-title);
+	font-size: 11px;
 	text-transform: uppercase;
+	cursor: pointer;
+	user-select: none;
+	padding: 8px 20px;
+	margin: 16px -12px 12px;
+	background: var(--header-bg);
+	position: relative;
+}
+summary:hover {
+	background: rgba(0, 0, 0, 0.15);
+}
+summary .section-title {
+	position: absolute;
+	left: 40px;
+	top: 8px;
 }
 a {
 	color: #fff;
@@ -32,10 +65,8 @@ a {
 .btn {
 	background: rgba(255, 255, 255, 0.2);
 	border-radius: 3px;
-	color: #eee;
+	color: var(--main-fg);
 	display: inline-block;
-	font-size: 14px;
-	font-weight: 700;
 	margin-right: 6px;
 	padding: 5px 12px;
 	text-decoration: none;
@@ -52,20 +83,20 @@ a {
 	width: 100%;
 }
 .CodeMirror {
-	background: #1e272e;
-	color: #ffffec;
-	font-size: 13px;
+	background: var(--main-bg);
+	color: var(--main-fg);
+	font: var(--mono-normal);
 	height: 100%;
-	line-height: 1.2em;
+	line-height: 1.3em;
 	padding: 12px;
 	width: 100%;
 }
 .CodeMirror .CodeMirror-gutters {
-	background: #1e272e;
-	border-right: 14px solid #1e272e;
+	background: var(--main-bg);
+	border-right: 14px solid var(--main-bg);
 }
 .CodeMirror .CodeMirror-linenumber {
-	color: #a9a9a9;
+	color: var(--dark-gray);
 }
 .CodeMirror .CodeMirror-selected {
 	background: #283655;
@@ -74,30 +105,30 @@ a {
 	border-left: 1px solid #ffffec;
 }
 .CodeMirror .cm-comment {
-	color: #696867;
+	color: var(--dark-gray);
 }
 .CodeMirror .cm-keyword {
 	color: #fff;
 }
 .CodeMirror .cm-variable-2 {
-	color: #d258a1;
+	color: var(--pink);
 }
 .CodeMirror .cm-variable-3 {
-	color: #e7a33d;
+	color: var(--orange);
 }
 .CodeMirror .cm-operator {
-	color: #bdbdbd;
+	color: var(--light-gray);
 }
 .CodeMirror .cm-string {
-	color: #29a950;
+	color: var(--green);
 }
 .CodeMirror .cm-number {
-	color: #71cafd;
+	color: var(--light-blue);
 }
 .CodeMirror .bibtex-error {
-	background: #de3040;
+	background: var(--red);
 	color: white;
-	font-weight: bold;
+	font: var(--mono-bold);
 }
 #sidebar {
 	background: rgba(154, 199, 255, 0.2);
@@ -120,17 +151,17 @@ a {
 	flex: 0 0 auto;
 }
 #sidebar #tidy {
-	background: #179fef;
+	background: var(--blue);
 	border: 0;
 	box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
 	color: #fff;
+	font: var(--sans-title);
 	font-size: 21px;
-	font-weight: 700;
 	height: 60px;
 	width: 100%;
 }
 #sidebar #tidy[disabled] {
-	background: #999;
+	background: var(--dark-gray);
 	color: transparent;
 	position: relative;
 }
@@ -165,7 +196,7 @@ a {
 #sidebar label {
 	display: block;
 	margin: 8px 0;
-	padding-left: 22px;
+	padding-left: 28px;
 	position: relative;
 	width: 100%;
 }
@@ -184,14 +215,19 @@ a {
 	font-size: 0.9em;
 	border: 1px solid rgba(255, 255, 255, 0.2);
 	background: rgba(0, 0, 0, 0.1);
-	color: #bbb;
-	padding: 1px;
+	color: var(--light-gray);
+	padding: 1px 4px;
 	border-radius: 3px;
 }
 .suboptions textarea {
 	resize: vertical;
 	width: 100%;
 	height: 100px;
+	padding: 4px 5px;
+	font: var(--mono-normal);
+}
+.suboptions input {
+	font: var(--mono-normal);
 }
 #sidebar input[type='number'] {
 	display: inline-block;
@@ -207,14 +243,14 @@ a {
 	height: 80px;
 }
 #feedback {
-	background: #05c46b;
+	background: var(--green);
 	color: #fff;
 	display: none;
 	font-size: 15px;
 	padding: 12px;
 }
 .error #feedback {
-	background: #d91e18;
+	background: var(--red);
 }
 #result {
 	opacity: 0;
@@ -227,8 +263,8 @@ a {
 }
 
 #cli .opt-name {
-	color: #29a950;
+	color: var(--green);
 }
 #cli .opt-val {
-	color: #e7a33d;
+	color: var(--orange);
 }

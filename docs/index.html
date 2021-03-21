@@ -58,7 +58,7 @@ Click Tidy to clean up the entries below
 				</p>
 
 				<details open>
-					<summary>Whitespace</summary>
+					<summary><div class="section-title">Whitespace</div></summary>
 					<label data-option="tab">
 						<input name="indent" type="radio" value="tabs" checked="checked" />
 						<span class="name"></span>
@@ -89,7 +89,7 @@ Click Tidy to clean up the entries below
 				</details>
 
 				<details open>
-					<summary>Values</summary>
+					<summary><div class="section-title">Values</div></summary>
 
 					<label data-option="curly">
 						<input type="checkbox" checked="checked" />
@@ -104,7 +104,9 @@ Click Tidy to clean up the entries below
 						<span class="name"></span>
 						<div class="suboptions">
 							Fields enclose in double braces: <br />
-							<textarea name="enclosingBracesList">title</textarea><br />
+							<textarea name="enclosingBracesList" spellcheck="false">
+title</textarea
+							><br />
 							Space delimited, e.g: <code>title journal</code>.
 							<code>-year author</code>.
 						</div>
@@ -140,14 +142,14 @@ Click Tidy to clean up the entries below
 				</details>
 
 				<details open>
-					<summary>Sorting</summary>
+					<summary><div class="section-title">Sorting</div></summary>
 
 					<label data-option="sort">
 						<input type="checkbox" />
 						<span class="name"></span>
 						<div class="suboptions">
 							Fields to sort by: <br />
-							<textarea name="sortList">key</textarea><br />
+							<textarea name="sortList" spellcheck="false">key</textarea><br />
 							Space delimited, e.g: <code>key type publisher author</code>. For
 							descending order, prefix the field name with a dash, e.g.
 							<code>-year author</code>.
@@ -159,7 +161,7 @@ Click Tidy to clean up the entries below
 						<span class="name"></span>
 						<div class="suboptions">
 							Field order: <br />
-							<textarea name="sortFieldList" value>
+							<textarea name="sortFieldList" spellcheck="false">
 title shorttitle author year month day journal booktitle location on publisher address series volume number pages doi isbn issn url urldate copyright category note metadata</textarea
 							><br />
 							Space delimited, e.g: <code>title author year</code>
@@ -168,7 +170,7 @@ title shorttitle author year month day journal booktitle location on publisher a
 				</details>
 
 				<details open>
-					<summary>Duplicates</summary>
+					<summary><div class="section-title">Duplicates</div></summary>
 
 					<label data-option="duplicates">
 						<input type="checkbox" checked="checked" />
@@ -237,7 +239,7 @@ title shorttitle author year month day journal booktitle location on publisher a
 				</details>
 
 				<details open>
-					<summary>Clean up</summary>
+					<summary><div class="section-title">Clean up</div></summary>
 
 					<label data-option="omit">
 						<input type="checkbox" />
@@ -247,6 +249,7 @@ title shorttitle author year month day journal booktitle location on publisher a
 							<textarea
 								name="omitList"
 								placeholder="e.g. abstract keywords"
+								spellcheck="false"
 							></textarea
 							><br />
 							Space delimited, e.g: <code>id type publisher author</code>
@@ -271,8 +274,8 @@ title shorttitle author year month day journal booktitle location on publisher a
 				</details>
 
 				<details>
-					<summary>CLI</summary>
-					To run this configuration on the command line:
+					<summary><div class="section-title">CLI</div></summary>
+					<p>To run this configuration on the command line:</p>
 					<code id="cli"></code>
 				</details>
 			</form>

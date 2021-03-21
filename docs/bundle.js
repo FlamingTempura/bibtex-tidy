@@ -21628,7 +21628,9 @@
 	    }
 
 	    return null;
-	  }).filter(s => s).join('');
+	  }).filter(s => s).join('') + ' YOUR_FILE.bib';
 	}
+
+	window.requestAnimationFrame(formatCLICommand);
 
 })));

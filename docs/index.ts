@@ -218,5 +218,8 @@ function formatCLICommand() {
 				return null;
 			})
 			.filter((s) => s)
-			.join('');
+			.join('') +
+		' YOUR_FILE.bib';
 }
+
+window.requestAnimationFrame(formatCLICommand);
