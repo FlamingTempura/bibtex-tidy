@@ -31,7 +31,7 @@
 		"cover": "npm test --coverage-report=lcov",
 		"build": "rollup -c",
 		"start": "rollup -cw",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit && (cd test && tsc --noEmit)"
 	},
 	"repository": {
 		"type": "git",
