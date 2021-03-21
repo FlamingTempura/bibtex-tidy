@@ -1,12 +1,12 @@
 import fs from 'fs';
-import os from 'os';
 import path from 'path';
 import { spawnSync } from 'child_process';
+import tap from 'tap';
 import { CLIOptions, Options } from '../../src/options.js';
 import { BibTeXTidyResult, Warning } from '../../src/index.js';
 import { BibTeXItem } from '../../src/bibtex-parser.js';
 
-const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'bibtex-tidy-'));
+const TMP_DIR = tap.testdir();
 
 function getTmpPath(i: number = 0): string {
 	return path.join(TMP_DIR, `tmp${i}.bib`);
