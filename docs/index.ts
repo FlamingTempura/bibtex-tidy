@@ -49,7 +49,7 @@ for (let $label of $$('label[data-option]')) {
 	const option = optionDocs[key];
 	const $input = $label.querySelector('input');
 	const [name, description] = option.description.split(' - ');
-	$label.setAttribute('title', description);
+	if (description) $label.setAttribute('title', description);
 	$label.querySelector('.name')!.textContent = name;
 	if (!$input!.getAttribute('name')) {
 		$input!.setAttribute('name', key);

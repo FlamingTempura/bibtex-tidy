@@ -66,23 +66,23 @@ Click Tidy to clean up the entries below
 					<label data-option="space">
 						<input name="indent" type="radio" value="spaces" />
 						<span class="name"></span>
-						<div class="suboptions">
+						<div class="suboptions keyvalue">
 							Spaces: <input name="spaces" type="number" value="2" />
 						</div>
 					</label>
 					<label data-option="align">
 						<input type="checkbox" checked="checked" />
 						<span class="name"></span>
-						<div class="suboptions">
-							Align values at column:
+						<div class="suboptions keyvalue">
+							Column:
 							<input name="alignnum" type="number" value="13" />
 						</div>
 					</label>
 					<label data-option="wrap">
 						<input type="checkbox" />
 						<span class="name"></span>
-						<div class="suboptions">
-							Wrap values at column:
+						<div class="suboptions keyvalue">
+							Column:
 							<input name="wrapnum" type="number" value="80" />
 						</div>
 					</label>
@@ -95,15 +95,11 @@ Click Tidy to clean up the entries below
 						<input type="checkbox" checked="checked" />
 						<span class="name"></span>
 					</label>
-					<label data-option="numeric">
-						<input type="checkbox" checked="checked" />
-						<span class="name"></span>
-					</label>
 					<label data-option="enclosingBraces">
 						<input type="checkbox" />
 						<span class="name"></span>
 						<div class="suboptions">
-							Fields enclose in double braces: <br />
+							Fields to enclose in double braces: <br />
 							<textarea name="enclosingBracesList" spellcheck="false">
 title</textarea
 							><br />
@@ -113,6 +109,10 @@ title</textarea
 					</label>
 					<label data-option="stripEnclosingBraces">
 						<input type="checkbox" />
+						<span class="name"></span>
+					</label>
+					<label data-option="numeric">
+						<input type="checkbox" checked="checked" />
 						<span class="name"></span>
 					</label>
 					<label data-option="dropAllCaps">
@@ -135,7 +135,7 @@ title</textarea
 						<input type="checkbox" />
 						<span class="name"></span>
 						<div class="suboptions">
-							<input name="maxAuthorsNum" type="number" /><br />
+							<input name="maxAuthorsNum" type="number" value="5" /><br />
 							Author lists longer than this will be truncated to "and others".
 						</div>
 					</label>
@@ -177,24 +177,22 @@ title shorttitle author year month day journal booktitle location on publisher a
 						<span class="name"></span>
 
 						<div class="suboptions">
+							<p>What to check:</p>
 							<label>
-								<p>What to check:</p>
-								<label>
-									<input type="checkbox" name="uniqKEY" checked="checked" />
-									Matching Keys
-								</label>
-								<label>
-									<input type="checkbox" name="uniqDOI" />
-									Matching DOIs
-								</label>
-								<label>
-									<input type="checkbox" name="uniqCIT" />
-									Similar author and title
-								</label>
-								<label>
-									<input type="checkbox" name="uniqABS" />
-									Similar abstracts
-								</label>
+								<input type="checkbox" name="uniqKEY" checked="checked" />
+								Matching Keys
+							</label>
+							<label>
+								<input type="checkbox" name="uniqDOI" />
+								Matching DOIs
+							</label>
+							<label>
+								<input type="checkbox" name="uniqCIT" />
+								Similar author and title
+							</label>
+							<label>
+								<input type="checkbox" name="uniqABS" />
+								Similar abstracts
 							</label>
 						</div>
 					</label>

@@ -13662,7 +13662,7 @@
 	  {
 	    "key": "curly",
 	    "cli": "curly",
-	    "description": "Enclose values in curly braces - Enclose all property values in braces. Quoted values will be converted to braces. For example, \"Journal of Tea\"\nwill become {Journal of Tea}.",
+	    "description": "Enclose values in braces - Enclose all property values in braces. Quoted values will be converted to braces. For example, \"Journal of Tea\"\nwill become {Journal of Tea}.",
 	    "examples": [],
 	    "type": "boolean",
 	    "deprecated": false
@@ -13796,7 +13796,7 @@
 	  {
 	    "key": "trailingCommas",
 	    "cli": "trailing-commas",
-	    "description": "End the last key value pair in each entry with a comma",
+	    "description": "Trailing commas - End the last key value pair in each entry with a comma",
 	    "examples": [],
 	    "type": "boolean",
 	    "deprecated": false
@@ -13820,7 +13820,7 @@
 	  {
 	    "key": "removeEmptyFields",
 	    "cli": "remove-empty-fields",
-	    "description": "Remove any fields that have empty values",
+	    "description": "Remove empty fields - Remove any fields that have empty values",
 	    "examples": [],
 	    "type": "boolean",
 	    "deprecated": false
@@ -13828,7 +13828,7 @@
 	  {
 	    "key": "maxAuthors",
 	    "cli": "max-authors",
-	    "description": "Maximum authors - truncates authors if above a given number into \"and others\".",
+	    "description": "Maximum authors - Truncate authors if above a given number into \"and others\".",
 	    "examples": [],
 	    "type": "number",
 	    "deprecated": false
@@ -13847,7 +13847,7 @@
 	  {
 	    "key": "enclosingBraces",
 	    "cli": "enclosing-braces",
-	    "description": "Enclose in double braces - Enclose the given fields in double braces, such that case is preserved during BibTeX compilation.",
+	    "description": "Enclose values in double braces - Enclose the given fields in double braces, such that case is preserved during BibTeX compilation.",
 	    "examples": [
 	      "--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})",
 	      "--enclosing-braces (equivalent to ---enclosing-braces=title)"
@@ -21493,7 +21493,7 @@
 	  const option = optionDocs[key];
 	  const $input = $label.querySelector('input');
 	  const [name, description] = option.description.split(' - ');
-	  $label.setAttribute('title', description);
+	  if (description) $label.setAttribute('title', description);
 	  $label.querySelector('.name').textContent = name;
 
 	  if (!$input.getAttribute('name')) {

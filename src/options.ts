@@ -9,7 +9,7 @@ export type Options = {
 	 */
 	omit?: string[];
 	/**
-	 * Enclose values in curly braces - Enclose all property values in braces.
+	 * Enclose values in braces - Enclose all property values in braces.
 	 * Quoted values will be converted to braces. For example, "Journal of Tea"
 	 * will become {Journal of Tea}.
 	 */
@@ -113,7 +113,7 @@ export type Options = {
 	 */
 	stripComments?: boolean;
 	/**
-	 * End the last key value pair in each entry with a comma
+	 * Trailing commas - End the last key value pair in each entry with a comma
 	 */
 	trailingCommas?: boolean;
 	/**
@@ -125,11 +125,11 @@ export type Options = {
 	 */
 	tidyComments?: boolean;
 	/**
-	 * Remove any fields that have empty values
+	 * Remove empty fields - Remove any fields that have empty values
 	 */
 	removeEmptyFields?: boolean;
 	/**
-	 * Maximum authors - truncates authors if above a given number into "and others".
+	 * Maximum authors - Truncate authors if above a given number into "and others".
 	 */
 	maxAuthors?: number;
 	/**
@@ -139,7 +139,7 @@ export type Options = {
 	 */
 	lowercase?: boolean;
 	/**
-	 * Enclose in double braces - Enclose the given fields in double braces, such
+	 * Enclose values in double braces - Enclose the given fields in double braces, such
 	 * that case is preserved during BibTeX compilation.
 	 * @example --enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})
 	 * @example --enclosing-braces (equivalent to ---enclosing-braces=title)
