@@ -1,6 +1,5 @@
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
-import dsv from '@rollup/plugin-dsv';
 import { version } from './package.json';
 import ts from 'typescript';
 import fs from 'fs';
@@ -9,12 +8,6 @@ import { builtinModules } from 'module';
 import babel from '@rollup/plugin-babel';
 
 const extensions = ['.ts', '.js'];
-
-const tsv = {
-	processRow(row) {
-		return [row.unicode, row.latex];
-	},
-};
 
 // Allows CLI util to get the option documentation from ts source files
 const docsResolve = {
@@ -111,7 +104,6 @@ export default [
 		plugins: [
 			docsResolve,
 			pegjs(),
-			dsv(tsv),
 			commonjs(),
 			nodeResolve({ extensions }),
 			babel({
@@ -138,7 +130,6 @@ export default [
 		plugins: [
 			docsResolve,
 			pegjs(),
-			dsv(tsv),
 			commonjs(),
 			nodeResolve({ extensions }),
 			babel({
@@ -161,7 +152,6 @@ export default [
 		plugins: [
 			docsResolve,
 			pegjs(),
-			dsv(tsv),
 			commonjs(),
 			nodeResolve({ extensions }),
 			babel({

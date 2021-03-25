@@ -1,6 +1,4 @@
-import { unicode } from './unicode';
-
-const specialCharacters = new Map(unicode);
+import { specialCharacters } from './unicode';
 
 export function escapeSpecialCharacters(str: string): string {
 	let newstr: string = '';
