@@ -25,7 +25,7 @@ export type Options = {
 	 * @example --space=2 (default)
 	 * @example --space=4
 	 */
-	space?: true | number;
+	space?: boolean | number;
 	/**
 	 * Indent with tabs - Prefix all fields with a tab.
 	 */
@@ -36,7 +36,7 @@ export type Options = {
 	 * @example --align=14 (default)
 	 * @example --no-align
 	 */
-	align?: false | number;
+	align?: boolean | number;
 	/**
 	 * Sort bibliography entries - Sort entries by specified fields. For
 	 * descending order, prefix the field with a dash (-).
@@ -157,11 +157,11 @@ export type CLIOptions = Options & {
 	/**
 	 * Show help
 	 */
-	help?: true;
+	help?: boolean;
 	/**
 	 * Suppress logs and warnings.
 	 */
-	quiet?: true;
+	quiet?: boolean;
 	/**
 	 * Make a backup <filename>.original
 	 * @example --backup (default)
