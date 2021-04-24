@@ -1,5 +1,5 @@
-// @ts-ignore
-import parser from './bibtex.pegjs';
+//@ts-ignore
+import bibtexParser from './bibtex.pegjs.js';
 
 type BibTeXFieldDatatype =
 	| 'concatenate'
@@ -62,4 +62,4 @@ export type BibTeXItem =
 	| BibTeXPreamble
 	| BibTeXComment;
 
-export const parse = parser.parse as (input: string) => BibTeXItem[];
+export const parse = bibtexParser.parse as (input: string) => BibTeXItem[];
