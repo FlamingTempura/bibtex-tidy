@@ -1,12 +1,7 @@
 import CodeMirror from 'codemirror';
 import { OptionDoc } from '../src/documentation';
 import bibtexTidy, { BibTeXTidyResult, Warning } from '../src/index';
-import {
-	applyOptionDefaults,
-	CLIOptions,
-	Options,
-	UniqueKey,
-} from '../src/options';
+import { applyOptionDefaults, Options, UniqueKey } from '../src/options';
 import './bibtex-highlighting';
 
 function $<T extends HTMLElement>(selector: string, parent?: ParentNode) {
@@ -91,7 +86,7 @@ $('#tidy').addEventListener('click', () => {
 });
 
 function formatSuccessMessage(
-	options: CLIOptions,
+	options: Options,
 	result: BibTeXTidyResult
 ): string {
 	const warnings = result.warnings.filter((w) => w.code !== 'DUPLICATE_ENTRY');
