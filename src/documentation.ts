@@ -1,7 +1,5 @@
 import { CLIOptions } from './options';
-
-// @ts-ignore
-import optionsDocumentation from 'DOCS';
+import optionsDocumentation from './optionDefinitions';
 
 export type OptionDoc = {
 	key: keyof CLIOptions;

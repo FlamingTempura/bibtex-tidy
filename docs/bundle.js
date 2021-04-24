@@ -13640,252 +13640,189 @@
 	  });
 	});
 
-	var optionsDocumentation = [
-	  {
-	    "key": "help",
-	    "cli": "help",
-	    "description": "Show help",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "omit",
-	    "cli": "omit",
-	    "description": "Remove fields - Remove specified fields from bibliography entries.",
-	    "examples": [
-	      "--omit=id,name"
-	    ],
-	    "type": "string[]",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "curly",
-	    "cli": "curly",
-	    "description": "Enclose values in braces - Enclose all property values in braces. Quoted values will be converted to braces. For example, \"Journal of Tea\"\nwill become {Journal of Tea}.",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "numeric",
-	    "cli": "numeric",
-	    "description": "Use numeric values where possible - Strip quotes and braces from numeric/month values. For example, {1998} will become 1998.",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "space",
-	    "cli": "space",
-	    "description": "Indent with spaces - Prefix all fields with the specified number of spaces\n(ignored if tab is set).",
-	    "examples": [
-	      "--space=2 (default)",
-	      "--space=4"
-	    ],
-	    "type": "number | boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "tab",
-	    "cli": "tab",
-	    "description": "Indent with tabs - Prefix all fields with a tab.",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "align",
-	    "cli": "align",
-	    "description": "Align values - Insert whitespace between fields and values so that values are visually aligned.",
-	    "examples": [
-	      "--align=14 (default)",
-	      "--no-align"
-	    ],
-	    "type": "number | boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "sort",
-	    "cli": "sort",
-	    "description": "Sort bibliography entries - Sort entries by specified fields. For descending order, prefix the field with a dash (-).",
-	    "examples": [
-	      "--sort (sort by id)",
-	      "--sort=-year,name (sort year descending then name ascending)",
-	      "--sort=name,year"
-	    ],
-	    "type": "boolean | string[]",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "duplicates",
-	    "cli": "duplicates",
-	    "description": "Check for duplicates - If there are duplicates, output warnings. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases:\n- their DOIs are identical,\n- their abstracts are identical, or\n- their authors and titles are both identical. The first-most entry is kept and any extra properties from duplicate entries are incorporated.",
-	    "examples": [
-	      "--duplicates (warn if sharing doi, key, abstract, or citation)",
-	      "--duplicates doi (warn if DOIs are identical)",
-	      "--duplicates key (warn if IDs are identical)",
-	      "--duplicates abstract (warn if abstracts are similar)",
-	      "--duplicates citation (warn if author and titles are similar)",
-	      "--duplicates doi, key (warn if DOI or keys are identical)"
-	    ],
-	    "type": "boolean | UniqueKey[]",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "merge",
-	    "cli": "merge",
-	    "description": "Merge duplicate entries - Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge:\n- first: only keep the original entry\n- last: only keep the last found duplicate\n- combine: keep original entry and merge in fields of duplicates if they do not already exist\n- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist",
-	    "examples": [],
-	    "type": "boolean | \"first\" | \"last\" | \"combine\" | \"overwrite\"",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "stripEnclosingBraces",
-	    "cli": "strip-enclosing-braces",
-	    "description": "Strip double-braced values - Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}.",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "dropAllCaps",
-	    "cli": "drop-all-caps",
-	    "description": "Drop all caps - Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "escape",
-	    "cli": "escape",
-	    "description": "Escape special characters - Escape special characters, such as umlaut. This ensures correct typesetting with latex.",
-	    "examples": [
-	      "--escape (default)",
-	      "--no-escape"
-	    ],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "sortFields",
-	    "cli": "sort-fields",
-	    "description": "Sort fields - Sort the fields within entries. If sort-fields is specified without fields, fields will be sorted as follows: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively, you can specify field names delimited by spaces or commas.",
-	    "examples": [
-	      "--sort-fields=name,author"
-	    ],
-	    "type": "boolean | string[]",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "sortProperties",
-	    "cli": "sort-properties",
-	    "description": "Alias of sort fields (legacy)",
-	    "examples": [],
-	    "type": "boolean | string[]",
-	    "deprecated": true
-	  },
-	  {
-	    "key": "stripComments",
-	    "cli": "strip-comments",
-	    "description": "Remove comments - Remove all comments from the bibtex source",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "trailingCommas",
-	    "cli": "trailing-commas",
-	    "description": "Trailing commas - End the last key value pair in each entry with a comma",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "encodeUrls",
-	    "cli": "encode-urls",
-	    "description": "Encode URLs - Replace invalid URL characters with percent encoded values.",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "tidyComments",
-	    "cli": "tidy-comments",
-	    "description": "Tidy comments - Remove whitespace surrounding",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "removeEmptyFields",
-	    "cli": "remove-empty-fields",
-	    "description": "Remove empty fields - Remove any fields that have empty values",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "maxAuthors",
-	    "cli": "max-authors",
-	    "description": "Maximum authors - Truncate authors if above a given number into \"and others\".",
-	    "examples": [],
-	    "type": "number",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "lowercase",
-	    "cli": "lowercase",
-	    "description": "Make field names and entry type lowercase.",
-	    "examples": [
-	      "--lowercase (default)",
-	      "--no-lowercase (keep original case)"
-	    ],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "enclosingBraces",
-	    "cli": "enclosing-braces",
-	    "description": "Enclose values in double braces - Enclose the given fields in double braces, such that case is preserved during BibTeX compilation.",
-	    "examples": [
-	      "--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})",
-	      "--enclosing-braces (equivalent to ---enclosing-braces=title)"
-	    ],
-	    "type": "boolean | string[]",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "wrap",
-	    "cli": "wrap",
-	    "description": "Wrap values - Wrap long values at the given column",
-	    "examples": [
-	      "--wrap (80 by default)",
-	      "--wrap=82"
-	    ],
-	    "type": "number | boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "quiet",
-	    "cli": "quiet",
-	    "description": "Suppress logs and warnings.",
-	    "examples": [],
-	    "type": "boolean",
-	    "deprecated": false
-	  },
-	  {
-	    "key": "backup",
-	    "cli": "backup",
-	    "description": "Make a backup <filename>.original",
-	    "examples": [
-	      "--backup (default)",
-	      "--no-backup (do not create a backup)"
-	    ],
-	    "type": "boolean",
-	    "deprecated": false
-	  }
-	];
+	var optionsDocumentation = [{
+	  "key": "help",
+	  "cli": "help",
+	  "description": "Show help",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "omit",
+	  "cli": "omit",
+	  "description": "Remove fields - Remove specified fields from bibliography entries.",
+	  "examples": ["--omit=id,name"],
+	  "type": "string[]",
+	  "deprecated": false
+	}, {
+	  "key": "curly",
+	  "cli": "curly",
+	  "description": "Enclose values in braces - Enclose all property values in braces. Quoted values will be converted to braces. For example, \"Journal of Tea\"\nwill become {Journal of Tea}.",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "numeric",
+	  "cli": "numeric",
+	  "description": "Use numeric values where possible - Strip quotes and braces from numeric/month values. For example, {1998} will become 1998.",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "space",
+	  "cli": "space",
+	  "description": "Indent with spaces - Prefix all fields with the specified number of spaces\n(ignored if tab is set).",
+	  "examples": ["--space=2 (default)", "--space=4"],
+	  "type": "boolean | number",
+	  "deprecated": false
+	}, {
+	  "key": "tab",
+	  "cli": "tab",
+	  "description": "Indent with tabs - Prefix all fields with a tab.",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "align",
+	  "cli": "align",
+	  "description": "Align values - Insert whitespace between fields and values so that values are visually aligned.",
+	  "examples": ["--align=14 (default)", "--no-align"],
+	  "type": "boolean | number",
+	  "deprecated": false
+	}, {
+	  "key": "sort",
+	  "cli": "sort",
+	  "description": "Sort bibliography entries - Sort entries by specified fields. For descending order, prefix the field with a dash (-).",
+	  "examples": ["--sort (sort by id)", "--sort=-year,name (sort year descending then name ascending)", "--sort=name,year"],
+	  "type": "boolean | string[]",
+	  "deprecated": false
+	}, {
+	  "key": "duplicates",
+	  "cli": "duplicates",
+	  "description": "Check for duplicates - If there are duplicates, output warnings. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases:\n- their DOIs are identical,\n- their abstracts are identical, or\n- their authors and titles are both identical. The first-most entry is kept and any extra properties from duplicate entries are incorporated.",
+	  "examples": ["--duplicates (warn if sharing doi, key, abstract, or citation)", "--duplicates doi (warn if DOIs are identical)", "--duplicates key (warn if IDs are identical)", "--duplicates abstract (warn if abstracts are similar)", "--duplicates citation (warn if author and titles are similar)", "--duplicates doi, key (warn if DOI or keys are identical)"],
+	  "type": "boolean | UniqueKey[]",
+	  "deprecated": false
+	}, {
+	  "key": "merge",
+	  "cli": "merge",
+	  "description": "Merge duplicate entries - Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge:\n- first: only keep the original entry\n- last: only keep the last found duplicate\n- combine: keep original entry and merge in fields of duplicates if they do not already exist\n- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist",
+	  "examples": [],
+	  "type": "boolean | MergeStrategy",
+	  "deprecated": false
+	}, {
+	  "key": "stripEnclosingBraces",
+	  "cli": "strip-enclosing-braces",
+	  "description": "Strip double-braced values - Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}.",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "dropAllCaps",
+	  "cli": "drop-all-caps",
+	  "description": "Drop all caps - Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "escape",
+	  "cli": "escape",
+	  "description": "Escape special characters - Escape special characters, such as umlaut. This ensures correct typesetting with latex.",
+	  "examples": ["--escape (default)", "--no-escape"],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "sortFields",
+	  "cli": "sort-fields",
+	  "description": "Sort fields - Sort the fields within entries. If sort-fields is specified without fields, fields will be sorted as follows: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively, you can specify field names delimited by spaces or commas.",
+	  "examples": ["--sort-fields=name,author"],
+	  "type": "boolean | string[]",
+	  "deprecated": false
+	}, {
+	  "key": "sortProperties",
+	  "cli": "sort-properties",
+	  "description": "Alias of sort fields (legacy)",
+	  "examples": [],
+	  "type": "boolean | string[]",
+	  "deprecated": true
+	}, {
+	  "key": "stripComments",
+	  "cli": "strip-comments",
+	  "description": "Remove comments - Remove all comments from the bibtex source",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "trailingCommas",
+	  "cli": "trailing-commas",
+	  "description": "Trailing commas - End the last key value pair in each entry with a comma",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "encodeUrls",
+	  "cli": "encode-urls",
+	  "description": "Encode URLs - Replace invalid URL characters with percent encoded values.",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "tidyComments",
+	  "cli": "tidy-comments",
+	  "description": "Tidy comments - Remove whitespace surrounding",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "removeEmptyFields",
+	  "cli": "remove-empty-fields",
+	  "description": "Remove empty fields - Remove any fields that have empty values",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "maxAuthors",
+	  "cli": "max-authors",
+	  "description": "Maximum authors - Truncate authors if above a given number into \"and others\".",
+	  "examples": [],
+	  "type": "number",
+	  "deprecated": false
+	}, {
+	  "key": "lowercase",
+	  "cli": "lowercase",
+	  "description": "Make field names and entry type lowercase.",
+	  "examples": ["--lowercase (default)", "--no-lowercase (keep original case)"],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "enclosingBraces",
+	  "cli": "enclosing-braces",
+	  "description": "Enclose values in double braces - Enclose the given fields in double braces, such that case is preserved during BibTeX compilation.",
+	  "examples": ["--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})", "--enclosing-braces (equivalent to ---enclosing-braces=title)"],
+	  "type": "boolean | string[]",
+	  "deprecated": false
+	}, {
+	  "key": "wrap",
+	  "cli": "wrap",
+	  "description": "Wrap values - Wrap long values at the given column",
+	  "examples": ["--wrap (80 by default)", "--wrap=82"],
+	  "type": "boolean | number",
+	  "deprecated": false
+	}, {
+	  "key": "quiet",
+	  "cli": "quiet",
+	  "description": "Suppress logs and warnings.",
+	  "examples": [],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
+	  "key": "backup",
+	  "cli": "backup",
+	  "description": "Make a backup <filename>.original",
+	  "examples": ["--backup (default)", "--no-backup (do not create a backup)"],
+	  "type": "boolean",
+	  "deprecated": false
+	}];
 
 	const optionDocs$1 = optionsDocumentation;
 

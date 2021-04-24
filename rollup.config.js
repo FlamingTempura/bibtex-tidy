@@ -1,7 +1,6 @@
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import { version } from './package.json';
-import ts from 'typescript';
 import fs, { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { builtinModules } from 'module';
@@ -27,70 +26,47 @@ writeFileSync(
 	banner + '\nexport default ' + parser
 );
 
-// Allows CLI util to get the option documentation from ts source files
-const docsResolve = {
-	name: 'docs-resolve',
-	resolveId(source) {
-		return source === 'DOCS' ? source : null;
-	},
-	load(id) {
-		if (id !== 'DOCS') return null;
-		const program = ts.createProgram([__dirname + '/src/options.ts'], {
-			target: ts.ScriptTarget.ES5,
-			module: ts.ModuleKind.CommonJS,
+function formatDescription(str) {
+	return str.replace(/([\w,.;:])\s+([A-Za-z])/g, '$1 $2').trim();
+}
+
+function formatType(type) {
+	return type.trim();
+}
+
+const src = readFileSync(join(SRC_PATH, 'options.ts'), 'utf8');
+// Find multiline comments and the line beneath each
+const matches = src.matchAll(/\/\*\*(.*?)\*\/\n([^\n]*)/gs);
+const options = [...matches]
+	.map((m) => {
+		const [description, ...tagComments] = m[1]
+			.replace(/^\s*\* */gm, '')
+			.trim()
+			.split('@');
+		const tags = tagComments.map((part) => {
+			const [name, ...description] = part.split(' ');
+			return { name, description: formatDescription(description.join(' ')) };
 		});
-		const checker = program.getTypeChecker();
-		const sourceFile = program
-			.getSourceFiles()
-			.find(({ path }) => path.endsWith('/src/options.ts'));
-		const typeToString = (member) => {
-			try {
-				return checker.typeToString(
-					checker.getTypeOfSymbolAtLocation(
-						member.symbol,
-						member.symbol.valueDeclaration
-					)
-				);
-			} catch (e) {
-				console.error(member, e);
-			}
+		const [name, type] = m[2].split(':');
+		const key = name.replace('?', '').trim();
+		return {
+			key,
+			// convert camelCase to --dash-argument
+			cli: key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`),
+			description: formatDescription(description),
+			examples: tags
+				.filter((tag) => tag.name === 'example')
+				.map((tag) => tag.description),
+			type: formatType(type.replace(';', '')),
+			deprecated: tags.some((tag) => tag.name === 'deprecated'),
 		};
+	})
+	.sort((a) => (a.key === 'help' ? -1 : 0));
 
-		const members = [];
-		ts.forEachChild(sourceFile, (node) => {
-			const symbol = checker.getSymbolAtLocation(node.name);
-			if (!symbol) return;
-			if (symbol.escapedName === 'Options') {
-				members.push(...symbol.declarations[0].type.members);
-			} else if (symbol.escapedName === 'CLIOptions') {
-				// Make sure these are at the top, e.g. --help, --quiet
-				members.push(...symbol.declarations[0].type.types[1].members);
-			}
-		});
-
-		const options = members
-			.sort((a, b) => (a.name.escapedText === 'help' ? -1 : 0))
-			.map((member) => {
-				const key = member.name.escapedText;
-				return {
-					key,
-					cli: key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`), // convert camelCase to --dash-argument
-					description: member.jsDoc[0].comment.replace(
-						/([\w,.;:])\s+([A-Za-z])/g,
-						'$1 $2'
-					),
-					examples: (member.jsDoc[0].tags || [])
-						.filter((tag) => tag.tagName.escapedText === 'example')
-						.map((m) => m.comment),
-					type: typeToString(member),
-					deprecated: (member.jsDoc[0].tags || []).some(
-						(tag) => tag.tagName.escapedText === 'deprecated'
-					),
-				};
-			});
-		return 'export default ' + JSON.stringify(options, null, 2) + ';';
-	},
-};
+writeFileSync(
+	join(SRC_PATH, 'optionDefinitions.ts'),
+	banner + `export default ${JSON.stringify(options, null, 2)}`
+);
 
 const makeExecutable = {
 	name: 'make-executable',
@@ -112,7 +88,6 @@ export default [
 	{
 		input: 'src/index.ts',
 		plugins: [
-			docsResolve,
 			commonjs(),
 			nodeResolve({ extensions }),
 			babel({
@@ -137,7 +112,6 @@ export default [
 		input: 'src/cli.ts',
 		external: builtinModules,
 		plugins: [
-			docsResolve,
 			commonjs(),
 			nodeResolve({ extensions }),
 			babel({
@@ -158,7 +132,6 @@ export default [
 	{
 		input: 'docs/index.ts',
 		plugins: [
-			docsResolve,
 			commonjs(),
 			nodeResolve({ extensions }),
 			babel({
