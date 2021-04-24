@@ -13646,7 +13646,7 @@
 	    "cli": "help",
 	    "description": "Show help",
 	    "examples": [],
-	    "type": "true",
+	    "type": "boolean",
 	    "deprecated": false
 	  },
 	  {
@@ -13683,7 +13683,7 @@
 	      "--space=2 (default)",
 	      "--space=4"
 	    ],
-	    "type": "number | true",
+	    "type": "number | boolean",
 	    "deprecated": false
 	  },
 	  {
@@ -13702,7 +13702,7 @@
 	      "--align=14 (default)",
 	      "--no-align"
 	    ],
-	    "type": "number | false",
+	    "type": "number | boolean",
 	    "deprecated": false
 	  },
 	  {
@@ -13871,7 +13871,7 @@
 	    "cli": "quiet",
 	    "description": "Suppress logs and warnings.",
 	    "examples": [],
-	    "type": "true",
+	    "type": "boolean",
 	    "deprecated": false
 	  },
 	  {
@@ -13893,84 +13893,84 @@
 	const DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
 	const DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'];
 	const DEFAULT_ENCLOSING_BRACES_FIELDS = ['title'];
-	function applyOptionDefaults(options) {
-	  var _options$sortFields, _optionDefault;
+	function normalizeOptions(options) {
+	  var _options$sortFields, _normalizeOption;
 
 	  return {
-	    align: optionDefault(options.align, {
+	    align: normalizeOption(options.align, {
 	      valueIfFalse: 1,
 	      defaultValue: 14
 	    }),
-	    curly: optionDefault(options.curly, {
+	    curly: normalizeOption(options.curly, {
 	      defaultValue: false
 	    }),
-	    dropAllCaps: optionDefault(options.dropAllCaps, {
+	    dropAllCaps: normalizeOption(options.dropAllCaps, {
 	      defaultValue: false
 	    }),
-	    duplicates: optionDefault(options.duplicates, {
+	    duplicates: normalizeOption(options.duplicates, {
 	      valueIfTrue: DEFAULT_MERGE_CHECK,
 	      defaultValue: options.merge ? DEFAULT_MERGE_CHECK : undefined
 	    }),
-	    enclosingBraces: optionDefault(options.enclosingBraces, {
+	    enclosingBraces: normalizeOption(options.enclosingBraces, {
 	      valueIfTrue: DEFAULT_ENCLOSING_BRACES_FIELDS
 	    }),
-	    encodeUrls: optionDefault(options.encodeUrls, {
+	    encodeUrls: normalizeOption(options.encodeUrls, {
 	      defaultValue: false
 	    }),
-	    escape: optionDefault(options.escape, {
+	    escape: normalizeOption(options.escape, {
 	      defaultValue: true
 	    }),
-	    lowercase: optionDefault(options.lowercase, {
+	    lowercase: normalizeOption(options.lowercase, {
 	      defaultValue: true
 	    }),
 	    maxAuthors: options.maxAuthors,
-	    merge: optionDefault(options.merge, {
+	    merge: normalizeOption(options.merge, {
 	      valueIfTrue: 'combine'
 	    }),
-	    numeric: optionDefault(options.numeric, {
+	    numeric: normalizeOption(options.numeric, {
 	      defaultValue: false
 	    }),
-	    omit: optionDefault(options.omit, {
+	    omit: normalizeOption(options.omit, {
 	      defaultValue: []
 	    }),
-	    removeEmptyFields: optionDefault(options.removeEmptyFields, {
+	    removeEmptyFields: normalizeOption(options.removeEmptyFields, {
 	      defaultValue: false
 	    }),
-	    sort: optionDefault(options.sort, {
+	    sort: normalizeOption(options.sort, {
 	      valueIfTrue: DEFAULT_ENTRY_ORDER
 	    }),
-	    sortFields: optionDefault((_options$sortFields = options.sortFields) !== null && _options$sortFields !== void 0 ? _options$sortFields : options.sortProperties, {
+	    sortFields: normalizeOption((_options$sortFields = options.sortFields) !== null && _options$sortFields !== void 0 ? _options$sortFields : options.sortProperties, {
 	      valueIfTrue: DEFAULT_FIELD_ORDER
 	    }),
-	    space: (_optionDefault = optionDefault(options.space, {
+	    space: (_normalizeOption = normalizeOption(options.space, {
 	      valueIfTrue: 2,
 	      defaultValue: 2
-	    })) !== null && _optionDefault !== void 0 ? _optionDefault : 2,
-	    stripComments: optionDefault(options.stripComments, {
+	    })) !== null && _normalizeOption !== void 0 ? _normalizeOption : 2,
+	    stripComments: normalizeOption(options.stripComments, {
 	      defaultValue: false
 	    }),
-	    stripEnclosingBraces: optionDefault(options.stripEnclosingBraces, {
+	    stripEnclosingBraces: normalizeOption(options.stripEnclosingBraces, {
 	      defaultValue: false
 	    }),
-	    tab: optionDefault(options.tab, {
+	    tab: normalizeOption(options.tab, {
 	      defaultValue: false
 	    }),
-	    tidyComments: optionDefault(options.tidyComments, {
+	    tidyComments: normalizeOption(options.tidyComments, {
 	      defaultValue: true
 	    }),
-	    trailingCommas: optionDefault(options.trailingCommas, {
+	    trailingCommas: normalizeOption(options.trailingCommas, {
 	      defaultValue: false
 	    }),
-	    wrap: optionDefault(options.wrap, {
+	    wrap: normalizeOption(options.wrap, {
 	      valueIfTrue: 80
 	    })
 	  };
 	}
 
-	function optionDefault(value, opt) {
-	  if (value === true && 'valueIfTrue' in opt) return opt.valueIfTrue;
-	  if (value === false && 'valueIfFalse' in opt) return opt.valueIfFalse;
-	  if (typeof value === 'undefined') return opt.defaultValue;
+	function normalizeOption(value, opt) {
+	  if (value === true && opt.valueIfTrue !== undefined) return opt.valueIfTrue;
+	  if (value === false && opt.valueIfFalse !== undefined) return opt.valueIfFalse;
+	  if (typeof value === 'undefined' && opt.defaultValue !== undefined) return opt.defaultValue;
 	  return value;
 	}
 
@@ -16190,7 +16190,7 @@
 	    enclosingBraces,
 	    wrap,
 	    maxAuthors
-	  } = applyOptionDefaults(options);
+	  } = normalizeOptions(options);
 	  const indent = tab ? '\t' : ' '.repeat(space);
 	  const uniqCheck = new Map();
 
@@ -16934,9 +16934,9 @@
 	}
 
 	function formatCLICommand() {
-	  const options = applyOptionDefaults(getOptions());
-	  const defaults = applyOptionDefaults({});
-	  const defaultsIfTrue = applyOptionDefaults({
+	  const options = normalizeOptions(getOptions());
+	  const defaults = normalizeOptions({});
+	  const defaultsIfTrue = normalizeOptions({
 	    curly: true,
 	    numeric: true,
 	    tab: true,

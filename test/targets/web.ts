@@ -1,7 +1,7 @@
 import {
-	applyOptionDefaults,
+	normalizeOptions,
 	Options,
-	OptionsSanitized,
+	OptionsNormalized,
 } from '../../src/options.js';
 import { BibTeXTidyResult, Warning } from '../../src/index.js';
 import puppeteer, { JSONObject } from 'puppeteer';
@@ -38,7 +38,7 @@ export async function testWeb(
 		page.exposeFunction('onEditorChange', resolve);
 
 		page.evaluate(
-			(input: string, options: OptionsSanitized) => {
+			(input: string, options: OptionsNormalized) => {
 				document.querySelector('textarea')!.value = input;
 				//@ts-ignore
 				window.cmEditor.setValue(input);
@@ -153,7 +153,7 @@ export async function testWeb(
 				document.querySelector<HTMLButtonElement>('#tidy')!.click();
 			},
 			input,
-			applyOptionDefaults(options) as JSONObject
+			normalizeOptions(options) as JSONObject
 		);
 	});
 

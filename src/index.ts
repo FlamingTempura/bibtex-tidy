@@ -1,5 +1,5 @@
 import { optionDocs } from './documentation';
-import { Options, applyOptionDefaults, UniqueKey } from './options';
+import { Options, normalizeOptions, UniqueKey } from './options';
 import { parse, BibTeXItem, BibTeXEntry, ValueString } from './bibtex-parser';
 import {
 	titleCase,
@@ -66,7 +66,7 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 		enclosingBraces,
 		wrap,
 		maxAuthors,
-	} = applyOptionDefaults(options);
+	} = normalizeOptions(options);
 
 	const indent: string = tab ? '\t' : ' '.repeat(space);
 	const uniqCheck: Map<UniqueKey, boolean> = new Map();
@@ -316,7 +316,7 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 				for (const k of sortedFieldNames) {
 					const field = item.fieldMap.get(k);
 					if (!field) continue;
-					bibtex += `,\n${indent}${k.padEnd((align as number) - 1)} = `;
+					bibtex += `,\n${indent}${k.padEnd(align - 1)} = `;
 					let val = field.value;
 					const dig3 = String(val).slice(0, 3).toLowerCase();
 					if (numeric && val.match(/^[1-9][0-9]*$/)) {

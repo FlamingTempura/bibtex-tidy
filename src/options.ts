@@ -170,7 +170,7 @@ export type CLIOptions = Options & {
 	backup?: boolean;
 };
 
-export type OptionsSanitized = Omit<
+export type OptionsNormalized = Omit<
 	Options,
 	| 'sortProperties'
 	| 'duplicates'
@@ -181,7 +181,7 @@ export type OptionsSanitized = Omit<
 	| 'wrap'
 	| 'enclosingBraces'
 > & {
-	align?: number;
+	align: number;
 	sort?: string[];
 	space: number;
 	sortFields?: string[];
@@ -204,55 +204,60 @@ const DEFAULT_FIELD_ORDER: string[] = [
 
 const DEFAULT_ENCLOSING_BRACES_FIELDS: string[] = ['title'];
 
-export function applyOptionDefaults(options: Options): OptionsSanitized {
+export function normalizeOptions(options: Options): OptionsNormalized {
 	return {
-		align: optionDefault(options.align, { valueIfFalse: 1, defaultValue: 14 }),
-		curly: optionDefault(options.curly, { defaultValue: false }),
-		dropAllCaps: optionDefault(options.dropAllCaps, { defaultValue: false }),
-		duplicates: optionDefault(options.duplicates, {
+		align: normalizeOption(options.align, {
+			valueIfFalse: 1,
+			defaultValue: 14,
+		}),
+		curly: normalizeOption(options.curly, { defaultValue: false }),
+		dropAllCaps: normalizeOption(options.dropAllCaps, { defaultValue: false }),
+		duplicates: normalizeOption(options.duplicates, {
 			valueIfTrue: DEFAULT_MERGE_CHECK,
 			defaultValue: options.merge ? DEFAULT_MERGE_CHECK : undefined,
 		}),
-		enclosingBraces: optionDefault(options.enclosingBraces, {
+		enclosingBraces: normalizeOption(options.enclosingBraces, {
 			valueIfTrue: DEFAULT_ENCLOSING_BRACES_FIELDS,
 		}),
-		encodeUrls: optionDefault(options.encodeUrls, { defaultValue: false }),
-		escape: optionDefault(options.escape, { defaultValue: true }),
-		lowercase: optionDefault(options.lowercase, { defaultValue: true }),
+		encodeUrls: normalizeOption(options.encodeUrls, { defaultValue: false }),
+		escape: normalizeOption(options.escape, { defaultValue: true }),
+		lowercase: normalizeOption(options.lowercase, { defaultValue: true }),
 		maxAuthors: options.maxAuthors,
-		merge: optionDefault(options.merge, { valueIfTrue: 'combine' }),
-		numeric: optionDefault(options.numeric, { defaultValue: false }),
-		omit: optionDefault(options.omit, { defaultValue: [] }),
-		removeEmptyFields: optionDefault(options.removeEmptyFields, {
+		merge: normalizeOption(options.merge, { valueIfTrue: 'combine' }),
+		numeric: normalizeOption(options.numeric, { defaultValue: false }),
+		omit: normalizeOption(options.omit, { defaultValue: [] }),
+		removeEmptyFields: normalizeOption(options.removeEmptyFields, {
 			defaultValue: false,
 		}),
-		sort: optionDefault(options.sort, { valueIfTrue: DEFAULT_ENTRY_ORDER }),
-		sortFields: optionDefault(options.sortFields ?? options.sortProperties, {
+		sort: normalizeOption(options.sort, { valueIfTrue: DEFAULT_ENTRY_ORDER }),
+		sortFields: normalizeOption(options.sortFields ?? options.sortProperties, {
 			valueIfTrue: DEFAULT_FIELD_ORDER,
 		}),
 		space:
-			optionDefault(options.space, { valueIfTrue: 2, defaultValue: 2 }) ?? 2,
-		stripComments: optionDefault(options.stripComments, {
+			normalizeOption(options.space, { valueIfTrue: 2, defaultValue: 2 }) ?? 2,
+		stripComments: normalizeOption(options.stripComments, {
 			defaultValue: false,
 		}),
-		stripEnclosingBraces: optionDefault(options.stripEnclosingBraces, {
+		stripEnclosingBraces: normalizeOption(options.stripEnclosingBraces, {
 			defaultValue: false,
 		}),
-		tab: optionDefault(options.tab, { defaultValue: false }),
-		tidyComments: optionDefault(options.tidyComments, { defaultValue: true }),
-		trailingCommas: optionDefault(options.trailingCommas, {
+		tab: normalizeOption(options.tab, { defaultValue: false }),
+		tidyComments: normalizeOption(options.tidyComments, { defaultValue: true }),
+		trailingCommas: normalizeOption(options.trailingCommas, {
 			defaultValue: false,
 		}),
-		wrap: optionDefault(options.wrap, { valueIfTrue: 80 }),
+		wrap: normalizeOption(options.wrap, { valueIfTrue: 80 }),
 	};
 }
 
-function optionDefault<TOut>(
+function normalizeOption<TOut>(
 	value: unknown,
 	opt: { valueIfTrue?: TOut; valueIfFalse?: TOut; defaultValue?: TOut }
-): TOut | undefined {
-	if (value === true && 'valueIfTrue' in opt) return opt.valueIfTrue;
-	if (value === false && 'valueIfFalse' in opt) return opt.valueIfFalse;
-	if (typeof value === 'undefined') return opt.defaultValue;
+): TOut {
+	if (value === true && opt.valueIfTrue !== undefined) return opt.valueIfTrue;
+	if (value === false && opt.valueIfFalse !== undefined)
+		return opt.valueIfFalse;
+	if (typeof value === 'undefined' && opt.defaultValue !== undefined)
+		return opt.defaultValue;
 	return value as TOut;
 }

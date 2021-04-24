@@ -150,7 +150,7 @@ var optionsDocumentation = [
     "cli": "help",
     "description": "Show help",
     "examples": [],
-    "type": "true",
+    "type": "boolean",
     "deprecated": false
   },
   {
@@ -187,7 +187,7 @@ var optionsDocumentation = [
       "--space=2 (default)",
       "--space=4"
     ],
-    "type": "number | true",
+    "type": "number | boolean",
     "deprecated": false
   },
   {
@@ -206,7 +206,7 @@ var optionsDocumentation = [
       "--align=14 (default)",
       "--no-align"
     ],
-    "type": "number | false",
+    "type": "number | boolean",
     "deprecated": false
   },
   {
@@ -375,7 +375,7 @@ var optionsDocumentation = [
     "cli": "quiet",
     "description": "Suppress logs and warnings.",
     "examples": [],
-    "type": "true",
+    "type": "boolean",
     "deprecated": false
   },
   {
@@ -397,84 +397,84 @@ var DEFAULT_ENTRY_ORDER = ['key'];
 var DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
 var DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'];
 var DEFAULT_ENCLOSING_BRACES_FIELDS = ['title'];
-function applyOptionDefaults(options) {
-  var _options$sortFields, _optionDefault;
+function normalizeOptions(options) {
+  var _options$sortFields, _normalizeOption;
 
   return {
-    align: optionDefault(options.align, {
+    align: normalizeOption(options.align, {
       valueIfFalse: 1,
       defaultValue: 14
     }),
-    curly: optionDefault(options.curly, {
+    curly: normalizeOption(options.curly, {
       defaultValue: false
     }),
-    dropAllCaps: optionDefault(options.dropAllCaps, {
+    dropAllCaps: normalizeOption(options.dropAllCaps, {
       defaultValue: false
     }),
-    duplicates: optionDefault(options.duplicates, {
+    duplicates: normalizeOption(options.duplicates, {
       valueIfTrue: DEFAULT_MERGE_CHECK,
       defaultValue: options.merge ? DEFAULT_MERGE_CHECK : undefined
     }),
-    enclosingBraces: optionDefault(options.enclosingBraces, {
+    enclosingBraces: normalizeOption(options.enclosingBraces, {
       valueIfTrue: DEFAULT_ENCLOSING_BRACES_FIELDS
     }),
-    encodeUrls: optionDefault(options.encodeUrls, {
+    encodeUrls: normalizeOption(options.encodeUrls, {
       defaultValue: false
     }),
-    escape: optionDefault(options.escape, {
+    escape: normalizeOption(options.escape, {
       defaultValue: true
     }),
-    lowercase: optionDefault(options.lowercase, {
+    lowercase: normalizeOption(options.lowercase, {
       defaultValue: true
     }),
     maxAuthors: options.maxAuthors,
-    merge: optionDefault(options.merge, {
+    merge: normalizeOption(options.merge, {
       valueIfTrue: 'combine'
     }),
-    numeric: optionDefault(options.numeric, {
+    numeric: normalizeOption(options.numeric, {
       defaultValue: false
     }),
-    omit: optionDefault(options.omit, {
+    omit: normalizeOption(options.omit, {
       defaultValue: []
     }),
-    removeEmptyFields: optionDefault(options.removeEmptyFields, {
+    removeEmptyFields: normalizeOption(options.removeEmptyFields, {
       defaultValue: false
     }),
-    sort: optionDefault(options.sort, {
+    sort: normalizeOption(options.sort, {
       valueIfTrue: DEFAULT_ENTRY_ORDER
     }),
-    sortFields: optionDefault((_options$sortFields = options.sortFields) !== null && _options$sortFields !== void 0 ? _options$sortFields : options.sortProperties, {
+    sortFields: normalizeOption((_options$sortFields = options.sortFields) !== null && _options$sortFields !== void 0 ? _options$sortFields : options.sortProperties, {
       valueIfTrue: DEFAULT_FIELD_ORDER
     }),
-    space: (_optionDefault = optionDefault(options.space, {
+    space: (_normalizeOption = normalizeOption(options.space, {
       valueIfTrue: 2,
       defaultValue: 2
-    })) !== null && _optionDefault !== void 0 ? _optionDefault : 2,
-    stripComments: optionDefault(options.stripComments, {
+    })) !== null && _normalizeOption !== void 0 ? _normalizeOption : 2,
+    stripComments: normalizeOption(options.stripComments, {
       defaultValue: false
     }),
-    stripEnclosingBraces: optionDefault(options.stripEnclosingBraces, {
+    stripEnclosingBraces: normalizeOption(options.stripEnclosingBraces, {
       defaultValue: false
     }),
-    tab: optionDefault(options.tab, {
+    tab: normalizeOption(options.tab, {
       defaultValue: false
     }),
-    tidyComments: optionDefault(options.tidyComments, {
+    tidyComments: normalizeOption(options.tidyComments, {
       defaultValue: true
     }),
-    trailingCommas: optionDefault(options.trailingCommas, {
+    trailingCommas: normalizeOption(options.trailingCommas, {
       defaultValue: false
     }),
-    wrap: optionDefault(options.wrap, {
+    wrap: normalizeOption(options.wrap, {
       valueIfTrue: 80
     })
   };
 }
 
-function optionDefault(value, opt) {
-  if (value === true && 'valueIfTrue' in opt) return opt.valueIfTrue;
-  if (value === false && 'valueIfFalse' in opt) return opt.valueIfFalse;
-  if (typeof value === 'undefined') return opt.defaultValue;
+function normalizeOption(value, opt) {
+  if (value === true && opt.valueIfTrue !== undefined) return opt.valueIfTrue;
+  if (value === false && opt.valueIfFalse !== undefined) return opt.valueIfFalse;
+  if (typeof value === 'undefined' && opt.defaultValue !== undefined) return opt.defaultValue;
   return value;
 }
 
@@ -2691,29 +2691,29 @@ function tidy(input) {
 
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-  var _applyOptionDefaults = applyOptionDefaults(options),
-      omit = _applyOptionDefaults.omit,
-      curly = _applyOptionDefaults.curly,
-      numeric = _applyOptionDefaults.numeric,
-      tab = _applyOptionDefaults.tab,
-      align = _applyOptionDefaults.align,
-      sort = _applyOptionDefaults.sort,
-      merge = _applyOptionDefaults.merge,
-      stripEnclosingBraces = _applyOptionDefaults.stripEnclosingBraces,
-      dropAllCaps = _applyOptionDefaults.dropAllCaps,
-      escape = _applyOptionDefaults.escape,
-      sortFields = _applyOptionDefaults.sortFields,
-      stripComments = _applyOptionDefaults.stripComments,
-      encodeUrls = _applyOptionDefaults.encodeUrls,
-      tidyComments = _applyOptionDefaults.tidyComments,
-      space = _applyOptionDefaults.space,
-      duplicates = _applyOptionDefaults.duplicates,
-      trailingCommas = _applyOptionDefaults.trailingCommas,
-      removeEmptyFields = _applyOptionDefaults.removeEmptyFields,
-      lowercase = _applyOptionDefaults.lowercase,
-      enclosingBraces = _applyOptionDefaults.enclosingBraces,
-      wrap = _applyOptionDefaults.wrap,
-      maxAuthors = _applyOptionDefaults.maxAuthors;
+  var _normalizeOptions = normalizeOptions(options),
+      omit = _normalizeOptions.omit,
+      curly = _normalizeOptions.curly,
+      numeric = _normalizeOptions.numeric,
+      tab = _normalizeOptions.tab,
+      align = _normalizeOptions.align,
+      sort = _normalizeOptions.sort,
+      merge = _normalizeOptions.merge,
+      stripEnclosingBraces = _normalizeOptions.stripEnclosingBraces,
+      dropAllCaps = _normalizeOptions.dropAllCaps,
+      escape = _normalizeOptions.escape,
+      sortFields = _normalizeOptions.sortFields,
+      stripComments = _normalizeOptions.stripComments,
+      encodeUrls = _normalizeOptions.encodeUrls,
+      tidyComments = _normalizeOptions.tidyComments,
+      space = _normalizeOptions.space,
+      duplicates = _normalizeOptions.duplicates,
+      trailingCommas = _normalizeOptions.trailingCommas,
+      removeEmptyFields = _normalizeOptions.removeEmptyFields,
+      lowercase = _normalizeOptions.lowercase,
+      enclosingBraces = _normalizeOptions.enclosingBraces,
+      wrap = _normalizeOptions.wrap,
+      maxAuthors = _normalizeOptions.maxAuthors;
 
   var indent = tab ? '\t' : ' '.repeat(space);
   var uniqCheck = new Map();

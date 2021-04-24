@@ -1,7 +1,7 @@
 import CodeMirror from 'codemirror';
 import { OptionDoc } from '../src/documentation';
-import bibtexTidy, { BibTeXTidyResult, Warning } from '../src/index';
-import { applyOptionDefaults, Options, UniqueKey } from '../src/options';
+import bibtexTidy, { BibTeXTidyResult } from '../src/index';
+import { normalizeOptions, Options, UniqueKey } from '../src/options';
 import './bibtex-highlighting';
 
 function $<T extends HTMLElement>(selector: string, parent?: ParentNode) {
@@ -166,9 +166,9 @@ function getOptions(): Options {
 }
 
 function formatCLICommand() {
-	const options = applyOptionDefaults(getOptions());
-	const defaults = applyOptionDefaults({}) as any;
-	const defaultsIfTrue = applyOptionDefaults({
+	const options = normalizeOptions(getOptions());
+	const defaults = normalizeOptions({}) as any;
+	const defaultsIfTrue = normalizeOptions({
 		curly: true,
 		numeric: true,
 		tab: true,
