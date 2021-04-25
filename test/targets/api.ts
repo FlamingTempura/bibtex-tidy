@@ -1,7 +1,9 @@
-// @ts-ignore
-import bibtexTidy from '../../../bibtex-tidy.js';
-import { Options } from '../../src/options.js';
-import { BibTeXTidyResult } from '../../src/index.js';
+import { Options } from '../../src/options';
+import { BibTeXTidyResult } from '../../src/index';
+
+// require the actual build. Using import would cause it to bundled into the
+// test and we won't be testing the actual build.
+const bibtexTidy = require('../../bibtex-tidy.js');
 
 export type APIResult = BibTeXTidyResult;
 

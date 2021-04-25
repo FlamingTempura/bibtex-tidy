@@ -1,15 +1,15 @@
-import tap from 'tap';
-import { bibtexTidy } from './utils';
+import { strictEqual, match } from 'assert';
+import { bibtexTidy, test } from './utils';
 
-tap.test('CLI help', async (t) => {
+test('CLI help', async () => {
 	const tidied1 = await bibtexTidy([], undefined, ['cli']);
 	const tidied2 = await bibtexTidy([], { help: true }, ['cli']);
 
 	const stdout1 = tidied1.cli?.stdout;
 	const stdout2 = tidied2.cli?.stdout;
 
-	t.same(stdout1, stdout2);
-	t.contains(stdout1, 'cleaner and formatter');
-	t.contains(stdout1, 'Examples');
-	t.contains(stdout1, '--space');
+	strictEqual(stdout1, stdout2);
+	match(stdout1 ?? '', /cleaner and formatter/);
+	match(stdout1 ?? '', /Examples/);
+	match(stdout1 ?? '', /--space/);
 });

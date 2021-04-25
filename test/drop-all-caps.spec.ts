@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 
@@ -24,7 +24,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('drop all caps', async (t) => {
+test('drop all caps', async () => {
 	const tidied = await bibtexTidy(input, { dropAllCaps: true });
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

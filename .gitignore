@@ -13,3 +13,4 @@ node_modules/
 *.tgz
 test/.tmp*
 .test
+.tmp

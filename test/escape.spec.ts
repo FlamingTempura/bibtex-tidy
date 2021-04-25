@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @misc{q,
@@ -14,7 +14,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('escape latex charaters', async (t) => {
+test('escape latex charaters', async () => {
 	const tidied = await bibtexTidy(input, { escape: true });
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

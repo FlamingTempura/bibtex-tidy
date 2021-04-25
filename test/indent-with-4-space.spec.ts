@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -27,7 +27,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('indent with 4 spaces', async (t) => {
+test('indent with 4 spaces', async () => {
 	const tidied = await bibtexTidy(input, { space: 4 });
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

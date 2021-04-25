@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -13,7 +13,7 @@ const input = bibtex`
     month={aug},
     publisher={Elsevier},}`;
 
-tap.test('duplicate key warnings (no duplicates)', async (t) => {
+test('duplicate key warnings (no duplicates)', async () => {
 	const tidied = await bibtexTidy(input, { escape: false }, ['api']);
-	t.same(tidied.api?.warnings, []);
+	strictEqual(tidied.api?.warnings.length, 0);
 });

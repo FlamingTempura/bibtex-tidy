@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @article{ art,
@@ -15,7 +15,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('@ in title', async (t) => {
+test('@ in title', async () => {
 	const tidied = await bibtexTidy(input); // @ in title - #124 (https://github.com/sciunto-org/python-bibtexparser/issues/124)
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

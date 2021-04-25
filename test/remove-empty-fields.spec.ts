@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -25,7 +25,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('remove empty fields', async (t) => {
+test('remove empty fields', async () => {
 	const tidied = await bibtexTidy(input, { removeEmptyFields: true });
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

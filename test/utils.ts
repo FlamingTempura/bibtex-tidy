@@ -1,8 +1,38 @@
-import tap from 'tap';
-import { CLIOptions } from '../src/options.js';
-import { CLIResult, testCLI } from './targets/cli.js';
-import { APIResult, testAPI } from './targets/api.js';
-import { testWeb, WebResult } from './targets/web.js';
+//import {  } from 'assert';
+import { CLIOptions } from '../src/options';
+import { CLIResult, testCLI } from './targets/cli';
+import { APIResult, testAPI } from './targets/api';
+import { testWeb, WebResult } from './targets/web';
+import { AssertionError, deepStrictEqual, strictEqual } from 'assert';
+
+let queue = Promise.resolve();
+
+export async function test(name: string, callback: () => any): Promise<void> {
+	try {
+		queue = queue.then(() => callback());
+		await queue;
+		console.log(`✅ ${name}`);
+	} catch (e: unknown) {
+		console.log(`❌ ${name}`);
+		if (e instanceof AssertionError) {
+			// Node generates a diff in the e.message unless a message was set in the
+			// assertion. In that case, generate a new diff.
+			if (!e.generatedMessage) {
+				const errWithDiff = new AssertionError({
+					expected: e.expected,
+					actual: e.actual,
+					operator: e.operator,
+				});
+				console.error(errWithDiff.message + '\n\n' + e.stack);
+			} else {
+				console.error(e.stack);
+			}
+		} else {
+			console.error(e);
+		}
+		process.exit(1);
+	}
+}
 
 // Allows \ to be used and removes the empty line at the start
 export function bibtex(str: TemplateStringsArray): string {
@@ -28,7 +58,7 @@ export async function bibtexTidy(
 	if (targets.includes('api')) {
 		const apiResult = testAPI(inputs, options);
 		const apiResult2 = testAPI([apiResult.bibtex], options);
-		tap.same(
+		strictEqual(
 			apiResult.bibtex,
 			apiResult2.bibtex,
 			'API result should be stable'
@@ -39,14 +69,14 @@ export async function bibtexTidy(
 	if (targets.includes('cli')) {
 		const cliResult = testCLI(inputs, options);
 		const cliResult2 = testCLI(cliResult.bibtexs, options);
-		tap.same(
+		deepStrictEqual(
 			cliResult.bibtexs,
 			cliResult2.bibtexs,
 			'CLI result should be stable'
 		);
 		result.cli = cliResult;
 		if (result.api) {
-			tap.same(
+			strictEqual(
 				cliResult.bibtexs[0],
 				result.api.bibtex,
 				'API and CLI outputs should match'
@@ -57,21 +87,21 @@ export async function bibtexTidy(
 	if (targets.includes('web')) {
 		const webResult = await testWeb(inputs, options);
 		const webResult2 = await testWeb([webResult.bibtex], options);
-		tap.same(
+		strictEqual(
 			webResult.bibtex,
 			webResult2.bibtex,
 			'API result should be stable'
 		);
 		result.web = webResult;
 		if (result.api) {
-			tap.same(
+			strictEqual(
 				webResult.bibtex,
 				result.api.bibtex,
 				'Web and API outputs should match'
 			);
 		}
 		if (result.cli) {
-			tap.same(
+			strictEqual(
 				webResult.bibtex,
 				result.cli.bibtexs[0],
 				'Web and CLI outputs should match'

@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @article{a,
@@ -33,7 +33,7 @@ Issue #11 - these should not be flagged as dupelicates
 	date-modified = {2020-05-09 00:14:50 +0530}
 	}`;
 
-tap.test('duplicate citation warnings', async (t) => {
+test('duplicate citation warnings', async () => {
 	const tidied = await bibtexTidy(input, { duplicates: ['citation'] }, ['api']);
-	t.same(tidied.api?.warnings.length, 1);
+	strictEqual(tidied.api?.warnings.length, 1);
 });

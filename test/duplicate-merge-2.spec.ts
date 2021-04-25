@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @article{Hess2012a,
@@ -425,7 +425,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('merge duplicates 2', async (t) => {
+test('merge duplicates 2', async () => {
 	const tidied = await bibtexTidy(input, {
 		merge: true,
 		tab: true,
@@ -433,6 +433,6 @@ tap.test('merge duplicates 2', async (t) => {
 		encodeUrls: false,
 		escape: false,
 	});
-	t.equal(tidied.bibtex, output);
-	//t.equal(tidied.warnings, 0);
+	strictEqual(tidied.bibtex, output);
+	//strictEqual(tidied.warnings, 0);
 });

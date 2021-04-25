@@ -8,12 +8,12 @@
 		"removeComments": true,
 		"moduleResolution": "Node",
 		"baseUrl": ".",
-		"lib": ["ESNext", "DOM"],
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"target": "ES6",
 		"paths": {
 			"*": ["../node_modules/*"]
 		},
 		"rootDir": "./src"
 	},
-	"include": ["./src/*"]
+	"include": ["./src/*", "./test/*"]
 }

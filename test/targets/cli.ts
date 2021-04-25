@@ -1,12 +1,13 @@
-import fs from 'fs';
-import path from 'path';
+import fs, { mkdirSync } from 'fs';
+import path, { join } from 'path';
 import { spawnSync } from 'child_process';
-import tap from 'tap';
-import { CLIOptions, Options } from '../../src/options.js';
-import { Warning } from '../../src/index.js';
-import { BibTeXItem } from '../../src/bibtex-parser.js';
+import { CLIOptions, Options } from '../../src/options';
+import { Warning } from '../../src/index';
+import { BibTeXItem } from '../../src/bibtex-parser';
 
-const TMP_DIR = tap.testdir();
+const TMP_DIR = join(__dirname, '..', '..', '.tmp');
+
+mkdirSync(TMP_DIR, { recursive: true });
 
 function getTmpPath(i: number = 0): string {
 	return path.join(TMP_DIR, `tmp${i}.bib`);
@@ -37,6 +38,7 @@ export function testCLI(
 	const args: string[] = [];
 	for (const k of Object.keys(options)) {
 		const value = options[k as keyof Options];
+		if (value === undefined) continue;
 		let cliParam = '--' + unCamelCase(k);
 		const vals: string[] = [];
 		if (typeof value === 'number' || typeof value === 'string') {
@@ -53,7 +55,7 @@ export function testCLI(
 		}
 	}
 
-	let tmpFiles = bibtexs.map((bibtex, i) => {
+	const tmpFiles = bibtexs.map((bibtex, i) => {
 		const tmpFile = getTmpPath(i);
 		fs.writeFileSync(tmpFile, bibtex, 'utf8');
 		return tmpFile;
@@ -68,7 +70,7 @@ export function testCLI(
 	//console.log('./bin/bibtex-tidy ' + args.join(' '));
 
 	const proc = spawnSync(
-		path.resolve(__dirname, '../../../bin/bibtex-tidy'),
+		path.resolve(__dirname, '../../bin/bibtex-tidy'),
 		args,
 		{ timeout: 100000, encoding: 'utf8' }
 	);
@@ -94,6 +96,8 @@ export function testCLI(
 		});
 
 	tmpFiles.forEach((tmpFile) => fs.unlinkSync(tmpFile));
+
+	// TODO: test proc.stderr is empty?
 
 	return {
 		bibtexs: tidiedOutputs,

@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @comment{jabref-meta: groupsversion:3;} % zotero export
@@ -227,7 +227,7 @@ Book{landru21,
 }
 `;
 
-tap.test('complex bib', async (t) => {
+test('complex bib', async () => {
 	const tidied = await bibtexTidy(input);
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

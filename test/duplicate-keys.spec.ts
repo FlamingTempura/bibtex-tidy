@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { deepStrictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 %references
@@ -72,7 +72,7 @@ title = {Methods for Research}
 % last thing
 % another last thing`;
 
-tap.test('duplicate key warnings', async (t) => {
+test('duplicate key warnings', async () => {
 	const tidied = await bibtexTidy(input, { escape: true }, ['api']);
 	const warnings = [
 		{
@@ -88,7 +88,12 @@ tap.test('duplicate key warnings', async (t) => {
 						value: 'Caroline JA Smith',
 						datatype: 'quoted',
 					},
-					{ name: 'year', raw: '2009', value: 2009, datatype: 'number' },
+					{
+						name: 'year',
+						raw: '2009',
+						value: BigInt(2009),
+						datatype: 'number',
+					},
 					{
 						name: 'month',
 						raw: 'dec',
@@ -116,5 +121,5 @@ tap.test('duplicate key warnings', async (t) => {
 
 	// @ts-ignore
 	delete tidied.api.warnings[0].entry.raw;
-	t.same(tidied.api?.warnings, warnings);
+	deepStrictEqual(tidied.api?.warnings, warnings);
 });

@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const file1 = bibtex`
 @article{a,
@@ -27,8 +27,8 @@ const output2 = bibtex`
 }
 `;
 
-tap.test('multiple files', async (t) => {
+test('multiple files', async () => {
 	const tidied = await bibtexTidy([file1, file2], undefined, ['cli']);
-	t.equal(tidied.cli?.bibtexs[0], output1);
-	t.equal(tidied.cli?.bibtexs[1], output2);
+	strictEqual(tidied.cli?.bibtexs[0], output1);
+	strictEqual(tidied.cli?.bibtexs[1], output2);
 });

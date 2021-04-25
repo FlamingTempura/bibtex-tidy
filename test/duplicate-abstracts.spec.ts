@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @article{a,
@@ -11,7 +11,7 @@ const input = bibtex`
     abstract={Something blah blah}
 }`;
 
-tap.test('duplicate abstract warnings', async (t) => {
+test('duplicate abstract warnings', async () => {
 	const tidied = await bibtexTidy(input, { duplicates: ['abstract'] }, ['api']);
-	t.same(tidied.api?.warnings.length, 1);
+	strictEqual(tidied.api?.warnings.length, 1);
 });

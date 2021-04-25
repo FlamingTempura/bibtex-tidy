@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @article{blah,
@@ -16,7 +16,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('should not mess up long numbers', async (t) => {
+test('should not mess up long numbers', async () => {
 	const tidied = await bibtexTidy(input);
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 % Entries
@@ -20,7 +20,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('multiline fields', async (t) => {
+test('multiline fields', async () => {
 	const tidied = await bibtexTidy(input); // #86, #177 (multiline fields), #198 (ACM bibtex)
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

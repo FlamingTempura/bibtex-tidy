@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @book{sweig42,
@@ -29,11 +29,11 @@ const output = bibtex`
 }
 `;
 
-tap.test('merge duplicates (keep last)', async (t) => {
+test('merge duplicates (keep last)', async () => {
 	const tidied = await bibtexTidy(input, { merge: 'last' });
 	const warnings = tidied.api?.warnings.filter(
 		(w) => w.code === 'DUPLICATE_ENTRY'
 	);
-	t.equal(tidied.bibtex, output);
-	t.equal(warnings?.length, 1);
+	strictEqual(tidied.bibtex, output);
+	strictEqual(warnings?.length, 1);
 });

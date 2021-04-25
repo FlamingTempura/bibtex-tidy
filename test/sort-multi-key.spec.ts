@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 
@@ -79,7 +79,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('sort entries by multiple keys', async (t) => {
+test('sort entries by multiple keys', async () => {
 	const tidied = await bibtexTidy(input, { sort: ['type', 'title'] });
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

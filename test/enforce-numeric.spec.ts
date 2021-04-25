@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -27,7 +27,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('enforce numeric values', async (t) => {
+test('enforce numeric values', async () => {
 	const tidied = await bibtexTidy(input, { numeric: true });
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

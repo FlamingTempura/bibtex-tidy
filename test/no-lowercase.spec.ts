@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -27,7 +27,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('keep original casing', async (t) => {
+test('keep original casing', async () => {
 	const tidied = await bibtexTidy(input, { lowercase: false });
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

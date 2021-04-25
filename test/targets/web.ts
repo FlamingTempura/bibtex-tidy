@@ -2,12 +2,12 @@ import {
 	normalizeOptions,
 	Options,
 	OptionsNormalized,
-} from '../../src/options.js';
-import { BibTeXTidyResult, Warning } from '../../src/index.js';
+} from '../../src/options';
+import { BibTeXTidyResult, Warning } from '../../src/index';
 import puppeteer, { JSONObject } from 'puppeteer';
 import { join } from 'path';
 
-const WEB_ROOT = join(__dirname, '..', '..', '..', 'docs', 'index.html');
+const WEB_ROOT = join(__dirname, '..', '..', 'docs', 'index.html');
 
 declare global {
 	interface Window {

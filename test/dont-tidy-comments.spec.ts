@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 %references
@@ -145,7 +145,7 @@ const output = bibtex`
 % another last thing
 `;
 
-tap.test('do not tidy comments', async (t) => {
+test('do not tidy comments', async () => {
 	const tidied = await bibtexTidy(input, { tidyComments: false });
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

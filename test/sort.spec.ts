@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 %references
@@ -141,7 +141,7 @@ const output = bibtex`
 % another last thing
 `;
 
-tap.test('sort entries by default', async (t) => {
+test('sort entries by default', async () => {
 	const tidied = await bibtexTidy(input, { sort: true });
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });

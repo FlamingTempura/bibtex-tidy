@@ -1,5 +1,5 @@
-import tap from 'tap';
-import { bibtex, bibtexTidy } from './utils';
+import { strictEqual } from 'assert';
+import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @ARTICLE {foobar,
@@ -23,7 +23,7 @@ const output = bibtex`
 }
 `;
 
-tap.test('paragraphs in values', async (t) => {
+test('paragraphs in values', async () => {
 	const tidied = await bibtexTidy(input, { align: 20 });
-	t.equal(tidied.bibtex, output);
+	strictEqual(tidied.bibtex, output);
 });
