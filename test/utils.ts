@@ -1,37 +1,49 @@
-//import {  } from 'assert';
 import { CLIOptions } from '../src/options';
 import { CLIResult, testCLI } from './targets/cli';
 import { APIResult, testAPI } from './targets/api';
-import { testWeb, WebResult } from './targets/web';
+import { testWeb, WebResult, teardown } from './targets/web';
 import { AssertionError, deepStrictEqual, strictEqual } from 'assert';
 
-let queue = Promise.resolve();
+const queue: (() => Promise<void>)[] = [];
+
+let isRunning = false;
+async function run() {
+	if (isRunning) return;
+	isRunning = true;
+	while (queue.length > 0) {
+		await queue.shift()?.();
+	}
+	teardown();
+}
 
 export async function test(name: string, callback: () => any): Promise<void> {
-	try {
-		queue = queue.then(() => callback());
-		await queue;
-		console.log(`✅ ${name}`);
-	} catch (e: unknown) {
-		console.log(`❌ ${name}`);
-		if (e instanceof AssertionError) {
-			// Node generates a diff in the e.message unless a message was set in the
-			// assertion. In that case, generate a new diff.
-			if (!e.generatedMessage) {
-				const errWithDiff = new AssertionError({
-					expected: e.expected,
-					actual: e.actual,
-					operator: e.operator,
-				});
-				console.error(errWithDiff.message + '\n\n' + e.stack);
+	queue.push(async () => {
+		try {
+			await callback();
+			await queue;
+			console.log(`✅ ${name}`);
+		} catch (e: unknown) {
+			console.log(`❌ ${name}`);
+			if (e instanceof AssertionError) {
+				// Node generates a diff in the e.message unless a message was set in the
+				// assertion. In that case, generate a new diff.
+				if (!e.generatedMessage) {
+					const errWithDiff = new AssertionError({
+						expected: e.expected,
+						actual: e.actual,
+						operator: e.operator,
+					});
+					console.error(errWithDiff.message + '\n\n' + e.stack);
+				} else {
+					console.error(e.stack);
+				}
 			} else {
-				console.error(e.stack);
+				console.error(e);
 			}
-		} else {
-			console.error(e);
+			process.exit(1);
 		}
-		process.exit(1);
-	}
+	});
+	run();
 }
 
 // Allows \ to be used and removes the empty line at the start

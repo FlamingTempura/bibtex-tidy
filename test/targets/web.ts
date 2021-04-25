@@ -12,7 +12,6 @@ const WEB_ROOT = join(__dirname, '..', '..', 'docs', 'index.html');
 declare global {
 	interface Window {
 		cmEditor: any;
-		onEditorChange: any;
 	}
 }
 
@@ -20,6 +19,19 @@ export type WebResult = {
 	bibtex: string;
 	warnings: Warning[];
 };
+
+let page: puppeteer.Page;
+async function getPage(): Promise<puppeteer.Page> {
+	if (page) return page;
+	const browser = await puppeteer.launch();
+	page = await browser.newPage();
+	await page.goto(`file://${WEB_ROOT}`);
+	return page;
+}
+
+export async function teardown() {
+	return page.browser().close();
+}
 
 export async function testWeb(
 	bibtexs: string[],
@@ -29,16 +41,14 @@ export async function testWeb(
 
 	const input = bibtexs[0];
 
-	const browser = await puppeteer.launch();
-
-	const page = await browser.newPage();
-	await page.goto(`file://${WEB_ROOT}`);
+	const page = await getPage();
 
 	const result = await new Promise<BibTeXTidyResult>((resolve) => {
-		page.exposeFunction('onEditorChange', resolve);
-
+		const callbackName =
+			'onEditorChange' + Math.floor(Math.random() * 1000000000);
+		page.exposeFunction(callbackName, resolve);
 		page.evaluate(
-			(input: string, options: OptionsNormalized) => {
+			(input: string, options: OptionsNormalized, fn: string) => {
 				document.querySelector('textarea')!.value = input;
 				//@ts-ignore
 				window.cmEditor.setValue(input);
@@ -136,7 +146,8 @@ export async function testWeb(
 					window.cmEditor.off('change', onchange);
 					// wait for feedback to be written
 					window.requestAnimationFrame(() => {
-						window.onEditorChange({
+						//@ts-ignore
+						window[fn]({
 							bibtex: window.cmEditor.getValue(),
 							warnings: [...document.querySelectorAll('#feedback li')].map(
 								(li) => ({
@@ -153,11 +164,10 @@ export async function testWeb(
 				document.querySelector<HTMLButtonElement>('#tidy')!.click();
 			},
 			input,
-			normalizeOptions(options) as JSONObject
+			normalizeOptions(options) as JSONObject,
+			callbackName
 		);
 	});
-
-	browser.close();
 
 	return result;
 }
