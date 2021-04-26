@@ -28,7 +28,7 @@
 		"test": "npm run build && node -r esbuild-register test/index.ts",
 		"build": "rollup -c",
 		"start": "rollup -cw",
-		"typecheck": "tsc --noEmit && (cd test && tsc --noEmit)"
+		"typecheck": "tsc --noEmit"
 	},
 	"repository": {
 		"type": "git",
