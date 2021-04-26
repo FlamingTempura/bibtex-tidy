@@ -134,8 +134,12 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 				if (
 					enclosingBracesFields.has(fieldName) &&
 					(field.datatype === 'braced' || curly)
-				)
+				) {
+					// Remove all braces
+					val = val.replace(/[{}]/g, '');
+					// Enclose entire value in braces
 					val = `{${val}}`;
+				}
 				// if a field's value is all caps, convert it to title case
 				if (dropAllCaps && val.match(/^[^a-z]+$/)) val = titleCase(val);
 				// url encode must happen before escape special characters

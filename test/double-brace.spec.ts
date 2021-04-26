@@ -5,6 +5,7 @@ const input = bibtex`
 @ARTICLE {feinberg1983technique,
     number={1},
     title={A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
+    shorttitle={A technique for radiolabeling {DNA} restriction endonuclease fragments to high specific activity},
   author="Feinberg, Andrew P and Vogelstein, Bert",
     journal    = {Analytical biochemistry},
     volume = 132,
@@ -17,6 +18,7 @@ const output1 = bibtex`
 @article{feinberg1983technique,
   number        = {1},
   title         = {{A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity}},
+  shorttitle    = {{A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity}},
   author        = "Feinberg, Andrew P and Vogelstein, Bert",
   journal       = {{Analytical biochemistry}},
   volume        = 132,
@@ -31,6 +33,7 @@ const output2 = bibtex`
 @article{feinberg1983technique,
   number        = {1},
   title         = {{A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity}},
+  shorttitle    = {A technique for radiolabeling {DNA} restriction endonuclease fragments to high specific activity},
   author        = "Feinberg, Andrew P and Vogelstein, Bert",
   journal       = {Analytical biochemistry},
   volume        = 132,
@@ -43,10 +46,10 @@ const output2 = bibtex`
 
 test('enclosing braces', async () => {
 	const tidied1 = await bibtexTidy(input, {
-		enclosingBraces: ['title', 'journal'],
+		enclosingBraces: ['title', 'shorttitle', 'journal'],
 	});
-	strictEqual(tidied1.bibtex, output1);
+	strictEqual(output1, tidied1.bibtex);
 
 	const tidied2 = await bibtexTidy(input, { enclosingBraces: true });
-	strictEqual(tidied2.bibtex, output2);
+	strictEqual(output2, tidied2.bibtex);
 });

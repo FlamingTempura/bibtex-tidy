@@ -3368,7 +3368,12 @@ function tidy(input) {
           } else {
             _val = String(field.value).replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>').replace(/\s*\n\s*/g, ' ').replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n').trim();
             if (stripEnclosingBraces || enclosingBracesFields.has(fieldName)) _val = _val.replace(/^\{([^{}]*)\}$/g, '$1');
-            if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) _val = `{${_val}}`;
+
+            if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) {
+              _val = _val.replace(/[{}]/g, '');
+              _val = `{${_val}}`;
+            }
+
             if (dropAllCaps && _val.match(/^[^a-z]+$/)) _val = titleCase(_val);
             if (nameLowerCase === 'url' && encodeUrls) _val = _val.replace(/\\?_/g, '\\%5F');
             if (escape) _val = escapeSpecialCharacters(_val);

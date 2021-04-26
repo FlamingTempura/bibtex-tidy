@@ -16821,7 +16821,12 @@
 	      } else {
 	        val = String(field.value).replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>').replace(/\s*\n\s*/g, ' ').replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n').trim();
 	        if (stripEnclosingBraces || enclosingBracesFields.has(fieldName)) val = val.replace(/^\{([^{}]*)\}$/g, '$1');
-	        if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) val = "{".concat(val, "}");
+
+	        if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) {
+	          val = val.replace(/[{}]/g, '');
+	          val = "{".concat(val, "}");
+	        }
+
 	        if (dropAllCaps && val.match(/^[^a-z]+$/)) val = titleCase(val);
 	        if (nameLowerCase === 'url' && encodeUrls) val = val.replace(/\\?_/g, '\\%5F');
 	        if (escape) val = escapeSpecialCharacters(val);
