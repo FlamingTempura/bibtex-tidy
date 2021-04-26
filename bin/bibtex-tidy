@@ -3636,9 +3636,9 @@ function tidy(input) {
           if (_item2.duplicate) continue;
           var itemType = lowercase ? _item2.type.toLocaleLowerCase() : _item2.type;
           bibtex += `@${itemType}{`;
-          if (_item2.key) bibtex += `${_item2.key}`;
+          if (_item2.key) bibtex += `${_item2.key},`;
           var sortedFieldNames = new Set([].concat(_toConsumableArray(sortFields || []), _toConsumableArray(_item2.fieldMap.keys())));
-          if (sortedFieldNames.size === 0) bibtex += ',';
+          var _i = 0;
 
           var _iterator10 = _createForOfIteratorHelper(sortedFieldNames),
               _step10;
@@ -3650,7 +3650,7 @@ function tidy(input) {
               var _field = _item2.fieldMap.get(_k2);
 
               if (!_field) continue;
-              bibtex += `,\n${indent}${_k2.padEnd(align - 1)} = `;
+              bibtex += `\n${indent}${_k2.padEnd(align - 1)} = `;
               var _val2 = _field.value;
               var dig3 = String(_val2).slice(0, 3).toLowerCase();
 
@@ -3686,15 +3686,17 @@ function tidy(input) {
               } else {
                 bibtex += _val2;
               }
+
+              var isLast = ++_i === _item2.fieldMap.size;
+
+              if (!isLast || trailingCommas) {
+                bibtex += ',';
+              }
             }
           } catch (err) {
             _iterator10.e(err);
           } finally {
             _iterator10.f();
-          }
-
-          if (trailingCommas) {
-            bibtex += ',';
           }
 
           bibtex += `\n}\n`;

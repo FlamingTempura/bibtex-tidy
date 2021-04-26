@@ -309,7 +309,7 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 				if (item.duplicate) continue;
 				const itemType = lowercase ? item.type.toLocaleLowerCase() : item.type;
 				bibtex += `@${itemType}{`;
-				if (item.key) bibtex += `${item.key}`;
+				if (item.key) bibtex += `${item.key},`;
 				// Create ordered list of fields to output, beginning with those
 				// specified in sortFields option, followed by fields in entry.
 				// Use Set to prevent duplicates and keep insertion order.
@@ -317,11 +317,13 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 					...(sortFields || []),
 					...item.fieldMap.keys(),
 				]);
-				if (sortedFieldNames.size === 0) bibtex += ',';
+
+				let i = 0;
 				for (const k of sortedFieldNames) {
 					const field = item.fieldMap.get(k);
+					// Might not have the field if it's specified in the sortFields list
 					if (!field) continue;
-					bibtex += `,\n${indent}${k.padEnd(align - 1)} = `;
+					bibtex += `\n${indent}${k.padEnd(align - 1)} = `;
 					let val = field.value;
 					const dig3 = String(val).slice(0, 3).toLowerCase();
 					if (numeric && val.match(/^[1-9][0-9]*$/)) {
@@ -363,9 +365,10 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 					} else {
 						bibtex += val;
 					}
-				}
-				if (trailingCommas) {
-					bibtex += ',';
+					const isLast = ++i === item.fieldMap.size;
+					if (!isLast || trailingCommas) {
+						bibtex += ',';
+					}
 				}
 				bibtex += `\n}\n`;
 				// @ts-ignore

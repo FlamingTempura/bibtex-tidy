@@ -3377,14 +3377,14 @@
           if (item.duplicate) continue;
           const itemType = lowercase ? item.type.toLocaleLowerCase() : item.type;
           bibtex += "@".concat(itemType, "{");
-          if (item.key) bibtex += "".concat(item.key);
+          if (item.key) bibtex += "".concat(item.key, ",");
           const sortedFieldNames = new Set([...(sortFields || []), ...item.fieldMap.keys()]);
-          if (sortedFieldNames.size === 0) bibtex += ',';
+          let i = 0;
 
           for (const k of sortedFieldNames) {
             const field = item.fieldMap.get(k);
             if (!field) continue;
-            bibtex += ",\n".concat(indent).concat(k.padEnd(align - 1), " = ");
+            bibtex += "\n".concat(indent).concat(k.padEnd(align - 1), " = ");
             let val = field.value;
             const dig3 = String(val).slice(0, 3).toLowerCase();
 
@@ -3414,10 +3414,12 @@
             } else {
               bibtex += val;
             }
-          }
 
-          if (trailingCommas) {
-            bibtex += ',';
+            const isLast = ++i === item.fieldMap.size;
+
+            if (!isLast || trailingCommas) {
+              bibtex += ',';
+            }
           }
 
           bibtex += "\n}\n";
