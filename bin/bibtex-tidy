@@ -3638,6 +3638,7 @@ function tidy(input) {
           bibtex += `@${itemType}{`;
           if (_item2.key) bibtex += `${_item2.key}`;
           var sortedFieldNames = new Set([].concat(_toConsumableArray(sortFields || []), _toConsumableArray(_item2.fieldMap.keys())));
+          if (sortedFieldNames.size === 0) bibtex += ',';
 
           var _iterator10 = _createForOfIteratorHelper(sortedFieldNames),
               _step10;

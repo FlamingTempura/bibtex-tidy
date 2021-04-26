@@ -3379,6 +3379,7 @@
           bibtex += "@".concat(itemType, "{");
           if (item.key) bibtex += "".concat(item.key);
           const sortedFieldNames = new Set([...(sortFields || []), ...item.fieldMap.keys()]);
+          if (sortedFieldNames.size === 0) bibtex += ',';
 
           for (const k of sortedFieldNames) {
             const field = item.fieldMap.get(k);

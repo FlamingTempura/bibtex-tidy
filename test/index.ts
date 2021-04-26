@@ -18,6 +18,7 @@ import './duplicate-merge-combine.spec';
 import './duplicate-merge-first.spec';
 import './duplicate-merge-last.spec';
 import './duplicate-merge-overwrite.spec';
+import './empty-entry.spec';
 import './encode-urls.spec';
 import './enforce-braces.spec';
 import './enforce-numeric.spec';

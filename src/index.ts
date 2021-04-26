@@ -317,6 +317,7 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 					...(sortFields || []),
 					...item.fieldMap.keys(),
 				]);
+				if (sortedFieldNames.size === 0) bibtex += ',';
 				for (const k of sortedFieldNames) {
 					const field = item.fieldMap.get(k);
 					if (!field) continue;
