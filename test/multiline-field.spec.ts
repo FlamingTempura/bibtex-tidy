@@ -1,12 +1,10 @@
 import { strictEqual } from 'assert';
 import { bibtex, bibtexTidy, test } from './utils';
 
-const input = bibtex`
-% Entries
+const input = `% Entries
 @ARTICLE{Cesar2013,
   author = {{A},
-            B. and {C},
-            D.},
+            B. \r\nand {C},\rD.},
   title = {An amazing title},
   volume="n.s.~2",
 }`;

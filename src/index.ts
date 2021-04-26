@@ -124,7 +124,7 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 			} else {
 				val = String(field.value)
 					.replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>') // preserve paragraphs (one or more empty lines) by replacing them with markers
-					.replace(/\s*\n\s*/g, ' ') // remove whitespace
+					.replace(/\s*(?:\n|\r|\r\n)\s*/g, ' ') // remove whitespace
 					.replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n') // restore paragraphs
 					.trim();
 				// if a field's value has double braces {{blah}}, lose the inner brace

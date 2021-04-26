@@ -3190,7 +3190,7 @@
         if (field.datatype === 'concatenate') {
           val = field.raw;
         } else {
-          val = String(field.value).replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>').replace(/\s*\n\s*/g, ' ').replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n').trim();
+          val = String(field.value).replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>').replace(/\s*(?:\n|\r|\r\n)\s*/g, ' ').replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n').trim();
           if (stripEnclosingBraces || enclosingBracesFields.has(fieldName)) val = val.replace(/^\{([^{}]*)\}$/g, '$1');
 
           if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) {
