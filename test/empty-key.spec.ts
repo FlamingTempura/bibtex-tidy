@@ -16,7 +16,7 @@ const output = bibtex`
 }
 `;
 
-test('empty entry', async () => {
+test('empty key', async () => {
 	const tidied = await bibtexTidy(input);
 	strictEqual(output, tidied.bibtex);
 });

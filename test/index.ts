@@ -50,4 +50,4 @@ import './strip-double-brace.spec';
 import './trailing-commas.spec';
 import './wrap.spec';
 
-// TODO import './valid-bibs.spec.';
+import './valid-bibs.spec';
