@@ -1,14 +1,13 @@
 import { strictEqual } from 'assert';
 import { bibtex, bibtexTidy, test } from './utils';
 
-const input = bibtex`
-@ARTICLE {foobar,
+const input = `@ARTICLE {foobar,
   title={Foo Bar},
   abstract={
     Paragraph 1
     ...continued
 
-    Paragraph 2
+    Paragraph 2\r\n\r\nParagraph 3\r\rParagraph 4
   },
 }`;
 
@@ -19,6 +18,10 @@ const output = bibtex`
     Paragraph 1 ...continued
 
     Paragraph 2
+
+    Paragraph 3
+
+    Paragraph 4
   }
 }
 `;

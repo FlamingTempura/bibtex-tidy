@@ -87,6 +87,8 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 		(enclosingBraces || []).map((field) => field.toLocaleLowerCase())
 	);
 
+	input = input.replace(/\r\n?/g, '\n');
+
 	// Parse the bibtex and retrieve the items (includes comments, entries, strings, preambles)
 	const items: BibTeXItem[] = parse(input);
 	// Set of entry keys, used to check for duplicate key warnings
@@ -123,9 +125,14 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 				val = field.raw;
 			} else {
 				val = String(field.value)
-					.replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>') // preserve paragraphs (one or more empty lines) by replacing them with markers
-					.replace(/\s*(?:\n|\r|\r\n)\s*/g, ' ') // remove whitespace
-					.replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n') // restore paragraphs
+					// preserve paragraphs (one or more empty lines) by replacing them with markers
+					//.replace(/\s*\r\n\s*\r\n\s*/g, '<<BIBTEX_TIDY_PARA>>')
+					.replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>')
+					//.replace(/\s*\r\s*\r\s*/g, '<<BIBTEX_TIDY_PARA>>')
+					// remove whitespace
+					.replace(/\s*\n\s*/g, ' ')
+					// restore paragraphs
+					.replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n')
 					.trim();
 				// if a field's value has double braces {{blah}}, lose the inner brace
 				if (stripEnclosingBraces || enclosingBracesFields.has(fieldName))
