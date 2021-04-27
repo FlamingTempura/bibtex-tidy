@@ -1,30 +1,13 @@
 //@ts-ignore
 import bibtexParser from './bibtex.pegjs.js';
 
-type BibTeXFieldDatatype =
-	| 'concatenate'
-	| 'braced'
-	| 'quoted'
-	| 'number'
-	| 'identifier';
-
-type BibTexValue = string | bigint | SingleField[];
-
-type SingleField = {
-	name: string;
-	datatype: Exclude<BibTeXFieldDatatype, 'concatenate'>;
-	value: Exclude<BibTexValue, SingleField[]>;
-	raw: string;
-};
-
-type ConcatField = {
-	name: string;
-	datatype: 'concatenate';
-	value: SingleField[];
-	raw: string;
-};
-
-type BibTexField = SingleField | ConcatField;
+type BibTexField = { name: string; raw: string } & (
+	| { datatype: 'quoted' | 'braced'; value: string }
+	| { datatype: 'number'; value: BigInt }
+	| { datatype: 'null'; value: null }
+	| { datatype: 'identifier'; value: string }
+	| { datatype: 'concatenate'; value: BibTexField[] }
+);
 
 type BibTeXString = {
 	itemtype: 'string';
@@ -52,8 +35,8 @@ export type BibTeXEntry = {
 };
 
 export type ValueString = {
-	value: string;
-	datatype: BibTeXFieldDatatype;
+	value: string | null;
+	datatype: BibTexField['datatype'];
 };
 
 export type BibTeXItem =

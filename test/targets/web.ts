@@ -66,6 +66,9 @@ export async function testWeb(
 				getOpt('tidyComments').checked = !!options.tidyComments;
 				getOpt('trailingCommas').checked = !!options.trailingCommas;
 				getOpt('removeEmptyFields').checked = !!options.removeEmptyFields;
+				getOpt(
+					'removeDuplicateFields'
+				).checked = !!options.removeDuplicateFields;
 				getOpt('lowercase').checked = !!options.lowercase;
 
 				if (typeof options.align === 'number') {

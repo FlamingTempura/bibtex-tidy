@@ -337,6 +337,13 @@ var optionsDocumentation = [{
   "type": "boolean",
   "deprecated": false
 }, {
+  "key": "removeDuplicateFields",
+  "cli": "remove-duplicate-fields",
+  "description": "Remove duplicate fields - Only allow one of each field in each entry.",
+  "examples": ["--remove-empty-fields (default)", "--no-remove-empty-fields"],
+  "type": "boolean",
+  "deprecated": false
+}, {
   "key": "maxAuthors",
   "cli": "max-authors",
   "description": "Maximum authors - Truncate authors if above a given number into \"and others\".",
@@ -428,6 +435,9 @@ function normalizeOptions(options) {
     }),
     removeEmptyFields: normalizeOption(options.removeEmptyFields, {
       defaultValue: false
+    }),
+    removeDuplicateFields: normalizeOption(options.removeDuplicateFields, {
+      defaultValue: true
     }),
     sort: normalizeOption(options.sort, {
       valueIfTrue: DEFAULT_ENTRY_ORDER
@@ -3269,11 +3279,39 @@ function fromCamelCase(str) {
     return '-' + c.toLowerCase();
   });
 }
+function convertCRLF(str) {
+  return str.replace(/\r\n?/g, '\n');
+}
+function unwrapText(str) {
+  return str.replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>').replace(/\s*\n\s*/g, ' ').replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n').trim();
+}
+function addEnclosingBraces(str, removeInsideBraces) {
+  if (removeInsideBraces) str = str.replace(/[{}]/g, '');
+  return `{${str}}`;
+}
+function removeEnclosingBraces(str) {
+  return str.replace(/^\{([^{}]*)\}$/g, '$1');
+}
+function escapeURL(str) {
+  return str.replace(/\\?_/g, '\\%5F');
+}
+function limitAuthors(str, maxAuthors) {
+  var authors = str.split(' and ');
+
+  if (authors.length > maxAuthors) {
+    return [].concat(_toConsumableArray(authors.slice(0, maxAuthors)), ['others']).join(' and ');
+  }
+
+  return str;
+}
+function formatPageRange(str) {
+  return str.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+}
 
 var MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
 
 function tidy(input) {
-  var _item$fieldMap$get2, _item$fieldMap$get3, _item$fieldMap$get4, _item$fieldMap$get5;
+  var _item$fieldMap$get$va2, _item$fieldMap$get2, _item$fieldMap$get3, _item$fieldMap$get4, _item$fieldMap$get$va3, _item$fieldMap$get5;
 
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -3296,6 +3334,7 @@ function tidy(input) {
       duplicates = _normalizeOptions.duplicates,
       trailingCommas = _normalizeOptions.trailingCommas,
       removeEmptyFields = _normalizeOptions.removeEmptyFields,
+      removeDuplicateFields = _normalizeOptions.removeDuplicateFields,
       lowercase = _normalizeOptions.lowercase,
       enclosingBraces = _normalizeOptions.enclosingBraces,
       wrap = _normalizeOptions.wrap,
@@ -3328,7 +3367,7 @@ function tidy(input) {
   var enclosingBracesFields = new Set((enclosingBraces || []).map(function (field) {
     return field.toLocaleLowerCase();
   }));
-  input = input.replace(/\r\n?/g, '\n');
+  input = convertCRLF(input);
   var items = parse(input);
   var keys = new Map();
   var dois = new Map();
@@ -3363,41 +3402,69 @@ function tidy(input) {
           var field = _step6.value;
           var fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
           var nameLowerCase = fieldName.toLocaleLowerCase();
-          if (omitFields.has(fieldName) || _item.fieldMap.has(fieldName)) continue;
+          if (omitFields.has(fieldName)) continue;
+          if (removeDuplicateFields && _item.fieldMap.has(fieldName)) continue;
+          var value = void 0;
 
-          var _val = void 0;
+          switch (field.datatype) {
+            case 'concatenate':
+            case 'identifier':
+              value = field.raw;
+              break;
 
-          if (field.datatype === 'concatenate') {
-            _val = field.raw;
-          } else {
-            _val = String(field.value).replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>').replace(/\s*\n\s*/g, ' ').replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n').trim();
-            if (stripEnclosingBraces || enclosingBracesFields.has(fieldName)) _val = _val.replace(/^\{([^{}]*)\}$/g, '$1');
+            case 'null':
+              if (removeEmptyFields) continue;
+              value = null;
+              break;
 
-            if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) {
-              _val = _val.replace(/[{}]/g, '');
-              _val = `{${_val}}`;
-            }
+            case 'number':
+              value = field.value.toString();
+              break;
 
-            if (dropAllCaps && _val.match(/^[^a-z]+$/)) _val = titleCase(_val);
-            if (nameLowerCase === 'url' && encodeUrls) _val = _val.replace(/\\?_/g, '\\%5F');
-            if (escape) _val = escapeSpecialCharacters(_val);
-            if (nameLowerCase === 'pages') _val = _val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+            case 'braced':
+            case 'quoted':
+              value = unwrapText(field.value);
 
-            if (nameLowerCase === 'author' && maxAuthors) {
-              var authors = _val.split(' and ');
-
-              if (authors.length > maxAuthors) {
-                _val = [].concat(_toConsumableArray(authors.slice(0, maxAuthors)), ['others']).join(' and ');
+              if (stripEnclosingBraces) {
+                value = removeEnclosingBraces(value);
               }
-            }
+
+              if (dropAllCaps && !value.match(/[a-z]/)) {
+                value = titleCase(value);
+              }
+
+              if (nameLowerCase === 'url' && encodeUrls) {
+                value = escapeURL(value);
+              }
+
+              if (escape) {
+                value = escapeSpecialCharacters(value);
+              }
+
+              if (nameLowerCase === 'pages') {
+                value = formatPageRange(value);
+              }
+
+              if (nameLowerCase === 'author' && maxAuthors) {
+                value = limitAuthors(value, maxAuthors);
+              }
+
+              if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) {
+                value = addEnclosingBraces(value, true);
+              }
+
           }
 
-          _val = _val.trim();
+          if (value !== null) value = value.trim();
 
-          if (_val || !removeEmptyFields) {
+          if (value || !removeEmptyFields) {
+            while (_item.fieldMap.has(fieldName)) {
+              fieldName += ' ';
+            }
+
             _item.fieldMap.set(fieldName, {
-              value: _val,
-              datatype: field.datatype
+              datatype: field.datatype,
+              value
             });
           }
         }
@@ -3426,7 +3493,7 @@ function tidy(input) {
               break;
 
             case 'doi':
-              var doi = alphaNum((_item$fieldMap$get2 = _item.fieldMap.get('doi')) === null || _item$fieldMap$get2 === void 0 ? void 0 : _item$fieldMap$get2.value);
+              var doi = alphaNum((_item$fieldMap$get$va2 = (_item$fieldMap$get2 = _item.fieldMap.get('doi')) === null || _item$fieldMap$get2 === void 0 ? void 0 : _item$fieldMap$get2.value) !== null && _item$fieldMap$get$va2 !== void 0 ? _item$fieldMap$get$va2 : '');
               if (!doi) continue;
               duplicateOf = dois.get(doi);
               if (!duplicateOf) dois.set(doi, _item);
@@ -3442,7 +3509,7 @@ function tidy(input) {
               break;
 
             case 'abstract':
-              var abstract = alphaNum((_item$fieldMap$get5 = _item.fieldMap.get('abstract')) === null || _item$fieldMap$get5 === void 0 ? void 0 : _item$fieldMap$get5.value);
+              var abstract = alphaNum((_item$fieldMap$get$va3 = (_item$fieldMap$get5 = _item.fieldMap.get('abstract')) === null || _item$fieldMap$get5 === void 0 ? void 0 : _item$fieldMap$get5.value) !== null && _item$fieldMap$get$va3 !== void 0 ? _item$fieldMap$get$va3 : '');
               var abs = abstract === null || abstract === void 0 ? void 0 : abstract.slice(0, 100);
               if (!abs) continue;
               duplicateOf = abstracts.get(abs);
@@ -3564,7 +3631,7 @@ function tidy(input) {
             } else {
               var _item$fieldMap$get$va, _item$fieldMap, _item$fieldMap$get;
 
-              val = String((_item$fieldMap$get$va = (_item$fieldMap = item.fieldMap) === null || _item$fieldMap === void 0 ? void 0 : (_item$fieldMap$get = _item$fieldMap.get(_key)) === null || _item$fieldMap$get === void 0 ? void 0 : _item$fieldMap$get.value) !== null && _item$fieldMap$get$va !== void 0 ? _item$fieldMap$get$va : '');
+              val = (_item$fieldMap$get$va = (_item$fieldMap = item.fieldMap) === null || _item$fieldMap === void 0 ? void 0 : (_item$fieldMap$get = _item$fieldMap.get(_key)) === null || _item$fieldMap$get === void 0 ? void 0 : _item$fieldMap$get.value) !== null && _item$fieldMap$get$va !== void 0 ? _item$fieldMap$get$va : '';
             }
 
             sortIndex.set(_key, val.toLowerCase());
@@ -3651,41 +3718,46 @@ function tidy(input) {
               var _field = _item2.fieldMap.get(_k2);
 
               if (!_field) continue;
-              bibtex += `\n${indent}${_k2.padEnd(align - 1)} = `;
-              var _val2 = _field.value;
-              var dig3 = String(_val2).slice(0, 3).toLowerCase();
 
-              if (numeric && _val2.match(/^[1-9][0-9]*$/)) {
-                bibtex += _val2;
-              } else if (numeric && _k2 === 'month' && MONTHS.has(dig3)) {
-                bibtex += dig3;
-              } else if (_field.datatype === 'braced' || curly) {
-                var lineLength = `${indent}${align}{${_val2}}`.length;
-
-                var multiLine = _val2.includes('\n\n');
-
-                if (wrap && lineLength > wrap || multiLine) {
-                  (function () {
-                    var paragraphs = _val2.split('\n\n');
-
-                    var valIndent = indent.repeat(2);
-
-                    if (wrap) {
-                      var wrapCol = wrap;
-                      paragraphs = paragraphs.map(function (paragraph) {
-                        return splitLines(paragraph, wrapCol - valIndent.length).join('\n' + valIndent);
-                      });
-                    }
-
-                    _val2 = '\n' + valIndent + paragraphs.join(`\n\n${valIndent}`) + '\n' + indent;
-                  })();
-                }
-
-                bibtex += `{${_val2}}`;
-              } else if (_field.datatype === 'quoted') {
-                bibtex += `"${_val2}"`;
+              if (_field.value === null) {
+                bibtex += `\n${indent}${_k2}`;
               } else {
-                bibtex += _val2;
+                bibtex += `\n${indent}${_k2.trim().padEnd(align - 1)} = `;
+                var _val = _field.value;
+                var dig3 = String(_val).slice(0, 3).toLowerCase();
+
+                if (numeric && _val.match(/^[1-9][0-9]*$/)) {
+                  bibtex += _val;
+                } else if (numeric && _k2 === 'month' && MONTHS.has(dig3)) {
+                  bibtex += dig3;
+                } else if (_field.datatype === 'braced' || curly) {
+                  var lineLength = `${indent}${align}{${_val}}`.length;
+
+                  var multiLine = _val.includes('\n\n');
+
+                  if (wrap && lineLength > wrap || multiLine) {
+                    (function () {
+                      var paragraphs = _val.split('\n\n');
+
+                      var valIndent = indent.repeat(2);
+
+                      if (wrap) {
+                        var wrapCol = wrap;
+                        paragraphs = paragraphs.map(function (paragraph) {
+                          return splitLines(paragraph, wrapCol - valIndent.length).join('\n' + valIndent);
+                        });
+                      }
+
+                      _val = '\n' + valIndent + paragraphs.join(`\n\n${valIndent}`) + '\n' + indent;
+                    })();
+                  }
+
+                  bibtex += addEnclosingBraces(_val);
+                } else if (_field.datatype === 'quoted') {
+                  bibtex += `"${_val}"`;
+                } else {
+                  bibtex += _val;
+                }
               }
 
               var isLast = ++_i === _item2.fieldMap.size;
@@ -3989,8 +4061,20 @@ function parseArguments() {
         options.trailingCommas = true;
         break;
 
+      case '--remove-duplicate-fields':
+        options.removeDuplicateFields = true;
+        break;
+
+      case '--no-remove-duplicate-fields':
+        options.removeDuplicateFields = false;
+        break;
+
       case '--remove-empty-fields':
         options.removeEmptyFields = true;
+        break;
+
+      case '--no-remove-empty-fields':
+        options.removeEmptyFields = false;
         break;
 
       case '--max-authors':
@@ -4040,7 +4124,7 @@ function start() {
 
   if (inputFiles.length === 0 || options.help) {
     printHelp();
-    process__default['default'].exit(1);
+    process__default['default'].exit(0);
   }
 
   if (options.quiet) {

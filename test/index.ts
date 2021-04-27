@@ -1,3 +1,4 @@
+import './remove-duplicate-fields.spec';
 import './align-20.spec';
 import './at-symbol-in-title.spec';
 import './big-numbers.spec';

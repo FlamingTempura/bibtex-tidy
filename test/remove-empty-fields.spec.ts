@@ -10,10 +10,26 @@ const input = bibtex`
     volume = 132,
     pages={},
     year={},
+    day,
     month={aug},
     publisher={Elsevier},}`;
 
-const output = bibtex`
+const outputWithEmpty = bibtex`
+@article{feinberg1983technique,
+  number        = {1},
+  title         = {A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
+  author        = "Feinberg, Andrew P and Vogelstein, Bert",
+  journal       = {Analytical biochemistry},
+  volume        = 132,
+  pages         = {},
+  year          = {},
+  day,
+  month         = {aug},
+  publisher     = {Elsevier}
+}
+`;
+
+const outputWithoutEmpty = bibtex`
 @article{feinberg1983technique,
   number        = {1},
   title         = {A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
@@ -26,6 +42,10 @@ const output = bibtex`
 `;
 
 test('remove empty fields', async () => {
-	const tidied = await bibtexTidy(input, { removeEmptyFields: true });
-	strictEqual(tidied.bibtex, output);
+	const tidiedWithEmpty = await bibtexTidy(input, { removeEmptyFields: false });
+	const tidiedWithoutEmpty = await bibtexTidy(input, {
+		removeEmptyFields: true,
+	});
+	strictEqual(tidiedWithEmpty.bibtex, outputWithEmpty);
+	strictEqual(tidiedWithoutEmpty.bibtex, outputWithoutEmpty);
 });

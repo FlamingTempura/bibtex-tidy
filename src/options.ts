@@ -129,6 +129,12 @@ export type Options = {
 	 */
 	removeEmptyFields?: boolean;
 	/**
+	 * Remove duplicate fields - Only allow one of each field in each entry.
+	 * @example --remove-empty-fields (default)
+	 * @example --no-remove-empty-fields
+	 */
+	removeDuplicateFields?: boolean;
+	/**
 	 * Maximum authors - Truncate authors if above a given number into "and others".
 	 */
 	maxAuthors?: number;
@@ -228,6 +234,9 @@ export function normalizeOptions(options: Options): OptionsNormalized {
 		omit: normalizeOption(options.omit, { defaultValue: [] }),
 		removeEmptyFields: normalizeOption(options.removeEmptyFields, {
 			defaultValue: false,
+		}),
+		removeDuplicateFields: normalizeOption(options.removeDuplicateFields, {
+			defaultValue: true,
 		}),
 		sort: normalizeOption(options.sort, { valueIfTrue: DEFAULT_ENTRY_ORDER }),
 		sortFields: normalizeOption(options.sortFields ?? options.sortProperties, {

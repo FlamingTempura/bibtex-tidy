@@ -52,3 +52,51 @@ export function splitLines(line: string, limit: number): string[] {
 export function fromCamelCase(str: string): string {
 	return str.replace(/[A-Z]/g, (c: string) => '-' + c.toLowerCase());
 }
+
+/** Normalize new lines. Convert CR/CRLF to LF. */
+export function convertCRLF(str: string): string {
+	return str.replace(/\r\n?/g, '\n');
+}
+
+/**
+ * Remove line breaks used to wrap text. This removes all line breaks except
+ * double line break (which is a paragraph).
+ */
+export function unwrapText(str: string): string {
+	// Preserve paragraphs (one or more empty lines) by replacing them with markers
+	return str
+		.replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>')
+		.replace(/\s*\n\s*/g, ' ')
+		.replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n')
+		.trim();
+}
+
+/** Remove all braces and enclose entire value in braces */
+export function addEnclosingBraces(
+	str: string,
+	removeInsideBraces?: boolean
+): string {
+	if (removeInsideBraces) str = str.replace(/[{}]/g, '');
+	return `{${str}}`;
+}
+
+export function removeEnclosingBraces(str: string): string {
+	return str.replace(/^\{([^{}]*)\}$/g, '$1');
+}
+
+export function escapeURL(str: string): string {
+	return str.replace(/\\?_/g, '\\%5F');
+}
+
+export function limitAuthors(str: string, maxAuthors: number): string {
+	const authors = str.split(' and ');
+	if (authors.length > maxAuthors) {
+		return [...authors.slice(0, maxAuthors), 'others'].join(' and ');
+	}
+	return str;
+}
+
+/** Replace single dash with double dash in page range **/
+export function formatPageRange(str: string): string {
+	return str.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+}

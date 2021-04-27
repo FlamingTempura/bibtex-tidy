@@ -21,7 +21,6 @@ export type CLIResult = {
 	bibtexs: string[];
 	warnings: Warning[];
 	stdout: string;
-	stderr: string;
 };
 
 /**
@@ -67,8 +66,6 @@ export function testCLI(
 		args.push(...tmpFiles);
 	}
 
-	//console.log('./bin/bibtex-tidy ' + args.join(' '));
-
 	const proc = spawnSync(
 		path.resolve(__dirname, '../../bin/bibtex-tidy'),
 		args,
@@ -97,12 +94,15 @@ export function testCLI(
 
 	tmpFiles.forEach((tmpFile) => fs.unlinkSync(tmpFile));
 
-	// TODO: test proc.stderr is empty?
+	if (proc.status !== 0) {
+		console.log(`> bibtex-tidy ${args.join(' ')}`);
+		console.error(proc.stderr);
+		throw new Error('CLI error');
+	}
 
 	return {
 		bibtexs: tidiedOutputs,
 		warnings,
 		stdout: proc.stdout,
-		stderr: proc.stderr,
 	};
 }

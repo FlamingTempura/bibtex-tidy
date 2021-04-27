@@ -158,6 +158,7 @@ function getOptions(): Options {
 		escape: options.escape.checked,
 		trailingCommas: options.trailingCommas.checked,
 		removeEmptyFields: options.removeEmptyFields.checked,
+		removeDuplicateFields: options.removeDuplicateFields.checked,
 		lowercase: options.lowercase.checked,
 		maxAuthors: options.maxAuthors.checked
 			? Number(options.maxAuthorsNum.value)
@@ -185,6 +186,7 @@ function formatCLICommand() {
 		duplicates: true,
 		trailingCommas: true,
 		removeEmptyFields: true,
+		removeDuplicateFields: true,
 		lowercase: true,
 		enclosingBraces: true,
 		wrap: true,

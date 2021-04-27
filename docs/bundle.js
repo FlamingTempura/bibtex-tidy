@@ -13780,6 +13780,13 @@
 	  "type": "boolean",
 	  "deprecated": false
 	}, {
+	  "key": "removeDuplicateFields",
+	  "cli": "remove-duplicate-fields",
+	  "description": "Remove duplicate fields - Only allow one of each field in each entry.",
+	  "examples": ["--remove-empty-fields (default)", "--no-remove-empty-fields"],
+	  "type": "boolean",
+	  "deprecated": false
+	}, {
 	  "key": "maxAuthors",
 	  "cli": "max-authors",
 	  "description": "Maximum authors - Truncate authors if above a given number into \"and others\".",
@@ -13871,6 +13878,9 @@
 	    }),
 	    removeEmptyFields: normalizeOption(options.removeEmptyFields, {
 	      defaultValue: false
+	    }),
+	    removeDuplicateFields: normalizeOption(options.removeDuplicateFields, {
+	      defaultValue: true
 	    }),
 	    sort: normalizeOption(options.sort, {
 	      valueIfTrue: DEFAULT_ENTRY_ORDER
@@ -16742,11 +16752,39 @@
 
 	  return lines.map(line => line.trim());
 	}
+	function convertCRLF(str) {
+	  return str.replace(/\r\n?/g, '\n');
+	}
+	function unwrapText(str) {
+	  return str.replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>').replace(/\s*\n\s*/g, ' ').replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n').trim();
+	}
+	function addEnclosingBraces(str, removeInsideBraces) {
+	  if (removeInsideBraces) str = str.replace(/[{}]/g, '');
+	  return "{".concat(str, "}");
+	}
+	function removeEnclosingBraces(str) {
+	  return str.replace(/^\{([^{}]*)\}$/g, '$1');
+	}
+	function escapeURL(str) {
+	  return str.replace(/\\?_/g, '\\%5F');
+	}
+	function limitAuthors(str, maxAuthors) {
+	  const authors = str.split(' and ');
+
+	  if (authors.length > maxAuthors) {
+	    return [...authors.slice(0, maxAuthors), 'others'].join(' and ');
+	  }
+
+	  return str;
+	}
+	function formatPageRange(str) {
+	  return str.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+	}
 
 	const MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
 
 	function tidy(input) {
-	  var _item$fieldMap$get, _item$fieldMap$get2, _item$fieldMap$get3, _item$fieldMap$get4;
+	  var _item$fieldMap$get$va, _item$fieldMap$get, _item$fieldMap$get2, _item$fieldMap$get3, _item$fieldMap$get$va2, _item$fieldMap$get4;
 
 	  let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 	  const {
@@ -16768,6 +16806,7 @@
 	    duplicates,
 	    trailingCommas,
 	    removeEmptyFields,
+	    removeDuplicateFields,
 	    lowercase,
 	    enclosingBraces,
 	    wrap,
@@ -16788,7 +16827,7 @@
 
 	  const omitFields = new Set(omit);
 	  const enclosingBracesFields = new Set((enclosingBraces || []).map(field => field.toLocaleLowerCase()));
-	  input = input.replace(/\r\n?/g, '\n');
+	  input = convertCRLF(input);
 	  const items = parse(input);
 	  const keys = new Map();
 	  const dois = new Map();
@@ -16811,42 +16850,71 @@
 	    item.fieldMap = new Map();
 
 	    for (const field of item.fields) {
-	      const fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
+	      let fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
 	      const nameLowerCase = fieldName.toLocaleLowerCase();
-	      if (omitFields.has(fieldName) || item.fieldMap.has(fieldName)) continue;
-	      let val;
+	      if (omitFields.has(fieldName)) continue;
+	      if (removeDuplicateFields && item.fieldMap.has(fieldName)) continue;
+	      let value;
 
-	      if (field.datatype === 'concatenate') {
-	        val = field.raw;
-	      } else {
-	        val = String(field.value).replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>').replace(/\s*\n\s*/g, ' ').replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n').trim();
-	        if (stripEnclosingBraces || enclosingBracesFields.has(fieldName)) val = val.replace(/^\{([^{}]*)\}$/g, '$1');
+	      switch (field.datatype) {
+	        case 'concatenate':
+	        case 'identifier':
+	          value = field.raw;
+	          break;
 
-	        if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) {
-	          val = val.replace(/[{}]/g, '');
-	          val = "{".concat(val, "}");
-	        }
+	        case 'null':
+	          if (removeEmptyFields) continue;
+	          value = null;
+	          break;
 
-	        if (dropAllCaps && val.match(/^[^a-z]+$/)) val = titleCase(val);
-	        if (nameLowerCase === 'url' && encodeUrls) val = val.replace(/\\?_/g, '\\%5F');
-	        if (escape) val = escapeSpecialCharacters(val);
-	        if (nameLowerCase === 'pages') val = val.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+	        case 'number':
+	          value = field.value.toString();
+	          break;
 
-	        if (nameLowerCase === 'author' && maxAuthors) {
-	          const authors = val.split(' and ');
+	        case 'braced':
+	        case 'quoted':
+	          value = unwrapText(field.value);
 
-	          if (authors.length > maxAuthors) {
-	            val = [...authors.slice(0, maxAuthors), 'others'].join(' and ');
+	          if (stripEnclosingBraces) {
+	            value = removeEnclosingBraces(value);
 	          }
-	        }
+
+	          if (dropAllCaps && !value.match(/[a-z]/)) {
+	            value = titleCase(value);
+	          }
+
+	          if (nameLowerCase === 'url' && encodeUrls) {
+	            value = escapeURL(value);
+	          }
+
+	          if (escape) {
+	            value = escapeSpecialCharacters(value);
+	          }
+
+	          if (nameLowerCase === 'pages') {
+	            value = formatPageRange(value);
+	          }
+
+	          if (nameLowerCase === 'author' && maxAuthors) {
+	            value = limitAuthors(value, maxAuthors);
+	          }
+
+	          if (enclosingBracesFields.has(fieldName) && (field.datatype === 'braced' || curly)) {
+	            value = addEnclosingBraces(value, true);
+	          }
+
 	      }
 
-	      val = val.trim();
+	      if (value !== null) value = value.trim();
 
-	      if (val || !removeEmptyFields) {
+	      if (value || !removeEmptyFields) {
+	        while (item.fieldMap.has(fieldName)) {
+	          fieldName += ' ';
+	        }
+
 	        item.fieldMap.set(fieldName, {
-	          value: val,
-	          datatype: field.datatype
+	          datatype: field.datatype,
+	          value
 	        });
 	      }
 	    }
@@ -16862,7 +16930,7 @@
 	          break;
 
 	        case 'doi':
-	          const doi = alphaNum((_item$fieldMap$get = item.fieldMap.get('doi')) === null || _item$fieldMap$get === void 0 ? void 0 : _item$fieldMap$get.value);
+	          const doi = alphaNum((_item$fieldMap$get$va = (_item$fieldMap$get = item.fieldMap.get('doi')) === null || _item$fieldMap$get === void 0 ? void 0 : _item$fieldMap$get.value) !== null && _item$fieldMap$get$va !== void 0 ? _item$fieldMap$get$va : '');
 	          if (!doi) continue;
 	          duplicateOf = dois.get(doi);
 	          if (!duplicateOf) dois.set(doi, item);
@@ -16878,7 +16946,7 @@
 	          break;
 
 	        case 'abstract':
-	          const abstract = alphaNum((_item$fieldMap$get4 = item.fieldMap.get('abstract')) === null || _item$fieldMap$get4 === void 0 ? void 0 : _item$fieldMap$get4.value);
+	          const abstract = alphaNum((_item$fieldMap$get$va2 = (_item$fieldMap$get4 = item.fieldMap.get('abstract')) === null || _item$fieldMap$get4 === void 0 ? void 0 : _item$fieldMap$get4.value) !== null && _item$fieldMap$get$va2 !== void 0 ? _item$fieldMap$get$va2 : '');
 	          const abs = abstract === null || abstract === void 0 ? void 0 : abstract.slice(0, 100);
 	          if (!abs) continue;
 	          duplicateOf = abstracts.get(abs);
@@ -16951,9 +17019,9 @@
 	        } else if (key === 'type') {
 	          val = item.type;
 	        } else {
-	          var _item$fieldMap$get$va, _item$fieldMap, _item$fieldMap$get5;
+	          var _item$fieldMap$get$va3, _item$fieldMap, _item$fieldMap$get5;
 
-	          val = String((_item$fieldMap$get$va = (_item$fieldMap = item.fieldMap) === null || _item$fieldMap === void 0 ? void 0 : (_item$fieldMap$get5 = _item$fieldMap.get(key)) === null || _item$fieldMap$get5 === void 0 ? void 0 : _item$fieldMap$get5.value) !== null && _item$fieldMap$get$va !== void 0 ? _item$fieldMap$get$va : '');
+	          val = (_item$fieldMap$get$va3 = (_item$fieldMap = item.fieldMap) === null || _item$fieldMap === void 0 ? void 0 : (_item$fieldMap$get5 = _item$fieldMap.get(key)) === null || _item$fieldMap$get5 === void 0 ? void 0 : _item$fieldMap$get5.value) !== null && _item$fieldMap$get$va3 !== void 0 ? _item$fieldMap$get$va3 : '';
 	        }
 
 	        sortIndex.set(key, val.toLowerCase());
@@ -17013,35 +17081,40 @@
 	        for (const k of sortedFieldNames) {
 	          const field = item.fieldMap.get(k);
 	          if (!field) continue;
-	          bibtex += "\n".concat(indent).concat(k.padEnd(align - 1), " = ");
-	          let val = field.value;
-	          const dig3 = String(val).slice(0, 3).toLowerCase();
 
-	          if (numeric && val.match(/^[1-9][0-9]*$/)) {
-	            bibtex += val;
-	          } else if (numeric && k === 'month' && MONTHS.has(dig3)) {
-	            bibtex += dig3;
-	          } else if (field.datatype === 'braced' || curly) {
-	            const lineLength = "".concat(indent).concat(align, "{").concat(val, "}").length;
-	            const multiLine = val.includes('\n\n');
+	          if (field.value === null) {
+	            bibtex += "\n".concat(indent).concat(k);
+	          } else {
+	            bibtex += "\n".concat(indent).concat(k.trim().padEnd(align - 1), " = ");
+	            let val = field.value;
+	            const dig3 = String(val).slice(0, 3).toLowerCase();
 
-	            if (wrap && lineLength > wrap || multiLine) {
-	              let paragraphs = val.split('\n\n');
-	              const valIndent = indent.repeat(2);
+	            if (numeric && val.match(/^[1-9][0-9]*$/)) {
+	              bibtex += val;
+	            } else if (numeric && k === 'month' && MONTHS.has(dig3)) {
+	              bibtex += dig3;
+	            } else if (field.datatype === 'braced' || curly) {
+	              const lineLength = "".concat(indent).concat(align, "{").concat(val, "}").length;
+	              const multiLine = val.includes('\n\n');
 
-	              if (wrap) {
-	                const wrapCol = wrap;
-	                paragraphs = paragraphs.map(paragraph => splitLines(paragraph, wrapCol - valIndent.length).join('\n' + valIndent));
+	              if (wrap && lineLength > wrap || multiLine) {
+	                let paragraphs = val.split('\n\n');
+	                const valIndent = indent.repeat(2);
+
+	                if (wrap) {
+	                  const wrapCol = wrap;
+	                  paragraphs = paragraphs.map(paragraph => splitLines(paragraph, wrapCol - valIndent.length).join('\n' + valIndent));
+	                }
+
+	                val = '\n' + valIndent + paragraphs.join("\n\n".concat(valIndent)) + '\n' + indent;
 	              }
 
-	              val = '\n' + valIndent + paragraphs.join("\n\n".concat(valIndent)) + '\n' + indent;
+	              bibtex += addEnclosingBraces(val);
+	            } else if (field.datatype === 'quoted') {
+	              bibtex += "\"".concat(val, "\"");
+	            } else {
+	              bibtex += val;
 	            }
-
-	            bibtex += "{".concat(val, "}");
-	          } else if (field.datatype === 'quoted') {
-	            bibtex += "\"".concat(val, "\"");
-	          } else {
-	            bibtex += val;
 	          }
 
 	          const isLast = ++i === item.fieldMap.size;
@@ -17519,6 +17592,7 @@
 	    escape: options.escape.checked,
 	    trailingCommas: options.trailingCommas.checked,
 	    removeEmptyFields: options.removeEmptyFields.checked,
+	    removeDuplicateFields: options.removeDuplicateFields.checked,
 	    lowercase: options.lowercase.checked,
 	    maxAuthors: options.maxAuthors.checked ? Number(options.maxAuthorsNum.value) : undefined
 	  };
@@ -17544,6 +17618,7 @@
 	    duplicates: true,
 	    trailingCommas: true,
 	    removeEmptyFields: true,
+	    removeDuplicateFields: true,
 	    lowercase: true,
 	    enclosingBraces: true,
 	    wrap: true

@@ -217,8 +217,17 @@ function parseArguments(): Arguments {
 			case '--trailing-commas':
 				options.trailingCommas = true;
 				break;
+			case '--remove-duplicate-fields':
+				options.removeDuplicateFields = true;
+				break;
+			case '--no-remove-duplicate-fields':
+				options.removeDuplicateFields = false;
+				break;
 			case '--remove-empty-fields':
 				options.removeEmptyFields = true;
+				break;
+			case '--no-remove-empty-fields':
+				options.removeEmptyFields = false;
 				break;
 			case '--max-authors':
 				options.maxAuthors = valStr ? Number(valStr) : nextNumber();
@@ -253,7 +262,7 @@ function start(): void {
 	const { inputFiles, options } = parseArguments();
 	if (inputFiles.length === 0 || options.help) {
 		printHelp();
-		process.exit(1);
+		process.exit(0);
 	}
 	if (options.quiet) {
 		console.log = () => {};

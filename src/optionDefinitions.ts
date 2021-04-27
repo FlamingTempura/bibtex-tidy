@@ -190,6 +190,17 @@
     "deprecated": false
   },
   {
+    "key": "removeDuplicateFields",
+    "cli": "remove-duplicate-fields",
+    "description": "Remove duplicate fields - Only allow one of each field in each entry.",
+    "examples": [
+      "--remove-empty-fields (default)",
+      "--no-remove-empty-fields"
+    ],
+    "type": "boolean",
+    "deprecated": false
+  },
+  {
     "key": "maxAuthors",
     "cli": "max-authors",
     "description": "Maximum authors - Truncate authors if above a given number into \"and others\".",
