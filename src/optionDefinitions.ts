@@ -6,7 +6,12 @@ export type OptionDefinition = {
 	examples?: string[];
 	type: string;
 	deprecated?: boolean;
+	defaultValue?: unknown;
+	valueIfTrue?: unknown;
+	valueIfFalse?: unknown;
 };
+
+const DEFAULT_MERGE_CHECK: string[] = ['doi', 'citation', 'abstract'];
 
 export const optionDefinitions: OptionDefinition[] = [
 	{
@@ -22,6 +27,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		description: ['Remove specified fields from bibliography entries.'],
 		examples: ['--omit=id,name'],
 		type: 'string[]',
+		defaultValue: [],
 	},
 	{
 		key: 'curly',
@@ -30,8 +36,8 @@ export const optionDefinitions: OptionDefinition[] = [
 		description: [
 			'Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.',
 		],
-
 		type: 'boolean',
+		defaultValue: false,
 	},
 	{
 		key: 'numeric',
@@ -40,8 +46,8 @@ export const optionDefinitions: OptionDefinition[] = [
 		description: [
 			'Strip quotes and braces from numeric/month values. For example, {1998} will become 1998.',
 		],
-
 		type: 'boolean',
+		defaultValue: false,
 	},
 	{
 		key: 'space',
@@ -52,14 +58,16 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		examples: ['--space=2 (default)', '--space=4'],
 		type: 'boolean | number',
+		valueIfTrue: 2,
+		defaultValue: 2,
 	},
 	{
 		key: 'tab',
 		cli: 'tab',
 		title: 'Indent with tabs',
 		description: ['Prefix all fields with a tab.'],
-
 		type: 'boolean',
+		defaultValue: false,
 	},
 	{
 		key: 'align',
@@ -70,6 +78,8 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		examples: ['--align=14 (default)', '--no-align'],
 		type: 'boolean | number',
+		valueIfFalse: 1,
+		defaultValue: 14,
 	},
 	{
 		key: 'sort',
@@ -84,6 +94,7 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--sort=name,year',
 		],
 		type: 'boolean | string[]',
+		valueIfTrue: ['key'],
 	},
 	{
 		key: 'duplicates',
@@ -104,6 +115,9 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--duplicates doi, key (warn if DOI or keys are identical)',
 		],
 		type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
+		valueIfTrue: DEFAULT_MERGE_CHECK,
+		defaultValue: (options: any) =>
+			options.merge ? DEFAULT_MERGE_CHECK : undefined,
 	},
 	{
 		key: 'merge',
@@ -116,8 +130,8 @@ export const optionDefinitions: OptionDefinition[] = [
 			'- combine: keep original entry and merge in fields of duplicates if they do not already exist',
 			'- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist',
 		],
-
 		type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
+		valueIfTrue: 'combine',
 	},
 	{
 		key: 'stripEnclosingBraces',
@@ -126,8 +140,8 @@ export const optionDefinitions: OptionDefinition[] = [
 		description: [
 			'Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}.',
 		],
-
 		type: 'boolean',
+		defaultValue: false,
 	},
 	{
 		key: 'dropAllCaps',
@@ -136,8 +150,8 @@ export const optionDefinitions: OptionDefinition[] = [
 		description: [
 			'Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.',
 		],
-
 		type: 'boolean',
+		defaultValue: false,
 	},
 	{
 		key: 'escape',
@@ -148,6 +162,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		examples: ['--escape (default)', '--no-escape'],
 		type: 'boolean',
+		defaultValue: true,
 	},
 	{
 		key: 'sortFields',
@@ -158,13 +173,19 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		examples: ['--sort-fields=name,author'],
 		type: 'boolean | string[]',
+		//prettier-ignore
+		valueIfTrue: [
+			'title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal',
+			'booktitle', 'location', 'on', 'publisher', 'address', 'series',
+			'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url',
+			'urldate', 'copyright', 'category', 'note', 'metadata'
+		],
 	},
 	{
 		key: 'sortProperties',
 		cli: 'sort-properties',
 		title: 'Sort properties',
 		description: ['Alias of sort fields (legacy)'],
-
 		type: 'boolean | string[]',
 		deprecated: true,
 	},
@@ -173,16 +194,16 @@ export const optionDefinitions: OptionDefinition[] = [
 		cli: 'strip-comments',
 		title: 'Remove comments',
 		description: ['Remove all comments from the bibtex source'],
-
 		type: 'boolean',
+		defaultValue: false,
 	},
 	{
 		key: 'trailingCommas',
 		cli: 'trailing-commas',
 		title: 'Trailing commas',
 		description: ['End the last key value pair in each entry with a comma'],
-
 		type: 'boolean',
+		defaultValue: false,
 	},
 	{
 		key: 'encodeUrls',
@@ -191,24 +212,24 @@ export const optionDefinitions: OptionDefinition[] = [
 		description: [
 			'Replace invalid URL characters with percent encoded values.',
 		],
-
 		type: 'boolean',
+		defaultValue: false,
 	},
 	{
 		key: 'tidyComments',
 		cli: 'tidy-comments',
 		title: 'Tidy comments',
 		description: ['Remove whitespace surrounding'],
-
 		type: 'boolean',
+		defaultValue: true,
 	},
 	{
 		key: 'removeEmptyFields',
 		cli: 'remove-empty-fields',
 		title: 'Remove empty fields',
 		description: ['Remove any fields that have empty values'],
-
 		type: 'boolean',
+		defaultValue: false,
 	},
 	{
 		key: 'removeDuplicateFields',
@@ -217,6 +238,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		description: ['Only allow one of each field in each entry.'],
 		examples: ['--remove-empty-fields (default)', '--no-remove-empty-fields'],
 		type: 'boolean',
+		defaultValue: true,
 	},
 	{
 		key: 'maxAuthors',
@@ -225,7 +247,6 @@ export const optionDefinitions: OptionDefinition[] = [
 		description: [
 			'Truncate authors if above a given number into "and others".',
 		],
-
 		type: 'number',
 	},
 	{
@@ -234,6 +255,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		title: 'Lowercase field names and entry type',
 		examples: ['--lowercase (default)', '--no-lowercase (keep original case)'],
 		type: 'boolean',
+		defaultValue: true,
 	},
 	{
 		key: 'enclosingBraces',
@@ -247,6 +269,7 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--enclosing-braces (equivalent to ---enclosing-braces=title)',
 		],
 		type: 'boolean | string[]',
+		valueIfTrue: ['title'],
 	},
 	{
 		key: 'wrap',
@@ -255,13 +278,13 @@ export const optionDefinitions: OptionDefinition[] = [
 		description: ['Wrap long values at the given column'],
 		examples: ['--wrap (80 by default)', '--wrap=82'],
 		type: 'boolean | number',
+		valueIfTrue: 80,
 	},
 	{
 		key: 'quiet',
 		cli: 'quiet',
 		title: 'Quiet',
 		description: ['Suppress logs and warnings.'],
-
 		type: 'boolean',
 	},
 	{
