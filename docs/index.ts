@@ -1,7 +1,7 @@
 import CodeMirror from 'codemirror';
-import { OptionDoc } from '../src/documentation';
 import bibtexTidy, { BibTeXTidyResult } from '../src/index';
-import { normalizeOptions, Options, UniqueKey } from '../src/options';
+import { optionDefinitions, OptionDefinition } from '../src/optionDefinitions';
+import { normalizeOptions, Options, UniqueKey } from '../src/optionUtils';
 import './bibtex-highlighting';
 
 function $<T extends HTMLElement>(selector: string, parent?: ParentNode) {
@@ -34,8 +34,8 @@ const cmEditor = CodeMirror.fromTextArea($('#editor textarea'), {
 });
 let errorHighlight: CodeMirror.TextMarker | undefined;
 
-const optionDocs: Record<string, OptionDoc> = {};
-for (const option of bibtexTidy.options) {
+const optionDocs: Record<string, OptionDefinition> = {};
+for (const option of optionDefinitions) {
 	optionDocs[option.key] = option;
 }
 
@@ -43,9 +43,9 @@ for (let $label of $$('label[data-option]')) {
 	const key = $label.dataset.option!;
 	const option = optionDocs[key];
 	const $input = $label.querySelector('input');
-	const [name, description] = option.description.split(' - ');
-	if (description) $label.setAttribute('title', description);
-	$label.querySelector('.name')!.textContent = name;
+	if (option.description)
+		$label.setAttribute('title', option.description.join('\n'));
+	$label.querySelector('.name')!.textContent = option.title;
 	if (!$input!.getAttribute('name')) {
 		$input!.setAttribute('name', key);
 	}

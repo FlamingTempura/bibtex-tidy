@@ -1,5 +1,4 @@
-import { optionDocs } from './documentation';
-import { Options, normalizeOptions, UniqueKey } from './options';
+import { Options, normalizeOptions, UniqueKey } from './optionUtils';
 import { parse, BibTeXItem, BibTeXEntry, ValueString } from './bibtex-parser';
 import {
 	titleCase,
@@ -416,6 +415,6 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 	return { bibtex, warnings, entries };
 }
 
-export default { tidy, options: optionDocs };
+export default { tidy };
 
 export type { Warning, BibTeXTidyResult };

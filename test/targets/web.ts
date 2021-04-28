@@ -2,7 +2,7 @@ import {
 	normalizeOptions,
 	Options,
 	OptionsNormalized,
-} from '../../src/options';
+} from '../../src/optionUtils';
 import { BibTeXTidyResult, Warning } from '../../src/index';
 import puppeteer, { JSONObject } from 'puppeteer';
 import { join } from 'path';

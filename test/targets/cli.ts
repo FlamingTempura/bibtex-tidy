@@ -1,7 +1,7 @@
 import fs, { mkdirSync } from 'fs';
 import path, { join } from 'path';
 import { spawnSync } from 'child_process';
-import { CLIOptions, Options } from '../../src/options';
+import { CLIOptions, Options } from '../../src/optionUtils';
 import { Warning } from '../../src/index';
 import { BibTeXItem } from '../../src/bibtex-parser';
 

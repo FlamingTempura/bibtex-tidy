@@ -1,9 +1,9 @@
-import { optionDocs } from './documentation';
 import tidy from './index';
 import { readFileSync, writeFileSync } from 'fs';
 import process from 'process';
-import { CLIOptions, MergeStrategy, UniqueKey } from './options';
+import { CLIOptions, MergeStrategy, UniqueKey } from './optionUtils';
 import { splitLines, fromCamelCase } from './utils';
+import { optionDefinitions } from './optionDefinitions';
 
 type Arguments = {
 	inputFiles: string[];
@@ -17,11 +17,17 @@ function printHelp(): void {
 	console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
 	console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.\n');
 	console.log('Options:');
-	for (const opt of optionDocs) {
+	for (const opt of optionDefinitions) {
 		if (opt.deprecated) continue;
-		const lines = opt.description
-			.split('\n')
-			.flatMap((line) => splitLines(line, BREAK_LINE - LEFT_MARGIN));
+
+		const description = [opt.title];
+		if (opt.description) {
+			description[0] += ' - ' + opt.description[0];
+			description.push(...opt.description.slice(1));
+		}
+		const lines = description.flatMap((line) =>
+			splitLines(line, BREAK_LINE - LEFT_MARGIN)
+		);
 		if (opt.examples && opt.examples.length > 0) {
 			const margin = BREAK_LINE - LEFT_MARGIN;
 			lines.push(
@@ -38,8 +44,8 @@ function printHelp(): void {
 				if (opt.type === 'array') keyval += '=x,y,z';
 				if (opt.type === 'number') keyval += '=NUMBER';
 				prefix = `  --${keyval}`.padEnd(LEFT_MARGIN, ' ');
-			} else if (i === 1 && opt.default === true) {
-				prefix = `  --no-${opt.key}`.padEnd(LEFT_MARGIN, ' ');
+				// } else if (i === 1 && opt.default === true) {
+				// 	prefix = `  --no-${opt.key}`.padEnd(LEFT_MARGIN, ' ');
 			} else {
 				prefix = ' '.repeat(LEFT_MARGIN);
 			}
