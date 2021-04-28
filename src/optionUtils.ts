@@ -1,4 +1,4 @@
-import { Options as AllOptions } from './optionsType';
+import { Options as AllOptions } from './__generated__/optionsType';
 
 export type CLIOptions = AllOptions;
 

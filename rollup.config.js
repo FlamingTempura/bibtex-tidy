@@ -1,7 +1,7 @@
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import { version } from './package.json';
-import fs, { readFileSync, writeFileSync } from 'fs';
+import fs, { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { builtinModules } from 'module';
 import babel from '@rollup/plugin-babel';
@@ -11,6 +11,9 @@ import esbuild from 'esbuild';
 const extensions = ['.ts', '.js'];
 
 const SRC_PATH = join(__dirname, 'src');
+const BUILD_PATH = join(SRC_PATH, '__generated__');
+
+mkdirSync(BUILD_PATH, { recursive: true });
 
 const banner = `/**
  * bibtex-tidy v${version}
@@ -23,7 +26,7 @@ const banner = `/**
 const peg = readFileSync(join(SRC_PATH, 'bibtex.pegjs'), 'utf8');
 const parser = pegjs.generate(peg, { output: 'source' });
 writeFileSync(
-	join(SRC_PATH, 'bibtex.pegjs.js'),
+	join(BUILD_PATH, 'bibtex.pegjs.js'),
 	banner + '\nexport default ' + parser
 );
 
@@ -57,7 +60,7 @@ function generateOptionTypes() {
 	ts.push('};');
 	ts.push('');
 
-	writeFileSync(join(SRC_PATH, 'optionsType.ts'), ts.join('\n'));
+	writeFileSync(join(BUILD_PATH, 'optionsType.ts'), ts.join('\n'));
 }
 
 generateOptionTypes();

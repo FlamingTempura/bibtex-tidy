@@ -1,5 +1,5 @@
 //@ts-ignore
-import bibtexParser from './bibtex.pegjs.js';
+import bibtexParser from './__generated__/bibtex.pegjs.js';
 
 type BibTexField = { name: string; raw: string } & (
 	| { datatype: 'quoted' | 'braced'; value: string }
