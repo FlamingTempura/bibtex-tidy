@@ -1,4 +1,4 @@
-import { CLIOptions } from '../src/options';
+import { CLIOptions } from '../src/optionUtils';
 import { CLIResult, testCLI } from './targets/cli';
 import { APIResult, testAPI } from './targets/api';
 import { testWeb, WebResult, teardown } from './targets/web';

@@ -1,4 +1,4 @@
-import { Options } from '../../src/options';
+import { Options } from '../../src/optionUtils';
 import { BibTeXTidyResult } from '../../src/index';
 
 // require the actual build. Using import would cause it to bundled into the

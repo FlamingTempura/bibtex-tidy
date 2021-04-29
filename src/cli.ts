@@ -1,7 +1,7 @@
 import tidy from './index';
 import { readFileSync, writeFileSync } from 'fs';
 import process from 'process';
-import { splitLines } from './utils';
+import { wrapText } from './utils';
 import { optionDefinitions } from './optionDefinitions';
 import { parseArguments } from './cliUtils';
 
@@ -28,7 +28,7 @@ function printHelp(): void {
 		}
 
 		const rightColumn = desc.flatMap((line) =>
-			splitLines(line, LINE_WIDTH - LEFT_COLUMN_WIDTH)
+			wrapText(line, LINE_WIDTH - LEFT_COLUMN_WIDTH)
 		);
 
 		for (let i = 0; i < Math.max(rightColumn.length, leftColumn.length); i++) {

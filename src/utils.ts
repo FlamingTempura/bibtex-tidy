@@ -38,24 +38,21 @@ export function alphaNum(str?: string): string | undefined {
 		.toLocaleLowerCase();
 }
 
-export function splitLines(line: string, limit: number): string[] {
-	const words = line.split(' ');
-	const lines = [''];
-	for (const word of words) {
-		if (lines[lines.length - 1].length + word.length + 1 > limit)
-			lines.push('');
-		lines[lines.length - 1] += word + ' ';
-	}
-	return lines.map((line) => line.trim());
-}
-
-export function fromCamelCase(str: string): string {
-	return str.replace(/[A-Z]/g, (c: string) => '-' + c.toLowerCase());
-}
-
 /** Normalize new lines. Convert CR/CRLF to LF. */
 export function convertCRLF(str: string): string {
 	return str.replace(/\r\n?/g, '\n');
+}
+
+export function wrapText(line: string, lineWidth: number): string[] {
+	const words: string[] = line.split(' ');
+	const lines: string[] = [''];
+	for (const word of words) {
+		if (lines[lines.length - 1].length + word.length + 1 > lineWidth) {
+			lines.push('');
+		}
+		lines[lines.length - 1] += word + ' ';
+	}
+	return lines.map((line) => line.trim());
 }
 
 /**

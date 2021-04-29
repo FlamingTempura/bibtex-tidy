@@ -4,7 +4,7 @@ import {
 	titleCase,
 	escapeSpecialCharacters,
 	alphaNum,
-	splitLines,
+	wrapText,
 	convertCRLF,
 	unwrapText,
 	addEnclosingBraces,
@@ -374,7 +374,7 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 								if (wrap) {
 									const wrapCol = wrap;
 									paragraphs = paragraphs.map((paragraph) =>
-										splitLines(paragraph, wrapCol - valIndent.length).join(
+										wrapText(paragraph, wrapCol - valIndent.length).join(
 											'\n' + valIndent
 										)
 									);

@@ -13,7 +13,7 @@
 		"paths": {
 			"*": ["../node_modules/*"]
 		},
-		"rootDir": "./src"
+		"rootDir": "./"
 	},
-	"include": ["./src/*", "./test/*"]
+	"include": ["./src/*", "./test/*", "./docs/*"]
 }
