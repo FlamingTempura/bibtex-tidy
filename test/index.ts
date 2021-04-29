@@ -50,5 +50,5 @@ import './strip-comments.spec';
 import './strip-double-brace.spec';
 import './trailing-commas.spec';
 import './wrap.spec';
-
+import './utils.spec';
 import './valid-bibs.spec';

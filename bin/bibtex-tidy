@@ -9,11 +9,11 @@
 'use strict';
 
 var fs = require('fs');
-var process = require('process');
+var process$1 = require('process');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var process__default = /*#__PURE__*/_interopDefaultLegacy(process);
+var process__default = /*#__PURE__*/_interopDefaultLegacy(process$1);
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -196,18 +196,27 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
   };
 }
 
-var DEFAULT_ENTRY_ORDER = ['key'];
 var DEFAULT_MERGE_CHECK = ['doi', 'citation', 'abstract'];
-var DEFAULT_FIELD_ORDER = ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'];
-var DEFAULT_ENCLOSING_BRACES_FIELDS = ['title'];
 var optionDefinitions = [{
   key: 'help',
-  cli: 'help',
+  cli: {
+    '--help': true,
+    '-h': true
+  },
   title: 'Show help',
   type: 'boolean'
 }, {
   key: 'omit',
-  cli: 'omit',
+  cli: {
+    '--omit': function omit(args) {
+      if (args.length === 0) {
+        console.error(`Expected a omit list`);
+        process.exit(1);
+      }
+
+      return args;
+    }
+  },
   title: 'Remove fields',
   description: ['Remove specified fields from bibliography entries.'],
   examples: ['--omit=id,name'],
@@ -215,21 +224,31 @@ var optionDefinitions = [{
   defaultValue: []
 }, {
   key: 'curly',
-  cli: 'curly',
+  cli: {
+    '--curly': true,
+    '--no-curly': false
+  },
   title: 'Enclose values in braces',
   description: ['Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'],
   type: 'boolean',
   defaultValue: false
 }, {
   key: 'numeric',
-  cli: 'numeric',
+  cli: {
+    '--numeric': true,
+    '--no-numeric': false
+  },
   title: 'Use numeric values where possible',
   description: ['Strip quotes and braces from numeric/month values. For example, {1998} will become 1998.'],
   type: 'boolean',
   defaultValue: false
 }, {
   key: 'space',
-  cli: 'space',
+  cli: {
+    '--space': function space(args) {
+      return args.length > 0 ? Number(args[0]) : true;
+    }
+  },
   title: 'Indent with spaces',
   description: ['Prefix all fields with the specified number of spaces (ignored if tab is set).'],
   examples: ['--space=2 (default)', '--space=4'],
@@ -238,14 +257,22 @@ var optionDefinitions = [{
   defaultValue: 2
 }, {
   key: 'tab',
-  cli: 'tab',
+  cli: {
+    '--tab': true,
+    '--no-tab': false
+  },
   title: 'Indent with tabs',
   description: ['Prefix all fields with a tab.'],
   type: 'boolean',
   defaultValue: false
 }, {
   key: 'align',
-  cli: 'align',
+  cli: {
+    '--align': function align(args) {
+      return Number(args[0]);
+    },
+    '--no-align': false
+  },
   title: 'Align values',
   description: ['Insert whitespace between fields and values so that values are visually aligned.'],
   examples: ['--align=14 (default)', '--no-align'],
@@ -254,15 +281,44 @@ var optionDefinitions = [{
   defaultValue: 14
 }, {
   key: 'sort',
-  cli: 'sort',
+  cli: {
+    '--sort': function sort(args) {
+      return args.length > 0 ? args : true;
+    },
+    '--no-sort': false
+  },
   title: 'Sort bibliography entries',
   description: ['Sort entries by specified fields. For descending order, prefix the field with a dash (-).'],
   examples: ['--sort (sort by id)', '--sort=-year,name (sort year descending then name ascending)', '--sort=name,year'],
   type: 'boolean | string[]',
-  valueIfTrue: DEFAULT_ENTRY_ORDER
+  valueIfTrue: ['key']
 }, {
   key: 'duplicates',
-  cli: 'duplicates',
+  cli: {
+    '--duplicates': function duplicates(args) {
+      if (!args) return true;
+
+      var _iterator = _createForOfIteratorHelper(args),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var i = _step.value;
+
+          if (i !== 'doi' && i !== 'key' && i !== 'abstract' && i !== 'citation') {
+            console.error(`Invalid key for merge option: "${i}"`);
+            process.exit(1);
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      return args;
+    }
+  },
   title: 'Check for duplicates',
   description: ['If there are duplicates, output warnings. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases:', '- their DOIs are identical,', '- their abstracts are identical, or', '- their authors and titles are both identical. The first-most entry is kept and any extra properties from duplicate entries are incorporated.'],
   examples: ['--duplicates (warn if sharing doi, key, abstract, or citation)', '--duplicates doi (warn if DOIs are identical)', '--duplicates key (warn if IDs are identical)', '--duplicates abstract (warn if abstracts are similar)', '--duplicates citation (warn if author and titles are similar)', '--duplicates doi, key (warn if DOI or keys are identical)'],
@@ -273,28 +329,47 @@ var optionDefinitions = [{
   }
 }, {
   key: 'merge',
-  cli: 'merge',
+  cli: {
+    '--merge': function merge(args) {
+      if (args.length === 0) return true;
+
+      if (args[0] !== 'first' && args[0] !== 'last' && args[0] !== 'combine' && args[0] !== 'overwrite') {
+        console.error(`Invalid merge strategy: "${args[0]}"`);
+        process.exit(1);
+      }
+
+      return args[0];
+    },
+    '--no-merge': false
+  },
   title: 'Merge duplicate entries',
   description: ['Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge:', '- first: only keep the original entry', '- last: only keep the last found duplicate', '- combine: keep original entry and merge in fields of duplicates if they do not already exist', '- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist'],
   type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
   valueIfTrue: 'combine'
 }, {
   key: 'stripEnclosingBraces',
-  cli: 'strip-enclosing-braces',
+  cli: {
+    '--strip-enclosing-braces': true
+  },
   title: 'Strip double-braced values',
   description: ['Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}.'],
   type: 'boolean',
   defaultValue: false
 }, {
   key: 'dropAllCaps',
-  cli: 'drop-all-caps',
+  cli: {
+    '--drop-all-caps': true
+  },
   title: 'Drop all caps',
   description: ['Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.'],
   type: 'boolean',
   defaultValue: false
 }, {
   key: 'escape',
-  cli: 'escape',
+  cli: {
+    '--escape': true,
+    '--no-escape': false
+  },
   title: 'Escape special characters',
   description: ['Escape special characters, such as umlaut. This ensures correct typesetting with latex.'],
   examples: ['--escape (default)', '--no-escape'],
@@ -302,57 +377,84 @@ var optionDefinitions = [{
   defaultValue: true
 }, {
   key: 'sortFields',
-  cli: 'sort-fields',
+  cli: {
+    '--sort-fields': function sortFields(args) {
+      return args.length > 0 ? args : true;
+    }
+  },
   title: 'Sort fields',
   description: ['Sort the fields within entries. If sort-fields is specified without fields, fields will be sorted as follows: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively, you can specify field names delimited by spaces or commas.'],
   examples: ['--sort-fields=name,author'],
   type: 'boolean | string[]',
-  valueIfTrue: DEFAULT_FIELD_ORDER
+  valueIfTrue: ['title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal', 'booktitle', 'location', 'on', 'publisher', 'address', 'series', 'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url', 'urldate', 'copyright', 'category', 'note', 'metadata'],
+  defaultValue: false
 }, {
   key: 'sortProperties',
-  cli: 'sort-properties',
+  cli: {
+    '--sort-properties': function sortProperties(args) {
+      return args.length > 0 ? args : true;
+    }
+  },
   title: 'Sort properties',
   description: ['Alias of sort fields (legacy)'],
   type: 'boolean | string[]',
   deprecated: true
 }, {
   key: 'stripComments',
-  cli: 'strip-comments',
+  cli: {
+    '--strip-comments': true,
+    '--no-strip-comments': false
+  },
   title: 'Remove comments',
   description: ['Remove all comments from the bibtex source'],
   type: 'boolean',
   defaultValue: false
 }, {
   key: 'trailingCommas',
-  cli: 'trailing-commas',
+  cli: {
+    '--trailing-commas': true,
+    '--no-trailing-commas': true
+  },
   title: 'Trailing commas',
   description: ['End the last key value pair in each entry with a comma'],
   type: 'boolean',
   defaultValue: false
 }, {
   key: 'encodeUrls',
-  cli: 'encode-urls',
+  cli: {
+    '--encode-urls': true,
+    '--no-encode-urls': true
+  },
   title: 'Encode URLs',
   description: ['Replace invalid URL characters with percent encoded values.'],
   type: 'boolean',
   defaultValue: false
 }, {
   key: 'tidyComments',
-  cli: 'tidy-comments',
+  cli: {
+    '--tidy-comments': true,
+    '--no-tidy-comments': false
+  },
   title: 'Tidy comments',
   description: ['Remove whitespace surrounding'],
   type: 'boolean',
   defaultValue: true
 }, {
   key: 'removeEmptyFields',
-  cli: 'remove-empty-fields',
+  cli: {
+    '--remove-empty-fields': true,
+    '--no-remove-empty-fields': false
+  },
   title: 'Remove empty fields',
   description: ['Remove any fields that have empty values'],
   type: 'boolean',
   defaultValue: false
 }, {
   key: 'removeDuplicateFields',
-  cli: 'remove-duplicate-fields',
+  cli: {
+    '--remove-duplicate-fields': true,
+    '--no-remove-duplicate-fields': false
+  },
   title: 'Remove duplicate fields',
   description: ['Only allow one of each field in each entry.'],
   examples: ['--remove-empty-fields (default)', '--no-remove-empty-fields'],
@@ -360,28 +462,43 @@ var optionDefinitions = [{
   defaultValue: true
 }, {
   key: 'maxAuthors',
-  cli: 'max-authors',
+  cli: {
+    '--max-authors': function maxAuthors(args) {
+      return Number(args[0]);
+    }
+  },
   title: 'Maximum authors',
   description: ['Truncate authors if above a given number into "and others".'],
   type: 'number'
 }, {
   key: 'lowercase',
-  cli: 'lowercase',
+  cli: {
+    '--no-lowercase': false
+  },
   title: 'Lowercase field names and entry type',
   examples: ['--lowercase (default)', '--no-lowercase (keep original case)'],
   type: 'boolean',
   defaultValue: true
 }, {
   key: 'enclosingBraces',
-  cli: 'enclosing-braces',
+  cli: {
+    '--enclosing-braces': function enclosingBraces(args) {
+      return args.length > 0 ? args : true;
+    }
+  },
   title: 'Enclose values in double braces',
   description: ['Enclose the given fields in double braces, such that case is preserved during BibTeX compilation.'],
   examples: ['--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})', '--enclosing-braces (equivalent to ---enclosing-braces=title)'],
   type: 'boolean | string[]',
-  valueIfTrue: DEFAULT_ENCLOSING_BRACES_FIELDS
+  valueIfTrue: ['title']
 }, {
   key: 'wrap',
-  cli: 'wrap',
+  cli: {
+    '--wrap': function wrap(args) {
+      return args.length > 0 ? Number(args[0]) : true;
+    },
+    '--no-wrap': false
+  },
   title: 'Wrap values',
   description: ['Wrap long values at the given column'],
   examples: ['--wrap (80 by default)', '--wrap=82'],
@@ -389,17 +506,23 @@ var optionDefinitions = [{
   valueIfTrue: 80
 }, {
   key: 'quiet',
-  cli: 'quiet',
+  cli: {
+    '--quiet': true
+  },
   title: 'Quiet',
   description: ['Suppress logs and warnings.'],
   type: 'boolean'
 }, {
   key: 'backup',
-  cli: 'backup',
+  cli: {
+    '--backup': true,
+    '--no-backup': false
+  },
   title: 'Backup',
   description: ['Make a backup <filename>.original'],
   examples: ['--backup (default)', '--no-backup (do not create a backup)'],
-  type: 'boolean'
+  type: 'boolean',
+  defaultValue: true
 }];
 
 function normalizeOptions(options) {
@@ -3748,6 +3871,106 @@ var tidy$1 = {
   tidy
 };
 
+var OPTIONS = new Set(optionDefinitions.flatMap(function (def) {
+  return Object.keys(def.cli);
+}));
+
+function isOption(arg) {
+  var argName = arg.split('=')[0];
+  if (OPTIONS.has(argName)) return true;
+  if (argName.startsWith('--')) throw new Error(`Invalid option ${argName}`);
+  return false;
+}
+
+function parseArguments(args) {
+  var _splitCLIArgs = splitCLIArgs(args),
+      inputFiles = _splitCLIArgs.inputFiles,
+      optionArgs = _splitCLIArgs.optionArgs;
+
+  var options = {};
+
+  var _iterator = _createForOfIteratorHelper(optionDefinitions),
+      _step;
+
+  try {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var def = _step.value;
+
+      for (var _i = 0, _Object$entries = Object.entries(def.cli); _i < _Object$entries.length; _i++) {
+        var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+            opt = _Object$entries$_i[0],
+            val = _Object$entries$_i[1];
+
+        if (!optionArgs[opt]) continue;
+        var key = def.key;
+
+        if (typeof val === 'function') {
+          options[key] = val(optionArgs[opt]);
+        } else {
+          options[key] = val;
+        }
+      }
+    }
+  } catch (err) {
+    _iterator.e(err);
+  } finally {
+    _iterator.f();
+  }
+
+  return {
+    inputFiles,
+    options
+  };
+}
+function splitCLIArgs(args) {
+  if (args[0] && isOption(args[0])) {
+    var i = args.length - _toConsumableArray(args).reverse().findIndex(isOption);
+
+    return {
+      inputFiles: args.slice(i),
+      optionArgs: groupCLIOptions(args.slice(0, i))
+    };
+  } else {
+    var _i2 = args.findIndex(isOption);
+
+    return {
+      inputFiles: _i2 === -1 ? args : args.slice(0, _i2),
+      optionArgs: groupCLIOptions(_i2 === -1 ? [] : args.slice(_i2))
+    };
+  }
+}
+function groupCLIOptions(args) {
+  var groups = {};
+  var currOption;
+  args = args.flatMap(function (arg) {
+    return arg.split(/[=,]/);
+  });
+
+  var _iterator2 = _createForOfIteratorHelper(args),
+      _step2;
+
+  try {
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var arg = _step2.value;
+
+      if (isOption(arg)) {
+        currOption = arg;
+        groups[currOption] = [];
+      } else if (currOption) {
+        groups[currOption].push(arg);
+      } else {
+        throw new Error(`Invalid args: ${args.join(' ')}`);
+      }
+    }
+  } catch (err) {
+    _iterator2.e(err);
+  } finally {
+    _iterator2.f();
+  }
+
+  return groups;
+}
+
 var BREAK_LINE = 84;
 var LEFT_MARGIN = 27;
 
@@ -3811,268 +4034,8 @@ function printHelp() {
   console.log('Full documentation <https://github.com/FlamingTempura/bibtex-tidy>');
 }
 
-function parseArguments() {
-  var options = {
-    backup: true
-  };
-  var args = process__default['default'].argv.slice(2);
-  var inputFiles = [];
-
-  var nextNumber = function nextNumber() {
-    if (args.length === 1 && inputFiles.length === 0) return;
-    if (!args[0] || args[0].startsWith('--')) return;
-    return Number(args.shift());
-  };
-
-  var nextString = function nextString() {
-    if (args.length === 1 && inputFiles.length === 0) return;
-    if (!args[0] || args[0].startsWith('--')) return;
-    return args.shift();
-  };
-
-  var nextList = function nextList() {
-    if (args.length === 1 && inputFiles.length === 0) return;
-    if (!args[0] || args[0].startsWith('--')) return;
-    return [args.shift()].concat(_toConsumableArray(nextList() || []));
-  };
-
-  while (args.length > 0) {
-    var arg = args.shift();
-    var argName = arg.split('=')[0];
-    var valStr = arg.split('=')[1] || undefined;
-
-    switch (argName) {
-      case '--help':
-      case '-h':
-        options.help = true;
-        break;
-
-      case '--omit':
-        var omit = (valStr === null || valStr === void 0 ? void 0 : valStr.split(',')) || nextList();
-
-        if (!omit) {
-          console.error(`Expected a omit list`);
-          process__default['default'].exit(1);
-        }
-
-        options.omit = omit;
-        break;
-
-      case '--curly':
-        options.curly = true;
-        break;
-
-      case '--no-curly':
-        options.curly = false;
-        break;
-
-      case '--numeric':
-        options.numeric = true;
-        break;
-
-      case '--no-numeric':
-        options.numeric = true;
-        break;
-
-      case '--space':
-        options.space = valStr ? Number(valStr) : nextNumber();
-        break;
-
-      case '--tab':
-        options.tab = true;
-        break;
-
-      case '--no-tab':
-        options.tab = false;
-        break;
-
-      case '--align':
-        options.align = valStr ? Number(valStr) : nextNumber();
-        break;
-
-      case '--no-align':
-        options.align = false;
-        break;
-
-      case '--sort':
-        options.sort = valStr ? valStr.split(',') : nextList() || true;
-        break;
-
-      case '--no-sort':
-        options.sort = false;
-        break;
-
-      case '--duplicates':
-        var uniqs = (valStr === null || valStr === void 0 ? void 0 : valStr.split(',')) || nextList();
-
-        if (!uniqs) {
-          options.merge = true;
-        } else {
-          var _iterator2 = _createForOfIteratorHelper(uniqs),
-              _step2;
-
-          try {
-            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-              var i = _step2.value;
-
-              if (i !== 'doi' && i !== 'key' && i !== 'abstract' && i !== 'citation') {
-                console.error(`Invalid key for merge option: "${i}"`);
-                process__default['default'].exit(1);
-              }
-            }
-          } catch (err) {
-            _iterator2.e(err);
-          } finally {
-            _iterator2.f();
-          }
-
-          options.duplicates = valStr || uniqs;
-        }
-
-        break;
-
-      case '--no-merge':
-        options.merge = false;
-        break;
-
-      case '--merge':
-        var uniq = valStr || nextString();
-
-        if (!uniq) {
-          options.merge = true;
-        } else {
-          if (uniq !== 'first' && uniq !== 'last' && uniq !== 'combine' && uniq !== 'overwrite') {
-            console.error(`Invalid merge strategy: "${uniq}"`);
-            process__default['default'].exit(1);
-          }
-
-          options.merge = valStr || uniq;
-        }
-
-        break;
-
-      case '--enclosing-braces':
-        options.enclosingBraces = valStr ? valStr.split(',') : nextList() || true;
-        break;
-
-      case '--strip-enclosing-braces':
-        options.stripEnclosingBraces = true;
-        break;
-
-      case '--no-strip-enclosing-braces':
-        options.stripEnclosingBraces = true;
-        break;
-
-      case '--drop-all-caps':
-        options.dropAllCaps = true;
-        break;
-
-      case '--no-drop-all-caps':
-        options.dropAllCaps = false;
-        break;
-
-      case '--escape':
-        options.escape = true;
-        break;
-
-      case '--no-escape':
-        options.escape = false;
-        break;
-
-      case '--sort-fields':
-        options.sortFields = valStr ? valStr.split(',') : nextList() || true;
-        break;
-
-      case '--no-sort-fields':
-        options.sortFields = false;
-        break;
-
-      case '--strip-comments':
-        options.stripComments = true;
-        break;
-
-      case '--no-strip-comments':
-        options.stripComments = false;
-        break;
-
-      case '--encode-urls':
-        options.encodeUrls = true;
-        break;
-
-      case '--no-encode-urls':
-        options.encodeUrls = false;
-        break;
-
-      case '--tidy-comments':
-        options.tidyComments = true;
-        break;
-
-      case '--no-tidy-comments':
-        options.tidyComments = false;
-        break;
-
-      case '--trailing-commas':
-        options.trailingCommas = true;
-        break;
-
-      case '--remove-duplicate-fields':
-        options.removeDuplicateFields = true;
-        break;
-
-      case '--no-remove-duplicate-fields':
-        options.removeDuplicateFields = false;
-        break;
-
-      case '--remove-empty-fields':
-        options.removeEmptyFields = true;
-        break;
-
-      case '--no-remove-empty-fields':
-        options.removeEmptyFields = false;
-        break;
-
-      case '--max-authors':
-        options.maxAuthors = valStr ? Number(valStr) : nextNumber();
-        break;
-
-      case '--no-lowercase':
-        options.lowercase = false;
-        break;
-
-      case '--wrap':
-        options.wrap = valStr ? Number(valStr) : nextNumber();
-        break;
-
-      case '--backup':
-        options.backup = true;
-        break;
-
-      case '--no-backup':
-        options.backup = false;
-        break;
-
-      case '--quiet':
-        options.quiet = true;
-        break;
-
-      default:
-        if (argName.startsWith('--')) {
-          console.error(`No option "${argName}"`);
-          process__default['default'].exit(1);
-        }
-
-        inputFiles.push(arg);
-    }
-  }
-
-  return {
-    inputFiles,
-    options
-  };
-}
-
 function start() {
-  var _parseArguments = parseArguments(),
+  var _parseArguments = parseArguments(process__default['default'].argv.slice(2)),
       inputFiles = _parseArguments.inputFiles,
       options = _parseArguments.options;
 
@@ -4089,27 +4052,27 @@ function start() {
 
   console.log('Tidying...');
 
-  var _iterator3 = _createForOfIteratorHelper(inputFiles),
-      _step3;
+  var _iterator2 = _createForOfIteratorHelper(inputFiles),
+      _step2;
 
   try {
-    for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-      var inputFile = _step3.value;
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var inputFile = _step2.value;
       var bibtex = fs.readFileSync(inputFile, 'utf8');
       var result = tidy$1.tidy(bibtex, options);
 
-      var _iterator4 = _createForOfIteratorHelper(result.warnings),
-          _step4;
+      var _iterator3 = _createForOfIteratorHelper(result.warnings),
+          _step3;
 
       try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var warning = _step4.value;
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var warning = _step3.value;
           console.error(`${warning.code}: ${warning.message}`);
         }
       } catch (err) {
-        _iterator4.e(err);
+        _iterator3.e(err);
       } finally {
-        _iterator4.f();
+        _iterator3.f();
       }
 
       console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
@@ -4128,9 +4091,9 @@ function start() {
       fs.writeFileSync(inputFile, result.bibtex, 'utf8');
     }
   } catch (err) {
-    _iterator3.e(err);
+    _iterator2.e(err);
   } finally {
-    _iterator3.f();
+    _iterator2.f();
   }
 }
 

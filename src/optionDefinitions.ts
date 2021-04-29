@@ -1,6 +1,6 @@
 export type OptionDefinition = {
 	key: string;
-	cli: string;
+	cli: Record<string, boolean | ((args: string[]) => void)>;
 	title: string;
 	description?: string[];
 	examples?: string[];
@@ -16,13 +16,21 @@ const DEFAULT_MERGE_CHECK: string[] = ['doi', 'citation', 'abstract'];
 export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'help',
-		cli: 'help',
+		cli: { '--help': true, '-h': true },
 		title: 'Show help',
 		type: 'boolean',
 	},
 	{
 		key: 'omit',
-		cli: 'omit',
+		cli: {
+			'--omit': (args) => {
+				if (args.length === 0) {
+					console.error(`Expected a omit list`);
+					process.exit(1);
+				}
+				return args;
+			},
+		},
 		title: 'Remove fields',
 		description: ['Remove specified fields from bibliography entries.'],
 		examples: ['--omit=id,name'],
@@ -31,7 +39,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'curly',
-		cli: 'curly',
+		cli: { '--curly': true, '--no-curly': false },
 		title: 'Enclose values in braces',
 		description: [
 			'Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.',
@@ -41,7 +49,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'numeric',
-		cli: 'numeric',
+		cli: { '--numeric': true, '--no-numeric': false },
 		title: 'Use numeric values where possible',
 		description: [
 			'Strip quotes and braces from numeric/month values. For example, {1998} will become 1998.',
@@ -51,7 +59,9 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'space',
-		cli: 'space',
+		cli: {
+			'--space': (args) => (args.length > 0 ? Number(args[0]) : true),
+		},
 		title: 'Indent with spaces',
 		description: [
 			'Prefix all fields with the specified number of spaces (ignored if tab is set).',
@@ -63,7 +73,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'tab',
-		cli: 'tab',
+		cli: { '--tab': true, '--no-tab': false },
 		title: 'Indent with tabs',
 		description: ['Prefix all fields with a tab.'],
 		type: 'boolean',
@@ -71,7 +81,10 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'align',
-		cli: 'align',
+		cli: {
+			'--align': (args) => Number(args[0]),
+			'--no-align': false,
+		},
 		title: 'Align values',
 		description: [
 			'Insert whitespace between fields and values so that values are visually aligned.',
@@ -83,7 +96,10 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'sort',
-		cli: 'sort',
+		cli: {
+			'--sort': (args) => (args.length > 0 ? args : true),
+			'--no-sort': false,
+		},
 		title: 'Sort bibliography entries',
 		description: [
 			'Sort entries by specified fields. For descending order, prefix the field with a dash (-).',
@@ -98,7 +114,24 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'duplicates',
-		cli: 'duplicates',
+		cli: {
+			'--duplicates': (args) => {
+				if (!args) return true;
+
+				for (const i of args) {
+					if (
+						i !== 'doi' &&
+						i !== 'key' &&
+						i !== 'abstract' &&
+						i !== 'citation'
+					) {
+						console.error(`Invalid key for merge option: "${i}"`);
+						process.exit(1);
+					}
+				}
+				return args;
+			},
+		},
 		title: 'Check for duplicates',
 		description: [
 			'If there are duplicates, output warnings. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases:',
@@ -121,7 +154,23 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'merge',
-		cli: 'merge',
+		cli: {
+			'--merge': (args) => {
+				if (args.length === 0) return true;
+
+				if (
+					args[0] !== 'first' &&
+					args[0] !== 'last' &&
+					args[0] !== 'combine' &&
+					args[0] !== 'overwrite'
+				) {
+					console.error(`Invalid merge strategy: "${args[0]}"`);
+					process.exit(1);
+				}
+				return args[0];
+			},
+			'--no-merge': false,
+		},
 		title: 'Merge duplicate entries',
 		description: [
 			'Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge:',
@@ -135,7 +184,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'stripEnclosingBraces',
-		cli: 'strip-enclosing-braces',
+		cli: { '--strip-enclosing-braces': true },
 		title: 'Strip double-braced values',
 		description: [
 			'Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}.',
@@ -145,7 +194,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'dropAllCaps',
-		cli: 'drop-all-caps',
+		cli: { '--drop-all-caps': true },
 		title: 'Drop all caps',
 		description: [
 			'Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.',
@@ -155,7 +204,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'escape',
-		cli: 'escape',
+		cli: { '--escape': true, '--no-escape': false },
 		title: 'Escape special characters',
 		description: [
 			'Escape special characters, such as umlaut. This ensures correct typesetting with latex.',
@@ -166,7 +215,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'sortFields',
-		cli: 'sort-fields',
+		cli: { '--sort-fields': (args) => (args.length > 0 ? args : true) },
 		title: 'Sort fields',
 		description: [
 			'Sort the fields within entries. If sort-fields is specified without fields, fields will be sorted as follows: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively, you can specify field names delimited by spaces or commas.',
@@ -180,10 +229,11 @@ export const optionDefinitions: OptionDefinition[] = [
 			'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url',
 			'urldate', 'copyright', 'category', 'note', 'metadata'
 		],
+		defaultValue: false,
 	},
 	{
 		key: 'sortProperties',
-		cli: 'sort-properties',
+		cli: { '--sort-properties': (args) => (args.length > 0 ? args : true) },
 		title: 'Sort properties',
 		description: ['Alias of sort fields (legacy)'],
 		type: 'boolean | string[]',
@@ -191,7 +241,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'stripComments',
-		cli: 'strip-comments',
+		cli: { '--strip-comments': true, '--no-strip-comments': false },
 		title: 'Remove comments',
 		description: ['Remove all comments from the bibtex source'],
 		type: 'boolean',
@@ -199,7 +249,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'trailingCommas',
-		cli: 'trailing-commas',
+		cli: { '--trailing-commas': true, '--no-trailing-commas': true },
 		title: 'Trailing commas',
 		description: ['End the last key value pair in each entry with a comma'],
 		type: 'boolean',
@@ -207,7 +257,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'encodeUrls',
-		cli: 'encode-urls',
+		cli: { '--encode-urls': true, '--no-encode-urls': true },
 		title: 'Encode URLs',
 		description: [
 			'Replace invalid URL characters with percent encoded values.',
@@ -217,7 +267,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'tidyComments',
-		cli: 'tidy-comments',
+		cli: { '--tidy-comments': true, '--no-tidy-comments': false },
 		title: 'Tidy comments',
 		description: ['Remove whitespace surrounding'],
 		type: 'boolean',
@@ -225,7 +275,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'removeEmptyFields',
-		cli: 'remove-empty-fields',
+		cli: { '--remove-empty-fields': true, '--no-remove-empty-fields': false },
 		title: 'Remove empty fields',
 		description: ['Remove any fields that have empty values'],
 		type: 'boolean',
@@ -233,7 +283,10 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'removeDuplicateFields',
-		cli: 'remove-duplicate-fields',
+		cli: {
+			'--remove-duplicate-fields': true,
+			'--no-remove-duplicate-fields': false,
+		},
 		title: 'Remove duplicate fields',
 		description: ['Only allow one of each field in each entry.'],
 		examples: ['--remove-empty-fields (default)', '--no-remove-empty-fields'],
@@ -242,7 +295,9 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'maxAuthors',
-		cli: 'max-authors',
+		cli: {
+			'--max-authors': (args) => Number(args[0]),
+		},
 		title: 'Maximum authors',
 		description: [
 			'Truncate authors if above a given number into "and others".',
@@ -251,7 +306,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'lowercase',
-		cli: 'lowercase',
+		cli: { '--no-lowercase': false },
 		title: 'Lowercase field names and entry type',
 		examples: ['--lowercase (default)', '--no-lowercase (keep original case)'],
 		type: 'boolean',
@@ -259,7 +314,9 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'enclosingBraces',
-		cli: 'enclosing-braces',
+		cli: {
+			'--enclosing-braces': (args) => (args.length > 0 ? args : true),
+		},
 		title: 'Enclose values in double braces',
 		description: [
 			'Enclose the given fields in double braces, such that case is preserved during BibTeX compilation.',
@@ -273,7 +330,10 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'wrap',
-		cli: 'wrap',
+		cli: {
+			'--wrap': (args) => (args.length > 0 ? Number(args[0]) : true),
+			'--no-wrap': false,
+		},
 		title: 'Wrap values',
 		description: ['Wrap long values at the given column'],
 		examples: ['--wrap (80 by default)', '--wrap=82'],
@@ -282,17 +342,18 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'quiet',
-		cli: 'quiet',
+		cli: { '--quiet': true },
 		title: 'Quiet',
 		description: ['Suppress logs and warnings.'],
 		type: 'boolean',
 	},
 	{
 		key: 'backup',
-		cli: 'backup',
+		cli: { '--backup': true, '--no-backup': false },
 		title: 'Backup',
 		description: ['Make a backup <filename>.original'],
 		examples: ['--backup (default)', '--no-backup (do not create a backup)'],
 		type: 'boolean',
+		defaultValue: true,
 	},
 ];

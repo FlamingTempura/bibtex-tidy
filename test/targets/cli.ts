@@ -31,10 +31,16 @@ export function testCLI(
 	bibtexs: string[],
 	options: CLIOptions = {}
 ): CLIResult {
-	const inputFirst = Math.random() > 0.5; // <input> [options] rather than [options] <input>
 	const useEquals = Math.random() > 0.5; // --sort=name,year rather than --sort name year
 
-	const args: string[] = [];
+	const tmpFiles = bibtexs.map((bibtex, i) => {
+		const tmpFile = getTmpPath(i);
+		fs.writeFileSync(tmpFile, bibtex, 'utf8');
+		return tmpFile;
+	});
+
+	const args: string[] = [...tmpFiles];
+
 	for (const k of Object.keys(options)) {
 		const value = options[k as keyof Options];
 		if (value === undefined) continue;
@@ -52,18 +58,6 @@ export function testCLI(
 		} else {
 			args.push(cliParam, ...vals);
 		}
-	}
-
-	const tmpFiles = bibtexs.map((bibtex, i) => {
-		const tmpFile = getTmpPath(i);
-		fs.writeFileSync(tmpFile, bibtex, 'utf8');
-		return tmpFile;
-	});
-
-	if (inputFirst) {
-		args.unshift(...tmpFiles);
-	} else {
-		args.push(...tmpFiles);
 	}
 
 	const proc = spawnSync(
