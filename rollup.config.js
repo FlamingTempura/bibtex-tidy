@@ -3,10 +3,10 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import { version } from './package.json';
 import { chmodSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
-import { builtinModules } from 'module';
 import babel from '@rollup/plugin-babel';
 import pegjs from 'pegjs';
 import esbuild from 'esbuild';
+import babelCore from '@babel/core';
 
 const extensions = ['.ts', '.js'];
 
@@ -65,11 +65,19 @@ function generateOptionTypes() {
 
 generateOptionTypes();
 
-const browserTargets = {
-	edge: '17',
-	firefox: '60',
+// For BigInt support:
+// * No IE version supports BigInt
+// * Edge 79+
+// * Firefox 68+
+// * Safari 14+
+// * Chrome 67+
+// All tested on browserstack. Bibtext tidy looks and works correctly.
+
+const BROWSER_TARGETS = {
+	edge: '79',
+	firefox: '68',
 	chrome: '67',
-	safari: '11.1',
+	safari: '14',
 };
 
 const cliOutFile = 'bin/bibtex-tidy';
@@ -85,6 +93,22 @@ esbuild.buildSync({
 
 chmodSync(cliOutFile, 0o755); // rwxr-xr-x
 
+const { outputFiles } = esbuild.buildSync({
+	platform: 'browser',
+	entryPoints: ['./docs/index.ts'],
+	bundle: true,
+	write: false,
+	banner: { js: banner },
+});
+const bundle = outputFiles[0];
+
+const result = babelCore.transform(bundle.text, {
+	presets: [['@babel/env', { targets: BROWSER_TARGETS }]],
+	compact: false,
+});
+if (!result?.code) throw new Error('No result from babel');
+writeFileSync('docs/bundle.js', result.code);
+
 export default [
 	{
 		input: 'src/index.ts',
@@ -97,7 +121,7 @@ export default [
 				// see https://babeljs.io/docs/en/usage/#configuration
 				presets: [
 					'@babel/typescript',
-					['@babel/env', { targets: browserTargets }],
+					['@babel/env', { targets: BROWSER_TARGETS }],
 				],
 				comments: false,
 			}),
@@ -105,29 +129,6 @@ export default [
 		output: {
 			name: 'bibtexTidy',
 			file: 'bibtex-tidy.js',
-			format: 'umd',
-			banner,
-		},
-	},
-	{
-		input: 'docs/index.ts',
-		plugins: [
-			commonjs(),
-			nodeResolve({ extensions }),
-			babel({
-				extensions,
-				babelHelpers: 'bundled',
-				// see https://babeljs.io/docs/en/usage/#configuration
-				presets: [
-					'@babel/typescript',
-					['@babel/env', { targets: browserTargets }],
-				],
-				comments: false,
-			}),
-		],
-		output: {
-			name: 'bibtexTidy',
-			file: 'docs/bundle.js',
 			format: 'umd',
 			banner,
 		},

@@ -25,14 +25,14 @@
 	  cli: {
 	    '--omit': args => {
 	      if (args.length === 0) {
-	        console.error("Expected a omit list");
+	        console.error(`Expected a omit list`);
 	        process.exit(1);
 	      }
 
 	      return args;
 	    }
 	  },
-	  toCLI: val => Array.isArray(val) && val.length > 0 ? "--omit=".concat(val.join(',')) : undefined,
+	  toCLI: val => Array.isArray(val) && val.length > 0 ? `--omit=${val.join(',')}` : undefined,
 	  title: 'Remove fields',
 	  description: ['Remove specified fields from bibliography entries.'],
 	  examples: ['--omit=id,name'],
@@ -44,7 +44,7 @@
 	    '--curly': true,
 	    '--no-curly': false
 	  },
-	  toCLI: val => val ? "--curly" : undefined,
+	  toCLI: val => val ? `--curly` : undefined,
 	  title: 'Enclose values in braces',
 	  description: ['Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'],
 	  type: 'boolean',
@@ -55,7 +55,7 @@
 	    '--numeric': true,
 	    '--no-numeric': false
 	  },
-	  toCLI: val => val ? "--numeric" : undefined,
+	  toCLI: val => val ? `--numeric` : undefined,
 	  title: 'Use numeric values where possible',
 	  description: ['Strip quotes and braces from numeric/month values. For example, {1998} will become 1998.'],
 	  type: 'boolean',
@@ -66,7 +66,7 @@
 	    '--space': args => args.length > 0 ? Number(args[0]) : true
 	  },
 	  toCLI: val => {
-	    if (typeof val === 'number') return "--space=".concat(val);
+	    if (typeof val === 'number') return `--space=${val}`;
 	    if (val) return '--space';
 	    return undefined;
 	  },
@@ -82,7 +82,7 @@
 	    '--tab': true,
 	    '--no-tab': false
 	  },
-	  toCLI: val => val ? "--tab" : undefined,
+	  toCLI: val => val ? `--tab` : undefined,
 	  title: 'Indent with tabs',
 	  description: ['Prefix all fields with a tab.'],
 	  type: 'boolean',
@@ -94,7 +94,7 @@
 	    '--no-align': false
 	  },
 	  toCLI: val => {
-	    if (typeof val === 'number') return "--align=".concat(val);
+	    if (typeof val === 'number') return `--align=${val}`;
 	    if (val === false) return '--no-align';
 	    return undefined;
 	  },
@@ -111,7 +111,7 @@
 	    '--no-sort': false
 	  },
 	  toCLI: val => {
-	    if (Array.isArray(val) && val.length > 0) return "--sort=".concat(val.join(','));
+	    if (Array.isArray(val) && val.length > 0) return `--sort=${val.join(',')}`;
 	    if (val === true) return '--sort';
 	    return undefined;
 	  },
@@ -128,7 +128,7 @@
 
 	      for (const i of args) {
 	        if (i !== 'doi' && i !== 'key' && i !== 'abstract' && i !== 'citation') {
-	          console.error("Invalid key for merge option: \"".concat(i, "\""));
+	          console.error(`Invalid key for merge option: "${i}"`);
 	          process.exit(1);
 	        }
 	      }
@@ -137,7 +137,7 @@
 	    }
 	  },
 	  toCLI: val => {
-	    if (Array.isArray(val) && val.length > 0) return "--duplicates=".concat(val.join(','));
+	    if (Array.isArray(val) && val.length > 0) return `--duplicates=${val.join(',')}`;
 	    if (val === true) return '--duplicates';
 	    return undefined;
 	  },
@@ -154,7 +154,7 @@
 	      if (args.length === 0) return true;
 
 	      if (args[0] !== 'first' && args[0] !== 'last' && args[0] !== 'combine' && args[0] !== 'overwrite') {
-	        console.error("Invalid merge strategy: \"".concat(args[0], "\""));
+	        console.error(`Invalid merge strategy: "${args[0]}"`);
 	        process.exit(1);
 	      }
 
@@ -163,7 +163,7 @@
 	    '--no-merge': false
 	  },
 	  toCLI: val => {
-	    if (typeof val === 'string') return "--merge=".concat(val);
+	    if (typeof val === 'string') return `--merge=${val}`;
 	    if (val) return '--merge';
 	    return undefined;
 	  },
@@ -208,7 +208,7 @@
 	    '--sort-fields': args => args.length > 0 ? args : true
 	  },
 	  toCLI: val => {
-	    if (Array.isArray(val) && val.length > 0) return "--sort-fields=".concat(val.join(','));
+	    if (Array.isArray(val) && val.length > 0) return `--sort-fields=${val.join(',')}`;
 	    if (val === true) return '--sort-fields';
 	    return undefined;
 	  },
@@ -298,7 +298,7 @@
 	  cli: {
 	    '--max-authors': args => Number(args[0])
 	  },
-	  toCLI: val => val ? "--max-authors=".concat(val) : undefined,
+	  toCLI: val => val ? `--max-authors=${val}` : undefined,
 	  title: 'Maximum authors',
 	  description: ['Truncate authors if above a given number into "and others".'],
 	  type: 'number'
@@ -317,7 +317,7 @@
 	    '--enclosing-braces': args => args.length > 0 ? args : true
 	  },
 	  toCLI: val => {
-	    if (Array.isArray(val) && val.length > 0) return "--enclosing-braces=".concat(val.join(','));
+	    if (Array.isArray(val) && val.length > 0) return `--enclosing-braces=${val.join(',')}`;
 	    if (val === true) return '--enclosing-braces';
 	    return undefined;
 	  },
@@ -332,7 +332,7 @@
 	    '--wrap': args => args.length > 0 ? Number(args[0]) : true,
 	    '--no-wrap': false
 	  },
-	  toCLI: val => val ? "--wrap=".concat(val) : undefined,
+	  toCLI: val => val ? `--wrap=${val}` : undefined,
 	  title: 'Wrap values',
 	  description: ['Wrap long values at the given column'],
 	  examples: ['--wrap (80 by default)', '--wrap=82'],
@@ -381,55 +381,6 @@
 	  }));
 	}
 
-	function _defineProperty(obj, key, value) {
-	  if (key in obj) {
-	    Object.defineProperty(obj, key, {
-	      value: value,
-	      enumerable: true,
-	      configurable: true,
-	      writable: true
-	    });
-	  } else {
-	    obj[key] = value;
-	  }
-
-	  return obj;
-	}
-
-	function ownKeys(object, enumerableOnly) {
-	  var keys = Object.keys(object);
-
-	  if (Object.getOwnPropertySymbols) {
-	    var symbols = Object.getOwnPropertySymbols(object);
-	    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-	      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-	    });
-	    keys.push.apply(keys, symbols);
-	  }
-
-	  return keys;
-	}
-
-	function _objectSpread2(target) {
-	  for (var i = 1; i < arguments.length; i++) {
-	    var source = arguments[i] != null ? arguments[i] : {};
-
-	    if (i % 2) {
-	      ownKeys(Object(source), true).forEach(function (key) {
-	        _defineProperty(target, key, source[key]);
-	      });
-	    } else if (Object.getOwnPropertyDescriptors) {
-	      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-	    } else {
-	      ownKeys(Object(source)).forEach(function (key) {
-	        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-	      });
-	    }
-	  }
-
-	  return target;
-	}
-
 	var bibtexParser = (function () {
 
 	  function peg$subclass(child, parent) {
@@ -457,10 +408,10 @@
 
 	  peg$SyntaxError.buildMessage = function (expected, found) {
 	    var DESCRIBE_EXPECTATION_FNS = {
-	      literal: function literal(expectation) {
+	      literal: function (expectation) {
 	        return "\"" + literalEscape(expectation.text) + "\"";
 	      },
-	      "class": function _class(expectation) {
+	      "class": function (expectation) {
 	        var escapedParts = "",
 	            i;
 
@@ -470,13 +421,13 @@
 
 	        return "[" + (expectation.inverted ? "^" : "") + escapedParts + "]";
 	      },
-	      any: function any(expectation) {
+	      any: function (expectation) {
 	        return "any character";
 	      },
-	      end: function end(expectation) {
+	      end: function (expectation) {
 	        return "end of input";
 	      },
-	      other: function other(expectation) {
+	      other: function (expectation) {
 	        return expectation.description;
 	      }
 	    };
@@ -554,7 +505,7 @@
 	      START: peg$parseSTART
 	    },
 	        peg$startRuleFunction = peg$parseSTART,
-	        peg$c0 = function peg$c0(items) {
+	        peg$c0 = function (items) {
 	      return items.reduce((memo, item) => {
 	        let last = memo[memo.length - 1];
 
@@ -568,22 +519,25 @@
 	      }, []);
 	    },
 	        peg$c1 = peg$otherExpectation("preamble, entry, string, or comment"),
-	        peg$c2 = function peg$c2(preamble) {
-	      return _objectSpread2({
-	        itemtype: 'preamble'
-	      }, preamble);
+	        peg$c2 = function (preamble) {
+	      return {
+	        itemtype: 'preamble',
+	        ...preamble
+	      };
 	    },
-	        peg$c3 = function peg$c3(keyval) {
-	      return _objectSpread2({
-	        itemtype: 'string'
-	      }, keyval);
+	        peg$c3 = function (keyval) {
+	      return {
+	        itemtype: 'string',
+	        ...keyval
+	      };
 	    },
-	        peg$c4 = function peg$c4(entry) {
-	      return _objectSpread2({
-	        itemtype: 'entry'
-	      }, entry);
+	        peg$c4 = function (entry) {
+	      return {
+	        itemtype: 'entry',
+	        ...entry
+	      };
 	    },
-	        peg$c5 = function peg$c5(comment) {
+	        peg$c5 = function (comment) {
 	      return {
 	        itemtype: 'comment',
 	        comment
@@ -596,21 +550,23 @@
 	        peg$c10 = peg$literalExpectation("(", false),
 	        peg$c11 = ")",
 	        peg$c12 = peg$literalExpectation(")", false),
-	        peg$c13 = function peg$c13(value) {
-	      return _objectSpread2({
-	        enclosed: 'parentheses'
-	      }, value);
+	        peg$c13 = function (value) {
+	      return {
+	        enclosed: 'parentheses',
+	        ...value
+	      };
 	    },
 	        peg$c14 = "{",
 	        peg$c15 = peg$literalExpectation("{", false),
 	        peg$c16 = "}",
 	        peg$c17 = peg$literalExpectation("}", false),
-	        peg$c18 = function peg$c18(value) {
-	      return _objectSpread2({
-	        enclosed: 'braces'
-	      }, value);
+	        peg$c18 = function (value) {
+	      return {
+	        enclosed: 'braces',
+	        ...value
+	      };
 	    },
-	        peg$c19 = function peg$c19(value) {
+	        peg$c19 = function (value) {
 	      return {
 	        enclosed: 'parentheses',
 	        value,
@@ -618,7 +574,7 @@
 	        raw: value
 	      };
 	    },
-	        peg$c20 = function peg$c20(value) {
+	        peg$c20 = function (value) {
 	      return {
 	        enclosed: 'braces',
 	        value,
@@ -626,13 +582,13 @@
 	        raw: value
 	      };
 	    },
-	        peg$c21 = function peg$c21(value) {
+	        peg$c21 = function (value) {
 	      return value;
 	    },
 	        peg$c22 = peg$otherExpectation("string"),
 	        peg$c23 = "@string",
 	        peg$c24 = peg$literalExpectation("@string", true),
-	        peg$c25 = function peg$c25(keyval) {
+	        peg$c25 = function (keyval) {
 	      return keyval;
 	    },
 	        peg$c26 = peg$otherExpectation("comment"),
@@ -653,35 +609,37 @@
 	        peg$c41 = peg$literalExpectation("preamble", true),
 	        peg$c42 = "string",
 	        peg$c43 = peg$literalExpectation("string", true),
-	        peg$c44 = function peg$c44(type, body) {
-	      return _objectSpread2({
-	        enclosed: 'braces'
-	      }, body);
+	        peg$c44 = function (type, body) {
+	      return {
+	        enclosed: 'braces',
+	        ...body
+	      };
 	    },
-	        peg$c45 = function peg$c45(type, body) {
-	      return _objectSpread2({
-	        enclosed: 'parentheses'
-	      }, body);
+	        peg$c45 = function (type, body) {
+	      return {
+	        enclosed: 'parentheses',
+	        ...body
+	      };
 	    },
-	        peg$c46 = function peg$c46(type, body) {
-	      return _objectSpread2(_objectSpread2({
-	        type
-	      }, body), {}, {
+	        peg$c46 = function (type, body) {
+	      return {
+	        type,
+	        ...body,
 	        raw: text()
-	      });
+	      };
 	    },
 	        peg$c47 = ",",
 	        peg$c48 = peg$literalExpectation(",", false),
-	        peg$c49 = function peg$c49(key) {
+	        peg$c49 = function (key) {
 	      return key;
 	    },
-	        peg$c50 = function peg$c50(key, first, assignment) {
+	        peg$c50 = function (key, first, assignment) {
 	      return assignment;
 	    },
-	        peg$c51 = function peg$c51(key, first, rest) {
+	        peg$c51 = function (key, first, rest) {
 	      return [first, ...rest];
 	    },
-	        peg$c52 = function peg$c52(key, fields) {
+	        peg$c52 = function (key, fields) {
 	      return {
 	        key,
 	        fields: fields || []
@@ -690,25 +648,26 @@
 	        peg$c53 = peg$otherExpectation("assignment"),
 	        peg$c54 = "=",
 	        peg$c55 = peg$literalExpectation("=", false),
-	        peg$c56 = function peg$c56(name, value) {
+	        peg$c56 = function (name, value) {
 	      return value;
 	    },
-	        peg$c57 = function peg$c57(name, value) {
-	      return _objectSpread2({
-	        name
-	      }, value ? value : {
-	        value: null,
-	        datatype: 'null',
-	        raw: ''
-	      });
+	        peg$c57 = function (name, value) {
+	      return {
+	        name,
+	        ...(value ? value : {
+	          value: null,
+	          datatype: 'null',
+	          raw: ''
+	        })
+	      };
 	    },
 	        peg$c58 = peg$otherExpectation("expression"),
 	        peg$c59 = "#",
 	        peg$c60 = peg$literalExpectation("#", false),
-	        peg$c61 = function peg$c61(first, value) {
+	        peg$c61 = function (first, value) {
 	      return value;
 	    },
-	        peg$c62 = function peg$c62(first, rest) {
+	        peg$c62 = function (first, rest) {
 	      return rest.length > 0 ? {
 	        value: [first, ...rest],
 	        datatype: 'concatenate',
@@ -718,28 +677,28 @@
 	        peg$c63 = peg$otherExpectation("literal"),
 	        peg$c64 = "\"",
 	        peg$c65 = peg$literalExpectation("\"", false),
-	        peg$c66 = function peg$c66(value) {
+	        peg$c66 = function (value) {
 	      return {
 	        value,
 	        datatype: 'quoted',
 	        raw: text()
 	      };
 	    },
-	        peg$c67 = function peg$c67(value) {
+	        peg$c67 = function (value) {
 	      return {
 	        value,
 	        datatype: 'braced',
 	        raw: text()
 	      };
 	    },
-	        peg$c68 = function peg$c68(value) {
+	        peg$c68 = function (value) {
 	      return {
 	        value,
 	        datatype: 'number',
 	        raw: text()
 	      };
 	    },
-	        peg$c69 = function peg$c69(value) {
+	        peg$c69 = function (value) {
 	      return {
 	        value,
 	        datatype: 'identifier',
@@ -755,7 +714,7 @@
 	        peg$c76 = peg$otherExpectation("number"),
 	        peg$c77 = /^[0-9]/,
 	        peg$c78 = peg$classExpectation([["0", "9"]], false, false),
-	        peg$c79 = function peg$c79() {
+	        peg$c79 = function () {
 	      return BigInt(text());
 	    },
 	        peg$c80 = peg$otherExpectation("braced value"),
@@ -3224,7 +3183,7 @@
 	}
 	function addEnclosingBraces(str, removeInsideBraces) {
 	  if (removeInsideBraces) str = str.replace(/[{}]/g, '');
-	  return "{".concat(str, "}");
+	  return `{${str}}`;
 	}
 	function removeEnclosingBraces(str) {
 	  return str.replace(/^\{([^{}]*)\}$/g, '$1');
@@ -3247,10 +3206,9 @@
 
 	const MONTHS = new Set(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']);
 
-	function tidy(input) {
+	function tidy(input, options = {}) {
 	  var _item$fieldMap$get$va, _item$fieldMap$get, _item$fieldMap$get2, _item$fieldMap$get3, _item$fieldMap$get$va2, _item$fieldMap$get4;
 
-	  let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 	  const {
 	    omit,
 	    curly,
@@ -3306,7 +3264,7 @@
 	    if (!item.key) {
 	      warnings.push({
 	        code: 'MISSING_KEY',
-	        message: "".concat(item.key, " does not have an entry key."),
+	        message: `${item.key} does not have an entry key.`,
 	        entry: item
 	      });
 	    }
@@ -3424,7 +3382,7 @@
 	        item.duplicate = true;
 	        warnings.push({
 	          code: 'DUPLICATE_ENTRY',
-	          message: "".concat(item.key, " appears to be a duplicate of ").concat(duplicateOf.key, " and was removed."),
+	          message: `${item.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`,
 	          entry: item,
 	          duplicateOf
 	        });
@@ -3454,7 +3412,7 @@
 	      } else {
 	        warnings.push({
 	          code: 'DUPLICATE_KEY',
-	          message: "".concat(item.key, " is a duplicate entry key."),
+	          message: `${item.key} is a duplicate entry key.`,
 	          entry: item
 	        });
 	      }
@@ -3516,11 +3474,11 @@
 	  for (const item of items) {
 	    switch (item.itemtype) {
 	      case 'string':
-	        bibtex += "@string{".concat(item.name, " = ").concat(item.raw, "}\n");
+	        bibtex += `@string{${item.name} = ${item.raw}}\n`;
 	        break;
 
 	      case 'preamble':
-	        bibtex += "@preamble{".concat(item.raw, "}\n");
+	        bibtex += `@preamble{${item.raw}}\n`;
 	        break;
 
 	      case 'comment':
@@ -3537,8 +3495,8 @@
 	      case 'entry':
 	        if (item.duplicate) continue;
 	        const itemType = lowercase ? item.type.toLocaleLowerCase() : item.type;
-	        bibtex += "@".concat(itemType, "{");
-	        if (item.key) bibtex += "".concat(item.key, ",");
+	        bibtex += `@${itemType}{`;
+	        if (item.key) bibtex += `${item.key},`;
 	        const sortedFieldNames = new Set([...(sortFields || []), ...item.fieldMap.keys()]);
 	        let i = 0;
 
@@ -3547,9 +3505,9 @@
 	          if (!field) continue;
 
 	          if (field.value === null) {
-	            bibtex += "\n".concat(indent).concat(k);
+	            bibtex += `\n${indent}${k}`;
 	          } else {
-	            bibtex += "\n".concat(indent).concat(k.trim().padEnd(align - 1), " = ");
+	            bibtex += `\n${indent}${k.trim().padEnd(align - 1)} = `;
 	            let val = field.value;
 	            const dig3 = String(val).slice(0, 3).toLowerCase();
 
@@ -3558,7 +3516,7 @@
 	            } else if (numeric && k === 'month' && MONTHS.has(dig3)) {
 	              bibtex += dig3;
 	            } else if (field.datatype === 'braced' || curly) {
-	              const lineLength = "".concat(indent).concat(align, "{").concat(val, "}").length;
+	              const lineLength = `${indent}${align}{${val}}`.length;
 	              const multiLine = val.includes('\n\n');
 
 	              if (wrap && lineLength > wrap || multiLine) {
@@ -3570,12 +3528,12 @@
 	                  paragraphs = paragraphs.map(paragraph => wrapText(paragraph, wrapCol - valIndent.length).join('\n' + valIndent));
 	                }
 
-	                val = '\n' + valIndent + paragraphs.join("\n\n".concat(valIndent)) + '\n' + indent;
+	                val = '\n' + valIndent + paragraphs.join(`\n\n${valIndent}`) + '\n' + indent;
 	              }
 
 	              bibtex += addEnclosingBraces(val);
 	            } else if (field.datatype === 'quoted') {
-	              bibtex += "\"".concat(val, "\"");
+	              bibtex += `"${val}"`;
 	            } else {
 	              bibtex += val;
 	            }
@@ -3588,7 +3546,7 @@
 	          }
 	        }
 
-	        bibtex += "\n}\n";
+	        bibtex += `\n}\n`;
 	        delete item.fieldMap;
 	        break;
 	    }
