@@ -11,9 +11,6 @@
 		"@babel/core": "^7.13.16",
 		"@babel/preset-env": "^7.13.15",
 		"@babel/preset-typescript": "^7.13.0",
-		"@rollup/plugin-babel": "^5.3.0",
-		"@rollup/plugin-commonjs": "^18.0.0",
-		"@rollup/plugin-node-resolve": "^11.2.1",
 		"@types/codemirror": "0.0.109",
 		"@types/node": "^15.0.0",
 		"codemirror": "^5.61.0",
@@ -21,14 +18,12 @@
 		"esbuild-register": "^2.5.0",
 		"pegjs": "^0.10.0",
 		"puppeteer": "^9.0.0",
-		"rollup": "^2.45.2",
 		"tslib": "^2.2.0",
 		"typescript": "^4.2.4"
 	},
 	"scripts": {
 		"test": "npm run build && node -r esbuild-register test/index.ts",
-		"build": "rollup -c",
-		"start": "rollup -cw",
+		"build": "node -r esbuild-register build.ts",
 		"typecheck": "tsc --noEmit"
 	},
 	"repository": {
