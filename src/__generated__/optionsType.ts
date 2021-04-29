@@ -86,7 +86,7 @@ export type Options = {
 	/**
 	 * Escape special characters
 	 *
-	 * Escape special characters, such as umlaut. This ensures correct typesetting with latex.
+	 * Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default.
 	 */
 	escape?: boolean;
 	/**
@@ -104,13 +104,13 @@ export type Options = {
 	/**
 	 * Remove comments
 	 *
-	 * Remove all comments from the bibtex source
+	 * Remove all comments from the bibtex source.
 	 */
 	stripComments?: boolean;
 	/**
 	 * Trailing commas
 	 *
-	 * End the last key value pair in each entry with a comma
+	 * End the last key value pair in each entry with a comma.
 	 */
 	trailingCommas?: boolean;
 	/**
@@ -122,19 +122,19 @@ export type Options = {
 	/**
 	 * Tidy comments
 	 *
-	 * Remove whitespace surrounding
+	 * Remove whitespace surrounding comments.
 	 */
 	tidyComments?: boolean;
 	/**
 	 * Remove empty fields
 	 *
-	 * Remove any fields that have empty values
+	 * Remove any fields that have empty values.
 	 */
 	removeEmptyFields?: boolean;
 	/**
 	 * Remove duplicate fields
 	 *
-	 * Only allow one of each field in each entry.
+	 * Only allow one of each field in each entry. Enabled by default.
 	 */
 	removeDuplicateFields?: boolean;
 	/**
@@ -144,7 +144,7 @@ export type Options = {
 	 */
 	maxAuthors?: number;
 	/**
-	 * Lowercase field names and entry type
+	 * Lowercase field names and entry type. Enabled by default.
 	 */
 	lowercase?: boolean;
 	/**
@@ -160,15 +160,11 @@ export type Options = {
 	 */
 	wrap?: boolean | number;
 	/**
-	 * Quiet
-	 *
 	 * Suppress logs and warnings.
 	 */
 	quiet?: boolean;
 	/**
-	 * Backup
-	 *
-	 * Make a backup <filename>.original
+	 * Make a backup <filename>.original. Enabled by default.
 	 */
 	backup?: boolean;
 };

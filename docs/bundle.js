@@ -13714,7 +13714,7 @@
 	  },
 	  title: 'Align values',
 	  description: ['Insert whitespace between fields and values so that values are visually aligned.'],
-	  examples: ['--align=14 (default)', '--no-align'],
+	  examples: ['--align=14 (default)'],
 	  type: 'boolean | number',
 	  valueIfFalse: 1,
 	  defaultValue: 14
@@ -13795,8 +13795,7 @@
 	    '--no-escape': false
 	  },
 	  title: 'Escape special characters',
-	  description: ['Escape special characters, such as umlaut. This ensures correct typesetting with latex.'],
-	  examples: ['--escape (default)', '--no-escape'],
+	  description: ['Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default.'],
 	  type: 'boolean',
 	  defaultValue: true
 	}, {
@@ -13826,7 +13825,7 @@
 	    '--no-strip-comments': false
 	  },
 	  title: 'Remove comments',
-	  description: ['Remove all comments from the bibtex source'],
+	  description: ['Remove all comments from the bibtex source.'],
 	  type: 'boolean',
 	  defaultValue: false
 	}, {
@@ -13836,7 +13835,7 @@
 	    '--no-trailing-commas': true
 	  },
 	  title: 'Trailing commas',
-	  description: ['End the last key value pair in each entry with a comma'],
+	  description: ['End the last key value pair in each entry with a comma.'],
 	  type: 'boolean',
 	  defaultValue: false
 	}, {
@@ -13856,7 +13855,7 @@
 	    '--no-tidy-comments': false
 	  },
 	  title: 'Tidy comments',
-	  description: ['Remove whitespace surrounding'],
+	  description: ['Remove whitespace surrounding comments.'],
 	  type: 'boolean',
 	  defaultValue: true
 	}, {
@@ -13866,18 +13865,17 @@
 	    '--no-remove-empty-fields': false
 	  },
 	  title: 'Remove empty fields',
-	  description: ['Remove any fields that have empty values'],
+	  description: ['Remove any fields that have empty values.'],
 	  type: 'boolean',
 	  defaultValue: false
 	}, {
 	  key: 'removeDuplicateFields',
 	  cli: {
-	    '--remove-duplicate-fields': true,
-	    '--no-remove-duplicate-fields': false
+	    '--remove-dupe-fields': true,
+	    '--no-remove-dupe-fields': false
 	  },
 	  title: 'Remove duplicate fields',
-	  description: ['Only allow one of each field in each entry.'],
-	  examples: ['--remove-empty-fields (default)', '--no-remove-empty-fields'],
+	  description: ['Only allow one of each field in each entry. Enabled by default.'],
 	  type: 'boolean',
 	  defaultValue: true
 	}, {
@@ -13893,8 +13891,7 @@
 	  cli: {
 	    '--no-lowercase': false
 	  },
-	  title: 'Lowercase field names and entry type',
-	  examples: ['--lowercase (default)', '--no-lowercase (keep original case)'],
+	  title: 'Lowercase field names and entry type. Enabled by default.',
 	  type: 'boolean',
 	  defaultValue: true
 	}, {
@@ -13923,8 +13920,7 @@
 	  cli: {
 	    '--quiet': true
 	  },
-	  title: 'Quiet',
-	  description: ['Suppress logs and warnings.'],
+	  title: 'Suppress logs and warnings.',
 	  type: 'boolean'
 	}, {
 	  key: 'backup',
@@ -13932,9 +13928,7 @@
 	    '--backup': true,
 	    '--no-backup': false
 	  },
-	  title: 'Backup',
-	  description: ['Make a backup <filename>.original'],
-	  examples: ['--backup (default)', '--no-backup (do not create a backup)'],
+	  title: 'Make a backup <filename>.original. Enabled by default.',
 	  type: 'boolean',
 	  defaultValue: true
 	}];

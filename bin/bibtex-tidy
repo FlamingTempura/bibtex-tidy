@@ -275,7 +275,7 @@ var optionDefinitions = [{
   },
   title: 'Align values',
   description: ['Insert whitespace between fields and values so that values are visually aligned.'],
-  examples: ['--align=14 (default)', '--no-align'],
+  examples: ['--align=14 (default)'],
   type: 'boolean | number',
   valueIfFalse: 1,
   defaultValue: 14
@@ -371,8 +371,7 @@ var optionDefinitions = [{
     '--no-escape': false
   },
   title: 'Escape special characters',
-  description: ['Escape special characters, such as umlaut. This ensures correct typesetting with latex.'],
-  examples: ['--escape (default)', '--no-escape'],
+  description: ['Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default.'],
   type: 'boolean',
   defaultValue: true
 }, {
@@ -406,7 +405,7 @@ var optionDefinitions = [{
     '--no-strip-comments': false
   },
   title: 'Remove comments',
-  description: ['Remove all comments from the bibtex source'],
+  description: ['Remove all comments from the bibtex source.'],
   type: 'boolean',
   defaultValue: false
 }, {
@@ -416,7 +415,7 @@ var optionDefinitions = [{
     '--no-trailing-commas': true
   },
   title: 'Trailing commas',
-  description: ['End the last key value pair in each entry with a comma'],
+  description: ['End the last key value pair in each entry with a comma.'],
   type: 'boolean',
   defaultValue: false
 }, {
@@ -436,7 +435,7 @@ var optionDefinitions = [{
     '--no-tidy-comments': false
   },
   title: 'Tidy comments',
-  description: ['Remove whitespace surrounding'],
+  description: ['Remove whitespace surrounding comments.'],
   type: 'boolean',
   defaultValue: true
 }, {
@@ -446,18 +445,17 @@ var optionDefinitions = [{
     '--no-remove-empty-fields': false
   },
   title: 'Remove empty fields',
-  description: ['Remove any fields that have empty values'],
+  description: ['Remove any fields that have empty values.'],
   type: 'boolean',
   defaultValue: false
 }, {
   key: 'removeDuplicateFields',
   cli: {
-    '--remove-duplicate-fields': true,
-    '--no-remove-duplicate-fields': false
+    '--remove-dupe-fields': true,
+    '--no-remove-dupe-fields': false
   },
   title: 'Remove duplicate fields',
-  description: ['Only allow one of each field in each entry.'],
-  examples: ['--remove-empty-fields (default)', '--no-remove-empty-fields'],
+  description: ['Only allow one of each field in each entry. Enabled by default.'],
   type: 'boolean',
   defaultValue: true
 }, {
@@ -475,8 +473,7 @@ var optionDefinitions = [{
   cli: {
     '--no-lowercase': false
   },
-  title: 'Lowercase field names and entry type',
-  examples: ['--lowercase (default)', '--no-lowercase (keep original case)'],
+  title: 'Lowercase field names and entry type. Enabled by default.',
   type: 'boolean',
   defaultValue: true
 }, {
@@ -509,8 +506,7 @@ var optionDefinitions = [{
   cli: {
     '--quiet': true
   },
-  title: 'Quiet',
-  description: ['Suppress logs and warnings.'],
+  title: 'Suppress logs and warnings.',
   type: 'boolean'
 }, {
   key: 'backup',
@@ -518,9 +514,7 @@ var optionDefinitions = [{
     '--backup': true,
     '--no-backup': false
   },
-  title: 'Backup',
-  description: ['Make a backup <filename>.original'],
-  examples: ['--backup (default)', '--no-backup (do not create a backup)'],
+  title: 'Make a backup <filename>.original. Enabled by default.',
   type: 'boolean',
   defaultValue: true
 }];
@@ -3347,11 +3341,6 @@ function splitLines(line, limit) {
     return line.trim();
   });
 }
-function fromCamelCase(str) {
-  return str.replace(/[A-Z]/g, function (c) {
-    return '-' + c.toLowerCase();
-  });
-}
 function convertCRLF(str) {
   return str.replace(/\r\n?/g, '\n');
 }
@@ -3971,8 +3960,8 @@ function groupCLIOptions(args) {
   return groups;
 }
 
-var BREAK_LINE = 84;
-var LEFT_MARGIN = 27;
+var LINE_WIDTH = 84;
+var LEFT_COLUMN_WIDTH = 27;
 
 function printHelp() {
   console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
@@ -3986,41 +3975,30 @@ function printHelp() {
     for (_iterator.s(); !(_step = _iterator.n()).done;) {
       var opt = _step.value;
       if (opt.deprecated) continue;
-      var description = [opt.title];
+      var leftColumn = Object.keys(opt.cli).map(function (arg) {
+        return `  ${arg} `;
+      });
+      var desc = [opt.title];
 
       if (opt.description) {
-        description[0] += ' - ' + opt.description[0];
-        description.push.apply(description, _toConsumableArray(opt.description.slice(1)));
+        desc[0] += '. ' + opt.description[0];
+        desc.push.apply(desc, _toConsumableArray(opt.description.slice(1)));
       }
-
-      var lines = description.flatMap(function (line) {
-        return splitLines(line, BREAK_LINE - LEFT_MARGIN);
-      });
 
       if (opt.examples && opt.examples.length > 0) {
-        (function () {
-          var margin = BREAK_LINE - LEFT_MARGIN;
-          lines.push.apply(lines, ['Examples:'].concat(_toConsumableArray(opt.examples.filter(function (example) {
-            return example;
-          }).flatMap(function (example) {
-            return splitLines(example, margin);
-          }))));
-        })();
+        desc.push.apply(desc, ['Examples:'].concat(_toConsumableArray(opt.examples.filter(function (example) {
+          return example;
+        }))));
       }
 
-      for (var i = 0; i < lines.length; i++) {
-        var prefix = '';
+      var rightColumn = desc.flatMap(function (line) {
+        return splitLines(line, LINE_WIDTH - LEFT_COLUMN_WIDTH);
+      });
 
-        if (i === 0) {
-          var keyval = fromCamelCase(opt.key);
-          if (opt.type === 'array') keyval += '=x,y,z';
-          if (opt.type === 'number') keyval += '=NUMBER';
-          prefix = `  --${keyval}`.padEnd(LEFT_MARGIN, ' ');
-        } else {
-          prefix = ' '.repeat(LEFT_MARGIN);
-        }
+      for (var i = 0; i < Math.max(rightColumn.length, leftColumn.length); i++) {
+        var _leftColumn$i, _rightColumn$i;
 
-        console.log(prefix + (lines[i] || ''));
+        console.log(((_leftColumn$i = leftColumn[i]) !== null && _leftColumn$i !== void 0 ? _leftColumn$i : '').padEnd(LEFT_COLUMN_WIDTH) + ((_rightColumn$i = rightColumn[i]) !== null && _rightColumn$i !== void 0 ? _rightColumn$i : ''));
       }
 
       console.log('');
