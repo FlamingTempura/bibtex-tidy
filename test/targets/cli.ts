@@ -1,9 +1,10 @@
 import fs, { mkdirSync } from 'fs';
 import path, { join } from 'path';
 import { spawnSync } from 'child_process';
-import { CLIOptions, Options } from '../../src/optionUtils';
+import { CLIOptions } from '../../src/optionUtils';
 import { Warning } from '../../src/index';
 import { BibTeXItem } from '../../src/bibtex-parser';
+import { optionsToCLIArgs } from '../../src/cliUtils';
 
 const TMP_DIR = join(__dirname, '..', '..', '.tmp');
 
@@ -11,10 +12,6 @@ mkdirSync(TMP_DIR, { recursive: true });
 
 function getTmpPath(i: number = 0): string {
 	return path.join(TMP_DIR, `tmp${i}.bib`);
-}
-
-function unCamelCase(str: string): string {
-	return str.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 }
 
 export type CLIResult = {
@@ -31,34 +28,13 @@ export function testCLI(
 	bibtexs: string[],
 	options: CLIOptions = {}
 ): CLIResult {
-	const useEquals = Math.random() > 0.5; // --sort=name,year rather than --sort name year
-
 	const tmpFiles = bibtexs.map((bibtex, i) => {
 		const tmpFile = getTmpPath(i);
 		fs.writeFileSync(tmpFile, bibtex, 'utf8');
 		return tmpFile;
 	});
 
-	const args: string[] = [...tmpFiles];
-
-	for (const k of Object.keys(options)) {
-		const value = options[k as keyof Options];
-		if (value === undefined) continue;
-		let cliParam = '--' + unCamelCase(k);
-		const vals: string[] = [];
-		if (typeof value === 'number' || typeof value === 'string') {
-			vals.push(String(value));
-		} else if (Array.isArray(value)) {
-			vals.push(...value);
-		} else if (value === false) {
-			cliParam = '--no-' + unCamelCase(k);
-		}
-		if (useEquals) {
-			args.push(cliParam + (vals.length > 0 ? '=' + vals.join(',') : ''));
-		} else {
-			args.push(cliParam, ...vals);
-		}
-	}
+	const args: string[] = [...tmpFiles, ...optionsToCLIArgs(options)];
 
 	const proc = spawnSync(
 		path.resolve(__dirname, '../../bin/bibtex-tidy'),

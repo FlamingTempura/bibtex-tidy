@@ -1,7 +1,8 @@
 import CodeMirror from 'codemirror';
 import bibtexTidy, { BibTeXTidyResult } from '../src/index';
 import { optionDefinitions, OptionDefinition } from '../src/optionDefinitions';
-import { normalizeOptions, Options, UniqueKey } from '../src/optionUtils';
+import { Options, UniqueKey } from '../src/optionUtils';
+import { optionsToCLIArgs } from '../src/cliUtils';
 import './bibtex-highlighting';
 
 function $<T extends HTMLElement>(selector: string, parent?: ParentNode) {
@@ -127,10 +128,14 @@ function getOptions(): Options {
 	return {
 		curly: options.curly.checked,
 		numeric: options.numeric.checked,
-		sort: options.sort.checked && options.sortList.value.split(/[\n\t ,]+/),
-		omit: options.omit.checked
-			? options.omitList.value.split(/[\n\t ,]+/)
-			: undefined,
+		sort:
+			options.sort.checked &&
+			options.sortList.value.length > 0 &&
+			options.sortList.value.split(/[\n\t ,]+/),
+		omit:
+			options.omit.checked && options.omitList.value.length > 0
+				? options.omitList.value.split(/[\n\t ,]+/)
+				: undefined,
 		space: Number(options.spaces.value),
 		tab: options.indent.value === 'tabs',
 		align: options.align.checked ? Number(options.alignnum.value) : 0,
@@ -146,11 +151,13 @@ function getOptions(): Options {
 		merge: options.merge.checked ? options.mergeStrategy.value : false,
 		enclosingBraces:
 			options.enclosingBraces.checked &&
+			options.enclosingBracesList.value.length > 0 &&
 			options.enclosingBracesList.value.split(/[\n\t ,]+/),
 		stripEnclosingBraces: options.stripEnclosingBraces.checked,
 		dropAllCaps: options.dropAllCaps.checked,
 		sortFields:
 			options.sortFields.checked &&
+			options.sortFieldList.value.length > 0 &&
 			options.sortFieldList.value.split(/[\n\t ,]+/),
 		stripComments: options.stripComments.checked,
 		tidyComments: options.tidyComments.checked,
@@ -167,55 +174,23 @@ function getOptions(): Options {
 }
 
 function formatCLICommand() {
-	const options = normalizeOptions(getOptions());
-	const defaults = normalizeOptions({}) as any;
-	const defaultsIfTrue = normalizeOptions({
-		curly: true,
-		numeric: true,
-		tab: true,
-		sort: true,
-		merge: true,
-		stripEnclosingBraces: true,
-		dropAllCaps: true,
-		escape: true,
-		sortFields: true,
-		stripComments: true,
-		encodeUrls: true,
-		tidyComments: true,
-		space: true,
-		duplicates: true,
-		trailingCommas: true,
-		removeEmptyFields: true,
-		removeDuplicateFields: true,
-		lowercase: true,
-		enclosingBraces: true,
-		wrap: true,
-	}) as any;
+	const options = getOptions();
 
 	$('#cli').innerHTML =
 		'bibtex-tidy ' +
-		Object.entries(options)
-			.map(([k, v]) => {
-				const opt = optionDocs[k].cli;
-				if (v && JSON.stringify(v) === JSON.stringify(defaultsIfTrue[k]))
-					v = true;
-				if (v === defaults[k]) return null;
-				if (v === true) return `<span class="opt-name">--${opt}</span>`;
-				if (v === false) return `<span class="opt-name">--no-${opt}</span>`;
-				if (Array.isArray(v)) {
-					return `
-						<span class="opt-name">--${opt}</span>
-						<span class="opt-val">${v.join(',')}</span>`;
+		optionsToCLIArgs(options)
+			.map((opt) => {
+				const i = opt.indexOf('=');
+				if (i === -1) {
+					return `<span class="opt-name">${opt}</span>`;
+				} else {
+					return [
+						`<span class="opt-name">${opt.slice(0, i)}</span>`,
+						`<span class="opt-val">${opt.slice(i + 1)}</span>`,
+					].join('=');
 				}
-				if (v !== undefined) {
-					return `
-						<span class="opt-name">--${opt}</span>
-						<span class="opt-val">${v}</span>`;
-				}
-				return null;
 			})
-			.filter((s) => s)
-			.join('') +
+			.join(' ') +
 		' YOUR_FILE.bib';
 }
 

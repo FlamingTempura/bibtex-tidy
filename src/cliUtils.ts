@@ -1,5 +1,5 @@
 import { optionDefinitions } from './optionDefinitions';
-import { CLIOptions } from './optionUtils';
+import { CLIOptions, Options } from './optionUtils';
 
 const OPTIONS = new Set(
 	optionDefinitions.flatMap((def) => Object.keys(def.cli))
@@ -77,4 +77,10 @@ export function groupCLIOptions(args: string[]): Record<string, string[]> {
 		}
 	}
 	return groups;
+}
+
+export function optionsToCLIArgs(options: Options): string[] {
+	return optionDefinitions
+		.map((def) => def.toCLI?.(options[def.key as keyof Options]))
+		.filter((arg): arg is string => typeof arg === 'string');
 }

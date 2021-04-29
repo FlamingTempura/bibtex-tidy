@@ -1,6 +1,7 @@
 export type OptionDefinition = {
 	key: string;
 	cli: Record<string, boolean | ((args: string[]) => void)>;
+	toCLI?: (val: any) => string | undefined;
 	title: string;
 	description?: string[];
 	examples?: string[];
@@ -31,6 +32,10 @@ export const optionDefinitions: OptionDefinition[] = [
 				return args;
 			},
 		},
+		toCLI: (val) =>
+			Array.isArray(val) && val.length > 0
+				? `--omit=${val.join(',')}`
+				: undefined,
 		title: 'Remove fields',
 		description: ['Remove specified fields from bibliography entries.'],
 		examples: ['--omit=id,name'],
@@ -40,6 +45,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'curly',
 		cli: { '--curly': true, '--no-curly': false },
+		toCLI: (val) => (val ? `--curly` : undefined),
 		title: 'Enclose values in braces',
 		description: [
 			'Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.',
@@ -50,6 +56,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'numeric',
 		cli: { '--numeric': true, '--no-numeric': false },
+		toCLI: (val) => (val ? `--numeric` : undefined),
 		title: 'Use numeric values where possible',
 		description: [
 			'Strip quotes and braces from numeric/month values. For example, {1998} will become 1998.',
@@ -61,6 +68,12 @@ export const optionDefinitions: OptionDefinition[] = [
 		key: 'space',
 		cli: {
 			'--space': (args) => (args.length > 0 ? Number(args[0]) : true),
+		},
+
+		toCLI: (val) => {
+			if (typeof val === 'number') return `--space=${val}`;
+			if (val) return '--space';
+			return undefined;
 		},
 		title: 'Indent with spaces',
 		description: [
@@ -74,6 +87,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'tab',
 		cli: { '--tab': true, '--no-tab': false },
+		toCLI: (val) => (val ? `--tab` : undefined),
 		title: 'Indent with tabs',
 		description: ['Prefix all fields with a tab.'],
 		type: 'boolean',
@@ -84,6 +98,11 @@ export const optionDefinitions: OptionDefinition[] = [
 		cli: {
 			'--align': (args) => Number(args[0]),
 			'--no-align': false,
+		},
+		toCLI: (val) => {
+			if (typeof val === 'number') return `--align=${val}`;
+			if (val === false) return '--no-align';
+			return undefined;
 		},
 		title: 'Align values',
 		description: [
@@ -99,6 +118,12 @@ export const optionDefinitions: OptionDefinition[] = [
 		cli: {
 			'--sort': (args) => (args.length > 0 ? args : true),
 			'--no-sort': false,
+		},
+		toCLI: (val) => {
+			if (Array.isArray(val) && val.length > 0)
+				return `--sort=${val.join(',')}`;
+			if (val === true) return '--sort';
+			return undefined;
 		},
 		title: 'Sort bibliography entries',
 		description: [
@@ -131,6 +156,12 @@ export const optionDefinitions: OptionDefinition[] = [
 				}
 				return args;
 			},
+		},
+		toCLI: (val) => {
+			if (Array.isArray(val) && val.length > 0)
+				return `--duplicates=${val.join(',')}`;
+			if (val === true) return '--duplicates';
+			return undefined;
 		},
 		title: 'Check for duplicates',
 		description: [
@@ -171,6 +202,11 @@ export const optionDefinitions: OptionDefinition[] = [
 			},
 			'--no-merge': false,
 		},
+		toCLI: (val) => {
+			if (typeof val === 'string') return `--merge=${val}`;
+			if (val) return '--merge';
+			return undefined;
+		},
 		title: 'Merge duplicate entries',
 		description: [
 			'Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge:',
@@ -185,6 +221,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'stripEnclosingBraces',
 		cli: { '--strip-enclosing-braces': true },
+		toCLI: (val) => (val ? '--strip-enclosing-braces' : undefined),
 		title: 'Strip double-braced values',
 		description: [
 			'Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}.',
@@ -195,6 +232,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'dropAllCaps',
 		cli: { '--drop-all-caps': true },
+		toCLI: (val) => (val ? '--drop-all-caps' : undefined),
 		title: 'Drop all caps',
 		description: [
 			'Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.',
@@ -205,6 +243,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'escape',
 		cli: { '--escape': true, '--no-escape': false },
+		toCLI: (val) => (val === false ? '--no-escape' : undefined),
 		title: 'Escape special characters',
 		description: [
 			'Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default.',
@@ -215,6 +254,12 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'sortFields',
 		cli: { '--sort-fields': (args) => (args.length > 0 ? args : true) },
+		toCLI: (val) => {
+			if (Array.isArray(val) && val.length > 0)
+				return `--sort-fields=${val.join(',')}`;
+			if (val === true) return '--sort-fields';
+			return undefined;
+		},
 		title: 'Sort fields',
 		description: [
 			'Sort the fields within entries. If sort-fields is specified without fields, fields will be sorted as follows: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively, you can specify field names delimited by spaces or commas.',
@@ -241,6 +286,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'stripComments',
 		cli: { '--strip-comments': true, '--no-strip-comments': false },
+		toCLI: (val) => (val ? '--strip-comments' : undefined),
 		title: 'Remove comments',
 		description: ['Remove all comments from the bibtex source.'],
 		type: 'boolean',
@@ -249,6 +295,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'trailingCommas',
 		cli: { '--trailing-commas': true, '--no-trailing-commas': true },
+		toCLI: (val) => (val ? '--trailing-commas' : undefined),
 		title: 'Trailing commas',
 		description: ['End the last key value pair in each entry with a comma.'],
 		type: 'boolean',
@@ -257,6 +304,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'encodeUrls',
 		cli: { '--encode-urls': true, '--no-encode-urls': true },
+		toCLI: (val) => (val ? '--encode-urls' : undefined),
 		title: 'Encode URLs',
 		description: [
 			'Replace invalid URL characters with percent encoded values.',
@@ -267,6 +315,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'tidyComments',
 		cli: { '--tidy-comments': true, '--no-tidy-comments': false },
+		toCLI: (val) => (val === false ? '--no-tidy-comments' : undefined),
 		title: 'Tidy comments',
 		description: ['Remove whitespace surrounding comments.'],
 		type: 'boolean',
@@ -275,6 +324,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'removeEmptyFields',
 		cli: { '--remove-empty-fields': true, '--no-remove-empty-fields': false },
+		toCLI: (val) => (val ? '--remove-empty-fields' : undefined),
 		title: 'Remove empty fields',
 		description: ['Remove any fields that have empty values.'],
 		type: 'boolean',
@@ -286,6 +336,7 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--remove-dupe-fields': true,
 			'--no-remove-dupe-fields': false,
 		},
+		toCLI: (val) => (val === false ? '--no-remove-dupe-fields' : undefined),
 		title: 'Remove duplicate fields',
 		description: [
 			'Only allow one of each field in each entry. Enabled by default.',
@@ -295,9 +346,8 @@ export const optionDefinitions: OptionDefinition[] = [
 	},
 	{
 		key: 'maxAuthors',
-		cli: {
-			'--max-authors': (args) => Number(args[0]),
-		},
+		cli: { '--max-authors': (args) => Number(args[0]) },
+		toCLI: (val) => (val ? `--max-authors=${val}` : undefined),
 		title: 'Maximum authors',
 		description: [
 			'Truncate authors if above a given number into "and others".',
@@ -307,6 +357,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'lowercase',
 		cli: { '--no-lowercase': false },
+		toCLI: (val) => (val === false ? '--no-lowercase' : undefined),
 		title: 'Lowercase field names and entry type. Enabled by default.',
 		type: 'boolean',
 		defaultValue: true,
@@ -315,6 +366,12 @@ export const optionDefinitions: OptionDefinition[] = [
 		key: 'enclosingBraces',
 		cli: {
 			'--enclosing-braces': (args) => (args.length > 0 ? args : true),
+		},
+		toCLI: (val) => {
+			if (Array.isArray(val) && val.length > 0)
+				return `--enclosing-braces=${val.join(',')}`;
+			if (val === true) return '--enclosing-braces';
+			return undefined;
 		},
 		title: 'Enclose values in double braces',
 		description: [
@@ -333,6 +390,7 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--wrap': (args) => (args.length > 0 ? Number(args[0]) : true),
 			'--no-wrap': false,
 		},
+		toCLI: (val) => (val ? `--wrap=${val}` : undefined),
 		title: 'Wrap values',
 		description: ['Wrap long values at the given column'],
 		examples: ['--wrap (80 by default)', '--wrap=82'],

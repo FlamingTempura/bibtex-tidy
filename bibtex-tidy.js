@@ -32,6 +32,7 @@
 	      return args;
 	    }
 	  },
+	  toCLI: val => Array.isArray(val) && val.length > 0 ? "--omit=".concat(val.join(',')) : undefined,
 	  title: 'Remove fields',
 	  description: ['Remove specified fields from bibliography entries.'],
 	  examples: ['--omit=id,name'],
@@ -43,6 +44,7 @@
 	    '--curly': true,
 	    '--no-curly': false
 	  },
+	  toCLI: val => val ? "--curly" : undefined,
 	  title: 'Enclose values in braces',
 	  description: ['Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'],
 	  type: 'boolean',
@@ -53,6 +55,7 @@
 	    '--numeric': true,
 	    '--no-numeric': false
 	  },
+	  toCLI: val => val ? "--numeric" : undefined,
 	  title: 'Use numeric values where possible',
 	  description: ['Strip quotes and braces from numeric/month values. For example, {1998} will become 1998.'],
 	  type: 'boolean',
@@ -61,6 +64,11 @@
 	  key: 'space',
 	  cli: {
 	    '--space': args => args.length > 0 ? Number(args[0]) : true
+	  },
+	  toCLI: val => {
+	    if (typeof val === 'number') return "--space=".concat(val);
+	    if (val) return '--space';
+	    return undefined;
 	  },
 	  title: 'Indent with spaces',
 	  description: ['Prefix all fields with the specified number of spaces (ignored if tab is set).'],
@@ -74,6 +82,7 @@
 	    '--tab': true,
 	    '--no-tab': false
 	  },
+	  toCLI: val => val ? "--tab" : undefined,
 	  title: 'Indent with tabs',
 	  description: ['Prefix all fields with a tab.'],
 	  type: 'boolean',
@@ -83,6 +92,11 @@
 	  cli: {
 	    '--align': args => Number(args[0]),
 	    '--no-align': false
+	  },
+	  toCLI: val => {
+	    if (typeof val === 'number') return "--align=".concat(val);
+	    if (val === false) return '--no-align';
+	    return undefined;
 	  },
 	  title: 'Align values',
 	  description: ['Insert whitespace between fields and values so that values are visually aligned.'],
@@ -95,6 +109,11 @@
 	  cli: {
 	    '--sort': args => args.length > 0 ? args : true,
 	    '--no-sort': false
+	  },
+	  toCLI: val => {
+	    if (Array.isArray(val) && val.length > 0) return "--sort=".concat(val.join(','));
+	    if (val === true) return '--sort';
+	    return undefined;
 	  },
 	  title: 'Sort bibliography entries',
 	  description: ['Sort entries by specified fields. For descending order, prefix the field with a dash (-).'],
@@ -117,6 +136,11 @@
 	      return args;
 	    }
 	  },
+	  toCLI: val => {
+	    if (Array.isArray(val) && val.length > 0) return "--duplicates=".concat(val.join(','));
+	    if (val === true) return '--duplicates';
+	    return undefined;
+	  },
 	  title: 'Check for duplicates',
 	  description: ['If there are duplicates, output warnings. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases:', '- their DOIs are identical,', '- their abstracts are identical, or', '- their authors and titles are both identical. The first-most entry is kept and any extra properties from duplicate entries are incorporated.'],
 	  examples: ['--duplicates (warn if sharing doi, key, abstract, or citation)', '--duplicates doi (warn if DOIs are identical)', '--duplicates key (warn if IDs are identical)', '--duplicates abstract (warn if abstracts are similar)', '--duplicates citation (warn if author and titles are similar)', '--duplicates doi, key (warn if DOI or keys are identical)'],
@@ -138,6 +162,11 @@
 	    },
 	    '--no-merge': false
 	  },
+	  toCLI: val => {
+	    if (typeof val === 'string') return "--merge=".concat(val);
+	    if (val) return '--merge';
+	    return undefined;
+	  },
 	  title: 'Merge duplicate entries',
 	  description: ['Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge:', '- first: only keep the original entry', '- last: only keep the last found duplicate', '- combine: keep original entry and merge in fields of duplicates if they do not already exist', '- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist'],
 	  type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
@@ -147,6 +176,7 @@
 	  cli: {
 	    '--strip-enclosing-braces': true
 	  },
+	  toCLI: val => val ? '--strip-enclosing-braces' : undefined,
 	  title: 'Strip double-braced values',
 	  description: ['Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}.'],
 	  type: 'boolean',
@@ -156,6 +186,7 @@
 	  cli: {
 	    '--drop-all-caps': true
 	  },
+	  toCLI: val => val ? '--drop-all-caps' : undefined,
 	  title: 'Drop all caps',
 	  description: ['Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.'],
 	  type: 'boolean',
@@ -166,6 +197,7 @@
 	    '--escape': true,
 	    '--no-escape': false
 	  },
+	  toCLI: val => val === false ? '--no-escape' : undefined,
 	  title: 'Escape special characters',
 	  description: ['Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default.'],
 	  type: 'boolean',
@@ -174,6 +206,11 @@
 	  key: 'sortFields',
 	  cli: {
 	    '--sort-fields': args => args.length > 0 ? args : true
+	  },
+	  toCLI: val => {
+	    if (Array.isArray(val) && val.length > 0) return "--sort-fields=".concat(val.join(','));
+	    if (val === true) return '--sort-fields';
+	    return undefined;
 	  },
 	  title: 'Sort fields',
 	  description: ['Sort the fields within entries. If sort-fields is specified without fields, fields will be sorted as follows: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively, you can specify field names delimited by spaces or commas.'],
@@ -196,6 +233,7 @@
 	    '--strip-comments': true,
 	    '--no-strip-comments': false
 	  },
+	  toCLI: val => val ? '--strip-comments' : undefined,
 	  title: 'Remove comments',
 	  description: ['Remove all comments from the bibtex source.'],
 	  type: 'boolean',
@@ -206,6 +244,7 @@
 	    '--trailing-commas': true,
 	    '--no-trailing-commas': true
 	  },
+	  toCLI: val => val ? '--trailing-commas' : undefined,
 	  title: 'Trailing commas',
 	  description: ['End the last key value pair in each entry with a comma.'],
 	  type: 'boolean',
@@ -216,6 +255,7 @@
 	    '--encode-urls': true,
 	    '--no-encode-urls': true
 	  },
+	  toCLI: val => val ? '--encode-urls' : undefined,
 	  title: 'Encode URLs',
 	  description: ['Replace invalid URL characters with percent encoded values.'],
 	  type: 'boolean',
@@ -226,6 +266,7 @@
 	    '--tidy-comments': true,
 	    '--no-tidy-comments': false
 	  },
+	  toCLI: val => val === false ? '--no-tidy-comments' : undefined,
 	  title: 'Tidy comments',
 	  description: ['Remove whitespace surrounding comments.'],
 	  type: 'boolean',
@@ -236,6 +277,7 @@
 	    '--remove-empty-fields': true,
 	    '--no-remove-empty-fields': false
 	  },
+	  toCLI: val => val ? '--remove-empty-fields' : undefined,
 	  title: 'Remove empty fields',
 	  description: ['Remove any fields that have empty values.'],
 	  type: 'boolean',
@@ -246,6 +288,7 @@
 	    '--remove-dupe-fields': true,
 	    '--no-remove-dupe-fields': false
 	  },
+	  toCLI: val => val === false ? '--no-remove-dupe-fields' : undefined,
 	  title: 'Remove duplicate fields',
 	  description: ['Only allow one of each field in each entry. Enabled by default.'],
 	  type: 'boolean',
@@ -255,6 +298,7 @@
 	  cli: {
 	    '--max-authors': args => Number(args[0])
 	  },
+	  toCLI: val => val ? "--max-authors=".concat(val) : undefined,
 	  title: 'Maximum authors',
 	  description: ['Truncate authors if above a given number into "and others".'],
 	  type: 'number'
@@ -263,6 +307,7 @@
 	  cli: {
 	    '--no-lowercase': false
 	  },
+	  toCLI: val => val === false ? '--no-lowercase' : undefined,
 	  title: 'Lowercase field names and entry type. Enabled by default.',
 	  type: 'boolean',
 	  defaultValue: true
@@ -270,6 +315,11 @@
 	  key: 'enclosingBraces',
 	  cli: {
 	    '--enclosing-braces': args => args.length > 0 ? args : true
+	  },
+	  toCLI: val => {
+	    if (Array.isArray(val) && val.length > 0) return "--enclosing-braces=".concat(val.join(','));
+	    if (val === true) return '--enclosing-braces';
+	    return undefined;
 	  },
 	  title: 'Enclose values in double braces',
 	  description: ['Enclose the given fields in double braces, such that case is preserved during BibTeX compilation.'],
@@ -282,6 +332,7 @@
 	    '--wrap': args => args.length > 0 ? Number(args[0]) : true,
 	    '--no-wrap': false
 	  },
+	  toCLI: val => val ? "--wrap=".concat(val) : undefined,
 	  title: 'Wrap values',
 	  description: ['Wrap long values at the given column'],
 	  examples: ['--wrap (80 by default)', '--wrap=82'],
@@ -3151,19 +3202,22 @@
 	  if (typeof str === 'undefined') return undefined;
 	  return String(str).replace(/[^0-9A-Za-z]/g, '').toLocaleLowerCase();
 	}
-	function splitLines(line, limit) {
+	function convertCRLF(str) {
+	  return str.replace(/\r\n?/g, '\n');
+	}
+	function wrapText(line, lineWidth) {
 	  const words = line.split(' ');
 	  const lines = [''];
 
 	  for (const word of words) {
-	    if (lines[lines.length - 1].length + word.length + 1 > limit) lines.push('');
+	    if (lines[lines.length - 1].length + word.length + 1 > lineWidth) {
+	      lines.push('');
+	    }
+
 	    lines[lines.length - 1] += word + ' ';
 	  }
 
 	  return lines.map(line => line.trim());
-	}
-	function convertCRLF(str) {
-	  return str.replace(/\r\n?/g, '\n');
 	}
 	function unwrapText(str) {
 	  return str.replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>').replace(/\s*\n\s*/g, ' ').replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n').trim();
@@ -3513,7 +3567,7 @@
 
 	                if (wrap) {
 	                  const wrapCol = wrap;
-	                  paragraphs = paragraphs.map(paragraph => splitLines(paragraph, wrapCol - valIndent.length).join('\n' + valIndent));
+	                  paragraphs = paragraphs.map(paragraph => wrapText(paragraph, wrapCol - valIndent.length).join('\n' + valIndent));
 	                }
 
 	                val = '\n' + valIndent + paragraphs.join("\n\n".concat(valIndent)) + '\n' + indent;
