@@ -62,38 +62,37 @@ BibTeX Tidy - cleaner and formatter for BibTeX files.
 
 Options:
   --help                   Show help
+  -h
 
-  --omit                   Remove fields - Remove specified fields from
-                           bibliography entries.
+  --omit                   Remove fields. Remove specified fields from bibliography
+                           entries.
                            Examples:
                            --omit=id,name
 
-  --curly                  Enclose values in curly braces - Enclose all property
-                           values in braces. Quoted values will be converted to
-                           braces. For example, "Journal of Tea"
-                           will become {Journal of Tea}.
+  --curly                  Enclose values in braces. Enclose all property values in
+  --no-curly               braces. Quoted values will be converted to braces. For
+                           example, "Journal of Tea" will become {Journal of Tea}.
 
-  --numeric                Use numeric values where possible - Strip quotes and
-                           braces from numeric/month values. For example, {1998}
+  --numeric                Use numeric values where possible. Strip quotes and
+  --no-numeric             braces from numeric/month values. For example, {1998}
                            will become 1998.
 
-  --space                  Indent with spaces - Prefix all fields with the
-                           specified number of spaces
-                           (ignored if tab is set).
+  --space                  Indent with spaces. Prefix all fields with the specified
+                           number of spaces (ignored if tab is set).
                            Examples:
                            --space=2 (default)
                            --space=4
 
-  --tab                    Indent with tabs - Prefix all fields with a tab.
+  --tab                    Indent with tabs. Prefix all fields with a tab.
+  --no-tab
 
-  --align                  Align values - Insert whitespace between fields and
-                           values so that values are visually aligned.
+  --align                  Align values. Insert whitespace between fields and
+  --no-align               values so that values are visually aligned.
                            Examples:
                            --align=14 (default)
-                           --no-align
 
-  --sort                   Sort bibliography entries - Sort entries by specified
-                           fields. For descending order, prefix the field with a
+  --sort                   Sort bibliography entries. Sort entries by specified
+  --no-sort                fields. For descending order, prefix the field with a
                            dash (-).
                            Examples:
                            --sort (sort by id)
@@ -101,7 +100,7 @@ Options:
                            ascending)
                            --sort=name,year
 
-  --duplicates             Check for duplicates - If there are duplicates, output
+  --duplicates             Check for duplicates. If there are duplicates, output
                            warnings. When using with the `merge` option, this
                            determines which entries to merge. Two entries are
                            considered duplicates in the following cases:
@@ -121,8 +120,8 @@ Options:
                            --duplicates doi, key (warn if DOI or keys are
                            identical)
 
-  --merge                  Merge duplicate entries - Merge duplicates entries. How
-                           duplicates are identified can be set using the
+  --merge                  Merge duplicate entries. Merge duplicates entries. How
+  --no-merge               duplicates are identified can be set using the
                            `duplicates` option. There are different ways to merge:
                            - first: only keep the original entry
                            - last: only keep the last found duplicate
@@ -131,23 +130,20 @@ Options:
                            - overwrite: keep original entry and merge in fields of
                            duplicates, overwriting existing fields if they exist
 
-  --strip-enclosing-braces Strip double-braced values - Where an entire value is
+  --strip-enclosing-braces Strip double-braced values. Where an entire value is
                            enclosed in double braces, remove the extra braces. For
                            example, {{Journal of Tea}} will become {Journal of
                            Tea}.
 
-  --drop-all-caps          Drop all caps - Where values are all caps, make them
+  --drop-all-caps          Drop all caps. Where values are all caps, make them
                            title case. For example, {JOURNAL OF TEA} will become
                            {Journal of Tea}.
 
-  --escape                 Escape special characters - Escape special characters,
-                           such as umlaut. This ensures correct typesetting with
-                           latex.
-                           Examples:
-                           --escape (default)
-                           --no-escape
+  --escape                 Escape special characters. Escape special characters,
+  --no-escape              such as umlaut. This ensures correct typesetting with
+                           latex. Enabled by default.
 
-  --sort-fields            Sort fields - Sort the fields within entries. If
+  --sort-fields            Sort fields. Sort the fields within entries. If
                            sort-fields is specified without fields, fields will be
                            sorted as follows: title, shorttitle, author, year,
                            month, day, journal, booktitle, location, on, publisher,
@@ -158,42 +154,50 @@ Options:
                            Examples:
                            --sort-fields=name,author
 
-  --strip-comments         Remove comments - Remove all comments from the bibtex
-                           source
+  --strip-comments         Remove comments. Remove all comments from the bibtex
+  --no-strip-comments      source.
 
-  --trailing-commas        End the last key value pair in each entry with a comma
+  --trailing-commas        Trailing commas. End the last key value pair in each
+  --no-trailing-commas     entry with a comma.
 
-  --encode-urls            Encode URLs - Replace invalid URL characters with
-                           percent encoded values.
+  --encode-urls            Encode URLs. Replace invalid URL characters with percent
+  --no-encode-urls         encoded values.
 
-  --tidy-comments          Tidy comments - Remove whitespace surrounding
+  --tidy-comments          Tidy comments. Remove whitespace surrounding comments.
+  --no-tidy-comments
 
-  --remove-empty-fields    Remove any fields that have empty values
+  --remove-empty-fields    Remove empty fields. Remove any fields that have empty
+  --no-remove-empty-fields values.
 
-  --max-authors=NUMBER     Maximum authors - truncates authors if above a given
+  --remove-dupe-fields     Remove duplicate fields. Only allow one of each field in
+  --no-remove-dupe-fields  each entry. Enabled by default.
+
+  --max-authors            Maximum authors. Truncate authors if above a given
                            number into "and others".
 
-  --lowercase              Make field names and entry type lowercase.
-                           Examples:
-                           --lowercase (default)
-                           --no-lowercase (keep original case)
+  --no-lowercase           Lowercase field names and entry type. Enabled by
+                           default.
 
-  --enclosing-braces       Wrap the given fields in double braces, such that case
-                           is preserved when compiling your document.
+  --enclosing-braces       Enclose values in double braces. Enclose the given
+                           fields in double braces, such that case is preserved
+                           during BibTeX compilation.
                            Examples:
                            --enclosing-braces=title,journal (output title and
                            journal fields will be of the form {{This is a title}})
                            --enclosing-braces (equivalent to
                            ---enclosing-braces=title)
 
-  --wrap                   Wrap values at the given column (80 by default)
+  --wrap                   Wrap values. Wrap long values at the given column
+  --no-wrap                Examples:
+                           --wrap (80 by default)
+                           --wrap=82
 
   --quiet                  Suppress logs and warnings.
 
-  --backup                 Make a backup <filename>.original
-                           Examples:
-                           --backup (default)
-                           --no-backup (do not create a backup)
+  --backup                 Make a backup <filename>.original. Enabled by default.
+  --no-backup
+
+Full documentation <https://github.com/FlamingTempura/bibtex-tidy>
 ```
 
 ### Programmatic usage
