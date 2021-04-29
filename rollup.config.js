@@ -1,7 +1,7 @@
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import { version } from './package.json';
-import fs, { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { chmodSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { builtinModules } from 'module';
 import babel from '@rollup/plugin-babel';
@@ -65,21 +65,25 @@ function generateOptionTypes() {
 
 generateOptionTypes();
 
-const makeExecutable = {
-	name: 'make-executable',
-	writeBundle(options) {
-		const filename = options && (options.file || options.dest);
-		fs.chmodSync(filename, 0o755); // rwxr-xr-x
-	},
-};
-
 const browserTargets = {
 	edge: '17',
 	firefox: '60',
 	chrome: '67',
 	safari: '11.1',
 };
-const cliTargets = { node: '4.0.0' };
+
+const cliOutFile = 'bin/bibtex-tidy';
+
+esbuild.buildSync({
+	bundle: true,
+	platform: 'node',
+	banner: { js: '#!/usr/bin/env node\n' + banner },
+	outfile: cliOutFile,
+	target: ['node7'],
+	entryPoints: ['src/cli.ts'],
+});
+
+chmodSync(cliOutFile, 0o755); // rwxr-xr-x
 
 export default [
 	{
@@ -103,27 +107,6 @@ export default [
 			file: 'bibtex-tidy.js',
 			format: 'umd',
 			banner,
-		},
-	},
-	{
-		input: 'src/cli.ts',
-		external: builtinModules,
-		plugins: [
-			commonjs(),
-			nodeResolve({ extensions }),
-			babel({
-				extensions,
-				babelHelpers: 'bundled',
-				presets: ['@babel/typescript', ['@babel/env', { targets: cliTargets }]],
-				comments: false,
-			}),
-			makeExecutable,
-		],
-		output: {
-			name: 'bibtexTidy',
-			file: 'bin/bibtex-tidy',
-			format: 'cjs',
-			banner: '#!/usr/bin/env node\n' + banner,
 		},
 	},
 	{
