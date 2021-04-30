@@ -42,3 +42,13 @@ No changes, aside from correcting version number at top of bibtex-tidy.js
 ### v1.6.1
 
 - Improve CLI help text for --max-authors
+
+### v1.7.0
+
+- #23 #28 Prevent adding enclosing brace on each tidy
+- `--remove-dupe-fields` / `removeDuplicateFields` option added
+- Better generation of CLI command in Web UI
+- Improved man page
+- Handle CRLF/CR line endings
+- Handle empty entry key
+- Handling empty entries
