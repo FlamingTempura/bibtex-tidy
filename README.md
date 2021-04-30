@@ -56,13 +56,13 @@ npm install -g bibtex-tidy
 bibtex-tidy references.bib
 ```
 
-```
+```manpage
 Usage: bibtex-tidy [OPTION]... FILE.BIB
-BibTeX Tidy - cleaner and formatter for BibTeX files.
+BibTeX Tidy v1.7.1 - cleaner and formatter for BibTeX files.
 
 Options:
   --help                   Show help
-  -h
+  -h                       
 
   --omit                   Remove fields. Remove specified fields from bibliography
                            entries.
@@ -84,7 +84,7 @@ Options:
                            --space=4
 
   --tab                    Indent with tabs. Prefix all fields with a tab.
-  --no-tab
+  --no-tab                 
 
   --align                  Align values. Insert whitespace between fields and
   --no-align               values so that values are visually aligned.
@@ -164,7 +164,7 @@ Options:
   --no-encode-urls         encoded values.
 
   --tidy-comments          Tidy comments. Remove whitespace surrounding comments.
-  --no-tidy-comments
+  --no-tidy-comments       
 
   --remove-empty-fields    Remove empty fields. Remove any fields that have empty
   --no-remove-empty-fields values.
@@ -192,10 +192,13 @@ Options:
                            --wrap (80 by default)
                            --wrap=82
 
+  --version                Show bibtex-tidy version.
+  -v                       
+
   --quiet                  Suppress logs and warnings.
 
   --backup                 Make a backup <filename>.original. Enabled by default.
-  --no-backup
+  --no-backup              
 
 Full documentation <https://github.com/FlamingTempura/bibtex-tidy>
 ```

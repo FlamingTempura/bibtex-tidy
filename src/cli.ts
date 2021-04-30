@@ -1,51 +1,9 @@
 import tidy from './index';
 import { readFileSync, writeFileSync } from 'fs';
 import process from 'process';
-import { wrapText } from './utils';
-import { optionDefinitions } from './optionDefinitions';
 import { parseArguments } from './cliUtils';
 import { version } from './__generated__/version';
-
-const LINE_WIDTH = 84;
-const LEFT_COLUMN_WIDTH = 27;
-
-function printHelp(): void {
-	console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
-	console.log(
-		`BibTeX Tidy v${version} - cleaner and formatter for BibTeX files.\n`
-	);
-	console.log('Options:');
-
-	for (const opt of optionDefinitions) {
-		if (opt.deprecated) continue;
-
-		const leftColumn: string[] = Object.keys(opt.cli).map((arg) => `  ${arg} `);
-
-		const desc = [opt.title];
-		if (opt.description) {
-			desc[0] += '. ' + opt.description[0];
-			desc.push(...opt.description.slice(1));
-		}
-		if (opt.examples && opt.examples.length > 0) {
-			desc.push('Examples:', ...opt.examples.filter((example) => example));
-		}
-
-		const rightColumn = desc.flatMap((line) =>
-			wrapText(line, LINE_WIDTH - LEFT_COLUMN_WIDTH)
-		);
-
-		for (let i = 0; i < Math.max(rightColumn.length, leftColumn.length); i++) {
-			console.log(
-				(leftColumn[i] ?? '').padEnd(LEFT_COLUMN_WIDTH) + (rightColumn[i] ?? '')
-			);
-		}
-
-		console.log('');
-	}
-	console.log(
-		'Full documentation <https://github.com/FlamingTempura/bibtex-tidy>'
-	);
-}
+import { manPage } from './__generated__/manPage';
 
 function start(): void {
 	const { inputFiles, options } = parseArguments(process.argv.slice(2));
@@ -54,7 +12,7 @@ function start(): void {
 		process.exit(0);
 	}
 	if (inputFiles.length === 0 || options.help) {
-		printHelp();
+		console.log(manPage.join('\n'));
 		process.exit(0);
 	}
 	if (options.quiet) {

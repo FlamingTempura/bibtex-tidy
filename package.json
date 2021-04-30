@@ -29,5 +29,9 @@
 		"url": "https://github.com/FlamingTempura/bibtex-tidy.git"
 	},
 	"author": "FlamingTempura",
-	"license": "MIT"
+	"license": "MIT",
+	"dependencies": {
+		"@types/babel__core": "^7.1.14",
+		"@types/pegjs": "^0.10.2"
+	}
 }
