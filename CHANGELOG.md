@@ -52,3 +52,7 @@ No changes, aside from correcting version number at top of bibtex-tidy.js
 - Handle CRLF/CR line endings
 - Handle empty entry key
 - Handling empty entries
+
+### v1.7.1
+
+- Add --version CLI option

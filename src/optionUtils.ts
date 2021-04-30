@@ -3,7 +3,7 @@ import { Options as AllOptions } from './__generated__/optionsType';
 
 export type CLIOptions = AllOptions;
 
-export type Options = Omit<AllOptions, 'help' | 'quiet' | 'backup'>;
+export type Options = Omit<AllOptions, 'help' | 'version' | 'quiet' | 'backup'>;
 
 export type MergeStrategy = Exclude<AllOptions['merge'], boolean | undefined>;
 export type UniqueKey = Exclude<

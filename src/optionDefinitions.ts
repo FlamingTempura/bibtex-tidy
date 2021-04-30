@@ -398,6 +398,12 @@ export const optionDefinitions: OptionDefinition[] = [
 		valueIfTrue: 80,
 	},
 	{
+		key: 'version',
+		cli: { '--version': true, '-v': true },
+		title: 'Show bibtex-tidy version.',
+		type: 'boolean',
+	},
+	{
 		key: 'quiet',
 		cli: { '--quiet': true },
 		title: 'Suppress logs and warnings.',

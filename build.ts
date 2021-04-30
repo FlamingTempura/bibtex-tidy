@@ -75,6 +75,13 @@ async function generateOptionTypes() {
 	await writeFile(join(BUILD_PATH, 'optionsType.ts'), ts.join('\n'));
 }
 
+async function generateVersionFile() {
+	await writeFile(
+		join(BUILD_PATH, 'version.ts'),
+		`export const version = "${version}";`
+	);
+}
+
 async function buildJSBundle() {
 	console.time('JS bundle built');
 	const { outputFiles } = esbuild.buildSync({
@@ -129,5 +136,11 @@ async function buildWebBundle() {
 }
 
 mkdir(BUILD_PATH, { recursive: true })
-	.then(() => Promise.all([generateParser(), generateOptionTypes()]))
+	.then(() =>
+		Promise.all([
+			generateParser(),
+			generateOptionTypes(),
+			generateVersionFile(),
+		])
+	)
 	.then(() => Promise.all([buildJSBundle(), buildCLI(), buildWebBundle()]));

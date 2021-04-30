@@ -4,13 +4,16 @@ import process from 'process';
 import { wrapText } from './utils';
 import { optionDefinitions } from './optionDefinitions';
 import { parseArguments } from './cliUtils';
+import { version } from './__generated__/version';
 
 const LINE_WIDTH = 84;
 const LEFT_COLUMN_WIDTH = 27;
 
 function printHelp(): void {
 	console.log(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
-	console.log('BibTeX Tidy - cleaner and formatter for BibTeX files.\n');
+	console.log(
+		`BibTeX Tidy v${version} - cleaner and formatter for BibTeX files.\n`
+	);
 	console.log('Options:');
 
 	for (const opt of optionDefinitions) {
@@ -46,6 +49,10 @@ function printHelp(): void {
 
 function start(): void {
 	const { inputFiles, options } = parseArguments(process.argv.slice(2));
+	if (options.version) {
+		console.log(`v${version}`);
+		process.exit(0);
+	}
 	if (inputFiles.length === 0 || options.help) {
 		printHelp();
 		process.exit(0);
