@@ -14,14 +14,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
       - name: Check NPM package works in node
         run: |
           mkdir foobar
           cd foobar
           npm install git+https://github.com/FlamingTempura/bibtex-tidy.git
           node -e "console.log(require('bibtex-tidy').tidy('test'))"
+          cd
+          
+      - uses: actions/checkout@v2
 
       - name: Install dependencies
         run: npm install
