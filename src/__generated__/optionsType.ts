@@ -8,6 +8,8 @@
 
 export type Options = {
 	/**
+	 * Help
+	 *
 	 * Show help
 	 */
 	help?: boolean;
@@ -32,13 +34,13 @@ export type Options = {
 	/**
 	 * Indent with spaces
 	 *
-	 * Prefix all fields with the specified number of spaces (ignored if tab is set).
+	 * Indent all fields with the specified number of spaces. Ignored if tab is set.
 	 */
 	space?: boolean | number;
 	/**
 	 * Indent with tabs
 	 *
-	 * Prefix all fields with a tab.
+	 * Intent all fields with a tab.
 	 */
 	tab?: boolean;
 	/**
@@ -56,16 +58,13 @@ export type Options = {
 	/**
 	 * Check for duplicates
 	 *
-	 * If there are duplicates, output warnings. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases:
-	 * - their DOIs are identical,
-	 * - their abstracts are identical, or
-	 * - their authors and titles are both identical. The first-most entry is kept and any extra properties from duplicate entries are incorporated.
+	 * Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same.
 	 */
 	duplicates?: boolean | ('doi' | 'key' | 'abstract' | 'citation')[];
 	/**
 	 * Merge duplicate entries
 	 *
-	 * Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge:
+	 * Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:
 	 * - first: only keep the original entry
 	 * - last: only keep the last found duplicate
 	 * - combine: keep original entry and merge in fields of duplicates if they do not already exist
@@ -93,7 +92,8 @@ export type Options = {
 	/**
 	 * Sort fields
 	 *
-	 * Sort the fields within entries. If sort-fields is specified without fields, fields will be sorted as follows: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively, you can specify field names delimited by spaces or commas.
+	 * Sort the fields within entries.
+	 * If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata
 	 */
 	sortFields?: boolean | string[];
 	/**
@@ -145,6 +145,8 @@ export type Options = {
 	 */
 	maxAuthors?: number;
 	/**
+	 * Lowercase fields
+	 *
 	 * Lowercase field names and entry type. Enabled by default.
 	 */
 	lowercase?: boolean;
@@ -161,14 +163,20 @@ export type Options = {
 	 */
 	wrap?: boolean | number;
 	/**
+	 * Version
+	 *
 	 * Show bibtex-tidy version.
 	 */
 	version?: boolean;
 	/**
+	 * Quiet
+	 *
 	 * Suppress logs and warnings.
 	 */
 	quiet?: boolean;
 	/**
+	 * Backup
+	 *
 	 * Make a backup <filename>.original. Enabled by default.
 	 */
 	backup?: boolean;

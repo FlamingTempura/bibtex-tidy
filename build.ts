@@ -99,12 +99,16 @@ async function generateManPage() {
 	for (const opt of optionDefinitions) {
 		if (opt.deprecated) continue;
 
-		const leftColumn: string[] = Object.keys(opt.cli).map((arg) => `  ${arg} `);
+		const left = wrapText(
+			Object.keys(opt.cli).join(', '),
+			MANPAGE_LEFT_COLUMN_WIDTH - 2
+		);
 
-		const desc = [opt.title];
+		const leftColumn: string[] = left.map((line) => `  ${line}`);
+
+		const desc: string[] = [];
 		if (opt.description) {
-			desc[0] += '. ' + opt.description[0];
-			desc.push(...opt.description.slice(1));
+			desc.push(...opt.description);
 		}
 		if (opt.examples && opt.examples.length > 0) {
 			desc.push('Examples:', ...opt.examples.filter((example) => example));

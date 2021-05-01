@@ -20,7 +20,8 @@ var optionDefinitions = [{
     "--help": true,
     "-h": true
   },
-  title: "Show help",
+  title: "Help",
+  description: ["Show help"],
   type: "boolean"
 }, {
   key: "omit",
@@ -73,7 +74,7 @@ var optionDefinitions = [{
     return void 0;
   },
   title: "Indent with spaces",
-  description: ["Prefix all fields with the specified number of spaces (ignored if tab is set)."],
+  description: ["Indent all fields with the specified number of spaces. Ignored if tab is set."],
   examples: ["--space=2 (default)", "--space=4"],
   type: "boolean | number",
   valueIfTrue: 2,
@@ -86,7 +87,7 @@ var optionDefinitions = [{
   },
   toCLI: val => val ? `--tab` : void 0,
   title: "Indent with tabs",
-  description: ["Prefix all fields with a tab."],
+  description: ["Intent all fields with a tab."],
   type: "boolean",
   defaultValue: false
 }, {
@@ -144,8 +145,8 @@ var optionDefinitions = [{
     return void 0;
   },
   title: "Check for duplicates",
-  description: ["If there are duplicates, output warnings. When using with the `merge` option, this determines which entries to merge. Two entries are considered duplicates in the following cases:", "- their DOIs are identical,", "- their abstracts are identical, or", "- their authors and titles are both identical. The first-most entry is kept and any extra properties from duplicate entries are incorporated."],
-  examples: ["--duplicates (warn if sharing doi, key, abstract, or citation)", "--duplicates doi (warn if DOIs are identical)", "--duplicates key (warn if IDs are identical)", "--duplicates abstract (warn if abstracts are similar)", "--duplicates citation (warn if author and titles are similar)", "--duplicates doi, key (warn if DOI or keys are identical)"],
+  description: ["Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."],
+  examples: ["--duplicates doi (same DOIs)", "--duplicates key (same IDs)", "--duplicates abstract (similar abstracts)", "--duplicates citation (similar author and titles)", "--duplicates doi, key (identical DOI or keys)", "--duplicates (same DOI, key, abstract, or citation)"],
   type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
   valueIfTrue: DEFAULT_MERGE_CHECK,
   defaultValue: options => options.merge ? DEFAULT_MERGE_CHECK : void 0
@@ -170,7 +171,7 @@ var optionDefinitions = [{
     return void 0;
   },
   title: "Merge duplicate entries",
-  description: ["Merge duplicates entries. How duplicates are identified can be set using the `duplicates` option. There are different ways to merge:", "- first: only keep the original entry", "- last: only keep the last found duplicate", "- combine: keep original entry and merge in fields of duplicates if they do not already exist", "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"],
+  description: ["Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:", "- first: only keep the original entry", "- last: only keep the last found duplicate", "- combine: keep original entry and merge in fields of duplicates if they do not already exist", "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"],
   type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
   valueIfTrue: "combine"
 }, {
@@ -215,7 +216,7 @@ var optionDefinitions = [{
     return void 0;
   },
   title: "Sort fields",
-  description: ["Sort the fields within entries. If sort-fields is specified without fields, fields will be sorted as follows: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata. Alternatively, you can specify field names delimited by spaces or commas."],
+  description: ["Sort the fields within entries.", "If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata"],
   examples: ["--sort-fields=name,author"],
   type: "boolean | string[]",
   valueIfTrue: ["title", "shorttitle", "author", "year", "month", "day", "journal", "booktitle", "location", "on", "publisher", "address", "series", "volume", "number", "pages", "doi", "isbn", "issn", "url", "urldate", "copyright", "category", "note", "metadata"],
@@ -310,7 +311,8 @@ var optionDefinitions = [{
     "--no-lowercase": false
   },
   toCLI: val => val === false ? "--no-lowercase" : void 0,
-  title: "Lowercase field names and entry type. Enabled by default.",
+  title: "Lowercase fields",
+  description: ["Lowercase field names and entry type. Enabled by default."],
   type: "boolean",
   defaultValue: true
 }, {
@@ -346,14 +348,16 @@ var optionDefinitions = [{
     "--version": true,
     "-v": true
   },
-  title: "Show bibtex-tidy version.",
+  title: "Version",
+  description: ["Show bibtex-tidy version."],
   type: "boolean"
 }, {
   key: "quiet",
   cli: {
     "--quiet": true
   },
-  title: "Suppress logs and warnings.",
+  title: "Quiet",
+  description: ["Suppress logs and warnings."],
   type: "boolean"
 }, {
   key: "backup",
@@ -361,7 +365,8 @@ var optionDefinitions = [{
     "--backup": true,
     "--no-backup": false
   },
-  title: "Make a backup <filename>.original. Enabled by default.",
+  title: "Backup",
+  description: ["Make a backup <filename>.original. Enabled by default."],
   type: "boolean",
   defaultValue: true
 }]; // src/optionUtils.ts
