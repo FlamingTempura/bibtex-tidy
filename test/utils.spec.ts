@@ -1,17 +1,6 @@
 import { deepStrictEqual } from 'assert';
-import { groupCLIOptions, splitCLIArgs, parseArguments } from '../src/cliUtils';
+import { splitCLIArgs, parseArguments } from '../src/cliUtils';
 import { test } from './utils';
-
-test('groupCLIOptions', async () => {
-	deepStrictEqual(
-		groupCLIOptions(['--no-wrap', '--space', '3', 'foo', '--tab=10,11']),
-		{
-			'--no-wrap': [],
-			'--space': ['3', 'foo'],
-			'--tab': ['10', '11'],
-		}
-	);
-});
 
 test('splitCLIArgs', async () => {
 	deepStrictEqual(
@@ -26,11 +15,12 @@ test('splitCLIArgs', async () => {
 		]),
 		{
 			inputFiles: ['foo.bib', 'something.txt'],
-			optionArgs: {
+			optionArgVals: {
 				'--no-wrap': [],
 				'--space': ['3', 'foo'],
 				'--tab': ['10', '11'],
 			},
+			unknownArgs: [],
 		}
 	);
 
@@ -46,22 +36,42 @@ test('splitCLIArgs', async () => {
 		]),
 		{
 			inputFiles: ['foo.bib', 'something.txt'],
-			optionArgs: {
+			optionArgVals: {
 				'--no-wrap': [],
 				'--space': ['3', 'foo'],
 				'--tab': ['10', '11'],
 			},
+			unknownArgs: [],
 		}
 	);
 });
 
 test('parseArguments', async () => {
+	deepStrictEqual(parseArguments([]), {
+		inputFiles: [],
+		options: {},
+		unknownArgs: [],
+	});
+
+	deepStrictEqual(parseArguments(['foo.bib', 'something.txt']), {
+		inputFiles: ['foo.bib', 'something.txt'],
+		options: {},
+		unknownArgs: [],
+	});
+
+	deepStrictEqual(parseArguments(['--bad-arg']), {
+		inputFiles: [],
+		options: {},
+		unknownArgs: ['--bad-arg'],
+	});
+
 	deepStrictEqual(
 		parseArguments([
 			'--no-tidy-comments',
 			'--space',
 			'3',
 			'--trailing-commas',
+			'--foo',
 			'--sort-fields=author,title',
 			'foo.bib',
 			'something.txt',
@@ -74,6 +84,31 @@ test('parseArguments', async () => {
 				trailingCommas: true,
 				sortFields: ['author', 'title'],
 			},
+			unknownArgs: ['--foo'],
+		}
+	);
+
+	deepStrictEqual(
+		parseArguments([
+			'--no-tidy-comments',
+			'--space',
+			'3',
+			'--trailing-commas',
+			'--foo',
+			'-vol',
+			'--sort-fields=-author,title',
+			'foo.bib',
+			'something.txt',
+		]),
+		{
+			inputFiles: ['foo.bib', 'something.txt'],
+			options: {
+				tidyComments: false,
+				space: 3,
+				trailingCommas: true,
+				sortFields: ['-author', 'title'],
+			},
+			unknownArgs: ['--foo', '-vol'],
 		}
 	);
 });

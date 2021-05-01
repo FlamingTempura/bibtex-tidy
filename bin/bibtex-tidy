@@ -5341,16 +5341,8 @@ var import_process = __toModule(require("process"));
 
 // src/cliUtils.ts
 var OPTIONS = new Set(optionDefinitions.flatMap((def) => Object.keys(def.cli)));
-function isOption(arg) {
-  const argName = arg.split("=")[0];
-  if (OPTIONS.has(argName))
-    return true;
-  if (argName.startsWith("--"))
-    throw new Error(`Invalid option ${argName}`);
-  return false;
-}
 function parseArguments(args) {
-  const {inputFiles, optionArgs} = splitCLIArgs(args);
+  const {inputFiles, optionArgVals: optionArgs, unknownArgs} = splitCLIArgs(args);
   const options = {};
   for (const def of optionDefinitions) {
     for (const [opt, val] of Object.entries(def.cli)) {
@@ -5364,38 +5356,58 @@ function parseArguments(args) {
       }
     }
   }
-  return {inputFiles, options};
+  return {inputFiles, options, unknownArgs};
 }
 function splitCLIArgs(args) {
-  if (args[0] && isOption(args[0])) {
-    const i = args.length - [...args].reverse().findIndex(isOption);
-    return {
-      inputFiles: args.slice(i),
-      optionArgs: groupCLIOptions(args.slice(0, i))
-    };
-  } else {
-    const i = args.findIndex(isOption);
-    return {
-      inputFiles: i === -1 ? args : args.slice(0, i),
-      optionArgs: groupCLIOptions(i === -1 ? [] : args.slice(i))
-    };
-  }
-}
-function groupCLIOptions(args) {
-  const groups = {};
+  const optionArgVals = {};
+  const unknownArgs = new Set();
   let currOption;
-  args = args.flatMap((arg) => arg.split(/[=,]/));
-  for (const arg of args) {
-    if (isOption(arg)) {
+  let valueOrInputArgs = [];
+  let inputArgs;
+  const argsToProcess = args.map((arg) => ({arg}));
+  while (true) {
+    const next = argsToProcess.shift();
+    if (!next)
+      break;
+    const {arg, isValue} = next;
+    if (!isValue && arg.startsWith("-")) {
+      const equalPos = arg.indexOf("=");
+      if (equalPos > -1) {
+        const option = arg.slice(0, equalPos);
+        const values = arg.slice(equalPos + 1).split(",");
+        argsToProcess.unshift({arg: option}, ...values.map((val) => ({arg: val, isValue: true})));
+        continue;
+      }
+      if (!OPTIONS.has(arg)) {
+        unknownArgs.add(arg);
+        continue;
+      }
+      if (currOption) {
+        optionArgVals[currOption].push(...valueOrInputArgs);
+      } else if (valueOrInputArgs.length > 0) {
+        inputArgs = valueOrInputArgs;
+      }
       currOption = arg;
-      groups[currOption] = [];
-    } else if (currOption) {
-      groups[currOption].push(arg);
+      optionArgVals[currOption] = [];
+      valueOrInputArgs = [];
+    } else if (isValue && currOption) {
+      optionArgVals[currOption].push(arg);
     } else {
-      throw new Error(`Invalid args: ${args.join(" ")}`);
+      valueOrInputArgs.push(arg);
     }
   }
-  return groups;
+  if (!inputArgs) {
+    inputArgs = valueOrInputArgs;
+  } else if (currOption) {
+    optionArgVals[currOption].push(...valueOrInputArgs);
+  } else {
+    throw new Error(`Invalid args: ${args.join(" ")}`);
+  }
+  return {
+    inputFiles: inputArgs,
+    optionArgVals,
+    unknownArgs: [...unknownArgs]
+  };
 }
 
 // src/__generated__/version.ts
@@ -5550,7 +5562,12 @@ var manPage = [
 
 // src/cli.ts
 function start() {
-  const {inputFiles, options} = parseArguments(import_process.default.argv.slice(2));
+  const {inputFiles, options, unknownArgs: unknownOptions} = parseArguments(import_process.default.argv.slice(2));
+  if (unknownOptions.length > 0) {
+    console.error(`Unknown option${unknownOptions.length > 1 ? "s" : ""}: ${unknownOptions.join(", ")}`);
+    console.error(`Try '${import_process.default.argv[1]} --help for more information.`);
+    import_process.default.exit(1);
+  }
   if (options.version) {
     console.log(`v${version}`);
     import_process.default.exit(0);

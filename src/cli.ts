@@ -6,7 +6,18 @@ import { version } from './__generated__/version';
 import { manPage } from './__generated__/manPage';
 
 function start(): void {
-	const { inputFiles, options } = parseArguments(process.argv.slice(2));
+	const { inputFiles, options, unknownArgs: unknownOptions } = parseArguments(
+		process.argv.slice(2)
+	);
+	if (unknownOptions.length > 0) {
+		console.error(
+			`Unknown option${
+				unknownOptions.length > 1 ? 's' : ''
+			}: ${unknownOptions.join(', ')}`
+		);
+		console.error(`Try 'bibtex-tidy --help for more information.`);
+		process.exit(1);
+	}
 	if (options.version) {
 		console.log(`v${version}`);
 		process.exit(0);

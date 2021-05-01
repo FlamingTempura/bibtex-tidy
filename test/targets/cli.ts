@@ -66,8 +66,7 @@ export function testCLI(
 
 	if (proc.status !== 0) {
 		console.log(`> bibtex-tidy ${args.join(' ')}`);
-		console.error(proc.stderr);
-		throw new Error('CLI error');
+		throw new Error('CLI error: ' + proc.stderr);
 	}
 
 	return {
