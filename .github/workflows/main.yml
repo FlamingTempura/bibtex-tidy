@@ -18,8 +18,8 @@ jobs:
 
       - name: Check NPM global install
         run: |
-          sudo npm install -g git+https://github.com/FlamingTempura/bibtex-tidy.git
-          bibtex-tidy -h
+          #sudo npm install -g git+https://github.com/FlamingTempura/bibtex-tidy.git
+          bibtex-tidy -v
 
       - name: Install dependencies
         run: npm install
