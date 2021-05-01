@@ -16,6 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Check NPM global install
+        run: |
+          sudo npm install -g git+https://github.com/FlamingTempura/bibtex-tidy.git
+          bibtex-tidy -h
+
       - name: Install dependencies
         run: npm install
 
@@ -24,8 +29,3 @@ jobs:
 
       - name: Test
         run: npm run test
-
-      - name: Check NPM global install
-        run: |
-          npm install -g git+https://github.com/FlamingTempura/bibtex-tidy.git
-          bibtex-tidy -h
