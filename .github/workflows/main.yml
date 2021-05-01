@@ -30,7 +30,7 @@ jobs:
           mkdir ~/foobar
           cd ~/foobar
           npm install git+https://github.com/FlamingTempura/bibtex-tidy.git
-          node -e "console.log(require('bibtex-tidy2').tidy('test'))"
+          node -e "console.log(require('bibtex-tidy22').tidy('test'))"
           
       - name: Check NPM global install
         run: |
