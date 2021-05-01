@@ -24,3 +24,8 @@ jobs:
 
       - name: Test
         run: npm run test
+
+      - name: Check NPM global install
+        run: |
+          npm install -g git+https://github.com/FlamingTempura/bibtex-tidy.git
+          bibtex-tidy -h
