@@ -8,10 +8,12 @@
 		"bibtex-tidy": "./bin/bibtex-tidy"
 	},
 	"devDependencies": {
+		"@types/babel__core": "^7.1.14",
 		"@babel/core": "^7.13.16",
 		"@babel/preset-env": "^7.13.15",
 		"@types/codemirror": "0.0.109",
 		"@types/node": "^15.0.0",
+		"@types/pegjs": "^0.10.2",
 		"codemirror": "^5.61.0",
 		"esbuild": "^0.11.16",
 		"esbuild-register": "^2.5.0",
@@ -29,9 +31,5 @@
 		"url": "https://github.com/FlamingTempura/bibtex-tidy.git"
 	},
 	"author": "FlamingTempura",
-	"license": "MIT",
-	"dependencies": {
-		"@types/babel__core": "^7.1.14",
-		"@types/pegjs": "^0.10.2"
-	}
+	"license": "MIT"
 }
