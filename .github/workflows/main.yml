@@ -1,4 +1,4 @@
-name: CI
+/name: CI
 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
@@ -27,10 +27,10 @@ jobs:
 
       - name: Check NPM package works in node
         run: |
-          mkdir foobar
-          cd ~foobar
+          mkdir ~/foobar
+          cd ~/foobar
           npm install git+https://github.com/FlamingTempura/bibtex-tidy.git
-          node -e "console.log(require('bibtex--tidy').tidy('test'))"
+          node -e "console.log(require('bibtex-tidy2').tidy('test'))"
           
       - name: Check NPM global install
         run: |
