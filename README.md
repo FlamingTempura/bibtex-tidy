@@ -192,4 +192,4 @@ const bibtex = fs.readFileSync('references.bib', 'utf8');
 tidy.tidy(bibtex, { curly: true });
 ```
 
-Documentation for the options can be found [here](https://github.com/FlamingTempura/bibtex-tidy/blob/master/src/options.ts)
+Documentation for the options can be found [here](https://github.com/FlamingTempura/bibtex-tidy/blob/master/src/__generated__/optionsType.ts)
