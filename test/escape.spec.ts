@@ -7,14 +7,24 @@ const input = bibtex`
   url = {something#boo}
 }`;
 
-const output = bibtex`
+const outputEscaped = bibtex`
 @misc{q,
   author        = {Chars \_, \$, \@, \&, \'{e}, \varepsilon{}, \={u}},
   url           = {something\#boo}
 }
 `;
 
-test('escape latex charaters', async () => {
-	const tidied = await bibtexTidy(input, { escape: true });
-	strictEqual(tidied.bibtex, output);
+const outputUnescaped = bibtex`
+@misc{q,
+  author        = {Chars _, $, @, &, é, ɛ, ū},
+  url           = {something#boo}
+}
+`;
+
+test('do not escape latex characters', async () => {
+	const tidied1 = await bibtexTidy(input, { escape: true });
+	strictEqual(tidied1.bibtex, outputEscaped);
+
+	const tidied2 = await bibtexTidy(input, { escape: false });
+	strictEqual(tidied2.bibtex, outputUnescaped);
 });

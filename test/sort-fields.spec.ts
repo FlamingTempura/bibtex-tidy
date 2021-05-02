@@ -13,7 +13,21 @@ author="Feinberg, Andrew P and Vogelstein, Bert",
   month={aug},
   publisher={Elsevier},}`;
 
-const output = bibtex`
+const outputSortedDefault = bibtex`
+@article{feinberg1983technique,
+  title         = {A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
+  author        = "Feinberg, Andrew P and Vogelstein, Bert",
+  year          = {1983},
+  month         = {aug},
+  journal       = {Analytical biochemistry},
+  publisher     = {Elsevier},
+  volume        = 132,
+  number        = {1},
+  pages         = {6--13}
+}
+`;
+
+const outputSortedCustom = bibtex`
 @article{feinberg1983technique,
   year          = {1983},
   author        = "Feinberg, Andrew P and Vogelstein, Bert",
@@ -27,7 +41,10 @@ const output = bibtex`
 }
 `;
 
-test('sort properties in custom order', async () => {
-	const tidied = await bibtexTidy(input, { sortFields: ['year', 'author'] });
-	strictEqual(tidied.bibtex, output);
+test('sort fields', async () => {
+	const tidied = await bibtexTidy(input, { sortFields: true });
+	strictEqual(tidied.bibtex, outputSortedDefault);
+
+	const tidied2 = await bibtexTidy(input, { sortFields: ['year', 'author'] });
+	strictEqual(tidied2.bibtex, outputSortedCustom);
 });

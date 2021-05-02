@@ -27,7 +27,7 @@ const output = bibtex`
 }
 `;
 
-test('enforce braced values', async () => {
+test('curly (enforce braced values)', async () => {
 	const tidied = await bibtexTidy(input, { curly: true });
 	strictEqual(tidied.bibtex, output);
 });

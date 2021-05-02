@@ -1,7 +1,17 @@
 import { strictEqual } from 'assert';
 import { bibtex, bibtexTidy, test } from './utils';
 
-const input = bibtex`
+const dupeAbstracts = bibtex`
+@article{a,
+    title={foo},
+    abstract="  something blah BLAH."
+}
+@article{b,
+    title={bar},
+    abstract={Something blah blah}
+}`;
+
+const dupeCitations = bibtex`
 @article{a,
     author={Smith, James},
     title="  something blah BLAH."
@@ -33,7 +43,31 @@ Issue #11 - these should not be flagged as dupelicates
 	date-modified = {2020-05-09 00:14:50 +0530}
 	}`;
 
-test('duplicate citation warnings', async () => {
-	const tidied = await bibtexTidy(input, { duplicates: ['citation'] }, ['api']);
-	strictEqual(tidied.api?.warnings.length, 1);
+const dupeDOIs = bibtex`
+@article{a,
+    title={foo},
+    doi=1
+}
+@article{b,
+    title={bar},
+    doi=1
+}`;
+
+test('duplicate entry warnings', async () => {
+	const tidied1 = await bibtexTidy(dupeDOIs, { duplicates: ['doi'] }, ['api']);
+	strictEqual(tidied1.api?.warnings.length, 1);
+
+	const tidied2 = await bibtexTidy(
+		dupeCitations,
+		{ duplicates: ['citation'] },
+		['api']
+	);
+	strictEqual(tidied2.api?.warnings.length, 1);
+
+	const tidied3 = await bibtexTidy(
+		dupeAbstracts,
+		{ duplicates: ['abstract'] },
+		['api']
+	);
+	strictEqual(tidied3.api?.warnings.length, 1);
 });

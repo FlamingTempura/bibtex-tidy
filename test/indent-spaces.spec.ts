@@ -13,7 +13,7 @@ author="Feinberg, Andrew P and Vogelstein, Bert",
   month={aug},
   publisher={Elsevier},}`;
 
-const output = bibtex`
+const output4Spaces = bibtex`
 @article{feinberg1983technique,
     number        = {1},
     title         = {A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
@@ -27,7 +27,24 @@ const output = bibtex`
 }
 `;
 
-test('indent with 4 spaces', async () => {
-	const tidied = await bibtexTidy(input, { space: 4 });
-	strictEqual(tidied.bibtex, output);
+const outputDefaultSpaces = bibtex`
+@article{feinberg1983technique,
+  number        = {1},
+  title         = {A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
+  author        = "Feinberg, Andrew P and Vogelstein, Bert",
+  journal       = {Analytical biochemistry},
+  volume        = 132,
+  pages         = {6--13},
+  year          = {1983},
+  month         = {aug},
+  publisher     = {Elsevier}
+}
+`;
+
+test('indent with spaces', async () => {
+	const tidied1 = await bibtexTidy(input, { space: true });
+	strictEqual(tidied1.bibtex, outputDefaultSpaces);
+
+	const tidied2 = await bibtexTidy(input, { space: 4 });
+	strictEqual(tidied2.bibtex, output4Spaces);
 });

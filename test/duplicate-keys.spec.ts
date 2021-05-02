@@ -1,7 +1,7 @@
-import { deepStrictEqual } from 'assert';
+import { deepStrictEqual, strictEqual } from 'assert';
 import { bibtex, bibtexTidy, test } from './utils';
 
-const input = bibtex`
+const dupeKeys = bibtex`
 %references
 @preamble{{abc}}
 @ARTICLE {feinberg1983technique,
@@ -72,8 +72,20 @@ title = {Methods for Research}
 % last thing
 % another last thing`;
 
+const noDupes = bibtex`
+@ARTICLE {feinberg1983technique,
+    number={1},
+    title={A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
+  author="Feinberg, Andrew P and Vogelstein, Bert",
+    journal    = {Analytical biochemistry},
+    volume = 132,
+    pages={6-13},
+    year={1983},
+    month={aug},
+    publisher={Elsevier},}`;
+
 test('duplicate key warnings', async () => {
-	const tidied = await bibtexTidy(input, { escape: true }, ['api']);
+	const tidied = await bibtexTidy(dupeKeys, { escape: true }, ['api']);
 	const warnings = [
 		{
 			entry: {
@@ -122,4 +134,7 @@ test('duplicate key warnings', async () => {
 	// @ts-ignore
 	delete tidied.api.warnings[0].entry.raw;
 	deepStrictEqual(tidied.api?.warnings, warnings);
+
+	const tidied2 = await bibtexTidy(noDupes, { escape: false }, ['api']);
+	strictEqual(tidied2.api?.warnings.length, 0);
 });
