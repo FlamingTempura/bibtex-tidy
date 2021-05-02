@@ -1,0 +1,64 @@
+@PHDTHESIS{alias1,
+  AUTHOR      = {Sammy Student},
+  TITLE       = {Four Years Later},
+  INSTITUTION = {University of Life},
+  ADDRESS     = {Ivory Towers},
+  DATE        = {2003-10-01},
+}
+
+% driver-defined default map to MISC
+@THING{alias2,
+  AUTHOR      = {Samuel Strange},
+  TITLE       = {Entitled},
+  ADDRESS     = {Ivory Towers},
+  SCHOOL      = {University of West Grantham},
+  INSTITUTION = {University of East Grantham},
+  DATE        = {2004-03-03},
+}
+
+% User-defined map to CUSTOMB
+@CHAT{alias3,
+  AUTHOR      = {Samuel Strange},
+  TITLE       = {Hello},
+}
+
+% User-defined map to CUSTOMA plus some alsosets (see tests)
+@CONVERSATION{alias4,
+  AUTHOR      = {Samuel Strange},
+  TITLE       = {Hello},
+  PARTICIPANT = {Sam Smith},
+  VERBC       = {sometext},
+  PUBMEDID    = {anid},
+}
+
+% User-defined map of string replacements and null maps
+@UNPUBLISHED{alias5,
+  ABSTRACT = {Some abstract %50 of which is useless},
+  AUTHOR = {AAA and BBB and CCC and DDD and EEE},
+  TITLE  = {A title},
+  DATE   = {2003},
+  USERB  = {test},
+  LISTA  = {list test},
+  LISTB  = {late and early},
+  LISTC  = {late and early},
+}
+
+% No target, just field additions
+@MISC{alias6,
+  AUTHOR      = {Brian Broom},
+  TITLE       = {Bristles}
+}
+
+% No regexp match
+% Also testing append mode
+@REPORT{alias7,
+  LISTA = {listaval},
+  VERBA = {val1},
+  VERBB = {val2},
+  VERBC = {val3}
+}
+
+@REPORT{alias8,
+  VERBA = {val2},
+  VERBB = {val2}
+}

@@ -1,0 +1,14 @@
+% From biber test data : t/tdata/crossrefs.bib
+% Kept initial comment but not for our purpose
+
+% Testing circular refs detection
+
+@BOOK{circ1,
+  DATE      = {1911},
+  CROSSREF  = {circ2}
+}
+
+@BOOK{circ2,
+  DATE      = {1911},
+  CROSSREF  = {circ1}
+}

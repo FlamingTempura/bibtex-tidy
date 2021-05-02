@@ -1,0 +1,6 @@
+﻿@article{
+   volume = {59},
+   number = {6},
+   year = {1999}
+}
+

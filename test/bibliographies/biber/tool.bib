@@ -1,0 +1,145 @@
+@UNPUBLISHED{i3Š,
+  OPTIONS  = {useprefix=false},
+  ABSTRACT = {Some abstract %50 of which is useless},
+  AUTHOR = {AAA and BBB and CCC and DDD and EEE},
+  TITLE  = {Š title},
+  DATE   = {2003},
+  USERB  = {test},
+  LOCATION = {one and two},
+  LISTA  = {list test},
+  LISTB  = {late and early},
+  LISTC  = {late and early},
+  KEYWORDS = {keyword, keyword2,keyword3},
+}
+
+@COMMENT{Comment 1}
+
+@BOOK{xd1,
+  AUTHOR        = {Edward Paul Ellington},
+  XDATA         = {macmillanalias, missingxd}
+}
+
+@XDATA{macmillan,
+  IDS   = {macmillanalias},
+  YEAR  = {2001},
+  XDATA = {macmillan:pubALIAS, macmillan:loc}
+}
+
+@COMMENT{ Comment 2 }
+
+@XDATA{macmillan:pub,
+  IDS       = {macmillan:pubALIAS},
+  PUBLISHER = {Macmillan}
+}
+
+@XDATA{macmillan:loc,
+  LOCATION = {New York and London},
+  NOTE     = {A Note} 
+}
+
+@COMMENT{jabref-meta: groupstree:
+0 AllEntriesGroup:;
+1 ExplicitGroup:Doktorandkurser\;2\;;
+2 KeywordGroup:Från könsroll till genus\;0\;course\;UCGS Från könsrolltill genus\;0\;0\;;
+2 KeywordGroup:Historiska och filosofiska perspektiv på psykologi\;0\;course\;Historiska och filosofiska perspektiv på psykologi\;0\;0\;;
+2 KeywordGroup:Kurs i introduktion\;0\;course\;Kurs i introduktion\;0\;0\;;
+2 KeywordGroup:Fenomenologi, kön och genus\;0\;course\;UCGS Fenomenologi\;0\;0\;;
+2 KeywordGroup:Quantitative Research Methods\;0\;course\;QMR\;0\;0\;;
+2 KeywordGroup:Multivariate Analysis\;0\;course\;MVA\;1\;0\;;
+}
+
+@BOOK{b1,
+  TITLE        = {Booktitle},
+  TITLE+an     = {=ann1, ann2},
+  LOCATION     = {London and Edinburgh},
+  LOCATION+an  = {1=ann1; 2=ann2},
+  YEAR         = {1999},
+  CROSSREF     = {mvalias}
+}
+
+@MVBOOK{mv1,
+  IDS        = {mvalias},
+  TITLE      = {Maintitle},
+  SUBTITLE   = {Mainsubtitle},
+  TITLEADDON = {Maintitleaddon}
+}
+
+% Test reconstructing datetimes
+@BOOK{dt1,
+ DATE      = {2004-04-25T14:34:00/2004-04-05T14:37:06},
+ ORIGDATE  = {2004-04-25T14:34:00Z/2004-04-05T14:34:05Z},
+ EVENTDATE = {2004-04-25T14:34:00+05:00/2004-04-05T15:34:00+05:00},
+ URLDATE   = {2004-04-25T14:34:00/2004-04-05T15:00:00}
+}
+
+@ARTICLE{m1,
+  DATE         = {2017},
+	JOURNALTITLE = {A Journal},
+}
+
+% mincrossrefs is 2 by default and so "baz" would be added automatically
+% but it doesn't exist. This shouldn't cause an error as "baz" should be
+% weeded out before it is references and this test is to make sure it is
+% and that these two entries are processed as normal
+@BOOK{badcr1,
+  AUTHOR       = {Foo},
+  TITLE        = {Foo},
+  DATE         = {2019},
+  CROSSREF     = {baz}
+}
+
+@BOOK{badcr2,
+  AUTHOR       = {Bar},
+  TITLE        = {Bar},
+  DATE         = {2019},
+  CROSSREF     = {baz}
+}
+
+% Test of skipping entry due to bad name with consecutive 'and'
+@MISC {badname,
+  AUTHOR = {John Smith and and Terry Brown}
+}
+
+% Granular XDATA tests
+@BOOK{gxd1,
+  AUTHOR       = {Simon Smith and xdata=gxd2-author}, % Picks name 1, no position
+  EDITOR       = {xdata=gxd2-editor-2},
+  TITLE        = {xdata=gxd4-title},
+  LOCATION     = {xdata=gxd3-location and B}, % Picks list element 1, no position
+  PUBLISHER    = {xdata=gxd2},                % malformed (unspecified field)- output literally
+  NOTE         = {xdata=gxd2-note},           % malformed (missing field) - output literally
+  TRANSLATOR   = {xdata=gxd2-author-3},       % malformed (bad position) - output literally
+  LISTA        = {xdata=gxd3-location-5},     % malformed (bad position) - output literally
+  ADDENDUM     = {xdata=missing},             % malformed (missing entry) - output literally
+  ORGANIZATION = {xdata=gxd2-author-3}        % malformed (incompatible types)- output literally
+}
+
+@XDATA{gxd2,
+  AUTHOR = {Brian Bloom and Arthur Anderson},
+  EDITOR = {William Wool and xdata=gxd4-editor}
+}
+
+@XDATA{gxd3,
+  LOCATION = {A and C}
+}
+
+@XDATA{gxd4,
+  EDITOR = {Frank Frill},
+  TITLE =  {Some title}
+}
+
+@BOOK{bo1,
+  IDS = {box1,box2},
+  AUTHOR = {Simon Smith}
+}
+
+@STRING{P = "Publisher"}
+@STRING{N = "NotUsed"}
+
+@BOOK{ld1,
+  AUTHOR = {AAA and BBB and CCC and DDD and EEE},
+  TITLE  = {A title},
+  YEAR   = {2003},
+  MONTH  = {4},
+  PUBLISHER = P
+}

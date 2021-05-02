@@ -1,0 +1,40 @@
+﻿MathSciNet </mathscinet/index.html>
+
+    *
+      Clipboard </mathscinet/clipboard.html>
+    * Home </mathscinet/index.html>
+    * Preferences </mathscinet/preferences.html>
+    * Help </mathscinet/help/headline_review_help_full.html>
+    * Support Mail </mathscinet/support_mail.html>
+    * Terms of Use </mathscinet/help/mathscinet_terms_of_use.html>
+    * University of Southampton
+
+@article {MR2254280,
+    VOLUME = {23},
+      YEAR = {2006},
+}
+		
+
+@article {MR2254274,
+    VOLUME = {23},
+      YEAR = {2006},
+}
+		
+
+@article {MR2248052,
+    VOLUME = {23},
+      YEAR = {2006},
+}
+		
+
+*Matches:* 3
+Mirror Sites
+
+
+© Copyright 2011, American Mathematical Society
+<http://www.ams.org/ams/copyright.html>
+Privacy Statement <http://www.ams.org/ams/privacy.html>
+American Mathematical Society <http://www.ams.org>
+American Mathematical Society
+201 Charles Street
+Providence, RI 02904-2294

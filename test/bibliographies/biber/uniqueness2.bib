@@ -1,0 +1,120 @@
+@ARTICLE{un8,
+  AUTHOR	    = {Alan AAA and B. BBB and A. CCC},
+}
+
+@ARTICLE{un9,
+  AUTHOR	    = {Anthon AAA and B. BBB and B. CCC and A. DDD},
+}
+
+@ARTICLE{un10,
+  AUTHOR	    = {B. DDD},
+}
+
+@ARTICLE{unapa1,
+  AUTHOR	    = {Ireys, A. and Chernoff, A. and DeVet, A. and Kim, A.},
+}
+
+@ARTICLE{unapa2,
+  AUTHOR	    = {Ireys, A. and Chernoff, A. and Stein, A. and DeVet, A. and Silver, A.},
+}
+
+@MISC{others1,
+  AUTHOR	  = {NameA and NameB and others},
+  YEAR		  = {2011}
+}
+
+@MISC{others2,
+  AUTHOR	  = {NameA and NameB and others},
+  YEAR		  = {2011}
+}
+
+% Two works by the same author list, should be no uniquelist
+@BOOK{unall1,
+  AUTHOR    = {Name11 and Name22 and Name33 and Name44 and Name55},
+  TITLE     = {Title 1},
+  YEAR      = {2011}
+}
+
+@BOOK{unall2,
+  AUTHOR    = {Name11 and Name22 and Name33 and Name44 and Name55},
+  TITLE     = {Title 2},
+  YEAR      = {2011}
+}
+
+% First namelist is subset of second,
+% maxnames=5 -> ul=undef and ul=6 respectively
+% maxnames=1 -> ul=5 and ul=6 respectively
+@BOOK{unall3,
+  AUTHOR    = {A111 and A222 and A333 and A444 and A555},
+  YEAR      = {2011}
+}
+
+@BOOK{unall4,
+  AUTHOR    = {A111 and A222 and A333 and A444 and A555 and A666},
+  YEAR      = {2011}
+}
+
+% Two lists with same authors, one differing in last place
+% ul=5
+@BOOK{unall5,
+  AUTHOR    = {Name1 and Name2 and Name3 and Name4 and Name5},
+  TITLE     = {Title 3},
+  YEAR      = {2010}
+}
+
+% ul=5
+@BOOK{unall6,
+  AUTHOR    = {Name1 and Name2 and Name3 and Name4 and Name5},
+  TITLE     = {Title 5},
+  YEAR      = {2010}
+}
+
+% ul=5
+@BOOK{unall7,
+  AUTHOR    = {Name1 and Name2 and Name3 and Name4 and Name6},
+  TITLE     = {Title 3},
+  YEAR      = {2010}
+}
+
+% Two lists with same authors, one differing in being a superset. maxnames/minnames=1
+% so the truncations are ambiguous, hence uniquelist is needed.
+% ul=5
+@BOOK{unall8,
+  AUTHOR    = {Name1111 and Name2222 and Name3333 and Name4444 and Name5555},
+  TITLE     = {Title 3},
+  YEAR      = {2010}
+}
+
+% ul=5
+@BOOK{unall9,
+  AUTHOR    = {Name1111 and Name2222 and Name3333 and Name4444 and Name5555},
+  TITLE     = {Title 5},
+  YEAR      = {2010}
+}
+
+% ul=false (per-namelist setting)
+@BOOK{unall9a,
+  AUTHOR    = {uniquelist=false and Name1111 and Name2222 and Name3333 and Name4444 and Name5555},
+  TITLE     = {Title 5},
+  YEAR      = {2010}
+}
+
+
+% ul=6
+@BOOK{unall10,
+  AUTHOR    = {Name1111 and Name2222 and Name3333 and Name4444 and Name5555 and Name6666},
+  TITLE     = {Title 5},
+  YEAR      = {2010}
+}
+
+% Testing "et al" counting as a uniquelist position
+% ul01 = 3
+% ul02 = 3 (because it will be "XXX and YYY and ZZZ et al" which disambiguates the list from
+% "XXX and YYY and ZZZ"
+@ARTICLE{ul01,
+  AUTHOR	    = {XXX and YYY and ZZZ},
+}
+
+@ARTICLE{ul02,
+  AUTHOR	    = {XXX and YYY and ZZZ and MMM and NNN},
+}

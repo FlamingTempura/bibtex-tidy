@@ -1,0 +1,17 @@
+@string {
+    me = "Renan",
+    emptyAbbr = "",
+    nullAbbr,
+    meImportant = "Sir " # me
+}
+
+@string {
+    meAccordingToMyMother = "Glamorous " # meImportant
+}
+
+@abbreviation {
+    message = "Hello " # meAccordingToMyMother # "!",
+    skip = "me",
+    mustEmpty = emptyAbbr,
+    mustNull = nullAbbr
+}

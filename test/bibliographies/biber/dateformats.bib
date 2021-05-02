@@ -1,0 +1,290 @@
+% WRONG - ORIGDATE is mistyped, URLDATE is just wrong
+% YEAR is not an integer
+% Explicit MONTH is not checked
+@ARTICLE{L1,
+  AUTHOR	    = {John Doe},
+  JOURNALTITLE      = {Journal},
+  TITLE		    = {Title 1},
+  YEAR		    = {1995--1996},
+  MONTH       = {14},
+  ORIGDATE    = {1985-1030},
+  URLDATE     = {1.5.1998},
+}
+
+% WRONG - missing dash between month and day
+@BOOK{L2,
+  AUTHOR	    = {John Doe},
+  TITLE		    = {Title 2},
+  PUBLISHER	  = {Oxford},
+  ORIGDATE	  = {1995-1230},
+  YEAR        = {1991}
+}
+
+% WRONG - completely wrong date range format
+@BOOK{L3,
+  AUTHOR	    = {John Doe},
+  TITLE		    = {Title 3},
+  PUBLISHER	  = {Oxford},
+  URL         = {http://a/b/c},
+  URLDATE	    = {1.5.1988},
+  YEAR        = {1854}
+}
+
+% WRONG - 1 digit month
+@BOOK{L4,
+  AUTHOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 1},
+  PUBLISHER	  = {Oxford},
+  DATE		    = {1995-1-04},
+}
+
+% WRONG - 1 digit day
+@BOOK{L5,
+  AUTHOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 2},
+  PUBLISHER	  = {Oxford},
+  DATE		    = {1995-10-4},
+}
+
+% WRONG - month out of bounds
+@BOOK{L6,
+  AUTHOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 1},
+  PUBLISHER	  = {Oxford},
+  DATE		    = {1996-13-03},
+}
+
+% WRONG - day out of bounds
+@PROCEEDINGS{L7,
+  EDITOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 2},
+  PUBLISHER	  = {Oxford},
+  EVENTDATE	  = {1996-10-35},
+  YEAR        = {1934}
+}
+
+% WRONG - MONTH not integer
+@ARTICLE{L8,
+  AUTHOR	    = {Bill Shakespeare},
+  JOURNALTITLE      = {Journal},
+  TITLE		    = {Works},
+  YEAR		    = {1985a},
+  MONTH       = {january}
+}
+
+% OK
+@PROCEEDINGS{L9,
+  EDITOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 2},
+  PUBLISHER	  = {Oxford},
+  EVENTDATE	  = {1996-12-31},
+  YEAR        = {1234}
+}
+
+% OK
+@PROCEEDINGS{L10,
+  EDITOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 2},
+  PUBLISHER	  = {Oxford},
+  EVENTDATE	  = {1996-01-01},
+  YEAR        = {1239}
+}
+
+% WRONG - DATE and YEAR specified
+@BOOK{L11,
+  AUTHOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 2},
+  PUBLISHER	  = {Oxford},
+  DATE   	    = {1996-01-01},
+  YEAR        = {1998},
+}
+
+% WRONG - DATE and MONTH specified
+@ARTICLE{L12,
+  AUTHOR	    = {John Doe and Albert Abrahams},
+  JOURNALTITLE      = {Journal},
+  TITLE		    = {Title 2},
+  DATE   	    = {1996-01-01},
+  MONTH       = {02},
+}
+
+% OK - open-ended date
+@BOOK{L13,
+  AUTHOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 2},
+  PUBLISHER	  = {Oxford},
+  DATE   	    = {1996-01-01/..},
+}
+
+% OK - ENDYEAR same as YEAR, labelyear should only have YEAR
+@BOOK{L14,
+  AUTHOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 2},
+  PUBLISHER	  = {Oxford},
+  DATE	      = {1996-12-10/1996-12-12},
+}
+
+% OK - labelyear should be undef, no DATE or YEAR
+@BOOK{L15,
+  AUTHOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 2},
+  PUBLISHER	  = {Oxford},
+}
+
+% MISSING YEAR/DATE
+@PROCEEDINGS{L16,
+  EDITOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 2},
+  PUBLISHER	  = {Oxford},
+  EVENTDATE	  = {1996-01-01},
+}
+
+% OK - YEAR same as ENDYEAR, labelyear should only have YEAR
+@PROCEEDINGS{L17,
+  PUBSTATE    = {inpress},
+  EDITOR	    = {John Doe and Albert Abrahams},
+  TITLE		    = {Title 2},
+  PUBLISHER	  = {Oxford},
+  DATE	      = {1996-12-10/1996-12-12},
+  ORIGDATE    = {1998-12-10/1998-12-12},
+  EVENTDATE   = {1998-12-10/2004-12-12},
+}
+
+% Testing extended dates
+@ARTICLE{era1,
+  AUTHOR       = {Alan Smith},
+  JOURNALTITLE = {Journal Title},
+  TITLE        = {Title},
+  DATE	       = {-0379-02},
+  ORIGDATE     = {-0221/-0219},
+}
+
+@INPROCEEDINGS{era2,
+  AUTHOR      = {Alan Smith},
+  BOOKTITLE   = {Book Title},
+  TITLE       = {Title},
+  DATE	      = {-0197},
+  EVENTDATE   = {-0249},
+  ORIGDATE    = {-0049/-0044},
+}
+
+@INPROCEEDINGS{era3,
+  AUTHOR      = {Alan Smith},
+  BOOKTITLE   = {Book Title},
+  TITLE       = {Title},
+  DATE	      = {-0196-02},
+  EVENTDATE   = {0250-03-02},
+}
+
+@INPROCEEDINGS{era4,
+  AUTHOR      = {Alan Smith},
+  BOOKTITLE   = {Book Title},
+  TITLE       = {Title},
+  DATE	      = {1034~},
+  EVENTDATE   = {1565?},
+  URLDATE     = {1487~/1490},
+  ORIGDATE    = {1487/1488~},
+}
+
+@INPROCEEDINGS{range1,
+  AUTHOR      = {Alan Smith},
+  BOOKTITLE   = {Book Title},
+  TITLE       = {Title},
+  DATE	      = {1034/},
+  EVENTDATE   = {1565/..},
+  ORIGDATE    = {2000/..},
+  URLDATE     = {/1034},
+}
+
+@INPROCEEDINGS{range2,
+  AUTHOR      = {Alan Smith},
+  BOOKTITLE   = {Book Title},
+  TITLE       = {Title},
+  DATE	      = {1034/},
+  EVENTDATE   = {../1565},
+  ORIGDATE    = {../2000},
+  URLDATE     = {/1034},
+}
+
+@INPROCEEDINGS{season1,
+  AUTHOR      = {Alan Smith},
+  BOOKTITLE   = {Book Title},
+  TITLE       = {Title},
+  DATE	      = {2003-21},
+  EVENTDATE   = {2002-23},
+}
+
+@ARTICLE{time1,
+  AUTHOR       = {Alan Smith},
+  JOURNALTITLE = {Journal Title},
+  TITLE        = {Title},
+  DATE	       = {2001-01-03T15:00:00},
+  ORIGDATE     = {2001-01-03T17:07:34Z},
+  URLDATE      = {2001-01-03T17:07:34+05:00},
+}
+
+% ISO 8601-2 4.5
+@INPROCEEDINGS{unspec1,
+  AUTHOR      = {Alan Smith},
+  BOOKTITLE   = {Book Title},
+  TITLE       = {Title},
+  DATE        = {199X},
+  EVENTDATE   = {19XX},
+  ORIGDATE    = {1999-XX},
+  URLDATE     = {1999-01-XX}
+}
+
+@ARTICLE{unspec2,
+  AUTHOR       = {Alan Smith},
+  JOURNALTITLE = {Journal Title},
+  TITLE        = {Title},
+  DATE         = {1999-XX-XX},
+}
+
+% ISO 8601-2 4.6
+@ARTICLE{y1,
+  AUTHOR       = {Alan Smith},
+  JOURNALTITLE = {Journal Title},
+  TITLE        = {Title},
+  DATE         = {Y17000002},
+}
+
+@ARTICLE{y2,
+  AUTHOR       = {Alan Smith},
+  JOURNALTITLE = {Journal Title},
+  TITLE        = {Title},
+  DATE         = {Y-17000002},
+}
+
+@ARTICLE{y3,
+  AUTHOR       = {Alan Smith},
+  JOURNALTITLE = {Journal Title},
+  TITLE        = {Title},
+  DATE         = {Y1700},
+}
+
+@BOOK{open1,
+  AUTHOR = {Bert Brown},
+  DATE = {/2004-01-01}
+}
+
+@BOOK{open2,
+  AUTHOR = {Bert Brown},
+  DATE = {../2004-01-01}
+}
+
+% Unicode scripts
+% 1987-01-15/1988-05-11
+@BOOK{script1,
+  AUTHOR    = {Kevin Krull},
+  DATE = {१९८७-०१-१५/१९८८-०५-११},
+}
+
+% milliseconds ignored
+@BOOK{mill1,
+  AUTHOR    = {Kevin Krull},
+  DATE = {2016-01-19T14:20:00.000Z},
+}
+
+
+

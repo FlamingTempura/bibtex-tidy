@@ -1,0 +1,129 @@
+% Not a valid type
+% Valid gender
+@BADTYPE{c1,
+  AUTHOR      = {Clive Constraint},
+  TITLE       = {Limits of Things},
+  DATE        = {2003-10-01},
+  GENDER      = {sm}
+}
+
+% Completely nonexistent field and field (alias) not valid for this type
+% Testing a field valid for all entrytypes (ABSTRACT)
+% Testing missing mandatory field
+@ETA{c2,
+  TITLE       = {Limits of Things},
+  DATE        = {2003-10-01},
+  BADFIELD    = {Something},
+  JOURNAL     = {Some journal},
+  ABSTRACT    = {Some text}
+}
+
+% Datatype constraint - wrong month format
+% Randomly named field
+% Invalid gender
+@ETB{c3,
+  AUTHOR      = {Clive Constraint},
+  TITLE       = {Limits of Things},
+  JOURNAL     = {Some journal},
+  YEAR        = {2003},
+  MONTH       = {WRONG FORMAT},
+  FIELD1      = {7},
+  GENDER      = {zz}
+}
+
+% Datatype constraint - wrong month format (range)
+% Randomly named field with custom range (integer)
+@ETB{c4,
+  AUTHOR      = {Clive Constraint},
+  TITLE       = {Limits of Things},
+  JOURNAL     = {Some journal},
+  YEAR        = {2003},
+  MONTH       = {14},
+  FIELD1      = {4}
+}
+
+% Conditional checks
+% XOR mandatory check - DATE and YEAR are both defined
+% all 2,3,4 -> none 5,6 (fail)
+@ETB{c5,
+  AUTHOR      = {Clive Constraint},
+  TITLE       = {Limits of Things},
+  JOURNAL     = {Some journal},
+  DATE        = {2004-01-02},
+  YEAR        = {2003},
+  FIELD2      = {a},
+  FIELD3      = {a},
+  FIELD4      = {a},
+  FIELD5      = {a},
+  FIELD6      = {a},
+}
+
+% Conditional checks
+% all 2,3,4 -> none 5,6 (pass) (because antecedent is not satisfied)
+% all 1,2 -> one 7,8 (fail)
+% all 5,6 -> all 9,10 (fail)
+@ETB{c6,
+  AUTHOR      = {Clive Constraint},
+  TITLE       = {Limits of Things},
+  JOURNAL     = {Some journal},
+  YEAR        = {2003},
+  FIELD1      = {8},
+  FIELD2      = {a},
+  FIELD3      = {a},
+  FIELD5      = {a},
+  FIELD6      = {a},
+  FIELD9      = {a}
+}
+
+% Conditional checks
+% one 2,3 -> none 4 (pass)
+% one 5,6 -> none 7 (fail)
+% one 2,3 -> all 8,9 (pass)
+% one 10,11 -> one 5 (pass)
+% Mandatory OR check - one of FIELDA or FIELDB must be present (fail)
+@ETC{c7,
+  AUTHOR      = {Clive Constraint},
+  TITLE       = {Limits of Things},
+  JOURNAL     = {Some journal},
+  YEAR        = {2003},
+  FIELD2      = {a},
+  FIELD3      = {a},
+  FIELD5      = {a},
+  FIELD7      = {a},
+  FIELD8      = {a},
+  FIELD9      = {a},
+  FIELD11     = {a},
+}
+
+% Conditional checks
+% none 2,3 -> none 4 (fail)
+% none 7 -> none 5 (pass) as antecedent is false
+% none 8,9 -> one 10,11 (fail)
+% none 6 -> all 12,13 (fail)
+% Mandatory OR check - one of FIELDA or FIELDB must be present
+%   (both are, testing different from XOR) (pass)
+@ETD{c8,
+  AUTHOR      = {Clive Constraint},
+  TITLE       = {Limits of Things},
+  JOURNAL     = {Some journal},
+  YEAR        = {2003},
+  FIELD4      = {a},
+  FIELD5      = {a},
+  FIELD7      = {a},
+  FIELD12     = {a},
+  FIELDA      = {a},
+  FIELDB      = {a},
+}
+
+% ISBN and ISSN checks
+@MISC{c9,
+  AUTHOR = {Fred Flummox},
+  ISBN   = {90-70002-34-5},
+  ISSN   = {0317-8471},
+}
+
+@MISC{c10,
+  AUTHOR = {Fred Flummox},
+  ISBN   = {90-7002-34-5},
+  ISSN   = {0317-8470},
+}

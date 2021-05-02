@@ -1,0 +1,332 @@
+% Testing mincrossrefs. cr1 and cr2 crossrefs should trigger inclusion of cr_m and also
+% the crossref fields in both of them
+% Also a test of some aliases
+@INBOOK{cr1,
+  AUTHOR        = {Graham Gullam},
+  TITLE         = {Great and Good Graphs},
+  ORIGDATE      = {1955},
+  ARCHIVEPREFIX = {SomEPrFiX},
+  PRIMARYCLASS  = {SOMECLASS},
+  MONTH         = {jan},
+  CROSSREF      = {cr_m}
+}
+
+@INBOOK{cr2,
+  AUTHOR      = {Frederick Fumble},
+  TITLE       = {Fabulous Fourier Forms},
+  SCHOOL      = {School},
+  INSTITUTION = {Institution},
+  ORIGDATE    = {1943},
+  CROSSREF    = {cr_m}
+}
+
+@BOOK{cr_m,
+  EDITOR    = {Edgar Erbriss},
+  TITLE     = {Graphs of the Continent},
+  PUBLISHER = {Grimble},
+  YEAR      = {1974}
+}
+
+% Testing explicit cite of crossref parent. Should trigger inclusion of child crossref field
+@INBOOK{cr3,
+  AUTHOR        = {Arthur Aptitude},
+  TITLE         = {Arrangements of All Articles},
+  ORIGDATE      = {1934},
+  ARCHIVEPREFIX = {SomEPrFiX},
+  EPRINTTYPE    = {sometype},
+  CROSSREF      = {crt}
+}
+
+@BOOK{crt,
+  EDITOR    = {Mark Monkley},
+  TITLE     = {Beasts of the Burbling Burns},
+  PUBLISHER = {Rancour},
+  YEAR      = {1996}
+}
+
+% Testing mincrossrefs not reached. cr4 is cited, cr5 isn't, therefore mincrossrefs (2) for
+% crn not reached
+@INBOOK{cr4,
+  AUTHOR    = {Morris Mumble},
+  TITLE     = {Enterprising Entities},
+  ORIGDATE  = {1911},
+  CROSSREF  = {crn}
+}
+
+@INBOOK{cr5,
+  AUTHOR    = {Oliver Ordinary},
+  TITLE     = {Questionable Quidities},
+  ORIGDATE  = {1919},
+  CROSSREF  = {crn}
+}
+
+@BOOK{crn,
+  EDITOR    = {Jeremy Jermain},
+  TITLE     = {Vanquished, Victor, Vandal},
+  PUBLISHER = {Pillsbury},
+  YEAR      = {1945}
+}
+
+% Testing inheritance of event information
+@PROCEEDINGS{cr6i,
+  AUTHOR     = {Spurious Author},
+  ADDRESS    = {Address},
+  TITLE      = {Title of proceeding},
+  EDITOR     = {Editor},
+  PUBLISHER  = {Publisher of proceeding},
+  EVENTDATE  = {2009-08-21/2009-08-24},
+  EVENTTITLE = {Title of the event},
+  VENUE      = {Location of event},
+  YEAR       = {2009}
+}
+
+@INPROCEEDINGS{cr6,
+  AUTHOR     = {Author, Firstname},
+  CROSSREF   = {cr6i},
+  PAGES      = {123--},
+  TITLE      = {Title of inproceeding},
+  BOOKTITLE  = {Manual booktitle},
+  YEAR       = {2009},
+}
+
+% Testing inheritance of special fields (booktitle, bookauthor etc.)
+@BOOK{cr7i,
+  AUTHOR     = {Brian Bookauthor},
+  TITLE      = {Book Title},
+  SUBTITLE   = {Book Subtitle},
+  TITLEADDON = {Book Titleaddon},
+  PUBLISHER  = {Publisher of proceeding},
+  YEAR       = {2009},
+  VERBA      = {String},
+}
+
+@INBOOK{cr7,
+  AUTHOR     = {Author, Firstname},
+  CROSSREF   = {cr7i},
+  PAGES      = {123--126},
+  TITLE      = {Title of Book bit},
+  YEAR       = {2010}
+}
+
+% Testing supression of default inheritance
+@COLLECTION{cr8i,
+  EDITOR     = {Brian Editor},
+  TITLE      = {Book Title},
+  SUBTITLE   = {Book Subtitle},
+  TITLEADDON = {Book Titleaddon},
+  PUBLISHER  = {Publisher of Collection},
+  YEAR       = {2009}
+}
+
+@INCOLLECTION{cr8,
+  AUTHOR     = {Smith, Firstname},
+  CROSSREF   = {cr8i},
+  PAGES      = {1--12},
+  TITLE      = {Title of Collection bit},
+  YEAR       = {2010}
+}
+
+
+% Testing minxrefs. xr1 and xr2 xrefs should trigger inclusion of xrm and also
+% the xref fields in both of them
+@INBOOK{xr1,
+  AUTHOR    = {Zoe Zentrum},
+  TITLE     = {Moods Mildly Modified},
+  ORIGDATE  = {1921},
+  XREF      = {xrm}
+}
+
+@INBOOK{xr2,
+  AUTHOR    = {Ian Instant},
+  TITLE     = {Migraines Multiplying Madly},
+  ORIGDATE  = {1926},
+  XREF      = {xrm}
+}
+
+@BOOK{xrm,
+  EDITOR    = {Peter Prendergast},
+  TITLE     = {Calligraphy, Calisthenics, Culture},
+  PUBLISHER = {Mainstream},
+  YEAR      = {1970}
+}
+
+% Testing explicit cite of xref parent.
+% Should not trigger inclusion of child xref field by minxrefs as parent is
+% also directly cited
+@INBOOK{xr3,
+  AUTHOR    = {Norman Normal},
+  TITLE     = {Russian Regalia Revisited},
+  ORIGDATE  = {1923},
+  XREF      = {xrt}
+}
+
+@BOOK{xrt,
+  EDITOR    = {Lucy Lunders},
+  TITLE     = {Kings, Cork and Calculation},
+  PUBLISHER = {Middling},
+  YEAR      = {1977}
+}
+
+% Testing minxrefs reached. xr4 is cited, xr5 isn't, but minxrefs=1 so xrn
+% is included
+@INBOOK{xr4,
+  AUTHOR    = {Megan Mistrel},
+  TITLE     = {Lumbering Lunatics},
+  ORIGDATE  = {1933},
+  XREF      = {xrn}
+}
+
+@INBOOK{xr5,
+  AUTHOR    = {Kenneth Kunrath},
+  TITLE     = {Dreadful Dreary Days},
+  ORIGDATE  = {1900},
+  XREF      = {xrn}
+}
+
+@BOOK{xrn,
+  EDITOR    = {Victor Vivacious},
+  TITLE     = {Examples of Excellent Exaggerations},
+  PUBLISHER = {Oxford},
+  YEAR      = {1935}
+}
+
+% Testing missing xref
+@INBOOK{mxr,
+  AUTHOR    = {Megan Mistrel},
+  TITLE     = {Lumbering Lunatics},
+  ORIGDATE  = {1933},
+  XREF      = {missing1}
+}
+
+% Testing missing crossref
+@INBOOK{mcr,
+  AUTHOR    = {Megan Mistrel},
+  TITLE     = {Lumbering Lunatics},
+  ORIGDATE  = {1933},
+  CROSSREF  = {missing1}
+}
+
+% Testing cascading crossrefs
+@MVBOOK{ccr1,
+  IDS       = {ccr1alias},
+  AUTHOR    = {Vince Various},
+  EDITOR    = {Edward Editor},
+  TITLE     = {Stuff Concerning Varia},
+  DATE      = {1934}
+}
+
+% Test of cascading xref+crossref
+@MISC{xc1,
+  AUTHOR    = {Xavier Crust},
+  XREF      = {xc2}
+}
+
+@INBOOK{xc2,
+  AUTHOR    = {Xavier Crust},
+  CROSSREF  = {xc3}
+}
+
+@BOOK{xc3,
+  AUTHOR    = {Xavier Crust},
+  TITLE     = {Title}
+}
+
+% using alias
+@BOOK{ccr2,
+  TITLE     = {Misc etc.},
+  DATE      = {1923},
+  CROSSREF  = {ccr1alias}
+}
+
+@INBOOK{ccr3,
+  TITLE     = {Perhaps, Perchance, Possibilities?},
+  DATE      = {1911},
+  CROSSREF  = {ccr2}
+}
+
+% Testing circular refs detection
+@BOOK{circ1,
+  DATE      = {1911},
+  CROSSREF  = {circ3}
+}
+
+@BOOK{circ2,
+  DATE      = {1911},
+  CROSSREF  = {circ1}
+}
+
+@BOOK{circ3,
+  DATE      = {1911},
+  CROSSREF  = {circ2}
+}
+
+% Test of dependency calculations for non-cited entries
+@BOOK{r1,
+  DATE      = {1911},
+  CROSSREF  = {r2}
+}
+
+@BOOK{r2,
+  DATE      = {1911},
+  CROSSREF  = {r3}
+}
+
+@BOOK{r3,
+  DATE      = {1911},
+  CROSSREF  = {r4}
+}
+
+@BOOK{r4,
+  DATE      = {1911},
+}
+
+% Test of per-entry inheritance suppression
+@INBOOK{s1,
+  OPTIONS  = {noinherit=nobtitle},
+  TITLE    = {Subtitle},
+  CROSSREF = {s2}
+}
+
+@BOOK{s2,
+  TITLE = {Title}
+}
+
+% Test of blocking all datepart inhertance when child has any datepart
+@INBOOK{b1,
+  DATE     = {2004-03-03},
+  ORIGDATE = {2004-03},
+  CROSSREF = {b2}
+}
+
+@BOOK{b2,
+  DATE     = {2004-03-03/2005-08-09},
+  ORIGDATE = {2004-03/2005-08},
+}
+
+% test of singletitle, uniquetitle and uniquework suppression
+@MVBOOK{sup1,
+  AUTHOR = {Alan Smith},
+  TITLE  = {Title1}
+}
+
+@BOOK{sup2,
+  NOTE   = {Book sup2},
+  CROSSREF = {sup1}
+}
+
+@BOOK{sup3,
+  NOTE   = {Book sup3},
+  CROSSREF = {sup1}
+}
+
+% Testing mincrossrefs via aliases
+@BOOK{al1,
+  DATE      = {1911},
+  CROSSREF  = {alias2}
+}
+
+@BOOK{al2,
+  IDS = {alias2},
+  DATE      = {1911},
+  CROSSREF  = {circ1}
+}

@@ -1,0 +1,28 @@
+@BOOK{F1,
+  IDS               = {F1a},
+  SHORTHAND         = {\emph{A}},
+  SORTSHORTHAND     = {A},
+  AUTHOR	          = {John Doe},
+  TITLE		          = {The Fullness of Times},
+  YEAR		          = {1995}
+}
+
+% Duplicate key. Should be reported via a warning
+@MISC{F1,
+  AUTHOR	          = {Frank Frill},
+  TITLE		          = {Dresses for Gentlemen},
+  YEAR		          = {1997}
+}
+
+% Mismatched cased key. Should be reported via a warning
+@BOOK{f1,
+  AUTHOR	          = {Someone Else},
+  TITLE		          = {The Case of the Duplicitous Duplicate},
+  YEAR		          = {1996}
+}
+
+@MISC{c1,
+ AUTHOR = {Benny Balgreen},
+ TITLE  = {Names We Invent},
+ YEAR   = {1900}
+}

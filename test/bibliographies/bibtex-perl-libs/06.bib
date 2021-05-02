@@ -1,0 +1,27 @@
+this is text, which is ignored by bibtex.
+
+@PREAMBLE{
+    This is only used for BibTeX files used in LaTeX documents
+}
+
+@Comment{
+    Comments are ignored too.
+}
+
+@ARTICLE{key1,
+	author	= {Gerhard Gossen and Ludwig van Beethoven},
+	title	= "Paper title",
+	year	= 2008,
+	month	= aug,
+}
+
+@STRING{ gerhard = "Gerhard" }
+
+@STRING{ gossen = "Gossen" }
+
+@BOOK{ key2,
+	author 	= gerhard # " " # gossen,
+	title	= "Book title",
+	year	= "2008",
+	month	= aug,
+}

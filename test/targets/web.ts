@@ -20,7 +20,7 @@ export type WebResult = {
 	warnings: Warning[];
 };
 
-let page: puppeteer.Page;
+let page: puppeteer.Page | undefined;
 async function getPage(): Promise<puppeteer.Page> {
 	if (page) return page;
 	const browser = await puppeteer.launch();
@@ -30,7 +30,7 @@ async function getPage(): Promise<puppeteer.Page> {
 }
 
 export async function teardown() {
-	return page.browser().close();
+	return page?.browser().close();
 }
 
 export async function testWeb(

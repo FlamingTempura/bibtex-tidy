@@ -1,0 +1,185 @@
+@ARTICLE{un1,
+  AUTHOR	    = {John AAA},
+  YEAR		    = {1994},
+}
+% Always good to have a repeated labelname entry as this is often an edge case
+@ARTICLE{un1a,
+  AUTHOR	    = {John AAA},
+  YEAR		    = {1999},
+}
+
+@ARTICLE{un2,
+  AUTHOR	    = {J. AAA},
+  YEAR		    = {1999},
+}
+
+% Per-namelist uniquename
+@ARTICLE{un3,
+  AUTHOR	    = {uniquename=false and K. AAA},
+  YEAR		    = {1939},
+}
+
+@ARTICLE{un4,
+  AUTHOR	    = {Edward AAA},
+  YEAR		    = {1934},
+}
+
+@ARTICLE{un4a,
+  OPTIONS     = {uniquename=false},
+  AUTHOR	    = {Edward AAA},
+  YEAR		    = {1934},
+}
+
+@ARTICLE{un5,
+  AUTHOR	    = {Jane AAA},
+  YEAR		    = {1983},
+}
+
+% uniquelist not set because it's not ambiguous with un1 with max/minnames=1 because
+% un1 is "AAA" and un6 is "AAA et al".
+@ARTICLE{un6,
+  AUTHOR	    = {John AAA and Mike BBB},
+  YEAR		    = {1921},
+}
+
+@ARTICLE{un7,
+  SHORTAUTHOR = {Chaps},
+  AUTHOR	    = {John AAA and Mike BBB},
+  YEAR		    = {1921},
+}
+
+% test2 should have un=0 because minnames makes Brian Jones invisible
+@BOOK{test1,
+  AUTHOR = {Paul Smith and Brian Jones and Peter Brown},
+  YEAR = {1900}
+}
+
+% Per-name uniquename
+@BOOK{test2,
+  AUTHOR = {uniquename=false, given={Henry}, family={Jones}},
+  YEAR = {1903}
+}
+
+@MISC{test3,
+  AUTHOR	  = {John Blether and John Doe},
+  DATE		  = {2011}
+}
+
+@MISC{test4,
+  AUTHOR	  = {John Blether and Jane Doe},
+  DATE		  = {2011}
+}
+
+@MISC{test5,
+  AUTHOR	  = {John Blether and Edward Doe},
+  DATE		  = {2011}
+}
+
+% Testing repeated entries for un=1
+@MISC{unt1,
+  AUTHOR	  = {Jeremy Alton and Alan Rattle},
+  TITLE		  = {Title},
+  DATE		  = {2011}
+}
+
+@MISC{unt2,
+  AUTHOR	  = {Jeremy Alton and Andrew Rattle},
+  TITLE		  = {Title},
+  DATE		  = {2011}
+}
+
+@MISC{unt3,
+  AUTHOR	  = {Jeremy Alton and Edward Rattle},
+  TITLE		  = {Title},
+  DATE		  = {2011}
+}
+
+@MISC{unt4,
+  AUTHOR	  = {Meredith Williams},
+  TITLE		  = {Title},
+  DATE		  = {2011}
+}
+
+@MISC{unt5,
+  AUTHOR	  = {Michael Williams},
+  TITLE		  = {Title},
+  DATE		  = {2011}
+}
+
+
+% Testing repeated entries for un=2
+@MISC{untf1,
+  AUTHOR	  = {Simon Monocle and Walter Ripple},
+  TITLE		  = {Title},
+  DATE		  = {2011}
+}
+
+@MISC{untf2,
+  AUTHOR	  = {Simon Monocle and Walter Ripple},
+  TITLE		  = {Title},
+  DATE		  = {2011}
+}
+
+@MISC{untf3,
+  AUTHOR	  = {Simon Monocle and William Ripple},
+  TITLE		  = {Title},
+  DATE		  = {2011}
+}
+
+% Testing prefices/suffices
+@MISC{sp1,
+  AUTHOR      = {Greaves, Jr., Percy L.},
+  TITLE       = {Title},
+  DATE		    = {2011}
+}
+
+@MISC{sp2,
+  AUTHOR      = {Greaves, Jr., Percy L.},
+  TITLE       = {Title2},
+  DATE		    = {2012}
+}
+
+@MISC{sp3,
+  AUTHOR      = {von Greaves, Jr., Percy L.},
+  TITLE       = {Title1},
+  DATE		    = {2012}
+}
+
+@MISC{sp4,
+  AUTHOR      = {von Greaves, Jr., Percy L.},
+  TITLE       = {Title2},
+  DATE		    = {2012}
+}
+
+% This counts as the same as sp1 and sp2 because of the useprefix=false
+@MISC{sp5,
+  OPTIONS     = {useprefix=false},
+  AUTHOR      = {von Greaves, Jr., Percy L.},
+  TITLE       = {Title2},
+  DATE		    = {2012}
+}
+
+@MISC{sp6,
+  AUTHOR      = {von Mises, Jr., Percy L.},
+  TITLE       = {Title1},
+  DATE		    = {2010}
+}
+
+@MISC{sp7,
+  AUTHOR      = {von Mises, Jr., Paul L.},
+  TITLE       = {Title1},
+  DATE		    = {2010}
+}
+
+@MISC{sp8,
+  AUTHOR      = {Ralley, Percy L.},
+  TITLE       = {Title1},
+  DATE		    = {2010}
+}
+
+@MISC{sp9,
+  AUTHOR      = {Ralley, Jr., Percy L.},
+  TITLE       = {Title1},
+  DATE		    = {2010}
+}
+

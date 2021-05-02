@@ -1,0 +1,66 @@
+% maxnames=1, minnames=1
+% both should be uniquelist=undef as the year disambiguates
+@ARTICLE{uls1,
+  AUTHOR      = {John Smith and Henry Jones},
+  YEAR        = {2000}
+}
+
+@ARTICLE{uls2,
+  AUTHOR      = {John Smith and Sam Small},
+  YEAR        = {2001}
+}
+
+% Should be uniquelist = 2 for both as the year is the same
+@ARTICLE{uls3,
+  AUTHOR      = {Henry Helarn and Brian Bonkers},
+  YEAR        = {2000}
+}
+
+@ARTICLE{uls4,
+  AUTHOR      = {Henry Helarn and Michael Resin},
+  YEAR        = {2000}
+}
+
+% uls5 and uls6 should all be uniquelist = 2 as same year but uls7 should be undef
+@ARTICLE{uls5,
+  AUTHOR      = {Robert Feld and Ian Ink},
+  YEAR        = {2000}
+}
+
+@ARTICLE{uls6,
+  AUTHOR      = {Robert Feld and Brian Belt},
+  YEAR        = {2000}
+}
+
+@ARTICLE{uls7,
+  AUTHOR      = {Robert Feld and Stanley Gibbons},
+  YEAR        = {2001}
+}
+
+% maxnames=3, minnames=2
+% uls8 and uls9 should all be undef as the year disambiguates
+@ARTICLE{uls8,
+  AUTHOR      = {Patrick Poodle and Robin Vessel and Marvin Eagle and Rupert Trendle},
+  YEAR        = {2000}
+}
+
+@ARTICLE{uls9,
+  AUTHOR      = {Patrick Poodle and Robin Vessel and Jeremy Idle and Leigh Loog},
+  YEAR        = {2001}
+}
+
+% uls10 and uls11 should be uniquelist = 3 and uls12 should be undef
+@ARTICLE{uls10,
+  AUTHOR      = {Vogel and Beast and Garble and Rook},
+  YEAR        = {2000}
+}
+
+@ARTICLE{uls11,
+  AUTHOR      = {Vogel and Beast and Tremble and Bite},
+  YEAR        = {2000}
+}
+
+@ARTICLE{uls12,
+  AUTHOR      = {Vogel and Beast and Acid and Squeeze},
+  YEAR        = {2001}
+}

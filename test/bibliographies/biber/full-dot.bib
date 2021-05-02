@@ -1,0 +1,394 @@
+% Testing mincrossrefs. cr1 and cr2 crossrefs should trigger inclusion of cr_m and also
+% the crossref fields in both of them
+% Also a test of some aliases
+@INBOOK{cr1,
+  AUTHOR        = {Graham Gullam},
+  TITLE         = {Great and Good Graphs},
+  ORIGDATE      = {1955},
+  ARCHIVEPREFIX = {SomEPrFiX},
+  PRIMARYCLASS  = {SOMECLASS},
+  CROSSREF      = {cr_m},
+  IDS           = {cr1a1,cr1a2}
+}
+
+@INBOOK{cr2,
+  AUTHOR      = {Frederick Fumble},
+  TITLE       = {Fabulous Fourier Forms},
+  SCHOOL      = {School},
+  INSTITUTION = {Institution},
+  ORIGDATE    = {1943},
+  CROSSREF    = {cr_m}
+}
+
+@BOOK{cr_m,
+  EDITOR    = {Edgar Erbriss},
+  TITLE     = {Graphs of the Continent},
+  PUBLISHER = {Grimble},
+  YEAR      = {1974}
+}
+
+% Testing explicit cite of crossref parent. Should trigger inclusion of child crossref field
+@INBOOK{cr3,
+  AUTHOR        = {Arthur Aptitude},
+  TITLE         = {Arrangements of All Articles},
+  ORIGDATE      = {1934},
+  ARCHIVEPREFIX = {SomEPrFiX},
+  EPRINTTYPE    = {sometype},
+  CROSSREF      = {crt}
+}
+
+@BOOK{crt,
+  EDITOR    = {Mark Monkley},
+  TITLE     = {Beasts of the Burbling Burns},
+  PUBLISHER = {Rancour},
+  YEAR      = {1996}
+}
+
+% Testing mincrossrefs not reached. cr4 is cited, cr5 isn't, therefore mincrossrefs (2) for
+% crn not reached
+@INBOOK{cr4,
+  AUTHOR    = {Morris Mumble},
+  TITLE     = {Enterprising Entities},
+  ORIGDATE  = {1911},
+  CROSSREF  = {crn}
+}
+
+@INBOOK{cr5,
+  AUTHOR    = {Oliver Ordinary},
+  TITLE     = {Questionable Quidities},
+  ORIGDATE  = {1919},
+  CROSSREF  = {crn}
+}
+
+@BOOK{crn,
+  EDITOR    = {Jeremy Jermain},
+  TITLE     = {Vanquished, Victor, Vandal},
+  PUBLISHER = {Pillsbury},
+  YEAR      = {1945}
+}
+
+% Testing inheritance of event information
+@PROCEEDINGS{cr6i,
+  AUTHOR     = {Spurious Author},
+  ADDRESS    = {Address},
+  TITLE      = {Title of proceeding},
+  EDITOR     = {Editor},
+  PUBLISHER  = {Publisher of proceeding},
+  EVENTDATE  = {2009-08-21/2009-08-24},
+  EVENTTITLE = {Title of the event},
+  VENUE      = {Location of event},
+  YEAR       = {2009}
+}
+
+@INPROCEEDINGS{cr6,
+  AUTHOR     = {Author, Firstname},
+  CROSSREF   = {cr6i},
+  PAGES      = {123--},
+  TITLE      = {Title of inproceeding},
+  BOOKTITLE  = {Manual booktitle},
+  YEAR       = {2009},
+}
+
+% Testing inheritance of special fields (booktitle, bookauthor etc.)
+@BOOK{cr7i,
+  AUTHOR     = {Brian Bookauthor},
+  TITLE      = {Book Title},
+  SUBTITLE   = {Book Subtitle},
+  TITLEADDON = {Book Titleaddon},
+  PUBLISHER  = {Publisher of proceeding},
+  YEAR       = {2009},
+  VERBA      = {String},
+}
+
+@INBOOK{cr7,
+  AUTHOR     = {Author, Firstname},
+  CROSSREF   = {cr7i},
+  PAGES      = {123--126},
+  TITLE      = {Title of Book bit},
+  YEAR       = {2010}
+}
+
+% Testing supression of default inheritance
+@COLLECTION{cr8i,
+  EDITOR     = {Brian Editor},
+  TITLE      = {Book Title},
+  SUBTITLE   = {Book Subtitle},
+  TITLEADDON = {Book Titleaddon},
+  PUBLISHER  = {Publisher of Collection},
+  YEAR       = {2009}
+}
+
+@INCOLLECTION{cr8,
+  AUTHOR     = {Smith, Firstname},
+  CROSSREF   = {cr8i},
+  PAGES      = {1--12},
+  TITLE      = {Title of Collection bit},
+  YEAR       = {2010}
+}
+
+
+% Testing mincrossrefs. xr1 and xr2 xrefs should trigger inclusion of xrm and also
+% the xreffields in both of them
+@INBOOK{xr1,
+  AUTHOR    = {Zoe Zentrum},
+  TITLE     = {Moods Mildly Modified},
+  ORIGDATE  = {1921},
+  XREF      = {xrm}
+}
+
+@INBOOK{xr2,
+  AUTHOR    = {Ian Instant},
+  TITLE     = {Migraines Multiplying Madly},
+  ORIGDATE  = {1926},
+  XREF      = {xrm}
+}
+
+@BOOK{xrm,
+  EDITOR    = {Peter Prendergast},
+  TITLE     = {Calligraphy, Calisthenics, Culture},
+  PUBLISHER = {Mainstream},
+  YEAR      = {1970}
+}
+
+% Testing explicit cite of xref parent. Should trigger inclusion of child xref field
+@INBOOK{xr3,
+  AUTHOR    = {Norman Normal},
+  TITLE     = {Russion Regalia Revisited},
+  ORIGDATE  = {1923},
+  XREF      = {xrt}
+}
+
+@BOOK{xrt,
+  EDITOR    = {Lucy Lunders},
+  TITLE     = {Kings, Cork and Calculation},
+  PUBLISHER = {Middling},
+  YEAR      = {1977}
+}
+
+% Testing mincrossrefs not reached. cr4 is cited, cr5 isn't, therefore mincrossrefs (2) for
+% crn not reached
+@INBOOK{xr4,
+  AUTHOR    = {Megan Mistrel},
+  TITLE     = {Lumbering Lunatics},
+  ORIGDATE  = {1933},
+  XREF      = {xrn}
+}
+
+@INBOOK{xr5,
+  AUTHOR    = {Kenneth Kunrath},
+  TITLE     = {Dreadful Dreary Days},
+  ORIGDATE  = {1900},
+  XREF      = {xrn}
+}
+
+@BOOK{xrn,
+  EDITOR    = {Victor Vivacious},
+  TITLE     = {Examples of Excellent Exaggerations},
+  PUBLISHER = {Oxford},
+  YEAR      = {1935}
+}
+
+% Testing missing xref
+@INBOOK{mxr,
+  AUTHOR    = {Megan Mistrel},
+  TITLE     = {Lumbering Lunatics},
+  ORIGDATE  = {1933},
+  XREF      = {missing1}
+}
+
+% Testing missing crossref
+@INBOOK{mcr,
+  AUTHOR    = {Megan Mistrel},
+  TITLE     = {Lumbering Lunatics},
+  ORIGDATE  = {1933},
+  CROSSREF  = {missing1}
+}
+
+% Testing cascading crossrefs
+@MVBOOK{ccr1,
+  AUTHOR    = {Vince Various},
+  EDITOR    = {Edward Editor},
+  TITLE     = {Stuff Concerning Varia},
+  DATE      = {1934}
+}
+
+@BOOK{ccr2,
+  TITLE     = {Misc etc.},
+  DATE      = {1923},
+  CROSSREF  = {ccr1}
+}
+
+@INBOOK{ccr3,
+  TITLE     = {Perhaps, Perchance, Possibilities?},
+  DATE      = {1911},
+  CROSSREF  = {ccr2}
+}
+
+% Testing circular refs detection
+
+@BOOK{circ1,
+  DATE      = {1911},
+  CROSSREF  = {circ3}
+}
+
+@BOOK{circ2,
+  DATE      = {1911},
+  CROSSREF  = {circ1}
+}
+
+@BOOK{circ3,
+  DATE      = {1911},
+  CROSSREF  = {circ2}
+}
+
+% Test of dependency calculations for non-cited entries
+
+@BOOK{r1,
+  DATE      = {1911},
+  CROSSREF  = {r2}
+}
+
+@BOOK{r2,
+  DATE      = {1911},
+  CROSSREF  = {r3}
+}
+
+@BOOK{r3,
+  DATE      = {1911},
+  CROSSREF  = {r4}
+}
+
+@BOOK{r4,
+  DATE      = {1911},
+}
+
+
+
+
+@XDATA{macmillan:pub,
+  PUBLISHER = {Macmillan}
+}
+
+@XDATA{macmillan:loc,
+  LOCATION = {New York and London},
+  NOTE     = {A Note} 
+}
+
+@XDATA{macmillan,
+  XDATA = {macmillan:pub, macmillan:loc}
+}
+
+
+@BOOK{xd1,
+  AUTHOR        = {Edward Ellington},
+  DATE          = {2007},
+  XDATA         = {macmillan,missingxd}
+}
+
+@BOOK{xd2,
+  AUTHOR        = {Peter Pillington},
+  DATE          = {2003},
+  PUBLISHER     = {Routledge},
+  XDATA         = {macmillan:loc, bltxxd1}
+}
+
+@SET{Static1,
+  ENTRYSET   = {Static2, Static3, Static4, missing1},
+  ANNOTATION = {Some notes}
+}
+
+@BOOK{Static2,
+  AUTHOR      = {Brian Bumble},
+  TITLE       = {Blessed Brains},
+  YEAR        = {2001},
+  ANNOTATION  = {Some Blessed Note}
+}
+
+@BOOK{Static3,
+  AUTHOR      = {Clive Crenellation},
+  TITLE       = {Castles and Crime},
+  YEAR        = {2002}
+}
+
+@INBOOK{Static4,
+  AUTHOR      = {Derek Dingle},
+  TITLE       = {Dungeons, Dark and Dangerous},
+  YEAR        = {2005},
+  CROSSREF    = {Dynamic2}
+}
+
+@BOOK{Dynamic1,
+  AUTHOR      = {Derek Dynamism},
+  TITLE       = {Doing Daring Deeds},
+  YEAR        = {2002},
+  ANNOTATION  = {Some Dynamic Note},
+  SHORTHAND   = {d1}
+}
+
+@BOOK{Dynamic2,
+  AUTHOR      = {Brian Bunting},
+  TITLE       = {Beautiful Birthdays},
+  YEAR        = {2010},
+  SHORTHAND   = {d2}
+}
+
+@INBOOK{Dynamic3,
+  AUTHOR      = {Roger Regardless},
+  TITLE       = {Reckless Ravishings},
+  YEAR        = {2000},
+  CROSSREF    = {Dynamic2}
+}
+
+% Related entry
+@ARTICLE{rel1,
+  RELATED         = {rel2,rel3,rel4},
+  RELATEDTYPE     = {reprintas},
+  AUTHOR          = {Author},
+  TITLE           = {Original Title},
+  JOURNALTITLE    = {Journal Title},
+  VOLUME          = {12},
+  NUMBER          = {5},
+  DATE            = {1998},
+  PAGES           = {125--150},
+  SHORTHAND       = {RK1}
+}
+
+@INBOOK{rel2,
+  RELATED         = {rel1},
+  RELATEDTYPE     = {reprintof},
+  RELATEDSTRING   = {First},
+  AUTHOR          = {Author},
+  TITLE           = {Reprint Title},
+  BOOKTITLE       = {Booktitle},
+  LOCATION        = {Location},
+  PUBLISHER       = {Publisher},
+  DATE            = {2009},
+  PAGES           = {34--60},
+  SHORTHAND       = {RK2}
+}
+
+@INBOOK{rel3,
+  RELATED         = {rel1},
+  RELATEDTYPE     = {reprintof},
+  RELATEDSTRING   = {Second},
+  AUTHOR          = {Author},
+  TITLE           = {Reprint Title},
+  BOOKTITLE       = {Booktitle},
+  LOCATION        = {Location},
+  PUBLISHER       = {Publisher2},
+  DATE            = {2010},
+  PAGES           = {33--57},
+  SHORTHAND       = {RK3}
+}
+
+@INBOOK{rel4,
+  AUTHOR          = {Author},
+  TITLE           = {Reprint Title},
+  BOOKTITLE       = {Booktitle},
+  LOCATION        = {Location},
+  PUBLISHER       = {Publisher2},
+  DATE            = {2011},
+  PAGES           = {33--57},
+  SHORTHAND       = {RK4}
+}
+

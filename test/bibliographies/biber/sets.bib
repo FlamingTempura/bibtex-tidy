@@ -1,0 +1,83 @@
+@SET{Elias1955,
+  ENTRYSET = {Elias1955aALIAS,Elias1955b},
+  CROSSREF = {Elias1955a}
+}
+
+% Also test of month hacking - should be forced to "03" by the bibtex driver
+@ARTICLE{Elias1955a,
+  IDS    = {Elias1955aALIAS},
+  AUTHOR = {Elias, P.},
+  TITLE = {Predictive coding--I},
+  JOURNAL = {IRE Transactions on Information Theory},
+  YEAR = {1955},
+  VOLUME = {1},
+  PAGES = {16-24},
+  NUMBER = {1},
+  MONTH = {March},
+  DOI = {10.1109/TIT.1955.1055126},
+  ENTRYSET = {Elias1955},
+  ISSN = {0096-1000},
+}
+
+% Also test of month hacking - should be forced to "03" by the bibtex driver
+@ARTICLE{Elias1955b,
+  AUTHOR = {Elias, P.},
+  TITLE = {Predictive coding--II},
+  JOURNAL = {IRE Transactions on Information Theory},
+  YEAR = {1955},
+  VOLUME = {1},
+  PAGES = {24-33},
+  NUMBER = {1},
+  MONTH = {Mar.},
+  DOI = {10.1109/TIT.1955.1055116},
+  ENTRYSET = {Elias1955},
+  ISSN = {0096-1000},
+}
+
+@SET{Static1,
+  ENTRYSET   = {Static2alias, Static3, Static4, missing1},
+  ANNOTATION = {Some notes}
+}
+
+@BOOK{Static2,
+  IDS         = {Somealias, Static2alias},
+  AUTHOR      = {Brian Bumble},
+  TITLE       = {Blessed Brains},
+  YEAR        = {2001},
+  ANNOTATION  = {Some Blessed Note}
+}
+
+@BOOK{Static3,
+  AUTHOR      = {Derek Dingle},
+  TITLE       = {Castles and Crime},
+  YEAR        = {2002}
+}
+
+@BOOK{Static4,
+  AUTHOR      = {Clive Crenellation},
+  TITLE       = {Dungeons, Dark and Dangerous},
+  YEAR        = {2005}
+}
+
+@BOOK{Dynamic1,
+  AUTHOR      = {Derek Dynamism},
+  TITLE       = {Doing Daring Deeds},
+  YEAR        = {2002},
+  ANNOTATION  = {Some Dynamic Note},
+  SHORTHAND   = {d1}
+}
+
+@BOOK{Dynamic2,
+  AUTHOR      = {Brian Bunting},
+  TITLE       = {Beautiful Birthdays},
+  YEAR        = {2010},
+  SHORTHAND   = {d2}
+}
+
+@BOOK{Dynamic3,
+  IDS         = {Dynamic3alias},
+  AUTHOR      = {Roger Regardless},
+  TITLE       = {Reckless Ravishings},
+  YEAR        = {2000},
+  SHORTHAND   = {d3}
+}

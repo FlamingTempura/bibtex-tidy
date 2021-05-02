@@ -1,0 +1,107 @@
+@ARTICLE{key1,
+  IDS             = {key1alias},
+  RELATED         = {key2,key3,missing1},
+  RELATEDTYPE     = {reprintas},
+  AUTHOR          = {Author},
+  TITLE           = {Original Title},
+  JOURNALTITLE    = {Journal Title},
+  VOLUME          = {12},
+  NUMBER          = {5},
+  DATE            = {1998},
+  PAGES           = {125--150},
+  SHORTHAND       = {RK1}
+}
+
+@INBOOK{key2,
+  RELATED         = {key1alias},
+  RELATEDTYPE     = {reprintof},
+  RELATEDSTRING   = {First},
+  AUTHOR          = {Author},
+  TITLE           = {Reprint Title},
+  BOOKTITLE       = {Booktitle},
+  LOCATION        = {Location},
+  PUBLISHER       = {Publisher},
+  DATE            = {2009-02?},
+  PAGES           = {34--60},
+  SHORTHAND       = {RK2}
+}
+
+@INBOOK{key3,
+  RELATED         = {key4},
+  RELATEDTYPE     = {translationof},
+  AUTHOR          = {Author},
+  TITLE           = {Reprint Title},
+  BOOKTITLE       = {Booktitle},
+  LOCATION        = {Location},
+  PUBLISHER       = {Publisher2},
+  DATE            = {-2010-01~},
+  PAGES           = {33--57},
+  SHORTHAND       = {RK3}
+}
+
+@INBOOK{key4,
+  OPTIONS         = {useeditor=false,uniquename=false},
+  XDATA           = {key4xd},
+  TITLE           = {Orig Language Title},
+  BOOKTITLE       = {Booktitle},
+  LOCATION        = {Location},
+  PUBLISHER       = {Publisher2},
+  DATE            = {2011-22},
+  PAGES           = {33--57},
+  SHORTHAND       = {RK4}
+}
+
+% Make sure XDATA information is inherited by related clones
+@XDATA{key4xd,
+  AUTHOR          = {Author}
+}
+
+@BOOK{c1,
+  RELATED = {c2},
+}
+
+@BOOK{c2,
+  RELATED = {c3, missing2},
+}
+
+@BOOK{c3,
+  RELATED = {c2, missing3},
+}
+
+% Test custom relatedoptions
+@BOOK{s1,
+  AUTHOR = {Author},
+  title = {Title 1}
+}
+
+@BOOK{s2,
+  AUTHOR = {Author},
+  TITLE = {Title 2},
+  RELATED = {s1},
+  RELATEDSTRING = {Related Book:},
+  RELATEDOPTIONS = {dataonly,skipbib=false,usecustom=false}
+}
+
+@BOOK{kullback,
+  AUTHOR       = {Kullback, Solomon},
+  TITLE        = {Information Theory and Statistics},
+  YEAR         = 1959,
+  PUBLISHER    = {John Wiley \& Sons},
+  LOCATION     = {New York},
+  LANGID       = {english},
+  LANGIDOPTS   = {variant=american},
+}
+
+@BOOK{kullback:related,
+  AUTHOR       = {Kullback, Solomon},
+  TITLE        = {Information Theory and Statistics},
+  YEAR         = 1997,
+  PUBLISHER    = {Dover Publications},
+  LOCATION     = {New York},
+  LANGID       = {english},
+  LANGIDOPTS   = {variant=american},
+  RELATED      = {kullback},
+  RELATEDTYPE  = {origpubin},
+  ANNOTATION   = {A reprint of the \texttt{kullback} entry. Note the format of
+                  the \texttt{related} and \texttt{relatedtype} fields},
+}

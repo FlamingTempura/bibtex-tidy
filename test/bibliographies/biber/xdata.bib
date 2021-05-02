@@ -1,0 +1,102 @@
+@XDATA{macmillan:pub,
+  IDS       = {macmillan:pubALIAS},
+  PUBLISHER = {Macmillan}
+}
+
+@XDATA{macmillan:loc,
+  LOCATION = {New York and London},
+  NOTE     = {A Note} 
+}
+
+@XDATA{macmillan,
+  IDS   = {macmillanalias},
+  XDATA = {macmillan:pubALIAS, macmillan:loc}
+}
+
+
+@BOOK{xd1,
+  AUTHOR        = {Edward Ellington},
+  DATE          = {2007},
+  XDATA         = {macmillanalias, missingxd}
+}
+
+@BOOK{xd2,
+  AUTHOR        = {Peter Pillington},
+  DATE          = {2003},
+  PUBLISHER     = {Routledge},
+  XDATA         = {macmillan:loc, bltxxd1}
+}
+
+% Loop detection test
+@BOOK{xd3,
+  AUTHOR        = {Edward Ellington},
+  DATE          = {1923},
+  XDATA         = {loop}
+}
+
+@XDATA{loop:1,
+  NOTE = {Note}
+}
+
+@XDATA{loop:2,
+  XDATA = {loop:3}
+}
+
+@XDATA{loop:3,
+  XDATA = {loop}
+}
+
+@XDATA{loop,
+  XDATA = {loop:1, loop:2}
+}
+
+% Granular XDATA tests
+@BOOK{gxd1,
+  AUTHOR = {Simon Smith and xdata=gxd2-author}, % Picks name 1, no position
+  EDITOR = {xdata=gxd2-editor-2},
+  TITLE  = {xdata=gxd4-title},
+  LOCATION = {xdata=gxd3-location and B}, % Picks list element 1, no position
+  PUBLISHER = {xdata=gxd2},             % malformed (unspecified field)- output literally
+  NOTE = {xdata=gxd2-note},             % malformed (missing field) - output literally
+  TRANSLATOR = {xdata=gxd2-author-3},   % malformed (bad position) - output literally
+  LISTA = {xdata=gxd3-location-5},      % malformed (bad position) - output literally
+  ADDENDUM = {xdata=missing},           % malformed (missing entry) - output literally
+  ORGANIZATION = {xdata=gxd2-author-3}, % malformed (incompatible types)- output literally
+  NAMEA = {xdata=lxd1-author}           % malformed (not an XDATA ref)- output literally
+}
+
+@XDATA{gxd2,
+  AUTHOR = {Brian Bloom and Arthur Anderson},
+  EDITOR = {William Wool and xdata=gxd4-editor}
+}
+
+@XDATA{gxd3,
+  LOCATION = {A and C}
+}
+
+@XDATA{gxd4,
+  EDITOR = {Frank Frill},
+  TITLE =  {Some title}
+}
+
+% Granular loop detection XDATA test
+@BOOK{lxd1,
+  AUTHOR = {Simon Smith and xdata=lxd1:loop-author},
+  EDITOR = {xdata=lxd3:loop-editor}
+}
+
+@XDATA{lxd1:loop,
+  AUTHOR = {xdata=lxd2:loop-author}
+}
+
+@XDATA{lxd2:loop,
+  AUTHOR = {xdata=lxd1:loop-author}
+}
+
+@XDATA{lxd3:loop,
+  EDITOR = {xdata=lxd4:loop-editor-1}
+}
+
+@XDATA{lxd4:loop,
+  EDITOR = {xdata=lxd4:loop-editor-1}
+}
