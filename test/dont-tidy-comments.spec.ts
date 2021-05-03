@@ -3,6 +3,7 @@ import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 %references
+@comment blah, blah
 @preamble{{abc}}
 @ARTICLE {feinberg1983technique,
   number={1},
@@ -74,6 +75,7 @@ title = {Methods for Research}
 
 const output = bibtex`
 %references
+@comment blah, blah
 @preamble{{abc}}
 @article{feinberg1983technique,
   number        = {1},

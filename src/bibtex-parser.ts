@@ -187,7 +187,8 @@ function generateAST(input: string): RootNode {
 					}
 					node.command = '';
 				} else if (char === '{' || char === '(') {
-					if (node.command.trim() === '') {
+					const commandTrimmed = node.command.trim();
+					if (commandTrimmed === '' || /\s/.test(commandTrimmed)) {
 						// A block without a command is invalid. It's sometimes used in comments though, e.g. @(#)
 						const newNode: TextNode = {
 							parent: node.parent,
@@ -197,7 +198,7 @@ function generateAST(input: string): RootNode {
 						node.parent.children.splice(-1, 1, newNode); // replace the block node
 						node = newNode;
 					} else {
-						node.command = node.command.trim();
+						node.command = commandTrimmed;
 						const command: string = node.command.toLowerCase();
 						const [braces, parens] = char === '{' ? [1, 0] : [0, 1];
 						let childNode: StringNode | PreambleNode | CommentNode | EntryNode;
@@ -225,10 +226,14 @@ function generateAST(input: string): RootNode {
 						node.block = childNode;
 						node = childNode;
 					}
-				} else if (char.match(/[=#,{}()\[\]]/)) {
-					throw new BibTeXSyntaxError(input, node, i, line, column);
-					// } else if (isWhitespace(char)) {
-					// 	// TODO - ignore if start or end, otherwise error
+				} else if (char.match(/[=#,})\[\]]/)) {
+					const newNode: TextNode = {
+						parent: node.parent,
+						type: 'text',
+						comment: '@' + node.command + char,
+					};
+					node.parent.children.splice(-1, 1, newNode); // replace the block node
+					node = newNode;
 				} else {
 					node.command += char;
 				}

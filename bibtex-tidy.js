@@ -475,7 +475,9 @@ function generateAST(input) {
 
             node.command = "";
           } else if (char === "{" || char === "(") {
-            if (node.command.trim() === "") {
+            const commandTrimmed = node.command.trim();
+
+            if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
               const newNode = {
                 parent: node.parent,
                 type: "text",
@@ -484,7 +486,7 @@ function generateAST(input) {
               node.parent.children.splice(-1, 1, newNode);
               node = newNode;
             } else {
-              node.command = node.command.trim();
+              node.command = commandTrimmed;
               const command = node.command.toLowerCase();
               const [braces, parens] = char === "{" ? [1, 0] : [0, 1];
               let childNode;
@@ -515,8 +517,14 @@ function generateAST(input) {
               node.block = childNode;
               node = childNode;
             }
-          } else if (char.match(/[=#,{}()\[\]]/)) {
-            throw new BibTeXSyntaxError(input, node, i, line, column);
+          } else if (char.match(/[=#,})\[\]]/)) {
+            const newNode = {
+              parent: node.parent,
+              type: "text",
+              comment: "@" + node.command + char
+            };
+            node.parent.children.splice(-1, 1, newNode);
+            node = newNode;
           } else {
             node.command += char;
           }
@@ -889,7 +897,11 @@ function limitAuthors(str, maxAuthors) {
 }
 
 function formatPageRange(str) {
-  return str.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
+  for (let i = 0; i < 4; i++) {
+    str = str.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
+  }
+
+  return str;
 } // src/index.ts
 
 

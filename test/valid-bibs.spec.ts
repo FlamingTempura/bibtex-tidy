@@ -36,9 +36,9 @@ function alphaNumOnly(str: string): string {
 }
 
 // Credit to https://github.com/retorquere/zotero-better-bibtex
-// test('Test bibtex files from Better BibTeX', async () => {
-// 	await testBibsInDir(join(__dirname, 'bibliographies', 'better-bibtex'));
-// });
+test('Test bibtex files from Better BibTeX', async () => {
+	await testBibsInDir(join(__dirname, 'bibliographies', 'better-bibtex'));
+});
 
 // Credit to https://github.com/sciunto-org/python-bibtexparser
 test('Test bibtex files from python-bibtexparser', async () => {
@@ -46,9 +46,9 @@ test('Test bibtex files from python-bibtexparser', async () => {
 });
 
 // Credit to https://github.com/renanbr/bibtex-parser
-// test('Test bibtex files from php-bibtex-parser', async () => {
-// 	await testBibsInDir(join(__dirname, 'bibliographies', 'php-bibtex-parser'));
-// });
+test('Test bibtex files from php-bibtex-parser', async () => {
+	await testBibsInDir(join(__dirname, 'bibliographies', 'php-bibtex-parser'));
+});
 
 // Credit to https://github.com/apcshields/autocomplete-bibtex
 test('Test bibtex files from autocomplete-bibtex', async () => {

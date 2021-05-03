@@ -95,5 +95,9 @@ export function limitAuthors(str: string, maxAuthors: number): string {
 
 /** Replace single dash with double dash in page range **/
 export function formatPageRange(str: string): string {
-	return str.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+	// TODO: replace with replaceAll when more widespread node support
+	for (let i = 0; i < 4; i++) {
+		str = str.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+	}
+	return str;
 }
