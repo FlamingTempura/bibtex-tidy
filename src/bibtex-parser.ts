@@ -37,66 +37,105 @@ export type BibTeXItem =
 	| BibTeXPreamble
 	| BibTeXComment;
 
-type NodeBase<TParent extends Node | null> = { parent: TParent };
+class RootNode {
+	type = 'root' as const;
+	constructor(public children: (TextNode | BlockNode)[] = []) {}
+}
 
-type RootNode = NodeBase<null> & {
-	type: 'root';
-	children: (TextNode | BlockNode)[];
-};
-
-type TextNode = NodeBase<RootNode> & { type: 'text'; comment: string };
-type BlockNode = NodeBase<RootNode> & {
-	type: 'block';
-	command: string;
-	block?: CommentNode | PreambleNode | StringNode | EntryNode;
-};
-type CommentNode = NodeBase<BlockNode> & {
-	type: 'comment';
-	raw: string;
-	braces: number;
-	parens: number;
-};
-type PreambleNode = NodeBase<BlockNode> & {
-	type: 'preamble';
-	raw: string;
-	braces: number;
-	parens: number;
-};
-type StringNode = NodeBase<BlockNode> & {
-	type: 'string';
-	raw: string;
-	braces: number;
-	parens: number;
-};
-type EntryNode = NodeBase<BlockNode> & {
-	type: 'entry';
+class TextNode {
+	type = 'text' as const;
+	constructor(public parent: RootNode, public text: string) {
+		parent.children.push(this);
+	}
+}
+class BlockNode {
+	type = 'block' as const;
+	public command: string = '';
+	public block?: CommentNode | PreambleNode | StringNode | EntryNode;
+	constructor(public parent: RootNode) {
+		parent.children.push(this);
+	}
+}
+class CommentNode {
+	type = 'comment' as const;
+	constructor(
+		public parent: BlockNode,
+		public raw: string = '',
+		public braces: number = 0,
+		public parens: number = 0
+	) {
+		parent.block = this;
+	}
+}
+class PreambleNode {
+	type = 'preamble' as const;
+	constructor(
+		public parent: BlockNode,
+		public raw: string = '',
+		public braces: number = 0,
+		public parens: number = 0
+	) {
+		parent.block = this;
+	}
+}
+class StringNode {
+	type = 'string' as const;
+	constructor(
+		public parent: BlockNode,
+		public raw: string = '',
+		public braces: number = 0,
+		public parens: number = 0
+	) {
+		parent.block = this;
+	}
+}
+class EntryNode {
+	type = 'entry' as const;
 	key?: string;
 	fields: FieldNode[];
-}; // forming any @ prefixed line
-type FieldNode = NodeBase<EntryNode> & {
-	type: 'field';
-	name: string;
+	constructor(public parent: BlockNode) {
+		parent.block = this;
+		this.fields = [];
+	}
+} // forming any @ prefixed line
+class FieldNode {
+	type = 'field' as const;
 	/** Each value is concatenated */
 	value?: ConcatNode;
-};
-type ConcatNode = NodeBase<FieldNode> & {
-	type: 'values';
+	constructor(public parent: EntryNode, public name: string = '') {
+		parent.fields.push(this);
+	}
+}
+class ConcatNode {
+	type = 'values' as const;
 	concat: (LiteralNode | BracedNode | QuotedNode)[];
-};
-type LiteralNode = NodeBase<ConcatNode> & {
-	type: 'literal';
-	value: string;
-};
-type BracedNode = NodeBase<ConcatNode> & {
-	type: 'braced';
-	value: string;
+	constructor(public parent: FieldNode) {
+		parent.value = this;
+		this.concat = [];
+	}
+}
+class LiteralNode {
+	type = 'literal' as const;
+	constructor(public parent: ConcatNode, public value: string) {
+		parent.concat.push(this);
+	}
+}
+class BracedNode {
+	type = 'braced' as const;
+	value: string = '';
 	/** Used to count opening and closing braces */
-	depth: number;
-};
-type QuotedNode = NodeBase<ConcatNode> & {
-	type: 'quoted';
-	value: string;
-};
+	depth: number = 0;
+	constructor(public parent: ConcatNode) {
+		parent.concat.push(this);
+	}
+}
+class QuotedNode {
+	type = 'quoted' as const;
+	value: string = '';
+	constructor(public parent: ConcatNode) {
+		parent.concat.push(this);
+	}
+}
 
 type Node =
 	| RootNode
@@ -112,23 +151,8 @@ type Node =
 	| BracedNode
 	| QuotedNode;
 
-const cliOutput: Record<Node['type'], (char: string) => void> = {
-	root: (char) => process.stdout.write(`\x1b[31m${char}\x1b[0m`), //red
-	text: (char) => process.stdout.write(`\x1b[32m${char}\x1b[0m`), //green
-	block: (char) => process.stdout.write(`\x1b[33m${char}\x1b[0m`), // yellow
-	entry: (char) => process.stdout.write(`\x1b[34m${char}\x1b[0m`), // blue
-	comment: (char) => process.stdout.write(`\x1b[35m${char}\x1b[0m`), // magenta
-	preamble: (char) => process.stdout.write(`\x1b[30m\x1b[46m${char}\x1b[0m`), // bg cyan
-	string: (char) => process.stdout.write(`\x1b[30m\x1b[41m${char}\x1b[0m`), // bg red
-	field: (char) => process.stdout.write(`\x1b[36m${char}\x1b[0m`), // cyan
-	values: (char) => process.stdout.write(`\x1b[30m\x1b[43m${char}\x1b[0m`), // bg yellow
-	literal: (char) => process.stdout.write(`\x1b[30m\x1b[44m${char}\x1b[0m`), // bg blue
-	braced: (char) => process.stdout.write(`\x1b[30m\x1b[45m${char}\x1b[0m`), // bg magenta
-	quoted: (char) => process.stdout.write(`\x1b[30m\x1b[42m${char}\x1b[0m`), // bg green
-};
-
 function generateAST(input: string): RootNode {
-	const rootNode: RootNode = { type: 'root', parent: null, children: [] };
+	const rootNode = new RootNode(); //= { type: 'root', parent: null, children: [] };
 	let node: Node = rootNode;
 	let line = 1;
 	let column = 0;
@@ -144,28 +168,15 @@ function generateAST(input: string): RootNode {
 
 		switch (node.type) {
 			case 'root': {
-				let newNode: Node;
-				if (char === '@') {
-					newNode = { type: 'block', parent: node, command: '' };
-				} else {
-					newNode = { type: 'text', parent: node, comment: char };
-				}
-				node.children.push(newNode);
-				node = newNode;
+				node = char === '@' ? new BlockNode(node) : new TextNode(node, char);
 				break;
 			}
 
 			case 'text': {
 				if (char === '@') {
-					const newNode: BlockNode = {
-						type: 'block',
-						parent: node.parent,
-						command: '',
-					};
-					node.parent.children.push(newNode);
-					node = newNode;
+					node = new BlockNode(node.parent);
 				} else {
-					node.comment += char;
+					node.text += char;
 				}
 				break;
 			}
@@ -173,67 +184,48 @@ function generateAST(input: string): RootNode {
 			case 'block': {
 				if (char === '@') {
 					// everything prior to this was a comment
-					const previousNode =
+					const prevNode =
 						node.parent.children[node.parent.children.length - 2];
-					if (previousNode.type === 'text') {
-						previousNode.comment += '@' + node.command;
+					if (prevNode.type === 'text') {
+						prevNode.text += '@' + node.command;
 					} else {
 						// insert text node 1 from the end
-						node.parent.children.splice(-1, 0, {
-							parent: node.parent,
-							type: 'text',
-							comment: '@' + node.command,
-						});
+						node.parent.children.pop();
+						new TextNode(node.parent, '@' + node.command);
+						node.parent.children.push(node);
 					}
 					node.command = '';
 				} else if (char === '{' || char === '(') {
 					const commandTrimmed = node.command.trim();
 					if (commandTrimmed === '' || /\s/.test(commandTrimmed)) {
 						// A block without a command is invalid. It's sometimes used in comments though, e.g. @(#)
-						const newNode: TextNode = {
-							parent: node.parent,
-							type: 'text',
-							comment: '@' + node.command + char,
-						};
-						node.parent.children.splice(-1, 1, newNode); // replace the block node
-						node = newNode;
+						// replace the block node
+						node.parent.children.pop();
+						node = new TextNode(node.parent, '@' + node.command + char);
 					} else {
 						node.command = commandTrimmed;
 						const command: string = node.command.toLowerCase();
 						const [braces, parens] = char === '{' ? [1, 0] : [0, 1];
-						let childNode: StringNode | PreambleNode | CommentNode | EntryNode;
+						const raw = '@' + command + char;
 						switch (command) {
 							case 'string':
+								node = new StringNode(node, raw, braces, parens);
+								break;
 							case 'preamble':
+								node = new PreambleNode(node, raw, braces, parens);
+								break;
 							case 'comment':
-								childNode = {
-									parent: node,
-									type: command,
-									raw: '@' + command + char, // TODO: this lowercases String etc, should be dependant on lowercase option
-									braces,
-									parens,
-								};
+								node = new CommentNode(node, raw, braces, parens);
 								break;
 							default:
-								childNode = {
-									parent: node,
-									type: 'entry',
-									key: '',
-									fields: [],
-								};
+								node = new EntryNode(node);
 								break;
 						}
-						node.block = childNode;
-						node = childNode;
 					}
 				} else if (char.match(/[=#,})\[\]]/)) {
-					const newNode: TextNode = {
-						parent: node.parent,
-						type: 'text',
-						comment: '@' + node.command + char,
-					};
-					node.parent.children.splice(-1, 1, newNode); // replace the block node
-					node = newNode;
+					// replace the block node
+					node.parent.children.pop();
+					node = new TextNode(node.parent, '@' + node.command + char);
 				} else {
 					node.command += char;
 				}
@@ -242,7 +234,7 @@ function generateAST(input: string): RootNode {
 
 			case 'comment':
 			case 'string':
-			case 'preamble': {
+			case 'preamble':
 				if (char === '{') {
 					node.braces++;
 				} else if (char === '}') {
@@ -257,31 +249,17 @@ function generateAST(input: string): RootNode {
 					node = node.parent.parent; // root
 				}
 				break;
-			}
 
 			case 'entry': {
 				if (char === '}' || char === ')') {
 					node = node.parent.parent; // root
 				} else if (char === ',') {
-					const newNode: FieldNode = { parent: node, type: 'field', name: '' };
-					node.fields.push(newNode);
-					node = newNode;
+					node = new FieldNode(node);
 				} else if (char === '=') {
 					// no key, this is a field name
-					const field: FieldNode = {
-						parent: node,
-						type: 'field',
-						name: node.key?.trim() ?? '',
-					};
-					node.fields.push(field);
+					const field: FieldNode = new FieldNode(node, node.key?.trim() ?? '');
 					node.key = undefined;
-					const value: ConcatNode = {
-						parent: field,
-						type: 'values',
-						concat: [],
-					};
-					field.value = value;
-					node = value;
+					node = new ConcatNode(field);
 				} else if (isWhitespace(char)) {
 					//TODO
 				} else if (char.match(/[=#,{}()\[\]]/)) {
@@ -298,22 +276,10 @@ function generateAST(input: string): RootNode {
 					node = node.parent.parent.parent; // root
 				} else if (char === '=') {
 					node.name = node.name.trim();
-					const newNode: ConcatNode = {
-						parent: node,
-						type: 'values',
-						concat: [],
-					};
-					node.value = newNode;
-					node = newNode;
+					node = new ConcatNode(node);
 				} else if (char === ',') {
 					node.name = node.name.trim();
-					const newNode: FieldNode = {
-						parent: node.parent,
-						type: 'field',
-						name: '',
-					};
-					node.parent.fields.push(newNode);
-					node = newNode;
+					node = new FieldNode(node.parent);
 				} else if (char.match(/[=,{}()\[\]]/)) {
 					throw new BibTeXSyntaxError(input, node, i, line, column);
 				} else {
@@ -326,42 +292,17 @@ function generateAST(input: string): RootNode {
 				if (isWhitespace(char)) {
 					// noop
 				} else if (char === '{') {
-					const newNode: BracedNode = {
-						parent: node,
-						type: 'braced',
-						depth: 0,
-						value: '',
-					};
-					node.concat.push(newNode);
-					node = newNode;
+					node = new BracedNode(node);
 				} else if (char === '"') {
-					const newNode: QuotedNode = {
-						parent: node,
-						type: 'quoted',
-						value: '',
-					};
-					node.concat.push(newNode);
-					node = newNode;
+					node = new QuotedNode(node);
 				} else if (char === '#') {
 					// TODO: error check if missing
 				} else if (char === ',') {
-					const newNode: FieldNode = {
-						parent: node.parent.parent,
-						type: 'field',
-						name: '',
-					};
-					node.parent.parent.fields.push(newNode);
-					node = newNode;
+					node = new FieldNode(node.parent.parent);
 				} else if (char === '}' || char === ')') {
 					node = node.parent.parent.parent.parent; // root
 				} else {
-					const newNode: LiteralNode = {
-						parent: node,
-						type: 'literal',
-						value: char,
-					};
-					node.concat.push(newNode);
-					node = newNode;
+					node = new LiteralNode(node, char);
 				}
 				break;
 			}
@@ -375,13 +316,7 @@ function generateAST(input: string): RootNode {
 						node = node.parent;
 					}
 				} else if (char === ',') {
-					const newNode: FieldNode = {
-						parent: node.parent.parent.parent,
-						type: 'field',
-						name: '',
-					};
-					node.parent.parent.parent.fields.push(newNode);
-					node = newNode;
+					node = new FieldNode(node.parent.parent.parent);
 				} else if (char === '}') {
 					node = node.parent.parent.parent.parent.parent; // root
 				} else {
@@ -389,7 +324,7 @@ function generateAST(input: string): RootNode {
 				}
 				break;
 
-			case 'braced': {
+			case 'braced':
 				if (char === '}' && node.depth === 0) {
 					node = node.parent; // values
 				} else {
@@ -401,27 +336,16 @@ function generateAST(input: string): RootNode {
 					node.value += char;
 				}
 				break;
-			}
 
-			case 'quoted': {
+			case 'quoted':
 				if (char === '"' && input[i - 1] !== '\\') {
 					node = node.parent; // values
 				} else {
 					node.value += char;
 				}
 				break;
-			}
 		}
-
-		// cliOutput[node.type](
-		// 	char.replace(' ', '_').replace('\t', '_').replace('\n', '¶\n')
-		// );
 	}
-
-	//console.log('\n------------------');
-	// console.dir(node, { depth: 100 });
-	//console.log('------------------');
-
 	return rootNode;
 }
 
@@ -433,9 +357,9 @@ export function parse(input: string): BibTeXItem[] {
 			case 'text':
 				const prevItem = items[items.length - 1];
 				if (prevItem?.itemtype === 'comment') {
-					prevItem.comment += node.comment;
+					prevItem.comment += node.text;
 				} else {
-					items.push({ itemtype: 'comment', comment: node.comment });
+					items.push({ itemtype: 'comment', comment: node.text });
 				}
 				break;
 
@@ -477,9 +401,6 @@ export function parse(input: string): BibTeXItem[] {
 				throw new Error('FATAL');
 		}
 	}
-
-	// console.dir(items, { depth: 6 });
-	// console.log('OK');
 
 	return items;
 }
