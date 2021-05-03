@@ -50,21 +50,6 @@
   XDATA = {loop:1, loop:2}
 }
 
-% Granular XDATA tests
-@BOOK{gxd1,
-  AUTHOR = {Simon Smith and xdata=gxd2-author}, % Picks name 1, no position
-  EDITOR = {xdata=gxd2-editor-2},
-  TITLE  = {xdata=gxd4-title},
-  LOCATION = {xdata=gxd3-location and B}, % Picks list element 1, no position
-  PUBLISHER = {xdata=gxd2},             % malformed (unspecified field)- output literally
-  NOTE = {xdata=gxd2-note},             % malformed (missing field) - output literally
-  TRANSLATOR = {xdata=gxd2-author-3},   % malformed (bad position) - output literally
-  LISTA = {xdata=gxd3-location-5},      % malformed (bad position) - output literally
-  ADDENDUM = {xdata=missing},           % malformed (missing entry) - output literally
-  ORGANIZATION = {xdata=gxd2-author-3}, % malformed (incompatible types)- output literally
-  NAMEA = {xdata=lxd1-author}           % malformed (not an XDATA ref)- output literally
-}
-
 @XDATA{gxd2,
   AUTHOR = {Brian Bloom and Arthur Anderson},
   EDITOR = {William Wool and xdata=gxd4-editor}
