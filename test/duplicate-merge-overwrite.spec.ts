@@ -19,7 +19,7 @@ const input = bibtex`
 }`;
 
 const output = bibtex`
-@book{sweigdd42,
+@book{sweig42,
   title         = {The impossible BOOK},
   author        = {Stefa{n} Sweig},
   year          = 1942,

@@ -6,7 +6,7 @@ const input = bibtex`
 `;
 
 const output = bibtex`
-@preamble{"Maintained by " # maintainer}
+@preamble{ "Maintained by " # maintainer }
 @string{mar = "march"}
 @book{sweig42,
   author        = {Stefan Sweig},

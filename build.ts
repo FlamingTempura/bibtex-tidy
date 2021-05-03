@@ -1,7 +1,6 @@
 import { version } from './package.json';
 import { writeFile, mkdir, chmod, readFile } from 'fs/promises';
 import { join } from 'path';
-import pegjs from 'pegjs';
 import esbuild from 'esbuild';
 import { transform as babel } from '@babel/core';
 import { optionDefinitions } from './src/optionDefinitions';
@@ -38,15 +37,6 @@ const banner = `/**
  * using \`npm run build\`. Edit files in './src' then rebuild.
  **/
 `;
-
-async function generateParser() {
-	const peg = await readFile(join(SRC_PATH, 'bibtex.pegjs'), 'utf8');
-	const parser = pegjs.generate(peg, { output: 'source' });
-	await writeFile(
-		join(BUILD_PATH, 'bibtex.pegjs.js'),
-		banner + 'export default ' + parser
-	);
-}
 
 async function generateOptionTypes() {
 	const { outputFiles } = await esbuild.build({
@@ -204,7 +194,6 @@ async function buildWebBundle() {
 mkdir(BUILD_PATH, { recursive: true })
 	.then(() =>
 		Promise.all([
-			generateParser(),
 			generateOptionTypes(),
 			generateVersionFile(),
 			generateManPage(),

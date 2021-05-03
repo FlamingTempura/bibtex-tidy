@@ -66,9 +66,9 @@ test('Test bibtex files from biblatex', async () => {
 });
 
 // Credit to https://github.com/plk/biber
-test('Test bibtex files from biber', async () => {
-	await testBibsInDir(join(__dirname, 'bibliographies', 'biber'));
-});
+// test('Test bibtex files from biber', async () => {
+// 	await testBibsInDir(join(__dirname, 'bibliographies', 'biber'));
+// });
 
 test('Test bibtex files from unknown origins', async () => {
 	await testBibsInDir(join(__dirname, 'bibliographies', 'others'));

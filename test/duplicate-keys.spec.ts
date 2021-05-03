@@ -88,51 +88,11 @@ test('duplicate key warnings', async () => {
 	const tidied = await bibtexTidy(dupeKeys, { escape: true }, ['api']);
 	const warnings = [
 		{
-			entry: {
-				itemtype: 'entry',
-				key: 'Smith2009',
-				type: 'inproceedings',
-				enclosed: 'braces',
-				fields: [
-					{
-						name: 'author',
-						raw: '"Caroline JA Smith"',
-						value: 'Caroline JA Smith',
-						datatype: 'quoted',
-					},
-					{
-						name: 'year',
-						raw: '2009',
-						value: BigInt(2009),
-						datatype: 'number',
-					},
-					{
-						name: 'month',
-						raw: 'dec',
-						value: 'dec',
-						datatype: 'identifier',
-					},
-					{
-						name: 'title',
-						raw: '{{Quantum somethings}}',
-						value: '{Quantum somethings}',
-						datatype: 'braced',
-					},
-					{
-						name: 'journal',
-						raw: '{Journal of {B}lah}',
-						value: 'Journal of {B}lah',
-						datatype: 'braced',
-					},
-				],
-			},
 			code: 'DUPLICATE_KEY',
 			message: 'Smith2009 is a duplicate entry key.',
 		},
 	];
 
-	// @ts-ignore
-	delete tidied.api.warnings[0].entry.raw;
 	deepStrictEqual(tidied.api?.warnings, warnings);
 
 	const tidied2 = await bibtexTidy(noDupes, { escape: false }, ['api']);

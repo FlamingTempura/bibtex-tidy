@@ -1,5 +1,10 @@
-import { Options, normalizeOptions, UniqueKey } from './optionUtils';
-import { parse, BibTeXItem, BibTeXEntry, ValueString } from './bibtex-parser';
+import {
+	Options,
+	normalizeOptions,
+	UniqueKey,
+	OptionsNormalized,
+} from './optionUtils';
+import { parse, BibTeXItem, BibTeXEntry, BibTeXField } from './bibtex-parser';
 import {
 	titleCase,
 	escapeSpecialCharacters,
@@ -19,13 +24,11 @@ type SortIndex = Map<string, string>;
 type DuplicateKeyWarning = {
 	code: 'DUPLICATE_KEY';
 	message: string;
-	entry: BibTeXItem;
 };
 
 type MissingKeyWarning = {
 	code: 'MISSING_KEY';
 	message: string;
-	entry: BibTeXItem;
 };
 
 type DuplicateEntryWarning = {
@@ -48,32 +51,24 @@ const MONTHS: Set<string> = new Set([
 	'jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'
 ]);
 
-function tidy(input: string, options: Options = {}): BibTeXTidyResult {
+function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
+	const options = normalizeOptions(options_);
 	const {
 		omit,
-		curly,
-		numeric,
 		tab,
 		align,
 		sort,
-		merge,
-		stripEnclosingBraces,
-		dropAllCaps,
-		escape,
 		sortFields,
+		merge,
 		stripComments,
-		encodeUrls,
 		tidyComments,
 		space,
 		duplicates,
 		trailingCommas,
-		removeEmptyFields,
 		removeDuplicateFields,
+		removeEmptyFields,
 		lowercase,
-		enclosingBraces,
-		wrap,
-		maxAuthors,
-	} = normalizeOptions(options);
+	} = options;
 
 	const indent: string = tab ? '\t' : ' '.repeat(space);
 	const uniqCheck: Map<UniqueKey, boolean> = new Map();
@@ -90,9 +85,6 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 	}
 
 	const omitFields: Set<string> = new Set(omit);
-	const enclosingBracesFields: Set<string> = new Set(
-		(enclosingBraces || []).map((field) => field.toLocaleLowerCase())
-	);
 
 	input = convertCRLF(input);
 
@@ -109,87 +101,24 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 	// Warnings to be output at the end
 	const warnings: Warning[] = [];
 
+	const fieldMaps = new Map<BibTeXEntry, Map<string, string | undefined>>();
+
 	for (const item of items) {
 		if (item.itemtype !== 'entry') continue;
 		if (!item.key) {
 			warnings.push({
 				code: 'MISSING_KEY',
-				message: `${item.key} does not have an entry key.`,
-				entry: item,
+				message: `${item.type} entry does not have an entry key.`,
 			});
 		}
 
-		// Create a map of field to stringified value for quick lookups
-		item.fieldMap = new Map<string, ValueString>();
-
-		for (const field of item.fields) {
-			let fieldName = lowercase ? field.name.toLocaleLowerCase() : field.name;
-			const nameLowerCase = fieldName.toLocaleLowerCase();
-			if (omitFields.has(fieldName)) continue;
-			if (removeDuplicateFields && item.fieldMap.has(fieldName)) continue;
-			let value: string | null;
-
-			switch (field.datatype) {
-				case 'concatenate':
-				case 'identifier':
-					value = field.raw;
-					break;
-
-				case 'null':
-					if (removeEmptyFields) continue;
-					value = null;
-					break;
-
-				case 'number':
-					value = field.value.toString();
-					break;
-
-				case 'braced':
-				case 'quoted':
-					value = unwrapText(field.value);
-					// if a field's value has double braces {{blah}}, lose the inner brace
-					if (stripEnclosingBraces) {
-						value = removeEnclosingBraces(value);
-					}
-					// if a field's value is all caps, convert it to title case
-					if (dropAllCaps && !value.match(/[a-z]/)) {
-						value = titleCase(value);
-					}
-					// url encode must happen before escape special characters
-					if (nameLowerCase === 'url' && encodeUrls) {
-						value = escapeURL(value);
-					}
-					// escape special characters like %
-					if (escape) {
-						value = escapeSpecialCharacters(value);
-					}
-					if (nameLowerCase === 'pages') {
-						value = formatPageRange(value);
-					}
-					if (nameLowerCase === 'author' && maxAuthors) {
-						value = limitAuthors(value, maxAuthors);
-					}
-					// if the user requested, wrap the value in braces (this forces bibtex
-					// compiler to preserve case)
-					if (
-						enclosingBracesFields.has(fieldName) &&
-						(field.datatype === 'braced' || curly)
-					) {
-						value = addEnclosingBraces(value, true);
-					}
-			}
-
-			if (value !== null) value = value.trim();
-
-			if (value || !removeEmptyFields) {
-				while (item.fieldMap.has(fieldName)) {
-					// HACK: append space on each duplicate field. These will be trimmed
-					// on output.
-					fieldName += ' ';
-				}
-				item.fieldMap.set(fieldName, { datatype: field.datatype, value });
-			}
-		}
+		const fieldMap = new Map<string, string | undefined>(
+			item.fields.map((field) => [
+				field.name.toLocaleLowerCase(),
+				field.values?.map((value) => value.value).join(' # '),
+			])
+		);
+		fieldMaps.set(item, fieldMap);
 
 		for (const [key, doMerge] of uniqCheck) {
 			let duplicateOf: BibTeXEntry | undefined;
@@ -200,14 +129,14 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 					if (!duplicateOf) keys.set(item.key, item);
 					break;
 				case 'doi':
-					const doi = alphaNum(item.fieldMap.get('doi')?.value ?? '');
+					const doi = alphaNum(fieldMap.get('doi') ?? '');
 					if (!doi) continue;
 					duplicateOf = dois.get(doi);
 					if (!duplicateOf) dois.set(doi, item);
 					break;
 				case 'citation':
-					const ttl = item.fieldMap.get('title')?.value;
-					const aut = item.fieldMap.get('author')?.value;
+					const ttl = fieldMap.get('title');
+					const aut = fieldMap.get('author');
 					if (!ttl || !aut) continue;
 					const cit: string =
 						alphaNum(aut.split(/,| and/)[0]) + ':' + alphaNum(ttl);
@@ -215,14 +144,16 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 					if (!duplicateOf) citations.set(cit, item);
 					break;
 				case 'abstract':
-					const abstract = alphaNum(item.fieldMap.get('abstract')?.value ?? '');
+					const abstract = alphaNum(fieldMap.get('abstract') ?? '');
 					const abs = abstract?.slice(0, 100);
 					if (!abs) continue;
 					duplicateOf = abstracts.get(abs);
 					if (!duplicateOf) abstracts.set(abs, item);
 					break;
 			}
+
 			if (!duplicateOf) continue;
+
 			if (doMerge) {
 				item.duplicate = true;
 				warnings.push({
@@ -234,25 +165,28 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 				switch (merge) {
 					case 'last':
 						duplicateOf.key = item.key;
-						duplicateOf.fieldMap = item.fieldMap;
+						duplicateOf.fields = item.fields;
 						break;
 					case 'combine':
-						for (const [k, v] of item.fieldMap) {
-							if (!duplicateOf.fieldMap.has(k)) duplicateOf.fieldMap.set(k, v);
-						}
-						break;
 					case 'overwrite':
-						duplicateOf.key = item.key;
-						for (const [k, v] of item.fieldMap) {
-							duplicateOf.fieldMap.set(k, v);
+						for (const field of item.fields) {
+							const existing = duplicateOf.fields.find(
+								(f) =>
+									f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase()
+							);
+							if (!existing) {
+								duplicateOf.fields.push(field);
+							} else if (merge === 'overwrite') {
+								existing.values = field.values;
+							}
 						}
 						break;
+					// TODO: case 'keep-both'
 				}
 			} else {
 				warnings.push({
 					code: 'DUPLICATE_KEY',
 					message: `${item.key} is a duplicate entry key.`,
-					entry: item,
 				});
 			}
 			break;
@@ -281,7 +215,7 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 				} else if (key === 'type') {
 					val = item.type;
 				} else {
-					val = item.fieldMap?.get(key)?.value ?? '';
+					val = fieldMaps.get(item)?.get(key) ?? '';
 				}
 				sortIndex.set(key, val.toLowerCase());
 			}
@@ -310,13 +244,9 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 	for (const item of items) {
 		switch (item.itemtype) {
 			case 'string':
-				// keep strings as they were
-				bibtex += `@string{${item.name} = ${item.raw}}\n`;
-				break;
-
 			case 'preamble':
 				// keep preambles as they were
-				bibtex += `@preamble{${item.raw}}\n`;
+				bibtex += `${item.raw}\n`;
 				break;
 
 			case 'comment':
@@ -335,73 +265,43 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 				const itemType = lowercase ? item.type.toLocaleLowerCase() : item.type;
 				bibtex += `@${itemType}{`;
 				if (item.key) bibtex += `${item.key},`;
-				// Create ordered list of fields to output, beginning with those
-				// specified in sortFields option, followed by fields in entry.
-				// Use Set to prevent duplicates and keep insertion order.
-				const sortedFieldNames: Set<string> = new Set([
-					...(sortFields || []),
-					...item.fieldMap.keys(),
-				]);
 
-				let i = 0;
-				for (const k of sortedFieldNames) {
-					const field = item.fieldMap.get(k);
-					// Might not have the field if it's specified in the sortFields list
-					if (!field) continue;
-					if (field.value === null) {
-						bibtex += `\n${indent}${k}`;
+				if (sortFields) {
+					item.fields.sort((a, b) => {
+						const orderA = sortFields.indexOf(a.name.toLocaleLowerCase());
+						const orderB = sortFields.indexOf(b.name.toLocaleLowerCase());
+						if (orderA === -1 && orderB === -1) return 0;
+						if (orderA === -1) return 1;
+						if (orderB === -1) return -1;
+						if (orderB < orderA) return 1;
+						if (orderB > orderA) return -1;
+						return 0;
+					});
+				}
+
+				const fieldSeen = new Set<string>();
+				for (let i = 0; i < item.fields.length; i++) {
+					const field = item.fields[i];
+					const nameLowerCase = field.name.toLocaleLowerCase();
+					const name = lowercase ? nameLowerCase : field.name;
+
+					if (omitFields.has(nameLowerCase)) continue;
+					if (removeDuplicateFields && fieldSeen.has(nameLowerCase)) continue;
+					fieldSeen.add(nameLowerCase);
+
+					if (field.values.length === 0) {
+						if (removeEmptyFields) continue;
+						bibtex += `\n${indent}${name}`;
 					} else {
-						bibtex += `\n${indent}${k.trim().padEnd(align - 1)} = `;
-						let val = field.value;
-						const dig3 = String(val).slice(0, 3).toLowerCase();
-						if (numeric && val.match(/^[1-9][0-9]*$/)) {
-							bibtex += val;
-						} else if (numeric && k === 'month' && MONTHS.has(dig3)) {
-							bibtex += dig3;
-						} else if (field.datatype === 'braced' || curly) {
-							const lineLength = `${indent}${align}{${val}}`.length;
-							const multiLine = val.includes('\n\n');
-							// If the value contains multiple paragraphs, then output the value at a separate indent level, e.g.
-							// abstract     = {
-							//   Paragraph 1
-							//
-							//   Paragraph 2
-							// }
-							if ((wrap && lineLength > wrap) || multiLine) {
-								let paragraphs = val.split('\n\n');
-								const valIndent = indent.repeat(2);
-
-								if (wrap) {
-									const wrapCol = wrap;
-									paragraphs = paragraphs.map((paragraph) =>
-										wrapText(paragraph, wrapCol - valIndent.length).join(
-											'\n' + valIndent
-										)
-									);
-								}
-
-								val =
-									'\n' +
-									valIndent +
-									paragraphs.join(`\n\n${valIndent}`) +
-									'\n' +
-									indent;
-							}
-							bibtex += addEnclosingBraces(val);
-						} else if (field.datatype === 'quoted') {
-							bibtex += `"${val}"`;
-						} else {
-							bibtex += val;
-						}
+						const value = formatValue(field, options);
+						if (removeEmptyFields && (value === '{}' || value === '""'))
+							continue;
+						bibtex += `\n${indent}${name.trim().padEnd(align - 1)} = ${value}`;
 					}
-					const isLast = ++i === item.fieldMap.size;
-					if (!isLast || trailingCommas) {
-						bibtex += ',';
-					}
+
+					if (i < item.fields.length - 1 || trailingCommas) bibtex += ',';
 				}
 				bibtex += `\n}\n`;
-				// @ts-ignore
-				delete item.fieldMap; // don't return the map
 				break;
 		}
 	}
@@ -413,6 +313,118 @@ function tidy(input: string, options: Options = {}): BibTeXTidyResult {
 	) as BibTeXEntry[];
 
 	return { bibtex, warnings, entries };
+}
+
+function formatValue(
+	field: BibTeXField,
+	options: OptionsNormalized
+): string | undefined {
+	const {
+		curly,
+		numeric,
+		align,
+		stripEnclosingBraces,
+		dropAllCaps,
+		escape,
+		encodeUrls,
+		wrap,
+		maxAuthors,
+		tab,
+		space,
+		enclosingBraces,
+	} = options;
+
+	if (!field.values) throw new Error('FATAL');
+
+	const nameLowerCase = field.name.toLocaleLowerCase();
+
+	const indent: string = tab ? '\t' : ' '.repeat(space);
+	const enclosingBracesFields: Set<string> = new Set(
+		(enclosingBraces || []).map((field) => field.toLocaleLowerCase())
+	);
+
+	return field.values
+		.map(({ type, value }) => {
+			const isNumeric = value.match(/^[1-9][0-9]*$/);
+			if (isNumeric && curly) {
+				type = 'braced';
+			}
+			if (type === 'literal' || (numeric && isNumeric)) {
+				return value;
+			}
+			const dig3 = value.slice(0, 3).toLowerCase();
+			if (!curly && numeric && nameLowerCase === 'month' && MONTHS.has(dig3)) {
+				return dig3;
+			}
+			value = unwrapText(value);
+			// if a field's value has double braces {{blah}}, lose the inner brace
+			if (stripEnclosingBraces) {
+				value = removeEnclosingBraces(value);
+			}
+			// if a field's value is all caps, convert it to title case
+			if (dropAllCaps && !value.match(/[a-z]/)) {
+				value = titleCase(value);
+			}
+			// url encode must happen before escape special characters
+			if (nameLowerCase === 'url' && encodeUrls) {
+				value = escapeURL(value);
+			}
+			// escape special characters like %
+			if (escape) {
+				value = escapeSpecialCharacters(value);
+			}
+			if (nameLowerCase === 'pages') {
+				value = formatPageRange(value);
+			}
+			if (nameLowerCase === 'author' && maxAuthors) {
+				value = limitAuthors(value, maxAuthors);
+			}
+			// if the user requested, wrap the value in braces (this forces bibtex
+			// compiler to preserve case)
+			if (
+				enclosingBracesFields.has(nameLowerCase) &&
+				(type === 'braced' || curly)
+			) {
+				value = addEnclosingBraces(value, true);
+			}
+
+			value = value.trim();
+
+			if (type === 'braced' || curly) {
+				const lineLength = `${indent}${align}{${value}}`.length;
+				const multiLine = value.includes('\n\n');
+				// If the value contains multiple paragraphs, then output the value at a separate indent level, e.g.
+				// abstract     = {
+				//   Paragraph 1
+				//
+				//   Paragraph 2
+				// }
+				if ((wrap && lineLength > wrap) || multiLine) {
+					let paragraphs = value.split('\n\n');
+					const valIndent = indent.repeat(2);
+
+					if (wrap) {
+						const wrapCol = wrap;
+						paragraphs = paragraphs.map((paragraph) =>
+							wrapText(paragraph, wrapCol - valIndent.length).join(
+								'\n' + valIndent
+							)
+						);
+					}
+
+					value =
+						'\n' +
+						valIndent +
+						paragraphs.join(`\n\n${valIndent}`) +
+						'\n' +
+						indent;
+				}
+				return addEnclosingBraces(value);
+			} else {
+				return `"${value}"`;
+			}
+		})
+		.join(' # ');
 }
 
 export default { tidy };

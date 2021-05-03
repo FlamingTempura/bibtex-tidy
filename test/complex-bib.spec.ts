@@ -137,13 +137,13 @@ comment
   year          = {1990},
   title         = {Methods for Research}
 }
-@Comment{A comment}
+@comment{A comment}
 @article{py03,
   author        = {Xavier D\'ecoret},
   title         = "PyBiTex",
   year          = 2003
 }
-@Comment{
+@comment{
   @Book{steward03,
     author = {Martha Steward},
     title = {Cooking behind bars},
@@ -157,20 +157,20 @@ comment
   }
   @boo{fd{},fds}
 }
-@string{mar = "march"}
+@string(mar = "march")
 @book{sweig42,
   month         = "1~mar"
 }
-@string{mar = "march"}
+@string(mar = "march")
 @book{sweig42,
   month         = "1~" # mar
 }
 @string{firstname = "Xavier"}
-@string{lastname = "Decoret"}
-@string{email = firstname # "." # lastname # "@imag.fr"}
+@string{lastname  = "Decoret"}
+@string{email      = firstname # "." # lastname # "@imag.fr"}
 @string{maintainer = "Xavier D\'ecoret"}
-@preamble{"Maintained by " # maintainer}
-@string{mar = "march"}
+@preamble{ "Maintained by " # maintainer }
+@string(mar = "march")
 @book{sweig42,
   author        = {Stefan Sweig},
   title         = {The impossible book},
@@ -180,7 +180,7 @@ comment
 }
 ...and finally an entry commented by the use of the special @Comment entry type.
 
-@Comment{steward03,
+@comment{steward03,
   author =   {Martha Steward},
   title =  {Cooking behind bars},
   publisher =  {Culinary Expert Series},
