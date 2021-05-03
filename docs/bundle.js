@@ -14690,10 +14690,14 @@
   }
 
   var BibTeXSyntaxError = class extends Error {
-    constructor(input, node, pos, line, row) {
-      const snippet = input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20);
-      super(`Line ${line}:${row}: Syntax Error in ${node.type}
-${snippet}`);
+    constructor(input, node, pos, line, column) {
+      super(`Line ${line}:${column}: Syntax Error in ${node.type}
+` + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
+      this.node = node;
+      this.line = line;
+      this.column = column;
+      this.name = "Syntax Error";
+      this.char = input[pos];
     }
 
   }; // src/unicode.ts
@@ -15308,19 +15312,19 @@ ${valIndent}`) + "\n" + indent;
         console.error("bibtex parse problem:", e);
         document.body.classList.toggle("error", true);
         $("#feedback").innerHTML = formatError(e);
-        const {
-          start,
-          end
-        } = e.location;
-        errorHighlight = cmEditor.markText({
-          line: start.line - 1,
-          ch: start.column - 1
-        }, {
-          line: end.line - 1,
-          ch: end.column + 9
-        }, {
-          className: "bibtex-error"
-        });
+
+        if (e instanceof BibTeXSyntaxError) {
+          console.log(e.line, e.column);
+          errorHighlight = cmEditor.markText({
+            line: e.line - 1,
+            ch: e.column - 2
+          }, {
+            line: e.line - 1,
+            ch: e.column - 1
+          }, {
+            className: "bibtex-error"
+          });
+        }
       }
 
       $("#feedback").style.display = "block";
@@ -15355,10 +15359,17 @@ ${valIndent}`) + "\n" + indent;
   }
 
   function formatError(e) {
-    return `
+    if (e instanceof BibTeXSyntaxError) {
+      return `
 		<strong>There's a problem with the bibtex (${e.name})</strong><br>
-		Line ${e.location.start.line} column ${e.location.start.column}<br>
-		${e.message}`;
+		Syntax Error on line ${e.line} column ${e.column}<br>
+		Unexpected ${JSON.stringify(e.char)} in ${e.node.type}.`;
+    }
+
+    return `
+		<strong>There's a problem with the bibtex</strong><br>
+		Unknown error: ${e}<br>
+		This is probably a bug.`;
   }
 
   window.cmEditor = cmEditor;

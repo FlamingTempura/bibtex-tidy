@@ -3,6 +3,7 @@ import bibtexTidy, { BibTeXTidyResult } from '../src/index';
 import { optionDefinitions, OptionDefinition } from '../src/optionDefinitions';
 import { Options, UniqueKey } from '../src/optionUtils';
 import { optionsToCLIArgs } from '../src/cliUtils';
+import { BibTeXSyntaxError } from '../src/bibtex-parser';
 import './bibtex-highlighting';
 
 function $<T extends HTMLElement>(selector: string, parent?: ParentNode) {
@@ -70,16 +71,18 @@ $('#tidy').addEventListener('click', () => {
 			result = bibtexTidy.tidy(bibtex, opt);
 			cmEditor.setValue(result.bibtex);
 			$('#feedback').innerHTML += formatSuccessMessage(opt, result);
-		} catch (e) {
+		} catch (e: unknown) {
 			console.error('bibtex parse problem:', e);
 			document.body.classList.toggle('error', true);
 			$('#feedback').innerHTML = formatError(e);
-			const { start, end } = e.location;
-			errorHighlight = cmEditor.markText(
-				{ line: start.line - 1, ch: start.column - 1 },
-				{ line: end.line - 1, ch: end.column + 9 },
-				{ className: 'bibtex-error' }
-			);
+			if (e instanceof BibTeXSyntaxError) {
+				console.log(e.line, e.column);
+				errorHighlight = cmEditor.markText(
+					{ line: e.line - 1, ch: e.column - 2 },
+					{ line: e.line - 1, ch: e.column - 1 },
+					{ className: 'bibtex-error' }
+				);
+			}
 		}
 		$('#feedback').style.display = 'block';
 		$('#tidy').removeAttribute('disabled');
@@ -113,11 +116,17 @@ function formatDuplicateSummary(result: BibTeXTidyResult): string {
 		</strong>`;
 }
 
-function formatError(e: any): string {
-	return `
+function formatError(e: unknown): string {
+	if (e instanceof BibTeXSyntaxError) {
+		return `
 		<strong>There's a problem with the bibtex (${e.name})</strong><br>
-		Line ${e.location.start.line} column ${e.location.start.column}<br>
-		${e.message}`;
+		Syntax Error on line ${e.line} column ${e.column}<br>
+		Unexpected ${JSON.stringify(e.char)} in ${e.node.type}.`;
+	}
+	return `
+		<strong>There's a problem with the bibtex</strong><br>
+		Unknown error: ${e}<br>
+		This is probably a bug.`;
 }
 
 // make editor available for tests

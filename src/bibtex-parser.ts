@@ -484,19 +484,23 @@ function isWhitespace(string: string): boolean {
 }
 
 export class BibTeXSyntaxError extends Error {
+	public char: string;
 	constructor(
 		input: string,
-		node: Node,
+		public node: Node,
 		pos: number,
-		line: number,
-		row: number
+		public line: number,
+		public column: number
 	) {
-		const snippet =
-			input.slice(Math.max(0, pos - 20), pos) +
-			'>>' +
-			input[pos] +
-			'<<' +
-			input.slice(pos + 1, pos + 20);
-		super(`Line ${line}:${row}: Syntax Error in ${node.type}\n${snippet}`);
+		super(
+			`Line ${line}:${column}: Syntax Error in ${node.type}\n` +
+				input.slice(Math.max(0, pos - 20), pos) +
+				'>>' +
+				input[pos] +
+				'<<' +
+				input.slice(pos + 1, pos + 20)
+		);
+		this.name = 'Syntax Error';
+		this.char = input[pos];
 	}
 }

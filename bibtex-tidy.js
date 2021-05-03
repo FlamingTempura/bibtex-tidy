@@ -795,10 +795,14 @@ function isWhitespace(string) {
 }
 
 var BibTeXSyntaxError = class extends Error {
-  constructor(input, node, pos, line, row) {
-    const snippet = input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20);
-    super(`Line ${line}:${row}: Syntax Error in ${node.type}
-${snippet}`);
+  constructor(input, node, pos, line, column) {
+    super(`Line ${line}:${column}: Syntax Error in ${node.type}
+` + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
+    this.node = node;
+    this.line = line;
+    this.column = column;
+    this.name = "Syntax Error";
+    this.char = input[pos];
   }
 
 }; // src/unicode.ts
