@@ -1,54 +1,15 @@
-export type BibTeXValue = {
-	type: 'quoted' | 'braced' | 'literal';
-	value: string;
-};
-
-type BibTeXString = {
-	itemtype: 'string';
-	raw: string;
-};
-
-type BibTeXComment = {
-	itemtype: 'comment';
-	comment: string;
-};
-
-type BibTeXPreamble = {
-	itemtype: 'preamble';
-	raw: string;
-};
-
-export type BibTeXEntry = {
-	itemtype: 'entry';
-	key?: string;
-	type: string;
-	/**
-	 * Indexed by name in lowercase
-	 */
-	fields: BibTeXField[];
-	duplicate?: boolean;
-};
-
-export type BibTeXField = { name: string; values: BibTeXValue[] };
-
-export type BibTeXItem =
-	| BibTeXString
-	| BibTeXEntry
-	| BibTeXPreamble
-	| BibTeXComment;
-
 class RootNode {
 	type = 'root' as const;
 	constructor(public children: (TextNode | BlockNode)[] = []) {}
 }
 
-class TextNode {
+export class TextNode {
 	type = 'text' as const;
 	constructor(public parent: RootNode, public text: string) {
 		parent.children.push(this);
 	}
 }
-class BlockNode {
+export class BlockNode {
 	type = 'block' as const;
 	public command: string = '';
 	public block?: CommentNode | PreambleNode | StringNode | EntryNode;
@@ -56,7 +17,7 @@ class BlockNode {
 		parent.children.push(this);
 	}
 }
-class CommentNode {
+export class CommentNode {
 	type = 'comment' as const;
 	constructor(
 		public parent: BlockNode,
@@ -89,7 +50,7 @@ class StringNode {
 		parent.block = this;
 	}
 }
-class EntryNode {
+export class EntryNode {
 	type = 'entry' as const;
 	key?: string;
 	fields: FieldNode[];
@@ -98,12 +59,12 @@ class EntryNode {
 		this.fields = [];
 	}
 } // forming any @ prefixed line
-class FieldNode {
+export class FieldNode {
 	type = 'field' as const;
 	/** Each value is concatenated */
 	value?: ConcatNode;
 	constructor(public parent: EntryNode, public name: string = '') {
-		parent.fields.push(this);
+		//parent.fields.push(this);
 	}
 }
 class ConcatNode {
@@ -151,8 +112,8 @@ type Node =
 	| BracedNode
 	| QuotedNode;
 
-function generateAST(input: string): RootNode {
-	const rootNode = new RootNode(); //= { type: 'root', parent: null, children: [] };
+export function generateAST(input: string): RootNode {
+	const rootNode = new RootNode();
 	let node: Node = rootNode;
 	let line = 1;
 	let column = 0;
@@ -258,6 +219,7 @@ function generateAST(input: string): RootNode {
 				} else if (char === '=') {
 					// no key, this is a field name
 					const field: FieldNode = new FieldNode(node, node.key?.trim() ?? '');
+					node.fields.push(field);
 					node.key = undefined;
 					node = new ConcatNode(field);
 				} else if (isWhitespace(char)) {
@@ -282,6 +244,13 @@ function generateAST(input: string): RootNode {
 					node = new FieldNode(node.parent);
 				} else if (char.match(/[=,{}()\[\]]/)) {
 					throw new BibTeXSyntaxError(input, node, i, line, column);
+				} else if (!node.name) {
+					if (!isWhitespace(char)) {
+						node.parent.fields.push(node);
+						node.name = char;
+					} else {
+						// noop
+					}
 				} else {
 					node.name += char;
 				}
@@ -347,62 +316,6 @@ function generateAST(input: string): RootNode {
 		}
 	}
 	return rootNode;
-}
-
-export function parse(input: string): BibTeXItem[] {
-	const nodes = generateAST(input).children;
-	const items: BibTeXItem[] = [];
-	for (const node of nodes) {
-		switch (node.type) {
-			case 'text':
-				const prevItem = items[items.length - 1];
-				if (prevItem?.itemtype === 'comment') {
-					prevItem.comment += node.text;
-				} else {
-					items.push({ itemtype: 'comment', comment: node.text });
-				}
-				break;
-
-			case 'block':
-				if (!node.block) throw new Error('FATAL');
-				switch (node.block.type) {
-					case 'preamble':
-					case 'string':
-						items.push({ itemtype: node.block.type, raw: node.block.raw });
-						break;
-
-					case 'comment':
-						const prevItem = items[items.length - 1];
-						if (prevItem?.itemtype === 'comment') {
-							prevItem.comment += node.block.raw;
-						} else {
-							items.push({ itemtype: 'comment', comment: node.block.raw });
-						}
-						break;
-
-					case 'entry': {
-						items.push({
-							itemtype: 'entry',
-							type: node.command,
-							key: node.block.key,
-							fields: node.block.fields
-								.filter((field) => field.name)
-								.map((field) => ({
-									name: field.name,
-									values: field.value?.concat ?? [],
-								})),
-						});
-						break;
-					}
-				}
-				break;
-
-			default:
-				throw new Error('FATAL');
-		}
-	}
-
-	return items;
 }
 
 function isWhitespace(string: string): boolean {

@@ -121,7 +121,8 @@ Book{landru21,
 }`;
 
 const output = bibtex`
-@comment{jabref-meta: groupsversion:3;} % zotero export
+@comment{jabref-meta: groupsversion:3;}
+% zotero export
 
 %references
 @inproceedings{Smith2009,
@@ -179,14 +180,12 @@ comment
   month         = mar
 }
 ...and finally an entry commented by the use of the special @Comment entry type.
-
 @comment{steward03,
   author =   {Martha Steward},
   title =  {Cooking behind bars},
   publisher =  {Culinary Expert Series},
   year =   2003
 }
-
 % boo!
 @article{thing_a,
   title         = {blah},

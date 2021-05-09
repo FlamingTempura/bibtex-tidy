@@ -14300,9 +14300,9 @@
 
   };
   var TextNode = class {
-    constructor(parent, comment) {
+    constructor(parent, text) {
       this.parent = parent;
-      this.comment = comment;
+      this.text = text;
       this.type = "text";
       parent.children.push(this);
     }
@@ -14364,7 +14364,6 @@
       this.parent = parent;
       this.name = name;
       this.type = "field";
-      parent.fields.push(this);
     }
 
   };
@@ -14434,7 +14433,7 @@
             if (char === "@") {
               node = new BlockNode(node.parent);
             } else {
-              node.comment += char;
+              node.text += char;
             }
 
             break;
@@ -14443,10 +14442,10 @@
         case "block":
           {
             if (char === "@") {
-              const previousNode = node.parent.children[node.parent.children.length - 2];
+              const prevNode = node.parent.children[node.parent.children.length - 2];
 
-              if (previousNode.type === "text") {
-                previousNode.comment += "@" + node.command;
+              if (prevNode.type === "text") {
+                prevNode.text += "@" + node.command;
               } else {
                 node.parent.children.pop();
                 new TextNode(node.parent, "@" + node.command);
@@ -14525,6 +14524,7 @@
               var _node$key$trim, _node$key;
 
               const field = new FieldNode(node, (_node$key$trim = (_node$key = node.key) === null || _node$key === void 0 ? void 0 : _node$key.trim()) !== null && _node$key$trim !== void 0 ? _node$key$trim : "");
+              node.fields.push(field);
               node.key = void 0;
               node = new ConcatNode(field);
             } else if (isWhitespace(char)) {} else if (char.match(/[=#,{}()\[\]]/)) {
@@ -14551,6 +14551,11 @@
               node = new FieldNode(node.parent);
             } else if (char.match(/[=,{}()\[\]]/)) {
               throw new BibTeXSyntaxError(input, node, i, line, column);
+            } else if (!node.name) {
+              if (!isWhitespace(char)) {
+                node.parent.fields.push(node);
+                node.name = char;
+              } else {}
             } else {
               node.name += char;
             }
@@ -14617,65 +14622,6 @@
     }
 
     return rootNode;
-  }
-
-  function parse(input) {
-    const nodes = generateAST(input).children;
-    const items = [];
-
-    for (const node of nodes) {
-      if (node instanceof TextNode) {
-        const prevItem = items[items.length - 1];
-
-        if ((prevItem === null || prevItem === void 0 ? void 0 : prevItem.itemtype) === "comment") {
-          prevItem.comment += node.comment;
-        } else {
-          items.push({
-            itemtype: "comment",
-            comment: node.comment
-          });
-        }
-      } else if (node instanceof BlockNode) {
-        const block = node.block;
-        if (!block) throw new Error("FATAL");
-
-        if (block instanceof PreambleNode || block instanceof StringNode) {
-          items.push({
-            itemtype: block.type,
-            raw: block.raw
-          });
-        } else if (block instanceof CommentNode) {
-          const prevItem = items[items.length - 1];
-
-          if ((prevItem === null || prevItem === void 0 ? void 0 : prevItem.itemtype) === "comment") {
-            prevItem.comment += block.raw;
-          } else {
-            items.push({
-              itemtype: "comment",
-              comment: block.raw
-            });
-          }
-        } else if (block instanceof EntryNode) {
-          items.push({
-            itemtype: "entry",
-            type: node.command,
-            key: block.key,
-            fields: block.fields.filter(field => field.name).map(field => {
-              var _field$value$concat, _field$value;
-
-              return {
-                name: field.name,
-                values: (_field$value$concat = (_field$value = field.value) === null || _field$value === void 0 ? void 0 : _field$value.concat) !== null && _field$value$concat !== void 0 ? _field$value$concat : []
-              };
-            })
-          });
-        }
-      } else {
-        throw new Error("FATAL");
-      }
-    }
-
-    return items;
   }
 
   function isWhitespace(string) {
@@ -14798,8 +14744,6 @@
       sort,
       sortFields,
       merge,
-      stripComments,
-      tidyComments,
       space,
       duplicates,
       trailingCommas,
@@ -14822,17 +14766,20 @@
 
     const omitFields = new Set(omit);
     input = convertCRLF(input);
-    const items = parse(input);
+    const ast = generateAST(input);
     const keys = new Map();
     const dois = new Map();
     const citations = new Map();
     const abstracts = new Map();
     const sortIndexes = new Map();
     const warnings = [];
+    const duplicateEntries = new Set();
     const fieldMaps = new Map();
 
-    for (const item of items) {
-      if (item.itemtype !== "entry") continue;
+    for (const child of ast.children) {
+      if (child.type === "text") continue;
+      const item = child.block;
+      if ((item === null || item === void 0 ? void 0 : item.type) !== "entry") continue;
 
       if (!item.key) {
         warnings.push({
@@ -14842,11 +14789,11 @@
       }
 
       const fieldMap = new Map(item.fields.map(field => {
-        var _field$values;
+        var _field$value;
 
-        return [field.name.toLocaleLowerCase(), (_field$values = field.values) === null || _field$values === void 0 ? void 0 : _field$values.map(value => value.value).join(" # ")];
+        return [field.name.toLocaleLowerCase(), (_field$value = field.value) === null || _field$value === void 0 ? void 0 : _field$value.concat.map(value => value.value).join(" # ")];
       }));
-      fieldMaps.set(item, fieldMap);
+      fieldMaps.set(child, fieldMap);
 
       for (const [key, doMerge] of uniqCheck) {
         let duplicateOf;
@@ -14886,12 +14833,10 @@
         if (!duplicateOf) continue;
 
         if (doMerge) {
-          item.duplicate = true;
+          duplicateEntries.add(item);
           warnings.push({
             code: "DUPLICATE_ENTRY",
-            message: `${item.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`,
-            entry: item,
-            duplicateOf
+            message: `${item.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`
           });
 
           switch (merge) {
@@ -14908,7 +14853,7 @@
                 if (!existing) {
                   duplicateOf.fields.push(field);
                 } else if (merge === "overwrite") {
-                  existing.values = field.values;
+                  existing.value = field.value;
                 }
               }
 
@@ -14928,8 +14873,10 @@
     if (sort) {
       const precedingMeta = [];
 
-      for (const item of items) {
-        if (item.itemtype !== "entry") {
+      for (const item of ast.children) {
+        var _item$block;
+
+        if (item.type === "text" || ((_item$block = item.block) === null || _item$block === void 0 ? void 0 : _item$block.type) !== "entry") {
           precedingMeta.push(item);
           continue;
         }
@@ -14941,9 +14888,9 @@
           let val;
 
           if (key === "key") {
-            val = item.key || "";
+            val = item.block.key || "";
           } else if (key === "type") {
-            val = item.type;
+            val = item.command;
           } else {
             var _fieldMaps$get$get, _fieldMaps$get;
 
@@ -14963,7 +14910,7 @@
       for (let i = sort.length - 1; i >= 0; i--) {
         const desc = sort[i].startsWith("-");
         const key = desc ? sort[i].slice(1) : sort[i];
-        items.sort((a, b) => {
+        ast.children.sort((a, b) => {
           var _sortIndexes$get$get, _sortIndexes$get, _sortIndexes$get$get2, _sortIndexes$get2;
 
           const ia = (_sortIndexes$get$get = (_sortIndexes$get = sortIndexes.get(a)) === null || _sortIndexes$get === void 0 ? void 0 : _sortIndexes$get.get(key)) !== null && _sortIndexes$get$get !== void 0 ? _sortIndexes$get$get : "\uFFF0";
@@ -14975,82 +14922,96 @@
 
     let bibtex = "";
 
-    for (const item of items) {
-      switch (item.itemtype) {
-        case "string":
-        case "preamble":
-          bibtex += `${item.raw}
+    for (const child of ast.children) {
+      if (child.type === "text") {
+        bibtex += formatComment(child.text, options2);
+      } else {
+        if (!child.block) throw new Error("FATAL!");
+
+        switch (child.block.type) {
+          case "preamble":
+          case "string":
+            bibtex += `${child.block.raw}
 `;
-          break;
+            break;
 
-        case "comment":
-          if (stripComments) continue;
+          case "comment":
+            bibtex += formatComment(child.block.raw, options2);
+            break;
 
-          if (tidyComments) {
-            bibtex += item.comment.trim() ? item.comment.trim() + "\n" : "";
-          } else {
-            bibtex += item.comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
-          }
+          case "entry":
+            if (duplicateEntries.has(child.block)) continue;
+            const itemType = lowercase ? child.command.toLocaleLowerCase() : child.command;
+            bibtex += `@${itemType}{`;
+            if (child.block.key) bibtex += `${child.block.key},`;
 
-          break;
-
-        case "entry":
-          if (item.duplicate) continue;
-          const itemType = lowercase ? item.type.toLocaleLowerCase() : item.type;
-          bibtex += `@${itemType}{`;
-          if (item.key) bibtex += `${item.key},`;
-
-          if (sortFields) {
-            item.fields.sort((a, b) => {
-              const orderA = sortFields.indexOf(a.name.toLocaleLowerCase());
-              const orderB = sortFields.indexOf(b.name.toLocaleLowerCase());
-              if (orderA === -1 && orderB === -1) return 0;
-              if (orderA === -1) return 1;
-              if (orderB === -1) return -1;
-              if (orderB < orderA) return 1;
-              if (orderB > orderA) return -1;
-              return 0;
-            });
-          }
-
-          const fieldSeen = new Set();
-
-          for (let i = 0; i < item.fields.length; i++) {
-            const field = item.fields[i];
-            const nameLowerCase = field.name.toLocaleLowerCase();
-            const name = lowercase ? nameLowerCase : field.name;
-            if (omitFields.has(nameLowerCase)) continue;
-            if (removeDuplicateFields && fieldSeen.has(nameLowerCase)) continue;
-            fieldSeen.add(nameLowerCase);
-
-            if (field.values.length === 0) {
-              if (removeEmptyFields) continue;
-              bibtex += `
-${indent}${name}`;
-            } else {
-              const value = formatValue(field, options2);
-              if (removeEmptyFields && (value === "{}" || value === '""')) continue;
-              bibtex += `
-${indent}${name.trim().padEnd(align - 1)} = ${value}`;
+            if (sortFields) {
+              child.block.fields.sort((a, b) => {
+                const orderA = sortFields.indexOf(a.name.toLocaleLowerCase());
+                const orderB = sortFields.indexOf(b.name.toLocaleLowerCase());
+                if (orderA === -1 && orderB === -1) return 0;
+                if (orderA === -1) return 1;
+                if (orderB === -1) return -1;
+                if (orderB < orderA) return 1;
+                if (orderB > orderA) return -1;
+                return 0;
+              });
             }
 
-            if (i < item.fields.length - 1 || trailingCommas) bibtex += ",";
-          }
+            const fieldSeen = new Set();
 
-          bibtex += `
+            for (let i = 0; i < child.block.fields.length; i++) {
+              const field = child.block.fields[i];
+              const nameLowerCase = field.name.toLocaleLowerCase();
+              const name = lowercase ? nameLowerCase : field.name;
+              if (field.name === "") continue;
+              if (omitFields.has(nameLowerCase)) continue;
+              if (removeDuplicateFields && fieldSeen.has(nameLowerCase)) continue;
+              fieldSeen.add(nameLowerCase);
+
+              if (!field.value || field.value.concat.length === 0) {
+                if (removeEmptyFields) continue;
+                bibtex += `
+${indent}${name}`;
+              } else {
+                const value = formatValue(field, options2);
+                if (removeEmptyFields && (value === "{}" || value === '""')) continue;
+                bibtex += `
+${indent}${name.trim().padEnd(align - 1)} = ${value}`;
+              }
+
+              if (i < child.block.fields.length - 1 || trailingCommas) bibtex += ",";
+            }
+
+            bibtex += `
 }
 `;
-          break;
+            break;
+        }
       }
     }
 
     if (!bibtex.endsWith("\n")) bibtex += "\n";
-    const entries = items.filter(item => item.itemtype === "entry");
     return {
       bibtex,
       warnings,
-      entries
+      entries: []
     };
+  }
+
+  function formatComment(comment, {
+    stripComments,
+    tidyComments
+  }) {
+    if (stripComments) return "";
+
+    if (tidyComments) {
+      const trimmed = comment.trim();
+      if (trimmed === "") return "";
+      return trimmed + "\n";
+    } else {
+      return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
+    }
   }
 
   function formatValue(field, options2) {
@@ -15068,11 +15029,11 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
       space,
       enclosingBraces
     } = options2;
-    if (!field.values) throw new Error("FATAL");
+    if (!field.value) throw new Error("FATAL ");
     const nameLowerCase = field.name.toLocaleLowerCase();
     const indent = tab ? "	" : " ".repeat(space);
     const enclosingBracesFields = new Set((enclosingBraces || []).map(field2 => field2.toLocaleLowerCase()));
-    return field.values.map(({
+    return field.value.concat.map(({
       type,
       value
     }) => {
