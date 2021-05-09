@@ -469,6 +469,7 @@ var FieldNode = class {
     this.parent = parent;
     this.name = name;
     this.type = "field";
+    this.value = new ConcatNode(this);
   }
 
 };
@@ -476,7 +477,6 @@ var ConcatNode = class {
   constructor(parent) {
     this.parent = parent;
     this.type = "values";
-    parent.value = this;
     this.concat = [];
   }
 
@@ -631,7 +631,7 @@ function generateAST(input) {
             const field = new FieldNode(node, (_node$key$trim = (_node$key = node.key) === null || _node$key === void 0 ? void 0 : _node$key.trim()) !== null && _node$key$trim !== void 0 ? _node$key$trim : "");
             node.fields.push(field);
             node.key = void 0;
-            node = new ConcatNode(field);
+            node = field.value;
           } else if (isWhitespace(char)) {} else if (char.match(/[=#,{}()\[\]]/)) {
             throw new BibTeXSyntaxError(input, node, i, line, column);
           } else {
@@ -650,7 +650,7 @@ function generateAST(input) {
             node = node.parent.parent.parent;
           } else if (char === "=") {
             node.name = node.name.trim();
-            node = new ConcatNode(node);
+            node = node.value;
           } else if (char === ",") {
             node.name = node.name.trim();
             node = new FieldNode(node.parent);
@@ -839,7 +839,7 @@ function formatPageRange(str) {
 var MONTHS = new Set(["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]);
 
 function tidy(input, options_ = {}) {
-  var _fieldMap$get, _fieldMap$get2;
+  var _entryValues$get, _entryValues$get2;
 
   const options = normalizeOptions(options_);
   const {
@@ -847,7 +847,7 @@ function tidy(input, options_ = {}) {
     tab,
     align,
     sort,
-    sortFields,
+    sortFields: fieldOrder,
     merge,
     space,
     duplicates,
@@ -876,83 +876,78 @@ function tidy(input, options_ = {}) {
   const dois = new Map();
   const citations = new Map();
   const abstracts = new Map();
-  const sortIndexes = new Map();
   const warnings = [];
   const duplicateEntries = new Set();
-  const fieldMaps = new Map();
+  const entries = ast.children.flatMap(node => {
+    var _node$block;
 
-  for (const child of ast.children) {
-    if (child.type === "text") continue;
-    const item = child.block;
-    if ((item === null || item === void 0 ? void 0 : item.type) !== "entry") continue;
+    return node.type !== "text" && ((_node$block = node.block) === null || _node$block === void 0 ? void 0 : _node$block.type) === "entry" ? [node.block] : [];
+  });
+  const valueLookup = generateValueLookup(entries, options);
 
-    if (!item.key) {
+  for (const entry of entries) {
+    if (!entry.key) {
       warnings.push({
         code: "MISSING_KEY",
-        message: `${item.type} entry does not have an entry key.`
+        message: `${entry.type} entry does not have an entry key.`
       });
     }
 
-    const fieldMap = new Map(item.fields.map(field => {
-      var _field$value;
-
-      return [field.name.toLocaleLowerCase(), (_field$value = field.value) === null || _field$value === void 0 ? void 0 : _field$value.concat.map(value => value.value).join(" # ")];
-    }));
-    fieldMaps.set(child, fieldMap);
+    const entryValues = valueLookup.get(entry);
 
     for (const [key, doMerge] of uniqCheck) {
       let duplicateOf;
 
       switch (key) {
         case "key":
-          if (!item.key) continue;
-          duplicateOf = keys.get(item.key);
-          if (!duplicateOf) keys.set(item.key, item);
+          if (!entry.key) continue;
+          duplicateOf = keys.get(entry.key);
+          if (!duplicateOf) keys.set(entry.key, entry);
           break;
 
         case "doi":
-          const doi = alphaNum((_fieldMap$get = fieldMap.get("doi")) !== null && _fieldMap$get !== void 0 ? _fieldMap$get : "");
+          const doi = alphaNum((_entryValues$get = entryValues.get("doi")) !== null && _entryValues$get !== void 0 ? _entryValues$get : "");
           if (!doi) continue;
           duplicateOf = dois.get(doi);
-          if (!duplicateOf) dois.set(doi, item);
+          if (!duplicateOf) dois.set(doi, entry);
           break;
 
         case "citation":
-          const ttl = fieldMap.get("title");
-          const aut = fieldMap.get("author");
+          const ttl = entryValues.get("title");
+          const aut = entryValues.get("author");
           if (!ttl || !aut) continue;
           const cit = alphaNum(aut.split(/,| and/)[0]) + ":" + alphaNum(ttl);
           duplicateOf = citations.get(cit);
-          if (!duplicateOf) citations.set(cit, item);
+          if (!duplicateOf) citations.set(cit, entry);
           break;
 
         case "abstract":
-          const abstract = alphaNum((_fieldMap$get2 = fieldMap.get("abstract")) !== null && _fieldMap$get2 !== void 0 ? _fieldMap$get2 : "");
+          const abstract = alphaNum((_entryValues$get2 = entryValues.get("abstract")) !== null && _entryValues$get2 !== void 0 ? _entryValues$get2 : "");
           const abs = abstract === null || abstract === void 0 ? void 0 : abstract.slice(0, 100);
           if (!abs) continue;
           duplicateOf = abstracts.get(abs);
-          if (!duplicateOf) abstracts.set(abs, item);
+          if (!duplicateOf) abstracts.set(abs, entry);
           break;
       }
 
       if (!duplicateOf) continue;
 
       if (doMerge) {
-        duplicateEntries.add(item);
+        duplicateEntries.add(entry);
         warnings.push({
           code: "DUPLICATE_ENTRY",
-          message: `${item.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`
+          message: `${entry.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`
         });
 
         switch (merge) {
           case "last":
-            duplicateOf.key = item.key;
-            duplicateOf.fields = item.fields;
+            duplicateOf.key = entry.key;
+            duplicateOf.fields = entry.fields;
             break;
 
           case "combine":
           case "overwrite":
-            for (const field of item.fields) {
+            for (const field of entry.fields) {
               const existing = duplicateOf.fields.find(f => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase());
 
               if (!existing) {
@@ -967,7 +962,7 @@ function tidy(input, options_ = {}) {
       } else {
         warnings.push({
           code: "DUPLICATE_KEY",
-          message: `${item.key} is a duplicate entry key.`
+          message: `${entry.key} is a duplicate entry key.`
         });
       }
 
@@ -975,56 +970,7 @@ function tidy(input, options_ = {}) {
     }
   }
 
-  if (sort) {
-    const precedingMeta = [];
-
-    for (const item of ast.children) {
-      var _item$block;
-
-      if (item.type === "text" || ((_item$block = item.block) === null || _item$block === void 0 ? void 0 : _item$block.type) !== "entry") {
-        precedingMeta.push(item);
-        continue;
-      }
-
-      const sortIndex = new Map();
-
-      for (let key of sort) {
-        if (key.startsWith("-")) key = key.slice(1);
-        let val;
-
-        if (key === "key") {
-          val = item.block.key || "";
-        } else if (key === "type") {
-          val = item.command;
-        } else {
-          var _fieldMaps$get$get, _fieldMaps$get;
-
-          val = (_fieldMaps$get$get = (_fieldMaps$get = fieldMaps.get(item)) === null || _fieldMaps$get === void 0 ? void 0 : _fieldMaps$get.get(key)) !== null && _fieldMaps$get$get !== void 0 ? _fieldMaps$get$get : "";
-        }
-
-        sortIndex.set(key, val.toLowerCase());
-      }
-
-      sortIndexes.set(item, sortIndex);
-
-      while (precedingMeta.length > 0) {
-        sortIndexes.set(precedingMeta.pop(), sortIndex);
-      }
-    }
-
-    for (let i = sort.length - 1; i >= 0; i--) {
-      const desc = sort[i].startsWith("-");
-      const key = desc ? sort[i].slice(1) : sort[i];
-      ast.children.sort((a, b) => {
-        var _sortIndexes$get$get, _sortIndexes$get, _sortIndexes$get$get2, _sortIndexes$get2;
-
-        const ia = (_sortIndexes$get$get = (_sortIndexes$get = sortIndexes.get(a)) === null || _sortIndexes$get === void 0 ? void 0 : _sortIndexes$get.get(key)) !== null && _sortIndexes$get$get !== void 0 ? _sortIndexes$get$get : "\uFFF0";
-        const ib = (_sortIndexes$get$get2 = (_sortIndexes$get2 = sortIndexes.get(b)) === null || _sortIndexes$get2 === void 0 ? void 0 : _sortIndexes$get2.get(key)) !== null && _sortIndexes$get$get2 !== void 0 ? _sortIndexes$get$get2 : "\uFFF0";
-        return (desc ? ib : ia).localeCompare(desc ? ia : ib);
-      });
-    }
-  }
-
+  if (sort) sortEntries(ast, valueLookup, options);
   let bibtex = "";
 
   for (const child of ast.children) {
@@ -1049,20 +995,7 @@ function tidy(input, options_ = {}) {
           const itemType = lowercase ? child.command.toLocaleLowerCase() : child.command;
           bibtex += `@${itemType}{`;
           if (child.block.key) bibtex += `${child.block.key},`;
-
-          if (sortFields) {
-            child.block.fields.sort((a, b) => {
-              const orderA = sortFields.indexOf(a.name.toLocaleLowerCase());
-              const orderB = sortFields.indexOf(b.name.toLocaleLowerCase());
-              if (orderA === -1 && orderB === -1) return 0;
-              if (orderA === -1) return 1;
-              if (orderB === -1) return -1;
-              if (orderB < orderA) return 1;
-              if (orderB > orderA) return -1;
-              return 0;
-            });
-          }
-
+          if (fieldOrder) sortFields(child.block.fields, fieldOrder);
           const fieldSeen = new Set();
 
           for (let i = 0; i < child.block.fields.length; i++) {
@@ -1074,7 +1007,7 @@ function tidy(input, options_ = {}) {
             if (removeDuplicateFields && fieldSeen.has(nameLowerCase)) continue;
             fieldSeen.add(nameLowerCase);
 
-            if (!field.value || field.value.concat.length === 0) {
+            if (field.value.concat.length === 0) {
               if (removeEmptyFields) continue;
               bibtex += `
 ${indent}${name}`;
@@ -1100,8 +1033,79 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
   return {
     bibtex,
     warnings,
-    entries: []
+    count: entries.length
   };
+}
+
+function sortFields(fields, fieldOrder) {
+  fields.sort((a, b) => {
+    const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
+    const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
+    if (orderA === -1 && orderB === -1) return 0;
+    if (orderA === -1) return 1;
+    if (orderB === -1) return -1;
+    if (orderB < orderA) return 1;
+    if (orderB > orderA) return -1;
+    return 0;
+  });
+}
+
+function generateValueLookup(entries, options) {
+  return new Map(entries.map(entry => [entry, new Map(entry.fields.map(field => [field.name.toLocaleLowerCase(), formatValue(field, options)]))]));
+}
+
+function sortEntries(ast, fieldMaps, {
+  sort
+}) {
+  if (!sort) return;
+  const sortIndexes = new Map();
+  const precedingMeta = [];
+
+  for (const item of ast.children) {
+    var _item$block;
+
+    if (item.type === "text" || ((_item$block = item.block) === null || _item$block === void 0 ? void 0 : _item$block.type) !== "entry") {
+      precedingMeta.push(item);
+      continue;
+    }
+
+    const sortIndex = new Map();
+
+    for (let key of sort) {
+      if (key.startsWith("-")) key = key.slice(1);
+      let val;
+
+      if (key === "key") {
+        val = item.block.key || "";
+      } else if (key === "type") {
+        val = item.command;
+      } else {
+        var _fieldMaps$get$get, _fieldMaps$get;
+
+        val = (_fieldMaps$get$get = (_fieldMaps$get = fieldMaps.get(item.block)) === null || _fieldMaps$get === void 0 ? void 0 : _fieldMaps$get.get(key)) !== null && _fieldMaps$get$get !== void 0 ? _fieldMaps$get$get : "";
+      }
+
+      sortIndex.set(key, val.toLowerCase());
+    }
+
+    sortIndexes.set(item, sortIndex);
+
+    while (precedingMeta.length > 0) {
+      sortIndexes.set(precedingMeta.pop(), sortIndex);
+    }
+  }
+
+  for (let i = sort.length - 1; i >= 0; i--) {
+    const desc = sort[i].startsWith("-");
+    const key = desc ? sort[i].slice(1) : sort[i];
+    ast.children.sort((a, b) => {
+      var _sortIndexes$get$get, _sortIndexes$get, _sortIndexes$get$get2, _sortIndexes$get2;
+
+      const ia = (_sortIndexes$get$get = (_sortIndexes$get = sortIndexes.get(a)) === null || _sortIndexes$get === void 0 ? void 0 : _sortIndexes$get.get(key)) !== null && _sortIndexes$get$get !== void 0 ? _sortIndexes$get$get : "\uFFF0";
+      const ib = (_sortIndexes$get$get2 = (_sortIndexes$get2 = sortIndexes.get(b)) === null || _sortIndexes$get2 === void 0 ? void 0 : _sortIndexes$get2.get(key)) !== null && _sortIndexes$get$get2 !== void 0 ? _sortIndexes$get$get2 : "\uFFF0";
+      return (desc ? ib : ia).localeCompare(desc ? ia : ib);
+    });
+  }
 }
 
 function formatComment(comment, {
@@ -1134,7 +1138,6 @@ function formatValue(field, options) {
     space,
     enclosingBraces
   } = options;
-  if (!field.value) throw new Error("FATAL ");
   const nameLowerCase = field.name.toLocaleLowerCase();
   const indent = tab ? "	" : " ".repeat(space);
   const enclosingBracesFields = new Set((enclosingBraces || []).map(field2 => field2.toLocaleLowerCase()));

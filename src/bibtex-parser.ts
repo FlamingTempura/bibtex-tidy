@@ -1,4 +1,4 @@
-class RootNode {
+export class RootNode {
 	type = 'root' as const;
 	constructor(public children: (TextNode | BlockNode)[] = []) {}
 }
@@ -58,20 +58,19 @@ export class EntryNode {
 		parent.block = this;
 		this.fields = [];
 	}
-} // forming any @ prefixed line
+}
 export class FieldNode {
 	type = 'field' as const;
 	/** Each value is concatenated */
-	value?: ConcatNode;
+	value: ConcatNode;
 	constructor(public parent: EntryNode, public name: string = '') {
-		//parent.fields.push(this);
+		this.value = new ConcatNode(this);
 	}
 }
 class ConcatNode {
 	type = 'values' as const;
 	concat: (LiteralNode | BracedNode | QuotedNode)[];
 	constructor(public parent: FieldNode) {
-		parent.value = this;
 		this.concat = [];
 	}
 }
@@ -221,7 +220,7 @@ export function generateAST(input: string): RootNode {
 					const field: FieldNode = new FieldNode(node, node.key?.trim() ?? '');
 					node.fields.push(field);
 					node.key = undefined;
-					node = new ConcatNode(field);
+					node = field.value;
 				} else if (isWhitespace(char)) {
 					//TODO
 				} else if (char.match(/[=#,{}()\[\]]/)) {
@@ -238,7 +237,7 @@ export function generateAST(input: string): RootNode {
 					node = node.parent.parent.parent; // root
 				} else if (char === '=') {
 					node.name = node.name.trim();
-					node = new ConcatNode(node);
+					node = node.value;
 				} else if (char === ',') {
 					node.name = node.name.trim();
 					node = new FieldNode(node.parent);

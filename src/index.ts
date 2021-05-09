@@ -10,6 +10,7 @@ import {
 	FieldNode,
 	TextNode,
 	EntryNode,
+	RootNode,
 } from './bibtex-parser';
 import {
 	titleCase,
@@ -27,27 +28,15 @@ import {
 
 type SortIndex = Map<string, string>;
 
-type DuplicateKeyWarning = {
-	code: 'DUPLICATE_KEY';
+export type Warning = {
+	code: 'MISSING_KEY' | 'DUPLICATE_KEY' | 'DUPLICATE_ENTRY';
 	message: string;
 };
 
-type MissingKeyWarning = {
-	code: 'MISSING_KEY';
-	message: string;
-};
-
-type DuplicateEntryWarning = {
-	code: 'DUPLICATE_ENTRY';
-	message: string;
-};
-
-type Warning = DuplicateKeyWarning | MissingKeyWarning | DuplicateEntryWarning;
-
-type BibTeXTidyResult = {
+export type BibTeXTidyResult = {
 	bibtex: string;
 	warnings: Warning[];
-	entries: any[];
+	count: number;
 };
 
 //prettier-ignore
@@ -62,7 +51,7 @@ function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 		tab,
 		align,
 		sort,
-		sortFields,
+		sortFields: fieldOrder,
 		merge,
 		space,
 		duplicates,
@@ -99,85 +88,75 @@ function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	const citations: Map<string, EntryNode> = new Map();
 	const abstracts: Map<string, EntryNode> = new Map();
 
-	// Map of items to sort values e.g. { year: 2009, author: 'West', ... }
-	const sortIndexes: Map<TextNode | BlockNode, SortIndex> = new Map();
 	// Warnings to be output at the end
 	const warnings: Warning[] = [];
 
 	const duplicateEntries = new Set<EntryNode>();
 
-	const fieldMaps = new Map<BlockNode, Map<string, string | undefined>>();
+	const entries: EntryNode[] = ast.children.flatMap((node) =>
+		node.type !== 'text' && node.block?.type === 'entry' ? [node.block] : []
+	);
 
-	for (const child of ast.children) {
-		if (child.type === 'text') continue;
-		const item = child.block;
-		if (item?.type !== 'entry') continue;
+	const valueLookup = generateValueLookup(entries, options);
 
-		if (!item.key) {
+	for (const entry of entries) {
+		if (!entry.key) {
 			warnings.push({
 				code: 'MISSING_KEY',
-				message: `${item.type} entry does not have an entry key.`,
+				message: `${entry.type} entry does not have an entry key.`,
 			});
 		}
 
-		const fieldMap = new Map<string, string | undefined>(
-			item.fields.map((field) => [
-				field.name.toLocaleLowerCase(),
-				field.value?.concat.map((value) => value.value).join(' # '),
-			])
-		);
-		fieldMaps.set(child, fieldMap);
+		const entryValues = valueLookup.get(entry)!;
 
 		for (const [key, doMerge] of uniqCheck) {
 			let duplicateOf: EntryNode | undefined;
 			switch (key) {
 				case 'key':
-					if (!item.key) continue;
-					duplicateOf = keys.get(item.key);
-					if (!duplicateOf) keys.set(item.key, item);
+					if (!entry.key) continue;
+					duplicateOf = keys.get(entry.key);
+					if (!duplicateOf) keys.set(entry.key, entry);
 					break;
 				case 'doi':
-					const doi = alphaNum(fieldMap.get('doi') ?? '');
+					const doi = alphaNum(entryValues.get('doi') ?? '');
 					if (!doi) continue;
 					duplicateOf = dois.get(doi);
-					if (!duplicateOf) dois.set(doi, item);
+					if (!duplicateOf) dois.set(doi, entry);
 					break;
 				case 'citation':
-					const ttl = fieldMap.get('title');
-					const aut = fieldMap.get('author');
+					const ttl = entryValues.get('title');
+					const aut = entryValues.get('author');
 					if (!ttl || !aut) continue;
 					const cit: string =
 						alphaNum(aut.split(/,| and/)[0]) + ':' + alphaNum(ttl);
 					duplicateOf = citations.get(cit);
-					if (!duplicateOf) citations.set(cit, item);
+					if (!duplicateOf) citations.set(cit, entry);
 					break;
 				case 'abstract':
-					const abstract = alphaNum(fieldMap.get('abstract') ?? '');
+					const abstract = alphaNum(entryValues.get('abstract') ?? '');
 					const abs = abstract?.slice(0, 100);
 					if (!abs) continue;
 					duplicateOf = abstracts.get(abs);
-					if (!duplicateOf) abstracts.set(abs, item);
+					if (!duplicateOf) abstracts.set(abs, entry);
 					break;
 			}
 
 			if (!duplicateOf) continue;
 
 			if (doMerge) {
-				duplicateEntries.add(item);
+				duplicateEntries.add(entry);
 				warnings.push({
 					code: 'DUPLICATE_ENTRY',
-					message: `${item.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`,
-					//entry: item,
-					//duplicateOf,
+					message: `${entry.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`,
 				});
 				switch (merge) {
 					case 'last':
-						duplicateOf.key = item.key;
-						duplicateOf.fields = item.fields;
+						duplicateOf.key = entry.key;
+						duplicateOf.fields = entry.fields;
 						break;
 					case 'combine':
 					case 'overwrite':
-						for (const field of item.fields) {
+						for (const field of entry.fields) {
 							const existing = duplicateOf.fields.find(
 								(f) =>
 									f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase()
@@ -194,7 +173,7 @@ function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 			} else {
 				warnings.push({
 					code: 'DUPLICATE_KEY',
-					message: `${item.key} is a duplicate entry key.`,
+					message: `${entry.key} is a duplicate entry key.`,
 				});
 			}
 			break;
@@ -202,50 +181,7 @@ function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	}
 
 	// sort needs to happen after merging all entries is complete
-	if (sort) {
-		// comments, preambles, and strings which should be kept with an entry
-		const precedingMeta: (TextNode | BlockNode)[] = [];
-
-		// first, create sort indexes
-		for (const item of ast.children) {
-			if (item.type === 'text' || item.block?.type !== 'entry') {
-				// if string, preamble, or comment, then use sort index of previous entry
-				precedingMeta.push(item);
-				continue;
-			}
-			const sortIndex: SortIndex = new Map();
-			for (let key of sort) {
-				// dash prefix indicates descending order, deal with this later
-				if (key.startsWith('-')) key = key.slice(1);
-				let val: string;
-				if (key === 'key') {
-					val = item.block.key || '';
-				} else if (key === 'type') {
-					val = item.command;
-				} else {
-					val = fieldMaps.get(item)?.get(key) ?? '';
-				}
-				sortIndex.set(key, val.toLowerCase());
-			}
-			sortIndexes.set(item, sortIndex);
-			// update comments above to this index
-			while (precedingMeta.length > 0) {
-				sortIndexes.set(precedingMeta.pop()!, sortIndex);
-			}
-		}
-
-		// Now iterate through sort keys and sort entries
-		for (let i = sort.length - 1; i >= 0; i--) {
-			const desc = sort[i].startsWith('-');
-			const key = desc ? sort[i].slice(1) : sort[i];
-			ast.children.sort((a, b) => {
-				// if no value, then use \ufff0 so entry will be last
-				const ia = sortIndexes.get(a)?.get(key) ?? '\ufff0';
-				const ib = sortIndexes.get(b)?.get(key) ?? '\ufff0';
-				return (desc ? ib : ia).localeCompare(desc ? ia : ib);
-			});
-		}
-	}
+	if (sort) sortEntries(ast, valueLookup, options);
 
 	// output the tidied bibtex
 	let bibtex: string = '';
@@ -275,18 +211,7 @@ function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 					bibtex += `@${itemType}{`;
 					if (child.block.key) bibtex += `${child.block.key},`;
 
-					if (sortFields) {
-						child.block.fields.sort((a, b) => {
-							const orderA = sortFields.indexOf(a.name.toLocaleLowerCase());
-							const orderB = sortFields.indexOf(b.name.toLocaleLowerCase());
-							if (orderA === -1 && orderB === -1) return 0;
-							if (orderA === -1) return 1;
-							if (orderB === -1) return -1;
-							if (orderB < orderA) return 1;
-							if (orderB > orderA) return -1;
-							return 0;
-						});
-					}
+					if (fieldOrder) sortFields(child.block.fields, fieldOrder);
 
 					const fieldSeen = new Set<string>();
 					for (let i = 0; i < child.block.fields.length; i++) {
@@ -299,7 +224,7 @@ function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 						if (removeDuplicateFields && fieldSeen.has(nameLowerCase)) continue;
 						fieldSeen.add(nameLowerCase);
 
-						if (!field.value || field.value.concat.length === 0) {
+						if (field.value.concat.length === 0) {
 							if (removeEmptyFields) continue;
 							bibtex += `\n${indent}${name}`;
 						} else {
@@ -322,7 +247,91 @@ function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 
 	if (!bibtex.endsWith('\n')) bibtex += '\n';
 
-	return { bibtex, warnings, entries: [] };
+	return { bibtex, warnings, count: entries.length };
+}
+
+function sortFields(fields: FieldNode[], fieldOrder: string[]): void {
+	fields.sort((a, b) => {
+		const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
+		const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
+		if (orderA === -1 && orderB === -1) return 0;
+		if (orderA === -1) return 1;
+		if (orderB === -1) return -1;
+		if (orderB < orderA) return 1;
+		if (orderB > orderA) return -1;
+		return 0;
+	});
+}
+
+function generateValueLookup(
+	entries: EntryNode[],
+	options: OptionsNormalized
+): Map<EntryNode, Map<string, string | undefined>> {
+	return new Map(
+		entries.map((entry) => [
+			entry,
+			new Map(
+				entry.fields.map((field) => [
+					field.name.toLocaleLowerCase(),
+					formatValue(field, options),
+				])
+			),
+		])
+	);
+}
+
+function sortEntries(
+	ast: RootNode,
+	fieldMaps: Map<EntryNode, Map<string, string | undefined>>,
+	{ sort }: OptionsNormalized
+): void {
+	if (!sort) return;
+
+	// Map of items to sort values e.g. { year: 2009, author: 'West', ... }
+	const sortIndexes: Map<TextNode | BlockNode, SortIndex> = new Map();
+
+	// comments, preambles, and strings which should be kept with an entry
+	const precedingMeta: (TextNode | BlockNode)[] = [];
+
+	// first, create sort indexes
+	for (const item of ast.children) {
+		if (item.type === 'text' || item.block?.type !== 'entry') {
+			// if string, preamble, or comment, then use sort index of previous entry
+			precedingMeta.push(item);
+			continue;
+		}
+		const sortIndex: SortIndex = new Map();
+		for (let key of sort) {
+			// dash prefix indicates descending order, deal with this later
+			if (key.startsWith('-')) key = key.slice(1);
+			let val: string;
+			if (key === 'key') {
+				val = item.block.key || '';
+			} else if (key === 'type') {
+				val = item.command;
+			} else {
+				val = fieldMaps.get(item.block)?.get(key) ?? '';
+			}
+			sortIndex.set(key, val.toLowerCase());
+		}
+		sortIndexes.set(item, sortIndex);
+		// update comments above to this index
+		while (precedingMeta.length > 0) {
+			sortIndexes.set(precedingMeta.pop()!, sortIndex);
+		}
+	}
+
+	// Now iterate through sort keys and sort entries
+	for (let i = sort.length - 1; i >= 0; i--) {
+		const desc = sort[i].startsWith('-');
+		const key = desc ? sort[i].slice(1) : sort[i];
+		ast.children.sort((a, b) => {
+			// if no value, then use \ufff0 so entry will be last
+			const ia = sortIndexes.get(a)?.get(key) ?? '\ufff0';
+			const ib = sortIndexes.get(b)?.get(key) ?? '\ufff0';
+			return (desc ? ib : ia).localeCompare(desc ? ia : ib);
+		});
+	}
 }
 
 function formatComment(
@@ -359,8 +368,6 @@ function formatValue(
 		space,
 		enclosingBraces,
 	} = options;
-
-	if (!field.value) throw new Error('FATAL ');
 
 	const nameLowerCase = field.name.toLocaleLowerCase();
 
@@ -454,5 +461,3 @@ function formatValue(
 }
 
 export default { tidy };
-
-export type { Warning, BibTeXTidyResult };

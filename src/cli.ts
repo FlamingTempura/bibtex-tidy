@@ -37,7 +37,7 @@ function start(): void {
 		for (const warning of result.warnings) {
 			console.error(`${warning.code}: ${warning.message}`);
 		}
-		console.log(`Done. Successfully tidied ${result.entries.length} entries.`);
+		console.log(`Done. Successfully tidied ${result.count} entries.`);
 		if (options.merge) {
 			const dupes = result.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
 			console.log(`${dupes.length} entries merged`);

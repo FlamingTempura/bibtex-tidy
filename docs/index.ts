@@ -96,7 +96,7 @@ function formatSuccessMessage(
 	const warnings = result.warnings.filter((w) => w.code !== 'DUPLICATE_ENTRY');
 	return `
 		<strong>Successful!</strong><br>
-		Tidied ${result.entries.length} entries.<br><br>
+		Tidied ${result.count} entries.<br><br>
 		<ul>
 			${warnings.map((warning) => `<li>${warning.message}</li>`).join('')}
 		</ul>
