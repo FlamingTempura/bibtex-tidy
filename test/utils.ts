@@ -67,6 +67,10 @@ export async function bibtexTidy(
 
 	const result: BibTeXTidyRunResult = {};
 
+	if (process.env.NODE_ENV === 'coverage') {
+		targets = targets.filter((f) => f !== 'web');
+	}
+
 	if (targets.includes('api')) {
 		const apiResult = testAPI(inputs, options);
 		const apiResult2 = testAPI([apiResult.bibtex], options);

@@ -21,9 +21,9 @@ export class CommentNode {
 	type = 'comment' as const;
 	constructor(
 		public parent: BlockNode,
-		public raw: string = '',
-		public braces: number = 0,
-		public parens: number = 0
+		public raw: string,
+		public braces: number,
+		public parens: number
 	) {
 		parent.block = this;
 	}
@@ -32,9 +32,9 @@ class PreambleNode {
 	type = 'preamble' as const;
 	constructor(
 		public parent: BlockNode,
-		public raw: string = '',
-		public braces: number = 0,
-		public parens: number = 0
+		public raw: string,
+		public braces: number,
+		public parens: number
 	) {
 		parent.block = this;
 	}
@@ -43,9 +43,9 @@ class StringNode {
 	type = 'string' as const;
 	constructor(
 		public parent: BlockNode,
-		public raw: string = '',
-		public braces: number = 0,
-		public parens: number = 0
+		public raw: string,
+		public braces: number,
+		public parens: number
 	) {
 		parent.block = this;
 	}

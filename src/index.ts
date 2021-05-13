@@ -44,7 +44,7 @@ const MONTHS: Set<string> = new Set([
 	'jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'
 ]);
 
-function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
+export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	const options = normalizeOptions(options_);
 	const {
 		omit,

@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.tidy = tidy;
 exports.default = void 0;
 
 /**
@@ -423,7 +424,7 @@ var BlockNode = class {
 
 };
 var CommentNode = class {
-  constructor(parent, raw = "", braces = 0, parens = 0) {
+  constructor(parent, raw, braces, parens) {
     this.parent = parent;
     this.raw = raw;
     this.braces = braces;
@@ -434,7 +435,7 @@ var CommentNode = class {
 
 };
 var PreambleNode = class {
-  constructor(parent, raw = "", braces = 0, parens = 0) {
+  constructor(parent, raw, braces, parens) {
     this.parent = parent;
     this.raw = raw;
     this.braces = braces;
@@ -445,7 +446,7 @@ var PreambleNode = class {
 
 };
 var StringNode = class {
-  constructor(parent, raw = "", braces = 0, parens = 0) {
+  constructor(parent, raw, braces, parens) {
     this.parent = parent;
     this.raw = raw;
     this.braces = braces;

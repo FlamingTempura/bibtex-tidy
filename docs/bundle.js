@@ -14326,7 +14326,7 @@
 
   };
   var CommentNode = class {
-    constructor(parent, raw = "", braces = 0, parens = 0) {
+    constructor(parent, raw, braces, parens) {
       this.parent = parent;
       this.raw = raw;
       this.braces = braces;
@@ -14337,7 +14337,7 @@
 
   };
   var PreambleNode = class {
-    constructor(parent, raw = "", braces = 0, parens = 0) {
+    constructor(parent, raw, braces, parens) {
       this.parent = parent;
       this.raw = raw;
       this.braces = braces;
@@ -14348,7 +14348,7 @@
 
   };
   var StringNode = class {
-    constructor(parent, raw = "", braces = 0, parens = 0) {
+    constructor(parent, raw, braces, parens) {
       this.parent = parent;
       this.raw = raw;
       this.braces = braces;

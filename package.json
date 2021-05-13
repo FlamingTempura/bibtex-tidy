@@ -16,13 +16,15 @@
 		"codemirror": "^5.61.0",
 		"esbuild": "^0.11.20",
 		"esbuild-register": "^2.5.0",
+		"nyc": "^15.1.0",
 		"puppeteer": "^9.1.1",
 		"typescript": "^4.2.4"
 	},
 	"scripts": {
-		"test": "npm run build && node -r esbuild-register test/index.ts",
 		"build": "node -r esbuild-register build.ts",
-		"typecheck": "tsc --noEmit"
+		"test": "npm run build && node -r esbuild-register test/index.ts",
+		"typecheck": "tsc --noEmit",
+		"cover": "NODE_ENV=coverage nyc --reporter html node -r esbuild-register test/index.ts"
 	},
 	"repository": {
 		"type": "git",
