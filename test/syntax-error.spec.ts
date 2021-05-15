@@ -1,5 +1,4 @@
 import { strictEqual } from 'assert';
-import { BibTeXSyntaxError } from '../src/bibtex-parser';
 import { bibtex, bibtexTidy, test } from './utils';
 
 const input1 = bibtex`
@@ -44,17 +43,17 @@ const input6 = bibtex`
 `;
 
 test('syntax-error', async () => {
-	strictEqual((await getError(input1)) instanceof BibTeXSyntaxError, true);
-	strictEqual((await getError(input2)) instanceof BibTeXSyntaxError, true);
-	strictEqual((await getError(input3)) instanceof BibTeXSyntaxError, true);
-	strictEqual((await getError(input4)) instanceof BibTeXSyntaxError, true);
-	strictEqual((await getError(input5)) instanceof BibTeXSyntaxError, true);
-	strictEqual((await getError(input6)) instanceof BibTeXSyntaxError, true);
+	strictEqual((await getError(input1))?.name, 'Syntax Error');
+	strictEqual((await getError(input2))?.name, 'Syntax Error');
+	strictEqual((await getError(input3))?.name, 'Syntax Error');
+	strictEqual((await getError(input4))?.name, 'Syntax Error');
+	strictEqual((await getError(input5))?.name, 'Syntax Error');
+	strictEqual((await getError(input6))?.name, 'Syntax Error');
 });
 
-async function getError(input: string): Promise<unknown> {
+async function getError(input: string): Promise<any> {
 	try {
-		await bibtexTidy(input);
+		await bibtexTidy(input, undefined, ['api']);
 	} catch (e) {
 		return e;
 	}
