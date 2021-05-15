@@ -124,7 +124,7 @@ const output = bibtex`
 `;
 
 test('merge duplicates', async () => {
-	const tidied = await bibtexTidy(input, { merge: true });
+	const tidied = await bibtexTidy(input, { duplicates: true, merge: true });
 	const warnings = tidied.api?.warnings.filter(
 		(w) => w.code === 'DUPLICATE_ENTRY'
 	);

@@ -33,6 +33,7 @@ function start(): void {
 	console.log('Tidying...');
 	for (const inputFile of inputFiles) {
 		const bibtex = readFileSync(inputFile, 'utf8');
+		console.log(bibtex);
 		const result = tidy.tidy(bibtex, options);
 		for (const warning of result.warnings) {
 			console.error(`${warning.code}: ${warning.message}`);

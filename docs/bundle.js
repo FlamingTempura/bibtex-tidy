@@ -14030,7 +14030,7 @@
     key: "duplicates",
     cli: {
       "--duplicates": args => {
-        if (!args) return true;
+        if (args.length === 0) return true;
 
         for (const i of args) {
           if (i !== "doi" && i !== "key" && i !== "abstract" && i !== "citation") {
@@ -14379,7 +14379,8 @@
   var ConcatNode = class {
     constructor(parent) {
       this.parent = parent;
-      this.type = "values";
+      this.type = "concat";
+      this.canConsumeValue = true;
       this.concat = [];
     }
 
@@ -14438,7 +14439,7 @@
 
         case "text":
           {
-            if (char === "@") {
+            if (char === "@" && /[\s\r\n}]/.test(input[i - 1])) {
               node = new BlockNode(node.parent);
             } else {
               node.text += char;
@@ -14452,7 +14453,7 @@
             if (char === "@") {
               const prevNode = node.parent.children[node.parent.children.length - 2];
 
-              if (prevNode.type === "text") {
+              if ((prevNode === null || prevNode === void 0 ? void 0 : prevNode.type) === "text") {
                 prevNode.text += "@" + node.command;
               } else {
                 node.parent.children.pop();
@@ -14529,18 +14530,20 @@
             } else if (char === ",") {
               node = new FieldNode(node);
             } else if (char === "=") {
-              var _node$key$trim, _node$key;
+              if (!node.key) {
+                throw new BibTeXSyntaxError(input, node, i, line, column);
+              }
 
-              const field = new FieldNode(node, (_node$key$trim = (_node$key = node.key) === null || _node$key === void 0 ? void 0 : _node$key.trim()) !== null && _node$key$trim !== void 0 ? _node$key$trim : "");
+              const field = new FieldNode(node, node.key);
               node.fields.push(field);
               node.key = void 0;
               node = field.value;
             } else if (isWhitespace(char)) {} else if (char.match(/[=#,{}()\[\]]/)) {
               throw new BibTeXSyntaxError(input, node, i, line, column);
             } else {
-              var _node$key2;
+              var _node$key;
 
-              node.key = ((_node$key2 = node.key) !== null && _node$key2 !== void 0 ? _node$key2 : "") + char;
+              node.key = ((_node$key = node.key) !== null && _node$key !== void 0 ? _node$key : "") + char;
             }
 
             break;
@@ -14557,7 +14560,7 @@
             } else if (char === ",") {
               node.name = node.name.trim();
               node = new FieldNode(node.parent);
-            } else if (char.match(/[=,{}()\[\]]/)) {
+            } else if (/[=,{}()\[\]]/.test(char)) {
               throw new BibTeXSyntaxError(input, node, i, line, column);
             } else if (!node.name) {
               if (!isWhitespace(char)) {
@@ -14571,18 +14574,34 @@
             break;
           }
 
-        case "values":
+        case "concat":
           {
-            if (isWhitespace(char)) {} else if (char === "{") {
-              node = new BracedNode(node);
-            } else if (char === '"') {
-              node = new QuotedNode(node);
-            } else if (char === "#") {} else if (char === ",") {
-              node = new FieldNode(node.parent.parent);
-            } else if (char === "}" || char === ")") {
-              node = node.parent.parent.parent.parent;
+            if (isWhitespace(char)) {
+              break;
+            } else if (node.canConsumeValue) {
+              if (/[#=,}()\[\]]/.test(char)) {
+                throw new BibTeXSyntaxError(input, node, i, line, column);
+              } else {
+                node.canConsumeValue = false;
+
+                if (char === "{") {
+                  node = new BracedNode(node);
+                } else if (char === '"') {
+                  node = new QuotedNode(node);
+                } else {
+                  node = new LiteralNode(node, char);
+                }
+              }
             } else {
-              node = new LiteralNode(node, char);
+              if (char === ",") {
+                node = new FieldNode(node.parent.parent);
+              } else if (char === "}" || char === ")") {
+                node = node.parent.parent.parent.parent;
+              } else if (char === "#") {
+                node.canConsumeValue = true;
+              } else {
+                throw new BibTeXSyntaxError(input, node, i, line, column);
+              }
             }
 
             break;
@@ -14590,9 +14609,7 @@
 
         case "literal":
           if (isWhitespace(char)) {
-            if (!node.value) {} else {
-              node = node.parent;
-            }
+            node = node.parent;
           } else if (char === ",") {
             node = new FieldNode(node.parent.parent.parent);
           } else if (char === "}") {
@@ -14680,8 +14697,7 @@
   }
 
   function alphaNum(str) {
-    if (typeof str === "undefined") return void 0;
-    return String(str).replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
+    return str.replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
   }
 
   function convertCRLF(str) {
@@ -14749,7 +14765,6 @@
       omit,
       tab,
       align,
-      sort,
       sortFields: fieldOrder,
       merge,
       space,
@@ -14833,47 +14848,45 @@
             break;
         }
 
-        if (!duplicateOf) continue;
+        if (duplicateOf) {
+          if (doMerge) {
+            duplicateEntries.add(entry);
+            warnings.push({
+              code: "DUPLICATE_ENTRY",
+              message: `${entry.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`
+            });
 
-        if (doMerge) {
-          duplicateEntries.add(entry);
-          warnings.push({
-            code: "DUPLICATE_ENTRY",
-            message: `${entry.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`
-          });
+            switch (merge) {
+              case "last":
+                duplicateOf.key = entry.key;
+                duplicateOf.fields = entry.fields;
+                break;
 
-          switch (merge) {
-            case "last":
-              duplicateOf.key = entry.key;
-              duplicateOf.fields = entry.fields;
-              break;
+              case "combine":
+              case "overwrite":
+                for (const field of entry.fields) {
+                  const existing = duplicateOf.fields.find(f => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase());
 
-            case "combine":
-            case "overwrite":
-              for (const field of entry.fields) {
-                const existing = duplicateOf.fields.find(f => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase());
-
-                if (!existing) {
-                  duplicateOf.fields.push(field);
-                } else if (merge === "overwrite") {
-                  existing.value = field.value;
+                  if (!existing) {
+                    duplicateOf.fields.push(field);
+                  } else if (merge === "overwrite") {
+                    existing.value = field.value;
+                  }
                 }
-              }
 
-              break;
+                break;
+            }
+          } else {
+            warnings.push({
+              code: "DUPLICATE_KEY",
+              message: `${entry.key} is a duplicate entry key.`
+            });
           }
-        } else {
-          warnings.push({
-            code: "DUPLICATE_KEY",
-            message: `${entry.key} is a duplicate entry key.`
-          });
         }
-
-        break;
       }
     }
 
-    if (sort) sortEntries(ast, valueLookup, options2);
+    sortEntries(ast, valueLookup, options2);
     let bibtex = "";
 
     for (const child of ast.children) {
@@ -14979,7 +14992,9 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
         let val;
 
         if (key === "key") {
-          val = item.block.key || "";
+          var _item$block$key;
+
+          val = (_item$block$key = item.block.key) !== null && _item$block$key !== void 0 ? _item$block$key : "";
         } else if (key === "type") {
           val = item.command;
         } else {

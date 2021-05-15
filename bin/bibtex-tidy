@@ -157,7 +157,7 @@ var optionDefinitions = [
     key: "duplicates",
     cli: {
       "--duplicates": (args) => {
-        if (!args)
+        if (args.length === 0)
           return true;
         for (const i of args) {
           if (i !== "doi" && i !== "key" && i !== "abstract" && i !== "citation") {
@@ -543,7 +543,8 @@ var FieldNode = class {
 var ConcatNode = class {
   constructor(parent) {
     this.parent = parent;
-    this.type = "values";
+    this.type = "concat";
+    this.canConsumeValue = true;
     this.concat = [];
   }
 };
@@ -573,7 +574,7 @@ var QuotedNode = class {
   }
 };
 function generateAST(input) {
-  var _a, _b, _c;
+  var _a;
   const rootNode = new RootNode();
   let node = rootNode;
   let line = 1;
@@ -591,7 +592,7 @@ function generateAST(input) {
         break;
       }
       case "text": {
-        if (char === "@") {
+        if (char === "@" && /[\s\r\n}]/.test(input[i - 1])) {
           node = new BlockNode(node.parent);
         } else {
           node.text += char;
@@ -601,7 +602,7 @@ function generateAST(input) {
       case "block": {
         if (char === "@") {
           const prevNode = node.parent.children[node.parent.children.length - 2];
-          if (prevNode.type === "text") {
+          if ((prevNode == null ? void 0 : prevNode.type) === "text") {
             prevNode.text += "@" + node.command;
           } else {
             node.parent.children.pop();
@@ -665,7 +666,10 @@ function generateAST(input) {
         } else if (char === ",") {
           node = new FieldNode(node);
         } else if (char === "=") {
-          const field = new FieldNode(node, (_b = (_a = node.key) == null ? void 0 : _a.trim()) != null ? _b : "");
+          if (!node.key) {
+            throw new BibTeXSyntaxError(input, node, i, line, column);
+          }
+          const field = new FieldNode(node, node.key);
           node.fields.push(field);
           node.key = void 0;
           node = field.value;
@@ -673,7 +677,7 @@ function generateAST(input) {
         } else if (char.match(/[=#,{}()\[\]]/)) {
           throw new BibTeXSyntaxError(input, node, i, line, column);
         } else {
-          node.key = ((_c = node.key) != null ? _c : "") + char;
+          node.key = ((_a = node.key) != null ? _a : "") + char;
         }
         break;
       }
@@ -687,7 +691,7 @@ function generateAST(input) {
         } else if (char === ",") {
           node.name = node.name.trim();
           node = new FieldNode(node.parent);
-        } else if (char.match(/[=,{}()\[\]]/)) {
+        } else if (/[=,{}()\[\]]/.test(char)) {
           throw new BibTeXSyntaxError(input, node, i, line, column);
         } else if (!node.name) {
           if (!isWhitespace(char)) {
@@ -700,28 +704,38 @@ function generateAST(input) {
         }
         break;
       }
-      case "values": {
+      case "concat": {
         if (isWhitespace(char)) {
-        } else if (char === "{") {
-          node = new BracedNode(node);
-        } else if (char === '"') {
-          node = new QuotedNode(node);
-        } else if (char === "#") {
-        } else if (char === ",") {
-          node = new FieldNode(node.parent.parent);
-        } else if (char === "}" || char === ")") {
-          node = node.parent.parent.parent.parent;
+          break;
+        } else if (node.canConsumeValue) {
+          if (/[#=,}()\[\]]/.test(char)) {
+            throw new BibTeXSyntaxError(input, node, i, line, column);
+          } else {
+            node.canConsumeValue = false;
+            if (char === "{") {
+              node = new BracedNode(node);
+            } else if (char === '"') {
+              node = new QuotedNode(node);
+            } else {
+              node = new LiteralNode(node, char);
+            }
+          }
         } else {
-          node = new LiteralNode(node, char);
+          if (char === ",") {
+            node = new FieldNode(node.parent.parent);
+          } else if (char === "}" || char === ")") {
+            node = node.parent.parent.parent.parent;
+          } else if (char === "#") {
+            node.canConsumeValue = true;
+          } else {
+            throw new BibTeXSyntaxError(input, node, i, line, column);
+          }
         }
         break;
       }
       case "literal":
         if (isWhitespace(char)) {
-          if (!node.value) {
-          } else {
-            node = node.parent;
-          }
+          node = node.parent;
         } else if (char === ",") {
           node = new FieldNode(node.parent.parent.parent);
         } else if (char === "}") {
@@ -3122,9 +3136,7 @@ function titleCase(str) {
   return str.replace(/(\w)(\S*)/g, (_, first, rest) => first.toLocaleUpperCase() + rest.toLocaleLowerCase());
 }
 function alphaNum(str) {
-  if (typeof str === "undefined")
-    return void 0;
-  return String(str).replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
+  return str.replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
 }
 function convertCRLF(str) {
   return str.replace(/\r\n?/g, "\n");
@@ -3190,7 +3202,6 @@ function tidy(input, options_ = {}) {
     omit,
     tab,
     align,
-    sort,
     sortFields: fieldOrder,
     merge,
     space,
@@ -3270,42 +3281,40 @@ function tidy(input, options_ = {}) {
             abstracts.set(abs, entry);
           break;
       }
-      if (!duplicateOf)
-        continue;
-      if (doMerge) {
-        duplicateEntries.add(entry);
-        warnings.push({
-          code: "DUPLICATE_ENTRY",
-          message: `${entry.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`
-        });
-        switch (merge) {
-          case "last":
-            duplicateOf.key = entry.key;
-            duplicateOf.fields = entry.fields;
-            break;
-          case "combine":
-          case "overwrite":
-            for (const field of entry.fields) {
-              const existing = duplicateOf.fields.find((f) => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase());
-              if (!existing) {
-                duplicateOf.fields.push(field);
-              } else if (merge === "overwrite") {
-                existing.value = field.value;
+      if (duplicateOf) {
+        if (doMerge) {
+          duplicateEntries.add(entry);
+          warnings.push({
+            code: "DUPLICATE_ENTRY",
+            message: `${entry.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`
+          });
+          switch (merge) {
+            case "last":
+              duplicateOf.key = entry.key;
+              duplicateOf.fields = entry.fields;
+              break;
+            case "combine":
+            case "overwrite":
+              for (const field of entry.fields) {
+                const existing = duplicateOf.fields.find((f) => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase());
+                if (!existing) {
+                  duplicateOf.fields.push(field);
+                } else if (merge === "overwrite") {
+                  existing.value = field.value;
+                }
               }
-            }
-            break;
+              break;
+          }
+        } else {
+          warnings.push({
+            code: "DUPLICATE_KEY",
+            message: `${entry.key} is a duplicate entry key.`
+          });
         }
-      } else {
-        warnings.push({
-          code: "DUPLICATE_KEY",
-          message: `${entry.key} is a duplicate entry key.`
-        });
       }
-      break;
     }
   }
-  if (sort)
-    sortEntries(ast, valueLookup, options);
+  sortEntries(ast, valueLookup, options);
   let bibtex = "";
   for (const child of ast.children) {
     if (child.type === "text") {
@@ -3396,7 +3405,7 @@ function generateValueLookup(entries, options) {
   ]));
 }
 function sortEntries(ast, fieldMaps, {sort}) {
-  var _a, _b, _c;
+  var _a, _b, _c, _d;
   if (!sort)
     return;
   const sortIndexes = new Map();
@@ -3412,11 +3421,11 @@ function sortEntries(ast, fieldMaps, {sort}) {
         key = key.slice(1);
       let val;
       if (key === "key") {
-        val = item.block.key || "";
+        val = (_b = item.block.key) != null ? _b : "";
       } else if (key === "type") {
         val = item.command;
       } else {
-        val = (_c = (_b = fieldMaps.get(item.block)) == null ? void 0 : _b.get(key)) != null ? _c : "";
+        val = (_d = (_c = fieldMaps.get(item.block)) == null ? void 0 : _c.get(key)) != null ? _d : "";
       }
       sortIndex.set(key, val.toLowerCase());
     }
@@ -3429,9 +3438,9 @@ function sortEntries(ast, fieldMaps, {sort}) {
     const desc = sort[i].startsWith("-");
     const key = desc ? sort[i].slice(1) : sort[i];
     ast.children.sort((a, b) => {
-      var _a2, _b2, _c2, _d;
+      var _a2, _b2, _c2, _d2;
       const ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "\uFFF0";
-      const ib = (_d = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d : "\uFFF0";
+      const ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "\uFFF0";
       return (desc ? ib : ia).localeCompare(desc ? ia : ib);
     });
   }
@@ -3750,6 +3759,7 @@ function start() {
   console.log("Tidying...");
   for (const inputFile of inputFiles) {
     const bibtex = (0, import_fs.readFileSync)(inputFile, "utf8");
+    console.log(bibtex);
     const result = src_default.tidy(bibtex, options);
     for (const warning of result.warnings) {
       console.error(`${warning.code}: ${warning.message}`);

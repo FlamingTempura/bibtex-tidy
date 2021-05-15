@@ -7,7 +7,7 @@ const input = bibtex`
     title={A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
     shorttitle={A technique for radiolabeling {DNA} restriction endonuclease fragments to high specific activity},
   author="Feinberg, Andrew P and Vogelstein, Bert",
-    journal    = {Analytical biochemistry},
+    journal    = "Analytical biochemistry",
     volume = 132,
     pages={6-13},
     year={1983},
@@ -19,9 +19,9 @@ const output1 = bibtex`
   number        = {1},
   title         = {{A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity}},
   shorttitle    = {{A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity}},
-  author        = "Feinberg, Andrew P and Vogelstein, Bert",
+  author        = {Feinberg, Andrew P and Vogelstein, Bert},
   journal       = {{Analytical biochemistry}},
-  volume        = 132,
+  volume        = {132},
   pages         = {6--13},
   year          = {1983},
   month         = {aug},
@@ -35,7 +35,7 @@ const output2 = bibtex`
   title         = {{A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity}},
   shorttitle    = {A technique for radiolabeling {DNA} restriction endonuclease fragments to high specific activity},
   author        = "Feinberg, Andrew P and Vogelstein, Bert",
-  journal       = {Analytical biochemistry},
+  journal       = "Analytical biochemistry",
   volume        = 132,
   pages         = {6--13},
   year          = {1983},
@@ -47,6 +47,7 @@ const output2 = bibtex`
 test('enclosing braces', async () => {
 	const tidied1 = await bibtexTidy(input, {
 		enclosingBraces: ['title', 'shorttitle', 'journal'],
+		curly: true,
 	});
 	strictEqual(output1, tidied1.bibtex);
 

@@ -142,8 +142,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		key: 'duplicates',
 		cli: {
 			'--duplicates': (args) => {
-				if (!args) return true;
-
+				if (args.length === 0) return true;
 				for (const i of args) {
 					if (
 						i !== 'doi' &&

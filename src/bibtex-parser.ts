@@ -68,8 +68,9 @@ export class FieldNode {
 	}
 }
 class ConcatNode {
-	type = 'values' as const;
+	type = 'concat' as const;
 	concat: (LiteralNode | BracedNode | QuotedNode)[];
+	canConsumeValue: boolean = true;
 	constructor(public parent: FieldNode) {
 		this.concat = [];
 	}
@@ -133,7 +134,10 @@ export function generateAST(input: string): RootNode {
 			}
 
 			case 'text': {
-				if (char === '@') {
+				// Whitespace or closing curly brace should precede an entry. This might
+				// not be correct but allows parsing of "valid" bibtex files in the
+				// wild.
+				if (char === '@' && /[\s\r\n}]/.test(input[i - 1])) {
 					node = new BlockNode(node.parent);
 				} else {
 					node.text += char;
@@ -146,7 +150,7 @@ export function generateAST(input: string): RootNode {
 					// everything prior to this was a comment
 					const prevNode =
 						node.parent.children[node.parent.children.length - 2];
-					if (prevNode.type === 'text') {
+					if (prevNode?.type === 'text') {
 						prevNode.text += '@' + node.command;
 					} else {
 						// insert text node 1 from the end
@@ -217,7 +221,10 @@ export function generateAST(input: string): RootNode {
 					node = new FieldNode(node);
 				} else if (char === '=') {
 					// no key, this is a field name
-					const field: FieldNode = new FieldNode(node, node.key?.trim() ?? '');
+					if (!node.key) {
+						throw new BibTeXSyntaxError(input, node, i, line, column);
+					}
+					const field: FieldNode = new FieldNode(node, node.key);
 					node.fields.push(field);
 					node.key = undefined;
 					node = field.value;
@@ -241,7 +248,7 @@ export function generateAST(input: string): RootNode {
 				} else if (char === ',') {
 					node.name = node.name.trim();
 					node = new FieldNode(node.parent);
-				} else if (char.match(/[=,{}()\[\]]/)) {
+				} else if (/[=,{}()\[\]]/.test(char)) {
 					throw new BibTeXSyntaxError(input, node, i, line, column);
 				} else if (!node.name) {
 					if (!isWhitespace(char)) {
@@ -256,33 +263,40 @@ export function generateAST(input: string): RootNode {
 				break;
 			}
 
-			case 'values': {
+			case 'concat': {
 				if (isWhitespace(char)) {
-					// noop
-				} else if (char === '{') {
-					node = new BracedNode(node);
-				} else if (char === '"') {
-					node = new QuotedNode(node);
-				} else if (char === '#') {
-					// TODO: error check if missing
-				} else if (char === ',') {
-					node = new FieldNode(node.parent.parent);
-				} else if (char === '}' || char === ')') {
-					node = node.parent.parent.parent.parent; // root
+					break; // noop
+				} else if (node.canConsumeValue) {
+					if (/[#=,}()\[\]]/.test(char)) {
+						throw new BibTeXSyntaxError(input, node, i, line, column);
+					} else {
+						node.canConsumeValue = false;
+						if (char === '{') {
+							node = new BracedNode(node);
+						} else if (char === '"') {
+							node = new QuotedNode(node);
+						} else {
+							node = new LiteralNode(node, char);
+						}
+					}
 				} else {
-					node = new LiteralNode(node, char);
+					if (char === ',') {
+						node = new FieldNode(node.parent.parent);
+					} else if (char === '}' || char === ')') {
+						node = node.parent.parent.parent.parent; // root
+					} else if (char === '#') {
+						node.canConsumeValue = true;
+					} else {
+						throw new BibTeXSyntaxError(input, node, i, line, column);
+					}
 				}
 				break;
 			}
 
 			case 'literal':
 				if (isWhitespace(char)) {
-					if (!node.value) {
-						// noop - ignore whitespace
-					} else {
-						// end of literal
-						node = node.parent;
-					}
+					// end of literal
+					node = node.parent;
 				} else if (char === ',') {
 					node = new FieldNode(node.parent.parent.parent);
 				} else if (char === '}') {

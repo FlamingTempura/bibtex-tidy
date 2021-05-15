@@ -31,11 +31,8 @@ export function titleCase(str: string): string {
 /**
  * Remove all non-alphanumeric characters
  */
-export function alphaNum(str?: string): string | undefined {
-	if (typeof str === 'undefined') return undefined;
-	return String(str)
-		.replace(/[^0-9A-Za-z]/g, '')
-		.toLocaleLowerCase();
+export function alphaNum(str: string): string {
+	return str.replace(/[^0-9A-Za-z]/g, '').toLocaleLowerCase();
 }
 
 /** Normalize new lines. Convert CR/CRLF to LF. */
