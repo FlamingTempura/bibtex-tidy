@@ -1,5 +1,6 @@
 import tidy from './index';
-import { readFileSync, writeFileSync } from 'fs';
+import {dash} from 'rw';
+const {readFileSync, writeFileSync} = dash;
 import process from 'process';
 import { parseArguments } from './cliUtils';
 import { version } from './__generated__/version';

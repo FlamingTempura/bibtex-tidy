@@ -14,6 +14,9 @@ var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __markAsModule = (target) => __defProp(target, "__esModule", {value: true});
+var __commonJS = (cb, mod) => function __require() {
+  return mod || (0, cb[Object.keys(cb)[0]])((mod = {exports: {}}).exports, mod), mod.exports;
+};
 var __reExport = (target, module2, desc) => {
   if (module2 && typeof module2 === "object" || typeof module2 === "function") {
     for (let key of __getOwnPropNames(module2))
@@ -25,6 +28,212 @@ var __reExport = (target, module2, desc) => {
 var __toModule = (module2) => {
   return __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", module2 && module2.__esModule && "default" in module2 ? {get: () => module2.default, enumerable: true} : {value: module2, enumerable: true})), module2);
 };
+
+// node_modules/rw/lib/rw/decode.js
+var require_decode = __commonJS({
+  "node_modules/rw/lib/rw/decode.js"(exports2, module2) {
+    module2.exports = function(options) {
+      if (options) {
+        if (typeof options === "string")
+          return encoding(options);
+        if (options.encoding !== null)
+          return encoding(options.encoding);
+      }
+      return identity();
+    };
+    function identity() {
+      var chunks = [];
+      return {
+        push: function(chunk) {
+          chunks.push(chunk);
+        },
+        value: function() {
+          return Buffer.concat(chunks);
+        }
+      };
+    }
+    function encoding(encoding2) {
+      var chunks = [];
+      return {
+        push: function(chunk) {
+          chunks.push(chunk);
+        },
+        value: function() {
+          return Buffer.concat(chunks).toString(encoding2);
+        }
+      };
+    }
+  }
+});
+
+// node_modules/rw/lib/rw/read-file.js
+var require_read_file = __commonJS({
+  "node_modules/rw/lib/rw/read-file.js"(exports2, module2) {
+    var fs = require("fs");
+    var decode = require_decode();
+    module2.exports = function(path, options, callback) {
+      if (arguments.length < 3)
+        callback = options, options = null;
+      switch (path) {
+        case "/dev/stdin":
+          return readStream(process.stdin, options, callback);
+      }
+      fs.stat(path, function(error, stat) {
+        if (error)
+          return callback(error);
+        if (stat.isFile())
+          return fs.readFile(path, options, callback);
+        readStream(fs.createReadStream(path, options ? {flags: options.flag || "r"} : {}), options, callback);
+      });
+    };
+    function readStream(stream, options, callback) {
+      var decoder = decode(options);
+      stream.on("error", callback);
+      stream.on("data", function(d) {
+        decoder.push(d);
+      });
+      stream.on("end", function() {
+        callback(null, decoder.value());
+      });
+    }
+  }
+});
+
+// node_modules/rw/lib/rw/read-file-sync.js
+var require_read_file_sync = __commonJS({
+  "node_modules/rw/lib/rw/read-file-sync.js"(exports2, module2) {
+    var fs = require("fs");
+    var decode = require_decode();
+    module2.exports = function(filename, options) {
+      if (fs.statSync(filename).isFile()) {
+        return fs.readFileSync(filename, options);
+      } else {
+        var fd = fs.openSync(filename, options && options.flag || "r"), decoder = decode(options);
+        while (true) {
+          try {
+            var buffer = new Buffer(bufferSize), bytesRead = fs.readSync(fd, buffer, 0, bufferSize);
+          } catch (e) {
+            if (e.code === "EOF")
+              break;
+            fs.closeSync(fd);
+            throw e;
+          }
+          if (bytesRead === 0)
+            break;
+          decoder.push(buffer.slice(0, bytesRead));
+        }
+        fs.closeSync(fd);
+        return decoder.value();
+      }
+    };
+    var bufferSize = 1 << 16;
+  }
+});
+
+// node_modules/rw/lib/rw/encode.js
+var require_encode = __commonJS({
+  "node_modules/rw/lib/rw/encode.js"(exports2, module2) {
+    module2.exports = function(data, options) {
+      return typeof data === "string" ? new Buffer(data, typeof options === "string" ? options : options && options.encoding !== null ? options.encoding : "utf8") : data;
+    };
+  }
+});
+
+// node_modules/rw/lib/rw/write-file.js
+var require_write_file = __commonJS({
+  "node_modules/rw/lib/rw/write-file.js"(exports2, module2) {
+    var fs = require("fs");
+    var encode = require_encode();
+    module2.exports = function(path, data, options, callback) {
+      if (arguments.length < 4)
+        callback = options, options = null;
+      switch (path) {
+        case "/dev/stdout":
+          return writeStream(process.stdout, "write", data, options, callback);
+        case "/dev/stderr":
+          return writeStream(process.stderr, "write", data, options, callback);
+      }
+      fs.stat(path, function(error, stat) {
+        if (error && error.code !== "ENOENT")
+          return callback(error);
+        if (stat && stat.isFile())
+          return fs.writeFile(path, data, options, callback);
+        writeStream(fs.createWriteStream(path, options ? {flags: options.flag || "w"} : {}), "end", data, options, callback);
+      });
+    };
+    function writeStream(stream, send, data, options, callback) {
+      stream.on("error", function(error) {
+        callback(error.code === "EPIPE" ? null : error);
+      });
+      stream[send](encode(data, options), function(error) {
+        callback(error && error.code === "EPIPE" ? null : error);
+      });
+    }
+  }
+});
+
+// node_modules/rw/lib/rw/write-file-sync.js
+var require_write_file_sync = __commonJS({
+  "node_modules/rw/lib/rw/write-file-sync.js"(exports2, module2) {
+    var fs = require("fs");
+    var encode = require_encode();
+    module2.exports = function(filename, data, options) {
+      var stat;
+      try {
+        stat = fs.statSync(filename);
+      } catch (error) {
+        if (error.code !== "ENOENT")
+          throw error;
+      }
+      if (!stat || stat.isFile()) {
+        fs.writeFileSync(filename, data, options);
+      } else {
+        var fd = fs.openSync(filename, options && options.flag || "w"), bytesWritten = 0, bytesTotal = (data = encode(data, options)).length;
+        while (bytesWritten < bytesTotal) {
+          try {
+            bytesWritten += fs.writeSync(fd, data, bytesWritten, bytesTotal - bytesWritten, null);
+          } catch (error) {
+            if (error.code === "EPIPE")
+              break;
+            fs.closeSync(fd);
+            throw error;
+          }
+        }
+        fs.closeSync(fd);
+      }
+    };
+  }
+});
+
+// node_modules/rw/lib/rw/dash.js
+var require_dash = __commonJS({
+  "node_modules/rw/lib/rw/dash.js"(exports2) {
+    var slice = Array.prototype.slice;
+    function dashify(method, file) {
+      return function(path) {
+        var argv = arguments;
+        if (path == "-")
+          (argv = slice.call(argv)).splice(0, 1, file);
+        return method.apply(null, argv);
+      };
+    }
+    exports2.readFile = dashify(require_read_file(), "/dev/stdin");
+    exports2.readFileSync = dashify(require_read_file_sync(), "/dev/stdin");
+    exports2.writeFile = dashify(require_write_file(), "/dev/stdout");
+    exports2.writeFileSync = dashify(require_write_file_sync(), "/dev/stdout");
+  }
+});
+
+// node_modules/rw/index.js
+var require_rw = __commonJS({
+  "node_modules/rw/index.js"(exports2) {
+    exports2.dash = require_dash();
+    exports2.readFile = require_read_file();
+    exports2.readFileSync = require_read_file_sync();
+    exports2.writeFile = require_write_file();
+    exports2.writeFileSync = require_write_file_sync();
+  }
+});
 
 // src/optionDefinitions.ts
 var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
@@ -3533,7 +3742,7 @@ ${valIndent}`) + "\n" + indent;
 var src_default = {tidy};
 
 // src/cli.ts
-var import_fs = __toModule(require("fs"));
+var import_rw = __toModule(require_rw());
 var import_process = __toModule(require("process"));
 
 // src/cliUtils.ts
@@ -3567,7 +3776,7 @@ function splitCLIArgs(args) {
     if (!next)
       break;
     const {arg, isValue} = next;
-    if (!isValue && arg.startsWith("-")) {
+    if (!isValue && arg.startsWith("-") && arg != "-") {
       const equalPos = arg.indexOf("=");
       if (equalPos > -1) {
         const option = arg.slice(0, equalPos);
@@ -3735,6 +3944,7 @@ var manPage = [
 ];
 
 // src/cli.ts
+var {readFileSync, writeFileSync} = import_rw.dash;
 function start() {
   const {inputFiles, options, unknownArgs: unknownOptions} = parseArguments(import_process.default.argv.slice(2));
   if (unknownOptions.length > 0) {
@@ -3758,7 +3968,7 @@ function start() {
   }
   console.log("Tidying...");
   for (const inputFile of inputFiles) {
-    const bibtex = (0, import_fs.readFileSync)(inputFile, "utf8");
+    const bibtex = readFileSync(inputFile, "utf8");
     console.log(bibtex);
     const result = src_default.tidy(bibtex, options);
     for (const warning of result.warnings) {
@@ -3770,9 +3980,9 @@ function start() {
       console.log(`${dupes.length} entries merged`);
     }
     if (options.backup) {
-      (0, import_fs.writeFileSync)(`${inputFile}.original`, bibtex, "utf8");
+      writeFileSync(`${inputFile}.original`, bibtex, "utf8");
     }
-    (0, import_fs.writeFileSync)(inputFile, result.bibtex, "utf8");
+    writeFileSync(inputFile, result.bibtex, "utf8");
   }
 }
 start();

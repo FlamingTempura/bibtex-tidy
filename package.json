@@ -31,5 +31,8 @@
 		"url": "https://github.com/FlamingTempura/bibtex-tidy.git"
 	},
 	"author": "FlamingTempura",
-	"license": "MIT"
+	"license": "MIT",
+	"dependencies": {
+		"rw": "^1.3.3"
+	}
 }
