@@ -63,7 +63,9 @@ export function splitCLIArgs(
 		// An option is any arg beginning dash or double dash. However, some values
 		// can being with "-", e.g when setting a field to sort in descending order.
 		// When those are encountered, isValue will be true.
-		if (!isValue && arg.startsWith('-')) {
+    // If, on the other hand, the argument is equal to "-", then it is an alias
+    // for stdin and should be processed as a filename. Therefore we skip it.
+    if (!isValue && arg.startsWith('-') && arg != '-') {
 			// Options with values can be specified as --thing=a,b,c or --thing a b c.
 			// Convert the former style into the latter by splitting them up into
 			// separate args and putting them at the beginning of the arg list.
