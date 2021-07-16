@@ -3748,7 +3748,11 @@ var import_process = __toModule(require("process"));
 // src/cliUtils.ts
 var OPTIONS = new Set(optionDefinitions.flatMap((def) => Object.keys(def.cli)));
 function parseArguments(args) {
-  const {inputFiles, optionArgVals: optionArgs, unknownArgs} = splitCLIArgs(args);
+  const {
+    inputFiles,
+    optionArgVals: optionArgs,
+    unknownArgs
+  } = splitCLIArgs(args);
   const options = {};
   for (const def of optionDefinitions) {
     for (const [opt, val] of Object.entries(def.cli)) {
@@ -3946,7 +3950,11 @@ var manPage = [
 // src/cli.ts
 var {readFileSync, writeFileSync} = import_rw.dash;
 function start() {
-  const {inputFiles, options, unknownArgs: unknownOptions} = parseArguments(import_process.default.argv.slice(2));
+  const {
+    inputFiles,
+    options,
+    unknownArgs: unknownOptions
+  } = parseArguments(import_process.default.argv.slice(2));
   if (unknownOptions.length > 0) {
     console.error(`Unknown option${unknownOptions.length > 1 ? "s" : ""}: ${unknownOptions.join(", ")}`);
     console.error(`Try 'bibtex-tidy --help for more information.`);
