@@ -26,31 +26,44 @@ export type CLIResult = {
  * bibtex files.
  */
 export function testCLI(
-	bibtexs: string[],
+	bibtexs: string[] | { stdin: string },
 	options: CLIOptions = {}
 ): CLIResult {
-	const tmpFiles = bibtexs.map((bibtex, i) => {
-		const tmpFile = getTmpPath(i);
-		writeFileSync(tmpFile, bibtex, 'utf8');
-		return tmpFile;
-	});
+	const args: string[] = [];
+	const files: string[] = [];
+	if (Array.isArray(bibtexs)) {
+		for (let i = 0; i < bibtexs.length; i++) {
+			const bibtex = bibtexs[i];
+			const tmpFile = getTmpPath(i);
+			writeFileSync(tmpFile, bibtex, 'utf8');
+			args.push(tmpFile);
+			files.push(tmpFile);
+		}
+	} else {
+		args.push('-');
+	}
 
-	const args = [...tmpFiles, ...optionsToCLIArgs(options)];
-	const proc = spawnSync(BIN_PATH, args, { timeout: 100000, encoding: 'utf8' });
+	args.push(...optionsToCLIArgs(options));
+
+	const proc = spawnSync(BIN_PATH, args, {
+		timeout: 100000,
+		encoding: 'utf8',
+		input: 'stdin' in bibtexs ? bibtexs.stdin : undefined,
+	});
 
 	if (proc.status !== 0) {
 		console.log(`> bibtex-tidy ${args.join(' ')}`);
 		throw new Error('CLI error: ' + proc.stderr);
 	}
 
-	const tidiedOutputs = tmpFiles.map((file) => readFileSync(file, 'utf8'));
+	const tidiedOutputs = files.map((file) => readFileSync(file, 'utf8'));
 
 	const warnings = (proc.stderr ?? '')
 		.split('\n')
 		.filter((line) => line.includes(': '))
 		.map((line) => line.split(':')[0]);
 
-	tmpFiles.forEach((tmpFile) => unlinkSync(tmpFile));
+	files.forEach((tmpFile) => unlinkSync(tmpFile));
 
 	return { bibtexs: tidiedOutputs, warnings, stdout: proc.stdout };
 }

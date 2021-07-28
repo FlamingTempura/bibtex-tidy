@@ -9,16 +9,16 @@ const OPTIONS = new Set(
  * <input files> <options>
  * <options> <input files>
  */
-export function parseArguments(
-	args: string[]
-): {
+export function parseArguments(args: string[]): {
 	inputFiles: string[];
 	options: CLIOptions;
 	unknownArgs: string[];
 } {
-	const { inputFiles, optionArgVals: optionArgs, unknownArgs } = splitCLIArgs(
-		args
-	);
+	const {
+		inputFiles,
+		optionArgVals: optionArgs,
+		unknownArgs,
+	} = splitCLIArgs(args);
 
 	const options: CLIOptions = {};
 
@@ -34,11 +34,13 @@ export function parseArguments(
 		}
 	}
 
+	if (inputFiles[0] === '-') {
+		options.quiet = true;
+	}
+
 	return { inputFiles, options, unknownArgs };
 }
-export function splitCLIArgs(
-	args: string[]
-): {
+export function splitCLIArgs(args: string[]): {
 	inputFiles: string[];
 	optionArgVals: Record<string, string[]>;
 	unknownArgs: string[];
@@ -65,7 +67,7 @@ export function splitCLIArgs(
 		// When those are encountered, isValue will be true.
 		// If, on the other hand, the argument is equal to "-", then it is an alias
 		// for stdin and should be processed as a filename. Therefore we skip it.
-		if (!isValue && arg.startsWith('-') && arg != '-') {
+		if (!isValue && arg.startsWith('-') && arg !== '-') {
 			// Options with values can be specified as --thing=a,b,c or --thing a b c.
 			// Convert the former style into the latter by splitting them up into
 			// separate args and putting them at the beginning of the arg list.

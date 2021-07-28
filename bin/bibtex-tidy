@@ -3748,7 +3748,11 @@ var import_process = __toModule(require("process"));
 // src/cliUtils.ts
 var OPTIONS = new Set(optionDefinitions.flatMap((def) => Object.keys(def.cli)));
 function parseArguments(args) {
-  const { inputFiles, optionArgVals: optionArgs, unknownArgs } = splitCLIArgs(args);
+  const {
+    inputFiles,
+    optionArgVals: optionArgs,
+    unknownArgs
+  } = splitCLIArgs(args);
   const options = {};
   for (const def of optionDefinitions) {
     for (const [opt, val] of Object.entries(def.cli)) {
@@ -3761,6 +3765,9 @@ function parseArguments(args) {
         options[key] = val;
       }
     }
+  }
+  if (inputFiles[0] === "-") {
+    options.quiet = true;
   }
   return { inputFiles, options, unknownArgs };
 }
@@ -3776,7 +3783,7 @@ function splitCLIArgs(args) {
     if (!next)
       break;
     const { arg, isValue } = next;
-    if (!isValue && arg.startsWith("-") && arg != "-") {
+    if (!isValue && arg.startsWith("-") && arg !== "-") {
       const equalPos = arg.indexOf("=");
       if (equalPos > -1) {
         const option = arg.slice(0, equalPos);
