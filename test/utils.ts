@@ -59,10 +59,9 @@ type BibTeXTidyRunResult = {
 };
 
 export async function bibtexTidy(
-	inputs: string | string[] | {stdin: string},
+	inputs: string | string[] | { stdin: string },
 	options?: CLIOptions,
-	targets: ('api' | 'cli' | 'web')[] = ['api', 'cli', 'web'],
-	stdin?: string
+	targets: ('api' | 'cli' | 'web')[] = ['api', 'cli', 'web']
 ): Promise<BibTeXTidyRunResult> {
 	if (typeof inputs === 'string') inputs = [inputs];
 
@@ -73,7 +72,7 @@ export async function bibtexTidy(
 	}
 
 	if (targets.includes('api')) {
-		if ('stdin' in inputs) throw new Error('API does not support stdin')
+		if ('stdin' in inputs) throw new Error('API does not support stdin');
 		const apiResult = testAPI(inputs, options);
 		const apiResult2 = testAPI([apiResult.bibtex], options);
 		strictEqual(
@@ -85,8 +84,8 @@ export async function bibtexTidy(
 	}
 
 	if (targets.includes('cli')) {
-		const cliResult = testCLI(inputs, options, stdin);
-		const cliResult2 = testCLI(cliResult.bibtexs, options, stdin);
+		const cliResult = testCLI(inputs, options);
+		const cliResult2 = testCLI(cliResult.bibtexs, options);
 		deepStrictEqual(
 			cliResult.bibtexs,
 			cliResult2.bibtexs,
@@ -103,7 +102,7 @@ export async function bibtexTidy(
 	}
 
 	if (targets.includes('web')) {
-		if ('stdin' in inputs) throw new Error('Web does not support stdin')
+		if ('stdin' in inputs) throw new Error('Web does not support stdin');
 		const webResult = await testWeb(inputs, options);
 		const webResult2 = await testWeb([webResult.bibtex], options);
 		strictEqual(
