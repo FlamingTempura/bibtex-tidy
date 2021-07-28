@@ -8,17 +8,17 @@
 		"bibtex-tidy": "./bin/bibtex-tidy"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.14.2",
-		"@babel/preset-env": "^7.14.2",
-		"@types/babel__core": "^7.1.14",
-		"@types/codemirror": "^5.60.0",
-		"@types/node": "^15.0.3",
-		"codemirror": "^5.61.0",
-		"esbuild": "^0.11.20",
-		"esbuild-register": "^2.5.0",
+		"@babel/core": "^7.14.8",
+		"@babel/preset-env": "^7.14.8",
+		"@types/babel__core": "^7.1.15",
+		"@types/codemirror": "^5.60.2",
+		"@types/node": "^16.4.5",
+		"codemirror": "^5.62.2",
+		"esbuild": "^0.12.16",
+		"esbuild-register": "^2.6.0",
 		"nyc": "^15.1.0",
-		"puppeteer": "^9.1.1",
-		"typescript": "^4.2.4"
+		"puppeteer": "^10.1.0",
+		"typescript": "^4.3.5"
 	},
 	"scripts": {
 		"build": "node -r esbuild-register build.ts",

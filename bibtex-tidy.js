@@ -513,6 +513,8 @@ var QuotedNode = class {
 };
 
 function generateAST(input) {
+  var _a;
+
   const rootNode = new RootNode();
   let node = rootNode;
   let line = 1;
@@ -551,7 +553,7 @@ function generateAST(input) {
           if (char === "@") {
             const prevNode = node.parent.children[node.parent.children.length - 2];
 
-            if ((prevNode === null || prevNode === void 0 ? void 0 : prevNode.type) === "text") {
+            if ((prevNode == null ? void 0 : prevNode.type) === "text") {
               prevNode.text += "@" + node.command;
             } else {
               node.parent.children.pop();
@@ -639,9 +641,7 @@ function generateAST(input) {
           } else if (isWhitespace(char)) {} else if (char.match(/[=#,{}()\[\]]/)) {
             throw new BibTeXSyntaxError(input, node, i, line, column);
           } else {
-            var _node$key;
-
-            node.key = ((_node$key = node.key) !== null && _node$key !== void 0 ? _node$key : "") + char;
+            node.key = ((_a = node.key) != null ? _a : "") + char;
           }
 
           break;
@@ -856,7 +856,7 @@ function formatPageRange(str) {
 var MONTHS = new Set(["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]);
 
 function tidy(input, options_ = {}) {
-  var _entryValues$get, _entryValues$get2;
+  var _a, _b;
 
   const options = normalizeOptions(options_);
   const {
@@ -895,9 +895,9 @@ function tidy(input, options_ = {}) {
   const warnings = [];
   const duplicateEntries = new Set();
   const entries = ast.children.flatMap(node => {
-    var _node$block;
+    var _a2;
 
-    return node.type !== "text" && ((_node$block = node.block) === null || _node$block === void 0 ? void 0 : _node$block.type) === "entry" ? [node.block] : [];
+    return node.type !== "text" && ((_a2 = node.block) == null ? void 0 : _a2.type) === "entry" ? [node.block] : [];
   });
   const valueLookup = generateValueLookup(entries, options);
 
@@ -922,7 +922,7 @@ function tidy(input, options_ = {}) {
           break;
 
         case "doi":
-          const doi = alphaNum((_entryValues$get = entryValues.get("doi")) !== null && _entryValues$get !== void 0 ? _entryValues$get : "");
+          const doi = alphaNum((_a = entryValues.get("doi")) != null ? _a : "");
           if (!doi) continue;
           duplicateOf = dois.get(doi);
           if (!duplicateOf) dois.set(doi, entry);
@@ -938,8 +938,8 @@ function tidy(input, options_ = {}) {
           break;
 
         case "abstract":
-          const abstract = alphaNum((_entryValues$get2 = entryValues.get("abstract")) !== null && _entryValues$get2 !== void 0 ? _entryValues$get2 : "");
-          const abs = abstract === null || abstract === void 0 ? void 0 : abstract.slice(0, 100);
+          const abstract = alphaNum((_b = entryValues.get("abstract")) != null ? _b : "");
+          const abs = abstract == null ? void 0 : abstract.slice(0, 100);
           if (!abs) continue;
           duplicateOf = abstracts.get(abs);
           if (!duplicateOf) abstracts.set(abs, entry);
@@ -1071,14 +1071,14 @@ function generateValueLookup(entries, options) {
 function sortEntries(ast, fieldMaps, {
   sort
 }) {
+  var _a, _b, _c, _d;
+
   if (!sort) return;
   const sortIndexes = new Map();
   const precedingMeta = [];
 
   for (const item of ast.children) {
-    var _item$block;
-
-    if (item.type === "text" || ((_item$block = item.block) === null || _item$block === void 0 ? void 0 : _item$block.type) !== "entry") {
+    if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
       precedingMeta.push(item);
       continue;
     }
@@ -1090,15 +1090,11 @@ function sortEntries(ast, fieldMaps, {
       let val;
 
       if (key === "key") {
-        var _item$block$key;
-
-        val = (_item$block$key = item.block.key) !== null && _item$block$key !== void 0 ? _item$block$key : "";
+        val = (_b = item.block.key) != null ? _b : "";
       } else if (key === "type") {
         val = item.command;
       } else {
-        var _fieldMaps$get$get, _fieldMaps$get;
-
-        val = (_fieldMaps$get$get = (_fieldMaps$get = fieldMaps.get(item.block)) === null || _fieldMaps$get === void 0 ? void 0 : _fieldMaps$get.get(key)) !== null && _fieldMaps$get$get !== void 0 ? _fieldMaps$get$get : "";
+        val = (_d = (_c = fieldMaps.get(item.block)) == null ? void 0 : _c.get(key)) != null ? _d : "";
       }
 
       sortIndex.set(key, val.toLowerCase());
@@ -1115,10 +1111,10 @@ function sortEntries(ast, fieldMaps, {
     const desc = sort[i].startsWith("-");
     const key = desc ? sort[i].slice(1) : sort[i];
     ast.children.sort((a, b) => {
-      var _sortIndexes$get$get, _sortIndexes$get, _sortIndexes$get$get2, _sortIndexes$get2;
+      var _a2, _b2, _c2, _d2;
 
-      const ia = (_sortIndexes$get$get = (_sortIndexes$get = sortIndexes.get(a)) === null || _sortIndexes$get === void 0 ? void 0 : _sortIndexes$get.get(key)) !== null && _sortIndexes$get$get !== void 0 ? _sortIndexes$get$get : "\uFFF0";
-      const ib = (_sortIndexes$get$get2 = (_sortIndexes$get2 = sortIndexes.get(b)) === null || _sortIndexes$get2 === void 0 ? void 0 : _sortIndexes$get2.get(key)) !== null && _sortIndexes$get$get2 !== void 0 ? _sortIndexes$get$get2 : "\uFFF0";
+      const ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "\uFFF0";
+      const ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "\uFFF0";
       return (desc ? ib : ia).localeCompare(desc ? ia : ib);
     });
   }

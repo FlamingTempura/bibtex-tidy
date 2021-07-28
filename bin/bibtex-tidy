@@ -13,20 +13,20 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __markAsModule = (target) => __defProp(target, "__esModule", {value: true});
+var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
 var __commonJS = (cb, mod) => function __require() {
-  return mod || (0, cb[Object.keys(cb)[0]])((mod = {exports: {}}).exports, mod), mod.exports;
+  return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var __reExport = (target, module2, desc) => {
   if (module2 && typeof module2 === "object" || typeof module2 === "function") {
     for (let key of __getOwnPropNames(module2))
       if (!__hasOwnProp.call(target, key) && key !== "default")
-        __defProp(target, key, {get: () => module2[key], enumerable: !(desc = __getOwnPropDesc(module2, key)) || desc.enumerable});
+        __defProp(target, key, { get: () => module2[key], enumerable: !(desc = __getOwnPropDesc(module2, key)) || desc.enumerable });
   }
   return target;
 };
 var __toModule = (module2) => {
-  return __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", module2 && module2.__esModule && "default" in module2 ? {get: () => module2.default, enumerable: true} : {value: module2, enumerable: true})), module2);
+  return __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", module2 && module2.__esModule && "default" in module2 ? { get: () => module2.default, enumerable: true } : { value: module2, enumerable: true })), module2);
 };
 
 // node_modules/rw/lib/rw/decode.js
@@ -83,7 +83,7 @@ var require_read_file = __commonJS({
           return callback(error);
         if (stat.isFile())
           return fs.readFile(path, options, callback);
-        readStream(fs.createReadStream(path, options ? {flags: options.flag || "r"} : {}), options, callback);
+        readStream(fs.createReadStream(path, options ? { flags: options.flag || "r" } : {}), options, callback);
       });
     };
     function readStream(stream, options, callback) {
@@ -158,7 +158,7 @@ var require_write_file = __commonJS({
           return callback(error);
         if (stat && stat.isFile())
           return fs.writeFile(path, data, options, callback);
-        writeStream(fs.createWriteStream(path, options ? {flags: options.flag || "w"} : {}), "end", data, options, callback);
+        writeStream(fs.createWriteStream(path, options ? { flags: options.flag || "w" } : {}), "end", data, options, callback);
       });
     };
     function writeStream(stream, send, data, options, callback) {
@@ -240,7 +240,7 @@ var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
 var optionDefinitions = [
   {
     key: "help",
-    cli: {"--help": true, "-h": true},
+    cli: { "--help": true, "-h": true },
     title: "Help",
     description: ["Show help"],
     type: "boolean"
@@ -265,7 +265,7 @@ var optionDefinitions = [
   },
   {
     key: "curly",
-    cli: {"--curly": true, "--no-curly": false},
+    cli: { "--curly": true, "--no-curly": false },
     toCLI: (val) => val ? `--curly` : void 0,
     title: "Enclose values in braces",
     description: [
@@ -276,7 +276,7 @@ var optionDefinitions = [
   },
   {
     key: "numeric",
-    cli: {"--numeric": true, "--no-numeric": false},
+    cli: { "--numeric": true, "--no-numeric": false },
     toCLI: (val) => val ? `--numeric` : void 0,
     title: "Use numeric values where possible",
     description: [
@@ -308,7 +308,7 @@ var optionDefinitions = [
   },
   {
     key: "tab",
-    cli: {"--tab": true, "--no-tab": false},
+    cli: { "--tab": true, "--no-tab": false },
     toCLI: (val) => val ? `--tab` : void 0,
     title: "Indent with tabs",
     description: ["Intent all fields with a tab."],
@@ -434,7 +434,7 @@ var optionDefinitions = [
   },
   {
     key: "stripEnclosingBraces",
-    cli: {"--strip-enclosing-braces": true},
+    cli: { "--strip-enclosing-braces": true },
     toCLI: (val) => val ? "--strip-enclosing-braces" : void 0,
     title: "Strip double-braced values",
     description: [
@@ -445,7 +445,7 @@ var optionDefinitions = [
   },
   {
     key: "dropAllCaps",
-    cli: {"--drop-all-caps": true},
+    cli: { "--drop-all-caps": true },
     toCLI: (val) => val ? "--drop-all-caps" : void 0,
     title: "Drop all caps",
     description: [
@@ -456,7 +456,7 @@ var optionDefinitions = [
   },
   {
     key: "escape",
-    cli: {"--escape": true, "--no-escape": false},
+    cli: { "--escape": true, "--no-escape": false },
     toCLI: (val) => val === false ? "--no-escape" : void 0,
     title: "Escape special characters",
     description: [
@@ -467,7 +467,7 @@ var optionDefinitions = [
   },
   {
     key: "sortFields",
-    cli: {"--sort-fields": (args) => args.length > 0 ? args : true},
+    cli: { "--sort-fields": (args) => args.length > 0 ? args : true },
     toCLI: (val) => {
       if (Array.isArray(val) && val.length > 0)
         return `--sort-fields=${val.join(",")}`;
@@ -513,7 +513,7 @@ var optionDefinitions = [
   },
   {
     key: "sortProperties",
-    cli: {"--sort-properties": (args) => args.length > 0 ? args : true},
+    cli: { "--sort-properties": (args) => args.length > 0 ? args : true },
     title: "Sort properties",
     description: ["Alias of sort fields (legacy)"],
     type: "boolean | string[]",
@@ -521,7 +521,7 @@ var optionDefinitions = [
   },
   {
     key: "stripComments",
-    cli: {"--strip-comments": true, "--no-strip-comments": false},
+    cli: { "--strip-comments": true, "--no-strip-comments": false },
     toCLI: (val) => val ? "--strip-comments" : void 0,
     title: "Remove comments",
     description: ["Remove all comments from the bibtex source."],
@@ -530,7 +530,7 @@ var optionDefinitions = [
   },
   {
     key: "trailingCommas",
-    cli: {"--trailing-commas": true, "--no-trailing-commas": true},
+    cli: { "--trailing-commas": true, "--no-trailing-commas": true },
     toCLI: (val) => val ? "--trailing-commas" : void 0,
     title: "Trailing commas",
     description: ["End the last key value pair in each entry with a comma."],
@@ -539,7 +539,7 @@ var optionDefinitions = [
   },
   {
     key: "encodeUrls",
-    cli: {"--encode-urls": true, "--no-encode-urls": true},
+    cli: { "--encode-urls": true, "--no-encode-urls": true },
     toCLI: (val) => val ? "--encode-urls" : void 0,
     title: "Encode URLs",
     description: [
@@ -550,7 +550,7 @@ var optionDefinitions = [
   },
   {
     key: "tidyComments",
-    cli: {"--tidy-comments": true, "--no-tidy-comments": false},
+    cli: { "--tidy-comments": true, "--no-tidy-comments": false },
     toCLI: (val) => val === false ? "--no-tidy-comments" : void 0,
     title: "Tidy comments",
     description: ["Remove whitespace surrounding comments."],
@@ -559,7 +559,7 @@ var optionDefinitions = [
   },
   {
     key: "removeEmptyFields",
-    cli: {"--remove-empty-fields": true, "--no-remove-empty-fields": false},
+    cli: { "--remove-empty-fields": true, "--no-remove-empty-fields": false },
     toCLI: (val) => val ? "--remove-empty-fields" : void 0,
     title: "Remove empty fields",
     description: ["Remove any fields that have empty values."],
@@ -582,7 +582,7 @@ var optionDefinitions = [
   },
   {
     key: "maxAuthors",
-    cli: {"--max-authors": (args) => Number(args[0])},
+    cli: { "--max-authors": (args) => Number(args[0]) },
     toCLI: (val) => val ? `--max-authors=${val}` : void 0,
     title: "Maximum authors",
     description: [
@@ -592,7 +592,7 @@ var optionDefinitions = [
   },
   {
     key: "lowercase",
-    cli: {"--no-lowercase": false},
+    cli: { "--no-lowercase": false },
     toCLI: (val) => val === false ? "--no-lowercase" : void 0,
     title: "Lowercase fields",
     description: ["Lowercase field names and entry type. Enabled by default."],
@@ -637,21 +637,21 @@ var optionDefinitions = [
   },
   {
     key: "version",
-    cli: {"--version": true, "-v": true},
+    cli: { "--version": true, "-v": true },
     title: "Version",
     description: ["Show bibtex-tidy version."],
     type: "boolean"
   },
   {
     key: "quiet",
-    cli: {"--quiet": true},
+    cli: { "--quiet": true },
     title: "Quiet",
     description: ["Suppress logs and warnings."],
     type: "boolean"
   },
   {
     key: "backup",
-    cli: {"--backup": true, "--no-backup": false},
+    cli: { "--backup": true, "--no-backup": false },
     title: "Backup",
     description: ["Make a backup <filename>.original. Enabled by default."],
     type: "boolean",
@@ -3585,7 +3585,7 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
   }
   if (!bibtex.endsWith("\n"))
     bibtex += "\n";
-  return {bibtex, warnings, count: entries.length};
+  return { bibtex, warnings, count: entries.length };
 }
 function sortFields(fields, fieldOrder) {
   fields.sort((a, b) => {
@@ -3613,7 +3613,7 @@ function generateValueLookup(entries, options) {
     ]))
   ]));
 }
-function sortEntries(ast, fieldMaps, {sort}) {
+function sortEntries(ast, fieldMaps, { sort }) {
   var _a, _b, _c, _d;
   if (!sort)
     return;
@@ -3654,7 +3654,7 @@ function sortEntries(ast, fieldMaps, {sort}) {
     });
   }
 }
-function formatComment(comment, {stripComments, tidyComments}) {
+function formatComment(comment, { stripComments, tidyComments }) {
   if (stripComments)
     return "";
   if (tidyComments) {
@@ -3684,7 +3684,7 @@ function formatValue(field, options) {
   const nameLowerCase = field.name.toLocaleLowerCase();
   const indent = tab ? "	" : " ".repeat(space);
   const enclosingBracesFields = new Set((enclosingBraces || []).map((field2) => field2.toLocaleLowerCase()));
-  return field.value.concat.map(({type, value}) => {
+  return field.value.concat.map(({ type, value }) => {
     const isNumeric = value.match(/^[1-9][0-9]*$/);
     if (isNumeric && curly) {
       type = "braced";
@@ -3739,7 +3739,7 @@ ${valIndent}`) + "\n" + indent;
     }
   }).join(" # ");
 }
-var src_default = {tidy};
+var src_default = { tidy };
 
 // src/cli.ts
 var import_rw = __toModule(require_rw());
@@ -3748,11 +3748,7 @@ var import_process = __toModule(require("process"));
 // src/cliUtils.ts
 var OPTIONS = new Set(optionDefinitions.flatMap((def) => Object.keys(def.cli)));
 function parseArguments(args) {
-  const {
-    inputFiles,
-    optionArgVals: optionArgs,
-    unknownArgs
-  } = splitCLIArgs(args);
+  const { inputFiles, optionArgVals: optionArgs, unknownArgs } = splitCLIArgs(args);
   const options = {};
   for (const def of optionDefinitions) {
     for (const [opt, val] of Object.entries(def.cli)) {
@@ -3766,7 +3762,7 @@ function parseArguments(args) {
       }
     }
   }
-  return {inputFiles, options, unknownArgs};
+  return { inputFiles, options, unknownArgs };
 }
 function splitCLIArgs(args) {
   const optionArgVals = {};
@@ -3774,18 +3770,18 @@ function splitCLIArgs(args) {
   let currOption;
   let valueOrInputArgs = [];
   let inputArgs;
-  const argsToProcess = args.map((arg) => ({arg}));
+  const argsToProcess = args.map((arg) => ({ arg }));
   while (true) {
     const next = argsToProcess.shift();
     if (!next)
       break;
-    const {arg, isValue} = next;
+    const { arg, isValue } = next;
     if (!isValue && arg.startsWith("-") && arg != "-") {
       const equalPos = arg.indexOf("=");
       if (equalPos > -1) {
         const option = arg.slice(0, equalPos);
         const values = arg.slice(equalPos + 1).split(",");
-        argsToProcess.unshift({arg: option}, ...values.map((val) => ({arg: val, isValue: true})));
+        argsToProcess.unshift({ arg: option }, ...values.map((val) => ({ arg: val, isValue: true })));
         continue;
       }
       if (!OPTIONS.has(arg)) {
@@ -3948,13 +3944,9 @@ var manPage = [
 ];
 
 // src/cli.ts
-var {readFileSync, writeFileSync} = import_rw.dash;
+var { readFileSync, writeFileSync } = import_rw.dash;
 function start() {
-  const {
-    inputFiles,
-    options,
-    unknownArgs: unknownOptions
-  } = parseArguments(import_process.default.argv.slice(2));
+  const { inputFiles, options, unknownArgs: unknownOptions } = parseArguments(import_process.default.argv.slice(2));
   if (unknownOptions.length > 0) {
     console.error(`Unknown option${unknownOptions.length > 1 ? "s" : ""}: ${unknownOptions.join(", ")}`);
     console.error(`Try 'bibtex-tidy --help for more information.`);
