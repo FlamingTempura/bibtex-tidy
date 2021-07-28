@@ -1,0 +1,5 @@
+bin/bibtex-tidy linguist-generated=true
+src/__generated/**/* linguist-generated=true
+package-lock.json linguist-generated=true
+bibtex-tidy.js linguist-generated=true
+docs/bundle.js linguist-generated=true
