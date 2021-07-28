@@ -1,9 +1,11 @@
 import tidy from './index';
-import { readFileSync, writeFileSync } from 'fs';
+import { dash } from 'rw';
 import process from 'process';
 import { parseArguments } from './cliUtils';
 import { version } from './__generated__/version';
 import { manPage } from './__generated__/manPage';
+
+const { readFileSync, writeFileSync } = dash;
 
 function start(): void {
 	const { inputFiles, options, unknownArgs: unknownOptions } = parseArguments(

@@ -1,9 +1,11 @@
-import { mkdirSync, readFileSync, writeFileSync, unlinkSync } from 'fs';
+import { mkdirSync, unlinkSync } from 'fs';
+import { dash } from 'rw';
 import { join } from 'path';
 import { spawnSync } from 'child_process';
 import { CLIOptions } from '../../src/optionUtils';
 import { optionsToCLIArgs } from '../../src/cliUtils';
 
+const { readFileSync, writeFileSync } = dash;
 const TMP_DIR = join(__dirname, '..', '..', '.tmp');
 const BIN_PATH = join(__dirname, '..', '..', 'bin', 'bibtex-tidy');
 

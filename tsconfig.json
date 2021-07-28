@@ -16,5 +16,5 @@
 		},
 		"rootDir": "./"
 	},
-	"include": ["./src/*", "./test/*", "./docs/*", "./build.ts"]
+	"include": ["./src/*", "./test/*", "./docs/*", "./build.ts", "decs.d.ts"]
 }
