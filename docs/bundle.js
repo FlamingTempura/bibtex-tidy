@@ -19,7 +19,11 @@
     value: true
   });
 
-  var __commonJS = (cb, mod) => function __require() {
+  var __require = typeof require !== "undefined" ? require : x => {
+    throw new Error('Dynamic require of "' + x + '" is not supported');
+  };
+
+  var __commonJS = (cb, mod) => function __require2() {
     return mod || (0, cb[Object.keys(cb)[0]])((mod = {
       exports: {}
     }).exports, mod), mod.exports;
@@ -4471,6 +4475,14 @@
           cursor.style.top = pos.top + "px";
           cursor.style.height = Math.max(0, pos.bottom - pos.top) * cm.options.cursorHeight + "px";
 
+          if (/\bcm-fat-cursor\b/.test(cm.getWrapperElement().className)) {
+            var charPos = charCoords(cm, head, "div", null, null);
+
+            if (charPos.right - charPos.left > 0) {
+              cursor.style.width = charPos.right - charPos.left + "px";
+            }
+          }
+
           if (pos.other) {
             var otherCursor = output.appendChild(elt("div", "\xA0", "CodeMirror-cursor CodeMirror-secondarycursor"));
             otherCursor.style.display = "";
@@ -4708,6 +4720,9 @@
         function updateHeightsInViewport(cm) {
           var display = cm.display;
           var prevBottom = display.lineDiv.offsetTop;
+          var viewTop = Math.max(0, display.scroller.getBoundingClientRect().top);
+          var oldHeight = display.lineDiv.getBoundingClientRect().top;
+          var mustScroll = 0;
 
           for (var i2 = 0; i2 < display.view.length; i2++) {
             var cur = display.view[i2],
@@ -4718,6 +4733,8 @@
             if (cur.hidden) {
               continue;
             }
+
+            oldHeight += cur.line.height;
 
             if (ie && ie_version < 8) {
               var bot = cur.node.offsetTop + cur.node.offsetHeight;
@@ -4735,6 +4752,10 @@
             var diff = cur.line.height - height;
 
             if (diff > 5e-3 || diff < -5e-3) {
+              if (oldHeight < viewTop) {
+                mustScroll -= diff;
+              }
+
               updateLineHeight(cur.line, height);
               updateWidgetHeight(cur.line);
 
@@ -4754,6 +4775,10 @@
                 cm.display.maxLineChanged = true;
               }
             }
+          }
+
+          if (Math.abs(mustScroll) > 2) {
+            display.scroller.scrollTop += mustScroll;
           }
         }
 
@@ -6048,6 +6073,7 @@
           d.scroller = elt("div", [d.sizer, d.heightForcer, d.gutters], "CodeMirror-scroll");
           d.scroller.setAttribute("tabIndex", "-1");
           d.wrapper = elt("div", [d.scrollbarFiller, d.gutterFiller, d.scroller], "CodeMirror");
+          d.wrapper.setAttribute("translate", "no");
 
           if (ie && ie_version < 8) {
             d.gutters.style.zIndex = -1;
@@ -12554,10 +12580,13 @@
         };
 
         ContentEditableInput.prototype.receivedFocus = function () {
+          var this$1 = this;
           var input = this;
 
           if (this.selectionInEditor()) {
-            this.pollSelection();
+            setTimeout(function () {
+              return this$1.pollSelection();
+            }, 20);
           } else {
             runInOp(this.cm, function () {
               return input.cm.curOp.selectionChanged = true;
@@ -13666,7 +13695,7 @@
 
         CodeMirror4.fromTextArea = fromTextArea;
         addLegacyProps(CodeMirror4);
-        CodeMirror4.version = "5.62.2";
+        CodeMirror4.version = "5.63.0";
         return CodeMirror4;
       });
     }
