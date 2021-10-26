@@ -821,7 +821,7 @@ function wrapText(line, lineWidth) {
 }
 
 function unwrapText(str) {
-  return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n").trim();
+  return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
 }
 
 function addEnclosingBraces(str, removeInsideBraces) {
@@ -1206,7 +1206,9 @@ function formatValue(field, options) {
       value = addEnclosingBraces(value, true);
     }
 
-    value = value.trim();
+    if (type !== "quoted") {
+      value = value.trim();
+    }
 
     if (type === "braced" || curly) {
       const lineLength = `${indent}${align}{${value}}`.length;

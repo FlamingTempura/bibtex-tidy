@@ -61,8 +61,7 @@ export function unwrapText(str: string): string {
 	return str
 		.replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>')
 		.replace(/\s*\n\s*/g, ' ')
-		.replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n')
-		.trim();
+		.replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n');
 }
 
 /** Remove all braces and enclose entire value in braces */

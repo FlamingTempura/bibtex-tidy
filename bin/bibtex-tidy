@@ -3365,7 +3365,7 @@ function wrapText(line, lineWidth) {
   return lines.map((line2) => line2.trim());
 }
 function unwrapText(str) {
-  return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n").trim();
+  return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
 }
 function addEnclosingBraces(str, removeInsideBraces) {
   if (removeInsideBraces)
@@ -3721,7 +3721,9 @@ function formatValue(field, options) {
     if (enclosingBracesFields.has(nameLowerCase) && (type === "braced" || curly)) {
       value = addEnclosingBraces(value, true);
     }
-    value = value.trim();
+    if (type !== "quoted") {
+      value = value.trim();
+    }
     if (type === "braced" || curly) {
       const lineLength = `${indent}${align}{${value}}`.length;
       const multiLine = value.includes("\n\n");

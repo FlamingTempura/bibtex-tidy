@@ -427,7 +427,9 @@ function formatValue(
 				value = addEnclosingBraces(value, true);
 			}
 
-			value = value.trim();
+			if (type !== 'quoted') {
+				value = value.trim();
+			}
 
 			if (type === 'braced' || curly) {
 				const lineLength = `${indent}${align}{${value}}`.length;
