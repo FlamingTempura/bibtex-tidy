@@ -8,17 +8,17 @@
 		"bibtex-tidy": "./bin/bibtex-tidy"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.15.5",
-		"@babel/preset-env": "^7.15.6",
+		"@babel/core": "^7.15.8",
+		"@babel/preset-env": "^7.15.8",
 		"@types/babel__core": "^7.1.16",
-		"@types/codemirror": "^5.60.2",
-		"@types/node": "^16.9.4",
-		"codemirror": "^5.63.0",
-		"esbuild": "^0.12.28",
+		"@types/codemirror": "^5.60.5",
+		"@types/node": "^16.11.6",
+		"codemirror": "^5.63.3",
+		"esbuild": "^0.13.9",
 		"esbuild-register": "^3.0.0",
 		"nyc": "^15.1.0",
-		"puppeteer": "^10.2.0",
-		"typescript": "^4.4.3"
+		"puppeteer": "^10.4.0",
+		"typescript": "^4.5.0-dev.20211026"
 	},
 	"scripts": {
 		"build": "node -r esbuild-register build.ts",
@@ -33,6 +33,8 @@
 	"author": "FlamingTempura",
 	"license": "MIT",
 	"dependencies": {
-		"rw": "^1.3.3"
+		"@types/semver": "^7.3.9",
+		"rw": "^1.3.3",
+		"semver": "^7.3.5"
 	}
 }

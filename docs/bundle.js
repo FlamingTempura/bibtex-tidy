@@ -19,11 +19,7 @@
     value: true
   });
 
-  var __require = typeof require !== "undefined" ? require : x => {
-    throw new Error('Dynamic require of "' + x + '" is not supported');
-  };
-
-  var __commonJS = (cb, mod) => function __require2() {
+  var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[Object.keys(cb)[0]])((mod = {
       exports: {}
     }).exports, mod), mod.exports;
@@ -6161,6 +6157,14 @@
           var delta = wheelEventDelta(e),
               dx = delta.x,
               dy = delta.y;
+          var pixelsPerUnit = wheelPixelsPerUnit;
+
+          if (e.deltaMode === 0) {
+            dx = e.deltaX;
+            dy = e.deltaY;
+            pixelsPerUnit = 1;
+          }
+
           var display = cm.display,
               scroll = display.scroller;
           var canScrollX = scroll.scrollWidth > scroll.clientWidth;
@@ -6181,12 +6185,12 @@
             }
           }
 
-          if (dx && !gecko && !presto && wheelPixelsPerUnit != null) {
+          if (dx && !gecko && !presto && pixelsPerUnit != null) {
             if (dy && canScrollY) {
-              updateScrollTop(cm, Math.max(0, scroll.scrollTop + dy * wheelPixelsPerUnit));
+              updateScrollTop(cm, Math.max(0, scroll.scrollTop + dy * pixelsPerUnit));
             }
 
-            setScrollLeft(cm, Math.max(0, scroll.scrollLeft + dx * wheelPixelsPerUnit));
+            setScrollLeft(cm, Math.max(0, scroll.scrollLeft + dx * pixelsPerUnit));
 
             if (!dy || dy && canScrollY) {
               e_preventDefault(e);
@@ -6196,8 +6200,8 @@
             return;
           }
 
-          if (dy && wheelPixelsPerUnit != null) {
-            var pixels = dy * wheelPixelsPerUnit;
+          if (dy && pixelsPerUnit != null) {
+            var pixels = dy * pixelsPerUnit;
             var top = cm.doc.scrollTop,
                 bot = top + display.wrapper.clientHeight;
 
@@ -6213,7 +6217,7 @@
             });
           }
 
-          if (wheelSamples < 20) {
+          if (wheelSamples < 20 && e.deltaMode !== 0) {
             if (display.wheelStartX == null) {
               display.wheelStartX = scroll.scrollLeft;
               display.wheelStartY = scroll.scrollTop;
@@ -11472,7 +11476,7 @@
         }
 
         function hiddenTextarea() {
-          var te = elt("textarea", null, null, "position: absolute; bottom: -1em; padding: 0; width: 1px; height: 1em; outline: none");
+          var te = elt("textarea", null, null, "position: absolute; bottom: -1em; padding: 0; width: 1px; height: 1em; min-height: 1em; outline: none");
           var div = elt("div", [te], null, "overflow: hidden; position: relative; width: 3px; height: 0px;");
 
           if (webkit) {
@@ -13695,7 +13699,7 @@
 
         CodeMirror4.fromTextArea = fromTextArea;
         addLegacyProps(CodeMirror4);
-        CodeMirror4.version = "5.63.0";
+        CodeMirror4.version = "5.63.3";
         return CodeMirror4;
       });
     }

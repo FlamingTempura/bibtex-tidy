@@ -3,8 +3,8 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.tidy = tidy;
 exports.default = void 0;
+exports.tidy = tidy;
 
 /**
  * bibtex-tidy v1.7.1
