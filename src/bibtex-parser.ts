@@ -301,6 +301,9 @@ export function generateAST(input: string): RootNode {
 					node = new FieldNode(node.parent.parent.parent);
 				} else if (char === '}') {
 					node = node.parent.parent.parent.parent.parent; // root
+				} else if (char === '#') {
+					node = node.parent;
+					node.canConsumeValue = true;
 				} else {
 					node.value += char;
 				}

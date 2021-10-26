@@ -14665,6 +14665,9 @@
             node = new FieldNode(node.parent.parent.parent);
           } else if (char === "}") {
             node = node.parent.parent.parent.parent.parent;
+          } else if (char === "#") {
+            node = node.parent;
+            node.canConsumeValue = true;
           } else {
             node.value += char;
           }
