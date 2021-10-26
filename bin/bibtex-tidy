@@ -214,10 +214,10 @@ var require_dash = __commonJS({
     var slice = Array.prototype.slice;
     function dashify(method, file) {
       return function(path) {
-        var argv = arguments;
+        var argv2 = arguments;
         if (path == "-")
-          (argv = slice.call(argv)).splice(0, 1, file);
-        return method.apply(null, argv);
+          (argv2 = slice.call(argv2)).splice(0, 1, file);
+        return method.apply(null, argv2);
       };
     }
     exports2.readFile = dashify(require_read_file(), "/dev/stdin");
@@ -3955,20 +3955,29 @@ var manPage = [
 
 // src/cli.ts
 var { readFileSync, writeFileSync } = import_rw.dash;
+var nodeVer = Number(import_process.versions.node.split(".")[0]);
+if (nodeVer < 12) {
+  console.error(`bibtex-tidy requires Node.js v12.0.0 or later`);
+  (0, import_process.exit)(1);
+}
 function start() {
-  const { inputFiles, options, unknownArgs: unknownOptions } = parseArguments(import_process.default.argv.slice(2));
+  const {
+    inputFiles,
+    options,
+    unknownArgs: unknownOptions
+  } = parseArguments(import_process.argv.slice(2));
   if (unknownOptions.length > 0) {
     console.error(`Unknown option${unknownOptions.length > 1 ? "s" : ""}: ${unknownOptions.join(", ")}`);
     console.error(`Try 'bibtex-tidy --help for more information.`);
-    import_process.default.exit(1);
+    (0, import_process.exit)(1);
   }
   if (options.version) {
     console.log(`v${version}`);
-    import_process.default.exit(0);
+    (0, import_process.exit)(0);
   }
   if (inputFiles.length === 0 || options.help) {
     console.log(manPage.join("\n"));
-    import_process.default.exit(0);
+    (0, import_process.exit)(0);
   }
   if (options.quiet) {
     console.log = () => {

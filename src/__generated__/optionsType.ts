@@ -145,11 +145,6 @@ export type Options = {
 	 */
 	maxAuthors?: number;
 	/**
-	 * Tidy authors
-	 *
-	 * Each author formatted as "last names, first names"
-	 */
-	/**
 	 * Lowercase fields
 	 *
 	 * Lowercase field names and entry type. Enabled by default.

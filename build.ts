@@ -29,6 +29,8 @@ const BROWSER_TARGETS = {
 	safari: '14',
 };
 
+const NODE_TARGET = ['node12'];
+
 const banner = `/**
  * bibtex-tidy v${version}
  * https://github.com/FlamingTempura/bibtex-tidy
@@ -165,7 +167,7 @@ async function buildCLI() {
 		platform: 'node',
 		banner: { js: '#!/usr/bin/env node\n' + banner },
 		outfile: CLI_BIN,
-		target: ['node7'],
+		target: NODE_TARGET,
 		entryPoints: [join(SRC_PATH, 'cli.ts')],
 	});
 	await chmod(CLI_BIN, 0o755); // rwxr-xr-x

@@ -1,16 +1,26 @@
 import tidy from './index';
 import { dash } from 'rw';
-import process from 'process';
+import { argv, versions, exit } from 'process';
 import { parseArguments } from './cliUtils';
 import { version } from './__generated__/version';
 import { manPage } from './__generated__/manPage';
 
 const { readFileSync, writeFileSync } = dash;
 
+const nodeVer = Number(versions.node.split('.')[0]);
+
+// Node v12 needed for Object.entries.
+if (nodeVer < 12) {
+	console.error(`bibtex-tidy requires Node.js v12.0.0 or later`);
+	exit(1);
+}
+
 function start(): void {
-	const { inputFiles, options, unknownArgs: unknownOptions } = parseArguments(
-		process.argv.slice(2)
-	);
+	const {
+		inputFiles,
+		options,
+		unknownArgs: unknownOptions,
+	} = parseArguments(argv.slice(2));
 	if (unknownOptions.length > 0) {
 		console.error(
 			`Unknown option${
@@ -18,15 +28,15 @@ function start(): void {
 			}: ${unknownOptions.join(', ')}`
 		);
 		console.error(`Try 'bibtex-tidy --help for more information.`);
-		process.exit(1);
+		exit(1);
 	}
 	if (options.version) {
 		console.log(`v${version}`);
-		process.exit(0);
+		exit(0);
 	}
 	if (inputFiles.length === 0 || options.help) {
 		console.log(manPage.join('\n'));
-		process.exit(0);
+		exit(0);
 	}
 	if (options.quiet) {
 		console.log = () => {};

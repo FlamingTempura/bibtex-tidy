@@ -51,6 +51,8 @@ After `bibtex-tidy references.bib`:
 
 ### Installation
 
+Requires node v12 or later.
+
 ```sh
 npm install -g bibtex-tidy
 bibtex-tidy references.bib
@@ -135,19 +137,19 @@ Options:
                            --sort-fields=name,author
 
   --strip-comments,        Remove all comments from the bibtex source.
-  --no-strip-comments      
+  --no-strip-comments
 
   --trailing-commas,       End the last key value pair in each entry with a comma.
-  --no-trailing-commas     
+  --no-trailing-commas
 
   --encode-urls,           Replace invalid URL characters with percent encoded
   --no-encode-urls         values.
 
   --tidy-comments,         Remove whitespace surrounding comments.
-  --no-tidy-comments       
+  --no-tidy-comments
 
   --remove-empty-fields,   Remove any fields that have empty values.
-  --no-remove-empty-fields 
+  --no-remove-empty-fields
 
   --remove-dupe-fields,    Only allow one of each field in each entry. Enabled by
   --no-remove-dupe-fields  default.
