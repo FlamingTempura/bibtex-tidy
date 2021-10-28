@@ -4,14 +4,14 @@ import { bibtex, bibtexTidy, test } from './utils';
 const input = bibtex`
 @ARTICLE {test,
   author   = aubert#" and "#Varacca,
-  journal = abc # {123},
+  journal = abc # { 123 },
     title = "A"#"B"
 }`;
 
 const output = bibtex`
 @article{test,
   author        = aubert # " and " # Varacca,
-  journal       = abc # {123},
+  journal       = abc # { 123 },
   title         = "A" # "B"
 }
 `;

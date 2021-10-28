@@ -427,7 +427,8 @@ function formatValue(
 				value = addEnclosingBraces(value, true);
 			}
 
-			if (type !== 'quoted') {
+			// Braced values should be trimmed, unless part of a concatenation
+			if (type === 'braced' && field.value.concat.length === 1) {
 				value = value.trim();
 			}
 

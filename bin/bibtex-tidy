@@ -3721,7 +3721,7 @@ function formatValue(field, options) {
     if (enclosingBracesFields.has(nameLowerCase) && (type === "braced" || curly)) {
       value = addEnclosingBraces(value, true);
     }
-    if (type !== "quoted") {
+    if (type === "braced" && field.value.concat.length === 1) {
       value = value.trim();
     }
     if (type === "braced" || curly) {

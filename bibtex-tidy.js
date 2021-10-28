@@ -1206,7 +1206,7 @@ function formatValue(field, options) {
       value = addEnclosingBraces(value, true);
     }
 
-    if (type !== "quoted") {
+    if (type === "braced" && field.value.concat.length === 1) {
       value = value.trim();
     }
 
