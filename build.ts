@@ -112,8 +112,10 @@ async function generateManPage() {
 
 		for (let i = 0; i < Math.max(rightColumn.length, leftColumn.length); i++) {
 			manPage.push(
-				(leftColumn[i] ?? '').padEnd(MANPAGE_LEFT_COLUMN_WIDTH) +
+				(
+					(leftColumn[i] ?? '').padEnd(MANPAGE_LEFT_COLUMN_WIDTH) +
 					(rightColumn[i] ?? '')
+				).trimEnd()
 			);
 		}
 

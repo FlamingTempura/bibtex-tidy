@@ -65,70 +65,40 @@ export async function bibtexTidy(
 ): Promise<BibTeXTidyRunResult> {
 	if (typeof inputs === 'string') inputs = [inputs];
 
-	const result: BibTeXTidyRunResult = {};
-
-	if (process.env.NODE_ENV === 'coverage') {
-		targets = targets.filter((f) => f !== 'web');
-	}
-
+	let api: APIResult | undefined;
 	if (targets.includes('api')) {
 		if ('stdin' in inputs) throw new Error('API does not support stdin');
-		const apiResult = testAPI(inputs, options);
-		const apiResult2 = testAPI([apiResult.bibtex], options);
-		strictEqual(
-			apiResult.bibtex,
-			apiResult2.bibtex,
-			'API result should be stable'
-		);
-		result.api = apiResult;
+		api = testAPI(inputs, options);
+		const check = testAPI([api.bibtex], options);
+		deepStrictEqual(api.bibtex, check.bibtex, 'API result unstable');
 	}
 
+	let cli: CLIResult | undefined;
 	if (targets.includes('cli')) {
-		const cliResult = testCLI(inputs, options);
-		const cliResult2 = testCLI(cliResult.bibtexs, options);
-		deepStrictEqual(
-			cliResult.bibtexs,
-			cliResult2.bibtexs,
-			'CLI result should be stable'
-		);
-		result.cli = cliResult;
-		if (result.api) {
-			strictEqual(
-				cliResult.bibtexs[0],
-				result.api.bibtex,
-				'API and CLI outputs should match'
-			);
-		}
+		cli = testCLI(inputs, options);
+		const check = testCLI(cli.bibtexs, options);
+		deepStrictEqual(cli.bibtexs, check.bibtexs, 'CLI result unstable');
 	}
 
-	if (targets.includes('web')) {
+	let web: WebResult | undefined;
+	if (targets.includes('web') && process.env.NODE_ENV !== 'coverage') {
 		if ('stdin' in inputs) throw new Error('Web does not support stdin');
-		const webResult = await testWeb(inputs, options);
-		const webResult2 = await testWeb([webResult.bibtex], options);
-		strictEqual(
-			webResult.bibtex,
-			webResult2.bibtex,
-			'API result should be stable'
-		);
-		result.web = webResult;
-		if (result.api) {
-			strictEqual(
-				webResult.bibtex,
-				result.api.bibtex,
-				'Web and API outputs should match'
-			);
-		}
-		if (result.cli) {
-			strictEqual(
-				webResult.bibtex,
-				result.cli.bibtexs[0],
-				'Web and CLI outputs should match'
-			);
-		}
+		web = await testWeb(inputs, options);
+		const check = await testWeb([web.bibtex], options);
+		deepStrictEqual(web.bibtex, check.bibtex, 'Web result unstable');
 	}
 
-	result.bibtex =
-		result.api?.bibtex ?? result.cli?.bibtexs[0] ?? result.web?.bibtex;
+	if (api && cli) {
+		strictEqual(api.bibtex, cli.bibtexs[0], 'API and CLI outputs differ');
+	}
+	if (cli && web) {
+		strictEqual(cli.bibtexs[0], web.bibtex, 'CLI and Web outputs differ');
+	}
+	if (web && api) {
+		strictEqual(web.bibtex, api.bibtex, 'Web and API outputs differ');
+	}
 
-	return result;
+	const bibtex = api?.bibtex ?? cli?.bibtexs[0] ?? web?.bibtex;
+
+	return { api, cli, web, bibtex };
 }
