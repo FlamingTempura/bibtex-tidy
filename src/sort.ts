@@ -1,3 +1,4 @@
+import { getEntries } from '.';
 import { BlockNode, TextNode, EntryNode, RootNode } from './bibtex-parser';
 
 type SortIndex = Map<string, string>;
@@ -56,11 +57,8 @@ export function sortEntries(
 	}
 }
 
-export function sortEntryFields(
-	entries: EntryNode[],
-	fieldOrder: string[]
-): void {
-	for (const entry of entries) {
+export function sortEntryFields(ast: RootNode, fieldOrder: string[]): void {
+	for (const entry of getEntries(ast)) {
 		entry.fields.sort((a, b) => {
 			const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
 			const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());

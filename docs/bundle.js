@@ -15051,8 +15051,8 @@ ${valIndent}`) + "\n" + indent;
     }
   }
 
-  function sortEntryFields(entries, fieldOrder) {
-    for (const entry of entries) {
+  function sortEntryFields(ast, fieldOrder) {
+    for (const entry of getEntries(ast)) {
       entry.fields.sort((a, b) => {
         const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
         const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
@@ -15067,7 +15067,7 @@ ${valIndent}`) + "\n" + indent;
   } // src/duplicates.ts
 
 
-  function checkForDuplicates(entries, valueLookup, duplicates, merge) {
+  function checkForDuplicates(ast, valueLookup, duplicates, merge) {
     var _a, _b;
 
     const uniqCheck = new Map();
@@ -15089,7 +15089,7 @@ ${valIndent}`) + "\n" + indent;
     const citations = new Map();
     const abstracts = new Map();
 
-    for (const entry of entries) {
+    for (const entry of getEntries(ast)) {
       const entryValues = valueLookup.get(entry);
 
       for (const [key, doMerge] of uniqCheck) {
@@ -15179,35 +15179,36 @@ ${valIndent}`) + "\n" + indent;
     const options2 = normalizeOptions(options_);
     input = convertCRLF(input);
     const ast = generateAST(input);
-    const entries = ast.children.flatMap(node => {
-      var _a;
-
-      return node.type !== "text" && ((_a = node.block) == null ? void 0 : _a.type) === "entry" ? [node.block] : [];
-    });
-    const warnings = entries.filter(entry => !entry.key).map(entry => ({
+    const warnings = getEntries(ast).filter(entry => !entry.key).map(entry => ({
       code: "MISSING_KEY",
       message: `${entry.type} entry does not have an entry key.`
     }));
-    const valueLookup = generateValueLookup(entries, options2);
-    const duplicates = checkForDuplicates(entries, valueLookup, options2.duplicates, options2.merge);
+    const valueLookup = generateValueLookup(ast, options2);
+    const duplicates = checkForDuplicates(ast, valueLookup, options2.duplicates, options2.merge);
     warnings.push(...duplicates.warnings);
-    ast.children = ast.children.filter(child => {
-      var _a;
-
-      return child.type !== "block" || ((_a = child.block) == null ? void 0 : _a.type) !== "entry" || !duplicates.entries.has(child.block);
-    });
+    ast.children = ast.children.filter(child => !isEntryNode(child) || !duplicates.entries.has(child.block));
     if (options2.sort) sortEntries(ast, valueLookup, options2.sort);
-    if (options2.sortFields) sortEntryFields(entries, options2.sortFields);
+    if (options2.sortFields) sortEntryFields(ast, options2.sortFields);
     const bibtex = formatBibtex(ast, options2);
     return {
       bibtex,
       warnings,
-      count: entries.length
+      count: getEntries(ast).length
     };
   }
 
-  function generateValueLookup(entries, options2) {
-    return new Map(entries.map(entry => [entry, new Map(entry.fields.map(field => [field.name.toLocaleLowerCase(), formatValue(field, options2)]))]));
+  function isEntryNode(node) {
+    var _a;
+
+    return node.type !== "text" && ((_a = node.block) == null ? void 0 : _a.type) === "entry";
+  }
+
+  function getEntries(ast) {
+    return ast.children.filter(isEntryNode).map(node => node.block);
+  }
+
+  function generateValueLookup(ast, options2) {
+    return new Map(getEntries(ast).map(entry => [entry, new Map(entry.fields.map(field => [field.name.toLocaleLowerCase(), formatValue(field, options2)]))]));
   }
 
   var src_default = {

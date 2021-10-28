@@ -1,10 +1,10 @@
 import { UniqueKey, MergeStrategy } from './optionUtils';
-import { EntryNode } from './bibtex-parser';
+import { EntryNode, RootNode } from './bibtex-parser';
 import { alphaNum } from './utils';
-import { Warning } from '.';
+import { getEntries, Warning } from '.';
 
 export function checkForDuplicates(
-	entries: EntryNode[],
+	ast: RootNode,
 	valueLookup: Map<EntryNode, Map<string, string | undefined>>,
 	duplicates?: UniqueKey[],
 	merge?: MergeStrategy
@@ -32,7 +32,7 @@ export function checkForDuplicates(
 	const citations: Map<string, EntryNode> = new Map();
 	const abstracts: Map<string, EntryNode> = new Map();
 
-	for (const entry of entries) {
+	for (const entry of getEntries(ast)) {
 		const entryValues = valueLookup.get(entry)!;
 
 		for (const [key, doMerge] of uniqCheck) {

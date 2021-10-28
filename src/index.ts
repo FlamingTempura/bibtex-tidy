@@ -1,5 +1,11 @@
 import { Options, normalizeOptions, OptionsNormalized } from './optionUtils';
-import { generateAST, EntryNode } from './bibtex-parser';
+import {
+	generateAST,
+	EntryNode,
+	BlockNode,
+	TextNode,
+	RootNode,
+} from './bibtex-parser';
 import { convertCRLF } from './utils';
 import { formatValue, formatBibtex } from './format';
 import { sortEntries, sortEntryFields } from './sort';
@@ -24,49 +30,54 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	// Parse the bibtex and retrieve the items (includes comments, entries, strings, preambles)
 	const ast = generateAST(input);
 
-	const entries: EntryNode[] = ast.children.flatMap((node) =>
-		node.type !== 'text' && node.block?.type === 'entry' ? [node.block] : []
-	);
-
-	const warnings: Warning[] = entries
+	const warnings: Warning[] = getEntries(ast)
 		.filter((entry) => !entry.key)
 		.map((entry) => ({
 			code: 'MISSING_KEY',
 			message: `${entry.type} entry does not have an entry key.`,
 		}));
 
-	const valueLookup = generateValueLookup(entries, options);
+	const valueLookup = generateValueLookup(ast, options);
 
 	const duplicates = checkForDuplicates(
-		entries,
+		ast,
 		valueLookup,
 		options.duplicates,
 		options.merge
 	);
+
 	warnings.push(...duplicates.warnings);
+
 	ast.children = ast.children.filter(
-		(child) =>
-			child.type !== 'block' ||
-			child.block?.type !== 'entry' ||
-			!duplicates.entries.has(child.block)
+		(child) => !isEntryNode(child) || !duplicates.entries.has(child.block)
 	);
 
 	// sort needs to happen after merging all entries is complete
 	if (options.sort) sortEntries(ast, valueLookup, options.sort);
 
-	if (options.sortFields) sortEntryFields(entries, options.sortFields);
+	if (options.sortFields) sortEntryFields(ast, options.sortFields);
 
 	const bibtex = formatBibtex(ast, options);
 
-	return { bibtex, warnings, count: entries.length };
+	return { bibtex, warnings, count: getEntries(ast).length };
+}
+
+function isEntryNode(
+	node: TextNode | BlockNode
+): node is BlockNode & { block: EntryNode } {
+	return node.type !== 'text' && node.block?.type === 'entry';
+}
+
+export function getEntries(ast: RootNode): EntryNode[] {
+	return ast.children.filter(isEntryNode).map((node) => node.block);
 }
 
 function generateValueLookup(
-	entries: EntryNode[],
+	ast: RootNode,
 	options: OptionsNormalized
 ): Map<EntryNode, Map<string, string | undefined>> {
 	return new Map(
-		entries.map((entry) => [
+		getEntries(ast).map((entry) => [
 			entry,
 			new Map(
 				entry.fields.map((field) => [
