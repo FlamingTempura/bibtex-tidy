@@ -1,8 +1,16 @@
 import { specialCharacters } from './unicode';
 
 export function escapeSpecialCharacters(str: string): string {
+	let mathExpressions: string[] = [];
+
+	str = str.replace(/\$[^$]+\$/, (match) => {
+		mathExpressions.push(match);
+		return `MATH.EXP.${mathExpressions.length - 1}`;
+	});
+
 	let newstr: string = '';
 	let escapeMode: boolean = false;
+
 	for (let i = 0; i < str.length; i++) {
 		if (escapeMode) {
 			escapeMode = false;
@@ -18,7 +26,10 @@ export function escapeSpecialCharacters(str: string): string {
 		const c = str.charCodeAt(i).toString(16).padStart(4, '0');
 		newstr += specialCharacters.get(c) || str[i];
 	}
-	return newstr;
+	return newstr.replace(
+		/MATH\.EXP\.(\d+)/,
+		(_, i) => mathExpressions[Number(i)]
+	);
 }
 
 export function titleCase(str: string): string {

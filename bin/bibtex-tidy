@@ -3326,6 +3326,11 @@ var specialCharacters = new Map([
 
 // src/utils.ts
 function escapeSpecialCharacters(str) {
+  let mathExpressions = [];
+  str = str.replace(/\$[^$]+\$/, (match) => {
+    mathExpressions.push(match);
+    return `MATH.EXP.${mathExpressions.length - 1}`;
+  });
   let newstr = "";
   let escapeMode = false;
   for (let i = 0; i < str.length; i++) {
@@ -3342,7 +3347,7 @@ function escapeSpecialCharacters(str) {
     const c = str.charCodeAt(i).toString(16).padStart(4, "0");
     newstr += specialCharacters.get(c) || str[i];
   }
-  return newstr;
+  return newstr.replace(/MATH\.EXP\.(\d+)/, (_, i) => mathExpressions[Number(i)]);
 }
 function titleCase(str) {
   return str.replace(/(\w)(\S*)/g, (_, first, rest) => first.toLocaleUpperCase() + rest.toLocaleLowerCase());
