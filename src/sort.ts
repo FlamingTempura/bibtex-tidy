@@ -1,7 +1,22 @@
 import { getEntries } from '.';
 import { BlockNode, TextNode, EntryNode, RootNode } from './bibtex-parser';
 
-type SortIndex = Map<string, string>;
+export const MONTHS = [
+	'jan',
+	'feb',
+	'mar',
+	'apr',
+	'may',
+	'jun',
+	'jul',
+	'aug',
+	'sep',
+	'oct',
+	'nov',
+	'dec',
+];
+
+type SortIndex = Map<string, string | number>;
 
 export function sortEntries(
 	ast: RootNode,
@@ -27,15 +42,19 @@ export function sortEntries(
 		for (let key of sort) {
 			// dash prefix indicates descending order, deal with this later
 			if (key.startsWith('-')) key = key.slice(1);
-			let val: string;
+			let val: string | number;
 			if (key === 'key') {
 				val = item.block.key ?? '';
 			} else if (key === 'type') {
 				val = item.command;
+			} else if (key === 'month') {
+				const v = fieldMaps.get(item.block)?.get(key);
+				const i = v ? MONTHS.indexOf(v) : -1;
+				val = i > -1 ? i : '';
 			} else {
 				val = fieldMaps.get(item.block)?.get(key) ?? '';
 			}
-			sortIndex.set(key, val.toLowerCase());
+			sortIndex.set(key, typeof val === 'string' ? val.toLowerCase() : val);
 		}
 		sortIndexes.set(item, sortIndex);
 		// update comments above to this index
@@ -50,8 +69,10 @@ export function sortEntries(
 		const key = desc ? sort[i].slice(1) : sort[i];
 		ast.children.sort((a, b) => {
 			// if no value, then use \ufff0 so entry will be last
-			const ia = sortIndexes.get(a)?.get(key) ?? '\ufff0';
-			const ib = sortIndexes.get(b)?.get(key) ?? '\ufff0';
+			let ia = sortIndexes.get(a)?.get(key) ?? '\ufff0';
+			let ib = sortIndexes.get(b)?.get(key) ?? '\ufff0';
+			if (typeof ia === 'number') ia = String(ia).padStart(50, '0');
+			if (typeof ib === 'number') ib = String(ib).padStart(50, '0');
 			return (desc ? ib : ia).localeCompare(desc ? ia : ib);
 		});
 	}

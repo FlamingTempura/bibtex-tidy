@@ -3392,8 +3392,8 @@ function formatPageRange(str) {
   return str;
 }
 
-// src/format.ts
-var MONTHS = new Set([
+// src/sort.ts
+var MONTHS = [
   "jan",
   "feb",
   "mar",
@@ -3406,7 +3406,78 @@ var MONTHS = new Set([
   "oct",
   "nov",
   "dec"
-]);
+];
+function sortEntries(ast, fieldMaps, sort) {
+  var _a, _b, _c, _d, _e;
+  if (!sort)
+    return;
+  const sortIndexes = new Map();
+  const precedingMeta = [];
+  for (const item of ast.children) {
+    if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
+      precedingMeta.push(item);
+      continue;
+    }
+    const sortIndex = new Map();
+    for (let key of sort) {
+      if (key.startsWith("-"))
+        key = key.slice(1);
+      let val;
+      if (key === "key") {
+        val = (_b = item.block.key) != null ? _b : "";
+      } else if (key === "type") {
+        val = item.command;
+      } else if (key === "month") {
+        const v = (_c = fieldMaps.get(item.block)) == null ? void 0 : _c.get(key);
+        const i = v ? MONTHS.indexOf(v) : -1;
+        val = i > -1 ? i : "";
+      } else {
+        val = (_e = (_d = fieldMaps.get(item.block)) == null ? void 0 : _d.get(key)) != null ? _e : "";
+      }
+      sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
+    }
+    sortIndexes.set(item, sortIndex);
+    while (precedingMeta.length > 0) {
+      sortIndexes.set(precedingMeta.pop(), sortIndex);
+    }
+  }
+  for (let i = sort.length - 1; i >= 0; i--) {
+    const desc = sort[i].startsWith("-");
+    const key = desc ? sort[i].slice(1) : sort[i];
+    ast.children.sort((a, b) => {
+      var _a2, _b2, _c2, _d2;
+      let ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "\uFFF0";
+      let ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "\uFFF0";
+      if (typeof ia === "number")
+        ia = String(ia).padStart(50, "0");
+      if (typeof ib === "number")
+        ib = String(ib).padStart(50, "0");
+      return (desc ? ib : ia).localeCompare(desc ? ia : ib);
+    });
+  }
+}
+function sortEntryFields(ast, fieldOrder) {
+  for (const entry of getEntries(ast)) {
+    entry.fields.sort((a, b) => {
+      const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
+      const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
+      if (orderA === -1 && orderB === -1)
+        return 0;
+      if (orderA === -1)
+        return 1;
+      if (orderB === -1)
+        return -1;
+      if (orderB < orderA)
+        return 1;
+      if (orderB > orderA)
+        return -1;
+      return 0;
+    });
+  }
+}
+
+// src/format.ts
+var MONTH_SET = new Set(MONTHS);
 function formatBibtex(ast, options) {
   const { omit, tab, space } = options;
   const indent = tab ? "	" : " ".repeat(space);
@@ -3517,7 +3588,7 @@ function formatValue(field, options) {
       return value;
     }
     const dig3 = value.slice(0, 3).toLowerCase();
-    if (!curly && numeric && nameLowerCase === "month" && MONTHS.has(dig3)) {
+    if (!curly && numeric && nameLowerCase === "month" && MONTH_SET.has(dig3)) {
       return dig3;
     }
     value = unwrapText(value);
@@ -3564,68 +3635,6 @@ ${valIndent}`) + "\n" + indent;
       return `"${value}"`;
     }
   }).join(" # ");
-}
-
-// src/sort.ts
-function sortEntries(ast, fieldMaps, sort) {
-  var _a, _b, _c, _d;
-  if (!sort)
-    return;
-  const sortIndexes = new Map();
-  const precedingMeta = [];
-  for (const item of ast.children) {
-    if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
-      precedingMeta.push(item);
-      continue;
-    }
-    const sortIndex = new Map();
-    for (let key of sort) {
-      if (key.startsWith("-"))
-        key = key.slice(1);
-      let val;
-      if (key === "key") {
-        val = (_b = item.block.key) != null ? _b : "";
-      } else if (key === "type") {
-        val = item.command;
-      } else {
-        val = (_d = (_c = fieldMaps.get(item.block)) == null ? void 0 : _c.get(key)) != null ? _d : "";
-      }
-      sortIndex.set(key, val.toLowerCase());
-    }
-    sortIndexes.set(item, sortIndex);
-    while (precedingMeta.length > 0) {
-      sortIndexes.set(precedingMeta.pop(), sortIndex);
-    }
-  }
-  for (let i = sort.length - 1; i >= 0; i--) {
-    const desc = sort[i].startsWith("-");
-    const key = desc ? sort[i].slice(1) : sort[i];
-    ast.children.sort((a, b) => {
-      var _a2, _b2, _c2, _d2;
-      const ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "\uFFF0";
-      const ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "\uFFF0";
-      return (desc ? ib : ia).localeCompare(desc ? ia : ib);
-    });
-  }
-}
-function sortEntryFields(ast, fieldOrder) {
-  for (const entry of getEntries(ast)) {
-    entry.fields.sort((a, b) => {
-      const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
-      const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
-      if (orderA === -1 && orderB === -1)
-        return 0;
-      if (orderA === -1)
-        return 1;
-      if (orderB === -1)
-        return -1;
-      if (orderB < orderA)
-        return 1;
-      if (orderB > orderA)
-        return -1;
-      return 0;
-    });
-  }
 }
 
 // src/duplicates.ts

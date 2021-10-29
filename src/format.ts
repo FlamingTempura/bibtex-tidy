@@ -17,11 +17,9 @@ import {
 	limitAuthors,
 	formatPageRange,
 } from './utils';
+import { MONTHS } from './sort';
 
-//prettier-ignore
-const MONTHS: Set<string> = new Set([
-	'jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'
-]);
+const MONTH_SET = new Set<string>(MONTHS);
 
 export function formatBibtex(
 	ast: RootNode,
@@ -169,7 +167,12 @@ export function formatValue(
 				return value;
 			}
 			const dig3 = value.slice(0, 3).toLowerCase();
-			if (!curly && numeric && nameLowerCase === 'month' && MONTHS.has(dig3)) {
+			if (
+				!curly &&
+				numeric &&
+				nameLowerCase === 'month' &&
+				MONTH_SET.has(dig3)
+			) {
 				return dig3;
 			}
 			value = unwrapText(value);
