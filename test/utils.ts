@@ -2,7 +2,7 @@ import { CLIOptions } from '../src/optionUtils';
 import { CLIResult, testCLI } from './targets/cli';
 import { APIResult, testAPI } from './targets/api';
 import { testWeb, WebResult, teardown } from './targets/web';
-import { AssertionError, deepStrictEqual, strictEqual } from 'assert';
+import assert, { AssertionError, deepStrictEqual, strictEqual } from 'assert';
 
 const queue: (() => Promise<void>)[] = [];
 
@@ -67,9 +67,10 @@ export async function bibtexTidy(
 
 	let api: APIResult | undefined;
 	if (targets.includes('api')) {
-		if ('stdin' in inputs) throw new Error('API does not support stdin');
-		api = testAPI(inputs, options);
-		const check = testAPI([api.bibtex], options);
+		assert(!('stdin' in inputs), 'API does not support stdin');
+		assert(inputs.length === 1, 'API only supports one input bibtex');
+		api = testAPI(inputs[0], options);
+		const check = testAPI(api.bibtex, options);
 		deepStrictEqual(api.bibtex, check.bibtex, 'API result unstable');
 	}
 
@@ -82,9 +83,10 @@ export async function bibtexTidy(
 
 	let web: WebResult | undefined;
 	if (targets.includes('web') && process.env.NODE_ENV !== 'coverage') {
-		if ('stdin' in inputs) throw new Error('Web does not support stdin');
-		web = await testWeb(inputs, options);
-		const check = await testWeb([web.bibtex], options);
+		assert(!('stdin' in inputs), 'Web does not support stdin');
+		assert(inputs.length === 1, 'Web only supports one input bibtex');
+		web = await testWeb(inputs[0], options);
+		const check = await testWeb(web.bibtex, options);
 		deepStrictEqual(web.bibtex, check.bibtex, 'Web result unstable');
 	}
 

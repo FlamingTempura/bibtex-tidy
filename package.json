@@ -32,9 +32,5 @@
 	},
 	"author": "FlamingTempura",
 	"license": "MIT",
-	"dependencies": {
-		"@types/semver": "^7.3.9",
-		"rw": "^1.3.3",
-		"semver": "^7.3.5"
-	}
+	"dependencies": {}
 }

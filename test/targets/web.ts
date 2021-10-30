@@ -34,13 +34,9 @@ export async function teardown() {
 }
 
 export async function testWeb(
-	bibtexs: string[],
+	input: string,
 	options: Options = {}
 ): Promise<WebResult> {
-	if (bibtexs.length > 1) throw new Error('Web only supports one input bibtex');
-
-	const input = bibtexs[0];
-
 	const page = await getPage();
 
 	const result = await new Promise<BibTeXTidyResult>((resolve) => {
@@ -66,9 +62,8 @@ export async function testWeb(
 				getOpt('tidyComments').checked = !!options.tidyComments;
 				getOpt('trailingCommas').checked = !!options.trailingCommas;
 				getOpt('removeEmptyFields').checked = !!options.removeEmptyFields;
-				getOpt(
-					'removeDuplicateFields'
-				).checked = !!options.removeDuplicateFields;
+				getOpt('removeDuplicateFields').checked =
+					!!options.removeDuplicateFields;
 				getOpt('lowercase').checked = !!options.lowercase;
 
 				if (typeof options.align === 'number') {
@@ -84,15 +79,13 @@ export async function testWeb(
 					getOpt('omit').checked = false;
 				}
 				if (options.space) {
-					document.querySelector<HTMLInputElement>(
-						'[value=spaces]'
-					)!.checked = true;
+					document.querySelector<HTMLInputElement>('[value=spaces]')!.checked =
+						true;
 					getOpt('spaces').value = String(options.space);
 				}
 				if (options.tab) {
-					document.querySelector<HTMLInputElement>(
-						'[value=tabs]'
-					)!.checked = true;
+					document.querySelector<HTMLInputElement>('[value=tabs]')!.checked =
+						true;
 				}
 				if (options.sort) {
 					getOpt('sort').checked = true;
@@ -127,9 +120,8 @@ export async function testWeb(
 
 				if (options.enclosingBraces) {
 					getOpt('enclosingBraces').checked = true;
-					getOpt('enclosingBracesList').value = options.enclosingBraces.join(
-						' '
-					);
+					getOpt('enclosingBracesList').value =
+						options.enclosingBraces.join(' ');
 				} else {
 					getOpt('enclosingBraces').checked = false;
 					getOpt('enclosingBracesList').value = '';

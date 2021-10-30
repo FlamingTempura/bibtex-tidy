@@ -1,11 +1,9 @@
 import tidy from './index';
-import { dash } from 'rw';
 import { argv, versions, exit } from 'process';
 import { parseArguments } from './cliUtils';
 import { version } from './__generated__/version';
 import { manPage } from './__generated__/manPage';
-
-const { readFileSync, writeFileSync } = dash;
+import { readFileSync, writeFileSync } from 'fs';
 
 const nodeVer = Number(versions.node.split('.')[0]);
 
@@ -15,7 +13,7 @@ if (nodeVer < 12) {
 	exit(1);
 }
 
-function start(): void {
+async function start(): Promise<void> {
 	const {
 		inputFiles,
 		options,
@@ -44,7 +42,10 @@ function start(): void {
 	}
 	console.log('Tidying...');
 	for (const inputFile of inputFiles) {
-		const bibtex = readFileSync(inputFile, 'utf8');
+		const isStdIO = inputFile === '-';
+		const bibtex = isStdIO
+			? await readStdin()
+			: readFileSync(inputFile, 'utf8');
 		console.log(bibtex);
 		const result = tidy.tidy(bibtex, options);
 		for (const warning of result.warnings) {
@@ -55,11 +56,25 @@ function start(): void {
 			const dupes = result.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
 			console.log(`${dupes.length} entries merged`);
 		}
-		if (options.backup) {
+		if (options.backup && !isStdIO) {
 			writeFileSync(`${inputFile}.original`, bibtex, 'utf8');
 		}
-		writeFileSync(inputFile, result.bibtex, 'utf8');
+		if (isStdIO) {
+			process.stdout.write(result.bibtex);
+		} else {
+			writeFileSync(inputFile, result.bibtex, 'utf8');
+		}
 	}
+}
+
+async function readStdin(): Promise<string> {
+	return new Promise<string>((resolve) => {
+		let bibtex = '';
+		process.stdin
+			.on('data', (chunk) => (bibtex += chunk))
+			.on('end', () => resolve(bibtex))
+			.setEncoding('utf8');
+	});
 }
 
 start();
