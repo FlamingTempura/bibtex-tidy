@@ -14251,6 +14251,16 @@
     type: "boolean",
     defaultValue: true
   }, {
+    key: "generateKeys",
+    cli: {
+      "--generate-keys": true
+    },
+    toCLI: val => val === true ? "--generate-keys" : void 0,
+    title: "Generate BibTeX keys",
+    description: ["[Experimental] For all entries replace the key with a new key of the form <author><year><title>."],
+    type: "boolean",
+    defaultValue: false
+  }, {
     key: "maxAuthors",
     cli: {
       "--max-authors": args => Number(args[0])
@@ -14890,7 +14900,7 @@
 
   var MONTH_SET = new Set(MONTHS);
 
-  function formatBibtex(ast, options2) {
+  function formatBibtex(ast, options2, replacementKeys) {
     const {
       omit,
       tab,
@@ -14898,12 +14908,12 @@
     } = options2;
     const indent = tab ? "	" : " ".repeat(space);
     const omitFields = new Set(omit);
-    let bibtex = ast.children.map(child => formatNode(child, options2, indent, omitFields)).join("");
+    let bibtex = ast.children.map(child => formatNode(child, options2, indent, omitFields, replacementKeys)).join("");
     if (!bibtex.endsWith("\n")) bibtex += "\n";
     return bibtex;
   }
 
-  function formatNode(child, options2, indent, omitFields) {
+  function formatNode(child, options2, indent, omitFields, replacementKeys) {
     if (child.type === "text") {
       return formatComment(child.text, options2);
     }
@@ -14920,11 +14930,11 @@
         return formatComment(child.block.raw, options2);
 
       case "entry":
-        return formatEntry(child.command, child.block, options2, indent, omitFields);
+        return formatEntry(child.command, child.block, options2, indent, omitFields, replacementKeys == null ? void 0 : replacementKeys.get(child.block));
     }
   }
 
-  function formatEntry(entryType, entry, options2, indent, omitFields) {
+  function formatEntry(entryType, entry, options2, indent, omitFields, replacementKey) {
     const {
       align,
       trailingCommas,
@@ -14935,7 +14945,8 @@
     let bibtex = "";
     const itemType = lowercase ? entryType.toLocaleLowerCase() : entryType;
     bibtex += `@${itemType}{`;
-    if (entry.key) bibtex += `${entry.key},`;
+    const key = replacementKey != null ? replacementKey : entry.key;
+    if (key) bibtex += `${key},`;
     const fieldSeen = new Set();
 
     for (let i = 0; i < entry.fields.length; i++) {
@@ -15185,6 +15196,27 @@ ${valIndent}`) + "\n" + indent;
 
         break;
     }
+  } // src/parseAuthors.ts
+
+
+  function parseAuthors(authors) {
+    return authors.replace(/\s+/g, " ").split(/ and /i).map(nameRaw => {
+      const name = nameRaw.trim();
+      const commaPos = name.indexOf(",");
+
+      if (commaPos > -1) {
+        return {
+          firstNames: name.slice(commaPos + 1).trim(),
+          lastName: name.slice(0, commaPos).trim()
+        };
+      } else {
+        const lastSpacePos = name.lastIndexOf(" ");
+        return {
+          firstNames: name.slice(0, lastSpacePos).trim(),
+          lastName: name.slice(lastSpacePos).trim()
+        };
+      }
+    });
   } // src/index.ts
 
 
@@ -15202,12 +15234,46 @@ ${valIndent}`) + "\n" + indent;
     ast.children = ast.children.filter(child => !isEntryNode(child) || !duplicates.entries.has(child.block));
     if (options2.sort) sortEntries(ast, valueLookup, options2.sort);
     if (options2.sortFields) sortEntryFields(ast, options2.sortFields);
-    const bibtex = formatBibtex(ast, options2);
+    const newKeys = options2.generateKeys ? generateKeys(ast, valueLookup) : void 0;
+    const bibtex = formatBibtex(ast, options2, newKeys);
     return {
       bibtex,
       warnings,
       count: getEntries(ast).length
     };
+  }
+
+  function generateKeys(ast, valueLookup) {
+    var _a;
+
+    const keys = new Map();
+    const keyCounts = new Map();
+
+    for (const node of ast.children) {
+      if (isEntryNode(node)) {
+        const newKey = generateKey(valueLookup.get(node.block));
+
+        if (newKey) {
+          const keyCount = ((_a = keyCounts.get(newKey)) != null ? _a : 0) + 1;
+          keys.set(node.block, newKey + (keyCount > 1 ? keyCount : ""));
+          keyCounts.set(newKey, keyCount);
+        }
+      }
+    }
+
+    return keys;
+  }
+
+  function generateKey(valueLookup) {
+    var _a, _b, _c, _d;
+
+    const authors = parseAuthors((_b = (_a = valueLookup == null ? void 0 : valueLookup.get("author")) == null ? void 0 : _a.replace(/["{}]/g, "")) != null ? _b : "");
+    const lastName = (_c = authors[0]) == null ? void 0 : _c.lastName.toLowerCase();
+    const year = (_d = valueLookup == null ? void 0 : valueLookup.get("year")) == null ? void 0 : _d.replace(/[^0-9]/g, "");
+    const title = valueLookup == null ? void 0 : valueLookup.get("title");
+    const titleFirstWord = title == null ? void 0 : title.toLowerCase().replace(/^.*?([a-z]+)[^a-z].*$/, "$1");
+    if (!lastName || !year) return;
+    return [lastName, year, titleFirstWord != null ? titleFirstWord : ""].join("");
   }
 
   function isEntryNode(node) {
@@ -15470,6 +15536,7 @@ ${valIndent}`) + "\n" + indent;
       removeEmptyFields: options.removeEmptyFields.checked,
       removeDuplicateFields: options.removeDuplicateFields.checked,
       lowercase: options.lowercase.checked,
+      generateKeys: options.generateKeys.checked,
       maxAuthors: options.maxAuthors.checked ? Number(options.maxAuthorsNum.value) : void 0
     };
   }

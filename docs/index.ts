@@ -176,6 +176,7 @@ function getOptions(): Options {
 		removeEmptyFields: options.removeEmptyFields.checked,
 		removeDuplicateFields: options.removeDuplicateFields.checked,
 		lowercase: options.lowercase.checked,
+		generateKeys: options.generateKeys.checked,
 		maxAuthors: options.maxAuthors.checked
 			? Number(options.maxAuthorsNum.value)
 			: undefined,

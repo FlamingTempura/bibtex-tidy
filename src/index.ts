@@ -10,6 +10,7 @@ import { convertCRLF } from './utils';
 import { formatValue, formatBibtex } from './format';
 import { sortEntries, sortEntryFields } from './sort';
 import { checkForDuplicates } from './duplicates';
+import { parseAuthors } from './parseAuthors';
 
 export type Warning = {
 	code: 'MISSING_KEY' | 'DUPLICATE_KEY' | 'DUPLICATE_ENTRY';
@@ -57,9 +58,48 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 
 	if (options.sortFields) sortEntryFields(ast, options.sortFields);
 
-	const bibtex = formatBibtex(ast, options);
+	const newKeys = options.generateKeys
+		? generateKeys(ast, valueLookup)
+		: undefined;
+
+	const bibtex = formatBibtex(ast, options, newKeys);
 
 	return { bibtex, warnings, count: getEntries(ast).length };
+}
+
+function generateKeys(
+	ast: RootNode,
+	valueLookup: Map<EntryNode, Map<string, string | undefined>>
+): Map<EntryNode, string> {
+	const keys = new Map<EntryNode, string>();
+	const keyCounts = new Map<string, number>();
+	for (const node of ast.children) {
+		if (isEntryNode(node)) {
+			const newKey = generateKey(valueLookup.get(node.block));
+			if (newKey) {
+				const keyCount = (keyCounts.get(newKey) ?? 0) + 1;
+				keys.set(node.block, newKey + (keyCount > 1 ? keyCount : ''));
+				keyCounts.set(newKey, keyCount);
+			}
+		}
+	}
+	return keys;
+}
+
+function generateKey(
+	valueLookup: Map<string, string | undefined> | undefined
+): string | undefined {
+	const authors = parseAuthors(
+		valueLookup?.get('author')?.replace(/["{}]/g, '') ?? ''
+	);
+	const lastName = authors[0]?.lastName.toLowerCase();
+	const year = valueLookup?.get('year')?.replace(/[^0-9]/g, '');
+	const title = valueLookup?.get('title');
+	const titleFirstWord = title
+		?.toLowerCase()
+		.replace(/^.*?([a-z]+)[^a-z].*$/, '$1');
+	if (!lastName || !year) return;
+	return [lastName, year, titleFirstWord ?? ''].join('');
 }
 
 function isEntryNode(

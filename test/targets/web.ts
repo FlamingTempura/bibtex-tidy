@@ -65,6 +65,7 @@ export async function testWeb(
 				getOpt('removeDuplicateFields').checked =
 					!!options.removeDuplicateFields;
 				getOpt('lowercase').checked = !!options.lowercase;
+				getOpt('generateKeys').checked = !!options.generateKeys;
 
 				if (typeof options.align === 'number') {
 					getOpt('align').checked = true;

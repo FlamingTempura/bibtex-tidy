@@ -342,6 +342,18 @@ export const optionDefinitions: OptionDefinition[] = [
 		type: 'boolean',
 		defaultValue: true,
 	},
+
+	{
+		key: 'generateKeys',
+		cli: { '--generate-keys': true },
+		toCLI: (val) => (val === true ? '--generate-keys' : undefined),
+		title: 'Generate BibTeX keys',
+		description: [
+			'[Experimental] For all entries replace the key with a new key of the form <author><year><title>.',
+		],
+		type: 'boolean',
+		defaultValue: false,
+	},
 	{
 		key: 'maxAuthors',
 		cli: { '--max-authors': (args) => Number(args[0]) },

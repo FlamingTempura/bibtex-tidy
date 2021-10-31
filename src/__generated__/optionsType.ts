@@ -139,6 +139,12 @@ export type Options = {
 	 */
 	removeDuplicateFields?: boolean;
 	/**
+	 * Generate BibTeX keys
+	 *
+	 * [Experimental] For all entries replace the key with a new key of the form <author><year><title>.
+	 */
+	generateKeys?: boolean;
+	/**
 	 * Maximum authors
 	 *
 	 * Truncate authors if above a given number into "and others".

@@ -154,6 +154,9 @@ Options:
   --remove-dupe-fields,    Only allow one of each field in each entry. Enabled by
   --no-remove-dupe-fields  default.
 
+  --generate-keys          [Experimental] For all entries replace the key with a
+                           new key of the form <author><year><title>.
+
   --max-authors            Truncate authors if above a given number into "and
                            others".
 

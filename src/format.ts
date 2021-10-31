@@ -23,7 +23,8 @@ const MONTH_SET = new Set<string>(MONTHS);
 
 export function formatBibtex(
 	ast: RootNode,
-	options: OptionsNormalized
+	options: OptionsNormalized,
+	replacementKeys?: Map<EntryNode, string>
 ): string {
 	const { omit, tab, space } = options;
 
@@ -31,7 +32,9 @@ export function formatBibtex(
 	const omitFields: Set<string> = new Set(omit);
 
 	let bibtex: string = ast.children
-		.map((child) => formatNode(child, options, indent, omitFields))
+		.map((child) =>
+			formatNode(child, options, indent, omitFields, replacementKeys)
+		)
 		.join('');
 
 	if (!bibtex.endsWith('\n')) bibtex += '\n';
@@ -43,7 +46,8 @@ function formatNode(
 	child: TextNode | BlockNode,
 	options: OptionsNormalized,
 	indent: string,
-	omitFields: Set<string>
+	omitFields: Set<string>,
+	replacementKeys?: Map<EntryNode, string>
 ): string {
 	if (child.type === 'text') {
 		return formatComment(child.text, options);
@@ -64,7 +68,8 @@ function formatNode(
 				child.block,
 				options,
 				indent,
-				omitFields
+				omitFields,
+				replacementKeys?.get(child.block)
 			);
 	}
 }
@@ -74,7 +79,8 @@ function formatEntry(
 	entry: EntryNode,
 	options: OptionsNormalized,
 	indent: string,
-	omitFields: Set<string>
+	omitFields: Set<string>,
+	replacementKey?: string
 ) {
 	const {
 		align,
@@ -87,7 +93,8 @@ function formatEntry(
 	let bibtex = '';
 	const itemType = lowercase ? entryType.toLocaleLowerCase() : entryType;
 	bibtex += `@${itemType}{`;
-	if (entry.key) bibtex += `${entry.key},`;
+	const key = replacementKey ?? entry.key;
+	if (key) bibtex += `${key},`;
 
 	const fieldSeen = new Set<string>();
 	for (let i = 0; i < entry.fields.length; i++) {
