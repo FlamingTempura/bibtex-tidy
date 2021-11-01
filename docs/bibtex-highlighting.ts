@@ -26,7 +26,8 @@ CodeMirror.defineSimpleMode('simplemode', {
 			push: 'parenthesised',
 		},
 		{
-			regex: /(\s*)(@[^=#,{}()[\] \t\n\r]+)(\s*\{\s*)([^=#,{}()[\] \t\n\r]+)(\s*,)/,
+			regex:
+				/(\s*)(@[^=#,{}()[\] \t\n\r]+)(\s*\{\s*)([^=#,{}()[\] \t\n\r]+)(\s*,)/,
 			token: ['', 'variable-2', '', 'variable-3'],
 			push: 'entry',
 		},

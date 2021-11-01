@@ -1,4 +1,4 @@
-name: CI
+name: Checks
 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
