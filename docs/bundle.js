@@ -14362,7 +14362,8 @@
 
 
   var RootNode = class {
-    constructor(children = []) {
+    constructor() {
+      let children = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
       this.children = children;
       this.type = "root";
     }
@@ -14429,7 +14430,8 @@
 
   };
   var FieldNode = class {
-    constructor(parent, name = "") {
+    constructor(parent) {
+      let name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
       this.parent = parent;
       this.name = name;
       this.type = "field";
@@ -14978,10 +14980,11 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
     return bibtex;
   }
 
-  function formatComment(comment, {
-    stripComments,
-    tidyComments
-  }) {
+  function formatComment(comment, _ref) {
+    let {
+      stripComments,
+      tidyComments
+    } = _ref;
     if (stripComments) return "";
 
     if (tidyComments) {
@@ -15011,10 +15014,11 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
     const nameLowerCase = field.name.toLocaleLowerCase();
     const indent = tab ? "	" : " ".repeat(space);
     const enclosingBracesFields = new Set((enclosingBraces || []).map(field2 => field2.toLocaleLowerCase()));
-    return field.value.concat.map(({
-      type,
-      value
-    }) => {
+    return field.value.concat.map(_ref2 => {
+      let {
+        type,
+        value
+      } = _ref2;
       const isNumeric = value.match(/^[1-9][0-9]*$/);
 
       if (isNumeric && curly) {
@@ -15220,7 +15224,8 @@ ${valIndent}`) + "\n" + indent;
   } // src/index.ts
 
 
-  function tidy(input, options_ = {}) {
+  function tidy(input) {
+    let options_ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     const options2 = normalizeOptions(options_);
     input = convertCRLF(input);
     const ast = generateAST(input);
