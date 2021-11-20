@@ -130,7 +130,16 @@ async function generateManPage() {
 		banner + `export const manPage = ${JSON.stringify(manPage, null, '\t')};`
 	);
 
-	await writeFile('bibtex-tidy.0', manPage.join('\n'));
+	await writeFile(
+		'bibtex-tidy.0',
+		[
+			'NAME',
+			'  bibtex-tidy',
+			'',
+			'SYNOPSIS',
+			...manPage.map((line) => '  ' + line),
+		].join('\n')
+	);
 
 	const readme = await readFile(join(__dirname, 'README.md'), 'utf8');
 	await writeFile(
