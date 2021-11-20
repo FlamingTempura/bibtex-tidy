@@ -214,7 +214,7 @@ mkdir(BUILD_PATH, { recursive: true })
 	)
 	.then(() =>
 		Promise.all([
-			buildTypeDeclarations(),
+			!process.argv.includes('--no-defs') ? buildTypeDeclarations() : undefined,
 			buildJSBundle(),
 			buildCLI(),
 			buildWebBundle(),
