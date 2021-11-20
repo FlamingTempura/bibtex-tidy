@@ -42,9 +42,13 @@
 	"files": [
 		"bin/bibtex-tidy",
 		"bibtex-tidy.js",
-		"bibtex-tidy.d.ts"
+		"bibtex-tidy.d.ts",
+		"manpage.txt"
 	],
 	"engines": {
 		"node": ">12"
-	}
+	},
+	"man": [
+		"manpage.txt"
+	]
 }

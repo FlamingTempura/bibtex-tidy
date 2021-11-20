@@ -130,6 +130,8 @@ async function generateManPage() {
 		banner + `export const manPage = ${JSON.stringify(manPage, null, '\t')};`
 	);
 
+	await writeFile(join('mainpage.txt'), manPage.join('\n'));
+
 	const readme = await readFile(join(__dirname, 'README.md'), 'utf8');
 	await writeFile(
 		join(__dirname, 'README.md'),
