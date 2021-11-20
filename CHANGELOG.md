@@ -71,3 +71,7 @@ No changes, aside from correcting version number at top of bibtex-tidy.js
 - #32 Sort month and numeric values
 - #27 Do not escape math expressions
 - #44 Option to generate standardised keys
+
+### v1.8.1
+
+No changes, aside from correcting version number at top of bibtex-tidy.js
