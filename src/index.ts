@@ -94,7 +94,7 @@ function generateKey(
 	);
 	const lastName = authors[0]?.lastName.toLowerCase();
 	const year = valueLookup?.get('year')?.replace(/[^0-9]/g, '');
-	const title = valueLookup?.get('title');
+	const title = valueLookup?.get('title') ?? valueLookup?.get('booktitle');
 	const titleFirstWord = title
 		?.toLowerCase()
 		.replace(/^.*?([a-z]+)[^a-z].*$/, '$1');

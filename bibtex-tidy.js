@@ -1318,12 +1318,12 @@ function generateKeys(ast, valueLookup) {
 }
 
 function generateKey(valueLookup) {
-  var _a, _b, _c, _d;
+  var _a, _b, _c, _d, _e;
 
   const authors = parseAuthors((_b = (_a = valueLookup == null ? void 0 : valueLookup.get("author")) == null ? void 0 : _a.replace(/["{}]/g, "")) != null ? _b : "");
   const lastName = (_c = authors[0]) == null ? void 0 : _c.lastName.toLowerCase();
   const year = (_d = valueLookup == null ? void 0 : valueLookup.get("year")) == null ? void 0 : _d.replace(/[^0-9]/g, "");
-  const title = valueLookup == null ? void 0 : valueLookup.get("title");
+  const title = (_e = valueLookup == null ? void 0 : valueLookup.get("title")) != null ? _e : valueLookup == null ? void 0 : valueLookup.get("booktitle");
   const titleFirstWord = title == null ? void 0 : title.toLowerCase().replace(/^.*?([a-z]+)[^a-z].*$/, "$1");
   if (!lastName || !year) return;
   return [lastName, year, titleFirstWord != null ? titleFirstWord : ""].join("");

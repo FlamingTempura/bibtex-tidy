@@ -138,7 +138,7 @@ const input = bibtex`
 
 @UNPUBLISHED{unpublished-full,
   author = "Ulrich Underwood and Ned Net and Paul Pot",
-  title = "Lower Bounds for Wishful Research Results 2",
+  booktitle = "Lower Bounds for Wishful Research Results 2",
   month = nov # ", " # dec,
   year = 1988,
   note = "Talk at Fanstord University (this is a full UNPUBLISHED entry)",
@@ -267,7 +267,7 @@ const output = bibtex`
 }
 @unpublished{underwood1988lower2,
   author        = "Ulrich Underwood and Ned Net and Paul Pot",
-  title         = "Lower Bounds for Wishful Research Results 2",
+  booktitle     = "Lower Bounds for Wishful Research Results 2",
   month         = nov # ", " # dec,
   year          = 1988,
   note          = "Talk at Fanstord University (this is a full UNPUBLISHED entry)"
