@@ -142,7 +142,26 @@ const input = bibtex`
   month = nov # ", " # dec,
   year = 1988,
   note = "Talk at Fanstord University (this is a full UNPUBLISHED entry)",
-}`;
+}
+@inproceedings{aristidou2008predicting,
+  title = {
+  Predicting Missing Markers to Drive Real-Time Centre of Rotation
+  
+    Estimation
+  },
+  author       = {Aristidou, Andreas and Cameron, Jonathan and Lasenby, Joan},
+  year         = 2008,
+  booktitle    = {
+    AMDO '08: Proceedings of the 5th international conference on Articulated
+  
+    Motion and Deformable Objects
+  },
+  location     = {Port d'Andratx, Mallorca, Spain},
+  publisher    = {Springer-Verlag},
+  address      = {Berlin, Heidelberg},
+  pages        = {238--247},
+  isbn         = {978-3-540-70516-1}
+  }`;
 
 const output = bibtex`
 @article{aamport1986the,
@@ -271,6 +290,25 @@ const output = bibtex`
   month         = nov # ", " # dec,
   year          = 1988,
   note          = "Talk at Fanstord University (this is a full UNPUBLISHED entry)"
+}
+@inproceedings{aristidou2008predicting,
+  title         = {
+    Predicting Missing Markers to Drive Real-Time Centre of Rotation
+
+    Estimation
+  },
+  author        = {Aristidou, Andreas and Cameron, Jonathan and Lasenby, Joan},
+  year          = 2008,
+  booktitle     = {
+    AMDO '08: Proceedings of the 5th international conference on Articulated
+
+    Motion and Deformable Objects
+  },
+  location      = {Port d'Andratx, Mallorca, Spain},
+  publisher     = {Springer-Verlag},
+  address       = {Berlin, Heidelberg},
+  pages         = {238--247},
+  isbn          = {978-3-540-70516-1}
 }
 `;
 
