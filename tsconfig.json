@@ -5,7 +5,6 @@
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitReturns": true,
 		"strict": true,
-		"removeComments": true,
 		"resolveJsonModule": true,
 		"moduleResolution": "Node",
 		"baseUrl": ".",
@@ -16,5 +15,5 @@
 		},
 		"rootDir": "./"
 	},
-	"include": ["./src/*", "./test/*", "./docs/*", "./build.ts", "decs.d.ts"]
+	"include": ["./src/*", "./test/*", "./docs/*", "./build.ts"]
 }

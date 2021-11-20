@@ -1,13 +1,19 @@
 import { optionDefinitions } from './optionDefinitions';
-import { Options as AllOptions } from './__generated__/optionsType';
+import { BibTeXTidyOptions } from './__generated__/optionsType';
 
-export type CLIOptions = AllOptions;
+export type CLIOptions = BibTeXTidyOptions;
 
-export type Options = Omit<AllOptions, 'help' | 'version' | 'quiet' | 'backup'>;
+export type Options = Omit<
+	BibTeXTidyOptions,
+	'help' | 'version' | 'quiet' | 'backup'
+>;
 
-export type MergeStrategy = Exclude<AllOptions['merge'], boolean | undefined>;
+export type MergeStrategy = Exclude<
+	BibTeXTidyOptions['merge'],
+	boolean | undefined
+>;
 export type UniqueKey = Exclude<
-	AllOptions['duplicates'],
+	BibTeXTidyOptions['duplicates'],
 	boolean | undefined
 >[number];
 

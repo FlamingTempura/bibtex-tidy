@@ -1,9 +1,11 @@
 {
 	"name": "bibtex-tidy",
-	"version": "1.8.1",
+	"version": "1.8.2",
 	"description": "Tidy bibtex files",
 	"homepage": "https://github.com/FlamingTempura/bibtex-tidy",
 	"main": "./bibtex-tidy.js",
+	"module": "./bibtex-tidy.js",
+	"types": "./bibtex-tidy.d.ts",
 	"bin": {
 		"bibtex-tidy": "./bin/bibtex-tidy"
 	},
@@ -14,6 +16,7 @@
 		"@types/codemirror": "^5.60.5",
 		"@types/node": "^16.11.6",
 		"codemirror": "^5.63.3",
+		"dts-bundle-generator": "^6.0.0",
 		"esbuild": "^0.13.10",
 		"esbuild-register": "^3.0.0",
 		"nyc": "^15.1.0",
@@ -37,6 +40,7 @@
 	"dependencies": {},
 	"files": [
 		"bin/bibtex-tidy",
-		"bibtex-tidy.js"
+		"bibtex-tidy.js",
+		"bibtex-tidy.d.ts"
 	]
 }

@@ -54,7 +54,7 @@ async function generateOptionTypes() {
 	const ts = [];
 
 	ts.push(banner);
-	ts.push('export type Options = {');
+	ts.push('export type BibTeXTidyOptions = {');
 	for (const opt of options.optionDefinitions) {
 		ts.push('\t/**');
 		ts.push(`\t * ${opt.title}`);
@@ -162,6 +162,15 @@ async function buildJSBundle() {
 	console.timeEnd('JS bundle built');
 }
 
+import { generateDtsBundle } from 'dts-bundle-generator';
+
+async function buildTypeDeclarations() {
+	console.time('Type declarations');
+	const typeFiles = generateDtsBundle([{ filePath: './src/index.ts' }]);
+	await writeFile('bibtex-tidy.d.ts', typeFiles[0]);
+	console.timeEnd('Type declarations');
+}
+
 async function buildCLI() {
 	console.time('CLI built');
 	await esbuild.build({
@@ -203,4 +212,11 @@ mkdir(BUILD_PATH, { recursive: true })
 			generateManPage(),
 		])
 	)
-	.then(() => Promise.all([buildJSBundle(), buildCLI(), buildWebBundle()]));
+	.then(() =>
+		Promise.all([
+			buildTypeDeclarations(),
+			buildJSBundle(),
+			buildCLI(),
+			buildWebBundle(),
+		])
+	);

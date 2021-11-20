@@ -75,3 +75,7 @@ No changes, aside from correcting version number at top of bibtex-tidy.js
 ### v1.8.1
 
 No changes, aside from correcting version number at top of bibtex-tidy.js
+
+### v1.8.2
+
+Add type definitions
