@@ -43,5 +43,8 @@
 		"bin/bibtex-tidy",
 		"bibtex-tidy.js",
 		"bibtex-tidy.d.ts"
-	]
+	],
+	"engines": {
+		"node": ">12"
+	}
 }
