@@ -60,7 +60,7 @@ bibtex-tidy references.bib
 
 ```manpage
 Usage: bibtex-tidy [OPTION]... FILE.BIB
-BibTeX Tidy v1.8.3 - cleaner and formatter for BibTeX files.
+BibTeX Tidy v1.8.4 - cleaner and formatter for BibTeX files.
 
 Options:
   --help, -h               Show help

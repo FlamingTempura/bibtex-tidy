@@ -1,6 +1,6 @@
 {
 	"name": "bibtex-tidy",
-	"version": "1.8.3",
+	"version": "1.8.4",
 	"description": "Tidy bibtex files",
 	"homepage": "https://github.com/FlamingTempura/bibtex-tidy",
 	"main": "./bibtex-tidy.js",
@@ -30,7 +30,7 @@
 		"typecheck": "tsc --noEmit",
 		"prettier": "prettier --write build.ts {test,docs}/**/*.ts src/*.ts",
 		"cover": "NODE_ENV=coverage nyc --reporter html node -r esbuild-register test/index.ts",
-		"prepare": "npm run build"
+		"prepublishOnly": "npm run build"
 	},
 	"repository": {
 		"type": "git",

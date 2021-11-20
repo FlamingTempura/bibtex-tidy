@@ -83,3 +83,7 @@ Add type definitions
 ### v1.8.3
 
 No changes, aside from correcting version number at top of bibtex-tidy.js
+
+### v1.8.4
+
+Remove npm prepare script
