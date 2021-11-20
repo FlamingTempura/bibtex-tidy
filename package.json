@@ -34,5 +34,9 @@
 	},
 	"author": "FlamingTempura",
 	"license": "MIT",
-	"dependencies": {}
+	"dependencies": {},
+	"files": [
+		"bin/bibtex-tidy",
+		"bibtex-tidy.js"
+	]
 }
