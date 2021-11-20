@@ -56,3 +56,18 @@ No changes, aside from correcting version number at top of bibtex-tidy.js
 ### v1.7.1
 
 - Add --version CLI option
+
+### v1.8.0
+
+- Better handling of invalid CLI params
+- New higher performance bibtex parser
+- Better handling of comments
+- #38 Fix "-" in input args not being interpreted as stdin
+- #41 Set minimum node 12
+- #51 Remove invalid windows filename chars
+- #47 Fix parsing for concatenate after literal
+- Retain whitespace in quoted values
+- #47 Do not trim braced values if concatenated
+- #32 Sort month and numeric values
+- #27 Do not escape math expressions
+- #44 Option to generate standardised keys
