@@ -3351,22 +3351,24 @@
             };
           }
 
-          for (var i2 = 0; i2 < lineView.rest.length; i2++) {
-            if (lineView.rest[i2] == line) {
-              return {
-                map: lineView.measure.maps[i2],
-                cache: lineView.measure.caches[i2]
-              };
+          if (lineView.rest) {
+            for (var i2 = 0; i2 < lineView.rest.length; i2++) {
+              if (lineView.rest[i2] == line) {
+                return {
+                  map: lineView.measure.maps[i2],
+                  cache: lineView.measure.caches[i2]
+                };
+              }
             }
-          }
 
-          for (var i$12 = 0; i$12 < lineView.rest.length; i$12++) {
-            if (lineNo(lineView.rest[i$12]) > lineN) {
-              return {
-                map: lineView.measure.maps[i$12],
-                cache: lineView.measure.caches[i$12],
-                before: true
-              };
+            for (var i$12 = 0; i$12 < lineView.rest.length; i$12++) {
+              if (lineNo(lineView.rest[i$12]) > lineN) {
+                return {
+                  map: lineView.measure.maps[i$12],
+                  cache: lineView.measure.caches[i$12],
+                  before: true
+                };
+              }
             }
           }
         }
@@ -4438,6 +4440,11 @@
               result = {};
           var curFragment = result.cursors = document.createDocumentFragment();
           var selFragment = result.selection = document.createDocumentFragment();
+          var customCursor = cm.options.$customCursor;
+
+          if (customCursor) {
+            primary = true;
+          }
 
           for (var i2 = 0; i2 < doc.sel.ranges.length; i2++) {
             if (!primary && i2 == doc.sel.primIndex) {
@@ -4452,7 +4459,13 @@
 
             var collapsed = range2.empty();
 
-            if (collapsed || cm.options.showCursorWhenSelecting) {
+            if (customCursor) {
+              var head = customCursor(cm, range2);
+
+              if (head) {
+                drawSelectionCursor(cm, head, curFragment);
+              }
+            } else if (collapsed || cm.options.showCursorWhenSelecting) {
               drawSelectionCursor(cm, range2.head, curFragment);
             }
 
@@ -4473,10 +4486,8 @@
 
           if (/\bcm-fat-cursor\b/.test(cm.getWrapperElement().className)) {
             var charPos = charCoords(cm, head, "div", null, null);
-
-            if (charPos.right - charPos.left > 0) {
-              cursor.style.width = charPos.right - charPos.left + "px";
-            }
+            var width = charPos.right - charPos.left;
+            cursor.style.width = (width > 0 ? width : cm.defaultCharWidth()) + "px";
           }
 
           if (pos.other) {
@@ -5116,6 +5127,7 @@
             var totalHeight = measure.viewHeight - (needsH ? sWidth : 0);
             this.vert.firstChild.style.height = Math.max(0, measure.scrollHeight - measure.clientHeight + totalHeight) + "px";
           } else {
+            this.vert.scrollTop = 0;
             this.vert.style.display = "";
             this.vert.firstChild.style.height = "0";
           }
@@ -13699,7 +13711,7 @@
 
         CodeMirror4.fromTextArea = fromTextArea;
         addLegacyProps(CodeMirror4);
-        CodeMirror4.version = "5.63.3";
+        CodeMirror4.version = "5.64.0";
         return CodeMirror4;
       });
     }
