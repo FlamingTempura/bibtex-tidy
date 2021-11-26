@@ -797,7 +797,7 @@ var BibTeXSyntaxError = class extends Error {
 };
 
 // src/unicode.ts
-var specialCharacters = new Map([
+var specialCharacters = /* @__PURE__ */ new Map([
   ["0023", "\\#"],
   ["0024", "\\$"],
   ["0025", "\\%"],
@@ -3218,14 +3218,14 @@ function sortEntries(ast, fieldMaps, sort) {
   var _a, _b, _c, _d, _e;
   if (!sort)
     return;
-  const sortIndexes = new Map();
+  const sortIndexes = /* @__PURE__ */ new Map();
   const precedingMeta = [];
   for (const item of ast.children) {
     if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
       precedingMeta.push(item);
       continue;
     }
-    const sortIndex = new Map();
+    const sortIndex = /* @__PURE__ */ new Map();
     for (let key of sort) {
       if (key.startsWith("-"))
         key = key.slice(1);
@@ -3325,7 +3325,7 @@ function formatEntry(entryType, entry, options, indent, omitFields, replacementK
   const key = replacementKey != null ? replacementKey : entry.key;
   if (key)
     bibtex += `${key},`;
-  const fieldSeen = new Set();
+  const fieldSeen = /* @__PURE__ */ new Set();
   for (let i = 0; i < entry.fields.length; i++) {
     const field = entry.fields[i];
     const nameLowerCase = field.name.toLocaleLowerCase();
@@ -3448,7 +3448,7 @@ ${valIndent}`) + "\n" + indent;
 // src/duplicates.ts
 function checkForDuplicates(ast, valueLookup, duplicates, merge) {
   var _a, _b;
-  const uniqCheck = new Map();
+  const uniqCheck = /* @__PURE__ */ new Map();
   if (duplicates) {
     for (const key of duplicates) {
       uniqCheck.set(key, !!merge);
@@ -3457,12 +3457,12 @@ function checkForDuplicates(ast, valueLookup, duplicates, merge) {
   if (!uniqCheck.has("key")) {
     uniqCheck.set("key", false);
   }
-  const duplicateEntries = new Set();
+  const duplicateEntries = /* @__PURE__ */ new Set();
   const warnings = [];
-  const keys = new Map();
-  const dois = new Map();
-  const citations = new Map();
-  const abstracts = new Map();
+  const keys = /* @__PURE__ */ new Map();
+  const dois = /* @__PURE__ */ new Map();
+  const citations = /* @__PURE__ */ new Map();
+  const abstracts = /* @__PURE__ */ new Map();
   for (const entry of getEntries(ast)) {
     const entryValues = valueLookup.get(entry);
     for (const [key, doMerge] of uniqCheck) {
@@ -3585,8 +3585,8 @@ function tidy(input, options_ = {}) {
 }
 function generateKeys(ast, valueLookup) {
   var _a;
-  const keys = new Map();
-  const keyCounts = new Map();
+  const keys = /* @__PURE__ */ new Map();
+  const keyCounts = /* @__PURE__ */ new Map();
   for (const node of ast.children) {
     if (isEntryNode(node)) {
       const newKey = generateKey(valueLookup.get(node.block));
@@ -3659,7 +3659,7 @@ function parseArguments(args) {
 }
 function splitCLIArgs(args) {
   const optionArgVals = {};
-  const unknownArgs = new Set();
+  const unknownArgs = /* @__PURE__ */ new Set();
   let currOption;
   let valueOrInputArgs = [];
   let inputArgs;
