@@ -1,0 +1,33 @@
+name: Tag version
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Check build matches version
+        run: git diff --exit-code
+
+      # - name: Create tag if version change
+      #   run: |
+      #     node << EOF
+      #     const { execSync } = require('child_process');
+      #     const oldVer = JSON.parse(execSync('git show HEAD~1:package.json')).version;
+      #     const newVer = JSON.parse(execSync('git show HEAD:package.json')).version;
+      #     if (oldVer !== newVer) {
+      #       execSync(`git tag ${newVer}`);
+      #     }
+      #     EOF
