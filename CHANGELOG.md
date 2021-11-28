@@ -87,3 +87,7 @@ No changes, aside from correcting version number at top of bibtex-tidy.js
 ### v1.8.4
 
 Remove npm prepare script
+
+### v1.8.5
+
+- New release process, including tagging releases (#75)
