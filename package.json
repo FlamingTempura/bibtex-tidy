@@ -30,7 +30,9 @@
 		"typecheck": "tsc --noEmit",
 		"prettier": "prettier --write build.ts {test,docs}/**/*.ts src/*.ts",
 		"cover": "NODE_ENV=coverage nyc --reporter html node -r esbuild-register test/index.ts",
-		"prepublishOnly": "npm run build"
+		"preversion": "git pull --rebase",
+		"version": "./scripts/prepare-release.sh",
+		"postversion": "git push --follow-tags && npm publish"
 	},
 	"repository": {
 		"type": "git",
