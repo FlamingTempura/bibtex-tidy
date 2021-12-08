@@ -16,6 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/setup-node@v2 # needed for npm install -g
+        with:
+          node-version: '16'
+
       - name: Install dependencies
         run: npm install
 
@@ -34,5 +38,5 @@ jobs:
 
       - name: Check NPM global install
         run: |
-          sudo npm install -g git+https://github.com/FlamingTempura/bibtex-tidy.git
+          npm install -g git+https://github.com/FlamingTempura/bibtex-tidy.git
           bibtex-tidy -v
