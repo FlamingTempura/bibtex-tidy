@@ -177,7 +177,9 @@ import { generateDtsBundle } from 'dts-bundle-generator';
 
 async function buildTypeDeclarations() {
 	console.time('Type declarations');
-	const typeFiles = generateDtsBundle([{ filePath: './src/index.ts' }]);
+	const typeFiles = generateDtsBundle([
+		{ filePath: './src/index.ts', output: { noBanner: true } },
+	]);
 	await writeFile('bibtex-tidy.d.ts', typeFiles[0]);
 	console.timeEnd('Type declarations');
 }
