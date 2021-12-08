@@ -17,7 +17,7 @@
 		"@types/node": "^16.11.6",
 		"codemirror": "^5.63.3",
 		"dts-bundle-generator": "^6.0.0",
-		"esbuild": "^0.14.0",
+		"esbuild": "^0.14.2",
 		"esbuild-register": "^3.0.0",
 		"nyc": "^15.1.0",
 		"prettier": "^2.4.1",
@@ -40,7 +40,6 @@
 	},
 	"author": "FlamingTempura",
 	"license": "MIT",
-	"dependencies": {},
 	"files": [
 		"bin/bibtex-tidy",
 		"bibtex-tidy.js",
