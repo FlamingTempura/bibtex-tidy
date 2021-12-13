@@ -90,7 +90,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		cli: { '--tab': true, '--no-tab': false },
 		toCLI: (val) => (val ? `--tab` : undefined),
 		title: 'Indent with tabs',
-		description: ['Intent all fields with a tab.'],
+		description: ['Indent all fields with a tab.'],
 		type: 'boolean',
 		defaultValue: false,
 	},
