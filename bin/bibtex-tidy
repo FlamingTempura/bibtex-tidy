@@ -102,7 +102,7 @@ var optionDefinitions = [
     cli: { "--tab": true, "--no-tab": false },
     toCLI: (val) => val ? `--tab` : void 0,
     title: "Indent with tabs",
-    description: ["Intent all fields with a tab."],
+    description: ["Indent all fields with a tab."],
     type: "boolean",
     defaultValue: false
   },
@@ -3736,7 +3736,7 @@ var manPage = [
   "                           --space=2 (default)",
   "                           --space=4",
   "",
-  "  --tab, --no-tab          Intent all fields with a tab.",
+  "  --tab, --no-tab          Indent all fields with a tab.",
   "",
   "  --align, --no-align      Insert whitespace between fields and values so that",
   "                           values are visually aligned.",

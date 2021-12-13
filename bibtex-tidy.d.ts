@@ -39,7 +39,7 @@ export declare type BibTeXTidyOptions = {
 	/**
 	 * Indent with tabs
 	 *
-	 * Intent all fields with a tab.
+	 * Indent all fields with a tab.
 	 */
 	tab?: boolean;
 	/**

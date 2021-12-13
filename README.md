@@ -82,7 +82,7 @@ Options:
                            --space=2 (default)
                            --space=4
 
-  --tab, --no-tab          Intent all fields with a tab.
+  --tab, --no-tab          Indent all fields with a tab.
 
   --align, --no-align      Insert whitespace between fields and values so that
                            values are visually aligned.

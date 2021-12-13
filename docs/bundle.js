@@ -14053,7 +14053,7 @@
     },
     toCLI: val => val ? `--tab` : void 0,
     title: "Indent with tabs",
-    description: ["Intent all fields with a tab."],
+    description: ["Indent all fields with a tab."],
     type: "boolean",
     defaultValue: false
   }, {
