@@ -20,14 +20,14 @@
   });
 
   var __commonJS = (cb, mod) => function __require() {
-    return mod || (0, cb[Object.keys(cb)[0]])((mod = {
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = {
       exports: {}
     }).exports, mod), mod.exports;
   };
 
-  var __reExport = (target, module, desc) => {
+  var __reExport = (target, module, copyDefault, desc) => {
     if (module && typeof module === "object" || typeof module === "function") {
-      for (let key of __getOwnPropNames(module)) if (!__hasOwnProp.call(target, key) && key !== "default") __defProp(target, key, {
+      for (let key of __getOwnPropNames(module)) if (!__hasOwnProp.call(target, key) && (copyDefault || key !== "default")) __defProp(target, key, {
         get: () => module[key],
         enumerable: !(desc = __getOwnPropDesc(module, key)) || desc.enumerable
       });
@@ -36,8 +36,8 @@
     return target;
   };
 
-  var __toModule = module => {
-    return __reExport(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", module && module.__esModule && "default" in module ? {
+  var __toESM = (module, isNodeMode) => {
+    return __reExport(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", !isNodeMode && module && module.__esModule ? {
       get: () => module.default,
       enumerable: true
     } : {
@@ -1906,7 +1906,7 @@
         }
 
         function addMarkedSpan(line, span, op) {
-          var inThisOp = op && window.WeakSet && (op.markedSpans || (op.markedSpans = new WeakSet()));
+          var inThisOp = op && window.WeakSet && (op.markedSpans || (op.markedSpans = /* @__PURE__ */new WeakSet()));
 
           if (inThisOp && inThisOp.has(line.markedSpans)) {
             line.markedSpans.push(span);
@@ -13976,7 +13976,7 @@
   }); // docs/index.ts
 
 
-  var import_codemirror2 = __toModule(require_codemirror()); // src/optionDefinitions.ts
+  var import_codemirror2 = __toESM(require_codemirror()); // src/optionDefinitions.ts
 
 
   var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
@@ -15322,9 +15322,9 @@ ${valIndent}`) + "\n" + indent;
   } // docs/bibtex-highlighting.ts
 
 
-  var import_codemirror = __toModule(require_codemirror());
+  var import_codemirror = __toESM(require_codemirror());
 
-  var import_simple = __toModule(require_simple());
+  var import_simple = __toESM(require_simple());
 
   import_codemirror.default.defineSimpleMode("simplemode", {
     start: [{
