@@ -1,4 +1,4 @@
-import { version } from './package.json';
+import { version, author, homepage } from './package.json';
 import { writeFile, mkdir, chmod, readFile } from 'fs/promises';
 import { join } from 'path';
 import { build, buildSync } from 'esbuild';
@@ -10,9 +10,6 @@ const SRC_PATH = join(__dirname, 'src');
 const BUILD_PATH = join(SRC_PATH, '__generated__');
 const WEB_PATH = join(__dirname, 'docs');
 const CLI_BIN = join(__dirname, 'bin', 'bibtex-tidy');
-
-const MANPAGE_LINE_WIDTH = 84;
-const MANPAGE_LEFT_COLUMN_WIDTH = 27;
 
 // For BigInt support:
 // * No IE version supports BigInt
@@ -88,77 +85,86 @@ async function generateVersionFile() {
 	);
 }
 
-async function generateManPage() {
-	const manPage: string[] = [];
-	manPage.push(`Usage: bibtex-tidy [OPTION]... FILE.BIB`);
-	manPage.push(
-		`BibTeX Tidy v${version} - cleaner and formatter for BibTeX files.\n`
-	);
-	manPage.push('Options:');
+const NAME = `BibTeX Tidy v${version}`;
+const DESCRIPTION = 'Cleaner and formatter for BibTeX files.';
+const SYNOPSIS = 'bibtex-tidy [OPTION]... FILE.BIB';
 
-	for (const opt of optionDefinitions) {
-		if (opt.deprecated) continue;
-
-		const left = wrapText(
-			Object.keys(opt.cli).join(', '),
-			MANPAGE_LEFT_COLUMN_WIDTH - 2
-		);
-
-		const leftColumn: string[] = left.map((line) => `  ${line}`);
-
-		const desc: string[] = [];
-		if (opt.description) {
-			desc.push(...opt.description);
-		}
-		if (opt.examples && opt.examples.length > 0) {
-			desc.push('Examples:', ...opt.examples.filter((example) => example));
-		}
-
-		const rightColumn = desc.flatMap((line) =>
-			wrapText(line, MANPAGE_LINE_WIDTH - MANPAGE_LEFT_COLUMN_WIDTH)
-		);
-
-		for (let i = 0; i < Math.max(rightColumn.length, leftColumn.length); i++) {
-			manPage.push(
-				(
-					(leftColumn[i] ?? '').padEnd(MANPAGE_LEFT_COLUMN_WIDTH) +
-					(rightColumn[i] ?? '')
-				).trimEnd()
-			);
-		}
-
-		manPage.push('');
-	}
-	manPage.push(
-		'Full documentation <https://github.com/FlamingTempura/bibtex-tidy>'
-	);
-
+async function generateCLIHelp() {
+	const help: string[] = [
+		`Usage: ${SYNOPSIS}`,
+		`${NAME} - ${DESCRIPTION}`,
+		'',
+		'Options:',
+		...formatOptions(2, 84),
+		`Full documentation <${homepage}>`,
+	];
 	await writeFile(
 		join(BUILD_PATH, 'manPage.ts'),
 		jsBanner.join('\n') +
-			`export const manPage = ${JSON.stringify(manPage, null, '\t')};`
+			`export const manPage = ${JSON.stringify(help, null, '\t')};`
 	);
+}
 
+async function generateManPage() {
 	await writeFile(
 		'bibtex-tidy.0',
 		[
-			...manpageBanner,
 			'NAME',
-			'  bibtex-tidy',
+			`    ${NAME}`,
 			'',
 			'SYNOPSIS',
-			...manPage.map((line) => '  ' + line),
+			`    ${SYNOPSIS}`,
+			'',
+			'DESCRIPTION',
+			`    ${DESCRIPTION}`,
+			'',
+			'OPTIONS',
+			...formatOptions(4, 65),
+			'BUGS',
+			`    ${homepage}`,
+			'',
+			'AUTHOR',
+			`    ${author}`,
 		].join('\n')
 	);
+}
 
+async function generateReadme() {
 	const readme = await readFile(join(__dirname, 'README.md'), 'utf8');
 	await writeFile(
 		join(__dirname, 'README.md'),
 		readme.replace(
 			/```manpage.*?```/s,
-			'```manpage\n' + manPage.join('\n') + '\n```'
+			'```manpage\n' + formatOptions(2, 84).join('\n') + '\n```'
 		)
 	);
+}
+
+function formatOptions(indent: number, lineWidth: number): string[] {
+	return optionDefinitions.flatMap((opt) => {
+		if (opt.deprecated) return [];
+
+		const description: string[] = [];
+
+		if (opt.description) {
+			description.push(...opt.description.flatMap((line) => [line, '\n']));
+		}
+
+		if (opt.examples && opt.examples.length > 0) {
+			description.push(
+				'Examples:',
+				opt.examples.filter((example) => example).join(', '),
+				''
+			);
+		}
+
+		return [
+			Object.keys(opt.cli).join(', '),
+			...description.flatMap((line) =>
+				wrapText(line, lineWidth - indent - 4).map((line) => `    ${line}`)
+			),
+		].map((line) => `${' '.repeat(indent)}${line}`);
+	});
 }
 
 async function buildJSBundle() {
@@ -233,6 +239,8 @@ mkdir(BUILD_PATH, { recursive: true })
 			generateOptionTypes(),
 			generateVersionFile(),
 			generateManPage(),
+			generateCLIHelp(),
+			generateReadme(),
 		])
 	)
 	.then(() =>
