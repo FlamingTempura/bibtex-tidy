@@ -9,7 +9,7 @@ test('CLI help', async () => {
 	const stdout2 = tidied2.cli?.stdout;
 
 	strictEqual(stdout1, stdout2);
-	match(stdout1 ?? '', /cleaner and formatter/);
-	match(stdout1 ?? '', /Examples/);
-	match(stdout1 ?? '', /--space/);
+	match(stdout1 ?? '', /cleaner and formatter/i);
+	match(stdout1 ?? '', /Examples/i);
+	match(stdout1 ?? '', /--space/i);
 });
