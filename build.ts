@@ -1,7 +1,7 @@
 import { version } from './package.json';
 import { writeFile, mkdir, chmod, readFile } from 'fs/promises';
 import { join } from 'path';
-import esbuild from 'esbuild';
+import { build, buildSync } from 'esbuild';
 import { transform as babel } from '@babel/core';
 import { optionDefinitions } from './src/optionDefinitions';
 import { wrapText } from './src/utils';
@@ -41,7 +41,7 @@ const banner = `/**
 `;
 
 async function generateOptionTypes() {
-	const { outputFiles } = await esbuild.build({
+	const { outputFiles } = await build({
 		entryPoints: [join(SRC_PATH, 'optionDefinitions.ts')],
 		write: false,
 		format: 'esm',
@@ -153,7 +153,7 @@ async function generateManPage() {
 
 async function buildJSBundle() {
 	console.time('JS bundle built');
-	const { outputFiles } = esbuild.buildSync({
+	const { outputFiles } = buildSync({
 		entryPoints: ['./src/index.ts'],
 		bundle: true,
 		write: false,
@@ -186,7 +186,7 @@ async function buildTypeDeclarations() {
 
 async function buildCLI() {
 	console.time('CLI built');
-	await esbuild.build({
+	await build({
 		bundle: true,
 		platform: 'node',
 		banner: { js: '#!/usr/bin/env node\n' + banner },
@@ -200,7 +200,7 @@ async function buildCLI() {
 
 async function buildWebBundle() {
 	console.time('Web bundle built');
-	const { outputFiles } = await esbuild.build({
+	const { outputFiles } = await build({
 		platform: 'browser',
 		entryPoints: ['./docs/index.ts'],
 		bundle: true,
