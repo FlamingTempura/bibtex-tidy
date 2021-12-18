@@ -3,11 +3,37 @@
 	"version": "1.8.5",
 	"description": "Tidy bibtex files",
 	"homepage": "https://github.com/FlamingTempura/bibtex-tidy",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/FlamingTempura/bibtex-tidy.git"
+	},
+	"author": "FlamingTempura",
+	"license": "MIT",
 	"main": "./bibtex-tidy.js",
 	"module": "./bibtex-tidy.js",
 	"types": "./bibtex-tidy.d.ts",
+	"man": "./bibtex-tidy.0",
 	"bin": {
 		"bibtex-tidy": "./bin/bibtex-tidy"
+	},
+	"files": [
+		"bin/bibtex-tidy",
+		"bibtex-tidy.js",
+		"bibtex-tidy.d.ts",
+		"bibtex-tidy.0"
+	],
+	"scripts": {
+		"build": "node -r esbuild-register build.ts",
+		"test": "node -r esbuild-register build.ts  --no-defs && node -r esbuild-register test/index.ts",
+		"typecheck": "tsc --noEmit",
+		"prettier": "prettier --write build.ts {test,docs}/**/*.ts src/*.ts",
+		"cover": "NODE_ENV=coverage nyc --reporter html node -r esbuild-register test/index.ts",
+		"preversion": "git pull --rebase",
+		"version": "./scripts/prepare-release.sh",
+		"postversion": "git push --follow-tags && npm publish"
+	},
+	"engines": {
+		"node": ">12"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.15.8",
@@ -24,30 +50,8 @@
 		"puppeteer": "^13.0.0",
 		"typescript": "^4.4.4"
 	},
-	"scripts": {
-		"build": "node -r esbuild-register build.ts",
-		"test": "node -r esbuild-register build.ts  --no-defs && node -r esbuild-register test/index.ts",
-		"typecheck": "tsc --noEmit",
-		"prettier": "prettier --write build.ts {test,docs}/**/*.ts src/*.ts",
-		"cover": "NODE_ENV=coverage nyc --reporter html node -r esbuild-register test/index.ts",
-		"preversion": "git pull --rebase",
-		"version": "./scripts/prepare-release.sh",
-		"postversion": "git push --follow-tags && npm publish"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/FlamingTempura/bibtex-tidy.git"
-	},
-	"author": "FlamingTempura",
-	"license": "MIT",
-	"files": [
-		"bin/bibtex-tidy",
-		"bibtex-tidy.js",
-		"bibtex-tidy.d.ts",
-		"bibtex-tidy.0"
-	],
-	"engines": {
-		"node": ">12"
-	},
-	"man": "bibtex-tidy.0"
+	"prettier": {
+		"useTabs": true,
+		"singleQuote": true
+	}
 }
