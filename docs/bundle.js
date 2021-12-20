@@ -13711,7 +13711,7 @@
 
         CodeMirror4.fromTextArea = fromTextArea;
         addLegacyProps(CodeMirror4);
-        CodeMirror4.version = "5.64.0";
+        CodeMirror4.version = "5.65.0";
         return CodeMirror4;
       });
     }
