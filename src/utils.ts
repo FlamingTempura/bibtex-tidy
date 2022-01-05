@@ -88,6 +88,14 @@ export function removeEnclosingBraces(str: string): string {
 	return str.replace(/^\{([^{}]*)\}$/g, '$1');
 }
 
+export function fullyRemoveBraces(str: string): string {
+	const new_str = str.replace(/{([^$]*)}/g, '$1');
+	if (new_str !== str) {
+		return fullyRemoveBraces(new_str);
+	}
+	return new_str;
+}
+
 export function escapeURL(str: string): string {
 	return str.replace(/\\?_/g, '\\%5F');
 }

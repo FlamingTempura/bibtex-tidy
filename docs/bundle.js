@@ -14151,6 +14151,16 @@
     type: "boolean",
     defaultValue: false
   }, {
+    key: "removeAllBraces",
+    cli: {
+      "--remove-all-braces": true
+    },
+    toCLI: val => val ? "--remove-all-braces" : void 0,
+    title: "Remove all braces",
+    description: ["Remove all braces within a value. For example, {{Journal} {of} {Tea}} will become {Journal of Tea}."],
+    type: "boolean",
+    defaultValue: false
+  }, {
     key: "dropAllCaps",
     cli: {
       "--drop-all-caps": true
@@ -14815,6 +14825,16 @@
     return str.replace(/^\{([^{}]*)\}$/g, "$1");
   }
 
+  function fullyRemoveBraces(str) {
+    const new_str = str.replace(/{([^$]*)}/g, "$1");
+
+    if (new_str !== str) {
+      return fullyRemoveBraces(new_str);
+    }
+
+    return new_str;
+  }
+
   function escapeURL(str) {
     return str.replace(/\\?_/g, "\\%5F");
   }
@@ -15014,6 +15034,7 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
       numeric,
       align,
       stripEnclosingBraces,
+      removeAllBraces,
       dropAllCaps,
       escape,
       encodeUrls,
@@ -15048,6 +15069,10 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
       }
 
       value = unwrapText(value);
+
+      if (removeAllBraces) {
+        value = fullyRemoveBraces(value);
+      }
 
       if (stripEnclosingBraces) {
         value = removeEnclosingBraces(value);
@@ -15543,6 +15568,7 @@ ${valIndent}`) + "\n" + indent;
       merge: options.merge.checked ? options.mergeStrategy.value : false,
       enclosingBraces: options.enclosingBraces.checked && options.enclosingBracesList.value.length > 0 && options.enclosingBracesList.value.split(/[\n\t ,]+/),
       stripEnclosingBraces: options.stripEnclosingBraces.checked,
+      removeAllBraces: options.removeAllBraces.checked,
       dropAllCaps: options.dropAllCaps.checked,
       sortFields: options.sortFields.checked && options.sortFieldList.value.length > 0 && options.sortFieldList.value.split(/[\n\t ,]+/),
       stripComments: options.stripComments.checked,

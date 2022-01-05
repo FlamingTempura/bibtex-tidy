@@ -77,6 +77,12 @@ export declare type BibTeXTidyOptions = {
 	 */
 	stripEnclosingBraces?: boolean;
 	/**
+	 * Remove all braces
+	 *
+	 * Remove all braces within a value. For example, {{Journal} {of} {Tea}} will become {Journal of Tea}.
+	 */
+	removeAllBraces?: boolean;
+	/**
 	 * Drop all caps
 	 *
 	 * Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.

@@ -163,6 +163,7 @@ function getOptions(): Options {
 			options.enclosingBracesList.value.length > 0 &&
 			options.enclosingBracesList.value.split(/[\n\t ,]+/),
 		stripEnclosingBraces: options.stripEnclosingBraces.checked,
+		removeAllBraces: options.removeAllBraces.checked,
 		dropAllCaps: options.dropAllCaps.checked,
 		sortFields:
 			options.sortFields.checked &&

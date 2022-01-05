@@ -187,6 +187,16 @@ var optionDefinitions = [{
   type: "boolean",
   defaultValue: false
 }, {
+  key: "removeAllBraces",
+  cli: {
+    "--remove-all-braces": true
+  },
+  toCLI: val => val ? "--remove-all-braces" : void 0,
+  title: "Remove all braces",
+  description: ["Remove all braces within a value. For example, {{Journal} {of} {Tea}} will become {Journal of Tea}."],
+  type: "boolean",
+  defaultValue: false
+}, {
   key: "dropAllCaps",
   cli: {
     "--drop-all-caps": true
@@ -851,6 +861,16 @@ function removeEnclosingBraces(str) {
   return str.replace(/^\{([^{}]*)\}$/g, "$1");
 }
 
+function fullyRemoveBraces(str) {
+  const new_str = str.replace(/{([^$]*)}/g, "$1");
+
+  if (new_str !== str) {
+    return fullyRemoveBraces(new_str);
+  }
+
+  return new_str;
+}
+
 function escapeURL(str) {
   return str.replace(/\\?_/g, "\\%5F");
 }
@@ -1050,6 +1070,7 @@ function formatValue(field, options) {
     numeric,
     align,
     stripEnclosingBraces,
+    removeAllBraces,
     dropAllCaps,
     escape,
     encodeUrls,
@@ -1084,6 +1105,10 @@ function formatValue(field, options) {
     }
 
     value = unwrapText(value);
+
+    if (removeAllBraces) {
+      value = fullyRemoveBraces(value);
+    }
 
     if (stripEnclosingBraces) {
       value = removeEnclosingBraces(value);

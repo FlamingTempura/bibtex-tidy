@@ -227,6 +227,18 @@ export const optionDefinitions: OptionDefinition[] = [
 		defaultValue: false,
 	},
 	{
+		key: 'removeAllBraces',
+		cli: { '--remove-all-braces': true },
+		toCLI: (val) => (val ? '--remove-all-braces' : undefined),
+		title: 'Remove all braces',
+		description: [
+			'Remove all braces within a value. For example, {{Journal} {of} {Tea}} will become {Journal of Tea}.',
+		],
+		type: 'boolean',
+		defaultValue: false,
+	},
+
+	{
 		key: 'dropAllCaps',
 		cli: { '--drop-all-caps': true },
 		toCLI: (val) => (val ? '--drop-all-caps' : undefined),

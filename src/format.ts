@@ -14,6 +14,7 @@ import {
 	addEnclosingBraces,
 	escapeURL,
 	removeEnclosingBraces,
+	fullyRemoveBraces,
 	limitAuthors,
 	formatPageRange,
 } from './utils';
@@ -147,6 +148,7 @@ export function formatValue(
 		numeric,
 		align,
 		stripEnclosingBraces,
+		removeAllBraces,
 		dropAllCaps,
 		escape,
 		encodeUrls,
@@ -183,6 +185,10 @@ export function formatValue(
 				return dig3;
 			}
 			value = unwrapText(value);
+			// if a field's value contains braces, remove them (except math expressions)
+			if (removeAllBraces) {
+				value = fullyRemoveBraces(value);
+			}
 			// if a field's value has double braces {{blah}}, lose the inner brace
 			if (stripEnclosingBraces) {
 				value = removeEnclosingBraces(value);
