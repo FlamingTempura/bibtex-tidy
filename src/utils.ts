@@ -1,5 +1,14 @@
 import { specialCharacters } from './unicode';
 
+export function escapeUppercaseLetters(str: string): string {
+	return str.replace(
+		/((?<!{)\b[A-Z][a-z0-9_]*[A-Z][a-z0-9_]*[A-Z]\w*\b)|((?<!{)\b[A-Z](?=[a-z0-9_]))/g,
+		(match) => {
+			return `{${match}}`;
+		}
+	);
+}
+
 export function escapeSpecialCharacters(str: string): string {
 	let mathExpressions: string[] = [];
 

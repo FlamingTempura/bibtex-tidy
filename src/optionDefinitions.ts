@@ -238,6 +238,17 @@ export const optionDefinitions: OptionDefinition[] = [
 		defaultValue: false,
 	},
 	{
+		key: 'escapeUppercase',
+		cli: { '--escape-uppercase': true },
+		toCLI: (val) => (val ? '--escape-uppercase' : undefined),
+		title: 'Escape uppercase letters',
+		description: [
+			'Escape uppercase letters at the beginning of words or the whole word if it contains more than one.',
+		],
+		type: 'boolean',
+		defaultValue: false,
+	},
+	{
 		key: 'escape',
 		cli: { '--escape': true, '--no-escape': false },
 		toCLI: (val) => (val === false ? '--no-escape' : undefined),

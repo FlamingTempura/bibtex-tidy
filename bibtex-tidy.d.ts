@@ -83,6 +83,12 @@ export declare type BibTeXTidyOptions = {
 	 */
 	dropAllCaps?: boolean;
 	/**
+	 * Escape uppercase letters
+	 *
+	 * Escape uppercase letters at the beginning of words or the whole word if it contains more than one.
+	 */
+	escapeUppercase?: boolean;
+	/**
 	 * Escape special characters
 	 *
 	 * Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default.

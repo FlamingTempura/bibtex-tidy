@@ -227,6 +227,17 @@ var optionDefinitions = [
     defaultValue: false
   },
   {
+    key: "escapeUppercase",
+    cli: { "--escape-uppercase": true },
+    toCLI: (val) => val ? "--escape-uppercase" : void 0,
+    title: "Escape uppercase letters",
+    description: [
+      "Escape uppercase letters at the beginning of words or the whole word if it contains more than one."
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
     key: "escape",
     cli: { "--escape": true, "--no-escape": false },
     toCLI: (val) => val === false ? "--no-escape" : void 0,
@@ -3108,6 +3119,11 @@ var specialCharacters = /* @__PURE__ */ new Map([
 ]);
 
 // src/utils.ts
+function escapeUppercaseLetters(str) {
+  return str.replace(/((?<!{)\b[A-Z][a-z0-9_]*[A-Z][a-z0-9_]*[A-Z]\w*\b)|((?<!{)\b[A-Z](?=[a-z0-9_]))/g, (match) => {
+    return `{${match}}`;
+  });
+}
 function escapeSpecialCharacters(str) {
   let mathExpressions = [];
   str = str.replace(/\$[^$]+\$/, (match) => {
@@ -3357,6 +3373,7 @@ function formatValue(field, options) {
     align,
     stripEnclosingBraces,
     dropAllCaps,
+    escapeUppercase,
     escape,
     encodeUrls,
     wrap,
@@ -3389,6 +3406,9 @@ function formatValue(field, options) {
     }
     if (nameLowerCase === "url" && encodeUrls) {
       value = escapeURL(value);
+    }
+    if (escapeUppercase) {
+      value = escapeUppercaseLetters(value);
     }
     if (escape) {
       value = escapeSpecialCharacters(value);
@@ -3771,6 +3791,10 @@ var manPage = [
   "  --drop-all-caps",
   "      Where values are all caps, make them title case. For example, {JOURNAL OF",
   "      TEA} will become {Journal of Tea}.",
+  "      ",
+  "  --escape-uppercase",
+  "      Escape uppercase letters at the beginning of words or the whole word if it",
+  "      contains more than one.",
   "      ",
   "  --escape, --no-escape",
   "      Escape special characters, such as umlaut. This ensures correct typesetting",
