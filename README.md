@@ -132,6 +132,11 @@ bibtex-tidy references.bib
       Where values are all caps, make them title case. For example, {JOURNAL OF
       TEA} will become {Journal of Tea}.
       
+      Fields can be excluded.
+      
+      Examples:
+      --sort-fields=publisher,volume
+      
   --escape, --no-escape
       Escape special characters, such as umlaut. This ensures correct typesetting
       with latex. Enabled by default.

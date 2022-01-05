@@ -163,7 +163,12 @@ function getOptions(): Options {
 			options.enclosingBracesList.value.length > 0 &&
 			options.enclosingBracesList.value.split(/[\n\t ,]+/),
 		stripEnclosingBraces: options.stripEnclosingBraces.checked,
-		dropAllCaps: options.dropAllCaps.checked,
+		dropAllCaps:
+			options.dropAllCaps.checked &&
+			(options.excludeDropAllCapsList.value.split(/[\n\t ,]+/).filter(Boolean)
+				.length === 0
+				? true
+				: options.excludeDropAllCapsList.value.split(/[\n\t ,]+/)),
 		sortFields:
 			options.sortFields.checked &&
 			options.sortFieldList.value.length > 0 &&

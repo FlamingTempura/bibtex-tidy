@@ -14155,10 +14155,15 @@
     cli: {
       "--drop-all-caps": true
     },
-    toCLI: val => val ? "--drop-all-caps" : void 0,
+    toCLI: val => {
+      if (Array.isArray(val) && val.length > 0) return `--drop-all-caps=${val.join(",")}`;
+      if (val === true) return "--drop-all-caps";
+      return void 0;
+    },
     title: "Drop all caps",
-    description: ["Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}."],
-    type: "boolean",
+    description: ["Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.", "Fields can be excluded."],
+    examples: ["--sort-fields=publisher,volume"],
+    type: "boolean | string[]",
     defaultValue: false
   }, {
     key: "escape",
@@ -15054,7 +15059,7 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
       }
 
       if (dropAllCaps && !value.match(/[a-z]/)) {
-        value = titleCase(value);
+        value = Array.isArray(dropAllCaps) && dropAllCaps.includes(nameLowerCase) ? value : titleCase(value);
       }
 
       if (nameLowerCase === "url" && encodeUrls) {
@@ -15543,7 +15548,7 @@ ${valIndent}`) + "\n" + indent;
       merge: options.merge.checked ? options.mergeStrategy.value : false,
       enclosingBraces: options.enclosingBraces.checked && options.enclosingBracesList.value.length > 0 && options.enclosingBracesList.value.split(/[\n\t ,]+/),
       stripEnclosingBraces: options.stripEnclosingBraces.checked,
-      dropAllCaps: options.dropAllCaps.checked,
+      dropAllCaps: options.dropAllCaps.checked && (options.excludeDropAllCapsList.value.split(/[\n\t ,]+/).filter(Boolean).length === 0 ? true : options.excludeDropAllCapsList.value.split(/[\n\t ,]+/)),
       sortFields: options.sortFields.checked && options.sortFieldList.value.length > 0 && options.sortFieldList.value.split(/[\n\t ,]+/),
       stripComments: options.stripComments.checked,
       tidyComments: options.tidyComments.checked,

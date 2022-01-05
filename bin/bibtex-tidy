@@ -218,12 +218,20 @@ var optionDefinitions = [
   {
     key: "dropAllCaps",
     cli: { "--drop-all-caps": true },
-    toCLI: (val) => val ? "--drop-all-caps" : void 0,
+    toCLI: (val) => {
+      if (Array.isArray(val) && val.length > 0)
+        return `--drop-all-caps=${val.join(",")}`;
+      if (val === true)
+        return "--drop-all-caps";
+      return void 0;
+    },
     title: "Drop all caps",
     description: [
-      "Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}."
+      "Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.",
+      "Fields can be excluded."
     ],
-    type: "boolean",
+    examples: ["--sort-fields=publisher,volume"],
+    type: "boolean | string[]",
     defaultValue: false
   },
   {
@@ -3385,7 +3393,7 @@ function formatValue(field, options) {
       value = removeEnclosingBraces(value);
     }
     if (dropAllCaps && !value.match(/[a-z]/)) {
-      value = titleCase(value);
+      value = Array.isArray(dropAllCaps) && dropAllCaps.includes(nameLowerCase) ? value : titleCase(value);
     }
     if (nameLowerCase === "url" && encodeUrls) {
       value = escapeURL(value);
@@ -3771,6 +3779,11 @@ var manPage = [
   "  --drop-all-caps",
   "      Where values are all caps, make them title case. For example, {JOURNAL OF",
   "      TEA} will become {Journal of Tea}.",
+  "      ",
+  "      Fields can be excluded.",
+  "      ",
+  "      Examples:",
+  "      --sort-fields=publisher,volume",
   "      ",
   "  --escape, --no-escape",
   "      Escape special characters, such as umlaut. This ensures correct typesetting",

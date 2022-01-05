@@ -191,10 +191,15 @@ var optionDefinitions = [{
   cli: {
     "--drop-all-caps": true
   },
-  toCLI: val => val ? "--drop-all-caps" : void 0,
+  toCLI: val => {
+    if (Array.isArray(val) && val.length > 0) return `--drop-all-caps=${val.join(",")}`;
+    if (val === true) return "--drop-all-caps";
+    return void 0;
+  },
   title: "Drop all caps",
-  description: ["Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}."],
-  type: "boolean",
+  description: ["Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.", "Fields can be excluded."],
+  examples: ["--sort-fields=publisher,volume"],
+  type: "boolean | string[]",
   defaultValue: false
 }, {
   key: "escape",
@@ -1090,7 +1095,7 @@ function formatValue(field, options) {
     }
 
     if (dropAllCaps && !value.match(/[a-z]/)) {
-      value = titleCase(value);
+      value = Array.isArray(dropAllCaps) && dropAllCaps.includes(nameLowerCase) ? value : titleCase(value);
     }
 
     if (nameLowerCase === "url" && encodeUrls) {
