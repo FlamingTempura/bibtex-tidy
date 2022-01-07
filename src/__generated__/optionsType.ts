@@ -84,11 +84,11 @@ export type BibTeXTidyOptions = {
 	 */
 	dropAllCaps?: boolean;
 	/**
-	 * Escape uppercase letters
+	 * Brace words which contain uppercase letters.
 	 *
-	 * Escape uppercase letters at the beginning of words or the whole word if it contains more than one.
+	 * Brace the whole word if a capital letter is not braced.
 	 */
-	escapeUppercase?: boolean;
+	braceCapitalWord?: boolean;
 	/**
 	 * Escape special characters
 	 *

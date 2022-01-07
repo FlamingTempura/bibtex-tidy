@@ -9,7 +9,7 @@ import {
 import {
 	titleCase,
 	escapeSpecialCharacters,
-	escapeUppercaseLetters,
+	braceWordsWithCapital,
 	wrapText,
 	unwrapText,
 	addEnclosingBraces,
@@ -149,7 +149,7 @@ export function formatValue(
 		align,
 		stripEnclosingBraces,
 		dropAllCaps,
-		escapeUppercase,
+		braceCapitalWord,
 		escape,
 		encodeUrls,
 		wrap,
@@ -197,8 +197,8 @@ export function formatValue(
 			if (nameLowerCase === 'url' && encodeUrls) {
 				value = escapeURL(value);
 			}
-			if (escapeUppercase) {
-				value = escapeUppercaseLetters(value);
+			if (braceCapitalWord) {
+				value = braceWordsWithCapital(value);
 			}
 			// escape special characters like %
 			if (escape) {

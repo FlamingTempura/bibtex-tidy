@@ -132,9 +132,8 @@ bibtex-tidy references.bib
       Where values are all caps, make them title case. For example, {JOURNAL OF
       TEA} will become {Journal of Tea}.
       
-  --escape-uppercase
-      Escape uppercase letters at the beginning of words or the whole word if it
-      contains more than one.
+  --brace-capital-word
+      Brace the whole word if a capital letter is not braced.
       
   --escape, --no-escape
       Escape special characters, such as umlaut. This ensures correct typesetting

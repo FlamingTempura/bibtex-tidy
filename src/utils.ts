@@ -1,8 +1,8 @@
 import { specialCharacters } from './unicode';
 
-export function escapeUppercaseLetters(str: string): string {
+export function braceWordsWithCapital(str: string): string {
 	return str.replace(
-		/((?<!{)\b[A-Z][a-z0-9_]*[A-Z][a-z0-9_]*[A-Z]\w*\b)|((?<!{)\b[A-Z](?=[a-z0-9_]))/g,
+		/(?<![\{\p{L}])\p{L}*\p{Lu}\p{L}*(?![\p{L}\}])/gu,
 		(match) => {
 			return `{${match}}`;
 		}

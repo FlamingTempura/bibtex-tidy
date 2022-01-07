@@ -171,7 +171,7 @@ function getOptions(): Options {
 		stripComments: options.stripComments.checked,
 		tidyComments: options.tidyComments.checked,
 		encodeUrls: options.encodeUrls.checked,
-		escapeUppercase: options.escapeUppercase.checked,
+		braceCapitalWord: options.braceCapitalWord.checked,
 		escape: options.escape.checked,
 		trailingCommas: options.trailingCommas.checked,
 		removeEmptyFields: options.removeEmptyFields.checked,
