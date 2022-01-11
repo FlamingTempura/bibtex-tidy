@@ -520,6 +520,7 @@ var QuotedNode = class {
     this.parent = parent;
     this.type = "quoted";
     this.value = "";
+    this.depth = 0;
     parent.concat.push(this);
   }
 
@@ -535,6 +536,7 @@ function generateAST(input) {
 
   for (let i = 0; i < input.length; i++) {
     const char = input[i];
+    const prev = input[i - 1];
 
     if (char === "\n") {
       line++;
@@ -552,7 +554,7 @@ function generateAST(input) {
 
       case "text":
         {
-          if (char === "@" && /[\s\r\n}]/.test(input[i - 1])) {
+          if (char === "@" && /[\s\r\n}]/.test(prev)) {
             node = new BlockNode(node.parent);
           } else {
             node.text += char;
@@ -737,25 +739,31 @@ function generateAST(input) {
       case "braced":
         if (char === "}" && node.depth === 0) {
           node = node.parent;
-        } else {
-          if (char === "{") {
-            node.depth++;
-          } else if (char === "}") {
-            node.depth--;
-          }
-
-          node.value += char;
+          break;
+        } else if (char === "{") {
+          node.depth++;
+        } else if (char === "}") {
+          node.depth--;
         }
 
+        node.value += char;
         break;
 
       case "quoted":
-        if (char === '"' && input[i - 1] !== "\\") {
+        if (char === '"' && node.depth === 0) {
           node = node.parent;
-        } else {
-          node.value += char;
+          break;
+        } else if (char === "{") {
+          node.depth++;
+        } else if (char === "}") {
+          node.depth--;
+
+          if (node.depth < 0) {
+            throw new BibTeXSyntaxError(input, node, i, line, column);
+          }
         }
 
+        node.value += char;
         break;
     }
   }

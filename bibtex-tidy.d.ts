@@ -269,6 +269,8 @@ declare class QuotedNode {
 	parent: ConcatNode;
 	type: "quoted";
 	value: string;
+	/** Used to count opening and closing braces */
+	depth: number;
 	constructor(parent: ConcatNode);
 }
 export declare type Warning = {

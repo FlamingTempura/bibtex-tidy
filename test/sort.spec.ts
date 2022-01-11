@@ -56,7 +56,7 @@ title = {Methods for Research}
 % boo!
   @article{thing_a,
     title={blah},
-    weird-key="{cheese} \"in brie\""
+    weird-key="{cheese} {"}in brie{"}"
   }
   % another comment
   @inproceedings{Smith2009,
@@ -135,7 +135,7 @@ const output = bibtex`
 % boo!
 @article{thing_a,
   title         = {blah},
-  weird-key     = "{cheese} \"in brie\""
+  weird-key     = "{cheese} {"}in brie{"}"
 }
 % last thing
 % another last thing

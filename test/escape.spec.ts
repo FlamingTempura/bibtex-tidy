@@ -3,14 +3,14 @@ import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
 @misc{q,
-  author = {Chars \", _, $, @, &, é, ɛ, ū},
+  author = {Chars \", _, $, @, &, é, ɛ, ū, {"}},
   title = {Math expression $\\alpha$ stay unescaped},
   url = {something#boo}
 }`;
 
 const outputEscaped = bibtex`
 @misc{q,
-  author        = {Chars \", \_, \$, \@, \&, \'{e}, \varepsilon{}, \={u}},
+  author        = {Chars \", \_, \$, \@, \&, \'{e}, \varepsilon{}, \={u}, {"}},
   title         = {Math expression $\\alpha$ stay unescaped},
   url           = {something\#boo}
 }
@@ -18,7 +18,7 @@ const outputEscaped = bibtex`
 
 const outputUnescaped = bibtex`
 @misc{q,
-  author        = {Chars \", _, $, @, &, é, ɛ, ū},
+  author        = {Chars \", _, $, @, &, é, ɛ, ū, {"}},
   title         = {Math expression $\\alpha$ stay unescaped},
   url           = {something#boo}
 }

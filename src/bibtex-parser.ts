@@ -93,6 +93,8 @@ class BracedNode {
 class QuotedNode {
 	type = 'quoted' as const;
 	value: string = '';
+	/** Used to count opening and closing braces */
+	depth: number = 0;
 	constructor(public parent: ConcatNode) {
 		parent.concat.push(this);
 	}
@@ -120,6 +122,7 @@ export function generateAST(input: string): RootNode {
 
 	for (let i = 0; i < input.length; i++) {
 		const char = input[i];
+		const prev = input[i - 1];
 
 		if (char === '\n') {
 			line++;
@@ -137,7 +140,7 @@ export function generateAST(input: string): RootNode {
 				// Whitespace or closing curly brace should precede an entry. This might
 				// not be correct but allows parsing of "valid" bibtex files in the
 				// wild.
-				if (char === '@' && /[\s\r\n}]/.test(input[i - 1])) {
+				if (char === '@' && /[\s\r\n}]/.test(prev)) {
 					node = new BlockNode(node.parent);
 				} else {
 					node.text += char;
@@ -309,25 +312,38 @@ export function generateAST(input: string): RootNode {
 				}
 				break;
 
+			// Values may be enclosed in curly braces. Curly braces may be used within
+			// the value but they must be balanced.
 			case 'braced':
 				if (char === '}' && node.depth === 0) {
 					node = node.parent; // values
-				} else {
-					if (char === '{') {
-						node.depth++;
-					} else if (char === '}') {
-						node.depth--;
-					}
-					node.value += char;
+					break;
+				} else if (char === '{') {
+					node.depth++;
+				} else if (char === '}') {
+					node.depth--;
 				}
+				node.value += char;
 				break;
 
+			// Values may be enclosed in double quotes. Curly braces may be used
+			// within quoted values but they must be balanced.
+			//
+			// To escape a double quote, surround it with braces `{"}`.
+			// https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
 			case 'quoted':
-				if (char === '"' && input[i - 1] !== '\\') {
+				if (char === '"' && node.depth === 0) {
 					node = node.parent; // values
-				} else {
-					node.value += char;
+					break;
+				} else if (char === '{') {
+					node.depth++;
+				} else if (char === '}') {
+					node.depth--;
+					if (node.depth < 0) {
+						throw new BibTeXSyntaxError(input, node, i, line, column);
+					}
 				}
+				node.value += char;
 				break;
 		}
 	}

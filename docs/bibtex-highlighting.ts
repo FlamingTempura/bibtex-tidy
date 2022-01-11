@@ -38,10 +38,15 @@ CodeMirror.defineSimpleMode('simplemode', {
 			regex: /([^=,{}()[\]\t\n\r]+)(\s*)(=)/,
 			token: ['keyword', '', 'operator'],
 		},
-		{ regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: 'string' },
+		{ regex: /"/, push: 'quoted' },
 		{ regex: /\d+/i, token: 'number' },
 		{ regex: /\{/, push: 'braced' },
 		{ regex: /}/, pop: true },
+	],
+	quoted: [
+		{ regex: /\{/, push: 'braced' },
+		{ regex: /[^{"]+/, token: 'string' },
+		{ regex: /"/, pop: true },
 	],
 	braced: [
 		{ regex: /\{/, push: 'braced' },
