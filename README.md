@@ -1,12 +1,16 @@
-## bibtex-tidy
+# bibtex-tidy
 
 Tidy bibtex files. [Try it out](https://flamingtempura.github.io/bibtex-tidy/).
 
 ![Screen Recording 2020-10-23 at 16 25 26(1)](https://user-images.githubusercontent.com/1085434/97023051-dcbcf180-154c-11eb-9185-6f6de7c2fc68.gif)
 
-bibtex-tidy is free to use at https://flamingtempura.github.io/bibtex-tidy/
+There are several ways you can use bibtex-tidy:
+* [In your browser](https://flamingtempura.github.io/bibtex-tidy/)
+* [CLI](#sec-cli)
+* As a pre-commit-hook
+* [Javascript/Typescript API](#sec-api)
 
-### Example
+## Example
 
 Before:
 
@@ -49,7 +53,9 @@ After `bibtex-tidy references.bib`:
 }
 ```
 
-### Installation
+<a name="sec-cli" />
+
+## CLI
 
 Requires node v12 or later.
 
@@ -201,7 +207,9 @@ bibtex-tidy references.bib
       
 ```
 
-### Programmatic usage
+<a name="sec-api" />
+
+## Javascript/Typescript API
 
 ```
 npm install bibtex-tidy
