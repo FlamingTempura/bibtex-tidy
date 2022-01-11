@@ -59,7 +59,7 @@ title = {Methods for Research}
     weird-key="{cheese} {"}in brie{"}"
   }
   % another comment
-  @inproceedings{Smith2009,
+  @inproceedings{smith2009,
     author="Caroline JA Smith",
   year=2009,
   month=dec,
@@ -89,7 +89,7 @@ test('duplicate key warnings', async () => {
 	const warnings = [
 		{
 			code: 'DUPLICATE_KEY',
-			message: 'Smith2009 is a duplicate entry key.',
+			message: 'smith2009 is a duplicate entry key.',
 		},
 	];
 

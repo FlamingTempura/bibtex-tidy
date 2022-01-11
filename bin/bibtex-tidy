@@ -7,6 +7,25 @@
  * using `npm run build`. Edit files in './src' then rebuild.
  **/
 
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
+var __reExport = (target, module2, copyDefault, desc) => {
+  if (module2 && typeof module2 === "object" || typeof module2 === "function") {
+    for (let key of __getOwnPropNames(module2))
+      if (!__hasOwnProp.call(target, key) && (copyDefault || key !== "default"))
+        __defProp(target, key, { get: () => module2[key], enumerable: !(desc = __getOwnPropDesc(module2, key)) || desc.enumerable });
+  }
+  return target;
+};
+var __toESM = (module2, isNodeMode) => {
+  return __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", !isNodeMode && module2 && module2.__esModule ? { get: () => module2.default, enumerable: true } : { value: module2, enumerable: true })), module2);
+};
+
 // src/optionDefinitions.ts
 var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
 var optionDefinitions = [
@@ -3457,13 +3476,15 @@ function checkForDuplicates(ast, valueLookup, duplicates, merge) {
     for (const [key, doMerge] of uniqCheck) {
       let duplicateOf;
       switch (key) {
-        case "key":
+        case "key": {
           if (!entry.key)
             continue;
-          duplicateOf = keys.get(entry.key);
+          const keyLC = entry.key.toLocaleLowerCase();
+          duplicateOf = keys.get(keyLC);
           if (!duplicateOf)
-            keys.set(entry.key, entry);
+            keys.set(keyLC, entry);
           break;
+        }
         case "doi":
           const doi = alphaNum((_a = entryValues.get("doi")) != null ? _a : "");
           if (!doi)
@@ -3618,7 +3639,7 @@ function generateValueLookup(ast, options) {
 var src_default = { tidy };
 
 // src/cli.ts
-var import_process = require("process");
+var import_process = __toESM(require("process"));
 
 // src/cliUtils.ts
 var OPTIONS = new Set(optionDefinitions.flatMap((def) => Object.keys(def.cli)));
@@ -3851,7 +3872,7 @@ var manPage = [
 ];
 
 // src/cli.ts
-var import_fs = require("fs");
+var import_fs = __toESM(require("fs"));
 var nodeVer = Number(import_process.versions.node.split(".")[0]);
 if (nodeVer < 12) {
   console.error(`bibtex-tidy requires Node.js v12.0.0 or later`);

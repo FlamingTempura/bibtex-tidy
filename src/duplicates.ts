@@ -39,11 +39,15 @@ export function checkForDuplicates(
 			let duplicateOf: EntryNode | undefined;
 
 			switch (key) {
-				case 'key':
+				case 'key': {
 					if (!entry.key) continue;
-					duplicateOf = keys.get(entry.key);
-					if (!duplicateOf) keys.set(entry.key, entry);
+					// Bibtex keys are case insensitive
+					// https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
+					const keyLC = entry.key.toLocaleLowerCase();
+					duplicateOf = keys.get(keyLC);
+					if (!duplicateOf) keys.set(keyLC, entry);
 					break;
+				}
 
 				case 'doi':
 					const doi = alphaNum(entryValues.get('doi') ?? '');

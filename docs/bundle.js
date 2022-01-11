@@ -15145,10 +15145,13 @@ ${valIndent}`) + "\n" + indent;
 
         switch (key) {
           case "key":
-            if (!entry.key) continue;
-            duplicateOf = keys.get(entry.key);
-            if (!duplicateOf) keys.set(entry.key, entry);
-            break;
+            {
+              if (!entry.key) continue;
+              const keyLC = entry.key.toLocaleLowerCase();
+              duplicateOf = keys.get(keyLC);
+              if (!duplicateOf) keys.set(keyLC, entry);
+              break;
+            }
 
           case "doi":
             const doi = alphaNum((_a = entryValues.get("doi")) != null ? _a : "");
