@@ -109,16 +109,6 @@
   AUTHOR = {{Sci-Art Publishers}}
 }
 
-% Should skip the first name as it has too many commas
-%@BOOK{L27,
-%  AUTHOR = {Smith, Jr., Bill, Lee und James Smith}
-%}
-
-% This causes Text::BibTeX <=0.4 to segfault
-%@BOOK{L28,
-%  AUTHOR = {Deux et al.,, O.}
-%}
-
 % Should be ok as escaped. Text::BibTeX < 0.41 has a bug however and replaces
 % the third comma with a space.
 @BOOK{L29,

@@ -1,7 +1,13 @@
 @string {
-    me = "Renan",
-    emptyAbbr = "",
-    nullAbbr,
+    me = "Renan"
+}
+@string {
+    emptyAbbr = ""
+}
+@string {
+    nullAbbr=""
+}
+@string {
     meImportant = "Sir " # me
 }
 
@@ -9,9 +15,15 @@
     meAccordingToMyMother = "Glamorous " # meImportant
 }
 
-@abbreviation {
-    message = "Hello " # meAccordingToMyMother # "!",
-    skip = "me",
-    mustEmpty = emptyAbbr,
+@string {
+    message = "Hello " # meAccordingToMyMother # "!"
+}
+@string {
+    skip = "me"
+}
+@string {
+    mustEmpty = emptyAbbr
+}
+@string {
     mustNull = nullAbbr
 }

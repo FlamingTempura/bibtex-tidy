@@ -1046,28 +1046,6 @@
 		    be listed after the entry referring to the entire first volume}
 }
 
-@InCollection{brandt,
-  options	  = {useprefix=false},
-  langid	  = {german},
-  indexsorttitle  = {Nordischen Lander von der Mitte des 11. Jahrhunderts bis 1448},
-  author	  = {von Brandt, Ahasver and Erich Hoffmann},
-  editor	  = {Ferdinand Seibt},
-  indextitle	  = {Nordischen L{\"a}nder von der Mitte des 11.~Jahrhunderts bis 1448, Die},
-  title		  = {Die nordischen L{\"a}nder von der Mitte des 11.~Jahrhunderts bis 1448},
-  shorttitle	  = {Die nordischen L{\"a}nder},
-  booktitle	  = {Europa im Hoch- und Sp{\"a}tmittelalter},
-  series	  = {Handbuch der europ{\"a}ischen Geschichte},
-  number	  = {2},
-  publisher	  = {Klett-Cotta},
-  location	  = {Stuttgart},
-  year		  = {1987},
-  pages		  = {884--917},
-  annotation	  = {An \texttt{incollection} entry with a \texttt{series} and a \texttt{number}.
-		    Note the format of the printed name and compare the \texttt{useprefix} option in
-		    the \texttt{options} field as well as \texttt{vangennep}. Also note the
-		    \texttt{indextitle, and \texttt{indexsorttitle} fields}}
-}
-
 @InCollection{hyman,
   keywords	  = {secondary},
   langid	  = {english},
@@ -1359,22 +1337,6 @@
   file		  = {ftp://gaia.cs.umass.edu/pub/Padhey99-markov.ps}
 }
 
-@Thesis{geer,
-  options	  = {useprefix=false},
-  langid	  = {english},
-  langidopts = {variant=british},
-  author	  = {de Geer, Ingrid},
-  title		  = {Earl, Saint, Bishop, Skald~-- and Music},
-  subtitle	  = {The Orkney Earldom of the Twelfth Century. A Musicological Study},
-  institution	  = {Uppsala Universitet},
-  type		  = {phdthesis},
-  location	  = {Uppsala},
-  year		  = {1985},
-  annotation	  = {This is a typical \texttt{thesis} entry for a PhD thesis. Note the
-		    \texttt{type} field in the database file which uses a localization key. Also
-		    note the format of the printed name and compare the \texttt{useprefix} option in
-		    the \texttt{options} field as well as \texttt{vangennep}}
-}
 
 @Thesis{loh,
   langid	  = {english},
@@ -1440,17 +1402,6 @@
   YEAR = {1997}
 }
 
-@BOOK{avona,
-  AUTHOR = {useprefix=false and Alan von Animal},
-  TITLE = {Things},
-  YEAR = {1998}
-}
-
-@BOOK{rvonr,
-  AUTHOR = {useprefix=false and useprefix=true, given=Richard, prefix=von, family=Rabble},
-  TITLE = {Things},
-  YEAR = {1998}
-}
 
 % fullhash and namehash should be different for these two
 @UNPUBLISHED{anon1,
@@ -1541,11 +1492,6 @@
   AUTHOR = {AAA and BBB and CCC},
   TITLE  = {A title},
   DATE   = {2005}
-}
-
-% Test of duplicate skipping
-@UNPUBLISHED{tmn4,
-  AUTHOR = {ZZZ}
 }
 
 % Testing exotic labelnames
@@ -1663,11 +1609,6 @@
 % Sorting name key tests
 @BOOK{snk1,
   AUTHOR = {von Doe, Jr, John}
-}
-
-% Extended name format test
-@BOOK{ent1,
-  AUTHOR = {sortingnamekeytemplatename=snks1 and Simon Smith and family=Brown, prefix=de, given=Brian, sortingnamekeytemplatename=snks2},
 }
 
 % Decode verbatim test
