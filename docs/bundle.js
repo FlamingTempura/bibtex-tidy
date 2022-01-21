@@ -3710,12 +3710,14 @@
         }
 
         function widgetTopHeight(lineObj) {
+          var ref = visualLine(lineObj);
+          var widgets = ref.widgets;
           var height = 0;
 
-          if (lineObj.widgets) {
-            for (var i2 = 0; i2 < lineObj.widgets.length; ++i2) {
-              if (lineObj.widgets[i2].above) {
-                height += widgetHeight(lineObj.widgets[i2]);
+          if (widgets) {
+            for (var i2 = 0; i2 < widgets.length; ++i2) {
+              if (widgets[i2].above) {
+                height += widgetHeight(widgets[i2]);
               }
             }
           }
@@ -13711,7 +13713,7 @@
 
         CodeMirror4.fromTextArea = fromTextArea;
         addLegacyProps(CodeMirror4);
-        CodeMirror4.version = "5.65.0";
+        CodeMirror4.version = "5.65.1";
         return CodeMirror4;
       });
     }
