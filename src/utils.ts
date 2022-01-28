@@ -80,7 +80,12 @@ export function addEnclosingBraces(
 	str: string,
 	removeInsideBraces?: boolean
 ): string {
-	if (removeInsideBraces) str = str.replace(/[{}]/g, '');
+	if (removeInsideBraces) {
+		// only strip braces if not preceded by `\command`
+		let matches = str.match(/(?<!\\\w*)([^{}\\]|\\{|\\})+|(\\.*?})/g);
+		if (matches)
+			str = matches.join('');
+	}
 	return `{${str}}`;
 }
 
