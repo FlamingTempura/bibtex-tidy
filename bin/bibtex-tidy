@@ -3164,8 +3164,11 @@ function unwrapText(str) {
   return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
 }
 function addEnclosingBraces(str, removeInsideBraces) {
-  if (removeInsideBraces)
-    str = str.replace(/[{}]/g, "");
+  if (removeInsideBraces) {
+    let matches = str.match(/(?<!\\\w*)([^{}\\]|\\{|\\})+|(\\.*?})/g);
+    if (matches)
+      str = matches.join("");
+  }
   return `{${str}}`;
 }
 function removeEnclosingBraces(str) {

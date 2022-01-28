@@ -14817,7 +14817,11 @@
   }
 
   function addEnclosingBraces(str, removeInsideBraces) {
-    if (removeInsideBraces) str = str.replace(/[{}]/g, "");
+    if (removeInsideBraces) {
+      let matches = str.match(/(?<!\\\w*)([^{}\\]|\\{|\\})+|(\\.*?})/g);
+      if (matches) str = matches.join("");
+    }
+
     return `{${str}}`;
   }
 
