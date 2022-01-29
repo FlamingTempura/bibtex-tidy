@@ -851,11 +851,7 @@ function unwrapText(str) {
 }
 
 function addEnclosingBraces(str, removeInsideBraces) {
-  if (removeInsideBraces) {
-    let matches = str.match(/(?<!\\\w*)([^{}\\]|\\{|\\})+|(\\.*?})/g);
-    if (matches) str = matches.join("");
-  }
-
+  if (removeInsideBraces) str = str.replace(/[{}]/g, "");
   return `{${str}}`;
 }
 
