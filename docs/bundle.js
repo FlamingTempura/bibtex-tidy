@@ -13713,7 +13713,7 @@
 
         CodeMirror4.fromTextArea = fromTextArea;
         addLegacyProps(CodeMirror4);
-        CodeMirror4.version = "5.65.1";
+        CodeMirror4.version = "5.65.2";
         return CodeMirror4;
       });
     }
