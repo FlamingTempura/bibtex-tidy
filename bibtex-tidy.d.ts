@@ -83,6 +83,12 @@ export declare type BibTeXTidyOptions = {
 	 */
 	dropAllCaps?: boolean;
 	/**
+	 * Brace words which contain uppercase letters.
+	 *
+	 * Brace the whole word if a capital letter is not braced.
+	 */
+	braceCapitalWord?: boolean;
+	/**
 	 * Escape special characters
 	 *
 	 * Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default.

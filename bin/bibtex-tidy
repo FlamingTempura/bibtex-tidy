@@ -227,6 +227,15 @@ var optionDefinitions = [
     defaultValue: false
   },
   {
+    key: "braceCapitalWord",
+    cli: { "--brace-capital-word": true },
+    toCLI: (val) => val ? "--brace-capital-word" : void 0,
+    title: "Brace words which contain uppercase letters.",
+    description: ["Brace the whole word if a capital letter is not braced."],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
     key: "escape",
     cli: { "--escape": true, "--no-escape": false },
     toCLI: (val) => val === false ? "--no-escape" : void 0,
@@ -3116,6 +3125,11 @@ var specialCharacters = /* @__PURE__ */ new Map([
 ]);
 
 // src/utils.ts
+function braceWordsWithCapital(str) {
+  return str.replace(/(?<![\{\p{L}])\p{L}*\p{Lu}\p{L}*(?![\p{L}\}])/gu, (match) => {
+    return `{${match}}`;
+  });
+}
 function escapeSpecialCharacters(str) {
   let mathExpressions = [];
   str = str.replace(/\$[^$]+\$/, (match) => {
@@ -3365,6 +3379,7 @@ function formatValue(field, options) {
     align,
     stripEnclosingBraces,
     dropAllCaps,
+    braceCapitalWord,
     escape,
     encodeUrls,
     wrap,
@@ -3397,6 +3412,9 @@ function formatValue(field, options) {
     }
     if (nameLowerCase === "url" && encodeUrls) {
       value = escapeURL(value);
+    }
+    if (braceCapitalWord) {
+      value = braceWordsWithCapital(value);
     }
     if (escape) {
       value = escapeSpecialCharacters(value);
@@ -3781,6 +3799,9 @@ var manPage = [
   "  --drop-all-caps",
   "      Where values are all caps, make them title case. For example, {JOURNAL OF",
   "      TEA} will become {Journal of Tea}.",
+  "      ",
+  "  --brace-capital-word",
+  "      Brace the whole word if a capital letter is not braced.",
   "      ",
   "  --escape, --no-escape",
   "      Escape special characters, such as umlaut. This ensures correct typesetting",

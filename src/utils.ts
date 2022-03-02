@@ -1,5 +1,14 @@
 import { specialCharacters } from './unicode';
 
+export function braceWordsWithCapital(str: string): string {
+	return str.replace(
+		/(?<![\{\p{L}])\p{L}*\p{Lu}\p{L}*(?![\p{L}\}])/gu,
+		(match) => {
+			return `{${match}}`;
+		}
+	);
+}
+
 export function escapeSpecialCharacters(str: string): string {
 	let mathExpressions: string[] = [];
 

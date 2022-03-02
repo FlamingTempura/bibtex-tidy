@@ -9,6 +9,7 @@ import {
 import {
 	titleCase,
 	escapeSpecialCharacters,
+	braceWordsWithCapital,
 	wrapText,
 	unwrapText,
 	addEnclosingBraces,
@@ -148,6 +149,7 @@ export function formatValue(
 		align,
 		stripEnclosingBraces,
 		dropAllCaps,
+		braceCapitalWord,
 		escape,
 		encodeUrls,
 		wrap,
@@ -195,6 +197,9 @@ export function formatValue(
 			if (nameLowerCase === 'url' && encodeUrls) {
 				value = escapeURL(value);
 			}
+			if (braceCapitalWord) {
+				value = braceWordsWithCapital(value);
+			}
 			// escape special characters like %
 			if (escape) {
 				value = escapeSpecialCharacters(value);
@@ -218,7 +223,6 @@ export function formatValue(
 			if (type === 'braced' && field.value.concat.length === 1) {
 				value = value.trim();
 			}
-
 			if (type === 'braced' || curly) {
 				const lineLength = `${indent}${align}{${value}}`.length;
 				const multiLine = value.includes('\n\n');

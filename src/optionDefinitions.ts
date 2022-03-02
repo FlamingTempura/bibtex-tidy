@@ -238,6 +238,15 @@ export const optionDefinitions: OptionDefinition[] = [
 		defaultValue: false,
 	},
 	{
+		key: 'braceCapitalWord',
+		cli: { '--brace-capital-word': true },
+		toCLI: (val) => (val ? '--brace-capital-word' : undefined),
+		title: 'Brace words which contain uppercase letters.',
+		description: ['Brace the whole word if a capital letter is not braced.'],
+		type: 'boolean',
+		defaultValue: false,
+	},
+	{
 		key: 'escape',
 		cli: { '--escape': true, '--no-escape': false },
 		toCLI: (val) => (val === false ? '--no-escape' : undefined),
