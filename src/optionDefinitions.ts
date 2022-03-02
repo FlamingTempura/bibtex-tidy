@@ -229,12 +229,19 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'dropAllCaps',
 		cli: { '--drop-all-caps': true },
-		toCLI: (val) => (val ? '--drop-all-caps' : undefined),
+		toCLI: (val) => {
+			if (Array.isArray(val) && val.length > 0)
+				return `--drop-all-caps=${val.join(',')}`;
+			if (val === true) return '--drop-all-caps';
+			return undefined;
+		},
 		title: 'Drop all caps',
 		description: [
 			'Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.',
+			'Fields can be excluded.',
 		],
-		type: 'boolean',
+		examples: ['--sort-fields=publisher,volume'],
+		type: 'boolean | string[]',
 		defaultValue: false,
 	},
 	{

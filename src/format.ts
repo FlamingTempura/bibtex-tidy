@@ -189,7 +189,10 @@ export function formatValue(
 			}
 			// if a field's value is all caps, convert it to title case
 			if (dropAllCaps && !value.match(/[a-z]/)) {
-				value = titleCase(value);
+				value =
+					Array.isArray(dropAllCaps) && dropAllCaps.includes(nameLowerCase)
+						? value
+						: titleCase(value);
 			}
 			// url encode must happen before escape special characters
 			if (nameLowerCase === 'url' && encodeUrls) {

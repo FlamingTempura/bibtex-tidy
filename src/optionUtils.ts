@@ -24,6 +24,7 @@ export type OptionsNormalized = Omit<
 	| 'align'
 	| 'merge'
 	| 'sort'
+	| 'dropAllCaps'
 	| 'sortFields'
 	| 'wrap'
 	| 'enclosingBraces'
@@ -32,6 +33,7 @@ export type OptionsNormalized = Omit<
 	sort?: string[];
 	space: number;
 	sortFields?: string[];
+	dropAllCaps: string[];
 	merge?: MergeStrategy;
 	duplicates?: UniqueKey[];
 	wrap?: number;

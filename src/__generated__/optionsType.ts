@@ -81,8 +81,9 @@ export type BibTeXTidyOptions = {
 	 * Drop all caps
 	 *
 	 * Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.
+	 * Fields can be excluded.
 	 */
-	dropAllCaps?: boolean;
+	dropAllCaps?: boolean | string[];
 	/**
 	 * Escape special characters
 	 *
