@@ -89,6 +89,21 @@ $('#tidy').addEventListener('click', () => {
 	}, 100);
 });
 
+let resetCopyBtnTimeout: NodeJS.Timeout;
+$('#copy').addEventListener('click', async () => {
+	try {
+		await navigator.clipboard.writeText(cmEditor.getValue());
+		$('#copy').classList.toggle('copied', true);
+		clearInterval(resetCopyBtnTimeout);
+		resetCopyBtnTimeout = setTimeout(
+			() => $('#copy').classList.toggle('copied', false),
+			3000
+		);
+	} catch {
+		alert('Failed to copy');
+	}
+});
+
 function formatSuccessMessage(
 	options: Options,
 	result: BibTeXTidyResult

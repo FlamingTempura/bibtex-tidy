@@ -27,6 +27,9 @@ body {
 	line-height: 1.5em;
 	margin: 0;
 }
+button {
+	cursor: pointer;
+}
 h1 {
 	font: var(--sans-title);
 	/* font-size: 16px; */
@@ -129,6 +132,41 @@ a {
 	background: var(--red);
 	color: white;
 	font: var(--mono-bold);
+}
+#copy {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	border: none;
+	font-weight: bold;
+	font-size: 15px;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 8px 8px 8px 12px;
+	transition: width 0.5s ease;
+	width: 40px;
+}
+#copy:after {
+	content: 'Copy';
+	overflow: hidden;
+	white-space: nowrap;
+	text-indent: 6px;
+}
+#copy:hover {
+	width: 90px;
+}
+#copy.copied {
+	width: 110px;
+}
+#copy.copied:after {
+	content: 'Copied!';
+}
+#copy svg {
+	fill: currentColor;
+	width: 20px;
+	flex-shrink: 0;
 }
 #sidebar {
 	background: rgba(154, 199, 255, 0.2);
