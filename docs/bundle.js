@@ -1927,7 +1927,7 @@
         function addMarkedSpan(line, span, op) {
           var inThisOp = op && window.WeakSet && (op.markedSpans || (op.markedSpans = /* @__PURE__ */new WeakSet()));
 
-          if (inThisOp && inThisOp.has(line.markedSpans)) {
+          if (inThisOp && line.markedSpans && inThisOp.has(line.markedSpans)) {
             line.markedSpans.push(span);
           } else {
             line.markedSpans = line.markedSpans ? line.markedSpans.concat([span]) : [span];
@@ -13732,7 +13732,7 @@
 
         CodeMirror3.fromTextArea = fromTextArea;
         addLegacyProps(CodeMirror3);
-        CodeMirror3.version = "5.65.2";
+        CodeMirror3.version = "5.65.3";
         return CodeMirror3;
       });
     }
