@@ -1,5 +1,19 @@
 "use strict";
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 /**
  * bibtex-tidy v1.8.5
  * https://github.com/FlamingTempura/bibtex-tidy
@@ -27,10 +41,26 @@
 
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
-      for (let key of __getOwnPropNames(from)) if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-        get: () => from[key],
-        enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
-      });
+      var _iterator = _createForOfIteratorHelper(__getOwnPropNames(from)),
+          _step;
+
+      try {
+        var _loop = function _loop() {
+          var key = _step.value;
+          if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
+            get: () => from[key],
+            enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+          });
+        };
+
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          _loop();
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
     }
 
     return to;
@@ -112,7 +142,7 @@
           return new RegExp("(^|\\s)" + cls + "(?:$|\\s)\\s*");
         }
 
-        var rmClass = function (node, cls) {
+        var rmClass = function rmClass(node, cls) {
           var current = node.className;
           var match = classTest(cls).exec(current);
 
@@ -165,14 +195,14 @@
         var range;
 
         if (document.createRange) {
-          range = function (node, start, end, endNode) {
+          range = function range(node, start, end, endNode) {
             var r = document.createRange();
             r.setEnd(endNode || node, end);
             r.setStart(node, start);
             return r;
           };
         } else {
-          range = function (node, start, end) {
+          range = function range(node, start, end) {
             var r = document.body.createTextRange();
 
             try {
@@ -244,17 +274,17 @@
           return b;
         }
 
-        var selectInput = function (node) {
+        var selectInput = function selectInput(node) {
           node.select();
         };
 
         if (ios) {
-          selectInput = function (node) {
+          selectInput = function selectInput(node) {
             node.selectionStart = 0;
             node.selectionEnd = node.value.length;
           };
         } else if (ie) {
-          selectInput = function (node) {
+          selectInput = function selectInput(node) {
             try {
               node.select();
             } catch (_e) {}
@@ -304,7 +334,7 @@
           }
         }
 
-        var Delayed = function () {
+        var Delayed = function Delayed() {
           this.id = null;
           this.f = null;
           this.time = 0;
@@ -344,7 +374,7 @@
 
         var scrollerGap = 50;
         var Pass = {
-          toString: function () {
+          toString: function toString() {
             return "CodeMirror.Pass";
           }
         };
@@ -757,7 +787,7 @@
 
         var noHandlers = [];
 
-        var on = function (emitter, type, f) {
+        var on = function on(emitter, type, f) {
           if (emitter.addEventListener) {
             emitter.addEventListener(type, f, false);
           } else if (emitter.attachEvent) {
@@ -809,7 +839,7 @@
           if (typeof e == "string") {
             e = {
               type: e,
-              preventDefault: function () {
+              preventDefault: function preventDefault() {
                 this.defaultPrevented = true;
               }
             };
@@ -1157,7 +1187,7 @@
           return mode.startState ? mode.startState(a1, a2) : true;
         }
 
-        var StringStream = function (string, tabSize, lineOracle) {
+        var StringStream = function StringStream(string, tabSize, lineOracle) {
           this.pos = this.start = 0;
           this.string = string;
           this.tabSize = tabSize || 8;
@@ -1250,7 +1280,7 @@
 
         StringStream.prototype.match = function (pattern, consume, caseInsensitive) {
           if (typeof pattern == "string") {
-            var cased = function (str) {
+            var cased = function cased(str) {
               return caseInsensitive ? str.toLowerCase() : str;
             };
 
@@ -1387,7 +1417,7 @@
           return no + cur.first;
         }
 
-        function lineAtHeight(chunk, h) {
+        function _lineAtHeight(chunk, h) {
           var n = chunk.first;
 
           outer: do {
@@ -1467,7 +1497,7 @@
           return Math.max(doc.first, Math.min(n, doc.first + doc.size - 1));
         }
 
-        function clipPos(doc, pos) {
+        function _clipPos(doc, pos) {
           if (pos.line < doc.first) {
             return Pos(doc.first, 0);
           }
@@ -1497,18 +1527,18 @@
           var out = [];
 
           for (var i2 = 0; i2 < array.length; i2++) {
-            out[i2] = clipPos(doc, array[i2]);
+            out[i2] = _clipPos(doc, array[i2]);
           }
 
           return out;
         }
 
-        var SavedContext = function (state, lookAhead) {
+        var SavedContext = function SavedContext(state, lookAhead) {
           this.state = state;
           this.lookAhead = lookAhead;
         };
 
-        var Context = function (doc, state, line, lookAhead) {
+        var Context = function Context(doc, state, line, lookAhead) {
           this.state = state;
           this.doc = doc;
           this.line = line;
@@ -1572,7 +1602,7 @@
           }, lineClasses, forceToEnd);
           var state = context.state;
 
-          var loop = function (o2) {
+          var loop = function loop(o2) {
             context.baseTokens = st;
             var overlay = cm.state.overlays[o2],
                 i2 = 1,
@@ -1611,7 +1641,9 @@
             context.baseTokenPos = 1;
           };
 
-          for (var o = 0; o < cm.state.overlays.length; ++o) loop(o);
+          for (var o = 0; o < cm.state.overlays.length; ++o) {
+            loop(o);
+          }
 
           return {
             styles: st,
@@ -1718,7 +1750,7 @@
           throw new Error("Mode " + mode.name + " failed to advance stream.");
         }
 
-        var Token = function (stream, type, state) {
+        var Token = function Token(stream, type, state) {
           this.start = stream.start;
           this.end = stream.pos;
           this.string = stream.current();
@@ -1730,7 +1762,7 @@
           var doc = cm.doc,
               mode = doc.mode,
               style;
-          pos = clipPos(doc, pos);
+          pos = _clipPos(doc, pos);
           var line = getLine(doc, pos.line),
               context = getContextBefore(cm, pos.line, precise);
           var stream = new StringStream(line.text, cm.options.tabSize, context),
@@ -2383,7 +2415,7 @@
           }
         }
 
-        function heightAtLine(lineObj) {
+        function _heightAtLine(lineObj) {
           lineObj = visualLine(lineObj);
           var h = 0,
               chunk = lineObj.parent;
@@ -2456,7 +2488,7 @@
           });
         }
 
-        var Line = function (text, markedSpans, estimateHeight2) {
+        var Line = function Line(text, markedSpans, estimateHeight2) {
           this.text = text;
           attachMarkedSpans(this, markedSpans);
           this.height = estimateHeight2 ? estimateHeight2(this) : 1;
@@ -2996,13 +3028,15 @@
             setTimeout(fireOrphanDelayed, 0);
           }
 
-          var loop = function (i3) {
+          var loop = function loop(i3) {
             list.push(function () {
               return arr[i3].apply(null, args);
             });
           };
 
-          for (var i2 = 0; i2 < arr.length; ++i2) loop(i2);
+          for (var i2 = 0; i2 < arr.length; ++i2) {
+            loop(i2);
+          }
         }
 
         function fireOrphanDelayed() {
@@ -3759,7 +3793,7 @@
             context = "local";
           }
 
-          var yOff = heightAtLine(lineObj);
+          var yOff = _heightAtLine(lineObj);
 
           if (context == "local") {
             yOff += paddingTop(cm.display);
@@ -3804,7 +3838,7 @@
           };
         }
 
-        function charCoords(cm, pos, context, lineObj, bias) {
+        function _charCoords(cm, pos, context, lineObj, bias) {
           if (!lineObj) {
             lineObj = getLine(cm.doc, pos.line);
           }
@@ -3812,7 +3846,7 @@
           return intoCoordSystem(cm, lineObj, measureChar(cm, lineObj, pos.ch, bias), context);
         }
 
-        function cursorCoords(cm, pos, context, lineObj, preparedMeasure, varHeight) {
+        function _cursorCoords(cm, pos, context, lineObj, preparedMeasure, varHeight) {
           lineObj = lineObj || getLine(cm.doc, pos.line);
 
           if (!preparedMeasure) {
@@ -3866,14 +3900,14 @@
 
         function estimateCoords(cm, pos) {
           var left = 0;
-          pos = clipPos(cm.doc, pos);
+          pos = _clipPos(cm.doc, pos);
 
           if (!cm.options.lineWrapping) {
             left = charWidth(cm.display) * pos.ch;
           }
 
           var lineObj = getLine(cm.doc, pos.line);
-          var top = heightAtLine(lineObj) + paddingTop(cm.display);
+          var top = _heightAtLine(lineObj) + paddingTop(cm.display);
           return {
             left,
             right: left,
@@ -3893,7 +3927,7 @@
           return pos;
         }
 
-        function coordsChar(cm, x, y) {
+        function _coordsChar(cm, x, y) {
           var doc = cm.doc;
           y += cm.display.viewOffset;
 
@@ -3901,7 +3935,7 @@
             return PosWithInfo(doc.first, 0, null, -1, -1);
           }
 
-          var lineN = lineAtHeight(doc, y),
+          var lineN = _lineAtHeight(doc, y),
               last = doc.first + doc.size - 1;
 
           if (lineN > last) {
@@ -3961,7 +3995,7 @@
         }
 
         function coordsCharInner(cm, lineObj, lineNo2, x, y) {
-          y -= heightAtLine(lineObj);
+          y -= _heightAtLine(lineObj);
           var preparedMeasure = prepareMeasureForLine(cm, lineObj);
           var widgetHeight2 = widgetTopHeight(lineObj);
           var begin = 0,
@@ -4010,7 +4044,9 @@
             }
 
             sticky = ch == 0 ? "after" : ch == lineObj.text.length ? "before" : measureCharPrepared(cm, preparedMeasure, ch - (ltr ? 1 : 0)).bottom + widgetHeight2 <= y == ltr ? "after" : "before";
-            var coords = cursorCoords(cm, Pos(lineNo2, ch, sticky), "line", lineObj, preparedMeasure);
+
+            var coords = _cursorCoords(cm, Pos(lineNo2, ch, sticky), "line", lineObj, preparedMeasure);
+
             baseX = coords.left;
             outside = y < coords.top ? -1 : y >= coords.bottom ? 1 : 0;
           }
@@ -4023,13 +4059,14 @@
           var index = findFirst(function (i2) {
             var part2 = order[i2],
                 ltr2 = part2.level != 1;
-            return boxIsAfter(cursorCoords(cm, Pos(lineNo2, ltr2 ? part2.to : part2.from, ltr2 ? "before" : "after"), "line", lineObj, preparedMeasure), x, y, true);
+            return boxIsAfter(_cursorCoords(cm, Pos(lineNo2, ltr2 ? part2.to : part2.from, ltr2 ? "before" : "after"), "line", lineObj, preparedMeasure), x, y, true);
           }, 0, order.length - 1);
           var part = order[index];
 
           if (index > 0) {
             var ltr = part.level != 1;
-            var start = cursorCoords(cm, Pos(lineNo2, ltr ? part.from : part.to, ltr ? "after" : "before"), "line", lineObj, preparedMeasure);
+
+            var start = _cursorCoords(cm, Pos(lineNo2, ltr ? part.from : part.to, ltr ? "after" : "before"), "line", lineObj, preparedMeasure);
 
             if (boxIsAfter(start, x, y, true) && start.top > y) {
               part = order[index - 1];
@@ -4220,7 +4257,7 @@
             return null;
           }
 
-          var coords = coordsChar(cm, x, y),
+          var coords = _coordsChar(cm, x, y),
               line;
 
           if (forRect && coords.xRel > 0 && (line = getLine(cm.doc, coords.line).text).length == coords.ch) {
@@ -4499,14 +4536,16 @@
         }
 
         function drawSelectionCursor(cm, head, output) {
-          var pos = cursorCoords(cm, head, "div", null, null, !cm.options.singleCursorHeightPerLine);
+          var pos = _cursorCoords(cm, head, "div", null, null, !cm.options.singleCursorHeightPerLine);
+
           var cursor = output.appendChild(elt("div", "\xA0", "CodeMirror-cursor"));
           cursor.style.left = pos.left + "px";
           cursor.style.top = pos.top + "px";
           cursor.style.height = Math.max(0, pos.bottom - pos.top) * cm.options.cursorHeight + "px";
 
           if (/\bcm-fat-cursor\b/.test(cm.getWrapperElement().className)) {
-            var charPos = charCoords(cm, head, "div", null, null);
+            var charPos = _charCoords(cm, head, "div", null, null);
+
             var width = charPos.right - charPos.left;
             cursor.style.width = (width > 0 ? width : cm.defaultCharWidth()) + "px";
           }
@@ -4549,7 +4588,7 @@
             var start, end;
 
             function coords(ch, bias) {
-              return charCoords(cm, Pos(line, ch), "div", lineObj, bias);
+              return _charCoords(cm, Pos(line, ch), "div", lineObj, bias);
             }
 
             function wrapX(pos, dir, side) {
@@ -4827,8 +4866,9 @@
           var top = viewport && viewport.top != null ? Math.max(0, viewport.top) : display.scroller.scrollTop;
           top = Math.floor(top - paddingTop(display));
           var bottom = viewport && viewport.bottom != null ? viewport.bottom : top + display.wrapper.clientHeight;
-          var from = lineAtHeight(doc, top),
-              to = lineAtHeight(doc, bottom);
+
+          var from = _lineAtHeight(doc, top),
+              to = _lineAtHeight(doc, bottom);
 
           if (viewport && viewport.ensure) {
             var ensureFrom = viewport.ensure.from.line,
@@ -4836,9 +4876,9 @@
 
             if (ensureFrom < from) {
               from = ensureFrom;
-              to = lineAtHeight(doc, heightAtLine(getLine(doc, ensureFrom)) + display.wrapper.clientHeight);
+              to = _lineAtHeight(doc, _heightAtLine(getLine(doc, ensureFrom)) + display.wrapper.clientHeight);
             } else if (Math.min(ensureTo, doc.lastLine()) >= to) {
-              from = lineAtHeight(doc, heightAtLine(getLine(doc, ensureTo)) - display.wrapper.clientHeight);
+              from = _lineAtHeight(doc, _heightAtLine(getLine(doc, ensureTo)) - display.wrapper.clientHeight);
               to = ensureTo;
             }
           }
@@ -4886,8 +4926,10 @@
 
           for (var limit = 0; limit < 5; limit++) {
             var changed = false;
-            var coords = cursorCoords(cm, pos);
-            var endCoords = !end || end == pos ? coords : cursorCoords(cm, end);
+
+            var coords = _cursorCoords(cm, pos);
+
+            var endCoords = !end || end == pos ? coords : _cursorCoords(cm, end);
             rect = {
               left: Math.min(coords.left, endCoords.left),
               top: Math.min(coords.top, endCoords.top) - margin,
@@ -5113,7 +5155,7 @@
           };
         }
 
-        var NativeScrollbars = function (place, scroll, cm) {
+        var NativeScrollbars = function NativeScrollbars(place, scroll, cm) {
           this.cm = cm;
           var vert = this.vert = elt("div", [elt("div", null, null, "min-width: 1px")], "CodeMirror-vscrollbar");
           var horiz = this.horiz = elt("div", [elt("div", null, null, "height: 100%; min-height: 1px")], "CodeMirror-hscrollbar");
@@ -5229,7 +5271,7 @@
           parent.removeChild(this.vert);
         };
 
-        var NullScrollbars = function () {};
+        var NullScrollbars = function NullScrollbars() {};
 
         NullScrollbars.prototype.update = function () {
           return {
@@ -5327,7 +5369,7 @@
 
         var nextOpId = 0;
 
-        function startOperation(cm) {
+        function _startOperation(cm) {
           cm.curOp = {
             cm,
             viewChanged: false,
@@ -5350,7 +5392,7 @@
           pushOperation(cm.curOp);
         }
 
-        function endOperation(cm) {
+        function _endOperation(cm) {
           var op = cm.curOp;
 
           if (op) {
@@ -5492,7 +5534,7 @@
           }
 
           if (op.scrollToPos) {
-            var rect = scrollPosIntoView(cm, clipPos(doc, op.scrollToPos.from), clipPos(doc, op.scrollToPos.to), op.scrollToPos.margin);
+            var rect = scrollPosIntoView(cm, _clipPos(doc, op.scrollToPos.from), _clipPos(doc, op.scrollToPos.to), op.scrollToPos.margin);
             maybeScrollWindow(cm, rect);
           }
 
@@ -5533,12 +5575,12 @@
             return f();
           }
 
-          startOperation(cm);
+          _startOperation(cm);
 
           try {
             return f();
           } finally {
-            endOperation(cm);
+            _endOperation(cm);
           }
         }
 
@@ -5548,12 +5590,12 @@
               return f.apply(cm, arguments);
             }
 
-            startOperation(cm);
+            _startOperation(cm);
 
             try {
               return f.apply(cm, arguments);
             } finally {
-              endOperation(cm);
+              _endOperation(cm);
             }
           };
         }
@@ -5564,12 +5606,12 @@
               return f.apply(this, arguments);
             }
 
-            startOperation(this);
+            _startOperation(this);
 
             try {
               return f.apply(this, arguments);
             } finally {
-              endOperation(this);
+              _endOperation(this);
             }
           };
         }
@@ -5582,12 +5624,12 @@
               return f.apply(this, arguments);
             }
 
-            startOperation(cm);
+            _startOperation(cm);
 
             try {
               return f.apply(this, arguments);
             } finally {
-              endOperation(cm);
+              _endOperation(cm);
             }
           };
         }
@@ -5666,7 +5708,7 @@
           }
         }
 
-        var DisplayUpdate = function (cm, viewport, force) {
+        var DisplayUpdate = function DisplayUpdate(cm, viewport, force) {
           var display = cm.display;
           this.viewport = viewport;
           this.visible = visibleLines(display, cm.doc, viewport);
@@ -5787,7 +5829,7 @@
 
           var different = from != display.viewFrom || to != display.viewTo || display.lastWrapHeight != update.wrapperHeight || display.lastWrapWidth != update.wrapperWidth;
           adjustView(cm, from, to);
-          display.viewOffset = heightAtLine(getLine(cm.doc, display.viewFrom));
+          display.viewOffset = _heightAtLine(getLine(cm.doc, display.viewFrom));
           cm.display.mover.style.top = display.viewOffset + "px";
           var toUpdate = countDirtyView(cm);
 
@@ -6280,7 +6322,7 @@
           }
         }
 
-        var Selection = function (ranges, primIndex) {
+        var Selection = function Selection(ranges, primIndex) {
           this.ranges = ranges;
           this.primIndex = primIndex;
         };
@@ -6346,7 +6388,7 @@
           return -1;
         };
 
-        var Range = function (anchor, head) {
+        var Range = function Range(anchor, head) {
           this.anchor = anchor;
           this.head = head;
         };
@@ -6927,11 +6969,11 @@
         function filterSelectionChange(doc, sel, options) {
           var obj = {
             ranges: sel.ranges,
-            update: function (ranges) {
+            update: function update(ranges) {
               this.ranges = [];
 
               for (var i2 = 0; i2 < ranges.length; i2++) {
-                this.ranges[i2] = new Range(clipPos(doc, ranges[i2].anchor), clipPos(doc, ranges[i2].head));
+                this.ranges[i2] = new Range(_clipPos(doc, ranges[i2].anchor), _clipPos(doc, ranges[i2].head));
               }
             },
             origin: options && options.origin
@@ -7090,7 +7132,7 @@
         function movePos(doc, pos, dir, line) {
           if (dir < 0 && pos.ch == 0) {
             if (pos.line > doc.first) {
-              return clipPos(doc, Pos(pos.line - 1));
+              return _clipPos(doc, Pos(pos.line - 1));
             } else {
               return null;
             }
@@ -7116,7 +7158,7 @@
             to: change.to,
             text: change.text,
             origin: change.origin,
-            cancel: function () {
+            cancel: function cancel() {
               return obj.canceled = true;
             }
           };
@@ -7124,11 +7166,11 @@
           if (update) {
             obj.update = function (from, to, text, origin) {
               if (from) {
-                obj.from = clipPos(doc, from);
+                obj.from = _clipPos(doc, from);
               }
 
               if (to) {
-                obj.to = clipPos(doc, to);
+                obj.to = _clipPos(doc, to);
               }
 
               if (text) {
@@ -7276,7 +7318,7 @@
           hist.generation = event.generation || ++hist.maxGeneration;
           var filter = hasHandler(doc, "beforeChange") || doc.cm && hasHandler(doc.cm, "beforeChange");
 
-          var loop = function (i3) {
+          var loop = function loop(i3) {
             var change = event.changes[i3];
             change.origin = type;
 
@@ -7464,7 +7506,7 @@
           cm.display.selForContextMenu = null;
         }
 
-        function replaceRange(doc, code, from, to, origin) {
+        function _replaceRange(doc, code, from, to, origin) {
           var assign;
 
           if (!to) {
@@ -7577,10 +7619,10 @@
         }
 
         LeafChunk.prototype = {
-          chunkSize: function () {
+          chunkSize: function chunkSize() {
             return this.lines.length;
           },
-          removeInner: function (at, n) {
+          removeInner: function removeInner(at, n) {
             for (var i2 = at, e = at + n; i2 < e; ++i2) {
               var line = this.lines[i2];
               this.height -= line.height;
@@ -7590,10 +7632,10 @@
 
             this.lines.splice(at, n);
           },
-          collapse: function (lines) {
+          collapse: function collapse(lines) {
             lines.push.apply(lines, this.lines);
           },
-          insertInner: function (at, lines, height) {
+          insertInner: function insertInner(at, lines, height) {
             this.height += height;
             this.lines = this.lines.slice(0, at).concat(lines).concat(this.lines.slice(at));
 
@@ -7601,7 +7643,7 @@
               lines[i2].parent = this;
             }
           },
-          iterN: function (at, n, op) {
+          iterN: function iterN(at, n, op) {
             for (var e = at + n; at < e; ++at) {
               if (op(this.lines[at])) {
                 return true;
@@ -7628,10 +7670,10 @@
         }
 
         BranchChunk.prototype = {
-          chunkSize: function () {
+          chunkSize: function chunkSize() {
             return this.size;
           },
-          removeInner: function (at, n) {
+          removeInner: function removeInner(at, n) {
             this.size -= n;
 
             for (var i2 = 0; i2 < this.children.length; ++i2) {
@@ -7666,12 +7708,12 @@
               this.children[0].parent = this;
             }
           },
-          collapse: function (lines) {
+          collapse: function collapse(lines) {
             for (var i2 = 0; i2 < this.children.length; ++i2) {
               this.children[i2].collapse(lines);
             }
           },
-          insertInner: function (at, lines, height) {
+          insertInner: function insertInner(at, lines, height) {
             this.size += lines.length;
             this.height += height;
 
@@ -7702,7 +7744,7 @@
               at -= sz;
             }
           },
-          maybeSpill: function () {
+          maybeSpill: function maybeSpill() {
             if (this.children.length <= 10) {
               return;
             }
@@ -7730,7 +7772,7 @@
 
             me.parent.maybeSpill();
           },
-          iterN: function (at, n, op) {
+          iterN: function iterN(at, n, op) {
             for (var i2 = 0; i2 < this.children.length; ++i2) {
               var child = this.children[i2],
                   sz = child.chunkSize();
@@ -7754,7 +7796,7 @@
           }
         };
 
-        var LineWidget = function (doc, node, options) {
+        var LineWidget = function LineWidget(doc, node, options) {
           if (options) {
             for (var opt in options) {
               if (options.hasOwnProperty(opt)) {
@@ -7827,7 +7869,7 @@
         eventMixin(LineWidget);
 
         function adjustScrollWhenAboveVisible(cm, line, diff) {
-          if (heightAtLine(line) < (cm.curOp && cm.curOp.scrollTop || cm.doc.scrollTop)) {
+          if (_heightAtLine(line) < (cm.curOp && cm.curOp.scrollTop || cm.doc.scrollTop)) {
             addToScrollTop(cm, diff);
           }
         }
@@ -7852,7 +7894,7 @@
             widget.line = line;
 
             if (cm && !lineIsHidden(doc, line)) {
-              var aboveVisible = heightAtLine(line) < doc.scrollTop;
+              var aboveVisible = _heightAtLine(line) < doc.scrollTop;
               updateLineHeight(line, line.height + widgetHeight(widget));
 
               if (aboveVisible) {
@@ -7874,7 +7916,7 @@
 
         var nextMarkerId = 0;
 
-        var TextMarker = function (doc, type) {
+        var TextMarker = function TextMarker(doc, type) {
           this.lines = [];
           this.type = type;
           this.doc = doc;
@@ -7890,7 +7932,7 @@
               withOp = cm && !cm.curOp;
 
           if (withOp) {
-            startOperation(cm);
+            _startOperation(cm);
           }
 
           if (hasHandler(this, "clear")) {
@@ -7960,7 +8002,7 @@
           }
 
           if (withOp) {
-            endOperation(cm);
+            _endOperation(cm);
           }
 
           if (this.parent) {
@@ -8061,13 +8103,13 @@
 
         eventMixin(TextMarker);
 
-        function markText(doc, from, to, options, type) {
+        function _markText(doc, from, to, options, type) {
           if (options && options.shared) {
             return markTextShared(doc, from, to, options, type);
           }
 
           if (doc.cm && !doc.cm.curOp) {
-            return operation(doc.cm, markText)(doc, from, to, options, type);
+            return operation(doc.cm, _markText)(doc, from, to, options, type);
           }
 
           var marker = new TextMarker(doc, type),
@@ -8176,7 +8218,7 @@
           return marker;
         }
 
-        var SharedTextMarker = function (markers, primary) {
+        var SharedTextMarker = function SharedTextMarker(markers, primary) {
           this.markers = markers;
           this.primary = primary;
 
@@ -8208,7 +8250,7 @@
         function markTextShared(doc, from, to, options, type) {
           options = copyObj(options);
           options.shared = false;
-          var markers = [markText(doc, from, to, options, type)],
+          var markers = [_markText(doc, from, to, options, type)],
               primary = markers[0];
           var widget = options.widgetNode;
           linkedDocs(doc, function (doc2) {
@@ -8216,7 +8258,7 @@
               options.widgetNode = widget.cloneNode(true);
             }
 
-            markers.push(markText(doc2, clipPos(doc2, from), clipPos(doc2, to), options, type));
+            markers.push(_markText(doc2, _clipPos(doc2, from), _clipPos(doc2, to), options, type));
 
             for (var i2 = 0; i2 < doc2.linked.length; ++i2) {
               if (doc2.linked[i2].isParent) {
@@ -8243,7 +8285,8 @@
                 mTo = doc.clipPos(pos.to);
 
             if (cmp(mFrom, mTo)) {
-              var subMark = markText(doc, mFrom, mTo, marker.primary, marker.primary.type);
+              var subMark = _markText(doc, mFrom, mTo, marker.primary, marker.primary.type);
+
               marker.markers.push(subMark);
               subMark.parent = marker;
             }
@@ -8251,7 +8294,7 @@
         }
 
         function detachSharedMarkers(markers) {
-          var loop = function (i3) {
+          var loop = function loop(i3) {
             var marker = markers[i3],
                 linked = [marker.primary.doc];
             linkedDocs(marker.primary.doc, function (d) {
@@ -8268,12 +8311,14 @@
             }
           };
 
-          for (var i2 = 0; i2 < markers.length; i2++) loop(i2);
+          for (var i2 = 0; i2 < markers.length; i2++) {
+            loop(i2);
+          }
         }
 
         var nextDocId = 0;
 
-        var Doc = function (text, mode, firstLine, lineSep, direction) {
+        var Doc = function Doc(text, mode, firstLine, lineSep, direction) {
           if (!(this instanceof Doc)) {
             return new Doc(text, mode, firstLine, lineSep, direction);
           }
@@ -8311,14 +8356,14 @@
 
         Doc.prototype = createObj(BranchChunk.prototype, {
           constructor: Doc,
-          iter: function (from, to, op) {
+          iter: function iter(from, to, op) {
             if (op) {
               this.iterN(from - this.first, to - from, op);
             } else {
               this.iterN(this.first, this.first + this.size, from);
             }
           },
-          insert: function (at, lines) {
+          insert: function insert(at, lines) {
             var height = 0;
 
             for (var i2 = 0; i2 < lines.length; ++i2) {
@@ -8327,10 +8372,10 @@
 
             this.insertInner(at - this.first, lines, height);
           },
-          remove: function (at, n) {
+          remove: function remove(at, n) {
             this.removeInner(at - this.first, n);
           },
-          getValue: function (lineSep) {
+          getValue: function getValue(lineSep) {
             var lines = getLines(this, this.first, this.first + this.size);
 
             if (lineSep === false) {
@@ -8356,13 +8401,14 @@
 
             setSelection(this, simpleSelection(top), sel_dontScroll);
           }),
-          replaceRange: function (code, from, to, origin) {
-            from = clipPos(this, from);
-            to = to ? clipPos(this, to) : from;
-            replaceRange(this, code, from, to, origin);
+          replaceRange: function replaceRange(code, from, to, origin) {
+            from = _clipPos(this, from);
+            to = to ? _clipPos(this, to) : from;
+
+            _replaceRange(this, code, from, to, origin);
           },
-          getRange: function (from, to, lineSep) {
-            var lines = getBetween(this, clipPos(this, from), clipPos(this, to));
+          getRange: function getRange(from, to, lineSep) {
+            var lines = getBetween(this, _clipPos(this, from), _clipPos(this, to));
 
             if (lineSep === false) {
               return lines;
@@ -8374,38 +8420,38 @@
 
             return lines.join(lineSep || this.lineSeparator());
           },
-          getLine: function (line) {
+          getLine: function getLine(line) {
             var l = this.getLineHandle(line);
             return l && l.text;
           },
-          getLineHandle: function (line) {
+          getLineHandle: function getLineHandle(line) {
             if (isLine(this, line)) {
               return getLine(this, line);
             }
           },
-          getLineNumber: function (line) {
+          getLineNumber: function getLineNumber(line) {
             return lineNo(line);
           },
-          getLineHandleVisualStart: function (line) {
+          getLineHandleVisualStart: function getLineHandleVisualStart(line) {
             if (typeof line == "number") {
               line = getLine(this, line);
             }
 
             return visualLine(line);
           },
-          lineCount: function () {
+          lineCount: function lineCount() {
             return this.size;
           },
-          firstLine: function () {
+          firstLine: function firstLine() {
             return this.first;
           },
-          lastLine: function () {
+          lastLine: function lastLine() {
             return this.first + this.size - 1;
           },
-          clipPos: function (pos) {
-            return clipPos(this, pos);
+          clipPos: function clipPos(pos) {
+            return _clipPos(this, pos);
           },
-          getCursor: function (start) {
+          getCursor: function getCursor(start) {
             var range2 = this.sel.primary(),
                 pos;
 
@@ -8421,20 +8467,20 @@
 
             return pos;
           },
-          listSelections: function () {
+          listSelections: function listSelections() {
             return this.sel.ranges;
           },
-          somethingSelected: function () {
+          somethingSelected: function somethingSelected() {
             return this.sel.somethingSelected();
           },
           setCursor: docMethodOp(function (line, ch, options) {
-            setSimpleSelection(this, clipPos(this, typeof line == "number" ? Pos(line, ch || 0) : line), null, options);
+            setSimpleSelection(this, _clipPos(this, typeof line == "number" ? Pos(line, ch || 0) : line), null, options);
           }),
           setSelection: docMethodOp(function (anchor, head, options) {
-            setSimpleSelection(this, clipPos(this, anchor), clipPos(this, head || anchor), options);
+            setSimpleSelection(this, _clipPos(this, anchor), _clipPos(this, head || anchor), options);
           }),
           extendSelection: docMethodOp(function (head, other, options) {
-            extendSelection(this, clipPos(this, head), other && clipPos(this, other), options);
+            extendSelection(this, _clipPos(this, head), other && _clipPos(this, other), options);
           }),
           extendSelections: docMethodOp(function (heads, options) {
             extendSelections(this, clipPosArray(this, heads), options);
@@ -8451,7 +8497,7 @@
             var out = [];
 
             for (var i2 = 0; i2 < ranges.length; i2++) {
-              out[i2] = new Range(clipPos(this, ranges[i2].anchor), clipPos(this, ranges[i2].head || ranges[i2].anchor));
+              out[i2] = new Range(_clipPos(this, ranges[i2].anchor), _clipPos(this, ranges[i2].head || ranges[i2].anchor));
             }
 
             if (primary == null) {
@@ -8462,10 +8508,10 @@
           }),
           addSelection: docMethodOp(function (anchor, head, options) {
             var ranges = this.sel.ranges.slice(0);
-            ranges.push(new Range(clipPos(this, anchor), clipPos(this, head || anchor)));
+            ranges.push(new Range(_clipPos(this, anchor), _clipPos(this, head || anchor)));
             setSelection(this, normalizeSelection(this.cm, ranges, ranges.length - 1), options);
           }),
-          getSelection: function (lineSep) {
+          getSelection: function getSelection(lineSep) {
             var ranges = this.sel.ranges,
                 lines;
 
@@ -8480,7 +8526,7 @@
               return lines.join(lineSep || this.lineSeparator());
             }
           },
-          getSelections: function (lineSep) {
+          getSelections: function getSelections(lineSep) {
             var parts = [],
                 ranges = this.sel.ranges;
 
@@ -8496,7 +8542,7 @@
 
             return parts;
           },
-          replaceSelection: function (code, collapse, origin) {
+          replaceSelection: function replaceSelection(code, collapse, origin) {
             var dup = [];
 
             for (var i2 = 0; i2 < this.sel.ranges.length; i2++) {
@@ -8543,13 +8589,13 @@
           redoSelection: docMethodOp(function () {
             makeChangeFromHistory(this, "redo", true);
           }),
-          setExtending: function (val) {
+          setExtending: function setExtending(val) {
             this.extend = val;
           },
-          getExtending: function () {
+          getExtending: function getExtending() {
             return this.extend;
           },
-          historySize: function () {
+          historySize: function historySize() {
             var hist = this.history,
                 done = 0,
                 undone = 0;
@@ -8571,33 +8617,33 @@
               redo: undone
             };
           },
-          clearHistory: function () {
+          clearHistory: function clearHistory() {
             var this$1 = this;
             this.history = new History(this.history);
             linkedDocs(this, function (doc) {
               return doc.history = this$1.history;
             }, true);
           },
-          markClean: function () {
+          markClean: function markClean() {
             this.cleanGeneration = this.changeGeneration(true);
           },
-          changeGeneration: function (forceSplit) {
+          changeGeneration: function changeGeneration(forceSplit) {
             if (forceSplit) {
               this.history.lastOp = this.history.lastSelOp = this.history.lastOrigin = null;
             }
 
             return this.history.generation;
           },
-          isClean: function (gen) {
+          isClean: function isClean(gen) {
             return this.history.generation == (gen || this.cleanGeneration);
           },
-          getHistory: function () {
+          getHistory: function getHistory() {
             return {
               done: copyHistoryArray(this.history.done),
               undone: copyHistoryArray(this.history.undone)
             };
           },
-          setHistory: function (histData) {
+          setHistory: function setHistory(histData) {
             var hist = this.history = new History(this.history);
             hist.done = copyHistoryArray(histData.done.slice(0), null, true);
             hist.undone = copyHistoryArray(histData.undone.slice(0), null, true);
@@ -8630,7 +8676,7 @@
               }
             });
           }),
-          lineInfo: function (line) {
+          lineInfo: function lineInfo(line) {
             var n;
 
             if (typeof line == "number") {
@@ -8704,13 +8750,13 @@
           addLineWidget: docMethodOp(function (handle, node, options) {
             return addLineWidget(this, handle, node, options);
           }),
-          removeLineWidget: function (widget) {
+          removeLineWidget: function removeLineWidget(widget) {
             widget.clear();
           },
-          markText: function (from, to, options) {
-            return markText(this, clipPos(this, from), clipPos(this, to), options, options && options.type || "range");
+          markText: function markText(from, to, options) {
+            return _markText(this, _clipPos(this, from), _clipPos(this, to), options, options && options.type || "range");
           },
-          setBookmark: function (pos, options) {
+          setBookmark: function setBookmark(pos, options) {
             var realOpts = {
               replacedWith: options && (options.nodeType == null ? options.widget : options),
               insertLeft: options && options.insertLeft,
@@ -8718,11 +8764,11 @@
               shared: options && options.shared,
               handleMouseEvents: options && options.handleMouseEvents
             };
-            pos = clipPos(this, pos);
-            return markText(this, pos, pos, realOpts, "bookmark");
+            pos = _clipPos(this, pos);
+            return _markText(this, pos, pos, realOpts, "bookmark");
           },
-          findMarksAt: function (pos) {
-            pos = clipPos(this, pos);
+          findMarksAt: function findMarksAt(pos) {
+            pos = _clipPos(this, pos);
             var markers = [],
                 spans = getLine(this, pos.line).markedSpans;
 
@@ -8738,9 +8784,9 @@
 
             return markers;
           },
-          findMarks: function (from, to, filter) {
-            from = clipPos(this, from);
-            to = clipPos(this, to);
+          findMarks: function findMarks(from, to, filter) {
+            from = _clipPos(this, from);
+            to = _clipPos(this, to);
             var found = [],
                 lineNo2 = from.line;
             this.iter(from.line, to.line + 1, function (line) {
@@ -8760,7 +8806,7 @@
             });
             return found;
           },
-          getAllMarks: function () {
+          getAllMarks: function getAllMarks() {
             var markers = [];
             this.iter(function (line) {
               var sps = line.markedSpans;
@@ -8775,7 +8821,7 @@
             });
             return markers;
           },
-          posFromIndex: function (off2) {
+          posFromIndex: function posFromIndex(off2) {
             var ch,
                 lineNo2 = this.first,
                 sepSize = this.lineSeparator().length;
@@ -8790,10 +8836,10 @@
               off2 -= sz;
               ++lineNo2;
             });
-            return clipPos(this, Pos(lineNo2, ch));
+            return _clipPos(this, Pos(lineNo2, ch));
           },
-          indexFromPos: function (coords) {
-            coords = clipPos(this, coords);
+          indexFromPos: function indexFromPos(coords) {
+            coords = _clipPos(this, coords);
             var index = coords.ch;
 
             if (coords.line < this.first || coords.ch < 0) {
@@ -8806,7 +8852,7 @@
             });
             return index;
           },
-          copy: function (copyHistory) {
+          copy: function copy(copyHistory) {
             var doc = new Doc(getLines(this, this.first, this.first + this.size), this.modeOption, this.first, this.lineSep, this.direction);
             doc.scrollTop = this.scrollTop;
             doc.scrollLeft = this.scrollLeft;
@@ -8820,7 +8866,7 @@
 
             return doc;
           },
-          linkedDoc: function (options) {
+          linkedDoc: function linkedDoc(options) {
             if (!options) {
               options = {};
             }
@@ -8854,7 +8900,7 @@
             copySharedMarkers(copy, findSharedMarkers(this));
             return copy;
           },
-          unlinkDoc: function (other) {
+          unlinkDoc: function unlinkDoc(other) {
             if (other instanceof CodeMirror3) {
               other = other.doc;
             }
@@ -8884,23 +8930,23 @@
               other.history.undone = copyHistoryArray(this.history.undone, splitIds);
             }
           },
-          iterLinkedDocs: function (f) {
+          iterLinkedDocs: function iterLinkedDocs(f) {
             linkedDocs(this, f);
           },
-          getMode: function () {
+          getMode: function getMode() {
             return this.mode;
           },
-          getEditor: function () {
+          getEditor: function getEditor() {
             return this.cm;
           },
-          splitLines: function (str) {
+          splitLines: function splitLines(str) {
             if (this.lineSep) {
               return str.split(this.lineSep);
             }
 
             return splitLinesAuto(str);
           },
-          lineSeparator: function () {
+          lineSeparator: function lineSeparator() {
             return this.lineSep || "\n";
           },
           setDirection: docMethodOp(function (dir) {
@@ -8951,10 +8997,10 @@
                 text = Array(n),
                 read = 0;
 
-            var markAsReadAndPasteIfAllFilesAreRead = function () {
+            var markAsReadAndPasteIfAllFilesAreRead = function markAsReadAndPasteIfAllFilesAreRead() {
               if (++read == n) {
                 operation(cm, function () {
-                  pos = clipPos(cm.doc, pos);
+                  pos = _clipPos(cm.doc, pos);
                   var change = {
                     from: pos,
                     to: pos,
@@ -8964,12 +9010,12 @@
                     origin: "paste"
                   };
                   makeChange(cm.doc, change);
-                  setSelectionReplaceHistory(cm.doc, simpleSelection(clipPos(cm.doc, pos), clipPos(cm.doc, changeEnd(change))));
+                  setSelectionReplaceHistory(cm.doc, simpleSelection(_clipPos(cm.doc, pos), _clipPos(cm.doc, changeEnd(change))));
                 })();
               }
             };
 
-            var readTextFromFile = function (file, i3) {
+            var readTextFromFile = function readTextFromFile(file, i3) {
               if (cm.options.allowDropFileTypes && indexOf(cm.options.allowDropFileTypes, file.type) == -1) {
                 markAsReadAndPasteIfAllFilesAreRead();
                 return;
@@ -9022,7 +9068,7 @@
 
                 if (selected) {
                   for (var i$12 = 0; i$12 < selected.length; ++i$12) {
-                    replaceRange(cm.doc, "", selected[i$12].anchor, selected[i$12].head, "drag");
+                    _replaceRange(cm.doc, "", selected[i$12].anchor, selected[i$12].head, "drag");
                   }
                 }
 
@@ -9508,7 +9554,7 @@
 
           runInOp(cm, function () {
             for (var i3 = kill.length - 1; i3 >= 0; i3--) {
-              replaceRange(cm.doc, "", kill[i3].from, kill[i3].to, "+delete");
+              _replaceRange(cm.doc, "", kill[i3].from, kill[i3].to, "+delete");
             }
 
             ensureCursorVisible(cm);
@@ -9583,13 +9629,13 @@
             return moveLogically(line, start, dir);
           }
 
-          var mv = function (pos, dir2) {
+          var mv = function mv(pos, dir2) {
             return moveCharLogically(line, pos instanceof Pos ? pos.ch : pos, dir2);
           };
 
           var prep;
 
-          var getWrappedLineExtent = function (ch2) {
+          var getWrappedLineExtent = function getWrappedLineExtent(ch2) {
             if (!cm.options.lineWrapping) {
               return {
                 begin: 0,
@@ -9613,8 +9659,8 @@
             }
           }
 
-          var searchInVisualLine = function (partPos2, dir2, wrappedLineExtent3) {
-            var getRes = function (ch3, moveInStorageOrder3) {
+          var searchInVisualLine = function searchInVisualLine(partPos2, dir2, wrappedLineExtent3) {
+            var getRes = function getRes(ch3, moveInStorageOrder3) {
               return moveInStorageOrder3 ? new Pos(start.line, mv(ch3, 1), "before") : new Pos(start.line, ch3, "after");
             };
 
@@ -9656,10 +9702,10 @@
 
         var commands = {
           selectAll,
-          singleSelection: function (cm) {
+          singleSelection: function singleSelection(cm) {
             return cm.setSelection(cm.getCursor("anchor"), cm.getCursor("head"), sel_dontScroll);
           },
-          killLine: function (cm) {
+          killLine: function killLine(cm) {
             return deleteNearSelection(cm, function (range2) {
               if (range2.empty()) {
                 var len = getLine(cm.doc, range2.head.line).text.length;
@@ -9683,15 +9729,15 @@
               }
             });
           },
-          deleteLine: function (cm) {
+          deleteLine: function deleteLine(cm) {
             return deleteNearSelection(cm, function (range2) {
               return {
                 from: Pos(range2.from().line, 0),
-                to: clipPos(cm.doc, Pos(range2.to().line + 1, 0))
+                to: _clipPos(cm.doc, Pos(range2.to().line + 1, 0))
               };
             });
           },
-          delLineLeft: function (cm) {
+          delLineLeft: function delLineLeft(cm) {
             return deleteNearSelection(cm, function (range2) {
               return {
                 from: Pos(range2.from().line, 0),
@@ -9699,7 +9745,7 @@
               };
             });
           },
-          delWrappedLineLeft: function (cm) {
+          delWrappedLineLeft: function delWrappedLineLeft(cm) {
             return deleteNearSelection(cm, function (range2) {
               var top = cm.charCoords(range2.head, "div").top + 5;
               var leftPos = cm.coordsChar({
@@ -9712,7 +9758,7 @@
               };
             });
           },
-          delWrappedLineRight: function (cm) {
+          delWrappedLineRight: function delWrappedLineRight(cm) {
             return deleteNearSelection(cm, function (range2) {
               var top = cm.charCoords(range2.head, "div").top + 5;
               var rightPos = cm.coordsChar({
@@ -9725,25 +9771,25 @@
               };
             });
           },
-          undo: function (cm) {
+          undo: function undo(cm) {
             return cm.undo();
           },
-          redo: function (cm) {
+          redo: function redo(cm) {
             return cm.redo();
           },
-          undoSelection: function (cm) {
+          undoSelection: function undoSelection(cm) {
             return cm.undoSelection();
           },
-          redoSelection: function (cm) {
+          redoSelection: function redoSelection(cm) {
             return cm.redoSelection();
           },
-          goDocStart: function (cm) {
+          goDocStart: function goDocStart(cm) {
             return cm.extendSelection(Pos(cm.firstLine(), 0));
           },
-          goDocEnd: function (cm) {
+          goDocEnd: function goDocEnd(cm) {
             return cm.extendSelection(Pos(cm.lastLine()));
           },
-          goLineStart: function (cm) {
+          goLineStart: function goLineStart(cm) {
             return cm.extendSelectionsBy(function (range2) {
               return lineStart(cm, range2.head.line);
             }, {
@@ -9751,7 +9797,7 @@
               bias: 1
             });
           },
-          goLineStartSmart: function (cm) {
+          goLineStartSmart: function goLineStartSmart(cm) {
             return cm.extendSelectionsBy(function (range2) {
               return lineStartSmart(cm, range2.head);
             }, {
@@ -9759,7 +9805,7 @@
               bias: 1
             });
           },
-          goLineEnd: function (cm) {
+          goLineEnd: function goLineEnd(cm) {
             return cm.extendSelectionsBy(function (range2) {
               return lineEnd(cm, range2.head.line);
             }, {
@@ -9767,7 +9813,7 @@
               bias: -1
             });
           },
-          goLineRight: function (cm) {
+          goLineRight: function goLineRight(cm) {
             return cm.extendSelectionsBy(function (range2) {
               var top = cm.cursorCoords(range2.head, "div").top + 5;
               return cm.coordsChar({
@@ -9776,7 +9822,7 @@
               }, "div");
             }, sel_move);
           },
-          goLineLeft: function (cm) {
+          goLineLeft: function goLineLeft(cm) {
             return cm.extendSelectionsBy(function (range2) {
               var top = cm.cursorCoords(range2.head, "div").top + 5;
               return cm.coordsChar({
@@ -9785,7 +9831,7 @@
               }, "div");
             }, sel_move);
           },
-          goLineLeftSmart: function (cm) {
+          goLineLeftSmart: function goLineLeftSmart(cm) {
             return cm.extendSelectionsBy(function (range2) {
               var top = cm.cursorCoords(range2.head, "div").top + 5;
               var pos = cm.coordsChar({
@@ -9800,73 +9846,73 @@
               return pos;
             }, sel_move);
           },
-          goLineUp: function (cm) {
+          goLineUp: function goLineUp(cm) {
             return cm.moveV(-1, "line");
           },
-          goLineDown: function (cm) {
+          goLineDown: function goLineDown(cm) {
             return cm.moveV(1, "line");
           },
-          goPageUp: function (cm) {
+          goPageUp: function goPageUp(cm) {
             return cm.moveV(-1, "page");
           },
-          goPageDown: function (cm) {
+          goPageDown: function goPageDown(cm) {
             return cm.moveV(1, "page");
           },
-          goCharLeft: function (cm) {
+          goCharLeft: function goCharLeft(cm) {
             return cm.moveH(-1, "char");
           },
-          goCharRight: function (cm) {
+          goCharRight: function goCharRight(cm) {
             return cm.moveH(1, "char");
           },
-          goColumnLeft: function (cm) {
+          goColumnLeft: function goColumnLeft(cm) {
             return cm.moveH(-1, "column");
           },
-          goColumnRight: function (cm) {
+          goColumnRight: function goColumnRight(cm) {
             return cm.moveH(1, "column");
           },
-          goWordLeft: function (cm) {
+          goWordLeft: function goWordLeft(cm) {
             return cm.moveH(-1, "word");
           },
-          goGroupRight: function (cm) {
+          goGroupRight: function goGroupRight(cm) {
             return cm.moveH(1, "group");
           },
-          goGroupLeft: function (cm) {
+          goGroupLeft: function goGroupLeft(cm) {
             return cm.moveH(-1, "group");
           },
-          goWordRight: function (cm) {
+          goWordRight: function goWordRight(cm) {
             return cm.moveH(1, "word");
           },
-          delCharBefore: function (cm) {
+          delCharBefore: function delCharBefore(cm) {
             return cm.deleteH(-1, "codepoint");
           },
-          delCharAfter: function (cm) {
+          delCharAfter: function delCharAfter(cm) {
             return cm.deleteH(1, "char");
           },
-          delWordBefore: function (cm) {
+          delWordBefore: function delWordBefore(cm) {
             return cm.deleteH(-1, "word");
           },
-          delWordAfter: function (cm) {
+          delWordAfter: function delWordAfter(cm) {
             return cm.deleteH(1, "word");
           },
-          delGroupBefore: function (cm) {
+          delGroupBefore: function delGroupBefore(cm) {
             return cm.deleteH(-1, "group");
           },
-          delGroupAfter: function (cm) {
+          delGroupAfter: function delGroupAfter(cm) {
             return cm.deleteH(1, "group");
           },
-          indentAuto: function (cm) {
+          indentAuto: function indentAuto(cm) {
             return cm.indentSelection("smart");
           },
-          indentMore: function (cm) {
+          indentMore: function indentMore(cm) {
             return cm.indentSelection("add");
           },
-          indentLess: function (cm) {
+          indentLess: function indentLess(cm) {
             return cm.indentSelection("subtract");
           },
-          insertTab: function (cm) {
+          insertTab: function insertTab(cm) {
             return cm.replaceSelection("	");
           },
-          insertSoftTab: function (cm) {
+          insertSoftTab: function insertSoftTab(cm) {
             var spaces = [],
                 ranges = cm.listSelections(),
                 tabSize = cm.options.tabSize;
@@ -9879,14 +9925,14 @@
 
             cm.replaceSelections(spaces);
           },
-          defaultTab: function (cm) {
+          defaultTab: function defaultTab(cm) {
             if (cm.somethingSelected()) {
               cm.indentSelection("add");
             } else {
               cm.execCommand("insertTab");
             }
           },
-          transposeChars: function (cm) {
+          transposeChars: function transposeChars(cm) {
             return runInOp(cm, function () {
               var ranges = cm.listSelections(),
                   newSel = [];
@@ -9923,7 +9969,7 @@
               cm.setSelections(newSel);
             });
           },
-          newlineAndIndent: function (cm) {
+          newlineAndIndent: function newlineAndIndent(cm) {
             return runInOp(cm, function () {
               var sels = cm.listSelections();
 
@@ -9940,10 +9986,10 @@
               ensureCursorVisible(cm);
             });
           },
-          openLine: function (cm) {
+          openLine: function openLine(cm) {
             return cm.replaceSelection("\n", "start");
           },
-          toggleOverwrite: function (cm) {
+          toggleOverwrite: function toggleOverwrite(cm) {
             return cm.toggleOverwrite();
           }
         };
@@ -10206,7 +10252,7 @@
 
         var DOUBLECLICK_DELAY = 400;
 
-        var PastClick = function (time, pos, button) {
+        var PastClick = function PastClick(time, pos, button) {
           this.time = time;
           this.pos = pos;
           this.button = button;
@@ -10417,11 +10463,11 @@
             }
           });
 
-          var mouseMove = function (e2) {
+          var mouseMove = function mouseMove(e2) {
             moved = moved || Math.abs(event.clientX - e2.clientX) + Math.abs(event.clientY - e2.clientY) >= 10;
           };
 
-          var dragStart = function () {
+          var dragStart = function dragStart() {
             return moved = true;
           };
 
@@ -10455,7 +10501,7 @@
           }
 
           if (unit == "line") {
-            return new Range(Pos(pos.line, 0), clipPos(cm.doc, Pos(pos.line + 1, 0)));
+            return new Range(Pos(pos.line, 0), _clipPos(cm.doc, Pos(pos.line + 1, 0)));
           }
 
           var result = unit(cm, pos);
@@ -10577,7 +10623,7 @@
               }
 
               var ranges$1 = startSel.ranges.slice(0);
-              ranges$1[ourIndex] = bidiSimplify(cm, new Range(clipPos(doc, anchor), head));
+              ranges$1[ourIndex] = bidiSimplify(cm, new Range(_clipPos(doc, anchor), head));
               setSelection(doc, normalizeSelection(cm, ranges$1, ourIndex), sel_mouse);
             }
           }
@@ -10734,7 +10780,8 @@
             var g = display.gutters.childNodes[i2];
 
             if (g && g.getBoundingClientRect().right >= mX) {
-              var line = lineAtHeight(cm.doc, mY);
+              var line = _lineAtHeight(cm.doc, mY);
+
               var gutter = cm.display.gutterSpecs[i2];
               signal(cm, type, cm, line, gutter.className, e);
               return e_defaultPrevented(e);
@@ -10774,7 +10821,7 @@
         }
 
         var Init = {
-          toString: function () {
+          toString: function toString() {
             return "CodeMirror.Init";
           }
         };
@@ -10838,7 +10885,7 @@
             });
 
             for (var i2 = newBreaks.length - 1; i2 >= 0; i2--) {
-              replaceRange(cm.doc, val, newBreaks[i2], Pos(newBreaks[i2].line, newBreaks[i2].ch + val.length));
+              _replaceRange(cm.doc, val, newBreaks[i2], Pos(newBreaks[i2].line, newBreaks[i2].ch + val.length));
             }
           });
           option("specialChars", /[\u0000-\u001f\u007f-\u009f\u00ad\u061c\u200b\u200e\u200f\u2028\u2029\ufeff\ufff9-\ufffc]/g, function (cm, val, old) {
@@ -11055,7 +11102,9 @@
 
           registerEventHandlers(this);
           ensureGlobalHandlers();
-          startOperation(this);
+
+          _startOperation(this);
+
           this.curOp.forceUpdate = true;
           attachDoc(this, doc);
 
@@ -11085,7 +11134,7 @@
             initHooks[i2](this);
           }
 
-          endOperation(this);
+          _endOperation(this);
 
           if (webkit && options.lineWrapping && getComputedStyle(display.lineDiv).textRendering == "optimizelegibility") {
             display.lineDiv.style.textRendering = "auto";
@@ -11197,7 +11246,7 @@
               } else if (!touch.prev.prev || farAway(touch, touch.prev.prev)) {
                 range2 = cm.findWordAt(pos);
               } else {
-                range2 = new Range(Pos(pos.line, 0), clipPos(cm.doc, Pos(pos.line + 1, 0)));
+                range2 = new Range(Pos(pos.line, 0), _clipPos(cm.doc, Pos(pos.line + 1, 0)));
               }
 
               cm.setSelection(range2.anchor, range2.head);
@@ -11225,22 +11274,22 @@
             return d.wrapper.scrollTop = d.wrapper.scrollLeft = 0;
           });
           d.dragFunctions = {
-            enter: function (e) {
+            enter: function enter(e) {
               if (!signalDOMEvent(cm, e)) {
                 e_stop(e);
               }
             },
-            over: function (e) {
+            over: function over(e) {
               if (!signalDOMEvent(cm, e)) {
                 onDragOver(cm, e);
                 e_stop(e);
               }
             },
-            start: function (e) {
+            start: function start(e) {
               return onDragStart(cm, e);
             },
             drop: operation(cm, onDrop),
-            leave: function (e) {
+            leave: function leave(e) {
               if (!signalDOMEvent(cm, e)) {
                 clearDragCursor(cm);
               }
@@ -11338,7 +11387,8 @@
           }
 
           if (indentString != curSpaceString) {
-            replaceRange(doc, indentString, Pos(n, 0), Pos(n, curSpaceString.length), "+input");
+            _replaceRange(doc, indentString, Pos(n, 0), Pos(n, curSpaceString.length), "+input");
+
             line.stateAfter = null;
             return true;
           } else {
@@ -11531,11 +11581,11 @@
           var helpers = CodeMirror4.helpers = {};
           CodeMirror4.prototype = {
             constructor: CodeMirror4,
-            focus: function () {
+            focus: function focus() {
               window.focus();
               this.display.input.focus();
             },
-            setOption: function (option, value) {
+            setOption: function setOption(option, value) {
               var options = this.options,
                   old = options[option];
 
@@ -11551,16 +11601,16 @@
 
               signal(this, "optionChange", this, option);
             },
-            getOption: function (option) {
+            getOption: function getOption(option) {
               return this.options[option];
             },
-            getDoc: function () {
+            getDoc: function getDoc() {
               return this.doc;
             },
-            addKeyMap: function (map2, bottom) {
+            addKeyMap: function addKeyMap(map2, bottom) {
               this.state.keyMaps[bottom ? "push" : "unshift"](getKeyMap(map2));
             },
-            removeKeyMap: function (map2) {
+            removeKeyMap: function removeKeyMap(map2) {
               var maps = this.state.keyMaps;
 
               for (var i2 = 0; i2 < maps.length; ++i2) {
@@ -11647,14 +11697,14 @@
                 }
               }
             }),
-            getTokenAt: function (pos, precise) {
+            getTokenAt: function getTokenAt(pos, precise) {
               return takeToken(this, pos, precise);
             },
-            getLineTokens: function (line, precise) {
+            getLineTokens: function getLineTokens(line, precise) {
               return takeToken(this, Pos(line), precise, true);
             },
-            getTokenTypeAt: function (pos) {
-              pos = clipPos(this.doc, pos);
+            getTokenTypeAt: function getTokenTypeAt(pos) {
+              pos = _clipPos(this.doc, pos);
               var styles = getLineStyles(this, getLine(this.doc, pos.line));
               var before = 0,
                   after = (styles.length - 1) / 2,
@@ -11681,7 +11731,7 @@
               var cut = type ? type.indexOf("overlay ") : -1;
               return cut < 0 ? type : cut == 0 ? null : type.slice(0, cut - 1);
             },
-            getModeAt: function (pos) {
+            getModeAt: function getModeAt(pos) {
               var mode = this.doc.mode;
 
               if (!mode.innerMode) {
@@ -11690,10 +11740,10 @@
 
               return CodeMirror4.innerMode(mode, this.getTokenAt(pos).state).mode;
             },
-            getHelper: function (pos, type) {
+            getHelper: function getHelper(pos, type) {
               return this.getHelpers(pos, type)[0];
             },
-            getHelpers: function (pos, type) {
+            getHelpers: function getHelpers(pos, type) {
               var found = [];
 
               if (!helpers.hasOwnProperty(type)) {
@@ -11731,40 +11781,40 @@
 
               return found;
             },
-            getStateAfter: function (line, precise) {
+            getStateAfter: function getStateAfter(line, precise) {
               var doc = this.doc;
               line = clipLine(doc, line == null ? doc.first + doc.size - 1 : line);
               return getContextBefore(this, line + 1, precise).state;
             },
-            cursorCoords: function (start, mode) {
+            cursorCoords: function cursorCoords(start, mode) {
               var pos,
                   range2 = this.doc.sel.primary();
 
               if (start == null) {
                 pos = range2.head;
               } else if (typeof start == "object") {
-                pos = clipPos(this.doc, start);
+                pos = _clipPos(this.doc, start);
               } else {
                 pos = start ? range2.from() : range2.to();
               }
 
-              return cursorCoords(this, pos, mode || "page");
+              return _cursorCoords(this, pos, mode || "page");
             },
-            charCoords: function (pos, mode) {
-              return charCoords(this, clipPos(this.doc, pos), mode || "page");
+            charCoords: function charCoords(pos, mode) {
+              return _charCoords(this, _clipPos(this.doc, pos), mode || "page");
             },
-            coordsChar: function (coords, mode) {
+            coordsChar: function coordsChar(coords, mode) {
               coords = fromCoordSystem(this, coords, mode || "page");
-              return coordsChar(this, coords.left, coords.top);
+              return _coordsChar(this, coords.left, coords.top);
             },
-            lineAtHeight: function (height, mode) {
+            lineAtHeight: function lineAtHeight(height, mode) {
               height = fromCoordSystem(this, {
                 top: height,
                 left: 0
               }, mode || "page").top;
-              return lineAtHeight(this.doc, height + this.display.viewOffset);
+              return _lineAtHeight(this.doc, height + this.display.viewOffset);
             },
-            heightAtLine: function (line, mode, includeWidgets) {
+            heightAtLine: function heightAtLine(line, mode, includeWidgets) {
               var end = false,
                   lineObj;
 
@@ -11786,23 +11836,23 @@
               return intoCoordSystem(this, lineObj, {
                 top: 0,
                 left: 0
-              }, mode || "page", includeWidgets || end).top + (end ? this.doc.height - heightAtLine(lineObj) : 0);
+              }, mode || "page", includeWidgets || end).top + (end ? this.doc.height - _heightAtLine(lineObj) : 0);
             },
-            defaultTextHeight: function () {
+            defaultTextHeight: function defaultTextHeight() {
               return textHeight(this.display);
             },
-            defaultCharWidth: function () {
+            defaultCharWidth: function defaultCharWidth() {
               return charWidth(this.display);
             },
-            getViewport: function () {
+            getViewport: function getViewport() {
               return {
                 from: this.display.viewFrom,
                 to: this.display.viewTo
               };
             },
-            addWidget: function (pos, node, scroll, vert, horiz) {
+            addWidget: function addWidget(pos, node, scroll, vert, horiz) {
               var display = this.display;
-              pos = cursorCoords(this, clipPos(this.doc, pos));
+              pos = _cursorCoords(this, _clipPos(this.doc, pos));
               var top = pos.bottom,
                   left = pos.left;
               node.style.position = "absolute";
@@ -11856,7 +11906,7 @@
             triggerOnKeyPress: methodOp(onKeyPress),
             triggerOnKeyUp: onKeyUp,
             triggerOnMouseDown: methodOp(onMouseDown),
-            execCommand: function (cmd) {
+            execCommand: function execCommand(cmd) {
               if (commands.hasOwnProperty(cmd)) {
                 return commands[cmd].call(null, this);
               }
@@ -11864,7 +11914,7 @@
             triggerElectric: methodOp(function (text) {
               triggerElectric(this, text);
             }),
-            findPosH: function (from, amount, unit, visually) {
+            findPosH: function findPosH(from, amount, unit, visually) {
               var dir = 1;
 
               if (amount < 0) {
@@ -11872,10 +11922,10 @@
                 amount = -amount;
               }
 
-              var cur = clipPos(this.doc, from);
+              var cur = _clipPos(this.doc, from);
 
               for (var i2 = 0; i2 < amount; ++i2) {
-                cur = findPosH(this.doc, cur, dir, unit, visually);
+                cur = _findPosH(this.doc, cur, dir, unit, visually);
 
                 if (cur.hitSide) {
                   break;
@@ -11888,7 +11938,7 @@
               var this$1 = this;
               this.extendSelectionsBy(function (range2) {
                 if (this$1.display.shift || this$1.doc.extend || range2.empty()) {
-                  return findPosH(this$1.doc, range2.head, dir, unit, this$1.options.rtlMoveVisually);
+                  return _findPosH(this$1.doc, range2.head, dir, unit, this$1.options.rtlMoveVisually);
                 } else {
                   return dir < 0 ? range2.from() : range2.to();
                 }
@@ -11902,7 +11952,8 @@
                 doc.replaceSelection("", null, "+delete");
               } else {
                 deleteNearSelection(this, function (range2) {
-                  var other = findPosH(doc, range2.head, dir, unit, false);
+                  var other = _findPosH(doc, range2.head, dir, unit, false);
+
                   return dir < 0 ? {
                     from: other,
                     to: range2.head
@@ -11913,7 +11964,7 @@
                 });
               }
             }),
-            findPosV: function (from, amount, unit, goalColumn) {
+            findPosV: function findPosV(from, amount, unit, goalColumn) {
               var dir = 1,
                   x = goalColumn;
 
@@ -11922,10 +11973,10 @@
                 amount = -amount;
               }
 
-              var cur = clipPos(this.doc, from);
+              var cur = _clipPos(this.doc, from);
 
               for (var i2 = 0; i2 < amount; ++i2) {
-                var coords = cursorCoords(this, cur, "div");
+                var coords = _cursorCoords(this, cur, "div");
 
                 if (x == null) {
                   x = coords.left;
@@ -11933,7 +11984,7 @@
                   coords.left = x;
                 }
 
-                cur = findPosV(this, coords, dir, unit);
+                cur = _findPosV(this, coords, dir, unit);
 
                 if (cur.hitSide) {
                   break;
@@ -11952,17 +12003,18 @@
                   return dir < 0 ? range2.from() : range2.to();
                 }
 
-                var headPos = cursorCoords(this$1, range2.head, "div");
+                var headPos = _cursorCoords(this$1, range2.head, "div");
 
                 if (range2.goalColumn != null) {
                   headPos.left = range2.goalColumn;
                 }
 
                 goals.push(headPos.left);
-                var pos = findPosV(this$1, headPos, dir, unit);
+
+                var pos = _findPosV(this$1, headPos, dir, unit);
 
                 if (unit == "page" && range2 == doc.sel.primary()) {
-                  addToScrollTop(this$1, charCoords(this$1, pos, "div").top - headPos.top);
+                  addToScrollTop(this$1, _charCoords(this$1, pos, "div").top - headPos.top);
                 }
 
                 return pos;
@@ -11974,7 +12026,7 @@
                 }
               }
             }),
-            findWordAt: function (pos) {
+            findWordAt: function findWordAt(pos) {
               var doc = this.doc,
                   line = getLine(doc, pos.line).text;
               var start = pos.ch,
@@ -12009,7 +12061,7 @@
 
               return new Range(Pos(pos.line, start), Pos(pos.line, end));
             },
-            toggleOverwrite: function (value) {
+            toggleOverwrite: function toggleOverwrite(value) {
               if (value != null && value == this.state.overwrite) {
                 return;
               }
@@ -12022,16 +12074,16 @@
 
               signal(this, "overwriteToggle", this, this.state.overwrite);
             },
-            hasFocus: function () {
+            hasFocus: function hasFocus() {
               return this.display.input.getField() == activeElt();
             },
-            isReadOnly: function () {
+            isReadOnly: function isReadOnly() {
               return !!(this.options.readOnly || this.doc.cantEdit);
             },
             scrollTo: methodOp(function (x, y) {
               scrollToCoords(this, x, y);
             }),
-            getScrollInfo: function () {
+            getScrollInfo: function getScrollInfo() {
               var scroller = this.display.scroller;
               return {
                 left: scroller.scrollLeft,
@@ -12079,7 +12131,7 @@
             setSize: methodOp(function (width, height) {
               var this$1 = this;
 
-              var interpret = function (val) {
+              var interpret = function interpret(val) {
                 return typeof val == "number" || /^\d+$/.test(String(val)) ? val + "px" : val;
               };
 
@@ -12111,14 +12163,14 @@
               this.curOp.forceUpdate = true;
               signal(this, "refresh", this);
             }),
-            operation: function (f) {
+            operation: function operation(f) {
               return runInOp(this, f);
             },
-            startOperation: function () {
-              return startOperation(this);
+            startOperation: function startOperation() {
+              return _startOperation(this);
             },
-            endOperation: function () {
-              return endOperation(this);
+            endOperation: function endOperation() {
+              return _endOperation(this);
             },
             refresh: methodOp(function () {
               var oldHeight = this.display.cachedTextHeight;
@@ -12150,20 +12202,20 @@
               signalLater(this, "swapDoc", this, old);
               return old;
             }),
-            phrase: function (phraseText) {
+            phrase: function phrase(phraseText) {
               var phrases = this.options.phrases;
               return phrases && Object.prototype.hasOwnProperty.call(phrases, phraseText) ? phrases[phraseText] : phraseText;
             },
-            getInputField: function () {
+            getInputField: function getInputField() {
               return this.display.input.getField();
             },
-            getWrapperElement: function () {
+            getWrapperElement: function getWrapperElement() {
               return this.display.wrapper;
             },
-            getScrollerElement: function () {
+            getScrollerElement: function getScrollerElement() {
               return this.display.scroller;
             },
-            getGutterElement: function () {
+            getGutterElement: function getGutterElement() {
               return this.display.gutters;
             }
           };
@@ -12189,7 +12241,7 @@
           };
         }
 
-        function findPosH(doc, pos, dir, unit, visually) {
+        function _findPosH(doc, pos, dir, unit, visually) {
           var oldPos = pos;
           var origDir = dir;
           var lineObj = getLine(doc, pos.line);
@@ -12287,7 +12339,7 @@
           return result;
         }
 
-        function findPosV(cm, pos, dir, unit) {
+        function _findPosV(cm, pos, dir, unit) {
           var doc = cm.doc,
               x = pos.left,
               y;
@@ -12303,7 +12355,7 @@
           var target;
 
           for (;;) {
-            target = coordsChar(cm, x, y);
+            target = _coordsChar(cm, x, y);
 
             if (!target.outside) {
               break;
@@ -12320,7 +12372,7 @@
           return target;
         }
 
-        var ContentEditableInput = function (cm) {
+        var ContentEditableInput = function ContentEditableInput(cm) {
           this.cm = cm;
           this.lastAnchorNode = this.lastAnchorOffset = this.lastFocusNode = this.lastFocusOffset = null;
           this.polling = new Delayed();
@@ -12780,7 +12832,8 @@
           var chTo = Pos(toLine, oldText.length ? lst(oldText).length - cutEnd : 0);
 
           if (newText.length > 1 || newText[0] || cmp(chFrom, chTo)) {
-            replaceRange(cm.doc, newText, chFrom, chTo, "+input");
+            _replaceRange(cm.doc, newText, chFrom, chTo, "+input");
+
             return true;
           }
         };
@@ -13118,7 +13171,7 @@
           }
         }
 
-        var TextareaInput = function (cm) {
+        var TextareaInput = function TextareaInput(cm) {
           this.cm = cm;
           this.prevInput = "";
           this.pollingFast = false;
@@ -13253,7 +13306,8 @@
           var result = prepareSelection(cm);
 
           if (cm.options.moveInputWithCursor) {
-            var headPos = cursorCoords(cm, doc.sel.primary().head, "div");
+            var headPos = _cursorCoords(cm, doc.sel.primary().head, "div");
+
             var wrapOff = display.wrapper.getBoundingClientRect(),
                 lineOff = display.lineDiv.getBoundingClientRect();
             result.teTop = Math.max(0, Math.min(display.wrapper.clientHeight - 10, headPos.top + lineOff.top - wrapOff.top));
@@ -13523,7 +13577,7 @@
               }
 
               var i2 = 0,
-                  poll = function () {
+                  poll = function poll() {
                 if (display.selForContextMenu == cm.doc.sel && te.selectionStart == 0 && te.selectionEnd > 0 && input.prevInput == "\u200B") {
                   operation(cm, selectAll)(cm);
                 } else if (i2++ < 10) {
@@ -13545,7 +13599,7 @@
           if (captureRightClick) {
             e_stop(e);
 
-            var mouseup = function () {
+            var mouseup = function mouseup() {
               off(window, "mouseup", mouseup);
               setTimeout(rehide, 20);
             };
@@ -13715,7 +13769,7 @@
         CodeMirror3.defineMIME = defineMIME;
         CodeMirror3.defineMode("null", function () {
           return {
-            token: function (stream) {
+            token: function token(stream) {
               return stream.skipToEnd();
             }
           };
@@ -13759,14 +13813,14 @@
         cli: {
           "--omit": args => {
             if (args.length === 0) {
-              console.error(`Expected a omit list`);
+              console.error("Expected a omit list");
               process.exit(1);
             }
 
             return args;
           }
         },
-        toCLI: val => Array.isArray(val) && val.length > 0 ? `--omit=${val.join(",")}` : void 0,
+        toCLI: val => Array.isArray(val) && val.length > 0 ? "--omit=".concat(val.join(",")) : void 0,
         title: "Remove fields",
         description: ["Remove specified fields from bibliography entries."],
         examples: ["--omit=id,name"],
@@ -13778,7 +13832,7 @@
           "--curly": true,
           "--no-curly": false
         },
-        toCLI: val => val ? `--curly` : void 0,
+        toCLI: val => val ? "--curly" : void 0,
         title: "Enclose values in braces",
         description: ['Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'],
         type: "boolean",
@@ -13789,7 +13843,7 @@
           "--numeric": true,
           "--no-numeric": false
         },
-        toCLI: val => val ? `--numeric` : void 0,
+        toCLI: val => val ? "--numeric" : void 0,
         title: "Use numeric values where possible",
         description: ["Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."],
         type: "boolean",
@@ -13800,7 +13854,7 @@
           "--space": args => args.length > 0 ? Number(args[0]) : true
         },
         toCLI: val => {
-          if (typeof val === "number") return `--space=${val}`;
+          if (typeof val === "number") return "--space=".concat(val);
           if (val) return "--space";
           return void 0;
         },
@@ -13816,7 +13870,7 @@
           "--tab": true,
           "--no-tab": false
         },
-        toCLI: val => val ? `--tab` : void 0,
+        toCLI: val => val ? "--tab" : void 0,
         title: "Indent with tabs",
         description: ["Indent all fields with a tab."],
         type: "boolean",
@@ -13828,7 +13882,7 @@
           "--no-align": false
         },
         toCLI: val => {
-          if (typeof val === "number") return `--align=${val}`;
+          if (typeof val === "number") return "--align=".concat(val);
           if (val === false) return "--no-align";
           return void 0;
         },
@@ -13845,7 +13899,7 @@
           "--no-sort": false
         },
         toCLI: val => {
-          if (Array.isArray(val) && val.length > 0) return `--sort=${val.join(",")}`;
+          if (Array.isArray(val) && val.length > 0) return "--sort=".concat(val.join(","));
           if (val === true) return "--sort";
           return void 0;
         },
@@ -13860,18 +13914,29 @@
           "--duplicates": args => {
             if (args.length === 0) return true;
 
-            for (const i of args) {
-              if (i !== "doi" && i !== "key" && i !== "abstract" && i !== "citation") {
-                console.error(`Invalid key for merge option: "${i}"`);
-                process.exit(1);
+            var _iterator2 = _createForOfIteratorHelper(args),
+                _step2;
+
+            try {
+              for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                var i = _step2.value;
+
+                if (i !== "doi" && i !== "key" && i !== "abstract" && i !== "citation") {
+                  console.error("Invalid key for merge option: \"".concat(i, "\""));
+                  process.exit(1);
+                }
               }
+            } catch (err) {
+              _iterator2.e(err);
+            } finally {
+              _iterator2.f();
             }
 
             return args;
           }
         },
         toCLI: val => {
-          if (Array.isArray(val) && val.length > 0) return `--duplicates=${val.join(",")}`;
+          if (Array.isArray(val) && val.length > 0) return "--duplicates=".concat(val.join(","));
           if (val === true) return "--duplicates";
           return void 0;
         },
@@ -13888,7 +13953,7 @@
             if (args.length === 0) return true;
 
             if (args[0] !== "first" && args[0] !== "last" && args[0] !== "combine" && args[0] !== "overwrite") {
-              console.error(`Invalid merge strategy: "${args[0]}"`);
+              console.error("Invalid merge strategy: \"".concat(args[0], "\""));
               process.exit(1);
             }
 
@@ -13897,7 +13962,7 @@
           "--no-merge": false
         },
         toCLI: val => {
-          if (typeof val === "string") return `--merge=${val}`;
+          if (typeof val === "string") return "--merge=".concat(val);
           if (val) return "--merge";
           return void 0;
         },
@@ -13942,7 +14007,7 @@
           "--sort-fields": args => args.length > 0 ? args : true
         },
         toCLI: val => {
-          if (Array.isArray(val) && val.length > 0) return `--sort-fields=${val.join(",")}`;
+          if (Array.isArray(val) && val.length > 0) return "--sort-fields=".concat(val.join(","));
           if (val === true) return "--sort-fields";
           return void 0;
         },
@@ -14042,7 +14107,7 @@
         cli: {
           "--max-authors": args => Number(args[0])
         },
-        toCLI: val => val ? `--max-authors=${val}` : void 0,
+        toCLI: val => val ? "--max-authors=".concat(val) : void 0,
         title: "Maximum authors",
         description: ['Truncate authors if above a given number into "and others".'],
         type: "number"
@@ -14062,7 +14127,7 @@
           "--enclosing-braces": args => args.length > 0 ? args : true
         },
         toCLI: val => {
-          if (Array.isArray(val) && val.length > 0) return `--enclosing-braces=${val.join(",")}`;
+          if (Array.isArray(val) && val.length > 0) return "--enclosing-braces=".concat(val.join(","));
           if (val === true) return "--enclosing-braces";
           return void 0;
         },
@@ -14077,7 +14142,7 @@
           "--wrap": args => args.length > 0 ? Number(args[0]) : true,
           "--no-wrap": false
         },
-        toCLI: val => val ? `--wrap=${val}` : void 0,
+        toCLI: val => val ? "--wrap=".concat(val) : void 0,
         title: "Wrap values",
         description: ["Wrap long values at the given column"],
         examples: ["--wrap (80 by default)", "--wrap=82"],
@@ -14118,8 +14183,8 @@
 
   function normalizeOptions(options) {
     return Object.fromEntries(optionDefinitions.map(def => {
-      const key = def.key;
-      const value = options[key];
+      var key = def.key;
+      var value = options[key];
 
       if (value === true && def.valueIfTrue !== void 0) {
         return [key, def.valueIfTrue];
@@ -14152,14 +14217,14 @@
   function generateAST(input) {
     var _a;
 
-    const rootNode = new RootNode();
-    let node = rootNode;
-    let line = 1;
-    let column = 0;
+    var rootNode = new RootNode();
+    var node = rootNode;
+    var line = 1;
+    var column = 0;
 
-    for (let i = 0; i < input.length; i++) {
-      const char = input[i];
-      const prev = input[i - 1];
+    for (var i = 0; i < input.length; i++) {
+      var char = input[i];
+      var prev = input[i - 1];
 
       if (char === "\n") {
         line++;
@@ -14189,7 +14254,7 @@
         case "block":
           {
             if (char === "@") {
-              const prevNode = node.parent.children[node.parent.children.length - 2];
+              var prevNode = node.parent.children[node.parent.children.length - 2];
 
               if ((prevNode == null ? void 0 : prevNode.type) === "text") {
                 prevNode.text += "@" + node.command;
@@ -14201,16 +14266,21 @@
 
               node.command = "";
             } else if (char === "{" || char === "(") {
-              const commandTrimmed = node.command.trim();
+              var commandTrimmed = node.command.trim();
 
               if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
                 node.parent.children.pop();
                 node = new TextNode(node.parent, "@" + node.command + char);
               } else {
                 node.command = commandTrimmed;
-                const command = node.command.toLowerCase();
-                const [braces, parens] = char === "{" ? [1, 0] : [0, 1];
-                const raw = "@" + command + char;
+                var command = node.command.toLowerCase();
+
+                var _ref = char === "{" ? [1, 0] : [0, 1],
+                    _ref2 = _slicedToArray(_ref, 2),
+                    braces = _ref2[0],
+                    parens = _ref2[1];
+
+                var raw = "@" + command + char;
 
                 switch (command) {
                   case "string":
@@ -14272,7 +14342,7 @@
                 throw new BibTeXSyntaxError(input, node, i, line, column);
               }
 
-              const field = new FieldNode(node, node.key);
+              var field = new FieldNode(node, node.key);
               node.fields.push(field);
               node.key = void 0;
               node = field.value;
@@ -14404,7 +14474,7 @@
     "src/bibtex-parser.ts"() {
       RootNode = class {
         constructor() {
-          let children = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+          var children = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
           this.children = children;
           this.type = "root";
         }
@@ -14472,7 +14542,7 @@
       };
       FieldNode = class {
         constructor(parent) {
-          let name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
+          var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
           this.parent = parent;
           this.name = name;
           this.type = "field";
@@ -14520,8 +14590,7 @@
       };
       BibTeXSyntaxError = class extends Error {
         constructor(input, node, pos, line, column) {
-          super(`Line ${line}:${column}: Syntax Error in ${node.type}
-` + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
+          super("Line ".concat(line, ":").concat(column, ": Syntax Error in ").concat(node.type, "\n") + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
           this.node = node;
           this.line = line;
           this.column = column;
@@ -14546,15 +14615,15 @@
 
 
   function escapeSpecialCharacters(str) {
-    let mathExpressions = [];
+    var mathExpressions = [];
     str = str.replace(/\$[^$]+\$/, match => {
       mathExpressions.push(match);
-      return `MATH.EXP.${mathExpressions.length - 1}`;
+      return "MATH.EXP.".concat(mathExpressions.length - 1);
     });
-    let newstr = "";
-    let escapeMode = false;
+    var newstr = "";
+    var escapeMode = false;
 
-    for (let i = 0; i < str.length; i++) {
+    for (var i = 0; i < str.length; i++) {
       if (escapeMode) {
         escapeMode = false;
         newstr += str[i];
@@ -14567,7 +14636,7 @@
         continue;
       }
 
-      const c = str.charCodeAt(i).toString(16).padStart(4, "0");
+      var c = str.charCodeAt(i).toString(16).padStart(4, "0");
       newstr += specialCharacters.get(c) || str[i];
     }
 
@@ -14587,15 +14656,26 @@
   }
 
   function wrapText(line, lineWidth) {
-    const words = line.split(" ");
-    const lines = [""];
+    var words = line.split(" ");
+    var lines = [""];
 
-    for (const word of words) {
-      if (lines[lines.length - 1].length + word.length + 1 > lineWidth) {
-        lines.push("");
+    var _iterator3 = _createForOfIteratorHelper(words),
+        _step3;
+
+    try {
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var word = _step3.value;
+
+        if (lines[lines.length - 1].length + word.length + 1 > lineWidth) {
+          lines.push("");
+        }
+
+        lines[lines.length - 1] += word + " ";
       }
-
-      lines[lines.length - 1] += word + " ";
+    } catch (err) {
+      _iterator3.e(err);
+    } finally {
+      _iterator3.f();
     }
 
     return lines.map(line2 => line2.trim());
@@ -14607,7 +14687,7 @@
 
   function addEnclosingBraces(str, removeInsideBraces) {
     if (removeInsideBraces) str = str.replace(/[{}]/g, "");
-    return `{${str}}`;
+    return "{".concat(str, "}");
   }
 
   function removeEnclosingBraces(str) {
@@ -14619,7 +14699,7 @@
   }
 
   function limitAuthors(str, maxAuthors) {
-    const authors = str.split(" and ");
+    var authors = str.split(" and ");
 
     if (authors.length > maxAuthors) {
       return [...authors.slice(0, maxAuthors), "others"].join(" and ");
@@ -14629,7 +14709,7 @@
   }
 
   function formatPageRange(str) {
-    for (let i = 0; i < 4; i++) {
+    for (var i = 0; i < 4; i++) {
       str = str.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
     }
 
@@ -14648,70 +14728,107 @@
     var _a, _b, _c, _d, _e;
 
     if (!sort) return;
-    const sortIndexes = /* @__PURE__ */new Map();
-    const precedingMeta = [];
+    var sortIndexes = /* @__PURE__ */new Map();
+    var precedingMeta = [];
 
-    for (const item of ast.children) {
-      if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
-        precedingMeta.push(item);
-        continue;
-      }
+    var _iterator4 = _createForOfIteratorHelper(ast.children),
+        _step4;
 
-      const sortIndex = /* @__PURE__ */new Map();
+    try {
+      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+        var item = _step4.value;
 
-      for (let key of sort) {
-        if (key.startsWith("-")) key = key.slice(1);
-        let val;
-
-        if (key === "key") {
-          val = (_b = item.block.key) != null ? _b : "";
-        } else if (key === "type") {
-          val = item.command;
-        } else if (key === "month") {
-          const v = (_c = fieldMaps.get(item.block)) == null ? void 0 : _c.get(key);
-          const i = v ? MONTHS.indexOf(v) : -1;
-          val = i > -1 ? i : "";
-        } else {
-          val = (_e = (_d = fieldMaps.get(item.block)) == null ? void 0 : _d.get(key)) != null ? _e : "";
+        if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
+          precedingMeta.push(item);
+          continue;
         }
 
-        sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
-      }
+        var sortIndex = /* @__PURE__ */new Map();
 
-      sortIndexes.set(item, sortIndex);
+        var _iterator5 = _createForOfIteratorHelper(sort),
+            _step5;
 
-      while (precedingMeta.length > 0) {
-        sortIndexes.set(precedingMeta.pop(), sortIndex);
+        try {
+          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+            var key = _step5.value;
+            if (key.startsWith("-")) key = key.slice(1);
+            var val = void 0;
+
+            if (key === "key") {
+              val = (_b = item.block.key) != null ? _b : "";
+            } else if (key === "type") {
+              val = item.command;
+            } else if (key === "month") {
+              var v = (_c = fieldMaps.get(item.block)) == null ? void 0 : _c.get(key);
+
+              var _i2 = v ? MONTHS.indexOf(v) : -1;
+
+              val = _i2 > -1 ? _i2 : "";
+            } else {
+              val = (_e = (_d = fieldMaps.get(item.block)) == null ? void 0 : _d.get(key)) != null ? _e : "";
+            }
+
+            sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
+          }
+        } catch (err) {
+          _iterator5.e(err);
+        } finally {
+          _iterator5.f();
+        }
+
+        sortIndexes.set(item, sortIndex);
+
+        while (precedingMeta.length > 0) {
+          sortIndexes.set(precedingMeta.pop(), sortIndex);
+        }
       }
+    } catch (err) {
+      _iterator4.e(err);
+    } finally {
+      _iterator4.f();
     }
 
-    for (let i = sort.length - 1; i >= 0; i--) {
-      const desc = sort[i].startsWith("-");
-      const key = desc ? sort[i].slice(1) : sort[i];
+    var _loop2 = function _loop2(i) {
+      var desc = sort[i].startsWith("-");
+      var key = desc ? sort[i].slice(1) : sort[i];
       ast.children.sort((a, b) => {
         var _a2, _b2, _c2, _d2;
 
-        let ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "\uFFF0";
-        let ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "\uFFF0";
+        var ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "\uFFF0";
+        var ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "\uFFF0";
         if (typeof ia === "number") ia = String(ia).padStart(50, "0");
         if (typeof ib === "number") ib = String(ib).padStart(50, "0");
         return (desc ? ib : ia).localeCompare(desc ? ia : ib);
       });
+    };
+
+    for (var i = sort.length - 1; i >= 0; i--) {
+      _loop2(i);
     }
   }
 
   function sortEntryFields(ast, fieldOrder) {
-    for (const entry of getEntries(ast)) {
-      entry.fields.sort((a, b) => {
-        const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
-        const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
-        if (orderA === -1 && orderB === -1) return 0;
-        if (orderA === -1) return 1;
-        if (orderB === -1) return -1;
-        if (orderB < orderA) return 1;
-        if (orderB > orderA) return -1;
-        return 0;
-      });
+    var _iterator6 = _createForOfIteratorHelper(getEntries(ast)),
+        _step6;
+
+    try {
+      for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+        var entry = _step6.value;
+        entry.fields.sort((a, b) => {
+          var orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
+          var orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
+          if (orderA === -1 && orderB === -1) return 0;
+          if (orderA === -1) return 1;
+          if (orderB === -1) return -1;
+          if (orderB < orderA) return 1;
+          if (orderB > orderA) return -1;
+          return 0;
+        });
+      }
+    } catch (err) {
+      _iterator6.e(err);
+    } finally {
+      _iterator6.f();
     }
   }
 
@@ -14727,14 +14844,12 @@
 
 
   function formatBibtex(ast, options, replacementKeys) {
-    const {
-      omit,
-      tab,
-      space
-    } = options;
-    const indent = tab ? "	" : " ".repeat(space);
-    const omitFields = new Set(omit);
-    let bibtex = ast.children.map(child => formatNode(child, options, indent, omitFields, replacementKeys)).join("");
+    var omit = options.omit,
+        tab = options.tab,
+        space = options.space;
+    var indent = tab ? "	" : " ".repeat(space);
+    var omitFields = new Set(omit);
+    var bibtex = ast.children.map(child => formatNode(child, options, indent, omitFields, replacementKeys)).join("");
     if (!bibtex.endsWith("\n")) bibtex += "\n";
     return bibtex;
   }
@@ -14749,8 +14864,7 @@
     switch (child.block.type) {
       case "preamble":
       case "string":
-        return `${child.block.raw}
-`;
+        return "".concat(child.block.raw, "\n");
 
       case "comment":
         return formatComment(child.block.raw, options);
@@ -14761,24 +14875,22 @@
   }
 
   function formatEntry(entryType, entry, options, indent, omitFields, replacementKey) {
-    const {
-      align,
-      trailingCommas,
-      removeDuplicateFields,
-      removeEmptyFields,
-      lowercase
-    } = options;
-    let bibtex = "";
-    const itemType = lowercase ? entryType.toLocaleLowerCase() : entryType;
-    bibtex += `@${itemType}{`;
-    const key = replacementKey != null ? replacementKey : entry.key;
-    if (key) bibtex += `${key},`;
-    const fieldSeen = /* @__PURE__ */new Set();
+    var align = options.align,
+        trailingCommas = options.trailingCommas,
+        removeDuplicateFields = options.removeDuplicateFields,
+        removeEmptyFields = options.removeEmptyFields,
+        lowercase = options.lowercase;
+    var bibtex = "";
+    var itemType = lowercase ? entryType.toLocaleLowerCase() : entryType;
+    bibtex += "@".concat(itemType, "{");
+    var key = replacementKey != null ? replacementKey : entry.key;
+    if (key) bibtex += "".concat(key, ",");
+    var fieldSeen = /* @__PURE__ */new Set();
 
-    for (let i = 0; i < entry.fields.length; i++) {
-      const field = entry.fields[i];
-      const nameLowerCase = field.name.toLocaleLowerCase();
-      const name = lowercase ? nameLowerCase : field.name;
+    for (var i = 0; i < entry.fields.length; i++) {
+      var field = entry.fields[i];
+      var nameLowerCase = field.name.toLocaleLowerCase();
+      var name = lowercase ? nameLowerCase : field.name;
       if (field.name === "") continue;
       if (omitFields.has(nameLowerCase)) continue;
       if (removeDuplicateFields && fieldSeen.has(nameLowerCase)) continue;
@@ -14786,33 +14898,27 @@
 
       if (field.value.concat.length === 0) {
         if (removeEmptyFields) continue;
-        bibtex += `
-${indent}${name}`;
+        bibtex += "\n".concat(indent).concat(name);
       } else {
-        const value = formatValue(field, options);
+        var value = formatValue(field, options);
         if (removeEmptyFields && (value === "{}" || value === '""')) continue;
-        bibtex += `
-${indent}${name.trim().padEnd(align - 1)} = ${value}`;
+        bibtex += "\n".concat(indent).concat(name.trim().padEnd(align - 1), " = ").concat(value);
       }
 
       if (i < entry.fields.length - 1 || trailingCommas) bibtex += ",";
     }
 
-    bibtex += `
-}
-`;
+    bibtex += "\n}\n";
     return bibtex;
   }
 
-  function formatComment(comment, _ref) {
-    let {
-      stripComments,
-      tidyComments
-    } = _ref;
+  function formatComment(comment, _ref3) {
+    var stripComments = _ref3.stripComments,
+        tidyComments = _ref3.tidyComments;
     if (stripComments) return "";
 
     if (tidyComments) {
-      const trimmed = comment.trim();
+      var trimmed = comment.trim();
       if (trimmed === "") return "";
       return trimmed + "\n";
     } else {
@@ -14821,29 +14927,25 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
   }
 
   function formatValue(field, options) {
-    const {
-      curly,
-      numeric,
-      align,
-      stripEnclosingBraces,
-      dropAllCaps,
-      escape,
-      encodeUrls,
-      wrap,
-      maxAuthors,
-      tab,
-      space,
-      enclosingBraces
-    } = options;
-    const nameLowerCase = field.name.toLocaleLowerCase();
-    const indent = tab ? "	" : " ".repeat(space);
-    const enclosingBracesFields = new Set((enclosingBraces || []).map(field2 => field2.toLocaleLowerCase()));
-    return field.value.concat.map(_ref2 => {
-      let {
-        type,
-        value
-      } = _ref2;
-      const isNumeric = value.match(/^[1-9][0-9]*$/);
+    var curly = options.curly,
+        numeric = options.numeric,
+        align = options.align,
+        stripEnclosingBraces = options.stripEnclosingBraces,
+        dropAllCaps = options.dropAllCaps,
+        escape = options.escape,
+        encodeUrls = options.encodeUrls,
+        wrap = options.wrap,
+        maxAuthors = options.maxAuthors,
+        tab = options.tab,
+        space = options.space,
+        enclosingBraces = options.enclosingBraces;
+    var nameLowerCase = field.name.toLocaleLowerCase();
+    var indent = tab ? "	" : " ".repeat(space);
+    var enclosingBracesFields = new Set((enclosingBraces || []).map(field2 => field2.toLocaleLowerCase()));
+    return field.value.concat.map(_ref4 => {
+      var type = _ref4.type,
+          value = _ref4.value;
+      var isNumeric = value.match(/^[1-9][0-9]*$/);
 
       if (isNumeric && curly) {
         type = "braced";
@@ -14853,7 +14955,7 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
         return value;
       }
 
-      const dig3 = value.slice(0, 3).toLowerCase();
+      var dig3 = value.slice(0, 3).toLowerCase();
 
       if (!curly && numeric && nameLowerCase === "month" && MONTH_SET.has(dig3)) {
         return dig3;
@@ -14894,26 +14996,24 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
       }
 
       if (type === "braced" || curly) {
-        const lineLength = `${indent}${align}{${value}}`.length;
-        const multiLine = value.includes("\n\n");
+        var lineLength = "".concat(indent).concat(align, "{").concat(value, "}").length;
+        var multiLine = value.includes("\n\n");
 
         if (wrap && lineLength > wrap || multiLine) {
-          let paragraphs = value.split("\n\n");
-          const valIndent = indent.repeat(2);
+          var paragraphs = value.split("\n\n");
+          var valIndent = indent.repeat(2);
 
           if (wrap) {
-            const wrapCol = wrap;
+            var wrapCol = wrap;
             paragraphs = paragraphs.map(paragraph => wrapText(paragraph, wrapCol - valIndent.length).join("\n" + valIndent));
           }
 
-          value = "\n" + valIndent + paragraphs.join(`
-
-${valIndent}`) + "\n" + indent;
+          value = "\n" + valIndent + paragraphs.join("\n\n".concat(valIndent)) + "\n" + indent;
         }
 
         return addEnclosingBraces(value);
       } else {
-        return `"${value}"`;
+        return "\"".concat(value, "\"");
       }
     }).join(" # ");
   }
@@ -14933,11 +15033,21 @@ ${valIndent}`) + "\n" + indent;
   function checkForDuplicates(ast, valueLookup, duplicates, merge) {
     var _a, _b;
 
-    const uniqCheck = /* @__PURE__ */new Map();
+    var uniqCheck = /* @__PURE__ */new Map();
 
     if (duplicates) {
-      for (const key of duplicates) {
-        uniqCheck.set(key, !!merge);
+      var _iterator7 = _createForOfIteratorHelper(duplicates),
+          _step7;
+
+      try {
+        for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+          var key = _step7.value;
+          uniqCheck.set(key, !!merge);
+        }
+      } catch (err) {
+        _iterator7.e(err);
+      } finally {
+        _iterator7.f();
       }
     }
 
@@ -14945,70 +15055,93 @@ ${valIndent}`) + "\n" + indent;
       uniqCheck.set("key", false);
     }
 
-    const duplicateEntries = /* @__PURE__ */new Set();
-    const warnings = [];
-    const keys = /* @__PURE__ */new Map();
-    const dois = /* @__PURE__ */new Map();
-    const citations = /* @__PURE__ */new Map();
-    const abstracts = /* @__PURE__ */new Map();
+    var duplicateEntries = /* @__PURE__ */new Set();
+    var warnings = [];
+    var keys = /* @__PURE__ */new Map();
+    var dois = /* @__PURE__ */new Map();
+    var citations = /* @__PURE__ */new Map();
+    var abstracts = /* @__PURE__ */new Map();
 
-    for (const entry of getEntries(ast)) {
-      const entryValues = valueLookup.get(entry);
+    var _iterator8 = _createForOfIteratorHelper(getEntries(ast)),
+        _step8;
 
-      for (const [key, doMerge] of uniqCheck) {
-        let duplicateOf;
+    try {
+      for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+        var entry = _step8.value;
+        var entryValues = valueLookup.get(entry);
 
-        switch (key) {
-          case "key":
-            {
-              if (!entry.key) continue;
-              const keyLC = entry.key.toLocaleLowerCase();
-              duplicateOf = keys.get(keyLC);
-              if (!duplicateOf) keys.set(keyLC, entry);
-              break;
+        var _iterator9 = _createForOfIteratorHelper(uniqCheck),
+            _step9;
+
+        try {
+          for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+            var _step9$value = _slicedToArray(_step9.value, 2),
+                _key = _step9$value[0],
+                doMerge = _step9$value[1];
+
+            var duplicateOf = void 0;
+
+            switch (_key) {
+              case "key":
+                {
+                  if (!entry.key) continue;
+                  var keyLC = entry.key.toLocaleLowerCase();
+                  duplicateOf = keys.get(keyLC);
+                  if (!duplicateOf) keys.set(keyLC, entry);
+                  break;
+                }
+
+              case "doi":
+                var doi = alphaNum((_a = entryValues.get("doi")) != null ? _a : "");
+                if (!doi) continue;
+                duplicateOf = dois.get(doi);
+                if (!duplicateOf) dois.set(doi, entry);
+                break;
+
+              case "citation":
+                var ttl = entryValues.get("title");
+                var aut = entryValues.get("author");
+                if (!ttl || !aut) continue;
+                var cit = alphaNum(aut.split(/,| and/)[0]) + ":" + alphaNum(ttl);
+                duplicateOf = citations.get(cit);
+                if (!duplicateOf) citations.set(cit, entry);
+                break;
+
+              case "abstract":
+                var abstract = alphaNum((_b = entryValues.get("abstract")) != null ? _b : "");
+                var abs = abstract == null ? void 0 : abstract.slice(0, 100);
+                if (!abs) continue;
+                duplicateOf = abstracts.get(abs);
+                if (!duplicateOf) abstracts.set(abs, entry);
+                break;
             }
 
-          case "doi":
-            const doi = alphaNum((_a = entryValues.get("doi")) != null ? _a : "");
-            if (!doi) continue;
-            duplicateOf = dois.get(doi);
-            if (!duplicateOf) dois.set(doi, entry);
-            break;
-
-          case "citation":
-            const ttl = entryValues.get("title");
-            const aut = entryValues.get("author");
-            if (!ttl || !aut) continue;
-            const cit = alphaNum(aut.split(/,| and/)[0]) + ":" + alphaNum(ttl);
-            duplicateOf = citations.get(cit);
-            if (!duplicateOf) citations.set(cit, entry);
-            break;
-
-          case "abstract":
-            const abstract = alphaNum((_b = entryValues.get("abstract")) != null ? _b : "");
-            const abs = abstract == null ? void 0 : abstract.slice(0, 100);
-            if (!abs) continue;
-            duplicateOf = abstracts.get(abs);
-            if (!duplicateOf) abstracts.set(abs, entry);
-            break;
-        }
-
-        if (duplicateOf) {
-          if (doMerge) {
-            duplicateEntries.add(entry);
-            warnings.push({
-              code: "DUPLICATE_ENTRY",
-              message: `${entry.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`
-            });
-            mergeEntries(merge, duplicateOf, entry);
-          } else {
-            warnings.push({
-              code: "DUPLICATE_KEY",
-              message: `${entry.key} is a duplicate entry key.`
-            });
+            if (duplicateOf) {
+              if (doMerge) {
+                duplicateEntries.add(entry);
+                warnings.push({
+                  code: "DUPLICATE_ENTRY",
+                  message: "".concat(entry.key, " appears to be a duplicate of ").concat(duplicateOf.key, " and was removed.")
+                });
+                mergeEntries(merge, duplicateOf, entry);
+              } else {
+                warnings.push({
+                  code: "DUPLICATE_KEY",
+                  message: "".concat(entry.key, " is a duplicate entry key.")
+                });
+              }
+            }
           }
+        } catch (err) {
+          _iterator9.e(err);
+        } finally {
+          _iterator9.f();
         }
       }
+    } catch (err) {
+      _iterator8.e(err);
+    } finally {
+      _iterator8.f();
     }
 
     return {
@@ -15026,14 +15159,28 @@ ${valIndent}`) + "\n" + indent;
 
       case "combine":
       case "overwrite":
-        for (const field of entry.fields) {
-          const existing = duplicateOf.fields.find(f => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase());
+        var _iterator10 = _createForOfIteratorHelper(entry.fields),
+            _step10;
 
-          if (!existing) {
-            duplicateOf.fields.push(field);
-          } else if (merge === "overwrite") {
-            existing.value = field.value;
+        try {
+          var _loop3 = function _loop3() {
+            var field = _step10.value;
+            var existing = duplicateOf.fields.find(f => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase());
+
+            if (!existing) {
+              duplicateOf.fields.push(field);
+            } else if (merge === "overwrite") {
+              existing.value = field.value;
+            }
+          };
+
+          for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+            _loop3();
           }
+        } catch (err) {
+          _iterator10.e(err);
+        } finally {
+          _iterator10.f();
         }
 
         break;
@@ -15051,8 +15198,8 @@ ${valIndent}`) + "\n" + indent;
 
   function parseAuthors(authors) {
     return authors.replace(/\s+/g, " ").split(/ and /i).map(nameRaw => {
-      const name = nameRaw.trim();
-      const commaPos = name.indexOf(",");
+      var name = nameRaw.trim();
+      var commaPos = name.indexOf(",");
 
       if (commaPos > -1) {
         return {
@@ -15060,7 +15207,7 @@ ${valIndent}`) + "\n" + indent;
           lastName: name.slice(0, commaPos).trim()
         };
       } else {
-        const lastSpacePos = name.lastIndexOf(" ");
+        var lastSpacePos = name.lastIndexOf(" ");
         return {
           firstNames: name.slice(0, lastSpacePos).trim(),
           lastName: name.slice(lastSpacePos).trim()
@@ -15076,22 +15223,22 @@ ${valIndent}`) + "\n" + indent;
 
 
   function tidy(input) {
-    let options_ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    const options = normalizeOptions(options_);
+    var options_ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var options = normalizeOptions(options_);
     input = convertCRLF(input);
-    const ast = generateAST(input);
-    const warnings = getEntries(ast).filter(entry => !entry.key).map(entry => ({
+    var ast = generateAST(input);
+    var warnings = getEntries(ast).filter(entry => !entry.key).map(entry => ({
       code: "MISSING_KEY",
-      message: `${entry.type} entry does not have an entry key.`
+      message: "".concat(entry.type, " entry does not have an entry key.")
     }));
-    const valueLookup = generateValueLookup(ast, options);
-    const duplicates = checkForDuplicates(ast, valueLookup, options.duplicates, options.merge);
+    var valueLookup = generateValueLookup(ast, options);
+    var duplicates = checkForDuplicates(ast, valueLookup, options.duplicates, options.merge);
     warnings.push(...duplicates.warnings);
     ast.children = ast.children.filter(child => !isEntryNode(child) || !duplicates.entries.has(child.block));
     if (options.sort) sortEntries(ast, valueLookup, options.sort);
     if (options.sortFields) sortEntryFields(ast, options.sortFields);
-    const newKeys = options.generateKeys ? generateKeys(ast, valueLookup) : void 0;
-    const bibtex = formatBibtex(ast, options, newKeys);
+    var newKeys = options.generateKeys ? generateKeys(ast, valueLookup) : void 0;
+    var bibtex = formatBibtex(ast, options, newKeys);
     return {
       bibtex,
       warnings,
@@ -15102,19 +15249,30 @@ ${valIndent}`) + "\n" + indent;
   function generateKeys(ast, valueLookup) {
     var _a;
 
-    const keys = /* @__PURE__ */new Map();
-    const keyCounts = /* @__PURE__ */new Map();
+    var keys = /* @__PURE__ */new Map();
+    var keyCounts = /* @__PURE__ */new Map();
 
-    for (const node of ast.children) {
-      if (isEntryNode(node)) {
-        const newKey = generateKey(valueLookup.get(node.block));
+    var _iterator11 = _createForOfIteratorHelper(ast.children),
+        _step11;
 
-        if (newKey) {
-          const keyCount = ((_a = keyCounts.get(newKey)) != null ? _a : 0) + 1;
-          keys.set(node.block, newKey + (keyCount > 1 ? keyCount : ""));
-          keyCounts.set(newKey, keyCount);
+    try {
+      for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
+        var node = _step11.value;
+
+        if (isEntryNode(node)) {
+          var newKey = generateKey(valueLookup.get(node.block));
+
+          if (newKey) {
+            var keyCount = ((_a = keyCounts.get(newKey)) != null ? _a : 0) + 1;
+            keys.set(node.block, newKey + (keyCount > 1 ? keyCount : ""));
+            keyCounts.set(newKey, keyCount);
+          }
         }
       }
+    } catch (err) {
+      _iterator11.e(err);
+    } finally {
+      _iterator11.f();
     }
 
     return keys;
@@ -15123,11 +15281,11 @@ ${valIndent}`) + "\n" + indent;
   function generateKey(valueLookup) {
     var _a, _b, _c, _d, _e;
 
-    const authors = parseAuthors((_b = (_a = valueLookup == null ? void 0 : valueLookup.get("author")) == null ? void 0 : _a.replace(/["{}]/g, "")) != null ? _b : "");
-    const lastName = (_c = authors[0]) == null ? void 0 : _c.lastName.toLowerCase();
-    const year = (_d = valueLookup == null ? void 0 : valueLookup.get("year")) == null ? void 0 : _d.replace(/[^0-9]/g, "");
-    const title = (_e = valueLookup == null ? void 0 : valueLookup.get("title")) != null ? _e : valueLookup == null ? void 0 : valueLookup.get("booktitle");
-    const titleFirstWord = title == null ? void 0 : title.toLowerCase().replace(/^[\s\S]*?([a-z]+)[^a-z][\s\S]*$/, "$1");
+    var authors = parseAuthors((_b = (_a = valueLookup == null ? void 0 : valueLookup.get("author")) == null ? void 0 : _a.replace(/["{}]/g, "")) != null ? _b : "");
+    var lastName = (_c = authors[0]) == null ? void 0 : _c.lastName.toLowerCase();
+    var year = (_d = valueLookup == null ? void 0 : valueLookup.get("year")) == null ? void 0 : _d.replace(/[^0-9]/g, "");
+    var title = (_e = valueLookup == null ? void 0 : valueLookup.get("title")) != null ? _e : valueLookup == null ? void 0 : valueLookup.get("booktitle");
+    var titleFirstWord = title == null ? void 0 : title.toLowerCase().replace(/^[\s\S]*?([a-z]+)[^a-z][\s\S]*$/, "$1");
     if (!lastName || !year) return;
     return [lastName, year, titleFirstWord != null ? titleFirstWord : ""].join("");
   }
@@ -15203,19 +15361,21 @@ ${valIndent}`) + "\n" + indent;
               meta = states.meta || {},
               hasIndentation = false;
 
-          for (var state in states) if (state != meta && states.hasOwnProperty(state)) {
-            var list = states_[state] = [],
-                orig = states[state];
+          for (var state in states) {
+            if (state != meta && states.hasOwnProperty(state)) {
+              var list = states_[state] = [],
+                  orig = states[state];
 
-            for (var i = 0; i < orig.length; i++) {
-              var data = orig[i];
-              list.push(new Rule(data, states));
-              if (data.indent || data.dedent) hasIndentation = true;
+              for (var i = 0; i < orig.length; i++) {
+                var data = orig[i];
+                list.push(new Rule(data, states));
+                if (data.indent || data.dedent) hasIndentation = true;
+              }
             }
           }
 
           var mode = {
-            startState: function () {
+            startState: function startState() {
               return {
                 state: "start",
                 pending: null,
@@ -15224,7 +15384,7 @@ ${valIndent}`) + "\n" + indent;
                 indent: hasIndentation ? [] : null
               };
             },
-            copyState: function (state2) {
+            copyState: function copyState(state2) {
               var s = {
                 state: state2.state,
                 pending: state2.pending,
@@ -15235,17 +15395,19 @@ ${valIndent}`) + "\n" + indent;
               if (state2.localState) s.localState = CodeMirror3.copyState(state2.local.mode, state2.localState);
               if (state2.stack) s.stack = state2.stack.slice(0);
 
-              for (var pers = state2.persistentStates; pers; pers = pers.next) s.persistentStates = {
-                mode: pers.mode,
-                spec: pers.spec,
-                state: pers.state == state2.localState ? s.localState : CodeMirror3.copyState(pers.mode, pers.state),
-                next: s.persistentStates
-              };
+              for (var pers = state2.persistentStates; pers; pers = pers.next) {
+                s.persistentStates = {
+                  mode: pers.mode,
+                  spec: pers.spec,
+                  state: pers.state == state2.localState ? s.localState : CodeMirror3.copyState(pers.mode, pers.state),
+                  next: s.persistentStates
+                };
+              }
 
               return s;
             },
             token: tokenFunction(states_, config),
-            innerMode: function (state2) {
+            innerMode: function innerMode(state2) {
               return state2.local && {
                 mode: state2.local.mode,
                 state: state2.localState
@@ -15255,7 +15417,9 @@ ${valIndent}`) + "\n" + indent;
           };
 
           if (meta) {
-            for (var prop in meta) if (meta.hasOwnProperty(prop)) mode[prop] = meta[prop];
+            for (var prop in meta) {
+              if (meta.hasOwnProperty(prop)) mode[prop] = meta[prop];
+            }
           }
 
           return mode;
@@ -15286,7 +15450,9 @@ ${valIndent}`) + "\n" + indent;
           if (typeof val == "string") return val.replace(/\./g, " ");
           var result = [];
 
-          for (var i = 0; i < val.length; i++) result.push(val[i] && val[i].replace(/\./g, " "));
+          for (var i = 0; i < val.length; i++) {
+            result.push(val[i] && val[i].replace(/\./g, " "));
+          }
 
           return result;
         }
@@ -15343,10 +15509,12 @@ ${valIndent}`) + "\n" + indent;
                 if (token && token.apply) token = token(matches);
 
                 if (matches.length > 2 && rule.token && typeof rule.token != "string") {
-                  for (var j = 2; j < matches.length; j++) if (matches[j]) (state.pending || (state.pending = [])).push({
-                    text: matches[j],
-                    token: rule.token[j - 1]
-                  });
+                  for (var j = 2; j < matches.length; j++) {
+                    if (matches[j]) (state.pending || (state.pending = [])).push({
+                      text: matches[j],
+                      token: rule.token[j - 1]
+                    });
+                  }
 
                   stream.backUp(matches[0].length - (matches[1] ? matches[1].length : 0));
                   return token[0];
@@ -15368,12 +15536,16 @@ ${valIndent}`) + "\n" + indent;
           if (!a || typeof a != "object" || !b || typeof b != "object") return false;
           var props = 0;
 
-          for (var prop in a) if (a.hasOwnProperty(prop)) {
-            if (!b.hasOwnProperty(prop) || !cmp(a[prop], b[prop])) return false;
-            props++;
+          for (var prop in a) {
+            if (a.hasOwnProperty(prop)) {
+              if (!b.hasOwnProperty(prop) || !cmp(a[prop], b[prop])) return false;
+              props++;
+            }
           }
 
-          for (var prop in b) if (b.hasOwnProperty(prop)) props--;
+          for (var prop in b) {
+            if (b.hasOwnProperty(prop)) props--;
+          }
 
           return props == 0;
         }
@@ -15382,7 +15554,9 @@ ${valIndent}`) + "\n" + indent;
           var pers;
 
           if (spec.persistent) {
-            for (var p = state.persistentStates; p && !pers; p = p.next) if (spec.spec ? cmp(spec.spec, p.spec) : spec.mode == p.mode) pers = p;
+            for (var p = state.persistentStates; p && !pers; p = p.next) {
+              if (spec.spec ? cmp(spec.spec, p.spec) : spec.mode == p.mode) pers = p;
+            }
           }
 
           var mode = pers ? pers.mode : spec.mode || CodeMirror3.getMode(config, spec.spec);
@@ -15403,7 +15577,9 @@ ${valIndent}`) + "\n" + indent;
         }
 
         function indexOf(val, arr) {
-          for (var i = 0; i < arr.length; i++) if (arr[i] === val) return true;
+          for (var i = 0; i < arr.length; i++) {
+            if (arr[i] === val) return true;
+          }
         }
 
         function indentFunction(states, meta) {
@@ -15556,17 +15732,37 @@ ${valIndent}`) + "\n" + indent;
       }
 
       function renderSuboptions() {
-        for (const suboption of $$(".suboptions")) {
-          const checkbox = $("input", suboption.parentNode);
-          suboption.style.display = checkbox.matches(":checked") ? "block" : "none";
+        var _iterator12 = _createForOfIteratorHelper($$(".suboptions")),
+            _step12;
+
+        try {
+          for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
+            var suboption = _step12.value;
+            var checkbox = $("input", suboption.parentNode);
+            suboption.style.display = checkbox.matches(":checked") ? "block" : "none";
+          }
+        } catch (err) {
+          _iterator12.e(err);
+        } finally {
+          _iterator12.f();
         }
       }
 
-      for (const input of $$("input, textarea")) {
-        input.addEventListener("input", () => {
-          renderSuboptions();
-          formatCLICommand();
-        });
+      var _iterator13 = _createForOfIteratorHelper($$("input, textarea")),
+          _step13;
+
+      try {
+        for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
+          var input = _step13.value;
+          input.addEventListener("input", () => {
+            renderSuboptions();
+            formatCLICommand();
+          });
+        }
+      } catch (err) {
+        _iterator13.e(err);
+      } finally {
+        _iterator13.f();
       }
 
       renderSuboptions();
@@ -15578,20 +15774,40 @@ ${valIndent}`) + "\n" + indent;
       var errorHighlight;
       var optionDocs = {};
 
-      for (const option of optionDefinitions) {
-        optionDocs[option.key] = option;
+      var _iterator14 = _createForOfIteratorHelper(optionDefinitions),
+          _step14;
+
+      try {
+        for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
+          var option = _step14.value;
+          optionDocs[option.key] = option;
+        }
+      } catch (err) {
+        _iterator14.e(err);
+      } finally {
+        _iterator14.f();
       }
 
-      for (let $label of $$("label[data-option]")) {
-        const key = $label.dataset.option;
-        const option = optionDocs[key];
-        const $input = $label.querySelector("input");
-        if (option.description) $label.setAttribute("title", option.description.join("\n"));
-        $label.querySelector(".name").textContent = option.title;
+      var _iterator15 = _createForOfIteratorHelper($$("label[data-option]")),
+          _step15;
 
-        if (!$input.getAttribute("name")) {
-          $input.setAttribute("name", key);
+      try {
+        for (_iterator15.s(); !(_step15 = _iterator15.n()).done;) {
+          var $label = _step15.value;
+          var key = $label.dataset.option;
+          var _option = optionDocs[key];
+          var $input = $label.querySelector("input");
+          if (_option.description) $label.setAttribute("title", _option.description.join("\n"));
+          $label.querySelector(".name").textContent = _option.title;
+
+          if (!$input.getAttribute("name")) {
+            $input.setAttribute("name", key);
+          }
         }
+      } catch (err) {
+        _iterator15.e(err);
+      } finally {
+        _iterator15.f();
       }
 
       $("#tidy").addEventListener("click", () => {
@@ -15600,9 +15816,9 @@ ${valIndent}`) + "\n" + indent;
         $("#feedback").innerHTML = "";
         document.body.classList.toggle("error", false);
         if (errorHighlight) errorHighlight.clear();
-        const bibtex = cmEditor.getValue();
-        let result;
-        const opt = getOptions();
+        var bibtex = cmEditor.getValue();
+        var result;
+        var opt = getOptions();
         setTimeout(() => {
           try {
             result = src_default.tidy(bibtex, opt);
@@ -15632,55 +15848,56 @@ ${valIndent}`) + "\n" + indent;
         }, 100);
       });
       var resetCopyBtnTimeout;
-      $("#copy").addEventListener("click", () => __async(exports, null, function* () {
-        try {
-          yield navigator.clipboard.writeText(cmEditor.getValue());
-          $("#copy").classList.toggle("copied", true);
-          clearInterval(resetCopyBtnTimeout);
-          resetCopyBtnTimeout = setTimeout(() => $("#copy").classList.toggle("copied", false), 3e3);
-        } catch (e) {
-          alert("Failed to copy");
-        }
-      }));
+      $("#copy").addEventListener("click", () => __async(exports, null, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.prev = 0;
+                _context.next = 3;
+                return navigator.clipboard.writeText(cmEditor.getValue());
+
+              case 3:
+                $("#copy").classList.toggle("copied", true);
+                clearInterval(resetCopyBtnTimeout);
+                resetCopyBtnTimeout = setTimeout(() => $("#copy").classList.toggle("copied", false), 3e3);
+                _context.next = 11;
+                break;
+
+              case 8:
+                _context.prev = 8;
+                _context.t0 = _context["catch"](0);
+                alert("Failed to copy");
+
+              case 11:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[0, 8]]);
+      })));
 
       function formatSuccessMessage(options2, result) {
-        const warnings = result.warnings.filter(w => w.code !== "DUPLICATE_ENTRY");
-        return `
-		<strong>Successful!</strong><br>
-		Tidied ${result.count} entries.<br><br>
-		<ul>
-			${warnings.map(warning => `<li>${warning.message}</li>`).join("")}
-		</ul>
-		${options2.merge ? formatDuplicateSummary(result) : ""}`;
+        var warnings = result.warnings.filter(w => w.code !== "DUPLICATE_ENTRY");
+        return "\n\t\t<strong>Successful!</strong><br>\n\t\tTidied ".concat(result.count, " entries.<br><br>\n\t\t<ul>\n\t\t\t").concat(warnings.map(warning => "<li>".concat(warning.message, "</li>")).join(""), "\n\t\t</ul>\n\t\t").concat(options2.merge ? formatDuplicateSummary(result) : "");
       }
 
       function formatDuplicateSummary(result) {
-        const dupes = result.warnings.filter(w => w.code === "DUPLICATE_ENTRY");
+        var dupes = result.warnings.filter(w => w.code === "DUPLICATE_ENTRY");
 
         if (dupes.length > 0) {
-          return `No duplicates.`;
+          return "No duplicates.";
         }
 
-        return `
-		<strong>${dupes.length} merged:
-			<ul>
-				${dupes.map(dupe => `<li>${dupe.message}</li>`).join("")}
-			</ul>
-		</strong>`;
+        return "\n\t\t<strong>".concat(dupes.length, " merged:\n\t\t\t<ul>\n\t\t\t\t").concat(dupes.map(dupe => "<li>".concat(dupe.message, "</li>")).join(""), "\n\t\t\t</ul>\n\t\t</strong>");
       }
 
       function formatError(e) {
         if (e instanceof BibTeXSyntaxError) {
-          return `
-		<strong>There's a problem with the bibtex (${e.name})</strong><br>
-		Syntax Error on line ${e.line} column ${e.column}<br>
-		Unexpected ${JSON.stringify(e.char)} in ${e.node.type}.`;
+          return "\n\t\t<strong>There's a problem with the bibtex (".concat(e.name, ")</strong><br>\n\t\tSyntax Error on line ").concat(e.line, " column ").concat(e.column, "<br>\n\t\tUnexpected ").concat(JSON.stringify(e.char), " in ").concat(e.node.type, ".");
         }
 
-        return `
-		<strong>There's a problem with the bibtex</strong><br>
-		Unknown error: ${e}<br>
-		This is probably a bug.`;
+        return "\n\t\t<strong>There's a problem with the bibtex</strong><br>\n\t\tUnknown error: ".concat(e, "<br>\n\t\tThis is probably a bug.");
       }
 
       window.cmEditor = cmEditor;
@@ -15715,14 +15932,14 @@ ${valIndent}`) + "\n" + indent;
       }
 
       function formatCLICommand() {
-        const options2 = getOptions();
+        var options2 = getOptions();
         $("#cli").innerHTML = "bibtex-tidy " + optionsToCLIArgs(options2).map(opt => {
-          const i = opt.indexOf("=");
+          var i = opt.indexOf("=");
 
           if (i === -1) {
-            return `<span class="opt-name">${opt}</span>`;
+            return "<span class=\"opt-name\">".concat(opt, "</span>");
           } else {
-            return [`<span class="opt-name">${opt.slice(0, i)}</span>`, `<span class="opt-val">${opt.slice(i + 1)}</span>`].join("=");
+            return ["<span class=\"opt-name\">".concat(opt.slice(0, i), "</span>"), "<span class=\"opt-val\">".concat(opt.slice(i + 1), "</span>")].join("=");
           }
         }).join(" ") + " YOUR_FILE.bib";
       }

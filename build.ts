@@ -11,19 +11,19 @@ const BUILD_PATH = join(SRC_PATH, '__generated__');
 const WEB_PATH = join(__dirname, 'docs');
 const CLI_BIN = join(__dirname, 'bin', 'bibtex-tidy');
 
-// For BigInt support:
-// * No IE version supports BigInt
+// For Summary/Details HTML element and CSS variable support:
+// * No IE versions
 // * Edge 79+
-// * Firefox 68+
-// * Safari 14+
-// * Chrome 67+
-// All tested on browserstack. Bibtext tidy looks and works correctly.
+// * Firefox 49+
+// * Chrome 49+
+// * Safari 10+
+// TODO: test on browserstack
 
 const BROWSER_TARGETS = {
 	edge: '79',
-	firefox: '68',
-	chrome: '67',
-	safari: '14',
+	firefox: '49',
+	chrome: '49',
+	safari: '10',
 };
 
 const NODE_TARGET: string[] = ['node12'];
