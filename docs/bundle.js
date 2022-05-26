@@ -11488,7 +11488,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           if (pasted) {
             e.preventDefault();
 
-            if (!cm.isReadOnly() && !cm.options.disableInput) {
+            if (!cm.isReadOnly() && !cm.options.disableInput && cm.hasFocus()) {
               runInOp(cm, function () {
                 return applyTextInput(cm, pasted, 0, null, "paste");
               });
@@ -13788,7 +13788,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
         CodeMirror3.fromTextArea = fromTextArea;
         addLegacyProps(CodeMirror3);
-        CodeMirror3.version = "5.65.3";
+        CodeMirror3.version = "5.65.4";
         return CodeMirror3;
       });
     }
