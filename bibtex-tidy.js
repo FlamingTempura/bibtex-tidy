@@ -1453,7 +1453,7 @@ function generateKey(valueLookup) {
   var lastName = (_c = authors[0]) == null ? void 0 : _c.lastName.toLowerCase();
   var year = (_d = valueLookup == null ? void 0 : valueLookup.get("year")) == null ? void 0 : _d.replace(/[^0-9]/g, "");
   var title = (_e = valueLookup == null ? void 0 : valueLookup.get("title")) != null ? _e : valueLookup == null ? void 0 : valueLookup.get("booktitle");
-  var titleFirstWord = title == null ? void 0 : title.toLowerCase().replace(/^[\s\S]*?([a-z]+)[^a-z][\s\S]*$/, "$1");
+  var titleFirstWord = title == null ? void 0 : title.toLowerCase().replace(new RegExp("^.*?([a-z]+)[^a-z].*$", "s"), "$1");
   if (!lastName || !year) return;
   return [lastName, year, titleFirstWord != null ? titleFirstWord : ""].join("");
 }
