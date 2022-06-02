@@ -115,7 +115,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         var ie_version = ie && (ie_upto10 ? document.documentMode || 6 : +(edge || ie_11up)[1]);
         var webkit = !edge && /WebKit\//.test(userAgent);
         var qtwebkit = webkit && /Qt\/\d+\.\d+/.test(userAgent);
-        var chrome = !edge && /Chrome\//.test(userAgent);
+        var chrome = !edge && /Chrome\/(\d+)/.exec(userAgent);
+        var chrome_version = chrome && +chrome[1];
         var presto = /Opera\//.test(userAgent);
         var safari = /Apple Computer/.test(navigator.vendor);
         var mac_geMountainLion = /Mac OS X 1\d\D([8-9]|\d\d)\D/.test(userAgent);
@@ -6231,6 +6232,19 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
 
         function onScrollWheel(cm, e) {
+          if (chrome && chrome_version >= 102) {
+            if (cm.display.chromeScrollHack == null) {
+              cm.display.sizer.style.pointerEvents = "none";
+            } else {
+              clearTimeout(cm.display.chromeScrollHack);
+            }
+
+            cm.display.chromeScrollHack = setTimeout(function () {
+              cm.display.chromeScrollHack = null;
+              cm.display.sizer.style.pointerEvents = "";
+            }, 100);
+          }
+
           var delta = wheelEventDelta(e),
               dx = delta.x,
               dy = delta.y;
@@ -13788,7 +13802,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
         CodeMirror3.fromTextArea = fromTextArea;
         addLegacyProps(CodeMirror3);
-        CodeMirror3.version = "5.65.4";
+        CodeMirror3.version = "5.65.5";
         return CodeMirror3;
       });
     }
