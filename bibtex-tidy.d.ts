@@ -287,6 +287,9 @@ export declare function getEntries(ast: RootNode): EntryNode[];
 declare const _default: {
 	tidy: typeof tidy;
 };
-export default _default;
+
+export {
+	_default as default,
+};
 
 export {};
