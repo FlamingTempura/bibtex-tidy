@@ -41,7 +41,7 @@
 		"@types/babel__core": "^7.1.16",
 		"@types/codemirror": "^5.60.5",
 		"@types/node": "^18.0.0",
-		"codemirror": "^5.63.3",
+		"codemirror": "^6.0.0",
 		"dts-bundle-generator": "^6.0.0",
 		"esbuild": "^0.14.2",
 		"esbuild-register": "^3.0.0",
