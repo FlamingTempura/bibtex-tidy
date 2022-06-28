@@ -53,5 +53,8 @@
 	"prettier": {
 		"useTabs": true,
 		"singleQuote": true
+	},
+	"dependencies": {
+		"@codemirror/state": "^6.0.0"
 	}
 }

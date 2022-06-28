@@ -81,30 +81,31 @@ a {
 	right: 320px;
 	top: 0;
 }
-#editor textarea {
-	height: 100%;
-	width: 100%;
-}
-.CodeMirror {
+
+.cm-editor {
 	background: var(--main-bg);
 	color: var(--main-fg);
-	font: var(--mono-normal);
 	height: 100%;
-	line-height: 1.3em;
 	padding: 12px;
 	width: 100%;
 }
-.CodeMirror .CodeMirror-gutters {
+.cm-editor .cm-scroller {
+	font: var(--mono-normal);
+	font-size: 14px;
+	line-height: 1.3em;
+}
+.cm-editor .cm-gutters {
 	background: var(--main-bg);
 	border-right: 14px solid var(--main-bg);
-}
-.CodeMirror .CodeMirror-linenumber {
 	color: var(--dark-gray);
 }
-.CodeMirror .CodeMirror-selected {
-	background: #283655;
+.cm-editor .cm-gutters .cm-gutter {
+	min-width: 29px;
 }
-.CodeMirror .CodeMirror-cursor {
+.cm-editor .cm-selectionBackground {
+	background: #283655 !important;
+}
+.cm-editor .cm-cursor {
 	border-left: 1px solid #ffffec;
 }
 .CodeMirror .cm-comment {

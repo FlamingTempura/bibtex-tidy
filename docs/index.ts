@@ -1,10 +1,39 @@
-import CodeMirror from 'codemirror';
+import { basicSetup, EditorView } from 'codemirror';
 import bibtexTidy, { BibTeXTidyResult } from '../src/index';
 import { optionDefinitions, OptionDefinition } from '../src/optionDefinitions';
 import { Options, UniqueKey } from '../src/optionUtils';
 import { optionsToCLIArgs } from '../src/cliUtils';
 import { BibTeXSyntaxError } from '../src/bibtex-parser';
-import './bibtex-highlighting';
+import { EditorState, StateEffect } from '@codemirror/state';
+import {
+	Decoration,
+	drawSelection,
+	gutter,
+	lineNumbers,
+} from '@codemirror/view';
+//import './bibtex-highlighting';
+
+const initialText = `Click Tidy to clean up the entries below      
+@Book{sweig42,
+  Author =	 { Stefa{n} Sweig },
+  title =	 { The impossible book },
+  publisher =	 { Dead Poet Society},
+  year =	 1942,
+  month =        mar
+}
+@article{steward03,
+  author =	 {Martha Steward},
+  title =	 {Cooking behind bars}, publisher = "Culinary Expert Series",
+  year = {2003}
+}
+@Book{impossible,
+  Author =	 { Stefan Sweig },
+  title =	 { The impossible book },
+  publisher =	 { Dead Poet Society},
+  year =	 1942,
+  month =        mar
+}
+`;
 
 function $<T extends HTMLElement>(selector: string, parent?: ParentNode) {
 	return (parent ?? document).querySelector<T>(selector)!;
@@ -30,11 +59,19 @@ for (const input of $$('input, textarea')) {
 renderSuboptions();
 
 const options = (document.forms as any).options;
-const cmEditor = CodeMirror.fromTextArea($('#editor textarea'), {
-	lineNumbers: true,
-	autofocus: true,
+// const cmEditor = CodeMirror.fromTextArea($('#editor textarea'), {
+// 	lineNumbers: true,
+// 	autofocus: true,
+// });
+// let errorHighlight: CodeMirror.TextMarker | undefined;
+
+const cmEditor = new EditorView({
+	parent: $('#editor'),
+	state: EditorState.create({
+		doc: initialText,
+		extensions: [lineNumbers(), drawSelection()],
+	}),
 });
-let errorHighlight: CodeMirror.TextMarker | undefined;
 
 const optionDocs: Record<string, OptionDefinition> = {};
 for (const option of optionDefinitions) {
@@ -61,27 +98,50 @@ $('#tidy').addEventListener('click', () => {
 
 	document.body.classList.toggle('error', false);
 
-	if (errorHighlight) errorHighlight.clear();
+	//if (errorHighlight) errorHighlight.clear();
+	cmEditor.dispatch({ effects: [] });
 
-	const bibtex = cmEditor.getValue();
+	const bibtex = cmEditor.state.doc.toString();
 	let result;
 	const opt = getOptions();
 	setTimeout(() => {
 		try {
 			result = bibtexTidy.tidy(bibtex, opt);
-			cmEditor.setValue(result.bibtex);
+			cmEditor.dispatch({
+				changes: {
+					from: 0,
+					to: cmEditor.state.doc.length,
+					insert: result.bibtex,
+				},
+			});
 			$('#feedback').innerHTML += formatSuccessMessage(opt, result);
 		} catch (e: unknown) {
 			console.error('bibtex parse problem:', e);
 			document.body.classList.toggle('error', true);
 			$('#feedback').innerHTML = formatError(e);
+
+			const addUnderline = StateEffect.define(); //StateEffect.define<{from: number, to: number}>()
+			const errorUnderline = Decoration.mark({
+				attributes: { class: 'bibtex-error' },
+			});
+
 			if (e instanceof BibTeXSyntaxError) {
 				console.log(e.line, e.column);
-				errorHighlight = cmEditor.markText(
-					{ line: e.line - 1, ch: e.column - 2 },
-					{ line: e.line - 1, ch: e.column - 1 },
-					{ className: 'bibtex-error' }
-				);
+
+				const from = cmEditor.state.doc.line(e.line - 1).from + e.column - 2;
+				const to = cmEditor.state.doc.line(e.line - 1).from + e.column - 1;
+
+				cmEditor.dispatch({
+					//@ts-ignore
+					effects: addUnderline.of([errorUnderline.range(from, to)]),
+					//addUnderline.of({ from, to})
+				});
+
+				// errorHighlight = cmEditor.markText(
+				// 	{ line: e.line - 1, ch: e.column - 2 },
+				// 	{ line: e.line - 1, ch: e.column - 1 },
+				// 	{ className: 'bibtex-error' }
+				// );
 			}
 		}
 		$('#feedback').style.display = 'block';
@@ -92,7 +152,7 @@ $('#tidy').addEventListener('click', () => {
 let resetCopyBtnTimeout: NodeJS.Timeout;
 $('#copy').addEventListener('click', async () => {
 	try {
-		await navigator.clipboard.writeText(cmEditor.getValue());
+		await navigator.clipboard.writeText(cmEditor.state.doc.toString());
 		$('#copy').classList.toggle('copied', true);
 		clearInterval(resetCopyBtnTimeout);
 		resetCopyBtnTimeout = setTimeout(
