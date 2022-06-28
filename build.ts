@@ -202,14 +202,15 @@ async function buildTypeDeclarations() {
 
 async function buildCLI() {
 	console.time('CLI built');
-	await build({
+	const { outputFiles } = await build({
 		bundle: true,
+		write: false,
 		platform: 'node',
-		banner: { js: '#!/usr/bin/env node\n' + jsBanner.join('\n') },
-		outfile: CLI_BIN,
+		banner: { js: jsBanner.join('\n') },
 		target: NODE_TARGET,
 		entryPoints: [join(SRC_PATH, 'cli.ts')],
 	});
+	await writeFile(CLI_BIN, '#!/usr/bin/env node\n' + outputFiles[0].text);
 	await chmod(CLI_BIN, 0o755); // rwxr-xr-x
 	console.timeEnd('CLI built');
 }
