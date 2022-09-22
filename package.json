@@ -43,7 +43,7 @@
 		"@types/node": "^18.0.0",
 		"codemirror": "^5.63.3",
 		"dts-bundle-generator": "^6.0.0",
-		"esbuild": "^0.14.2",
+		"esbuild": "^0.15.9",
 		"esbuild-register": "^3.0.0",
 		"nyc": "^15.1.0",
 		"prettier": "^2.4.1",
