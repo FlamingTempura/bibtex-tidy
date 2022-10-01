@@ -20,9 +20,9 @@ function renderSuboptions() {
 	}
 }
 
-function delay(fn, ms) {
-  let timer = 0;
-  return function(...args) {
+function delay(fn: Function, ms: number) {
+  let timer: ReturnType<typeof setTimeout>;
+  return function(this: typeof delay, ...args: any) {
     clearTimeout(timer);
     timer = setTimeout(fn.bind(this, ...args), ms || 0);
   }
@@ -217,8 +217,8 @@ function getOptions(): Options {
 function setOptions(opts: Options) {
 	options.curly.checked = opts.curly;
 	options.numeric.checked = opts.numeric;
-	options.sort.checked = opts.sort && opts.sort.length > 0;
-	options.sortList.value = (opts.sort && opts.sort.length > 0 && opts.sort.join(',')) || '';
+	options.sort.checked = opts.sort && (opts.sort as string[]).length > 0;
+	options.sortList.value = (opts.sort && (opts.sort as string[]).join(',')) || '';
 	options.omit.checked = opts.omit !== null;
 	options.omitList.value = (opts.omit && opts.omit.length > 0 && opts.omit.join(',')) || '';
 	options.spaces.value = String(opts.space);
@@ -228,17 +228,17 @@ function setOptions(opts: Options) {
 	options.wrap.checked = opts.wrap !== false;
 	options.wrapnum.value = String(opts.wrap || 0);
 	options.duplicates.checked = Boolean(opts.duplicates);
-	options.uniqKEY.checked = opts.duplicates.includes("key") || false;
-	options.uniqDOI.checked = opts.duplicates.includes("doi") || false;
-	options.uniqABS.checked = opts.duplicates.includes("abstract") || false;
-	options.uniqCIT.checked = opts.duplicates.includes("citation") || false;
+	options.uniqKEY.checked = (opts.duplicates && (opts.duplicates as string[]).includes("key")) || false;
+	options.uniqDOI.checked = (opts.duplicates && (opts.duplicates as string[]).includes("doi")) || false;
+	options.uniqABS.checked = (opts.duplicates && (opts.duplicates as string[]).includes("abstract")) || false;
+	options.uniqCIT.checked = (opts.duplicates && (opts.duplicates as string[]).includes("citation")) || false;
 	options.merge.checked = Boolean(opts.merge)
 	options.mergeStrategy.value = opts.merge || '';
-	options.enclosingBraces.checked = opts.enclosingBraces && opts.enclosingBraces.length > 0;
-	options.enclosingBracesList.value = (opts.enclosingBraces && opts.enclosingBraces.length > 0 && opts.enclosingBraces.join(',')) || '';
+	options.enclosingBraces.checked = opts.enclosingBraces && (opts.enclosingBraces as string[]).length > 0;
+	options.enclosingBracesList.value = (opts.enclosingBraces && (opts.enclosingBraces as string[]).join(',')) || '';
 	options.dropAllCaps.checked = opts.dropAllCaps;
-	options.sortFields.checked = opts.sortFields && opts.sortFields.length > 0;
-	options.sortFieldList.value = (opts.sortFields && opts.sortFields.length > 0 && opts.sortFields.join(',')) || '';
+	options.sortFields.checked = opts.sortFields && (opts.sortFields as string[]).length > 0;
+	options.sortFieldList.value = (opts.sortFields && (opts.sortFields as string[]).join(',')) || '';
 	options.stripComments.checked = opts.stripComments;
 	options.tidyComments.checked = opts.tidyComments;
 	options.encodeUrls.checked = opts.encodeUrls;
@@ -249,7 +249,7 @@ function setOptions(opts: Options) {
 	options.lowercase.checked = opts.lowercase;
 	options.generateKeys.checked = opts.generateKeys;
 	options.maxAuthors.checked = opts.maxAuthors !== null;
-	options.maxAuthorsNum.value = String(opts.maxAuthorsNum || 0);
+	options.maxAuthorsNum.value = String(opts.maxAuthors || 0);
 }
 
 function updateURLParams() {
@@ -261,7 +261,7 @@ function updateURLParams() {
 function getOptionsFromURL() : Options {
 	const queryString = window.location.search;
 	const urlParams = new URLSearchParams(queryString);
-	const options_json = urlParams.get('opt');
+	const options_json = urlParams.get('opt') || "";
 	return JSON.parse(options_json);
 }
 
@@ -288,7 +288,7 @@ function formatCLICommand() {
 
 window.requestAnimationFrame(formatCLICommand);
 
-function onPopState(event) {
+function onPopState(event: any) {
 	setOptions(event.state);
 	renderSuboptions();
 }
