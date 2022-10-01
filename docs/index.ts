@@ -20,13 +20,28 @@ function renderSuboptions() {
 	}
 }
 
-for (const input of $$('input, textarea')) {
-	input.addEventListener('input', () => {
-		renderSuboptions();
-		formatCLICommand();
-		updateURLParams();
-	});
+function delay(fn, ms) {
+  let timer = 0;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(fn.bind(this, ...args), ms || 0);
+  }
 }
+
+function inputUpdate() {
+	renderSuboptions();
+	formatCLICommand();
+	updateURLParams();
+}
+
+for (const input of $$('input')) {
+	input.addEventListener('input', inputUpdate);
+}
+
+for (const input of $$('textarea')) {
+	input.addEventListener('input', delay(inputUpdate, 500));
+}
+
 
 renderSuboptions();
 
@@ -240,18 +255,15 @@ function setOptions(opts: Options) {
 function updateURLParams() {
 	const options = getOptions();
 	const options_json = JSON.stringify(options);
-	window.history.pushState(options, "", `index.html?cli=${encodeURIComponent(options_json)}`);
+	window.history.pushState(options, "", `index.html?opt=${encodeURIComponent(options_json)}`);
 }
 
 function getOptionsFromURL() : Options {
 	const queryString = window.location.search;
 	const urlParams = new URLSearchParams(queryString);
-	const options_json = urlParams.get('cli');
+	const options_json = urlParams.get('opt');
 	return JSON.parse(options_json);
 }
-
-setOptions(getOptionsFromURL());
-renderSuboptions();
 
 function formatCLICommand() {
 	const options = getOptions();
@@ -282,3 +294,7 @@ function onPopState(event) {
 }
 
 window.onpopstate = onPopState;
+
+setOptions(getOptionsFromURL());
+renderSuboptions();
+formatCLICommand();
