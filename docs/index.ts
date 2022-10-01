@@ -240,7 +240,7 @@ function setOptions(opts: Options) {
 function updateURLParams() {
 	const options = getOptions();
 	const options_json = JSON.stringify(options);
-	window.history.pushState({}, "", `index.html?cli=${encodeURIComponent(options_json)}`);
+	window.history.pushState(options, "", `index.html?cli=${encodeURIComponent(options_json)}`);
 }
 
 function getOptionsFromURL() : Options {
@@ -275,3 +275,10 @@ function formatCLICommand() {
 }
 
 window.requestAnimationFrame(formatCLICommand);
+
+function onPopState(event) {
+	setOptions(event.state);
+	renderSuboptions();
+}
+
+window.onpopstate = onPopState;

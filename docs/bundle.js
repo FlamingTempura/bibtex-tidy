@@ -16013,7 +16013,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       function updateURLParams() {
         var options2 = getOptions();
         var options_json = JSON.stringify(options2);
-        window.history.pushState({}, "", "index.html?cli=".concat(encodeURIComponent(options_json)));
+        window.history.pushState(options2, "", "index.html?cli=".concat(encodeURIComponent(options_json)));
       }
 
       function getOptionsFromURL() {
@@ -16040,6 +16040,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
 
       window.requestAnimationFrame(formatCLICommand);
+
+      function onPopState(event) {
+        setOptions(event.state);
+        renderSuboptions();
+      }
+
+      window.onpopstate = onPopState;
     }
 
   });
