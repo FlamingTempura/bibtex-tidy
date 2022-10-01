@@ -15797,6 +15797,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           input.addEventListener("input", () => {
             renderSuboptions();
             formatCLICommand();
+            updateURLParams();
           });
         }
       } catch (err) {
@@ -15970,6 +15971,60 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           maxAuthors: options.maxAuthors.checked ? Number(options.maxAuthorsNum.value) : void 0
         };
       }
+
+      function setOptions(opts) {
+        options.curly.checked = opts.curly;
+        options.numeric.checked = opts.numeric;
+        options.sort.checked = opts.sort && opts.sort.length > 0;
+        options.sortList.value = opts.sort && opts.sort.length > 0 && opts.sort.join(",") || "";
+        options.omit.checked = opts.omit !== null;
+        options.omitList.value = opts.omit && opts.omit.length > 0 && opts.omit.join(",") || "";
+        options.spaces.value = String(opts.space);
+        options.indent.value = opts.tab ? "tabs" : "";
+        options.align.checked = opts.align && opts.align != 0;
+        options.alignnum.value = String(opts.align || 0);
+        options.wrap.checked = opts.wrap !== false;
+        options.wrapnum.value = String(opts.wrap || 0);
+        options.duplicates.checked = Boolean(opts.duplicates);
+        options.uniqKEY.checked = opts.duplicates.includes("key") || false;
+        options.uniqDOI.checked = opts.duplicates.includes("doi") || false;
+        options.uniqABS.checked = opts.duplicates.includes("abstract") || false;
+        options.uniqCIT.checked = opts.duplicates.includes("citation") || false;
+        options.merge.checked = Boolean(opts.merge);
+        options.mergeStrategy.value = opts.merge || "";
+        options.enclosingBraces.checked = opts.enclosingBraces && opts.enclosingBraces.length > 0;
+        options.enclosingBracesList.value = opts.enclosingBraces && opts.enclosingBraces.length > 0 && opts.enclosingBraces.join(",") || "";
+        options.dropAllCaps.checked = opts.dropAllCaps;
+        options.sortFields.checked = opts.sortFields && opts.sortFields.length > 0;
+        options.sortFieldList.value = opts.sortFields && opts.sortFields.length > 0 && opts.sortFields.join(",") || "";
+        options.stripComments.checked = opts.stripComments;
+        options.tidyComments.checked = opts.tidyComments;
+        options.encodeUrls.checked = opts.encodeUrls;
+        options.escape.checked = opts.escape;
+        options.trailingCommas.checked = opts.trailingCommas;
+        options.removeEmptyFields.checked = opts.removeEmptyFields;
+        options.removeDuplicateFields.checked = opts.removeDuplicateFields;
+        options.lowercase.checked = opts.lowercase;
+        options.generateKeys.checked = opts.generateKeys;
+        options.maxAuthors.checked = opts.maxAuthors !== null;
+        options.maxAuthorsNum.value = String(opts.maxAuthorsNum || 0);
+      }
+
+      function updateURLParams() {
+        var options2 = getOptions();
+        var options_json = JSON.stringify(options2);
+        window.history.pushState({}, "", "index.html?cli=".concat(encodeURIComponent(options_json)));
+      }
+
+      function getOptionsFromURL() {
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var options_json = urlParams.get("cli");
+        return JSON.parse(options_json);
+      }
+
+      setOptions(getOptionsFromURL());
+      renderSuboptions();
 
       function formatCLICommand() {
         var options2 = getOptions();
