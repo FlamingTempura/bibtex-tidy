@@ -222,7 +222,7 @@ function setOptions(opts: Options) {
 	options.omit.checked = opts.omit !== null;
 	options.omitList.value = (opts.omit && opts.omit.length > 0 && opts.omit.join(',')) || '';
 	options.spaces.value = String(opts.space);
-	options.indent.value = opts.tab ? 'tabs' : '';
+	options.indent.value = opts.tab ? 'tabs' : 'spaces';
 	options.align.checked = opts.align && opts.align != 0;
 	options.alignnum.value = String(opts.align || 0);
 	options.wrap.checked = opts.wrap !== false;
