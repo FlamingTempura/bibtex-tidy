@@ -15788,21 +15788,52 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
       }
 
-      var _iterator13 = _createForOfIteratorHelper($$("input, textarea")),
+      function delay(fn, ms) {
+        var timer = 0;
+        return function () {
+          clearTimeout(timer);
+
+          for (var _len = arguments.length, args = new Array(_len), _key2 = 0; _key2 < _len; _key2++) {
+            args[_key2] = arguments[_key2];
+          }
+
+          timer = setTimeout(fn.bind(this, ...args), ms || 0);
+        };
+      }
+
+      function inputUpdate() {
+        renderSuboptions();
+        formatCLICommand();
+        updateURLParams();
+      }
+
+      var _iterator13 = _createForOfIteratorHelper($$("input")),
           _step13;
 
       try {
         for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
           var input = _step13.value;
-          input.addEventListener("input", () => {
-            renderSuboptions();
-            formatCLICommand();
-          });
+          input.addEventListener("input", inputUpdate);
         }
       } catch (err) {
         _iterator13.e(err);
       } finally {
         _iterator13.f();
+      }
+
+      var _iterator14 = _createForOfIteratorHelper($$("textarea")),
+          _step14;
+
+      try {
+        for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
+          var _input = _step14.value;
+
+          _input.addEventListener("input", delay(inputUpdate, 500));
+        }
+      } catch (err) {
+        _iterator14.e(err);
+      } finally {
+        _iterator14.f();
       }
 
       renderSuboptions();
@@ -15814,26 +15845,26 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var errorHighlight;
       var optionDocs = {};
 
-      var _iterator14 = _createForOfIteratorHelper(optionDefinitions),
-          _step14;
-
-      try {
-        for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
-          var option = _step14.value;
-          optionDocs[option.key] = option;
-        }
-      } catch (err) {
-        _iterator14.e(err);
-      } finally {
-        _iterator14.f();
-      }
-
-      var _iterator15 = _createForOfIteratorHelper($$("label[data-option]")),
+      var _iterator15 = _createForOfIteratorHelper(optionDefinitions),
           _step15;
 
       try {
         for (_iterator15.s(); !(_step15 = _iterator15.n()).done;) {
-          var $label = _step15.value;
+          var option = _step15.value;
+          optionDocs[option.key] = option;
+        }
+      } catch (err) {
+        _iterator15.e(err);
+      } finally {
+        _iterator15.f();
+      }
+
+      var _iterator16 = _createForOfIteratorHelper($$("label[data-option]")),
+          _step16;
+
+      try {
+        for (_iterator16.s(); !(_step16 = _iterator16.n()).done;) {
+          var $label = _step16.value;
           var key = $label.dataset.option;
           var _option = optionDocs[key];
           var $input = $label.querySelector("input");
@@ -15845,9 +15876,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
         }
       } catch (err) {
-        _iterator15.e(err);
+        _iterator16.e(err);
       } finally {
-        _iterator15.f();
+        _iterator16.f();
       }
 
       $("#tidy").addEventListener("click", () => {
@@ -15971,6 +16002,57 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         };
       }
 
+      function setOptions(opts) {
+        options.curly.checked = opts.curly;
+        options.numeric.checked = opts.numeric;
+        options.sort.checked = opts.sort && opts.sort.length > 0;
+        options.sortList.value = opts.sort && opts.sort.length > 0 && opts.sort.join(",") || "";
+        options.omit.checked = opts.omit !== null;
+        options.omitList.value = opts.omit && opts.omit.length > 0 && opts.omit.join(",") || "";
+        options.spaces.value = String(opts.space);
+        options.indent.value = opts.tab ? "tabs" : "";
+        options.align.checked = opts.align && opts.align != 0;
+        options.alignnum.value = String(opts.align || 0);
+        options.wrap.checked = opts.wrap !== false;
+        options.wrapnum.value = String(opts.wrap || 0);
+        options.duplicates.checked = Boolean(opts.duplicates);
+        options.uniqKEY.checked = opts.duplicates.includes("key") || false;
+        options.uniqDOI.checked = opts.duplicates.includes("doi") || false;
+        options.uniqABS.checked = opts.duplicates.includes("abstract") || false;
+        options.uniqCIT.checked = opts.duplicates.includes("citation") || false;
+        options.merge.checked = Boolean(opts.merge);
+        options.mergeStrategy.value = opts.merge || "";
+        options.enclosingBraces.checked = opts.enclosingBraces && opts.enclosingBraces.length > 0;
+        options.enclosingBracesList.value = opts.enclosingBraces && opts.enclosingBraces.length > 0 && opts.enclosingBraces.join(",") || "";
+        options.dropAllCaps.checked = opts.dropAllCaps;
+        options.sortFields.checked = opts.sortFields && opts.sortFields.length > 0;
+        options.sortFieldList.value = opts.sortFields && opts.sortFields.length > 0 && opts.sortFields.join(",") || "";
+        options.stripComments.checked = opts.stripComments;
+        options.tidyComments.checked = opts.tidyComments;
+        options.encodeUrls.checked = opts.encodeUrls;
+        options.escape.checked = opts.escape;
+        options.trailingCommas.checked = opts.trailingCommas;
+        options.removeEmptyFields.checked = opts.removeEmptyFields;
+        options.removeDuplicateFields.checked = opts.removeDuplicateFields;
+        options.lowercase.checked = opts.lowercase;
+        options.generateKeys.checked = opts.generateKeys;
+        options.maxAuthors.checked = opts.maxAuthors !== null;
+        options.maxAuthorsNum.value = String(opts.maxAuthorsNum || 0);
+      }
+
+      function updateURLParams() {
+        var options2 = getOptions();
+        var options_json = JSON.stringify(options2);
+        window.history.pushState(options2, "", "index.html?opt=".concat(encodeURIComponent(options_json)));
+      }
+
+      function getOptionsFromURL() {
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var options_json = urlParams.get("opt");
+        return JSON.parse(options_json);
+      }
+
       function formatCLICommand() {
         var options2 = getOptions();
         $("#cli").innerHTML = "bibtex-tidy " + optionsToCLIArgs(options2).map(opt => {
@@ -15985,6 +16067,16 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
 
       window.requestAnimationFrame(formatCLICommand);
+
+      function onPopState(event) {
+        setOptions(event.state);
+        renderSuboptions();
+      }
+
+      window.onpopstate = onPopState;
+      setOptions(getOptionsFromURL());
+      renderSuboptions();
+      formatCLICommand();
     }
 
   });
