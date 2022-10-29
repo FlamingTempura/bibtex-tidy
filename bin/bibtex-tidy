@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-"use strict";
 /**
  * bibtex-tidy v1.8.5
  * https://github.com/FlamingTempura/bibtex-tidy
@@ -8,6 +7,7 @@
  * using `npm run build`. Edit files in './src' then rebuild.
  **/
 
+"use strict";
 
 // src/optionDefinitions.ts
 var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
@@ -446,23 +446,25 @@ var optionDefinitions = [
 
 // src/optionUtils.ts
 function normalizeOptions(options) {
-  return Object.fromEntries(optionDefinitions.map((def) => {
-    const key = def.key;
-    const value = options[key];
-    if (value === true && def.valueIfTrue !== void 0) {
-      return [key, def.valueIfTrue];
-    }
-    if (value === false && def.valueIfFalse !== void 0) {
-      return [key, def.valueIfFalse];
-    }
-    if (typeof value === "undefined" && def.defaultValue !== void 0) {
-      if (typeof def.defaultValue === "function") {
-        return [key, def.defaultValue(options)];
+  return Object.fromEntries(
+    optionDefinitions.map((def) => {
+      const key = def.key;
+      const value = options[key];
+      if (value === true && def.valueIfTrue !== void 0) {
+        return [key, def.valueIfTrue];
       }
-      return [key, def.defaultValue];
-    }
-    return [key, value];
-  }));
+      if (value === false && def.valueIfFalse !== void 0) {
+        return [key, def.valueIfFalse];
+      }
+      if (typeof value === "undefined" && def.defaultValue !== void 0) {
+        if (typeof def.defaultValue === "function") {
+          return [key, def.defaultValue(options)];
+        }
+        return [key, def.defaultValue];
+      }
+      return [key, value];
+    })
+  );
 }
 
 // src/bibtex-parser.ts
@@ -777,8 +779,10 @@ function isWhitespace(string) {
 }
 var BibTeXSyntaxError = class extends Error {
   constructor(input, node, pos, line, column) {
-    super(`Line ${line}:${column}: Syntax Error in ${node.type}
-` + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
+    super(
+      `Line ${line}:${column}: Syntax Error in ${node.type}
+` + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20)
+    );
     this.node = node;
     this.line = line;
     this.column = column;
@@ -3140,10 +3144,16 @@ function escapeSpecialCharacters(str) {
     const c = str.charCodeAt(i).toString(16).padStart(4, "0");
     newstr += specialCharacters.get(c) || str[i];
   }
-  return newstr.replace(/MATH\.EXP\.(\d+)/, (_, i) => mathExpressions[Number(i)]);
+  return newstr.replace(
+    /MATH\.EXP\.(\d+)/,
+    (_, i) => mathExpressions[Number(i)]
+  );
 }
 function titleCase(str) {
-  return str.replace(/(\w)(\S*)/g, (_, first, rest) => first.toLocaleUpperCase() + rest.toLocaleLowerCase());
+  return str.replace(
+    /(\w)(\S*)/g,
+    (_, first, rest) => first.toLocaleUpperCase() + rest.toLocaleLowerCase()
+  );
 }
 function alphaNum(str) {
   return str.replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
@@ -3280,7 +3290,9 @@ function formatBibtex(ast, options, replacementKeys) {
   const { omit, tab, space } = options;
   const indent = tab ? "	" : " ".repeat(space);
   const omitFields = new Set(omit);
-  let bibtex = ast.children.map((child) => formatNode(child, options, indent, omitFields, replacementKeys)).join("");
+  let bibtex = ast.children.map(
+    (child) => formatNode(child, options, indent, omitFields, replacementKeys)
+  ).join("");
   if (!bibtex.endsWith("\n"))
     bibtex += "\n";
   return bibtex;
@@ -3299,7 +3311,14 @@ function formatNode(child, options, indent, omitFields, replacementKeys) {
     case "comment":
       return formatComment(child.block.raw, options);
     case "entry":
-      return formatEntry(child.command, child.block, options, indent, omitFields, replacementKeys == null ? void 0 : replacementKeys.get(child.block));
+      return formatEntry(
+        child.command,
+        child.block,
+        options,
+        indent,
+        omitFields,
+        replacementKeys == null ? void 0 : replacementKeys.get(child.block)
+      );
   }
 }
 function formatEntry(entryType, entry, options, indent, omitFields, replacementKey) {
@@ -3377,7 +3396,9 @@ function formatValue(field, options) {
   } = options;
   const nameLowerCase = field.name.toLocaleLowerCase();
   const indent = tab ? "	" : " ".repeat(space);
-  const enclosingBracesFields = new Set((enclosingBraces || []).map((field2) => field2.toLocaleLowerCase()));
+  const enclosingBracesFields = new Set(
+    (enclosingBraces || []).map((field2) => field2.toLocaleLowerCase())
+  );
   return field.value.concat.map(({ type, value }) => {
     const isNumeric = value.match(/^[1-9][0-9]*$/);
     if (isNumeric && curly) {
@@ -3423,7 +3444,11 @@ function formatValue(field, options) {
         const valIndent = indent.repeat(2);
         if (wrap) {
           const wrapCol = wrap;
-          paragraphs = paragraphs.map((paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join("\n" + valIndent));
+          paragraphs = paragraphs.map(
+            (paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join(
+              "\n" + valIndent
+            )
+          );
         }
         value = "\n" + valIndent + paragraphs.join(`
 
@@ -3524,7 +3549,9 @@ function mergeEntries(merge, duplicateOf, entry) {
     case "combine":
     case "overwrite":
       for (const field of entry.fields) {
-        const existing = duplicateOf.fields.find((f) => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase());
+        const existing = duplicateOf.fields.find(
+          (f) => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase()
+        );
         if (!existing) {
           duplicateOf.fields.push(field);
         } else if (merge === "overwrite") {
@@ -3565,9 +3592,16 @@ function tidy(input, options_ = {}) {
     message: `${entry.type} entry does not have an entry key.`
   }));
   const valueLookup = generateValueLookup(ast, options);
-  const duplicates = checkForDuplicates(ast, valueLookup, options.duplicates, options.merge);
+  const duplicates = checkForDuplicates(
+    ast,
+    valueLookup,
+    options.duplicates,
+    options.merge
+  );
   warnings.push(...duplicates.warnings);
-  ast.children = ast.children.filter((child) => !isEntryNode(child) || !duplicates.entries.has(child.block));
+  ast.children = ast.children.filter(
+    (child) => !isEntryNode(child) || !duplicates.entries.has(child.block)
+  );
   if (options.sort)
     sortEntries(ast, valueLookup, options.sort);
   if (options.sortFields)
@@ -3594,7 +3628,9 @@ function generateKeys(ast, valueLookup) {
 }
 function generateKey(valueLookup) {
   var _a, _b, _c, _d, _e;
-  const authors = parseAuthors((_b = (_a = valueLookup == null ? void 0 : valueLookup.get("author")) == null ? void 0 : _a.replace(/["{}]/g, "")) != null ? _b : "");
+  const authors = parseAuthors(
+    (_b = (_a = valueLookup == null ? void 0 : valueLookup.get("author")) == null ? void 0 : _a.replace(/["{}]/g, "")) != null ? _b : ""
+  );
   const lastName = (_c = authors[0]) == null ? void 0 : _c.lastName.toLowerCase();
   const year = (_d = valueLookup == null ? void 0 : valueLookup.get("year")) == null ? void 0 : _d.replace(/[^0-9]/g, "");
   const title = (_e = valueLookup == null ? void 0 : valueLookup.get("title")) != null ? _e : valueLookup == null ? void 0 : valueLookup.get("booktitle");
@@ -3611,13 +3647,17 @@ function getEntries(ast) {
   return ast.children.filter(isEntryNode).map((node) => node.block);
 }
 function generateValueLookup(ast, options) {
-  return new Map(getEntries(ast).map((entry) => [
-    entry,
-    new Map(entry.fields.map((field) => [
-      field.name.toLocaleLowerCase(),
-      formatValue(field, options)
-    ]))
-  ]));
+  return new Map(
+    getEntries(ast).map((entry) => [
+      entry,
+      new Map(
+        entry.fields.map((field) => [
+          field.name.toLocaleLowerCase(),
+          formatValue(field, options)
+        ])
+      )
+    ])
+  );
 }
 var src_default = { tidy };
 
@@ -3625,7 +3665,9 @@ var src_default = { tidy };
 var import_process = require("process");
 
 // src/cliUtils.ts
-var OPTIONS = new Set(optionDefinitions.flatMap((def) => Object.keys(def.cli)));
+var OPTIONS = new Set(
+  optionDefinitions.flatMap((def) => Object.keys(def.cli))
+);
 function parseArguments(args) {
   const {
     inputFiles,
@@ -3667,7 +3709,10 @@ function splitCLIArgs(args) {
       if (equalPos > -1) {
         const option = arg.slice(0, equalPos);
         const values = arg.slice(equalPos + 1).split(",");
-        argsToProcess.unshift({ arg: option }, ...values.map((val) => ({ arg: val, isValue: true })));
+        argsToProcess.unshift(
+          { arg: option },
+          ...values.map((val) => ({ arg: val, isValue: true }))
+        );
         continue;
       }
       if (!OPTIONS.has(arg)) {
@@ -3868,7 +3913,9 @@ async function start() {
     unknownArgs: unknownOptions
   } = parseArguments(import_process.argv.slice(2));
   if (unknownOptions.length > 0) {
-    console.error(`Unknown option${unknownOptions.length > 1 ? "s" : ""}: ${unknownOptions.join(", ")}`);
+    console.error(
+      `Unknown option${unknownOptions.length > 1 ? "s" : ""}: ${unknownOptions.join(", ")}`
+    );
     console.error(`Try 'bibtex-tidy --help for more information.`);
     (0, import_process.exit)(1);
   }
