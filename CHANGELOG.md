@@ -96,3 +96,4 @@ Remove npm prepare script
 
 - removal of DUPLICATE_KEY
 - DUPLICATE_ENTRY now has a 'rule' property (can be key, doi, citation, or abstract)
+- add --blank-lines option to separate entries with a blank line

@@ -98,6 +98,9 @@ bibtex-tidy references.bib
       Examples:
       --align=14 (default)
       
+  --blank-lines, --no-blank-lines
+      Insert an empty line between each entry.
+      
   --sort, --no-sort
       Sort entries by specified fields. For descending order, prefix the field with
       a dash (-).

@@ -11323,6 +11323,16 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         valueIfFalse: 1,
         defaultValue: 14
       }, {
+        key: "blankLines",
+        cli: {
+          "--blank-lines": true,
+          "--no-blank-lines": false
+        },
+        toCLI: val => val ? "--blank-lines" : void 0,
+        title: "Insert blank lines",
+        description: ["Insert an empty line between each entry."],
+        type: "boolean"
+      }, {
         key: "sort",
         cli: {
           "--sort": args => args.length > 0 ? args : true,
@@ -12184,7 +12194,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       space = options.space;
     var indent = tab ? "	" : " ".repeat(space);
     var omitFields = new Set(omit);
-    var bibtex = ast.children.map(child => formatNode(child, options, indent, omitFields, replacementKeys)).join("");
+    var bibtex = ast.children.map(child => formatNode(child, options, indent, omitFields, replacementKeys)).join("").trimEnd();
     if (!bibtex.endsWith("\n")) bibtex += "\n";
     return bibtex;
   }
@@ -12196,11 +12206,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     switch (child.block.type) {
       case "preamble":
       case "string":
-        return "".concat(child.block.raw, "\n");
+        return "".concat(child.block.raw, "\n") + (options.blankLines ? "\n" : "");
       case "comment":
         return formatComment(child.block.raw, options);
       case "entry":
-        return formatEntry(child.command, child.block, options, indent, omitFields, replacementKeys == null ? void 0 : replacementKeys.get(child.block));
+        return formatEntry(child.command, child.block, options, indent, omitFields, replacementKeys == null ? void 0 : replacementKeys.get(child.block)) + (options.blankLines ? "\n" : "");
     }
   }
   function formatEntry(entryType, entry, options, indent, omitFields, replacementKey) {
@@ -13148,6 +13158,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           tab: options.indent.value === "tabs",
           align: options.align.checked ? Number(options.alignnum.value) : 0,
           wrap: options.wrap.checked ? Number(options.wrapnum.value) : false,
+          blankLines: options.blankLines.checked,
           duplicates: options.duplicates.checked ? [options.uniqKEY.checked ? "key" : null, options.uniqDOI.checked ? "doi" : null, options.uniqABS.checked ? "abstract" : null, options.uniqCIT.checked ? "citation" : null].filter(a => a !== null) : false,
           merge: options.merge.checked ? options.mergeStrategy.value : false,
           enclosingBraces: options.enclosingBraces.checked && options.enclosingBracesList.value.length > 0 && options.enclosingBracesList.value.split(/[\n\t ,]+/),
@@ -13178,6 +13189,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         options.align.checked = opts.align && opts.align != 0;
         options.alignnum.value = String(opts.align || 0);
         options.wrap.checked = opts.wrap !== false;
+        options.blankLines.checked = opts.blankLines === true;
         options.wrapnum.value = String(opts.wrap || 0);
         options.duplicates.checked = Boolean(opts.duplicates);
         options.uniqKEY.checked = opts.duplicates && opts.duplicates.includes("key") || false;

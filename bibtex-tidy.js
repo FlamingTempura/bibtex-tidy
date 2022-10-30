@@ -116,6 +116,16 @@ var optionDefinitions = [{
   valueIfFalse: 1,
   defaultValue: 14
 }, {
+  key: "blankLines",
+  cli: {
+    "--blank-lines": true,
+    "--no-blank-lines": false
+  },
+  toCLI: val => val ? "--blank-lines" : void 0,
+  title: "Insert blank lines",
+  description: ["Insert an empty line between each entry."],
+  type: "boolean"
+}, {
   key: "sort",
   cli: {
     "--sort": args => args.length > 0 ? args : true,
@@ -940,7 +950,7 @@ function formatBibtex(ast, options, replacementKeys) {
     space = options.space;
   var indent = tab ? "	" : " ".repeat(space);
   var omitFields = new Set(omit);
-  var bibtex = ast.children.map(child => formatNode(child, options, indent, omitFields, replacementKeys)).join("");
+  var bibtex = ast.children.map(child => formatNode(child, options, indent, omitFields, replacementKeys)).join("").trimEnd();
   if (!bibtex.endsWith("\n")) bibtex += "\n";
   return bibtex;
 }
@@ -952,11 +962,11 @@ function formatNode(child, options, indent, omitFields, replacementKeys) {
   switch (child.block.type) {
     case "preamble":
     case "string":
-      return "".concat(child.block.raw, "\n");
+      return "".concat(child.block.raw, "\n") + (options.blankLines ? "\n" : "");
     case "comment":
       return formatComment(child.block.raw, options);
     case "entry":
-      return formatEntry(child.command, child.block, options, indent, omitFields, replacementKeys == null ? void 0 : replacementKeys.get(child.block));
+      return formatEntry(child.command, child.block, options, indent, omitFields, replacementKeys == null ? void 0 : replacementKeys.get(child.block)) + (options.blankLines ? "\n" : "");
   }
 }
 function formatEntry(entryType, entry, options, indent, omitFields, replacementKey) {

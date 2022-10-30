@@ -30,12 +30,12 @@ export function formatBibtex(
 
 	const indent: string = tab ? '\t' : ' '.repeat(space);
 	const omitFields: Set<string> = new Set(omit);
-
 	let bibtex: string = ast.children
 		.map((child) =>
 			formatNode(child, options, indent, omitFields, replacementKeys)
 		)
-		.join('');
+		.join('')
+		.trimEnd();
 
 	if (!bibtex.endsWith('\n')) bibtex += '\n';
 
@@ -59,17 +59,19 @@ function formatNode(
 		case 'preamble':
 		case 'string':
 			// keep preambles as they were
-			return `${child.block.raw}\n`;
+			return `${child.block.raw}\n` + (options.blankLines ? '\n' : '');
 		case 'comment':
 			return formatComment(child.block.raw, options);
 		case 'entry':
-			return formatEntry(
-				child.command,
-				child.block,
-				options,
-				indent,
-				omitFields,
-				replacementKeys?.get(child.block)
+			return (
+				formatEntry(
+					child.command,
+					child.block,
+					options,
+					indent,
+					omitFields,
+					replacementKeys?.get(child.block)
+				) + (options.blankLines ? '\n' : '')
 			);
 	}
 }

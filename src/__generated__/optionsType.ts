@@ -50,6 +50,12 @@ export type BibTeXTidyOptions = {
 	 */
 	align?: boolean | number;
 	/**
+	 * Insert blank lines
+	 *
+	 * Insert an empty line between each entry.
+	 */
+	blankLines?: boolean;
+	/**
 	 * Sort bibliography entries
 	 *
 	 * Sort entries by specified fields. For descending order, prefix the field with a dash (-).

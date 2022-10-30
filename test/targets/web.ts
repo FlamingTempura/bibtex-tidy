@@ -140,6 +140,8 @@ export async function testWeb(
 				getOpt('wrapnum').value = String(options.wrap);
 			}
 
+			getOpt('blankLines').checked = options.blankLines ?? false;
+
 			const onchange = () => {
 				window.cmEditor.off('change', onchange);
 				// wait for feedback to be written

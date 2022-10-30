@@ -112,6 +112,14 @@ var optionDefinitions = [
     defaultValue: 14
   },
   {
+    key: "blankLines",
+    cli: { "--blank-lines": true, "--no-blank-lines": false },
+    toCLI: (val) => val ? `--blank-lines` : void 0,
+    title: "Insert blank lines",
+    description: ["Insert an empty line between each entry."],
+    type: "boolean"
+  },
+  {
     key: "sort",
     cli: {
       "--sort": (args) => args.length > 0 ? args : true,
@@ -3317,7 +3325,7 @@ function formatBibtex(ast, options, replacementKeys) {
   const omitFields = new Set(omit);
   let bibtex = ast.children.map(
     (child) => formatNode(child, options, indent, omitFields, replacementKeys)
-  ).join("");
+  ).join("").trimEnd();
   if (!bibtex.endsWith("\n"))
     bibtex += "\n";
   return bibtex;
@@ -3332,7 +3340,7 @@ function formatNode(child, options, indent, omitFields, replacementKeys) {
     case "preamble":
     case "string":
       return `${child.block.raw}
-`;
+` + (options.blankLines ? "\n" : "");
     case "comment":
       return formatComment(child.block.raw, options);
     case "entry":
@@ -3343,7 +3351,7 @@ function formatNode(child, options, indent, omitFields, replacementKeys) {
         indent,
         omitFields,
         replacementKeys == null ? void 0 : replacementKeys.get(child.block)
-      );
+      ) + (options.blankLines ? "\n" : "");
   }
 }
 function formatEntry(entryType, entry, options, indent, omitFields, replacementKey) {
@@ -3827,6 +3835,9 @@ var manPage = [
   "      ",
   "      Examples:",
   "      --align=14 (default)",
+  "      ",
+  "  --blank-lines, --no-blank-lines",
+  "      Insert an empty line between each entry.",
   "      ",
   "  --sort, --no-sort",
   "      Sort entries by specified fields. For descending order, prefix the field with",

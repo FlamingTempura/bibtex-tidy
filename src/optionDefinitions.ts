@@ -115,6 +115,14 @@ export const optionDefinitions: OptionDefinition[] = [
 		defaultValue: 14,
 	},
 	{
+		key: 'blankLines',
+		cli: { '--blank-lines': true, '--no-blank-lines': false },
+		toCLI: (val) => (val ? `--blank-lines` : undefined),
+		title: 'Insert blank lines',
+		description: ['Insert an empty line between each entry.'],
+		type: 'boolean',
+	},
+	{
 		key: 'sort',
 		cli: {
 			'--sort': (args) => (args.length > 0 ? args : true),

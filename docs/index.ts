@@ -179,6 +179,7 @@ function getOptions(): Options {
 		tab: options.indent.value === 'tabs',
 		align: options.align.checked ? Number(options.alignnum.value) : 0,
 		wrap: options.wrap.checked ? Number(options.wrapnum.value) : false,
+		blankLines: options.blankLines.checked,
 		duplicates: options.duplicates.checked
 			? [
 					options.uniqKEY.checked ? 'key' : null,
@@ -227,6 +228,7 @@ function setOptions(opts: Options) {
 	options.align.checked = opts.align && opts.align != 0;
 	options.alignnum.value = String(opts.align || 0);
 	options.wrap.checked = opts.wrap !== false;
+	options.blankLines.checked = opts.blankLines === true;
 	options.wrapnum.value = String(opts.wrap || 0);
 	options.duplicates.checked = Boolean(opts.duplicates);
 	options.uniqKEY.checked =
