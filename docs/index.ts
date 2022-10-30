@@ -1,7 +1,7 @@
 import CodeMirror from 'codemirror';
 import bibtexTidy, { BibTeXTidyResult } from '../src/index';
 import { optionDefinitions, OptionDefinition } from '../src/optionDefinitions';
-import { Options, UniqueKey } from '../src/optionUtils';
+import { Options, DuplicateRule } from '../src/optionUtils';
 import { optionsToCLIArgs } from '../src/cliUtils';
 import { BibTeXSyntaxError } from '../src/bibtex-parser';
 import './bibtex-highlighting';
@@ -185,7 +185,7 @@ function getOptions(): Options {
 					options.uniqDOI.checked ? 'doi' : null,
 					options.uniqABS.checked ? 'abstract' : null,
 					options.uniqCIT.checked ? 'citation' : null,
-			  ].filter((a): a is UniqueKey => a !== null)
+			  ].filter((a): a is DuplicateRule => a !== null)
 			: false,
 		merge: options.merge.checked ? options.mergeStrategy.value : false,
 		enclosingBraces:

@@ -1079,16 +1079,16 @@ function formatValue(field, options) {
 }
 
 // src/duplicates.ts
-function checkForDuplicates(ast, valueLookup, duplicates, merge) {
+function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
   var _a, _b;
-  var uniqCheck = /* @__PURE__ */new Map();
-  if (duplicates) {
-    var _iterator6 = _createForOfIteratorHelper(duplicates),
+  var rules = /* @__PURE__ */new Map();
+  if (duplicateRules) {
+    var _iterator6 = _createForOfIteratorHelper(duplicateRules),
       _step6;
     try {
       for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-        var key = _step6.value;
-        uniqCheck.set(key, !!merge);
+        var rule = _step6.value;
+        rules.set(rule, !!merge);
       }
     } catch (err) {
       _iterator6.e(err);
@@ -1096,8 +1096,8 @@ function checkForDuplicates(ast, valueLookup, duplicates, merge) {
       _iterator6.f();
     }
   }
-  if (!uniqCheck.has("key")) {
-    uniqCheck.set("key", false);
+  if (!rules.has("key")) {
+    rules.set("key", false);
   }
   var duplicateEntries = /* @__PURE__ */new Set();
   var warnings = [];
@@ -1111,59 +1111,73 @@ function checkForDuplicates(ast, valueLookup, duplicates, merge) {
     for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
       var entry = _step7.value;
       var entryValues = valueLookup.get(entry);
-      var _iterator8 = _createForOfIteratorHelper(uniqCheck),
+      var _iterator8 = _createForOfIteratorHelper(rules),
         _step8;
       try {
         for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
           var _step8$value = _slicedToArray(_step8.value, 2),
-            _key = _step8$value[0],
+            _rule = _step8$value[0],
             doMerge = _step8$value[1];
           var duplicateOf = void 0;
-          switch (_key) {
+          var warning = void 0;
+          switch (_rule) {
             case "key":
               {
                 if (!entry.key) continue;
                 var keyLC = entry.key.toLocaleLowerCase();
                 duplicateOf = keys.get(keyLC);
-                if (!duplicateOf) keys.set(keyLC, entry);
+                if (!duplicateOf) {
+                  keys.set(keyLC, entry);
+                } else {
+                  warning = "The citation key ".concat(entry.key, " has already been used.");
+                }
                 break;
               }
             case "doi":
               var doi = alphaNum((_a = entryValues.get("doi")) != null ? _a : "");
               if (!doi) continue;
               duplicateOf = dois.get(doi);
-              if (!duplicateOf) dois.set(doi, entry);
+              if (!duplicateOf) {
+                dois.set(doi, entry);
+              } else {
+                warning = "Entry ".concat(entry.key, " has an identical DOI to entry ").concat(duplicateOf.key, ".");
+              }
               break;
             case "citation":
               var ttl = entryValues.get("title");
               var aut = entryValues.get("author");
+              var num = entryValues.get("number");
               if (!ttl || !aut) continue;
-              var cit = alphaNum(aut.split(/,| and/)[0]) + ":" + alphaNum(ttl);
+              var cit = [alphaNum(aut.split(/,| and/)[0]), alphaNum(ttl), alphaNum(num != null ? num : "0")].join(":");
               duplicateOf = citations.get(cit);
-              if (!duplicateOf) citations.set(cit, entry);
+              if (!duplicateOf) {
+                citations.set(cit, entry);
+              } else {
+                warning = "Entry ".concat(entry.key, " has similar content to entry ").concat(duplicateOf.key, ".");
+              }
               break;
             case "abstract":
               var abstract = alphaNum((_b = entryValues.get("abstract")) != null ? _b : "");
               var abs = abstract == null ? void 0 : abstract.slice(0, 100);
               if (!abs) continue;
               duplicateOf = abstracts.get(abs);
-              if (!duplicateOf) abstracts.set(abs, entry);
+              if (!duplicateOf) {
+                abstracts.set(abs, entry);
+              } else {
+                warning = "Entry ".concat(entry.key, " has a similar abstract to entry ").concat(duplicateOf.key, ".");
+              }
               break;
           }
-          if (duplicateOf) {
-            if (doMerge) {
-              duplicateEntries.add(entry);
-              warnings.push({
-                code: "DUPLICATE_ENTRY",
-                message: "".concat(entry.key, " appears to be a duplicate of ").concat(duplicateOf.key, " and was removed.")
-              });
-              mergeEntries(merge, duplicateOf, entry);
-            } else {
-              warnings.push({
-                code: "DUPLICATE_KEY",
-                message: "".concat(entry.key, " is a duplicate entry key.")
-              });
-            }
+          if (duplicateOf && doMerge) {
+            duplicateEntries.add(entry);
+            mergeEntries(merge, duplicateOf, entry);
+          }
+          if (warning) {
+            warnings.push({
+              code: "DUPLICATE_ENTRY",
+              rule: _rule,
+              message: "Duplicate ".concat(doMerge ? "removed" : "detected", ". ").concat(warning)
+            });
           }
         }
       } catch (err) {

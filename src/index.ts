@@ -1,4 +1,9 @@
-import { Options, normalizeOptions, OptionsNormalized } from './optionUtils';
+import {
+	Options,
+	normalizeOptions,
+	OptionsNormalized,
+	DuplicateRule,
+} from './optionUtils';
 import {
 	generateAST,
 	EntryNode,
@@ -12,8 +17,10 @@ import { sortEntries, sortEntryFields } from './sort';
 import { checkForDuplicates } from './duplicates';
 import { parseAuthors } from './parseAuthors';
 
-export type Warning = {
-	code: 'MISSING_KEY' | 'DUPLICATE_KEY' | 'DUPLICATE_ENTRY';
+export type Warning = (
+	| { code: 'MISSING_KEY' }
+	| { code: 'DUPLICATE_ENTRY'; rule: DuplicateRule }
+) & {
 	message: string;
 };
 

@@ -3487,16 +3487,16 @@ ${valIndent}`) + "\n" + indent;
 }
 
 // src/duplicates.ts
-function checkForDuplicates(ast, valueLookup, duplicates, merge) {
+function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
   var _a, _b;
-  const uniqCheck = /* @__PURE__ */ new Map();
-  if (duplicates) {
-    for (const key of duplicates) {
-      uniqCheck.set(key, !!merge);
+  const rules = /* @__PURE__ */ new Map();
+  if (duplicateRules) {
+    for (const rule of duplicateRules) {
+      rules.set(rule, !!merge);
     }
   }
-  if (!uniqCheck.has("key")) {
-    uniqCheck.set("key", false);
+  if (!rules.has("key")) {
+    rules.set("key", false);
   }
   const duplicateEntries = /* @__PURE__ */ new Set();
   const warnings = [];
@@ -3506,16 +3506,20 @@ function checkForDuplicates(ast, valueLookup, duplicates, merge) {
   const abstracts = /* @__PURE__ */ new Map();
   for (const entry of getEntries(ast)) {
     const entryValues = valueLookup.get(entry);
-    for (const [key, doMerge] of uniqCheck) {
+    for (const [rule, doMerge] of rules) {
       let duplicateOf;
-      switch (key) {
+      let warning;
+      switch (rule) {
         case "key": {
           if (!entry.key)
             continue;
           const keyLC = entry.key.toLocaleLowerCase();
           duplicateOf = keys.get(keyLC);
-          if (!duplicateOf)
+          if (!duplicateOf) {
             keys.set(keyLC, entry);
+          } else {
+            warning = `The citation key ${entry.key} has already been used.`;
+          }
           break;
         }
         case "doi":
@@ -3523,18 +3527,29 @@ function checkForDuplicates(ast, valueLookup, duplicates, merge) {
           if (!doi)
             continue;
           duplicateOf = dois.get(doi);
-          if (!duplicateOf)
+          if (!duplicateOf) {
             dois.set(doi, entry);
+          } else {
+            warning = `Entry ${entry.key} has an identical DOI to entry ${duplicateOf.key}.`;
+          }
           break;
         case "citation":
           const ttl = entryValues.get("title");
           const aut = entryValues.get("author");
+          const num = entryValues.get("number");
           if (!ttl || !aut)
             continue;
-          const cit = alphaNum(aut.split(/,| and/)[0]) + ":" + alphaNum(ttl);
+          const cit = [
+            alphaNum(aut.split(/,| and/)[0]),
+            alphaNum(ttl),
+            alphaNum(num != null ? num : "0")
+          ].join(":");
           duplicateOf = citations.get(cit);
-          if (!duplicateOf)
+          if (!duplicateOf) {
             citations.set(cit, entry);
+          } else {
+            warning = `Entry ${entry.key} has similar content to entry ${duplicateOf.key}.`;
+          }
           break;
         case "abstract":
           const abstract = alphaNum((_b = entryValues.get("abstract")) != null ? _b : "");
@@ -3542,24 +3557,23 @@ function checkForDuplicates(ast, valueLookup, duplicates, merge) {
           if (!abs)
             continue;
           duplicateOf = abstracts.get(abs);
-          if (!duplicateOf)
+          if (!duplicateOf) {
             abstracts.set(abs, entry);
+          } else {
+            warning = `Entry ${entry.key} has a similar abstract to entry ${duplicateOf.key}.`;
+          }
           break;
       }
-      if (duplicateOf) {
-        if (doMerge) {
-          duplicateEntries.add(entry);
-          warnings.push({
-            code: "DUPLICATE_ENTRY",
-            message: `${entry.key} appears to be a duplicate of ${duplicateOf.key} and was removed.`
-          });
-          mergeEntries(merge, duplicateOf, entry);
-        } else {
-          warnings.push({
-            code: "DUPLICATE_KEY",
-            message: `${entry.key} is a duplicate entry key.`
-          });
-        }
+      if (duplicateOf && doMerge) {
+        duplicateEntries.add(entry);
+        mergeEntries(merge, duplicateOf, entry);
+      }
+      if (warning) {
+        warnings.push({
+          code: "DUPLICATE_ENTRY",
+          rule,
+          message: `Duplicate ${doMerge ? "removed" : "detected"}. ${warning}`
+        });
       }
     }
   }

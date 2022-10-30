@@ -12,7 +12,7 @@ export type MergeStrategy = Exclude<
 	BibTeXTidyOptions['merge'],
 	boolean | undefined
 >;
-export type UniqueKey = Exclude<
+export type DuplicateRule = Exclude<
 	BibTeXTidyOptions['duplicates'],
 	boolean | undefined
 >[number];
@@ -33,7 +33,7 @@ export type OptionsNormalized = Omit<
 	space: number;
 	sortFields?: string[];
 	merge?: MergeStrategy;
-	duplicates?: UniqueKey[];
+	duplicates?: DuplicateRule[];
 	wrap?: number;
 	enclosingBraces?: string[];
 };

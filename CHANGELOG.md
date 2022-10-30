@@ -91,3 +91,8 @@ Remove npm prepare script
 ### v1.8.5
 
 - New release process, including tagging releases (#75)
+
+### Unreleased
+
+- removal of DUPLICATE_KEY
+- DUPLICATE_ENTRY now has a 'rule' property (can be key, doi, citation, or abstract)

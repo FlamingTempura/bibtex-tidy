@@ -129,5 +129,10 @@ test('merge duplicates', async () => {
 		(w) => w.code === 'DUPLICATE_ENTRY'
 	);
 	strictEqual(tidied.bibtex, output);
-	strictEqual(warnings?.length, 3);
+	strictEqual(
+		warnings?.filter(
+			(warning) => warning.code === 'DUPLICATE_ENTRY' && warning.rule !== 'key'
+		).length,
+		3
+	);
 });
