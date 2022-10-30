@@ -3670,10 +3670,10 @@ function generateKey(valueLookup) {
   const authors = parseAuthors(
     (_b = (_a = valueLookup == null ? void 0 : valueLookup.get("author")) == null ? void 0 : _a.replace(/["{}]/g, "")) != null ? _b : ""
   );
-  const lastName = (_c = authors[0]) == null ? void 0 : _c.lastName.toLowerCase();
+  const lastName = (_c = authors[0]) == null ? void 0 : _c.lastName.toLowerCase().replace(/[^\p{Letter}]+/gu, "_");
   const year = (_d = valueLookup == null ? void 0 : valueLookup.get("year")) == null ? void 0 : _d.replace(/[^0-9]/g, "");
   const title = (_e = valueLookup == null ? void 0 : valueLookup.get("title")) != null ? _e : valueLookup == null ? void 0 : valueLookup.get("booktitle");
-  const titleFirstWord = title == null ? void 0 : title.toLowerCase().replace(/^.*?([a-z]+)[^a-z].*$/s, "$1");
+  const titleFirstWord = title == null ? void 0 : title.toLowerCase().replace(/^.*?(\p{Letter}+)[^\p{Letter}].*$/su, "$1");
   if (!lastName || !year)
     return;
   return [lastName, year, titleFirstWord != null ? titleFirstWord : ""].join("");

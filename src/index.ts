@@ -99,12 +99,14 @@ function generateKey(
 	const authors = parseAuthors(
 		valueLookup?.get('author')?.replace(/["{}]/g, '') ?? ''
 	);
-	const lastName = authors[0]?.lastName.toLowerCase();
+	const lastName = authors[0]?.lastName
+		.toLowerCase()
+		.replace(/[^\p{Letter}]+/gu, '_');
 	const year = valueLookup?.get('year')?.replace(/[^0-9]/g, '');
 	const title = valueLookup?.get('title') ?? valueLookup?.get('booktitle');
 	const titleFirstWord = title
 		?.toLowerCase()
-		.replace(/^.*?([a-z]+)[^a-z].*$/s, '$1');
+		.replace(/^.*?(\p{Letter}+)[^\p{Letter}].*$/su, '$1');
 	if (!lastName || !year) return;
 	return [lastName, year, titleFirstWord ?? ''].join('');
 }

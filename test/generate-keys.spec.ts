@@ -161,6 +161,12 @@ const input = bibtex`
   address      = {Berlin, Heidelberg},
   pages        = {238--247},
   isbn         = {978-3-540-70516-1}
+  }
+
+  @article{foo_bar,
+    author = {~[]()=Foo Bar , Moo},
+    year = 2000,
+    title = "Baa baa",
   }`;
 
 const output = bibtex`
@@ -309,6 +315,11 @@ const output = bibtex`
   address       = {Berlin, Heidelberg},
   pages         = {238--247},
   isbn          = {978-3-540-70516-1}
+}
+@article{_foo_bar2000baa,
+  author        = {~[]()=Foo Bar , Moo},
+  year          = 2000,
+  title         = "Baa baa"
 }
 `;
 
