@@ -21,11 +21,11 @@ function renderSuboptions() {
 }
 
 function delay(fn: Function, ms: number) {
-  let timer: ReturnType<typeof setTimeout>;
-  return function(this: typeof delay, ...args: any) {
-    clearTimeout(timer);
-    timer = setTimeout(fn.bind(this, ...args), ms || 0);
-  }
+	let timer: ReturnType<typeof setTimeout>;
+	return function (this: typeof delay, ...args: any) {
+		clearTimeout(timer);
+		timer = setTimeout(fn.bind(this, ...args), ms || 0);
+	};
 }
 
 function inputUpdate() {
@@ -41,7 +41,6 @@ for (const input of $$('input')) {
 for (const input of $$('textarea')) {
 	input.addEventListener('input', delay(inputUpdate, 500));
 }
-
 
 renderSuboptions();
 
@@ -152,7 +151,7 @@ function formatError(e: unknown): string {
 		return `
 		<strong>There's a problem with the bibtex (${e.name})</strong><br>
 		Syntax Error on line ${e.line} column ${e.column}<br>
-		Unexpected ${JSON.stringify(e.char)} in ${e.node.type}.`;
+		${e.hint ?? `Unexpected ${JSON.stringify(e.char)} in ${e.node.type}.`}`;
 	}
 	return `
 		<strong>There's a problem with the bibtex</strong><br>
@@ -218,9 +217,11 @@ function setOptions(opts: Options) {
 	options.curly.checked = opts.curly;
 	options.numeric.checked = opts.numeric;
 	options.sort.checked = opts.sort && (opts.sort as string[]).length > 0;
-	options.sortList.value = (opts.sort && (opts.sort as string[]).join(',')) || '';
+	options.sortList.value =
+		(opts.sort && (opts.sort as string[]).join(',')) || '';
 	options.omit.checked = opts.omit !== null;
-	options.omitList.value = (opts.omit && opts.omit.length > 0 && opts.omit.join(',')) || '';
+	options.omitList.value =
+		(opts.omit && opts.omit.length > 0 && opts.omit.join(',')) || '';
 	options.spaces.value = String(opts.space);
 	options.indent.value = opts.tab ? 'tabs' : 'spaces';
 	options.align.checked = opts.align && opts.align != 0;
@@ -228,17 +229,28 @@ function setOptions(opts: Options) {
 	options.wrap.checked = opts.wrap !== false;
 	options.wrapnum.value = String(opts.wrap || 0);
 	options.duplicates.checked = Boolean(opts.duplicates);
-	options.uniqKEY.checked = (opts.duplicates && (opts.duplicates as string[]).includes("key")) || false;
-	options.uniqDOI.checked = (opts.duplicates && (opts.duplicates as string[]).includes("doi")) || false;
-	options.uniqABS.checked = (opts.duplicates && (opts.duplicates as string[]).includes("abstract")) || false;
-	options.uniqCIT.checked = (opts.duplicates && (opts.duplicates as string[]).includes("citation")) || false;
-	options.merge.checked = Boolean(opts.merge)
+	options.uniqKEY.checked =
+		(opts.duplicates && (opts.duplicates as string[]).includes('key')) || false;
+	options.uniqDOI.checked =
+		(opts.duplicates && (opts.duplicates as string[]).includes('doi')) || false;
+	options.uniqABS.checked =
+		(opts.duplicates && (opts.duplicates as string[]).includes('abstract')) ||
+		false;
+	options.uniqCIT.checked =
+		(opts.duplicates && (opts.duplicates as string[]).includes('citation')) ||
+		false;
+	options.merge.checked = Boolean(opts.merge);
 	options.mergeStrategy.value = opts.merge || '';
-	options.enclosingBraces.checked = opts.enclosingBraces && (opts.enclosingBraces as string[]).length > 0;
-	options.enclosingBracesList.value = (opts.enclosingBraces && (opts.enclosingBraces as string[]).join(',')) || '';
+	options.enclosingBraces.checked =
+		opts.enclosingBraces && (opts.enclosingBraces as string[]).length > 0;
+	options.enclosingBracesList.value =
+		(opts.enclosingBraces && (opts.enclosingBraces as string[]).join(',')) ||
+		'';
 	options.dropAllCaps.checked = opts.dropAllCaps;
-	options.sortFields.checked = opts.sortFields && (opts.sortFields as string[]).length > 0;
-	options.sortFieldList.value = (opts.sortFields && (opts.sortFields as string[]).join(',')) || '';
+	options.sortFields.checked =
+		opts.sortFields && (opts.sortFields as string[]).length > 0;
+	options.sortFieldList.value =
+		(opts.sortFields && (opts.sortFields as string[]).join(',')) || '';
 	options.stripComments.checked = opts.stripComments;
 	options.tidyComments.checked = opts.tidyComments;
 	options.encodeUrls.checked = opts.encodeUrls;
@@ -255,13 +267,17 @@ function setOptions(opts: Options) {
 function updateURLParams() {
 	const options = getOptions();
 	const options_json = JSON.stringify(options);
-	window.history.pushState(options, "", `index.html?opt=${encodeURIComponent(options_json)}`);
+	window.history.pushState(
+		options,
+		'',
+		`index.html?opt=${encodeURIComponent(options_json)}`
+	);
 }
 
-function getOptionsFromURL() : Options {
+function getOptionsFromURL(): Options {
 	const queryString = window.location.search;
 	const urlParams = new URLSearchParams(queryString);
-	const options_json = urlParams.get('opt') || "";
+	const options_json = urlParams.get('opt') || '';
 	return JSON.parse(options_json);
 }
 

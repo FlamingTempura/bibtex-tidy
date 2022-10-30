@@ -231,10 +231,11 @@ declare class StringNode {
 }
 declare class EntryNode {
 	parent: BlockNode;
+	wrapType: "{" | "(";
 	type: "entry";
 	key?: string;
 	fields: FieldNode[];
-	constructor(parent: BlockNode);
+	constructor(parent: BlockNode, wrapType: "{" | "(");
 }
 declare class FieldNode {
 	parent: EntryNode;

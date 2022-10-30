@@ -53,8 +53,9 @@ class StringNode {
 export class EntryNode {
 	type = 'entry' as const;
 	key?: string;
+	keyEnded?: boolean;
 	fields: FieldNode[];
-	constructor(public parent: BlockNode) {
+	constructor(public parent: BlockNode, public wrapType: '{' | '(') {
 		parent.block = this;
 		this.fields = [];
 	}
@@ -185,7 +186,7 @@ export function generateAST(input: string): RootNode {
 								node = new CommentNode(node, raw, braces, parens);
 								break;
 							default:
-								node = new EntryNode(node);
+								node = new EntryNode(node, char);
 								break;
 						}
 					}
@@ -218,23 +219,44 @@ export function generateAST(input: string): RootNode {
 				break;
 
 			case 'entry': {
-				if (char === '}' || char === ')') {
-					node = node.parent.parent; // root
+				if (isWhitespace(char)) {
+					if (!node.key) {
+						// Before key, ignore
+					} else {
+						// Ensure subsequent characters are not appended to the key
+						node.keyEnded = true;
+					}
 				} else if (char === ',') {
 					node = new FieldNode(node);
-				} else if (char === '=') {
-					// no key, this is a field name
-					if (!node.key) {
-						throw new BibTeXSyntaxError(input, node, i, line, column);
-					}
+				} else if (
+					(node.wrapType === '{' && char === '}') ||
+					(node.wrapType === '(' && char === ')')
+				) {
+					node = node.parent.parent; // root
+				} else if (char === '=' && node.key && isValidFieldName(node.key)) {
+					// Entry has no key, this is a field name
 					const field: FieldNode = new FieldNode(node, node.key);
 					node.fields.push(field);
 					node.key = undefined;
 					node = field.value;
-				} else if (isWhitespace(char)) {
-					//TODO
-				} else if (char.match(/[=#,{}()\[\]]/)) {
-					throw new BibTeXSyntaxError(input, node, i, line, column);
+				} else if (node.keyEnded) {
+					throw new BibTeXSyntaxError(
+						input,
+						node,
+						i,
+						line,
+						column,
+						`The entry key cannot contain whitespace`
+					);
+				} else if (!isValidKeyCharacter(char)) {
+					throw new BibTeXSyntaxError(
+						input,
+						node,
+						i,
+						line,
+						column,
+						`The entry key cannot contain the character (${char})`
+					);
 				} else {
 					node.key = (node.key ?? '') + char;
 				}
@@ -251,7 +273,7 @@ export function generateAST(input: string): RootNode {
 				} else if (char === ',') {
 					node.name = node.name.trim();
 					node = new FieldNode(node.parent);
-				} else if (/[=,{}()\[\]]/.test(char)) {
+				} else if (!isValidFieldName(char)) {
 					throw new BibTeXSyntaxError(input, node, i, line, column);
 				} else if (!node.name) {
 					if (!isWhitespace(char)) {
@@ -354,6 +376,18 @@ function isWhitespace(string: string): boolean {
 	return /^[ \t\n\r]*$/.test(string);
 }
 
+/**
+ * Certain characters are special in latex: {}%#$~. These cannot be used in
+ * \cite without error. See https://tex.stackexchange.com/a/408548
+ */
+function isValidKeyCharacter(char: string): boolean {
+	return !/[#%{}~$,]/.test(char);
+}
+
+function isValidFieldName(char: string): boolean {
+	return !/[=,{}()\[\]]/.test(char);
+}
+
 export class BibTeXSyntaxError extends Error {
 	public char: string;
 	constructor(
@@ -361,10 +395,11 @@ export class BibTeXSyntaxError extends Error {
 		public node: Node,
 		pos: number,
 		public line: number,
-		public column: number
+		public column: number,
+		public hint?: string
 	) {
 		super(
-			`Line ${line}:${column}: Syntax Error in ${node.type}\n` +
+			`Line ${line}:${column}: Syntax Error in ${node.type} (${hint})\n` +
 				input.slice(Math.max(0, pos - 20), pos) +
 				'>>' +
 				input[pos] +

@@ -470,8 +470,9 @@ var StringNode = class {
   }
 };
 var EntryNode = class {
-  constructor(parent) {
+  constructor(parent, wrapType) {
     this.parent = parent;
+    this.wrapType = wrapType;
     this.type = "entry";
     parent.block = this;
     this.fields = [];
@@ -585,7 +586,7 @@ function generateAST(input) {
                   node = new CommentNode(node, raw, braces, parens);
                   break;
                 default:
-                  node = new EntryNode(node);
+                  node = new EntryNode(node, char);
                   break;
               }
             }
@@ -616,20 +617,23 @@ function generateAST(input) {
         break;
       case "entry":
         {
-          if (char === "}" || char === ")") {
-            node = node.parent.parent;
+          if (isWhitespace(char)) {
+            if (!node.key) {} else {
+              node.keyEnded = true;
+            }
           } else if (char === ",") {
             node = new FieldNode(node);
-          } else if (char === "=") {
-            if (!node.key) {
-              throw new BibTeXSyntaxError(input, node, i, line, column);
-            }
+          } else if (node.wrapType === "{" && char === "}" || node.wrapType === "(" && char === ")") {
+            node = node.parent.parent;
+          } else if (char === "=" && node.key && isValidFieldName(node.key)) {
             var field = new FieldNode(node, node.key);
             node.fields.push(field);
             node.key = void 0;
             node = field.value;
-          } else if (isWhitespace(char)) {} else if (char.match(/[=#,{}()\[\]]/)) {
-            throw new BibTeXSyntaxError(input, node, i, line, column);
+          } else if (node.keyEnded) {
+            throw new BibTeXSyntaxError(input, node, i, line, column, "The entry key cannot contain whitespace");
+          } else if (!isValidKeyCharacter(char)) {
+            throw new BibTeXSyntaxError(input, node, i, line, column, "The entry key cannot contain the character (".concat(char, ")"));
           } else {
             node.key = ((_a = node.key) != null ? _a : "") + char;
           }
@@ -646,7 +650,7 @@ function generateAST(input) {
           } else if (char === ",") {
             node.name = node.name.trim();
             node = new FieldNode(node.parent);
-          } else if (/[=,{}()\[\]]/.test(char)) {
+          } else if (!isValidFieldName(char)) {
             throw new BibTeXSyntaxError(input, node, i, line, column);
           } else if (!node.name) {
             if (!isWhitespace(char)) {
@@ -734,12 +738,19 @@ function generateAST(input) {
 function isWhitespace(string) {
   return /^[ \t\n\r]*$/.test(string);
 }
+function isValidKeyCharacter(char) {
+  return !/[#%{}~$,]/.test(char);
+}
+function isValidFieldName(char) {
+  return !/[=,{}()\[\]]/.test(char);
+}
 var BibTeXSyntaxError = class extends Error {
-  constructor(input, node, pos, line, column) {
-    super("Line ".concat(line, ":").concat(column, ": Syntax Error in ").concat(node.type, "\n") + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
+  constructor(input, node, pos, line, column, hint) {
+    super("Line ".concat(line, ":").concat(column, ": Syntax Error in ").concat(node.type, " (").concat(hint, ")\n") + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
     this.node = node;
     this.line = line;
     this.column = column;
+    this.hint = hint;
     this.name = "Syntax Error";
     this.char = input[pos];
   }
@@ -1231,7 +1242,7 @@ function tidy(input) {
   var ast = generateAST(input);
   var warnings = getEntries(ast).filter(entry => !entry.key).map(entry => ({
     code: "MISSING_KEY",
-    message: "".concat(entry.type, " entry does not have an entry key.")
+    message: "".concat(entry.parent.command, " entry does not have a citation key.")
   }));
   var valueLookup = generateValueLookup(ast, options);
   var duplicates = checkForDuplicates(ast, valueLookup, options.duplicates, options.merge);
