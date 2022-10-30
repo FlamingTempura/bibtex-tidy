@@ -35,7 +35,7 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 		.filter((entry) => !entry.key)
 		.map((entry) => ({
 			code: 'MISSING_KEY',
-			message: `${entry.type} entry does not have an entry key.`,
+			message: `${entry.parent.command} entry does not have a citation key.`,
 		}));
 
 	const valueLookup = generateValueLookup(ast, options);
