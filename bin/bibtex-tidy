@@ -3195,9 +3195,9 @@ function convertCRLF(str) {
   return str.replace(/\r\n?/g, "\n");
 }
 function wrapText(line, lineWidth) {
-  const words = line.split(" ");
+  const words2 = line.split(" ");
   const lines = [""];
-  for (const word of words) {
+  for (const word of words2) {
     if (lines[lines.length - 1].length + word.length + 1 > lineWidth) {
       lines.push("");
     }
@@ -3231,6 +3231,10 @@ function formatPageRange(str) {
     str = str.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
   }
   return str;
+}
+function isEntryNode(node) {
+  var _a;
+  return node.type !== "text" && ((_a = node.block) == null ? void 0 : _a.type) === "entry";
 }
 
 // src/sort.ts
@@ -3610,9 +3614,12 @@ function mergeEntries(merge, duplicateOf, entry) {
 }
 
 // src/parseAuthors.ts
-function parseAuthors(authors) {
+function parseAuthors(authors, sanitize) {
   return authors.replace(/\s+/g, " ").split(/ and /i).map((nameRaw) => {
-    const name = nameRaw.trim();
+    let name = nameRaw.trim();
+    if (sanitize) {
+      name = name.replace(/["{}]/g, "");
+    }
     const commaPos = name.indexOf(",");
     if (commaPos > -1) {
       return {
@@ -3627,6 +3634,232 @@ function parseAuthors(authors) {
       };
     }
   });
+}
+
+// src/generateKeys.ts
+var defaultTemplate = `[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]`;
+var SPECIAL_MARKERS = {
+  auth: {
+    description: "Last name of first authors",
+    callback: (v) => {
+      var _a, _b;
+      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+      const author = (_b = authors[0]) == null ? void 0 : _b.lastName.replace(/[^\p{Letter}]+/gu, "_");
+      return author ? [author] : [];
+    }
+  },
+  authEtAl: {
+    description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
+    callback: (v) => {
+      var _a;
+      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+      return [
+        ...authors.slice(0, 2).map((author) => author == null ? void 0 : author.lastName.replace(/[^\p{Letter}]+/gu, "_")),
+        ...authors.length > 2 ? ["Et", "Al"] : []
+      ];
+    }
+  },
+  authors: {
+    description: "Last name all authors",
+    callback: (v) => {
+      var _a;
+      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+      return authors.map(
+        (author) => author == null ? void 0 : author.lastName.replace(/[^\p{Letter}]+/gu, "_")
+      );
+    }
+  },
+  authorsN: {
+    description: "Last name N authors, with EtAl if more",
+    callback: (v, n) => {
+      var _a;
+      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+      return [
+        ...authors.slice(0, n).map((author) => author == null ? void 0 : author.lastName.replace(/[^\p{Letter}]+/gu, "_")),
+        ...authors.length > n ? ["Et", "Al"] : []
+      ];
+    }
+  },
+  veryshorttitle: {
+    callback: (v) => nonFunctionWords(title(v)).slice(0, 1)
+  },
+  shorttitle: {
+    callback: (v) => nonFunctionWords(title(v)).slice(0, 3)
+  },
+  title: {
+    callback: (v) => capitalize(words(title(v)))
+  },
+  fulltitle: {
+    callback: (v) => words(title(v))
+  },
+  year: {
+    callback: (v) => {
+      var _a;
+      const year = (_a = v.get("year")) == null ? void 0 : _a.replace(/[^0-9]/g, "");
+      return year ? [year] : [];
+    }
+  },
+  duplicateLetter: {
+    description: "If the multiple entries end up with the same key, then insert a letter a-z",
+    callback: () => ["[duplicateLetter]"]
+  },
+  duplicateNumber: {
+    description: "If the multiple entries end up with the same key, then insert a number 0-1. By default this will be inserted at the end.",
+    callback: () => ["[duplicateNumber]"]
+  }
+};
+var MODIFIERS = {
+  required: {
+    description: "If data is missing, revert to existing key",
+    callback: (words2) => {
+      if (words2.length === 0)
+        throw new MissingRequiredData();
+      return words2;
+    }
+  },
+  lower: { callback: (words2) => words2.map((word) => word.toLocaleLowerCase()) },
+  upper: { callback: (words2) => words2.map((word) => word.toLocaleUpperCase()) },
+  capitalize: { callback: capitalize }
+};
+var MissingRequiredData = class extends Error {
+};
+function generateKeys(ast, valueLookup, template = defaultTemplate) {
+  var _a;
+  let template2 = template;
+  if (!template.includes("[duplicateLetter]") && !template.includes("[duplicateNumber]")) {
+    template2 = template + "[duplicateNumber]";
+  }
+  const entriesByKey = /* @__PURE__ */ new Map();
+  for (const node of ast.children) {
+    if (isEntryNode(node)) {
+      const entryValues = valueLookup.get(node.block);
+      if (!entryValues)
+        continue;
+      const newKey = generateKey(entryValues, template2);
+      if (!newKey)
+        continue;
+      const keyEntries = (_a = entriesByKey.get(newKey)) != null ? _a : [];
+      entriesByKey.set(newKey, [...keyEntries, node.block]);
+    }
+  }
+  const keys = /* @__PURE__ */ new Map();
+  for (const [key, entries] of entriesByKey) {
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i];
+      const duplicateLetter = entries.length > 1 ? String.fromCharCode(97 + i) : "";
+      const duplicateNumber = entries.length > 1 ? String(i + 1) : "";
+      entry.key = key == null ? void 0 : key.replace(/\[duplicateLetter\]/g, duplicateLetter).replace(/\[duplicateNumber\]/g, duplicateNumber);
+    }
+  }
+  return keys;
+}
+function generateKey(valueLookup, template) {
+  try {
+    return template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (m) => {
+      var _a;
+      const [tokenKeyN, ...modifierKeys] = m.slice(1, -1).split(":");
+      let n;
+      const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m2) => {
+        n = Number(m2);
+        return "N";
+      });
+      const token = SPECIAL_MARKERS[tokenKey];
+      let key;
+      if (token) {
+        key = (_a = token.callback(valueLookup, n)) != null ? _a : "";
+      } else if (tokenKey === tokenKey.toLocaleUpperCase()) {
+        console.log(tokenKey);
+        const value = valueLookup.get(tokenKey.toLocaleLowerCase());
+        key = value ? words(value) : [];
+      } else {
+        throw new Error(`Invalid citation key token ${tokenKey}`);
+      }
+      for (const modifierKey of modifierKeys) {
+        const modifier = MODIFIERS[modifierKey];
+        if (modifier) {
+          key = modifier.callback(key);
+        } else {
+          throw new Error(`Invalid modifier ${modifierKey}`);
+        }
+      }
+      return key.join("");
+    });
+  } catch (e) {
+    if (e instanceof MissingRequiredData) {
+      return;
+    }
+    throw e;
+  }
+}
+var functionWords = /* @__PURE__ */ new Set([
+  "a",
+  "about",
+  "above",
+  "across",
+  "against",
+  "along",
+  "among",
+  "an",
+  "and",
+  "around",
+  "at",
+  "before",
+  "behind",
+  "below",
+  "beneath",
+  "beside",
+  "between",
+  "beyond",
+  "but",
+  "by",
+  "down",
+  "during",
+  "except",
+  "for",
+  "for",
+  "from",
+  "in",
+  "inside",
+  "into",
+  "like",
+  "near",
+  "nor",
+  "of",
+  "off",
+  "on",
+  "onto",
+  "or",
+  "since",
+  "so",
+  "the",
+  "through",
+  "to",
+  "toward",
+  "under",
+  "until",
+  "up",
+  "upon",
+  "with",
+  "within",
+  "without",
+  "yet"
+]);
+function nonFunctionWords(value) {
+  return words(value).filter(
+    (word) => !functionWords.has(word.toLocaleLowerCase())
+  );
+}
+function words(value) {
+  return value.split(/[^\p{Letter}\d]+/u).filter((word) => word.length > 0);
+}
+function capitalize(words2) {
+  return words2.map(
+    (word) => word.slice(0, 1).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase()
+  );
+}
+function title(entryValues) {
+  var _a, _b;
+  return (_b = (_a = entryValues.get("title")) != null ? _a : entryValues.get("booktitle")) != null ? _b : "";
 }
 
 // src/index.ts
@@ -3657,39 +3890,6 @@ function tidy(input, options_ = {}) {
   const bibtex = formatBibtex(ast, options, newKeys);
   return { bibtex, warnings, count: getEntries(ast).length };
 }
-function generateKeys(ast, valueLookup) {
-  var _a;
-  const keys = /* @__PURE__ */ new Map();
-  const keyCounts = /* @__PURE__ */ new Map();
-  for (const node of ast.children) {
-    if (isEntryNode(node)) {
-      const newKey = generateKey(valueLookup.get(node.block));
-      if (newKey) {
-        const keyCount = ((_a = keyCounts.get(newKey)) != null ? _a : 0) + 1;
-        keys.set(node.block, newKey + (keyCount > 1 ? keyCount : ""));
-        keyCounts.set(newKey, keyCount);
-      }
-    }
-  }
-  return keys;
-}
-function generateKey(valueLookup) {
-  var _a, _b, _c, _d, _e;
-  const authors = parseAuthors(
-    (_b = (_a = valueLookup == null ? void 0 : valueLookup.get("author")) == null ? void 0 : _a.replace(/["{}]/g, "")) != null ? _b : ""
-  );
-  const lastName = (_c = authors[0]) == null ? void 0 : _c.lastName.toLowerCase().replace(/[^\p{Letter}]+/gu, "_");
-  const year = (_d = valueLookup == null ? void 0 : valueLookup.get("year")) == null ? void 0 : _d.replace(/[^0-9]/g, "");
-  const title = (_e = valueLookup == null ? void 0 : valueLookup.get("title")) != null ? _e : valueLookup == null ? void 0 : valueLookup.get("booktitle");
-  const titleFirstWord = title == null ? void 0 : title.toLowerCase().replace(/^.*?(\p{Letter}+)[^\p{Letter}].*$/su, "$1");
-  if (!lastName || !year)
-    return;
-  return [lastName, year, titleFirstWord != null ? titleFirstWord : ""].join("");
-}
-function isEntryNode(node) {
-  var _a;
-  return node.type !== "text" && ((_a = node.block) == null ? void 0 : _a.type) === "entry";
-}
 function getEntries(ast) {
   return ast.children.filter(isEntryNode).map((node) => node.block);
 }
@@ -3698,10 +3898,13 @@ function generateValueLookup(ast, options) {
     getEntries(ast).map((entry) => [
       entry,
       new Map(
-        entry.fields.map((field) => [
-          field.name.toLocaleLowerCase(),
-          formatValue(field, options)
-        ])
+        entry.fields.map((field) => {
+          var _a;
+          return [
+            field.name.toLocaleLowerCase(),
+            (_a = formatValue(field, options)) != null ? _a : ""
+          ];
+        })
       )
     ])
   );

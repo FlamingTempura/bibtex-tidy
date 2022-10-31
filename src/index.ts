@@ -4,18 +4,12 @@ import {
 	OptionsNormalized,
 	DuplicateRule,
 } from './optionUtils';
-import {
-	generateAST,
-	EntryNode,
-	BlockNode,
-	TextNode,
-	RootNode,
-} from './bibtex-parser';
-import { convertCRLF } from './utils';
+import { generateAST, EntryNode, RootNode } from './bibtex-parser';
+import { convertCRLF, isEntryNode } from './utils';
 import { formatValue, formatBibtex } from './format';
 import { sortEntries, sortEntryFields } from './sort';
 import { checkForDuplicates } from './duplicates';
-import { parseAuthors } from './parseAuthors';
+import { generateKeys } from './generateKeys';
 
 export type Warning = (
 	| { code: 'MISSING_KEY' }
@@ -74,49 +68,6 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	return { bibtex, warnings, count: getEntries(ast).length };
 }
 
-function generateKeys(
-	ast: RootNode,
-	valueLookup: Map<EntryNode, Map<string, string | undefined>>
-): Map<EntryNode, string> {
-	const keys = new Map<EntryNode, string>();
-	const keyCounts = new Map<string, number>();
-	for (const node of ast.children) {
-		if (isEntryNode(node)) {
-			const newKey = generateKey(valueLookup.get(node.block));
-			if (newKey) {
-				const keyCount = (keyCounts.get(newKey) ?? 0) + 1;
-				keys.set(node.block, newKey + (keyCount > 1 ? keyCount : ''));
-				keyCounts.set(newKey, keyCount);
-			}
-		}
-	}
-	return keys;
-}
-
-function generateKey(
-	valueLookup: Map<string, string | undefined> | undefined
-): string | undefined {
-	const authors = parseAuthors(
-		valueLookup?.get('author')?.replace(/["{}]/g, '') ?? ''
-	);
-	const lastName = authors[0]?.lastName
-		.toLowerCase()
-		.replace(/[^\p{Letter}]+/gu, '_');
-	const year = valueLookup?.get('year')?.replace(/[^0-9]/g, '');
-	const title = valueLookup?.get('title') ?? valueLookup?.get('booktitle');
-	const titleFirstWord = title
-		?.toLowerCase()
-		.replace(/^.*?(\p{Letter}+)[^\p{Letter}].*$/su, '$1');
-	if (!lastName || !year) return;
-	return [lastName, year, titleFirstWord ?? ''].join('');
-}
-
-function isEntryNode(
-	node: TextNode | BlockNode
-): node is BlockNode & { block: EntryNode } {
-	return node.type !== 'text' && node.block?.type === 'entry';
-}
-
 export function getEntries(ast: RootNode): EntryNode[] {
 	return ast.children.filter(isEntryNode).map((node) => node.block);
 }
@@ -124,14 +75,14 @@ export function getEntries(ast: RootNode): EntryNode[] {
 function generateValueLookup(
 	ast: RootNode,
 	options: OptionsNormalized
-): Map<EntryNode, Map<string, string | undefined>> {
+): Map<EntryNode, Map<string, string>> {
 	return new Map(
 		getEntries(ast).map((entry) => [
 			entry,
 			new Map(
 				entry.fields.map((field) => [
 					field.name.toLocaleLowerCase(),
-					formatValue(field, options),
+					formatValue(field, options) ?? '',
 				])
 			),
 		])

@@ -1,4 +1,5 @@
 import { strictEqual } from 'assert';
+import { generateKey } from '../src/generateKeys';
 import { bibtex, bibtexTidy, test } from './utils';
 
 const input = bibtex`
@@ -170,13 +171,13 @@ const input = bibtex`
   }`;
 
 const output = bibtex`
-@article{aamport1986the,
+@article{aamport1986gnats1,
   author        = {L[eslie] A. Aamport},
   title         = {The Gnats and Gnus Document Preparation System},
   journal       = {\\mbox{G-Animal's} Journal},
   year          = 1986
 }
-@article{aamport1986the2,
+@article{aamport1986gnats2,
   author        = {L[eslie] A. Aamport},
   title         = {The Gnats and Gnus Document Preparation System},
   journal       = {\\mbox{G-Animal's} Journal},
@@ -187,7 +188,7 @@ const output = bibtex`
   month         = jul,
   note          = "This is a full ARTICLE entry"
 }
-@inbook{knuth1973fundamental,
+@inbook{knuth1973fundamental1,
   author        = "Donald E. Knuth",
   title         = "Fundamental Algorithms",
   publisher     = "Addison-Wesley",
@@ -209,7 +210,7 @@ const output = bibtex`
   pages         = "10--119",
   note          = "This is a full INBOOK entry"
 }
-@book{knuth1968the,
+@book{knuth1968art,
   author        = "Donald E. Knuth",
   publisher     = "Addison-Wesley",
   title         = "The Art of Computer Programming",
@@ -238,7 +239,7 @@ const output = bibtex`
   key           = "Manmaker",
   title         = "The Definitive Computer Manual"
 }
-@manual{manmaker1986the,
+@manual{manmaker1986definitive,
   author        = "Larry Manmaker",
   title         = "The Definitive Computer Manual",
   organization  = "Chips-R-Us",
@@ -254,7 +255,7 @@ const output = bibtex`
   school        = "Stanford University",
   year          = 1988
 }
-@inproceedings{oaho1983on,
+@inproceedings{oaho1983notions,
   author        = "Alfred V. Oaho and Jeffrey D. Ullman and Mihalis Yannakakis",
   title         = "On Notions of Information Transfer in {VLSI} Circuits",
   editor        = "Wizard V. Oz and Mihalis Yannakakis",
@@ -283,7 +284,7 @@ const output = bibtex`
   title         = "Lower Bounds for Wishful Research Results",
   note          = "Talk at Fanstord University (this is a minimal UNPUBLISHED entry)"
 }
-@unpublished{underwood1988lower,
+@unpublished{underwood1988lower1,
   author        = "Ulrich Underwood and Ned Net and Paul Pot",
   title         = "Lower Bounds for Wishful Research Results",
   month         = nov # ", " # dec,
@@ -326,4 +327,30 @@ const output = bibtex`
 test('generate keys', async () => {
 	const tidied = await bibtexTidy(input, { generateKeys: true });
 	strictEqual(tidied.bibtex, output);
+
+	const entryValues = new Map([
+		['title', 'A story of 2 foo and 1 bar: the best story'],
+		['author', 'Bar, Foo and Mee, Moo and One, Two'],
+		['year', '2018'],
+		['journal', 'Foo and Goo'],
+	]);
+	strictEqual(generateKey(entryValues, '[auth:upper][year]'), 'BAR2018');
+	strictEqual(generateKey(entryValues, '[authEtAl:lower]'), 'barmeeetal');
+	strictEqual(generateKey(entryValues, '[authEtAl:capitalize]'), 'BarMeeEtAl');
+	strictEqual(generateKey(entryValues, '[authors:capitalize]'), 'BarMeeOne');
+	strictEqual(generateKey(entryValues, '[authors1]'), 'BarEtAl');
+	strictEqual(generateKey(entryValues, '[veryshorttitle]'), 'story');
+	strictEqual(generateKey(entryValues, '[shorttitle]'), 'story2foo');
+	strictEqual(
+		generateKey(entryValues, '[title]'),
+		'AStoryOf2FooAnd1BarTheBestStory'
+	);
+	strictEqual(
+		generateKey(entryValues, '[fulltitle]'),
+		'Astoryof2fooand1barthebeststory'
+	);
+	strictEqual(generateKey(entryValues, '[JOURNAL]'), 'FooandGoo');
+	strictEqual(generateKey(entryValues, '[JOURNAL:capitalize]'), 'FooAndGoo');
+	strictEqual(generateKey(entryValues, '[YEAR]'), '2018');
+	strictEqual(generateKey(entryValues, '[AUTHOR]'), 'BarFooandMeeMooandOneTwo');
 });

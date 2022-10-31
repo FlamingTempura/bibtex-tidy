@@ -1,3 +1,4 @@
+import { BlockNode, EntryNode, TextNode } from './bibtex-parser';
 import { specialCharacters } from './unicode';
 
 export function escapeSpecialCharacters(str: string): string {
@@ -107,4 +108,10 @@ export function formatPageRange(str: string): string {
 		str = str.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
 	}
 	return str;
+}
+
+export function isEntryNode(
+	node: TextNode | BlockNode
+): node is BlockNode & { block: EntryNode } {
+	return node.type !== 'text' && node.block?.type === 'entry';
 }

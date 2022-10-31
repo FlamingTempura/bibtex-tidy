@@ -3,12 +3,15 @@ type Author = {
 	lastName: string;
 };
 
-export function parseAuthors(authors: string): Author[] {
+export function parseAuthors(authors: string, sanitize?: boolean): Author[] {
 	return authors
 		.replace(/\s+/g, ' ') // normalise whitespace and remove new lines
 		.split(/ and /i)
 		.map((nameRaw) => {
-			const name = nameRaw.trim();
+			let name = nameRaw.trim();
+			if (sanitize) {
+				name = name.replace(/["{}]/g, '');
+			}
 			const commaPos = name.indexOf(',');
 			if (commaPos > -1) {
 				return {
