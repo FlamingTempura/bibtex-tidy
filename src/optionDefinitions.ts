@@ -353,13 +353,20 @@ export const optionDefinitions: OptionDefinition[] = [
 
 	{
 		key: 'generateKeys',
-		cli: { '--generate-keys': true },
-		toCLI: (val) => (val === true ? '--generate-keys' : undefined),
-		title: 'Generate BibTeX keys',
+		cli: { '--generate-keys': (args) => (args.length > 0 ? args : true) },
+		toCLI: (val) => {
+			if (typeof val === 'string')
+				return `--generate-keys="${val.replace(/"/g, '\\"')}"`;
+			if (val) return '--generate-keys';
+			return undefined;
+		},
+		title: 'Generate citation keys',
 		description: [
-			'[Experimental] For all entries replace the key with a new key of the form <author><year><title>.',
+			'[Experimental] For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided.',
 		],
-		type: 'boolean',
+		type: 'boolean | string',
+		valueIfTrue:
+			'[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]',
 		defaultValue: false,
 	},
 	{

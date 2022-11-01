@@ -207,7 +207,8 @@ function getOptions(): Options {
 		removeEmptyFields: options.removeEmptyFields.checked,
 		removeDuplicateFields: options.removeDuplicateFields.checked,
 		lowercase: options.lowercase.checked,
-		generateKeys: options.generateKeys.checked,
+		generateKeys:
+			options.generateKeys.checked && options.generateKeysTemplate.value,
 		maxAuthors: options.maxAuthors.checked
 			? Number(options.maxAuthorsNum.value)
 			: undefined,
@@ -261,7 +262,8 @@ function setOptions(opts: Options) {
 	options.removeEmptyFields.checked = opts.removeEmptyFields;
 	options.removeDuplicateFields.checked = opts.removeDuplicateFields;
 	options.lowercase.checked = opts.lowercase;
-	options.generateKeys.checked = opts.generateKeys;
+	options.generateKeys.checked = Boolean(opts.generateKeys);
+	options.generateKeysTemplate.value = opts.generateKeys;
 	options.maxAuthors.checked = opts.maxAuthors !== null;
 	options.maxAuthorsNum.value = String(opts.maxAuthors || 0);
 }

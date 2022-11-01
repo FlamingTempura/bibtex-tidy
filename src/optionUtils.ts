@@ -27,6 +27,7 @@ export type OptionsNormalized = Omit<
 	| 'sortFields'
 	| 'wrap'
 	| 'enclosingBraces'
+	| 'generateKeys'
 > & {
 	align: number;
 	sort?: string[];
@@ -36,6 +37,7 @@ export type OptionsNormalized = Omit<
 	duplicates?: DuplicateRule[];
 	wrap?: number;
 	enclosingBraces?: string[];
+	generateKeys?: string;
 };
 
 export function normalizeOptions(options: Options): OptionsNormalized {

@@ -68,7 +68,13 @@ export async function testWeb(
 			getOpt('removeEmptyFields').checked = !!options.removeEmptyFields;
 			getOpt('removeDuplicateFields').checked = !!options.removeDuplicateFields;
 			getOpt('lowercase').checked = !!options.lowercase;
-			getOpt('generateKeys').checked = !!options.generateKeys;
+
+			if (options.generateKeys) {
+				getOpt('generateKeys').checked = true;
+				getOpt('generateKeysTemplate').value = options.generateKeys;
+			} else {
+				getOpt('generateKeys').checked = false;
+			}
 
 			if (typeof options.align === 'number') {
 				getOpt('align').checked = true;

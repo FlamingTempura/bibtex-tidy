@@ -364,13 +364,20 @@ var optionDefinitions = [
   },
   {
     key: "generateKeys",
-    cli: { "--generate-keys": true },
-    toCLI: (val) => val === true ? "--generate-keys" : void 0,
-    title: "Generate BibTeX keys",
+    cli: { "--generate-keys": (args) => args.length > 0 ? args : true },
+    toCLI: (val) => {
+      if (typeof val === "string")
+        return `--generate-keys="${val.replace(/"/g, '\\"')}"`;
+      if (val)
+        return "--generate-keys";
+      return void 0;
+    },
+    title: "Generate citation keys",
     description: [
-      "[Experimental] For all entries replace the key with a new key of the form <author><year><title>."
+      "[Experimental] For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided."
     ],
-    type: "boolean",
+    type: "boolean | string",
+    valueIfTrue: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
     defaultValue: false
   },
   {
@@ -3637,7 +3644,6 @@ function parseAuthors(authors, sanitize) {
 }
 
 // src/generateKeys.ts
-var defaultTemplate = `[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]`;
 var SPECIAL_MARKERS = {
   auth: {
     description: "Last name of first authors",
@@ -3700,11 +3706,11 @@ var SPECIAL_MARKERS = {
     }
   },
   duplicateLetter: {
-    description: "If the multiple entries end up with the same key, then insert a letter a-z",
+    description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
     callback: () => ["[duplicateLetter]"]
   },
   duplicateNumber: {
-    description: "If the multiple entries end up with the same key, then insert a number 0-1. By default this will be inserted at the end.",
+    description: "If the multiple entries end up with the same key, then insert a number 0-1.",
     callback: () => ["[duplicateNumber]"]
   }
 };
@@ -3723,11 +3729,11 @@ var MODIFIERS = {
 };
 var MissingRequiredData = class extends Error {
 };
-function generateKeys(ast, valueLookup, template = defaultTemplate) {
+function generateKeys(ast, valueLookup, template) {
   var _a;
   let template2 = template;
   if (!template.includes("[duplicateLetter]") && !template.includes("[duplicateNumber]")) {
-    template2 = template + "[duplicateNumber]";
+    template2 = template + "[duplicateLetter]";
   }
   const entriesByKey = /* @__PURE__ */ new Map();
   for (const node of ast.children) {
@@ -3755,7 +3761,7 @@ function generateKeys(ast, valueLookup, template = defaultTemplate) {
 }
 function generateKey(valueLookup, template) {
   try {
-    return template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (m) => {
+    const newKey = template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (m) => {
       var _a;
       const [tokenKeyN, ...modifierKeys] = m.slice(1, -1).split(":");
       let n;
@@ -3768,7 +3774,6 @@ function generateKey(valueLookup, template) {
       if (token) {
         key = (_a = token.callback(valueLookup, n)) != null ? _a : "";
       } else if (tokenKey === tokenKey.toLocaleUpperCase()) {
-        console.log(tokenKey);
         const value = valueLookup.get(tokenKey.toLocaleLowerCase());
         key = value ? words(value) : [];
       } else {
@@ -3784,6 +3789,9 @@ function generateKey(valueLookup, template) {
       }
       return key.join("");
     });
+    if (newKey === "")
+      return;
+    return newKey;
   } catch (e) {
     if (e instanceof MissingRequiredData) {
       return;
@@ -3886,7 +3894,7 @@ function tidy(input, options_ = {}) {
     sortEntries(ast, valueLookup, options.sort);
   if (options.sortFields)
     sortEntryFields(ast, options.sortFields);
-  const newKeys = options.generateKeys ? generateKeys(ast, valueLookup) : void 0;
+  const newKeys = options.generateKeys ? generateKeys(ast, valueLookup, options.generateKeys) : void 0;
   const bibtex = formatBibtex(ast, options, newKeys);
   return { bibtex, warnings, count: getEntries(ast).length };
 }
@@ -3978,7 +3986,7 @@ function splitCLIArgs(args) {
       optionArgVals[currOption] = [];
       valueOrInputArgs = [];
     } else if (isValue && currOption) {
-      optionArgVals[currOption].push(arg);
+      optionArgVals[currOption].push(unquote(arg));
     } else {
       valueOrInputArgs.push(arg);
     }
@@ -3995,6 +4003,12 @@ function splitCLIArgs(args) {
     optionArgVals,
     unknownArgs: [...unknownArgs]
   };
+}
+function unquote(value) {
+  if (value.startsWith('"') && value.endsWith('"')) {
+    return JSON.parse(value);
+  }
+  return value;
 }
 
 // src/__generated__/version.ts
@@ -4117,7 +4131,7 @@ var manPage = [
   "      ",
   "  --generate-keys",
   "      [Experimental] For all entries replace the key with a new key of the form",
-  "      <author><year><title>.",
+  "      <author><year><title>. A JabRef citation pattern can be provided.",
   "      ",
   "  --max-authors",
   '      Truncate authors if above a given number into "and others".',

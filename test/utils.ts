@@ -91,13 +91,21 @@ export async function bibtexTidy(
 	}
 
 	if (api && cli) {
-		strictEqual(api.bibtex, cli.bibtexs[0], 'API and CLI outputs differ');
+		strictEqual(
+			api.bibtex,
+			cli.bibtexs[0],
+			'API (+) and CLI (-) outputs differ'
+		);
 	}
 	if (cli && web) {
-		strictEqual(cli.bibtexs[0], web.bibtex, 'CLI and Web outputs differ');
+		strictEqual(
+			cli.bibtexs[0],
+			web.bibtex,
+			'CLI (+) and Web (-) outputs differ'
+		);
 	}
 	if (web && api) {
-		strictEqual(web.bibtex, api.bibtex, 'Web and API outputs differ');
+		strictEqual(web.bibtex, api.bibtex, 'Web (+) and API (-) outputs differ');
 	}
 
 	const bibtex = api?.bibtex ?? cli?.bibtexs[0] ?? web?.bibtex;

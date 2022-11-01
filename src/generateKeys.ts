@@ -2,8 +2,6 @@ import { isEntryNode } from './utils';
 import { RootNode, EntryNode } from './bibtex-parser';
 import { parseAuthors } from './parseAuthors';
 
-const defaultTemplate = `[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]`;
-
 const SPECIAL_MARKERS: Record<
 	string,
 	{
@@ -76,12 +74,12 @@ const SPECIAL_MARKERS: Record<
 	},
 	duplicateLetter: {
 		description:
-			'If the multiple entries end up with the same key, then insert a letter a-z',
+			'If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.',
 		callback: () => ['[duplicateLetter]'],
 	},
 	duplicateNumber: {
 		description:
-			'If the multiple entries end up with the same key, then insert a number 0-1. By default this will be inserted at the end.',
+			'If the multiple entries end up with the same key, then insert a number 0-1.',
 		callback: () => ['[duplicateNumber]'],
 	},
 };
@@ -114,14 +112,14 @@ class MissingRequiredData extends Error {}
 export function generateKeys(
 	ast: RootNode,
 	valueLookup: Map<EntryNode, Map<string, string>>,
-	template: string = defaultTemplate
+	template: string
 ): Map<EntryNode, string> {
 	let template2 = template;
 	if (
 		!template.includes('[duplicateLetter]') &&
 		!template.includes('[duplicateNumber]')
 	) {
-		template2 = template + '[duplicateNumber]';
+		template2 = template + '[duplicateLetter]';
 	}
 
 	const entriesByKey = new Map<string, EntryNode[]>();
@@ -159,7 +157,7 @@ export function generateKey(
 	template: string
 ): string | undefined {
 	try {
-		return template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (m) => {
+		const newKey = template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (m) => {
 			const [tokenKeyN, ...modifierKeys] = m.slice(1, -1).split(':');
 			let n: number | undefined;
 			const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
@@ -185,11 +183,15 @@ export function generateKey(
 					throw new Error(`Invalid modifier ${modifierKey}`);
 				}
 			}
+
 			return key.join('');
 		});
+
+		if (newKey === '') return; // keep existing key
+		return newKey;
 	} catch (e) {
 		if (e instanceof MissingRequiredData) {
-			return;
+			return; // keep existing key
 		}
 		throw e;
 	}

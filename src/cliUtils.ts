@@ -98,7 +98,7 @@ export function splitCLIArgs(args: string[]): {
 			optionArgVals[currOption] = [];
 			valueOrInputArgs = [];
 		} else if (isValue && currOption) {
-			optionArgVals[currOption].push(arg);
+			optionArgVals[currOption].push(unquote(arg));
 		} else {
 			valueOrInputArgs.push(arg);
 		}
@@ -124,4 +124,11 @@ export function optionsToCLIArgs(options: Options): string[] {
 	return optionDefinitions
 		.map((def) => def.toCLI?.(options[def.key as keyof Options]))
 		.filter((arg): arg is string => typeof arg === 'string');
+}
+
+function unquote(value: string): string {
+	if (value.startsWith('"') && value.endsWith('"')) {
+		return JSON.parse(value);
+	}
+	return value;
 }

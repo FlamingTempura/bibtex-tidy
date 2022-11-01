@@ -49,6 +49,12 @@ export declare type BibTeXTidyOptions = {
 	 */
 	align?: boolean | number;
 	/**
+	 * Insert blank lines
+	 *
+	 * Insert an empty line between each entry.
+	 */
+	blankLines?: boolean;
+	/**
 	 * Sort bibliography entries
 	 *
 	 * Sort entries by specified fields. For descending order, prefix the field with a dash (-).
@@ -138,11 +144,11 @@ export declare type BibTeXTidyOptions = {
 	 */
 	removeDuplicateFields?: boolean;
 	/**
-	 * Generate BibTeX keys
+	 * Generate citation keys
 	 *
-	 * [Experimental] For all entries replace the key with a new key of the form <author><year><title>.
+	 * [Experimental] For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided.
 	 */
-	generateKeys?: boolean;
+	generateKeys?: boolean | string;
 	/**
 	 * Maximum authors
 	 *
@@ -187,6 +193,7 @@ export declare type BibTeXTidyOptions = {
 	backup?: boolean;
 };
 export declare type Options = Omit<BibTeXTidyOptions, "help" | "version" | "quiet" | "backup">;
+export declare type DuplicateRule = Exclude<BibTeXTidyOptions["duplicates"], boolean | undefined>[number];
 declare class RootNode {
 	children: (TextNode | BlockNode)[];
 	type: "root";
@@ -234,6 +241,7 @@ declare class EntryNode {
 	wrapType: "{" | "(";
 	type: "entry";
 	key?: string;
+	keyEnded?: boolean;
 	fields: FieldNode[];
 	constructor(parent: BlockNode, wrapType: "{" | "(");
 }
@@ -274,8 +282,12 @@ declare class QuotedNode {
 	depth: number;
 	constructor(parent: ConcatNode);
 }
-export declare type Warning = {
-	code: "MISSING_KEY" | "DUPLICATE_KEY" | "DUPLICATE_ENTRY";
+export declare type Warning = ({
+	code: "MISSING_KEY";
+} | {
+	code: "DUPLICATE_ENTRY";
+	rule: DuplicateRule;
+}) & {
 	message: string;
 };
 export declare type BibTeXTidyResult = {

@@ -11531,12 +11531,17 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }, {
         key: "generateKeys",
         cli: {
-          "--generate-keys": true
+          "--generate-keys": args => args.length > 0 ? args : true
         },
-        toCLI: val => val === true ? "--generate-keys" : void 0,
-        title: "Generate BibTeX keys",
-        description: ["[Experimental] For all entries replace the key with a new key of the form <author><year><title>."],
-        type: "boolean",
+        toCLI: val => {
+          if (typeof val === "string") return "--generate-keys=\"".concat(val.replace(/"/g, '\\"'), "\"");
+          if (val) return "--generate-keys";
+          return void 0;
+        },
+        title: "Generate citation keys",
+        description: ["[Experimental] For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided."],
+        type: "boolean | string",
+        valueIfTrue: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
         defaultValue: false
       }, {
         key: "maxAuthors",
@@ -12535,12 +12540,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   });
 
   // src/generateKeys.ts
-  function generateKeys(ast, valueLookup) {
-    var template = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : defaultTemplate;
+  function generateKeys(ast, valueLookup, template) {
     var _a;
     var template2 = template;
     if (!template.includes("[duplicateLetter]") && !template.includes("[duplicateNumber]")) {
-      template2 = template + "[duplicateNumber]";
+      template2 = template + "[duplicateLetter]";
     }
     var entriesByKey = /* @__PURE__ */new Map();
     var _iterator11 = _createForOfIteratorHelper(ast.children),
@@ -12586,7 +12590,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   }
   function generateKey(valueLookup, template) {
     try {
-      return template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, m => {
+      var newKey = template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, m => {
         var _a;
         var _m$slice$split = m.slice(1, -1).split(":"),
           _m$slice$split2 = _toArray(_m$slice$split),
@@ -12602,7 +12606,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         if (token) {
           key = (_a = token.callback(valueLookup, n)) != null ? _a : "";
         } else if (tokenKey === tokenKey.toLocaleUpperCase()) {
-          console.log(tokenKey);
           var value = valueLookup.get(tokenKey.toLocaleLowerCase());
           key = value ? words(value) : [];
         } else {
@@ -12627,6 +12630,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         return key.join("");
       });
+      if (newKey === "") return;
+      return newKey;
     } catch (e) {
       if (e instanceof MissingRequiredData) {
         return;
@@ -12647,14 +12652,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     var _a, _b;
     return (_b = (_a = entryValues.get("title")) != null ? _a : entryValues.get("booktitle")) != null ? _b : "";
   }
-  var defaultTemplate, SPECIAL_MARKERS, MODIFIERS, MissingRequiredData, functionWords;
+  var SPECIAL_MARKERS, MODIFIERS, MissingRequiredData, functionWords;
   var init_generateKeys = __esm({
     "src/generateKeys.ts"() {
       "use strict";
 
       init_utils();
       init_parseAuthors();
-      defaultTemplate = "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
       SPECIAL_MARKERS = {
         auth: {
           description: "Last name of first authors",
@@ -12709,11 +12713,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
         },
         duplicateLetter: {
-          description: "If the multiple entries end up with the same key, then insert a letter a-z",
+          description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
           callback: () => ["[duplicateLetter]"]
         },
         duplicateNumber: {
-          description: "If the multiple entries end up with the same key, then insert a number 0-1. By default this will be inserted at the end.",
+          description: "If the multiple entries end up with the same key, then insert a number 0-1.",
           callback: () => ["[duplicateNumber]"]
         }
       };
@@ -12756,7 +12760,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     ast.children = ast.children.filter(child => !isEntryNode(child) || !duplicates.entries.has(child.block));
     if (options.sort) sortEntries(ast, valueLookup, options.sort);
     if (options.sortFields) sortEntryFields(ast, options.sortFields);
-    var newKeys = options.generateKeys ? generateKeys(ast, valueLookup) : void 0;
+    var newKeys = options.generateKeys ? generateKeys(ast, valueLookup, options.generateKeys) : void 0;
     var bibtex = formatBibtex(ast, options, newKeys);
     return {
       bibtex,
@@ -13352,7 +13356,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           removeEmptyFields: options.removeEmptyFields.checked,
           removeDuplicateFields: options.removeDuplicateFields.checked,
           lowercase: options.lowercase.checked,
-          generateKeys: options.generateKeys.checked,
+          generateKeys: options.generateKeys.checked && options.generateKeysTemplate.value,
           maxAuthors: options.maxAuthors.checked ? Number(options.maxAuthorsNum.value) : void 0
         };
       }
@@ -13390,7 +13394,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         options.removeEmptyFields.checked = opts.removeEmptyFields;
         options.removeDuplicateFields.checked = opts.removeDuplicateFields;
         options.lowercase.checked = opts.lowercase;
-        options.generateKeys.checked = opts.generateKeys;
+        options.generateKeys.checked = Boolean(opts.generateKeys);
+        options.generateKeysTemplate.value = opts.generateKeys;
         options.maxAuthors.checked = opts.maxAuthors !== null;
         options.maxAuthorsNum.value = String(opts.maxAuthors || 0);
       }

@@ -60,7 +60,7 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	if (options.sortFields) sortEntryFields(ast, options.sortFields);
 
 	const newKeys = options.generateKeys
-		? generateKeys(ast, valueLookup)
+		? generateKeys(ast, valueLookup, options.generateKeys)
 		: undefined;
 
 	const bibtex = formatBibtex(ast, options, newKeys);

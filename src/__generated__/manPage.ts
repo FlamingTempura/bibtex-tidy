@@ -121,7 +121,7 @@ export const manPage = [
 	"      ",
 	"  --generate-keys",
 	"      [Experimental] For all entries replace the key with a new key of the form",
-	"      <author><year><title>.",
+	"      <author><year><title>. A JabRef citation pattern can be provided.",
 	"      ",
 	"  --max-authors",
 	"      Truncate authors if above a given number into \"and others\".",
