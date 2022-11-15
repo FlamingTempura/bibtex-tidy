@@ -26,7 +26,7 @@ WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/docs ./docs
 
 # Copy a new configuration file setting listen port to 8080
-COPY ./bibtex-tidy.conf /etc/nginx/conf.d/
+COPY ./docker/bibtex-tidy.conf /etc/nginx/conf.d/
 
 EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
