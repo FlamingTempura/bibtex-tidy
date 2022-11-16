@@ -1,5 +1,5 @@
 import { optionDefinitions } from './optionDefinitions';
-import { CLIOptions, Options } from './optionUtils';
+import type { CLIOptions, Options } from './optionUtils';
 
 const OPTIONS = new Set(
 	optionDefinitions.flatMap((def) => Object.keys(def.cli))

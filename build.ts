@@ -1,10 +1,12 @@
 import { version, author, homepage } from './package.json';
 import { writeFile, mkdir, chmod, readFile } from 'fs/promises';
-import { join } from 'path';
-import { build, buildSync } from 'esbuild';
+import { join, relative } from 'path';
+import { build, buildSync, serve, type Plugin } from 'esbuild';
 import { transform as babel } from '@babel/core';
 import { optionDefinitions } from './src/optionDefinitions';
 import { wrapText } from './src/utils';
+import sveltePlugin from 'esbuild-svelte';
+import autoPreprocess from 'svelte-preprocess';
 
 const SRC_PATH = join(__dirname, 'src');
 const BUILD_PATH = join(SRC_PATH, '__generated__');
@@ -222,40 +224,88 @@ async function buildCLI() {
 	console.timeEnd('CLI built');
 }
 
-async function buildWebBundle() {
+async function buildWebBundle(serve?: boolean) {
 	console.time('Web bundle built');
+
 	const { outputFiles } = await build({
 		platform: 'browser',
-		entryPoints: ['./docs/index.ts'],
+		entryPoints: ['./src/ui/index.ts'],
+		// esbuild replaces the extension, e.g. js for css
+		outfile: join(WEB_PATH, 'bundle.js'),
 		bundle: true,
 		write: false,
 		banner: { js: jsBanner.join('\n') },
+		plugins: [sveltePlugin({ preprocess: autoPreprocess() }), babelPlugin],
 	});
-	const bundle = outputFiles[0];
-	const result = babel(bundle.text, {
-		presets: [['@babel/env', { targets: BROWSER_TARGETS }]],
-		compact: false,
-	});
-	if (!result?.code) throw new Error('Expected babel output');
-	await writeFile(join(WEB_PATH, 'bundle.js'), result.code);
+
+	for (const file of outputFiles) {
+		await writeFile(file.path, file.text);
+	}
+
 	console.timeEnd('Web bundle built');
 }
 
-mkdir(BUILD_PATH, { recursive: true })
-	.then(() =>
-		Promise.all([
-			generateOptionTypes(),
-			generateVersionFile(),
-			generateManPage(),
-			generateCLIHelp(),
-			generateReadme(),
-		])
-	)
-	.then(() =>
-		Promise.all([
-			!process.argv.includes('--no-defs') ? buildTypeDeclarations() : undefined,
-			buildJSBundle(),
-			buildCLI(),
-			buildWebBundle(),
-		])
+async function serveWeb() {
+	const server = await serve(
+		{ servedir: WEB_PATH },
+		{
+			platform: 'browser',
+			entryPoints: ['./src/ui/index.ts'],
+			// esbuild replaces the extension, e.g. js for css
+			outfile: join(WEB_PATH, 'bundle.js'),
+			bundle: true,
+			sourcemap: true,
+			plugins: [
+				sveltePlugin({
+					preprocess: autoPreprocess(),
+					compilerOptions: { enableSourcemap: true },
+				}),
+			],
+		}
 	);
+	console.log(`Access on http://localhost:${server.port}`);
+}
+
+const babelPlugin: Plugin = {
+	name: 'babel',
+	setup(build) {
+		// This will not run on serve mode https://github.com/evanw/esbuild/issues/1384
+		build.onEnd((result) => {
+			for (const file of result.outputFiles ?? []) {
+				if (file.path.endsWith('.js')) {
+					const result = babel(file.text, {
+						presets: [['@babel/env', { targets: BROWSER_TARGETS }]],
+						compact: false,
+					});
+					if (!result?.code) throw new Error('Expected babel output');
+					file.contents = Buffer.from(result.code);
+				}
+			}
+		});
+	},
+};
+
+if (process.argv.includes('--serve')) {
+	serveWeb();
+} else {
+	mkdir(BUILD_PATH, { recursive: true })
+		.then(() =>
+			Promise.all([
+				generateOptionTypes(),
+				generateVersionFile(),
+				generateManPage(),
+				generateCLIHelp(),
+				generateReadme(),
+			])
+		)
+		.then(() =>
+			Promise.all([
+				!process.argv.includes('--no-defs')
+					? buildTypeDeclarations()
+					: undefined,
+				buildJSBundle(),
+				buildCLI(),
+				buildWebBundle(),
+			])
+		);
+}

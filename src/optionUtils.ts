@@ -28,6 +28,7 @@ export type OptionsNormalized = Omit<
 	| 'wrap'
 	| 'enclosingBraces'
 	| 'generateKeys'
+	| 'blankLines'
 > & {
 	align: number;
 	sort?: string[];
@@ -38,6 +39,7 @@ export type OptionsNormalized = Omit<
 	wrap?: number;
 	enclosingBraces?: string[];
 	generateKeys?: string;
+	blankLines: boolean;
 };
 
 export function normalizeOptions(options: Options): OptionsNormalized {
@@ -45,10 +47,10 @@ export function normalizeOptions(options: Options): OptionsNormalized {
 		optionDefinitions.map((def): [keyof OptionsNormalized, any] => {
 			const key = def.key as keyof OptionsNormalized;
 			const value = options[key];
-			if (value === true && def.valueIfTrue !== undefined) {
+			if (value === true && 'valueIfTrue' in def) {
 				return [key, def.valueIfTrue];
 			}
-			if (value === false && def.valueIfFalse !== undefined) {
+			if (value === false && 'valueIfFalse' in def) {
 				return [key, def.valueIfFalse];
 			}
 			if (typeof value === 'undefined' && def.defaultValue !== undefined) {

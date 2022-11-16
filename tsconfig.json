@@ -1,4 +1,5 @@
 {
+	"extends": "@tsconfig/svelte/tsconfig.json",
 	"compilerOptions": {
 		"module": "ES6",
 		"esModuleInterop": true,
@@ -7,13 +8,8 @@
 		"strict": true,
 		"resolveJsonModule": true,
 		"moduleResolution": "Node",
-		"baseUrl": ".",
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
-		"target": "ES6",
-		"paths": {
-			"*": ["../node_modules/*"]
-		},
-		"rootDir": "./"
+		"target": "ES6"
 	},
-	"include": ["./src/*", "./test/*", "./docs/*", "./build.ts"]
+	"include": ["./src/*", "./test/*", "./build.ts"]
 }

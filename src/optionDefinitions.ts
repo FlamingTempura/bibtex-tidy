@@ -1,3 +1,5 @@
+import type { Options } from './optionUtils';
+
 export type OptionDefinition = {
 	key: string;
 	cli: Record<string, boolean | ((args: string[]) => void)>;
@@ -13,6 +15,17 @@ export type OptionDefinition = {
 };
 
 const DEFAULT_MERGE_CHECK: string[] = ['doi', 'citation', 'abstract'];
+export const DEFAULT_ALIGN = 14;
+export const DEFAULT_SPACE = 2;
+export const DEFAULT_WRAP = 80;
+//prettier-ignore
+export const DEFAULT_FIELD_SORT =  [
+	'title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal',
+	'booktitle', 'location', 'on', 'publisher', 'address', 'series',
+	'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url',
+	'urldate', 'copyright', 'category', 'note', 'metadata'
+]
+export const DEFAULT_SORT = ['key'];
 
 export const optionDefinitions: OptionDefinition[] = [
 	{
@@ -72,8 +85,9 @@ export const optionDefinitions: OptionDefinition[] = [
 		},
 
 		toCLI: (val) => {
-			if (typeof val === 'number') return `--space=${val}`;
-			if (val) return '--space';
+			if (typeof val === 'number' && val !== DEFAULT_SPACE)
+				return `--space=${val}`;
+			if (val && val !== DEFAULT_SPACE) return '--space';
 			return undefined;
 		},
 		title: 'Indent with spaces',
@@ -82,8 +96,8 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		examples: ['--space=2 (default)', '--space=4'],
 		type: 'boolean | number',
-		valueIfTrue: 2,
-		defaultValue: 2,
+		valueIfTrue: DEFAULT_SPACE,
+		defaultValue: DEFAULT_SPACE,
 	},
 	{
 		key: 'tab',
@@ -101,7 +115,8 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--no-align': false,
 		},
 		toCLI: (val) => {
-			if (typeof val === 'number') return `--align=${val}`;
+			if (typeof val === 'number' && val !== DEFAULT_ALIGN)
+				return `--align=${val}`;
 			if (val === false) return '--no-align';
 			return undefined;
 		},
@@ -112,7 +127,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		examples: ['--align=14 (default)'],
 		type: 'boolean | number',
 		valueIfFalse: 1,
-		defaultValue: 14,
+		defaultValue: DEFAULT_ALIGN,
 	},
 	{
 		key: 'blankLines',
@@ -144,7 +159,7 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--sort=name,year',
 		],
 		type: 'boolean | string[]',
-		valueIfTrue: ['key'],
+		valueIfTrue: DEFAULT_SORT,
 	},
 	{
 		key: 'duplicates',
@@ -185,6 +200,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
 		valueIfTrue: DEFAULT_MERGE_CHECK,
+		valueIfFalse: undefined,
 		defaultValue: (options: any) =>
 			options.merge ? DEFAULT_MERGE_CHECK : undefined,
 	},
@@ -260,8 +276,12 @@ export const optionDefinitions: OptionDefinition[] = [
 		key: 'sortFields',
 		cli: { '--sort-fields': (args) => (args.length > 0 ? args : true) },
 		toCLI: (val) => {
-			if (Array.isArray(val) && val.length > 0)
+			if (Array.isArray(val) && val.length > 0) {
+				if (JSON.stringify(val) === JSON.stringify(DEFAULT_FIELD_SORT)) {
+					return '--sort_fields';
+				}
 				return `--sort-fields=${val.join(',')}`;
+			}
 			if (val === true) return '--sort-fields';
 			return undefined;
 		},
@@ -272,14 +292,9 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		examples: ['--sort-fields=name,author'],
 		type: 'boolean | string[]',
-		//prettier-ignore
-		valueIfTrue: [
-			'title', 'shorttitle', 'author', 'year', 'month', 'day', 'journal',
-			'booktitle', 'location', 'on', 'publisher', 'address', 'series',
-			'volume', 'number', 'pages', 'doi', 'isbn', 'issn', 'url',
-			'urldate', 'copyright', 'category', 'note', 'metadata'
-		],
-		defaultValue: false,
+		valueIfTrue: DEFAULT_FIELD_SORT,
+		valueIfFalse: undefined,
+		defaultValue: undefined,
 	},
 	{
 		key: 'sortProperties',
@@ -367,7 +382,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		type: 'boolean | string',
 		valueIfTrue:
 			'[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]',
-		defaultValue: false,
+		defaultValue: undefined,
 	},
 	{
 		key: 'maxAuthors',
@@ -421,7 +436,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		description: ['Wrap long values at the given column'],
 		examples: ['--wrap (80 by default)', '--wrap=82'],
 		type: 'boolean | number',
-		valueIfTrue: 80,
+		valueIfTrue: DEFAULT_WRAP,
 	},
 	{
 		key: 'version',
@@ -446,3 +461,9 @@ export const optionDefinitions: OptionDefinition[] = [
 		defaultValue: true,
 	},
 ];
+
+export const optionDefinitionByKey: Record<keyof Options, OptionDefinition> =
+	Object.fromEntries(optionDefinitions.map((opt) => [opt.key, opt])) as Record<
+		keyof Options,
+		OptionDefinition
+	>;

@@ -1,9 +1,5 @@
-import {
-	normalizeOptions,
-	Options,
-	OptionsNormalized,
-} from '../../src/optionUtils';
-import { BibTeXTidyResult, Warning } from '../../src/index';
+import { normalizeOptions, type Options } from '../../src/optionUtils';
+import type { Warning } from '../../src/index';
 import puppeteer from 'puppeteer';
 import { join } from 'path';
 
@@ -35,142 +31,150 @@ export async function teardown() {
 
 export async function testWeb(
 	input: string,
-	options: Options = {}
+	options_: Options = {}
 ): Promise<WebResult> {
+	const options = normalizeOptions(options_);
 	const page = await getPage();
 
-	const result = await new Promise<BibTeXTidyResult>((resolve) => {
-		const callbackName =
-			'onEditorChange' + Math.floor(Math.random() * 1000000000);
-		page.exposeFunction(callbackName, resolve);
+	async function setCheckbox(name: string, checked: boolean): Promise<void> {
+		(await page.waitForSelector(`input[name=${name}]`, {
+			timeout: 100,
+		}))!.evaluate((el_, checked) => {
+			const el = el_ as HTMLInputElement;
+			if (el.checked !== checked) el.click();
+		}, checked);
+	}
 
-		const evalCallback = (
-			input: string,
-			options: OptionsNormalized,
-			fn: string
-		) => {
-			document.querySelector('textarea')!.value = input;
+	async function setRadio(value: string): Promise<void> {
+		(await page.waitForSelector(`input[value=${value}]`, {
+			timeout: 100,
+		}))!.evaluate((el) => (el as HTMLInputElement).click());
+	}
+
+	async function setValue(name: string, value: string): Promise<void> {
+		await (await page.waitForSelector(`[name=${name}]`, {
+			timeout: 100,
+		}))!.focus();
+
+		await page.keyboard.down('ControlLeft');
+		await page.keyboard.press('KeyA');
+		await page.keyboard.up('ControlLeft');
+		await page.keyboard.type(value);
+	}
+
+	await page.evaluate(
+		(value) =>
 			//@ts-ignore
-			window.cmEditor.setValue(input);
+			window.cmEditor.setValue(value),
+		input
+	);
 
-			const getOpt = (name: string) =>
-				document.querySelector<HTMLInputElement>(`[name=${name}]`)!;
+	await setCheckbox('curly', !!options.curly);
+	await setCheckbox('numeric', !!options.numeric);
+	await setCheckbox('stripEnclosingBraces', !!options.stripEnclosingBraces);
+	await setCheckbox('dropAllCaps', !!options.dropAllCaps);
+	await setCheckbox('escape', !!options.escape);
+	await setCheckbox('stripComments', !!options.stripComments);
+	await setCheckbox('encodeUrls', !!options.encodeUrls);
+	await setCheckbox('tidyComments', !!options.tidyComments);
+	await setCheckbox('trailingCommas', !!options.trailingCommas);
+	await setCheckbox('removeEmptyFields', !!options.removeEmptyFields);
+	await setCheckbox('removeDuplicateFields', !!options.removeDuplicateFields);
+	await setCheckbox('lowercase', !!options.lowercase);
+	await setCheckbox('blankLines', options.blankLines ?? false);
 
-			getOpt('curly').checked = !!options.curly;
-			getOpt('numeric').checked = !!options.numeric;
-			getOpt('stripEnclosingBraces').checked = !!options.stripEnclosingBraces;
-			getOpt('dropAllCaps').checked = !!options.dropAllCaps;
-			getOpt('escape').checked = !!options.escape;
-			getOpt('stripComments').checked = !!options.stripComments;
-			getOpt('encodeUrls').checked = !!options.encodeUrls;
-			getOpt('tidyComments').checked = !!options.tidyComments;
-			getOpt('trailingCommas').checked = !!options.trailingCommas;
-			getOpt('removeEmptyFields').checked = !!options.removeEmptyFields;
-			getOpt('removeDuplicateFields').checked = !!options.removeDuplicateFields;
-			getOpt('lowercase').checked = !!options.lowercase;
+	if (options.space) {
+		await setRadio('spaces');
+		await setValue('spaces', String(options.space));
+	}
+	if (options.tab) {
+		await setRadio('tabs');
+	}
 
-			if (options.generateKeys) {
-				getOpt('generateKeys').checked = true;
-				getOpt('generateKeysTemplate').value = options.generateKeys;
-			} else {
-				getOpt('generateKeys').checked = false;
-			}
+	if (options.generateKeys) {
+		await setCheckbox('generateKeys', true);
+		await setValue('generateKeysTemplate', options.generateKeys);
+	} else {
+		await setCheckbox('generateKeys', false);
+	}
 
-			if (typeof options.align === 'number') {
-				getOpt('align').checked = true;
-				getOpt('alignnum').value = String(options.align);
-			} else {
-				getOpt('align').checked = false;
-			}
-			if (options.omit) {
-				getOpt('omit').checked = true;
-				getOpt('omitList').value = options.omit.join(' ');
-			} else {
-				getOpt('omit').checked = false;
-			}
-			if (options.space) {
-				document.querySelector<HTMLInputElement>('[value=spaces]')!.checked =
-					true;
-				getOpt('spaces').value = String(options.space);
-			}
-			if (options.tab) {
-				document.querySelector<HTMLInputElement>('[value=tabs]')!.checked =
-					true;
-			}
-			if (options.sort) {
-				getOpt('sort').checked = true;
-				getOpt('sortList').value = options.sort.join(' ');
-			} else {
-				getOpt('sort').checked = false;
-				getOpt('sortList').value = '';
-			}
-			if (options.duplicates) {
-				getOpt('duplicates').checked = true;
-				getOpt('uniqKEY').checked = options.duplicates.includes('key');
-				getOpt('uniqDOI').checked = options.duplicates.includes('doi');
-				getOpt('uniqCIT').checked = options.duplicates.includes('citation');
-				getOpt('uniqABS').checked = options.duplicates.includes('abstract');
-			} else {
-				getOpt('duplicates').checked = false;
-			}
-			if (options.merge) {
-				getOpt('merge').checked = true;
-				getOpt('mergeStrategy').value = options.merge;
-			} else {
-				getOpt('merge').checked = false;
-			}
+	if (typeof options.align === 'number') {
+		await setCheckbox('align', true);
+		await setValue('alignnum', String(options.align));
+	} else {
+		await setCheckbox('align', false);
+	}
 
-			if (options.sortFields) {
-				getOpt('sortFields').checked = true;
-				getOpt('sortFieldList').value = options.sortFields.join(' ');
-			} else {
-				getOpt('sortFields').checked = false;
-				getOpt('sortFieldList').value = '';
-			}
+	if (options.omit && options.omit.length > 0) {
+		await setCheckbox('omit', true);
+		await setValue('omitList', options.omit.join(' '));
+	} else {
+		await setCheckbox('omit', false);
+	}
+	if (options.sort) {
+		await setCheckbox('sort', true);
+		await setValue('sortList', options.sort.join(' '));
+	} else {
+		await setCheckbox('sort', false);
+	}
+	if (options.duplicates) {
+		await setCheckbox('duplicates', true);
+		await setCheckbox('uniqKEY', options.duplicates.includes('key'));
+		await setCheckbox('uniqDOI', options.duplicates.includes('doi'));
+		await setCheckbox('uniqCIT', options.duplicates.includes('citation'));
+		await setCheckbox('uniqABS', options.duplicates.includes('abstract'));
+	} else {
+		await setCheckbox('duplicates', false);
+	}
+	if (options.merge) {
+		await setCheckbox('merge', true);
+		await setRadio(options.merge);
+	} else {
+		await setCheckbox('merge', false);
+	}
 
-			if (options.enclosingBraces) {
-				getOpt('enclosingBraces').checked = true;
-				getOpt('enclosingBracesList').value = options.enclosingBraces.join(' ');
-			} else {
-				getOpt('enclosingBraces').checked = false;
-				getOpt('enclosingBracesList').value = '';
-			}
+	if (options.sortFields) {
+		await setCheckbox('sortFields', true);
+		await setValue('sortFieldList', options.sortFields.join(' '));
+	} else {
+		await setCheckbox('sortFields', false);
+	}
 
-			if (options.maxAuthors) {
-				getOpt('maxAuthors').checked = true;
-				getOpt('maxAuthorsNum')!.value = String(options.maxAuthors);
-			}
+	if (options.enclosingBraces) {
+		await setCheckbox('enclosingBraces', true);
+		await setValue('enclosingBracesList', options.enclosingBraces.join(' '));
+	} else {
+		await setCheckbox('enclosingBraces', false);
+	}
 
-			if (options.wrap) {
-				getOpt('wrap').checked = true;
-				getOpt('wrapnum').value = String(options.wrap);
-			}
+	if (options.maxAuthors) {
+		await setCheckbox('maxAuthors', true);
+		await setValue('maxAuthorsNum', String(options.maxAuthors));
+	}
 
-			getOpt('blankLines').checked = options.blankLines ?? false;
+	if (options.wrap) {
+		await setCheckbox('wrap', true);
+		await setValue('wrapnum', String(options.wrap));
+	}
 
-			const onchange = () => {
-				window.cmEditor.off('change', onchange);
-				// wait for feedback to be written
-				window.requestAnimationFrame(() => {
-					//@ts-ignore
-					window[fn]({
-						bibtex: window.cmEditor.getValue(),
-						warnings: [...document.querySelectorAll('#feedback li')].map(
-							(li) => ({
-								code: li.textContent?.includes('duplicate')
-									? 'DUPLICATE_ENTRY'
-									: '',
-							})
-						),
-					});
-				});
-			};
-			window.cmEditor.on('change', onchange);
+	((await page.waitForXPath(
+		'//button[contains(text(),"Tidy")]'
+	)) as any as HTMLElement)!.click();
 
-			document.querySelector<HTMLButtonElement>('#tidy')!.click();
-		};
-		page.evaluate(evalCallback, input, normalizeOptions(options), callbackName);
-	});
+	await new Promise((r) => setTimeout(r, 50));
 
-	return result;
+	await page.waitForSelector('.feedback', { timeout: 3000 });
+
+	const bibtex = await page.evaluate(() =>
+		//@ts-ignore
+		window.cmEditor.getValue()
+	);
+
+	const warnings = (await page.evaluate(() =>
+		[...document.querySelectorAll('.feedback li')].map((li) => ({
+			code: li.textContent?.includes('duplicate') ? 'DUPLICATE_ENTRY' : '',
+		}))
+	)) as Warning[];
+
+	return { bibtex, warnings };
 }

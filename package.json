@@ -24,14 +24,14 @@
 	],
 	"scripts": {
 		"build": "node -r esbuild-register build.ts",
+		"serve": "node -r esbuild-register build.ts --serve",
 		"test": "node -r esbuild-register build.ts  --no-defs && node -r esbuild-register test/index.ts",
 		"typecheck": "tsc --noEmit",
 		"prettier": "prettier --write build.ts {test,docs}/**/*.ts src/*.ts",
 		"cover": "NODE_ENV=coverage nyc --reporter html node -r esbuild-register test/index.ts",
 		"preversion": "git pull --rebase",
 		"version": "./scripts/prepare-release.sh",
-		"postversion": "git push --follow-tags && npm publish",
-		"serve": "esbuild docs/index.ts --servedir=docs --outfile=docs/bundle.js --bundle --sourcemap=inline"
+		"postversion": "git push --follow-tags && npm publish"
 	},
 	"engines": {
 		"node": ">12"
@@ -39,6 +39,7 @@
 	"devDependencies": {
 		"@babel/core": "^7.19.6",
 		"@babel/preset-env": "^7.19.4",
+		"@tsconfig/svelte": "^3.0.0",
 		"@types/babel__core": "^7.1.19",
 		"@types/codemirror": "^5.60.5",
 		"@types/node": "^18.11.7",
@@ -46,9 +47,11 @@
 		"dts-bundle-generator": "^7.0.0",
 		"esbuild": "^0.15.12",
 		"esbuild-register": "^3.3.3",
+		"esbuild-svelte": "^0.7.3",
 		"nyc": "^15.1.0",
 		"prettier": "^2.7.1",
 		"puppeteer": "^19.2.0",
+		"svelte-preprocess": "^4.10.7",
 		"typescript": "^4.8.4"
 	},
 	"prettier": {

@@ -25,6 +25,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 // src/optionDefinitions.ts
 var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
+var DEFAULT_ALIGN = 14;
+var DEFAULT_SPACE = 2;
+var DEFAULT_WRAP = 80;
+var DEFAULT_FIELD_SORT = ["title", "shorttitle", "author", "year", "month", "day", "journal", "booktitle", "location", "on", "publisher", "address", "series", "volume", "number", "pages", "doi", "isbn", "issn", "url", "urldate", "copyright", "category", "note", "metadata"];
+var DEFAULT_SORT = ["key"];
 var optionDefinitions = [{
   key: "help",
   cli: {
@@ -79,16 +84,16 @@ var optionDefinitions = [{
     "--space": args => args.length > 0 ? Number(args[0]) : true
   },
   toCLI: val => {
-    if (typeof val === "number") return "--space=".concat(val);
-    if (val) return "--space";
+    if (typeof val === "number" && val !== DEFAULT_SPACE) return "--space=".concat(val);
+    if (val && val !== DEFAULT_SPACE) return "--space";
     return void 0;
   },
   title: "Indent with spaces",
   description: ["Indent all fields with the specified number of spaces. Ignored if tab is set."],
   examples: ["--space=2 (default)", "--space=4"],
   type: "boolean | number",
-  valueIfTrue: 2,
-  defaultValue: 2
+  valueIfTrue: DEFAULT_SPACE,
+  defaultValue: DEFAULT_SPACE
 }, {
   key: "tab",
   cli: {
@@ -107,7 +112,7 @@ var optionDefinitions = [{
     "--no-align": false
   },
   toCLI: val => {
-    if (typeof val === "number") return "--align=".concat(val);
+    if (typeof val === "number" && val !== DEFAULT_ALIGN) return "--align=".concat(val);
     if (val === false) return "--no-align";
     return void 0;
   },
@@ -116,7 +121,7 @@ var optionDefinitions = [{
   examples: ["--align=14 (default)"],
   type: "boolean | number",
   valueIfFalse: 1,
-  defaultValue: 14
+  defaultValue: DEFAULT_ALIGN
 }, {
   key: "blankLines",
   cli: {
@@ -142,7 +147,7 @@ var optionDefinitions = [{
   description: ["Sort entries by specified fields. For descending order, prefix the field with a dash (-)."],
   examples: ["--sort (sort by id)", "--sort=-year,name (sort year descending then name ascending)", "--sort=name,year"],
   type: "boolean | string[]",
-  valueIfTrue: ["key"]
+  valueIfTrue: DEFAULT_SORT
 }, {
   key: "duplicates",
   cli: {
@@ -176,6 +181,7 @@ var optionDefinitions = [{
   examples: ["--duplicates doi (same DOIs)", "--duplicates key (same IDs)", "--duplicates abstract (similar abstracts)", "--duplicates citation (similar author and titles)", "--duplicates doi, key (identical DOI or keys)", "--duplicates (same DOI, key, abstract, or citation)"],
   type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
   valueIfTrue: DEFAULT_MERGE_CHECK,
+  valueIfFalse: void 0,
   defaultValue: options => options.merge ? DEFAULT_MERGE_CHECK : void 0
 }, {
   key: "merge",
@@ -236,7 +242,12 @@ var optionDefinitions = [{
     "--sort-fields": args => args.length > 0 ? args : true
   },
   toCLI: val => {
-    if (Array.isArray(val) && val.length > 0) return "--sort-fields=".concat(val.join(","));
+    if (Array.isArray(val) && val.length > 0) {
+      if (JSON.stringify(val) === JSON.stringify(DEFAULT_FIELD_SORT)) {
+        return "--sort_fields";
+      }
+      return "--sort-fields=".concat(val.join(","));
+    }
     if (val === true) return "--sort-fields";
     return void 0;
   },
@@ -244,8 +255,9 @@ var optionDefinitions = [{
   description: ["Sort the fields within entries.", "If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata"],
   examples: ["--sort-fields=name,author"],
   type: "boolean | string[]",
-  valueIfTrue: ["title", "shorttitle", "author", "year", "month", "day", "journal", "booktitle", "location", "on", "publisher", "address", "series", "volume", "number", "pages", "doi", "isbn", "issn", "url", "urldate", "copyright", "category", "note", "metadata"],
-  defaultValue: false
+  valueIfTrue: DEFAULT_FIELD_SORT,
+  valueIfFalse: void 0,
+  defaultValue: void 0
 }, {
   key: "sortProperties",
   cli: {
@@ -335,7 +347,7 @@ var optionDefinitions = [{
   description: ["[Experimental] For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided."],
   type: "boolean | string",
   valueIfTrue: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
-  defaultValue: false
+  defaultValue: void 0
 }, {
   key: "maxAuthors",
   cli: {
@@ -381,7 +393,7 @@ var optionDefinitions = [{
   description: ["Wrap long values at the given column"],
   examples: ["--wrap (80 by default)", "--wrap=82"],
   type: "boolean | number",
-  valueIfTrue: 80
+  valueIfTrue: DEFAULT_WRAP
 }, {
   key: "version",
   cli: {
@@ -410,16 +422,17 @@ var optionDefinitions = [{
   type: "boolean",
   defaultValue: true
 }];
+var optionDefinitionByKey = Object.fromEntries(optionDefinitions.map(opt => [opt.key, opt]));
 
 // src/optionUtils.ts
 function normalizeOptions(options) {
   return Object.fromEntries(optionDefinitions.map(def => {
     var key = def.key;
     var value = options[key];
-    if (value === true && def.valueIfTrue !== void 0) {
+    if (value === true && "valueIfTrue" in def) {
       return [key, def.valueIfTrue];
     }
-    if (value === false && def.valueIfFalse !== void 0) {
+    if (value === false && "valueIfFalse" in def) {
       return [key, def.valueIfFalse];
     }
     if (typeof value === "undefined" && def.defaultValue !== void 0) {

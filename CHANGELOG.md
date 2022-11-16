@@ -94,6 +94,23 @@ Remove npm prepare script
 
 ### Unreleased
 
-- removal of DUPLICATE_KEY
-- DUPLICATE_ENTRY now has a 'rule' property (can be key, doi, citation, or abstract)
-- add --blank-lines option to separate entries with a blank line
+Features:
+
+- Bibtex keys can now be generated according to a JabRef template, such as `[auth:lower][year]`. See https://docs.jabref.org/setup/citationkeypatterns. Currently bibtex-tidy only supports a few markers and modifiers (see generateKeys.ts) (#179)
+- Add --blank-lines option to separate entries with a blank line (#245)
+- Docker configuration added (#371)
+- The web UI will now persist the user's bibtex-tidy configuration in the URL (#344)
+- Add copy button to web UI (#177)
+
+Bug fixes:
+
+- Convert invalid key characters to \_ when generating keys (#304)
+- More permitted characters in citation key, including parentheses, which were triggering a parser error (#358).
+- Support escaping quotes in quoted value, which were triggering a parser error (#98)
+
+Other enhancements:
+
+- UI rewritten in Svelte. This should't change end user experience but will make maintenance much easier.
+- Entries with similar author and title will not be marked as duplicates if the `number` field is different (#364).
+- DUPLICATE_ENTRY now has a 'rule' property (can be key, doi, citation, or abstract). Note: This includes the removal of DUPLICATE_KEY warning. Look for DUPLICATE_ENTRY with `rule: "key "` instead.
+- Make duplicate key check case insensitive to match [bibtex implementation](https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html)

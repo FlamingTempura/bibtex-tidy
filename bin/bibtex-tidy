@@ -11,6 +11,37 @@
 
 // src/optionDefinitions.ts
 var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
+var DEFAULT_ALIGN = 14;
+var DEFAULT_SPACE = 2;
+var DEFAULT_WRAP = 80;
+var DEFAULT_FIELD_SORT = [
+  "title",
+  "shorttitle",
+  "author",
+  "year",
+  "month",
+  "day",
+  "journal",
+  "booktitle",
+  "location",
+  "on",
+  "publisher",
+  "address",
+  "series",
+  "volume",
+  "number",
+  "pages",
+  "doi",
+  "isbn",
+  "issn",
+  "url",
+  "urldate",
+  "copyright",
+  "category",
+  "note",
+  "metadata"
+];
+var DEFAULT_SORT = ["key"];
 var optionDefinitions = [
   {
     key: "help",
@@ -65,9 +96,9 @@ var optionDefinitions = [
       "--space": (args) => args.length > 0 ? Number(args[0]) : true
     },
     toCLI: (val) => {
-      if (typeof val === "number")
+      if (typeof val === "number" && val !== DEFAULT_SPACE)
         return `--space=${val}`;
-      if (val)
+      if (val && val !== DEFAULT_SPACE)
         return "--space";
       return void 0;
     },
@@ -77,8 +108,8 @@ var optionDefinitions = [
     ],
     examples: ["--space=2 (default)", "--space=4"],
     type: "boolean | number",
-    valueIfTrue: 2,
-    defaultValue: 2
+    valueIfTrue: DEFAULT_SPACE,
+    defaultValue: DEFAULT_SPACE
   },
   {
     key: "tab",
@@ -96,7 +127,7 @@ var optionDefinitions = [
       "--no-align": false
     },
     toCLI: (val) => {
-      if (typeof val === "number")
+      if (typeof val === "number" && val !== DEFAULT_ALIGN)
         return `--align=${val}`;
       if (val === false)
         return "--no-align";
@@ -109,7 +140,7 @@ var optionDefinitions = [
     examples: ["--align=14 (default)"],
     type: "boolean | number",
     valueIfFalse: 1,
-    defaultValue: 14
+    defaultValue: DEFAULT_ALIGN
   },
   {
     key: "blankLines",
@@ -142,7 +173,7 @@ var optionDefinitions = [
       "--sort=name,year"
     ],
     type: "boolean | string[]",
-    valueIfTrue: ["key"]
+    valueIfTrue: DEFAULT_SORT
   },
   {
     key: "duplicates",
@@ -180,6 +211,7 @@ var optionDefinitions = [
     ],
     type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
     valueIfTrue: DEFAULT_MERGE_CHECK,
+    valueIfFalse: void 0,
     defaultValue: (options) => options.merge ? DEFAULT_MERGE_CHECK : void 0
   },
   {
@@ -251,8 +283,12 @@ var optionDefinitions = [
     key: "sortFields",
     cli: { "--sort-fields": (args) => args.length > 0 ? args : true },
     toCLI: (val) => {
-      if (Array.isArray(val) && val.length > 0)
+      if (Array.isArray(val) && val.length > 0) {
+        if (JSON.stringify(val) === JSON.stringify(DEFAULT_FIELD_SORT)) {
+          return "--sort_fields";
+        }
         return `--sort-fields=${val.join(",")}`;
+      }
       if (val === true)
         return "--sort-fields";
       return void 0;
@@ -264,34 +300,9 @@ var optionDefinitions = [
     ],
     examples: ["--sort-fields=name,author"],
     type: "boolean | string[]",
-    valueIfTrue: [
-      "title",
-      "shorttitle",
-      "author",
-      "year",
-      "month",
-      "day",
-      "journal",
-      "booktitle",
-      "location",
-      "on",
-      "publisher",
-      "address",
-      "series",
-      "volume",
-      "number",
-      "pages",
-      "doi",
-      "isbn",
-      "issn",
-      "url",
-      "urldate",
-      "copyright",
-      "category",
-      "note",
-      "metadata"
-    ],
-    defaultValue: false
+    valueIfTrue: DEFAULT_FIELD_SORT,
+    valueIfFalse: void 0,
+    defaultValue: void 0
   },
   {
     key: "sortProperties",
@@ -378,7 +389,7 @@ var optionDefinitions = [
     ],
     type: "boolean | string",
     valueIfTrue: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
-    defaultValue: false
+    defaultValue: void 0
   },
   {
     key: "maxAuthors",
@@ -433,7 +444,7 @@ var optionDefinitions = [
     description: ["Wrap long values at the given column"],
     examples: ["--wrap (80 by default)", "--wrap=82"],
     type: "boolean | number",
-    valueIfTrue: 80
+    valueIfTrue: DEFAULT_WRAP
   },
   {
     key: "version",
@@ -458,6 +469,7 @@ var optionDefinitions = [
     defaultValue: true
   }
 ];
+var optionDefinitionByKey = Object.fromEntries(optionDefinitions.map((opt) => [opt.key, opt]));
 
 // src/optionUtils.ts
 function normalizeOptions(options) {
@@ -465,10 +477,10 @@ function normalizeOptions(options) {
     optionDefinitions.map((def) => {
       const key = def.key;
       const value = options[key];
-      if (value === true && def.valueIfTrue !== void 0) {
+      if (value === true && "valueIfTrue" in def) {
         return [key, def.valueIfTrue];
       }
-      if (value === false && def.valueIfFalse !== void 0) {
+      if (value === false && "valueIfFalse" in def) {
         return [key, def.valueIfFalse];
       }
       if (typeof value === "undefined" && def.defaultValue !== void 0) {

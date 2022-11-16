@@ -1,0 +1,749 @@
+@import "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400&family=Inconsolata:wght@400;600&display=swap";
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/CopyButton.esbuild-svelte-fake-css */
+#copy.svelte-oet81a.svelte-oet81a {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  font-weight: bold;
+  font-size: 15px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8px 8px 8px 12px;
+  transition: width 0.5s ease;
+  width: 40px;
+}
+#copy.svelte-oet81a.svelte-oet81a:after {
+  content: "Copy";
+  overflow: hidden;
+  white-space: nowrap;
+  text-indent: 6px;
+}
+#copy.svelte-oet81a.svelte-oet81a:hover {
+  width: 90px;
+}
+#copy.copied.svelte-oet81a.svelte-oet81a {
+  width: 110px;
+}
+#copy.copied.svelte-oet81a.svelte-oet81a:after {
+  content: "Copied!";
+}
+#copy.svelte-oet81a svg.svelte-oet81a {
+  fill: currentColor;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+/* node_modules/codemirror/lib/codemirror.css */
+.CodeMirror {
+  font-family: monospace;
+  height: 300px;
+  color: black;
+  direction: ltr;
+}
+.CodeMirror-lines {
+  padding: 4px 0;
+}
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like {
+  padding: 0 4px;
+}
+.CodeMirror-scrollbar-filler,
+.CodeMirror-gutter-filler {
+  background-color: white;
+}
+.CodeMirror-gutters {
+  border-right: 1px solid #ddd;
+  background-color: #f7f7f7;
+  white-space: nowrap;
+}
+.CodeMirror-linenumbers {
+}
+.CodeMirror-linenumber {
+  padding: 0 3px 0 5px;
+  min-width: 20px;
+  text-align: right;
+  color: #999;
+  white-space: nowrap;
+}
+.CodeMirror-guttermarker {
+  color: black;
+}
+.CodeMirror-guttermarker-subtle {
+  color: #999;
+}
+.CodeMirror-cursor {
+  border-left: 1px solid black;
+  border-right: none;
+  width: 0;
+}
+.CodeMirror div.CodeMirror-secondarycursor {
+  border-left: 1px solid silver;
+}
+.cm-fat-cursor .CodeMirror-cursor {
+  width: auto;
+  border: 0 !important;
+  background: #7e7;
+}
+.cm-fat-cursor div.CodeMirror-cursors {
+  z-index: 1;
+}
+.cm-fat-cursor .CodeMirror-line::selection,
+.cm-fat-cursor .CodeMirror-line > span::selection,
+.cm-fat-cursor .CodeMirror-line > span > span::selection {
+  background: transparent;
+}
+.cm-fat-cursor .CodeMirror-line::-moz-selection,
+.cm-fat-cursor .CodeMirror-line > span::-moz-selection,
+.cm-fat-cursor .CodeMirror-line > span > span::-moz-selection {
+  background: transparent;
+}
+.cm-fat-cursor {
+  caret-color: transparent;
+}
+@-moz-keyframes blink {
+  0% {
+  }
+  50% {
+    background-color: transparent;
+  }
+  100% {
+  }
+}
+@-webkit-keyframes blink {
+  0% {
+  }
+  50% {
+    background-color: transparent;
+  }
+  100% {
+  }
+}
+@keyframes blink {
+  0% {
+  }
+  50% {
+    background-color: transparent;
+  }
+  100% {
+  }
+}
+.CodeMirror-overwrite .CodeMirror-cursor {
+}
+.cm-tab {
+  display: inline-block;
+  text-decoration: inherit;
+}
+.CodeMirror-rulers {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -50px;
+  bottom: 0;
+  overflow: hidden;
+}
+.CodeMirror-ruler {
+  border-left: 1px solid #ccc;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+}
+.cm-s-default .cm-header {
+  color: blue;
+}
+.cm-s-default .cm-quote {
+  color: #090;
+}
+.cm-negative {
+  color: #d44;
+}
+.cm-positive {
+  color: #292;
+}
+.cm-header,
+.cm-strong {
+  font-weight: bold;
+}
+.cm-em {
+  font-style: italic;
+}
+.cm-link {
+  text-decoration: underline;
+}
+.cm-strikethrough {
+  text-decoration: line-through;
+}
+.cm-s-default .cm-keyword {
+  color: #708;
+}
+.cm-s-default .cm-atom {
+  color: #219;
+}
+.cm-s-default .cm-number {
+  color: #164;
+}
+.cm-s-default .cm-def {
+  color: #00f;
+}
+.cm-s-default .cm-variable,
+.cm-s-default .cm-punctuation,
+.cm-s-default .cm-property,
+.cm-s-default .cm-operator {
+}
+.cm-s-default .cm-variable-2 {
+  color: #05a;
+}
+.cm-s-default .cm-variable-3,
+.cm-s-default .cm-type {
+  color: #085;
+}
+.cm-s-default .cm-comment {
+  color: #a50;
+}
+.cm-s-default .cm-string {
+  color: #a11;
+}
+.cm-s-default .cm-string-2 {
+  color: #f50;
+}
+.cm-s-default .cm-meta {
+  color: #555;
+}
+.cm-s-default .cm-qualifier {
+  color: #555;
+}
+.cm-s-default .cm-builtin {
+  color: #30a;
+}
+.cm-s-default .cm-bracket {
+  color: #997;
+}
+.cm-s-default .cm-tag {
+  color: #170;
+}
+.cm-s-default .cm-attribute {
+  color: #00c;
+}
+.cm-s-default .cm-hr {
+  color: #999;
+}
+.cm-s-default .cm-link {
+  color: #00c;
+}
+.cm-s-default .cm-error {
+  color: #f00;
+}
+.cm-invalidchar {
+  color: #f00;
+}
+.CodeMirror-composing {
+  border-bottom: 2px solid;
+}
+div.CodeMirror span.CodeMirror-matchingbracket {
+  color: #0b0;
+}
+div.CodeMirror span.CodeMirror-nonmatchingbracket {
+  color: #a22;
+}
+.CodeMirror-matchingtag {
+  background: rgba(255, 150, 0, .3);
+}
+.CodeMirror-activeline-background {
+  background: #e8f2ff;
+}
+.CodeMirror {
+  position: relative;
+  overflow: hidden;
+  background: white;
+}
+.CodeMirror-scroll {
+  overflow: scroll !important;
+  margin-bottom: -50px;
+  margin-right: -50px;
+  padding-bottom: 50px;
+  height: 100%;
+  outline: none;
+  position: relative;
+  z-index: 0;
+}
+.CodeMirror-sizer {
+  position: relative;
+  border-right: 50px solid transparent;
+}
+.CodeMirror-vscrollbar,
+.CodeMirror-hscrollbar,
+.CodeMirror-scrollbar-filler,
+.CodeMirror-gutter-filler {
+  position: absolute;
+  z-index: 6;
+  display: none;
+  outline: none;
+}
+.CodeMirror-vscrollbar {
+  right: 0;
+  top: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.CodeMirror-hscrollbar {
+  bottom: 0;
+  left: 0;
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+.CodeMirror-scrollbar-filler {
+  right: 0;
+  bottom: 0;
+}
+.CodeMirror-gutter-filler {
+  left: 0;
+  bottom: 0;
+}
+.CodeMirror-gutters {
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-height: 100%;
+  z-index: 3;
+}
+.CodeMirror-gutter {
+  white-space: normal;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: -50px;
+}
+.CodeMirror-gutter-wrapper {
+  position: absolute;
+  z-index: 4;
+  background: none !important;
+  border: none !important;
+}
+.CodeMirror-gutter-background {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 4;
+}
+.CodeMirror-gutter-elt {
+  position: absolute;
+  cursor: default;
+  z-index: 4;
+}
+.CodeMirror-gutter-wrapper ::selection {
+  background-color: transparent;
+}
+.CodeMirror-gutter-wrapper ::-moz-selection {
+  background-color: transparent;
+}
+.CodeMirror-lines {
+  cursor: text;
+  min-height: 1px;
+}
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like {
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  border-width: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
+  white-space: pre;
+  word-wrap: normal;
+  line-height: inherit;
+  color: inherit;
+  z-index: 2;
+  position: relative;
+  overflow: visible;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-variant-ligatures: contextual;
+  font-variant-ligatures: contextual;
+}
+.CodeMirror-wrap pre.CodeMirror-line,
+.CodeMirror-wrap pre.CodeMirror-line-like {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: normal;
+}
+.CodeMirror-linebackground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+}
+.CodeMirror-linewidget {
+  position: relative;
+  z-index: 2;
+  padding: 0.1px;
+}
+.CodeMirror-widget {
+}
+.CodeMirror-rtl pre {
+  direction: rtl;
+}
+.CodeMirror-code {
+  outline: none;
+}
+.CodeMirror-scroll,
+.CodeMirror-sizer,
+.CodeMirror-gutter,
+.CodeMirror-gutters,
+.CodeMirror-linenumber {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+.CodeMirror-measure {
+  position: absolute;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+.CodeMirror-cursor {
+  position: absolute;
+  pointer-events: none;
+}
+.CodeMirror-measure pre {
+  position: static;
+}
+div.CodeMirror-cursors {
+  visibility: hidden;
+  position: relative;
+  z-index: 3;
+}
+div.CodeMirror-dragcursors {
+  visibility: visible;
+}
+.CodeMirror-focused div.CodeMirror-cursors {
+  visibility: visible;
+}
+.CodeMirror-selected {
+  background: #d9d9d9;
+}
+.CodeMirror-focused .CodeMirror-selected {
+  background: #d7d4f0;
+}
+.CodeMirror-crosshair {
+  cursor: crosshair;
+}
+.CodeMirror-line::selection,
+.CodeMirror-line > span::selection,
+.CodeMirror-line > span > span::selection {
+  background: #d7d4f0;
+}
+.CodeMirror-line::-moz-selection,
+.CodeMirror-line > span::-moz-selection,
+.CodeMirror-line > span > span::-moz-selection {
+  background: #d7d4f0;
+}
+.cm-searching {
+  background-color: #ffa;
+  background-color: rgba(255, 255, 0, .4);
+}
+.cm-force-border {
+  padding-right: .1px;
+}
+@media print {
+  .CodeMirror div.CodeMirror-cursors {
+    visibility: hidden;
+  }
+}
+.cm-tab-wrap-hack:after {
+  content: "";
+}
+span.CodeMirror-selectedtext {
+  background: none;
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Editor.esbuild-svelte-fake-css */
+#editor.svelte-19r6amv.svelte-19r6amv {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 320px;
+  top: 0;
+}
+#editor.svelte-19r6amv textarea.svelte-19r6amv {
+  height: 100%;
+  width: 100%;
+}
+.CodeMirror {
+  background: var(--main-bg);
+  color: var(--main-fg);
+  font: var(--mono-normal);
+  height: 100%;
+  line-height: 1.3em;
+  padding: 12px;
+  width: 100%;
+}
+.CodeMirror .CodeMirror-gutters {
+  background: var(--main-bg);
+  border-right: 14px solid var(--main-bg);
+}
+.CodeMirror .CodeMirror-linenumber {
+  color: var(--dark-gray);
+}
+.CodeMirror .CodeMirror-selected {
+  background: #283655;
+}
+.CodeMirror .CodeMirror-cursor {
+  border-left: 1px solid #ffffec;
+}
+.CodeMirror .cm-comment {
+  color: var(--dark-gray);
+}
+.CodeMirror .cm-keyword {
+  color: #fff;
+}
+.CodeMirror .cm-variable-2 {
+  color: var(--pink);
+}
+.CodeMirror .cm-variable-3 {
+  color: var(--orange);
+}
+.CodeMirror .cm-operator {
+  color: var(--light-gray);
+}
+.CodeMirror .cm-string {
+  color: var(--green);
+}
+.CodeMirror .cm-number {
+  color: var(--light-blue);
+}
+.CodeMirror .bibtex-error {
+  background: var(--red);
+  color: white;
+  font: var(--mono-bold);
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Label.esbuild-svelte-fake-css */
+label.svelte-12n4po9 {
+  display: block;
+  margin: 8px 0;
+  padding-left: 28px;
+  position: relative;
+  width: 100%;
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Option.esbuild-svelte-fake-css */
+.suboptions.svelte-3302s7 {
+  font-size: 13px;
+  margin: 4px 0 18px;
+}
+.suboptions.svelte-3302s7 textarea {
+  resize: vertical;
+  width: 100%;
+  height: 100px;
+  padding: 4px 5px;
+}
+.suboptions.svelte-3302s7 textarea,
+.suboptions.svelte-3302s7 input {
+  font: var(--mono-normal);
+  border: 0;
+  border-radius: 3px;
+  min-height: 24px;
+  font-size: 15px;
+}
+input[type=checkbox].svelte-3302s7,
+input[type=radio].svelte-3302s7,
+.suboptions.svelte-3302s7 input[type=radio],
+.suboptions.svelte-3302s7 input[type=checkbox] {
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+.suboptions.svelte-3302s7 input[type=number] {
+  display: inline-block;
+  width: 62px;
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Collapsible.esbuild-svelte-fake-css */
+summary.svelte-3dqs55.svelte-3dqs55 {
+  font: var(--sans-title);
+  font-size: 11px;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  padding: 8px 20px;
+  margin: 16px -12px 12px;
+  background: var(--header-bg);
+  position: relative;
+}
+summary.svelte-3dqs55.svelte-3dqs55:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+summary.svelte-3dqs55 .section-title.svelte-3dqs55 {
+  position: absolute;
+  left: 40px;
+  top: 8px;
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/WhitespaceOptions.esbuild-svelte-fake-css */
+.keyvalue.svelte-htg484 input.svelte-htg484 {
+  margin-left: 8px;
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/CleanupOptions.esbuild-svelte-fake-css */
+textarea.omit.svelte-1t0249j {
+  height: 50px;
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Cli.esbuild-svelte-fake-css */
+#cli.svelte-1xnx1c1.svelte-1xnx1c1 {
+  display: block;
+  padding: 8px;
+  word-wrap: break-word;
+}
+#cli.svelte-1xnx1c1 .opt-name.svelte-1xnx1c1 {
+  color: var(--green);
+}
+#cli.svelte-1xnx1c1 .opt-val.svelte-1xnx1c1 {
+  color: var(--orange);
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Feedback.esbuild-svelte-fake-css */
+.feedback.svelte-8zkapm {
+  background: var(--green);
+  color: #fff;
+  font-size: 15px;
+  padding: 12px;
+}
+.error.svelte-8zkapm {
+  background: var(--red);
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Sidebar.esbuild-svelte-fake-css */
+#sidebar.svelte-im2ep9.svelte-im2ep9 {
+  background: rgba(154, 199, 255, 0.2);
+  bottom: 0;
+  box-shadow: 0 0 7px #000;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 320px;
+  z-index: 10;
+}
+#sidebar.svelte-im2ep9 form.svelte-im2ep9 {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 0 12px 200px 12px;
+}
+#sidebar.svelte-im2ep9 .run.svelte-im2ep9 {
+  flex: 0 0 auto;
+}
+#sidebar.svelte-im2ep9 #tidy.svelte-im2ep9 {
+  background: var(--blue);
+  border: 0;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font: var(--sans-title);
+  font-size: 21px;
+  height: 60px;
+  width: 100%;
+}
+#sidebar.svelte-im2ep9 #tidy[disabled].svelte-im2ep9 {
+  background: var(--dark-gray);
+  color: transparent;
+  position: relative;
+}
+#sidebar.svelte-im2ep9 #tidy[disabled].svelte-im2ep9:after {
+  animation: svelte-im2ep9-pulse 0.9s infinite linear;
+  background: #fff;
+  border-radius: 50%;
+  content: "";
+  height: 20px;
+  left: 140px;
+  position: absolute;
+  top: 22px;
+  width: 20px;
+}
+#sidebar.svelte-im2ep9 code {
+  font-size: 0.9em;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--light-gray);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+@keyframes svelte-im2ep9-pulse {
+  0% {
+    transform: translateX(-80px) scale(0);
+  }
+  35% {
+    transform: translateX(-40px) scale(0.85);
+  }
+  50% {
+    transform: translateX(0px) scale(1);
+  }
+  65% {
+    transform: translateX(40px) scale(0.85);
+  }
+  100% {
+    transform: translateX(80px) scale(0);
+  }
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/App.esbuild-svelte-fake-css */
+:root {
+  --header-bg:rgba(0, 0, 0, 0.2);
+  --main-bg:#1e272e;
+  --main-fg:#edf0f3;
+  --red:#de3040;
+  --green:#05c46b;
+  --orange:#f9b653;
+  --pink:#f36eb7;
+  --light-blue:#71cafd;
+  --blue:#179fef;
+  --light-gray:#bdbdbd;
+  --dark-gray:#696867;
+  --mono-normal:400 14px "Inconsolata", monospace;
+  --mono-bold:600 14px "Inconsolata", monospace;
+  --sans-normal:300 13px "IBM Plex Sans", sans-serif;
+  --sans-title:400 15px "IBM Plex Sans", sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  background: var(--main-bg);
+  color: var(--main-fg);
+  font: var(--sans-normal);
+  line-height: 1.5em;
+  margin: 0;
+}
+button {
+  cursor: pointer;
+}
+h1 {
+  font: var(--sans-title);
+  padding: 12px;
+  margin: 0px -12px 8px;
+  background: var(--header-bg);
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+a {
+  color: #fff;
+}
+.btn {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  color: var(--main-fg);
+  display: inline-block;
+  margin-right: 6px;
+  padding: 5px 12px;
+  text-decoration: none;
+}

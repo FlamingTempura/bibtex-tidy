@@ -25,9 +25,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   var __getOwnPropNames = Object.getOwnPropertyNames;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __esm = (fn, res) => function __init() {
-    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-  };
   var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = {
       exports: {}
@@ -60,32 +57,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     value: mod,
     enumerable: true
   }) : target, mod));
-  var __async = (__this, __arguments, generator) => {
-    return new Promise((resolve, reject) => {
-      var fulfilled = value => {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var rejected = value => {
-        try {
-          step(generator.throw(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var step = x => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-      step((generator = generator.apply(__this, __arguments)).next());
-    });
-  };
 
   // node_modules/codemirror/lib/codemirror.js
   var require_codemirror = __commonJS({
     "node_modules/codemirror/lib/codemirror.js"(exports, module) {
-      (function (global, factory) {
-        typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define(factory) : (global = global || self, global.CodeMirror = factory());
+      (function (global2, factory) {
+        typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define(factory) : (global2 = global2 || self, global2.CodeMirror = factory());
       })(exports, function () {
         "use strict";
 
@@ -243,7 +220,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             } catch (_e) {}
           };
         }
-        function bind(f) {
+        function bind2(f) {
           var args = Array.prototype.slice.call(arguments, 1);
           return function () {
             return f.apply(null, args);
@@ -281,7 +258,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           this.id = null;
           this.f = null;
           this.time = 0;
-          this.handler = bind(this.onTimeout, this);
+          this.handler = bind2(this.onTimeout, this);
         };
         Delayed.prototype.onTimeout = function (self2) {
           self2.id = 0;
@@ -1075,14 +1052,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           var out = [],
             n = start.line;
           doc.iter(start.line, end.line + 1, function (line) {
-            var text = line.text;
+            var text2 = line.text;
             if (n == end.line) {
-              text = text.slice(0, end.ch);
+              text2 = text2.slice(0, end.ch);
             }
             if (n == start.line) {
-              text = text.slice(start.ch);
+              text2 = text2.slice(start.ch);
             }
-            out.push(text);
+            out.push(text2);
             ++n;
           });
           return out;
@@ -1342,11 +1319,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
           return context;
         }
-        function processLine(cm, text, context, startAt) {
+        function processLine(cm, text2, context, startAt) {
           var mode = cm.doc.mode;
-          var stream = new StringStream(text, cm.options.tabSize, context);
+          var stream = new StringStream(text2, cm.options.tabSize, context);
           stream.start = stream.pos = startAt || 0;
-          if (text == "") {
+          if (text2 == "") {
             callBlankLine(mode, context.state);
           }
           while (!stream.eol()) {
@@ -1424,26 +1401,26 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
           return type;
         }
-        function runMode(cm, text, mode, context, f, lineClasses, forceToEnd) {
+        function runMode(cm, text2, mode, context, f, lineClasses, forceToEnd) {
           var flattenSpans = mode.flattenSpans;
           if (flattenSpans == null) {
             flattenSpans = cm.options.flattenSpans;
           }
           var curStart = 0,
             curStyle = null;
-          var stream = new StringStream(text, cm.options.tabSize, context),
+          var stream = new StringStream(text2, cm.options.tabSize, context),
             style;
           var inner = cm.options.addModeClass && [null];
-          if (text == "") {
+          if (text2 == "") {
             extractLineClasses(callBlankLine(mode, context.state), lineClasses);
           }
           while (!stream.eol()) {
             if (stream.pos > cm.options.maxHighlightLength) {
               flattenSpans = false;
               if (forceToEnd) {
-                processLine(cm, text, context, stream.pos);
+                processLine(cm, text2, context, stream.pos);
               }
-              stream.pos = text.length;
+              stream.pos = text2.length;
               style = null;
             } else {
               style = extractLineClasses(readToken(mode, stream, context.state, inner), lineClasses);
@@ -1948,8 +1925,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             }
           });
         }
-        var Line = function Line(text, markedSpans, estimateHeight2) {
-          this.text = text;
+        var Line = function Line(text2, markedSpans, estimateHeight2) {
+          this.text = text2;
           attachMarkedSpans(this, markedSpans);
           this.height = estimateHeight2 ? estimateHeight2(this) : 1;
         };
@@ -1957,8 +1934,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           return lineNo(this);
         };
         eventMixin(Line);
-        function updateLine(line, text, markedSpans, estimateHeight2) {
-          line.text = text;
+        function updateLine(line, text2, markedSpans, estimateHeight2) {
+          line.text = text2;
           if (line.stateAfter) {
             line.stateAfter = null;
           }
@@ -2048,29 +2025,29 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           token.setAttribute("aria-label", token.title);
           return token;
         }
-        function buildToken(builder, text, style, startStyle, endStyle, css, attributes) {
-          if (!text) {
+        function buildToken(builder, text2, style, startStyle, endStyle, css, attributes) {
+          if (!text2) {
             return;
           }
-          var displayText = builder.splitSpaces ? splitSpaces(text, builder.trailingSpace) : text;
+          var displayText = builder.splitSpaces ? splitSpaces(text2, builder.trailingSpace) : text2;
           var special = builder.cm.state.specialChars,
             mustWrap = false;
           var content;
-          if (!special.test(text)) {
-            builder.col += text.length;
+          if (!special.test(text2)) {
+            builder.col += text2.length;
             content = document.createTextNode(displayText);
-            builder.map.push(builder.pos, builder.pos + text.length, content);
+            builder.map.push(builder.pos, builder.pos + text2.length, content);
             if (ie && ie_version < 9) {
               mustWrap = true;
             }
-            builder.pos += text.length;
+            builder.pos += text2.length;
           } else {
             content = document.createDocumentFragment();
             var pos = 0;
             while (true) {
               special.lastIndex = pos;
-              var m = special.exec(text);
-              var skipped = m ? m.index - pos : text.length - pos;
+              var m = special.exec(text2);
+              var skipped = m ? m.index - pos : text2.length - pos;
               if (skipped) {
                 var txt = document.createTextNode(displayText.slice(pos, pos + skipped));
                 if (ie && ie_version < 9) {
@@ -2112,7 +2089,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               builder.pos++;
             }
           }
-          builder.trailingSpace = displayText.charCodeAt(text.length - 1) == 32;
+          builder.trailingSpace = displayText.charCodeAt(text2.length - 1) == 32;
           if (style || startStyle || endStyle || mustWrap || css || attributes) {
             var fullStyle = style || "";
             if (startStyle) {
@@ -2123,9 +2100,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             }
             var token = elt("span", [content], fullStyle, css);
             if (attributes) {
-              for (var attr in attributes) {
-                if (attributes.hasOwnProperty(attr) && attr != "style" && attr != "class") {
-                  token.setAttribute(attr, attributes[attr]);
+              for (var attr2 in attributes) {
+                if (attributes.hasOwnProperty(attr2) && attr2 != "style" && attr2 != "class") {
+                  token.setAttribute(attr2, attributes[attr2]);
                 }
               }
             }
@@ -2133,15 +2110,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
           builder.content.appendChild(content);
         }
-        function splitSpaces(text, trailingBefore) {
-          if (text.length > 1 && !/  /.test(text)) {
-            return text;
+        function splitSpaces(text2, trailingBefore) {
+          if (text2.length > 1 && !/  /.test(text2)) {
+            return text2;
           }
           var spaceBefore = trailingBefore,
             result = "";
-          for (var i2 = 0; i2 < text.length; i2++) {
-            var ch = text.charAt(i2);
-            if (ch == " " && spaceBefore && (i2 == text.length - 1 || text.charCodeAt(i2 + 1) == 32)) {
+          for (var i2 = 0; i2 < text2.length; i2++) {
+            var ch = text2.charAt(i2);
+            if (ch == " " && spaceBefore && (i2 == text2.length - 1 || text2.charCodeAt(i2 + 1) == 32)) {
               ch = "\xA0";
             }
             result += ch;
@@ -2150,10 +2127,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           return result;
         }
         function buildTokenBadBidi(inner, order) {
-          return function (builder, text, style, startStyle, endStyle, css, attributes) {
+          return function (builder, text2, style, startStyle, endStyle, css, attributes) {
             style = style ? style + " cm-force-border" : "cm-force-border";
             var start = builder.pos,
-              end = start + text.length;
+              end = start + text2.length;
             for (;;) {
               var part = void 0;
               for (var i2 = 0; i2 < order.length; i2++) {
@@ -2163,11 +2140,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                 }
               }
               if (part.to >= end) {
-                return inner(builder, text, style, startStyle, endStyle, css, attributes);
+                return inner(builder, text2, style, startStyle, endStyle, css, attributes);
               }
-              inner(builder, text.slice(0, part.to - start), style, startStyle, null, css, attributes);
+              inner(builder, text2.slice(0, part.to - start), style, startStyle, null, css, attributes);
               startStyle = null;
-              text = text.slice(part.to - start);
+              text2 = text2.slice(part.to - start);
               start = part.to;
             }
           };
@@ -2203,7 +2180,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           var len = allText.length,
             pos = 0,
             i2 = 1,
-            text = "",
+            text2 = "",
             style,
             css;
           var nextChange = 0,
@@ -2246,8 +2223,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                     (attributes || (attributes = {})).title = m.title;
                   }
                   if (m.attributes) {
-                    for (var attr in m.attributes) {
-                      (attributes || (attributes = {}))[attr] = m.attributes[attr];
+                    for (var attr2 in m.attributes) {
+                      (attributes || (attributes = {}))[attr2] = m.attributes[attr2];
                     }
                   }
                   if (m.collapsed && (!collapsed || compareCollapsedMarkers(collapsed.marker, m) < 0)) {
@@ -2284,21 +2261,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             }
             var upto = Math.min(len, nextChange);
             while (true) {
-              if (text) {
-                var end = pos + text.length;
+              if (text2) {
+                var end = pos + text2.length;
                 if (!collapsed) {
-                  var tokenText = end > upto ? text.slice(0, upto - pos) : text;
+                  var tokenText = end > upto ? text2.slice(0, upto - pos) : text2;
                   builder.addToken(builder, tokenText, style ? style + spanStyle : spanStyle, spanStartStyle, pos + tokenText.length == nextChange ? spanEndStyle : "", css, attributes);
                 }
                 if (end >= upto) {
-                  text = text.slice(upto - pos);
+                  text2 = text2.slice(upto - pos);
                   pos = upto;
                   break;
                 }
                 pos = end;
                 spanStartStyle = "";
               }
-              text = allText.slice(at, at = styles[i2++]);
+              text2 = allText.slice(at, at = styles[i2++]);
               style = interpretTokenStyle(styles[i2++], builder.cm.options);
             }
           }
@@ -3352,10 +3329,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
           var x,
             y,
-            space = display.lineSpace.getBoundingClientRect();
+            space2 = display.lineSpace.getBoundingClientRect();
           try {
-            x = e.clientX - space.left;
-            y = e.clientY - space.top;
+            x = e.clientX - space2.left;
+            y = e.clientY - space2.top;
           } catch (e$1) {
             return null;
           }
@@ -4468,7 +4445,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         function startWorker(cm, time) {
           if (cm.doc.highlightFrontier < cm.display.viewTo) {
-            cm.state.highlight.set(time, bind(highlightWorker, cm));
+            cm.state.highlight.set(time, bind2(highlightWorker, cm));
           }
         }
         function highlightWorker(cm) {
@@ -4595,23 +4572,23 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             sel.extend(snapshot.focusNode, snapshot.focusOffset);
           }
         }
-        function updateDisplayIfNeeded(cm, update) {
+        function updateDisplayIfNeeded(cm, update2) {
           var display = cm.display,
             doc = cm.doc;
-          if (update.editorIsHidden) {
+          if (update2.editorIsHidden) {
             resetView(cm);
             return false;
           }
-          if (!update.force && update.visible.from >= display.viewFrom && update.visible.to <= display.viewTo && (display.updateLineNumbers == null || display.updateLineNumbers >= display.viewTo) && display.renderedView == display.view && countDirtyView(cm) == 0) {
+          if (!update2.force && update2.visible.from >= display.viewFrom && update2.visible.to <= display.viewTo && (display.updateLineNumbers == null || display.updateLineNumbers >= display.viewTo) && display.renderedView == display.view && countDirtyView(cm) == 0) {
             return false;
           }
           if (maybeUpdateLineNumberWidth(cm)) {
             resetView(cm);
-            update.dims = getDimensions(cm);
+            update2.dims = getDimensions(cm);
           }
           var end = doc.first + doc.size;
-          var from = Math.max(update.visible.from - cm.options.viewportMargin, doc.first);
-          var to = Math.min(end, update.visible.to + cm.options.viewportMargin);
+          var from = Math.max(update2.visible.from - cm.options.viewportMargin, doc.first);
+          var to = Math.min(end, update2.visible.to + cm.options.viewportMargin);
           if (display.viewFrom < from && from - display.viewFrom < 20) {
             from = Math.max(doc.first, display.viewFrom);
           }
@@ -4622,19 +4599,19 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             from = visualLineNo(cm.doc, from);
             to = visualLineEndNo(cm.doc, to);
           }
-          var different = from != display.viewFrom || to != display.viewTo || display.lastWrapHeight != update.wrapperHeight || display.lastWrapWidth != update.wrapperWidth;
+          var different = from != display.viewFrom || to != display.viewTo || display.lastWrapHeight != update2.wrapperHeight || display.lastWrapWidth != update2.wrapperWidth;
           adjustView(cm, from, to);
           display.viewOffset = _heightAtLine(getLine(cm.doc, display.viewFrom));
           cm.display.mover.style.top = display.viewOffset + "px";
           var toUpdate = countDirtyView(cm);
-          if (!different && toUpdate == 0 && !update.force && display.renderedView == display.view && (display.updateLineNumbers == null || display.updateLineNumbers >= display.viewTo)) {
+          if (!different && toUpdate == 0 && !update2.force && display.renderedView == display.view && (display.updateLineNumbers == null || display.updateLineNumbers >= display.viewTo)) {
             return false;
           }
           var selSnapshot = selectionSnapshot(cm);
           if (toUpdate > 4) {
             display.lineDiv.style.display = "none";
           }
-          patchDisplay(cm, display.updateLineNumbers, update.dims);
+          patchDisplay(cm, display.updateLineNumbers, update2.dims);
           if (toUpdate > 4) {
             display.lineDiv.style.display = "";
           }
@@ -4644,30 +4621,30 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           removeChildren(display.selectionDiv);
           display.gutters.style.height = display.sizer.style.minHeight = 0;
           if (different) {
-            display.lastWrapHeight = update.wrapperHeight;
-            display.lastWrapWidth = update.wrapperWidth;
+            display.lastWrapHeight = update2.wrapperHeight;
+            display.lastWrapWidth = update2.wrapperWidth;
             startWorker(cm, 400);
           }
           display.updateLineNumbers = null;
           return true;
         }
-        function postUpdateDisplay(cm, update) {
-          var viewport = update.viewport;
+        function postUpdateDisplay(cm, update2) {
+          var viewport = update2.viewport;
           for (var first = true;; first = false) {
-            if (!first || !cm.options.lineWrapping || update.oldDisplayWidth == displayWidth(cm)) {
+            if (!first || !cm.options.lineWrapping || update2.oldDisplayWidth == displayWidth(cm)) {
               if (viewport && viewport.top != null) {
                 viewport = {
                   top: Math.min(cm.doc.height + paddingVert(cm.display) - displayHeight(cm), viewport.top)
                 };
               }
-              update.visible = visibleLines(cm.display, cm.doc, viewport);
-              if (update.visible.from >= cm.display.viewFrom && update.visible.to <= cm.display.viewTo) {
+              update2.visible = visibleLines(cm.display, cm.doc, viewport);
+              if (update2.visible.from >= cm.display.viewFrom && update2.visible.to <= cm.display.viewTo) {
                 break;
               }
             } else if (first) {
-              update.visible = visibleLines(cm.display, cm.doc, viewport);
+              update2.visible = visibleLines(cm.display, cm.doc, viewport);
             }
-            if (!updateDisplayIfNeeded(cm, update)) {
+            if (!updateDisplayIfNeeded(cm, update2)) {
               break;
             }
             updateHeightsInViewport(cm);
@@ -4675,25 +4652,25 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             updateSelection(cm);
             updateScrollbars(cm, barMeasure);
             setDocumentHeight(cm, barMeasure);
-            update.force = false;
+            update2.force = false;
           }
-          update.signal(cm, "update", cm);
+          update2.signal(cm, "update", cm);
           if (cm.display.viewFrom != cm.display.reportedViewFrom || cm.display.viewTo != cm.display.reportedViewTo) {
-            update.signal(cm, "viewportChange", cm, cm.display.viewFrom, cm.display.viewTo);
+            update2.signal(cm, "viewportChange", cm, cm.display.viewFrom, cm.display.viewTo);
             cm.display.reportedViewFrom = cm.display.viewFrom;
             cm.display.reportedViewTo = cm.display.viewTo;
           }
         }
         function updateDisplaySimple(cm, viewport) {
-          var update = new DisplayUpdate(cm, viewport);
-          if (updateDisplayIfNeeded(cm, update)) {
+          var update2 = new DisplayUpdate(cm, viewport);
+          if (updateDisplayIfNeeded(cm, update2)) {
             updateHeightsInViewport(cm);
-            postUpdateDisplay(cm, update);
+            postUpdateDisplay(cm, update2);
             var barMeasure = measureForScrollbars(cm);
             updateSelection(cm);
             updateScrollbars(cm, barMeasure);
             setDocumentHeight(cm, barMeasure);
-            update.finish();
+            update2.finish();
           }
         }
         function patchDisplay(cm, updateNumbersFrom, dims) {
@@ -5213,31 +5190,31 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           function spansFor(n) {
             return markedSpans ? markedSpans[n] : null;
           }
-          function update(line, text2, spans) {
-            updateLine(line, text2, spans, estimateHeight2);
+          function update2(line, text3, spans) {
+            updateLine(line, text3, spans, estimateHeight2);
             signalLater(line, "change", line, change);
           }
           function linesFor(start, end) {
             var result = [];
             for (var i2 = start; i2 < end; ++i2) {
-              result.push(new Line(text[i2], spansFor(i2), estimateHeight2));
+              result.push(new Line(text2[i2], spansFor(i2), estimateHeight2));
             }
             return result;
           }
           var from = change.from,
             to = change.to,
-            text = change.text;
+            text2 = change.text;
           var firstLine = getLine(doc, from.line),
             lastLine = getLine(doc, to.line);
-          var lastText = lst(text),
-            lastSpans = spansFor(text.length - 1),
+          var lastText = lst(text2),
+            lastSpans = spansFor(text2.length - 1),
             nlines = to.line - from.line;
           if (change.full) {
-            doc.insert(0, linesFor(0, text.length));
-            doc.remove(text.length, doc.size - text.length);
+            doc.insert(0, linesFor(0, text2.length));
+            doc.remove(text2.length, doc.size - text2.length);
           } else if (isWholeLineUpdate(doc, change)) {
-            var added = linesFor(0, text.length - 1);
-            update(lastLine, lastLine.text, lastSpans);
+            var added = linesFor(0, text2.length - 1);
+            update2(lastLine, lastLine.text, lastSpans);
             if (nlines) {
               doc.remove(from.line, nlines);
             }
@@ -5245,21 +5222,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               doc.insert(from.line, added);
             }
           } else if (firstLine == lastLine) {
-            if (text.length == 1) {
-              update(firstLine, firstLine.text.slice(0, from.ch) + lastText + firstLine.text.slice(to.ch), lastSpans);
+            if (text2.length == 1) {
+              update2(firstLine, firstLine.text.slice(0, from.ch) + lastText + firstLine.text.slice(to.ch), lastSpans);
             } else {
-              var added$1 = linesFor(1, text.length - 1);
+              var added$1 = linesFor(1, text2.length - 1);
               added$1.push(new Line(lastText + firstLine.text.slice(to.ch), lastSpans, estimateHeight2));
-              update(firstLine, firstLine.text.slice(0, from.ch) + text[0], spansFor(0));
+              update2(firstLine, firstLine.text.slice(0, from.ch) + text2[0], spansFor(0));
               doc.insert(from.line + 1, added$1);
             }
-          } else if (text.length == 1) {
-            update(firstLine, firstLine.text.slice(0, from.ch) + text[0] + lastLine.text.slice(to.ch), spansFor(0));
+          } else if (text2.length == 1) {
+            update2(firstLine, firstLine.text.slice(0, from.ch) + text2[0] + lastLine.text.slice(to.ch), spansFor(0));
             doc.remove(from.line + 1, nlines);
           } else {
-            update(firstLine, firstLine.text.slice(0, from.ch) + text[0], spansFor(0));
-            update(lastLine, lastText + lastLine.text.slice(to.ch), lastSpans);
-            var added$2 = linesFor(1, text.length - 1);
+            update2(firstLine, firstLine.text.slice(0, from.ch) + text2[0], spansFor(0));
+            update2(lastLine, lastText + lastLine.text.slice(to.ch), lastSpans);
+            var added$2 = linesFor(1, text2.length - 1);
             if (nlines > 1) {
               doc.remove(from.line + 1, nlines - 1);
             }
@@ -5705,7 +5682,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         function selectAll(cm) {
           cm.setSelection(Pos(cm.firstLine(), 0), Pos(cm.lastLine()), sel_dontScroll);
         }
-        function filterChange(doc, change, update) {
+        function filterChange(doc, change, update2) {
           var obj = {
             canceled: false,
             from: change.from,
@@ -5716,16 +5693,16 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               return obj.canceled = true;
             }
           };
-          if (update) {
-            obj.update = function (from, to, text, origin) {
+          if (update2) {
+            obj.update = function (from, to, text2, origin) {
               if (from) {
                 obj.from = _clipPos(doc, from);
               }
               if (to) {
                 obj.to = _clipPos(doc, to);
               }
-              if (text) {
-                obj.text = text;
+              if (text2) {
+                obj.text = text2;
               }
               if (origin !== void 0) {
                 obj.origin = origin;
@@ -5994,12 +5971,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           cm.display.selForContextMenu = null;
         }
         function _replaceRange(doc, code, from, to, origin) {
-          var assign;
+          var assign2;
           if (!to) {
             to = from;
           }
           if (cmp(to, from) < 0) {
-            assign = [to, from], from = assign[0], to = assign[1];
+            assign2 = [to, from], from = assign2[0], to = assign2[1];
           }
           if (typeof code == "string") {
             code = doc.splitLines(code);
@@ -6114,12 +6091,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             }
           }
         };
-        function BranchChunk(children) {
-          this.children = children;
+        function BranchChunk(children2) {
+          this.children = children2;
           var size = 0,
             height = 0;
-          for (var i2 = 0; i2 < children.length; ++i2) {
-            var ch = children[i2];
+          for (var i2 = 0; i2 < children2.length; ++i2) {
+            var ch = children2[i2];
             size += ch.chunkSize();
             height += ch.height;
             ch.parent = this;
@@ -6640,9 +6617,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
         }
         var nextDocId = 0;
-        var Doc = function Doc(text, mode, firstLine, lineSep, direction) {
+        var Doc = function Doc(text2, mode, firstLine, lineSep, direction) {
           if (!(this instanceof Doc)) {
-            return new Doc(text, mode, firstLine, lineSep, direction);
+            return new Doc(text2, mode, firstLine, lineSep, direction);
           }
           if (firstLine == null) {
             firstLine = 0;
@@ -6661,13 +6638,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           this.lineSep = lineSep;
           this.direction = direction == "rtl" ? "rtl" : "ltr";
           this.extend = false;
-          if (typeof text == "string") {
-            text = this.splitLines(text);
+          if (typeof text2 == "string") {
+            text2 = this.splitLines(text2);
           }
           updateDoc(this, {
             from: start,
             to: start,
-            text
+            text: text2
           });
           setSelection(this, simpleSelection(start), sel_dontScroll);
         };
@@ -7151,7 +7128,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             return copy;
           },
           unlinkDoc: function unlinkDoc(other) {
-            if (other instanceof CodeMirror3) {
+            if (other instanceof CodeMirror4) {
               other = other.doc;
             }
             if (this.linked) {
@@ -7229,7 +7206,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
           if (files && files.length && window.FileReader && window.File) {
             var n = files.length,
-              text = Array(n),
+              text2 = Array(n),
               read = 0;
             var markAsReadAndPasteIfAllFilesAreRead = function markAsReadAndPasteIfAllFilesAreRead() {
               if (++read == n) {
@@ -7238,7 +7215,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                   var change = {
                     from: pos,
                     to: pos,
-                    text: cm.doc.splitLines(text.filter(function (t) {
+                    text: cm.doc.splitLines(text2.filter(function (t) {
                       return t != null;
                     }).join(cm.doc.lineSeparator())),
                     origin: "paste"
@@ -7263,7 +7240,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                   markAsReadAndPasteIfAllFilesAreRead();
                   return;
                 }
-                text[i3] = content;
+                text2[i3] = content;
                 markAsReadAndPasteIfAllFilesAreRead();
               };
               reader.readAsText(file);
@@ -8408,7 +8385,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         function leftButtonDown(cm, pos, repeat, event) {
           if (ie) {
-            setTimeout(bind(ensureFocus, cm), 0);
+            setTimeout(bind2(ensureFocus, cm), 0);
           } else {
             cm.curOp.focus = activeElt();
           }
@@ -8562,12 +8539,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               var left = Math.min(startCol, posCol),
                 right = Math.max(startCol, posCol);
               for (var line = Math.min(start.line, pos.line), end = Math.min(cm.lastLine(), Math.max(start.line, pos.line)); line <= end; line++) {
-                var text = getLine(doc, line).text,
-                  leftPos = findColumn(text, left, tabSize);
+                var text2 = getLine(doc, line).text,
+                  leftPos = findColumn(text2, left, tabSize);
                 if (left == right) {
                   ranges2.push(new Range(Pos(line, leftPos), Pos(line, leftPos)));
-                } else if (text.length > leftPos) {
-                  ranges2.push(new Range(Pos(line, leftPos), Pos(line, findColumn(text, right, tabSize))));
+                } else if (text2.length > leftPos) {
+                  ranges2.push(new Range(Pos(line, leftPos), Pos(line, findColumn(text2, right, tabSize))));
                 }
               }
               if (!ranges2.length) {
@@ -8754,10 +8731,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         };
         var defaults = {};
         var optionHandlers = {};
-        function defineOptions(CodeMirror4) {
-          var optionHandlers2 = CodeMirror4.optionHandlers;
+        function defineOptions(CodeMirror5) {
+          var optionHandlers2 = CodeMirror5.optionHandlers;
           function option(name, deflt, handle, notOnInit) {
-            CodeMirror4.defaults[name] = deflt;
+            CodeMirror5.defaults[name] = deflt;
             if (handle) {
               optionHandlers2[name] = notOnInit ? function (cm, val, old) {
                 if (old != Init) {
@@ -8766,8 +8743,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               } : handle;
             }
           }
-          CodeMirror4.defineOption = option;
-          CodeMirror4.Init = Init;
+          CodeMirror5.defineOption = option;
+          CodeMirror5.Init = Init;
           option("value", "", function (cm, val) {
             return cm.setValue(val);
           }, true);
@@ -8953,10 +8930,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             return updateScrollbars(cm);
           }, 100);
         }
-        function CodeMirror3(place, options) {
+        function CodeMirror4(place, options) {
           var this$1 = this;
-          if (!(this instanceof CodeMirror3)) {
-            return new CodeMirror3(place, options);
+          if (!(this instanceof CodeMirror4)) {
+            return new CodeMirror4(place, options);
           }
           this.options = options = options ? copyObj(options) : {};
           copyObj(defaults, options, false);
@@ -8967,7 +8944,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             doc.modeOption = options.mode;
           }
           this.doc = doc;
-          var input = new CodeMirror3.inputStyles[options.inputStyle](this);
+          var input = new CodeMirror4.inputStyles[options.inputStyle](this);
           var display = this.display = new Display(place, doc, input, options);
           display.wrapper.CodeMirror = this;
           themeChanged(this);
@@ -9030,8 +9007,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             display.lineDiv.style.textRendering = "auto";
           }
         }
-        CodeMirror3.defaults = defaults;
-        CodeMirror3.optionHandlers = optionHandlers;
+        CodeMirror4.defaults = defaults;
+        CodeMirror4.optionHandlers = optionHandlers;
         function registerEventHandlers(cm) {
           var d = cm.display;
           on(d.scroller, "mousedown", operation(cm, onMouseDown));
@@ -9181,7 +9158,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           });
         }
         var initHooks = [];
-        CodeMirror3.defineInitHook = function (f) {
+        CodeMirror4.defineInitHook = function (f) {
           return initHooks.push(f);
         };
         function indentLine(cm, n, how, aggressive) {
@@ -9360,7 +9337,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
         }
         function copyableRanges(cm) {
-          var text = [],
+          var text2 = [],
             ranges = [];
           for (var i2 = 0; i2 < cm.doc.sel.ranges.length; i2++) {
             var line = cm.doc.sel.ranges[i2].head.line;
@@ -9369,10 +9346,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               head: Pos(line + 1, 0)
             };
             ranges.push(lineRange);
-            text.push(cm.getRange(lineRange.anchor, lineRange.head));
+            text2.push(cm.getRange(lineRange.anchor, lineRange.head));
           }
           return {
-            text,
+            text: text2,
             ranges
           };
         }
@@ -9395,11 +9372,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           disableBrowserMagic(te);
           return div;
         }
-        function addEditorMethods(CodeMirror4) {
-          var optionHandlers2 = CodeMirror4.optionHandlers;
-          var helpers = CodeMirror4.helpers = {};
-          CodeMirror4.prototype = {
-            constructor: CodeMirror4,
+        function addEditorMethods(CodeMirror5) {
+          var optionHandlers2 = CodeMirror5.optionHandlers;
+          var helpers = CodeMirror5.helpers = {};
+          CodeMirror5.prototype = {
+            constructor: CodeMirror5,
             focus: function focus() {
               window.focus();
               this.display.input.focus();
@@ -9435,7 +9412,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               }
             },
             addOverlay: methodOp(function (spec, options) {
-              var mode = spec.token ? spec : CodeMirror4.getMode(this.options, spec);
+              var mode = spec.token ? spec : CodeMirror5.getMode(this.options, spec);
               if (mode.startState) {
                 throw new Error("Overlays may not be stateful.");
               }
@@ -9536,7 +9513,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               if (!mode.innerMode) {
                 return mode;
               }
-              return CodeMirror4.innerMode(mode, this.getTokenAt(pos).state).mode;
+              return CodeMirror5.innerMode(mode, this.getTokenAt(pos).state).mode;
             },
             getHelper: function getHelper(pos, type) {
               return this.getHelpers(pos, type)[0];
@@ -9689,8 +9666,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                 return commands[cmd].call(null, this);
               }
             },
-            triggerElectric: methodOp(function (text) {
-              triggerElectric(this, text);
+            triggerElectric: methodOp(function (text2) {
+              triggerElectric(this, text2);
             }),
             findPosH: function findPosH(from, amount, unit, visually) {
               var dir = 1;
@@ -9954,17 +9931,17 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               return this.display.gutters;
             }
           };
-          eventMixin(CodeMirror4);
-          CodeMirror4.registerHelper = function (type, name, value) {
+          eventMixin(CodeMirror5);
+          CodeMirror5.registerHelper = function (type, name, value) {
             if (!helpers.hasOwnProperty(type)) {
-              helpers[type] = CodeMirror4[type] = {
+              helpers[type] = CodeMirror5[type] = {
                 _global: []
               };
             }
             helpers[type][name] = value;
           };
-          CodeMirror4.registerGlobalHelper = function (type, name, predicate, value) {
-            CodeMirror4.registerHelper(type, name, value);
+          CodeMirror5.registerGlobalHelper = function (type, name, predicate, value) {
+            CodeMirror5.registerHelper(type, name, value);
             helpers[type]._global.push({
               pred: predicate,
               val: value
@@ -10551,7 +10528,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           return pos;
         }
         function domTextBetween(cm, from, to, fromLine, toLine) {
-          var text = "",
+          var text2 = "",
             closing = false,
             lineSep = cm.doc.lineSeparator(),
             extraLinebreak = false;
@@ -10562,9 +10539,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
           function close() {
             if (closing) {
-              text += lineSep;
+              text2 += lineSep;
               if (extraLinebreak) {
-                text += lineSep;
+                text2 += lineSep;
               }
               closing = extraLinebreak = false;
             }
@@ -10572,7 +10549,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           function addText(str) {
             if (str) {
               close();
-              text += str;
+              text2 += str;
             }
           }
           function walk(node) {
@@ -10622,7 +10599,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             from = from.nextSibling;
             extraLinebreak = false;
           }
-          return text;
+          return text2;
         }
         function domToPos(cm, node, offset) {
           var lineNode;
@@ -10930,16 +10907,16 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           if (this.contextMenuPending || !cm.state.focused || hasSelection(input) && !prevInput && !this.composing || cm.isReadOnly() || cm.options.disableInput || cm.state.keySeq) {
             return false;
           }
-          var text = input.value;
-          if (text == prevInput && !cm.somethingSelected()) {
+          var text2 = input.value;
+          if (text2 == prevInput && !cm.somethingSelected()) {
             return false;
           }
-          if (ie && ie_version >= 9 && this.hasSelection === text || mac && /[\uf700-\uf7ff]/.test(text)) {
+          if (ie && ie_version >= 9 && this.hasSelection === text2 || mac && /[\uf700-\uf7ff]/.test(text2)) {
             cm.display.input.reset();
             return false;
           }
           if (cm.doc.sel == cm.display.selForContextMenu) {
-            var first = text.charCodeAt(0);
+            var first = text2.charCodeAt(0);
             if (first == 8203 && !prevInput) {
               prevInput = "\u200B";
             }
@@ -10949,16 +10926,16 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             }
           }
           var same = 0,
-            l = Math.min(prevInput.length, text.length);
-          while (same < l && prevInput.charCodeAt(same) == text.charCodeAt(same)) {
+            l = Math.min(prevInput.length, text2.length);
+          while (same < l && prevInput.charCodeAt(same) == text2.charCodeAt(same)) {
             ++same;
           }
           runInOp(cm, function () {
-            applyTextInput(cm, text.slice(same), prevInput.length - same, null, this$1.composing ? "*compose" : null);
-            if (text.length > 1e3 || text.indexOf("\n") > -1) {
+            applyTextInput(cm, text2.slice(same), prevInput.length - same, null, this$1.composing ? "*compose" : null);
+            if (text2.length > 1e3 || text2.indexOf("\n") > -1) {
               input.value = this$1.prevInput = "";
             } else {
-              this$1.prevInput = text;
+              this$1.prevInput = text2;
             }
             if (this$1.composing) {
               this$1.composing.range.clear();
@@ -11131,60 +11108,60 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             };
           };
           textarea.style.display = "none";
-          var cm = CodeMirror3(function (node) {
+          var cm = CodeMirror4(function (node) {
             return textarea.parentNode.insertBefore(node, textarea.nextSibling);
           }, options);
           return cm;
         }
-        function addLegacyProps(CodeMirror4) {
-          CodeMirror4.off = off;
-          CodeMirror4.on = on;
-          CodeMirror4.wheelEventPixels = wheelEventPixels;
-          CodeMirror4.Doc = Doc;
-          CodeMirror4.splitLines = splitLinesAuto;
-          CodeMirror4.countColumn = countColumn;
-          CodeMirror4.findColumn = findColumn;
-          CodeMirror4.isWordChar = isWordCharBasic;
-          CodeMirror4.Pass = Pass;
-          CodeMirror4.signal = signal;
-          CodeMirror4.Line = Line;
-          CodeMirror4.changeEnd = changeEnd;
-          CodeMirror4.scrollbarModel = scrollbarModel;
-          CodeMirror4.Pos = Pos;
-          CodeMirror4.cmpPos = cmp;
-          CodeMirror4.modes = modes;
-          CodeMirror4.mimeModes = mimeModes;
-          CodeMirror4.resolveMode = resolveMode;
-          CodeMirror4.getMode = getMode;
-          CodeMirror4.modeExtensions = modeExtensions;
-          CodeMirror4.extendMode = extendMode;
-          CodeMirror4.copyState = copyState;
-          CodeMirror4.startState = startState;
-          CodeMirror4.innerMode = innerMode;
-          CodeMirror4.commands = commands;
-          CodeMirror4.keyMap = keyMap;
-          CodeMirror4.keyName = keyName;
-          CodeMirror4.isModifierKey = isModifierKey;
-          CodeMirror4.lookupKey = lookupKey;
-          CodeMirror4.normalizeKeyMap = normalizeKeyMap;
-          CodeMirror4.StringStream = StringStream;
-          CodeMirror4.SharedTextMarker = SharedTextMarker;
-          CodeMirror4.TextMarker = TextMarker;
-          CodeMirror4.LineWidget = LineWidget;
-          CodeMirror4.e_preventDefault = e_preventDefault;
-          CodeMirror4.e_stopPropagation = e_stopPropagation;
-          CodeMirror4.e_stop = e_stop;
-          CodeMirror4.addClass = addClass;
-          CodeMirror4.contains = contains;
-          CodeMirror4.rmClass = rmClass;
-          CodeMirror4.keyNames = keyNames;
+        function addLegacyProps(CodeMirror5) {
+          CodeMirror5.off = off;
+          CodeMirror5.on = on;
+          CodeMirror5.wheelEventPixels = wheelEventPixels;
+          CodeMirror5.Doc = Doc;
+          CodeMirror5.splitLines = splitLinesAuto;
+          CodeMirror5.countColumn = countColumn;
+          CodeMirror5.findColumn = findColumn;
+          CodeMirror5.isWordChar = isWordCharBasic;
+          CodeMirror5.Pass = Pass;
+          CodeMirror5.signal = signal;
+          CodeMirror5.Line = Line;
+          CodeMirror5.changeEnd = changeEnd;
+          CodeMirror5.scrollbarModel = scrollbarModel;
+          CodeMirror5.Pos = Pos;
+          CodeMirror5.cmpPos = cmp;
+          CodeMirror5.modes = modes;
+          CodeMirror5.mimeModes = mimeModes;
+          CodeMirror5.resolveMode = resolveMode;
+          CodeMirror5.getMode = getMode;
+          CodeMirror5.modeExtensions = modeExtensions;
+          CodeMirror5.extendMode = extendMode;
+          CodeMirror5.copyState = copyState;
+          CodeMirror5.startState = startState;
+          CodeMirror5.innerMode = innerMode;
+          CodeMirror5.commands = commands;
+          CodeMirror5.keyMap = keyMap;
+          CodeMirror5.keyName = keyName;
+          CodeMirror5.isModifierKey = isModifierKey;
+          CodeMirror5.lookupKey = lookupKey;
+          CodeMirror5.normalizeKeyMap = normalizeKeyMap;
+          CodeMirror5.StringStream = StringStream;
+          CodeMirror5.SharedTextMarker = SharedTextMarker;
+          CodeMirror5.TextMarker = TextMarker;
+          CodeMirror5.LineWidget = LineWidget;
+          CodeMirror5.e_preventDefault = e_preventDefault;
+          CodeMirror5.e_stopPropagation = e_stopPropagation;
+          CodeMirror5.e_stop = e_stop;
+          CodeMirror5.addClass = addClass;
+          CodeMirror5.contains = contains;
+          CodeMirror5.rmClass = rmClass;
+          CodeMirror5.keyNames = keyNames;
         }
-        defineOptions(CodeMirror3);
-        addEditorMethods(CodeMirror3);
+        defineOptions(CodeMirror4);
+        addEditorMethods(CodeMirror4);
         var dontDelegate = "iter insert remove copy getEditor constructor".split(" ");
         for (var prop in Doc.prototype) {
           if (Doc.prototype.hasOwnProperty(prop) && indexOf(dontDelegate, prop) < 0) {
-            CodeMirror3.prototype[prop] = function (method) {
+            CodeMirror4.prototype[prop] = function (method) {
               return function () {
                 return method.apply(this.doc, arguments);
               };
@@ -11192,463 +11169,822 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
         }
         eventMixin(Doc);
-        CodeMirror3.inputStyles = {
+        CodeMirror4.inputStyles = {
           "textarea": TextareaInput,
           "contenteditable": ContentEditableInput
         };
-        CodeMirror3.defineMode = function (name) {
-          if (!CodeMirror3.defaults.mode && name != "null") {
-            CodeMirror3.defaults.mode = name;
+        CodeMirror4.defineMode = function (name) {
+          if (!CodeMirror4.defaults.mode && name != "null") {
+            CodeMirror4.defaults.mode = name;
           }
           defineMode.apply(this, arguments);
         };
-        CodeMirror3.defineMIME = defineMIME;
-        CodeMirror3.defineMode("null", function () {
+        CodeMirror4.defineMIME = defineMIME;
+        CodeMirror4.defineMode("null", function () {
           return {
             token: function token(stream) {
               return stream.skipToEnd();
             }
           };
         });
-        CodeMirror3.defineMIME("text/plain", "null");
-        CodeMirror3.defineExtension = function (name, func) {
-          CodeMirror3.prototype[name] = func;
+        CodeMirror4.defineMIME("text/plain", "null");
+        CodeMirror4.defineExtension = function (name, func) {
+          CodeMirror4.prototype[name] = func;
         };
-        CodeMirror3.defineDocExtension = function (name, func) {
+        CodeMirror4.defineDocExtension = function (name, func) {
           Doc.prototype[name] = func;
         };
-        CodeMirror3.fromTextArea = fromTextArea;
-        addLegacyProps(CodeMirror3);
-        CodeMirror3.version = "5.65.5";
-        return CodeMirror3;
+        CodeMirror4.fromTextArea = fromTextArea;
+        addLegacyProps(CodeMirror4);
+        CodeMirror4.version = "5.65.5";
+        return CodeMirror4;
       });
     }
   });
 
-  // src/optionDefinitions.ts
-  var DEFAULT_MERGE_CHECK, optionDefinitions;
-  var init_optionDefinitions = __esm({
-    "src/optionDefinitions.ts"() {
-      "use strict";
+  // node_modules/codemirror/addon/mode/simple.js
+  var require_simple = __commonJS({
+    "node_modules/codemirror/addon/mode/simple.js"(exports, module) {
+      (function (mod) {
+        if (typeof exports == "object" && typeof module == "object") mod(require_codemirror());else if (typeof define == "function" && define.amd) define(["../../lib/codemirror"], mod);else mod(CodeMirror);
+      })(function (CodeMirror4) {
+        "use strict";
 
-      DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
-      optionDefinitions = [{
-        key: "help",
-        cli: {
-          "--help": true,
-          "-h": true
-        },
-        title: "Help",
-        description: ["Show help"],
-        type: "boolean"
-      }, {
-        key: "omit",
-        cli: {
-          "--omit": args => {
-            if (args.length === 0) {
-              console.error("Expected a omit list");
-              process.exit(1);
+        CodeMirror4.defineSimpleMode = function (name, states) {
+          CodeMirror4.defineMode(name, function (config) {
+            return CodeMirror4.simpleMode(config, states);
+          });
+        };
+        CodeMirror4.simpleMode = function (config, states) {
+          ensureState(states, "start");
+          var states_ = {},
+            meta = states.meta || {},
+            hasIndentation = false;
+          for (var state in states) {
+            if (state != meta && states.hasOwnProperty(state)) {
+              var list = states_[state] = [],
+                orig = states[state];
+              for (var i = 0; i < orig.length; i++) {
+                var data = orig[i];
+                list.push(new Rule(data, states));
+                if (data.indent || data.dedent) hasIndentation = true;
+              }
             }
-            return args;
           }
-        },
-        toCLI: val => Array.isArray(val) && val.length > 0 ? "--omit=".concat(val.join(",")) : void 0,
-        title: "Remove fields",
-        description: ["Remove specified fields from bibliography entries."],
-        examples: ["--omit=id,name"],
-        type: "string[]",
-        defaultValue: []
-      }, {
-        key: "curly",
-        cli: {
-          "--curly": true,
-          "--no-curly": false
-        },
-        toCLI: val => val ? "--curly" : void 0,
-        title: "Enclose values in braces",
-        description: ['Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'],
-        type: "boolean",
-        defaultValue: false
-      }, {
-        key: "numeric",
-        cli: {
-          "--numeric": true,
-          "--no-numeric": false
-        },
-        toCLI: val => val ? "--numeric" : void 0,
-        title: "Use numeric values where possible",
-        description: ["Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."],
-        type: "boolean",
-        defaultValue: false
-      }, {
-        key: "space",
-        cli: {
-          "--space": args => args.length > 0 ? Number(args[0]) : true
-        },
-        toCLI: val => {
-          if (typeof val === "number") return "--space=".concat(val);
-          if (val) return "--space";
-          return void 0;
-        },
-        title: "Indent with spaces",
-        description: ["Indent all fields with the specified number of spaces. Ignored if tab is set."],
-        examples: ["--space=2 (default)", "--space=4"],
-        type: "boolean | number",
-        valueIfTrue: 2,
-        defaultValue: 2
-      }, {
-        key: "tab",
-        cli: {
-          "--tab": true,
-          "--no-tab": false
-        },
-        toCLI: val => val ? "--tab" : void 0,
-        title: "Indent with tabs",
-        description: ["Indent all fields with a tab."],
-        type: "boolean",
-        defaultValue: false
-      }, {
-        key: "align",
-        cli: {
-          "--align": args => Number(args[0]),
-          "--no-align": false
-        },
-        toCLI: val => {
-          if (typeof val === "number") return "--align=".concat(val);
-          if (val === false) return "--no-align";
-          return void 0;
-        },
-        title: "Align values",
-        description: ["Insert whitespace between fields and values so that values are visually aligned."],
-        examples: ["--align=14 (default)"],
-        type: "boolean | number",
-        valueIfFalse: 1,
-        defaultValue: 14
-      }, {
-        key: "blankLines",
-        cli: {
-          "--blank-lines": true,
-          "--no-blank-lines": false
-        },
-        toCLI: val => val ? "--blank-lines" : void 0,
-        title: "Insert blank lines",
-        description: ["Insert an empty line between each entry."],
-        type: "boolean"
-      }, {
-        key: "sort",
-        cli: {
-          "--sort": args => args.length > 0 ? args : true,
-          "--no-sort": false
-        },
-        toCLI: val => {
-          if (Array.isArray(val) && val.length > 0) return "--sort=".concat(val.join(","));
-          if (val === true) return "--sort";
-          return void 0;
-        },
-        title: "Sort bibliography entries",
-        description: ["Sort entries by specified fields. For descending order, prefix the field with a dash (-)."],
-        examples: ["--sort (sort by id)", "--sort=-year,name (sort year descending then name ascending)", "--sort=name,year"],
-        type: "boolean | string[]",
-        valueIfTrue: ["key"]
-      }, {
-        key: "duplicates",
-        cli: {
-          "--duplicates": args => {
-            if (args.length === 0) return true;
-            var _iterator2 = _createForOfIteratorHelper(args),
-              _step2;
-            try {
-              for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-                var i = _step2.value;
-                if (i !== "doi" && i !== "key" && i !== "abstract" && i !== "citation") {
-                  console.error("Invalid key for merge option: \"".concat(i, "\""));
-                  process.exit(1);
+          var mode = {
+            startState: function startState() {
+              return {
+                state: "start",
+                pending: null,
+                local: null,
+                localState: null,
+                indent: hasIndentation ? [] : null
+              };
+            },
+            copyState: function copyState(state2) {
+              var s = {
+                state: state2.state,
+                pending: state2.pending,
+                local: state2.local,
+                localState: null,
+                indent: state2.indent && state2.indent.slice(0)
+              };
+              if (state2.localState) s.localState = CodeMirror4.copyState(state2.local.mode, state2.localState);
+              if (state2.stack) s.stack = state2.stack.slice(0);
+              for (var pers = state2.persistentStates; pers; pers = pers.next) {
+                s.persistentStates = {
+                  mode: pers.mode,
+                  spec: pers.spec,
+                  state: pers.state == state2.localState ? s.localState : CodeMirror4.copyState(pers.mode, pers.state),
+                  next: s.persistentStates
+                };
+              }
+              return s;
+            },
+            token: tokenFunction(states_, config),
+            innerMode: function innerMode(state2) {
+              return state2.local && {
+                mode: state2.local.mode,
+                state: state2.localState
+              };
+            },
+            indent: indentFunction(states_, meta)
+          };
+          if (meta) {
+            for (var prop in meta) {
+              if (meta.hasOwnProperty(prop)) mode[prop] = meta[prop];
+            }
+          }
+          return mode;
+        };
+        function ensureState(states, name) {
+          if (!states.hasOwnProperty(name)) throw new Error("Undefined state " + name + " in simple mode");
+        }
+        function toRegex(val, caret) {
+          if (!val) return /(?:)/;
+          var flags = "";
+          if (val instanceof RegExp) {
+            if (val.ignoreCase) flags = "i";
+            if (val.unicode) flags += "u";
+            val = val.source;
+          } else {
+            val = String(val);
+          }
+          return new RegExp((caret === false ? "" : "^") + "(?:" + val + ")", flags);
+        }
+        function asToken(val) {
+          if (!val) return null;
+          if (val.apply) return val;
+          if (typeof val == "string") return val.replace(/\./g, " ");
+          var result = [];
+          for (var i = 0; i < val.length; i++) {
+            result.push(val[i] && val[i].replace(/\./g, " "));
+          }
+          return result;
+        }
+        function Rule(data, states) {
+          if (data.next || data.push) ensureState(states, data.next || data.push);
+          this.regex = toRegex(data.regex);
+          this.token = asToken(data.token);
+          this.data = data;
+        }
+        function tokenFunction(states, config) {
+          return function (stream, state) {
+            if (state.pending) {
+              var pend = state.pending.shift();
+              if (state.pending.length == 0) state.pending = null;
+              stream.pos += pend.text.length;
+              return pend.token;
+            }
+            if (state.local) {
+              if (state.local.end && stream.match(state.local.end)) {
+                var tok = state.local.endToken || null;
+                state.local = state.localState = null;
+                return tok;
+              } else {
+                var tok = state.local.mode.token(stream, state.localState),
+                  m;
+                if (state.local.endScan && (m = state.local.endScan.exec(stream.current()))) stream.pos = stream.start + m.index;
+                return tok;
+              }
+            }
+            var curState = states[state.state];
+            for (var i = 0; i < curState.length; i++) {
+              var rule = curState[i];
+              var matches = (!rule.data.sol || stream.sol()) && stream.match(rule.regex);
+              if (matches) {
+                if (rule.data.next) {
+                  state.state = rule.data.next;
+                } else if (rule.data.push) {
+                  (state.stack || (state.stack = [])).push(state.state);
+                  state.state = rule.data.push;
+                } else if (rule.data.pop && state.stack && state.stack.length) {
+                  state.state = state.stack.pop();
+                }
+                if (rule.data.mode) enterLocalMode(config, state, rule.data.mode, rule.token);
+                if (rule.data.indent) state.indent.push(stream.indentation() + config.indentUnit);
+                if (rule.data.dedent) state.indent.pop();
+                var token = rule.token;
+                if (token && token.apply) token = token(matches);
+                if (matches.length > 2 && rule.token && typeof rule.token != "string") {
+                  for (var j = 2; j < matches.length; j++) {
+                    if (matches[j]) (state.pending || (state.pending = [])).push({
+                      text: matches[j],
+                      token: rule.token[j - 1]
+                    });
+                  }
+                  stream.backUp(matches[0].length - (matches[1] ? matches[1].length : 0));
+                  return token[0];
+                } else if (token && token.join) {
+                  return token[0];
+                } else {
+                  return token;
                 }
               }
-            } catch (err) {
-              _iterator2.e(err);
-            } finally {
-              _iterator2.f();
             }
-            return args;
-          }
-        },
-        toCLI: val => {
-          if (Array.isArray(val) && val.length > 0) return "--duplicates=".concat(val.join(","));
-          if (val === true) return "--duplicates";
-          return void 0;
-        },
-        title: "Check for duplicates",
-        description: ["Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."],
-        examples: ["--duplicates doi (same DOIs)", "--duplicates key (same IDs)", "--duplicates abstract (similar abstracts)", "--duplicates citation (similar author and titles)", "--duplicates doi, key (identical DOI or keys)", "--duplicates (same DOI, key, abstract, or citation)"],
-        type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
-        valueIfTrue: DEFAULT_MERGE_CHECK,
-        defaultValue: options => options.merge ? DEFAULT_MERGE_CHECK : void 0
-      }, {
-        key: "merge",
-        cli: {
-          "--merge": args => {
-            if (args.length === 0) return true;
-            if (args[0] !== "first" && args[0] !== "last" && args[0] !== "combine" && args[0] !== "overwrite") {
-              console.error("Invalid merge strategy: \"".concat(args[0], "\""));
-              process.exit(1);
-            }
-            return args[0];
-          },
-          "--no-merge": false
-        },
-        toCLI: val => {
-          if (typeof val === "string") return "--merge=".concat(val);
-          if (val) return "--merge";
-          return void 0;
-        },
-        title: "Merge duplicate entries",
-        description: ["Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:", "- first: only keep the original entry", "- last: only keep the last found duplicate", "- combine: keep original entry and merge in fields of duplicates if they do not already exist", "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"],
-        type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
-        valueIfTrue: "combine"
-      }, {
-        key: "stripEnclosingBraces",
-        cli: {
-          "--strip-enclosing-braces": true
-        },
-        toCLI: val => val ? "--strip-enclosing-braces" : void 0,
-        title: "Strip double-braced values",
-        description: ["Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}."],
-        type: "boolean",
-        defaultValue: false
-      }, {
-        key: "dropAllCaps",
-        cli: {
-          "--drop-all-caps": true
-        },
-        toCLI: val => val ? "--drop-all-caps" : void 0,
-        title: "Drop all caps",
-        description: ["Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}."],
-        type: "boolean",
-        defaultValue: false
-      }, {
-        key: "escape",
-        cli: {
-          "--escape": true,
-          "--no-escape": false
-        },
-        toCLI: val => val === false ? "--no-escape" : void 0,
-        title: "Escape special characters",
-        description: ["Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default."],
-        type: "boolean",
-        defaultValue: true
-      }, {
-        key: "sortFields",
-        cli: {
-          "--sort-fields": args => args.length > 0 ? args : true
-        },
-        toCLI: val => {
-          if (Array.isArray(val) && val.length > 0) return "--sort-fields=".concat(val.join(","));
-          if (val === true) return "--sort-fields";
-          return void 0;
-        },
-        title: "Sort fields",
-        description: ["Sort the fields within entries.", "If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata"],
-        examples: ["--sort-fields=name,author"],
-        type: "boolean | string[]",
-        valueIfTrue: ["title", "shorttitle", "author", "year", "month", "day", "journal", "booktitle", "location", "on", "publisher", "address", "series", "volume", "number", "pages", "doi", "isbn", "issn", "url", "urldate", "copyright", "category", "note", "metadata"],
-        defaultValue: false
-      }, {
-        key: "sortProperties",
-        cli: {
-          "--sort-properties": args => args.length > 0 ? args : true
-        },
-        title: "Sort properties",
-        description: ["Alias of sort fields (legacy)"],
-        type: "boolean | string[]",
-        deprecated: true
-      }, {
-        key: "stripComments",
-        cli: {
-          "--strip-comments": true,
-          "--no-strip-comments": false
-        },
-        toCLI: val => val ? "--strip-comments" : void 0,
-        title: "Remove comments",
-        description: ["Remove all comments from the bibtex source."],
-        type: "boolean",
-        defaultValue: false
-      }, {
-        key: "trailingCommas",
-        cli: {
-          "--trailing-commas": true,
-          "--no-trailing-commas": true
-        },
-        toCLI: val => val ? "--trailing-commas" : void 0,
-        title: "Trailing commas",
-        description: ["End the last key value pair in each entry with a comma."],
-        type: "boolean",
-        defaultValue: false
-      }, {
-        key: "encodeUrls",
-        cli: {
-          "--encode-urls": true,
-          "--no-encode-urls": true
-        },
-        toCLI: val => val ? "--encode-urls" : void 0,
-        title: "Encode URLs",
-        description: ["Replace invalid URL characters with percent encoded values."],
-        type: "boolean",
-        defaultValue: false
-      }, {
-        key: "tidyComments",
-        cli: {
-          "--tidy-comments": true,
-          "--no-tidy-comments": false
-        },
-        toCLI: val => val === false ? "--no-tidy-comments" : void 0,
-        title: "Tidy comments",
-        description: ["Remove whitespace surrounding comments."],
-        type: "boolean",
-        defaultValue: true
-      }, {
-        key: "removeEmptyFields",
-        cli: {
-          "--remove-empty-fields": true,
-          "--no-remove-empty-fields": false
-        },
-        toCLI: val => val ? "--remove-empty-fields" : void 0,
-        title: "Remove empty fields",
-        description: ["Remove any fields that have empty values."],
-        type: "boolean",
-        defaultValue: false
-      }, {
-        key: "removeDuplicateFields",
-        cli: {
-          "--remove-dupe-fields": true,
-          "--no-remove-dupe-fields": false
-        },
-        toCLI: val => val === false ? "--no-remove-dupe-fields" : void 0,
-        title: "Remove duplicate fields",
-        description: ["Only allow one of each field in each entry. Enabled by default."],
-        type: "boolean",
-        defaultValue: true
-      }, {
-        key: "generateKeys",
-        cli: {
-          "--generate-keys": args => args.length > 0 ? args : true
-        },
-        toCLI: val => {
-          if (typeof val === "string") return "--generate-keys=\"".concat(val.replace(/"/g, '\\"'), "\"");
-          if (val) return "--generate-keys";
-          return void 0;
-        },
-        title: "Generate citation keys",
-        description: ["[Experimental] For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided."],
-        type: "boolean | string",
-        valueIfTrue: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
-        defaultValue: false
-      }, {
-        key: "maxAuthors",
-        cli: {
-          "--max-authors": args => Number(args[0])
-        },
-        toCLI: val => val ? "--max-authors=".concat(val) : void 0,
-        title: "Maximum authors",
-        description: ['Truncate authors if above a given number into "and others".'],
-        type: "number"
-      }, {
-        key: "lowercase",
-        cli: {
-          "--no-lowercase": false
-        },
-        toCLI: val => val === false ? "--no-lowercase" : void 0,
-        title: "Lowercase fields",
-        description: ["Lowercase field names and entry type. Enabled by default."],
-        type: "boolean",
-        defaultValue: true
-      }, {
-        key: "enclosingBraces",
-        cli: {
-          "--enclosing-braces": args => args.length > 0 ? args : true
-        },
-        toCLI: val => {
-          if (Array.isArray(val) && val.length > 0) return "--enclosing-braces=".concat(val.join(","));
-          if (val === true) return "--enclosing-braces";
-          return void 0;
-        },
-        title: "Enclose values in double braces",
-        description: ["Enclose the given fields in double braces, such that case is preserved during BibTeX compilation."],
-        examples: ["--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})", "--enclosing-braces (equivalent to ---enclosing-braces=title)"],
-        type: "boolean | string[]",
-        valueIfTrue: ["title"]
-      }, {
-        key: "wrap",
-        cli: {
-          "--wrap": args => args.length > 0 ? Number(args[0]) : true,
-          "--no-wrap": false
-        },
-        toCLI: val => val ? "--wrap=".concat(val) : void 0,
-        title: "Wrap values",
-        description: ["Wrap long values at the given column"],
-        examples: ["--wrap (80 by default)", "--wrap=82"],
-        type: "boolean | number",
-        valueIfTrue: 80
-      }, {
-        key: "version",
-        cli: {
-          "--version": true,
-          "-v": true
-        },
-        title: "Version",
-        description: ["Show bibtex-tidy version."],
-        type: "boolean"
-      }, {
-        key: "quiet",
-        cli: {
-          "--quiet": true
-        },
-        title: "Quiet",
-        description: ["Suppress logs and warnings."],
-        type: "boolean"
-      }, {
-        key: "backup",
-        cli: {
-          "--backup": true,
-          "--no-backup": false
-        },
-        title: "Backup",
-        description: ["Make a backup <filename>.original. Enabled by default."],
-        type: "boolean",
-        defaultValue: true
-      }];
-    }
-  });
-
-  // src/optionUtils.ts
-  function normalizeOptions(options) {
-    return Object.fromEntries(optionDefinitions.map(def => {
-      var key = def.key;
-      var value = options[key];
-      if (value === true && def.valueIfTrue !== void 0) {
-        return [key, def.valueIfTrue];
-      }
-      if (value === false && def.valueIfFalse !== void 0) {
-        return [key, def.valueIfFalse];
-      }
-      if (typeof value === "undefined" && def.defaultValue !== void 0) {
-        if (typeof def.defaultValue === "function") {
-          return [key, def.defaultValue(options)];
+            stream.next();
+            return null;
+          };
         }
-        return [key, def.defaultValue];
-      }
-      return [key, value];
-    }));
-  }
-  var init_optionUtils = __esm({
-    "src/optionUtils.ts"() {
-      "use strict";
-
-      init_optionDefinitions();
+        function cmp(a, b) {
+          if (a === b) return true;
+          if (!a || typeof a != "object" || !b || typeof b != "object") return false;
+          var props = 0;
+          for (var prop in a) {
+            if (a.hasOwnProperty(prop)) {
+              if (!b.hasOwnProperty(prop) || !cmp(a[prop], b[prop])) return false;
+              props++;
+            }
+          }
+          for (var prop in b) {
+            if (b.hasOwnProperty(prop)) props--;
+          }
+          return props == 0;
+        }
+        function enterLocalMode(config, state, spec, token) {
+          var pers;
+          if (spec.persistent) {
+            for (var p = state.persistentStates; p && !pers; p = p.next) {
+              if (spec.spec ? cmp(spec.spec, p.spec) : spec.mode == p.mode) pers = p;
+            }
+          }
+          var mode = pers ? pers.mode : spec.mode || CodeMirror4.getMode(config, spec.spec);
+          var lState = pers ? pers.state : CodeMirror4.startState(mode);
+          if (spec.persistent && !pers) state.persistentStates = {
+            mode,
+            spec: spec.spec,
+            state: lState,
+            next: state.persistentStates
+          };
+          state.localState = lState;
+          state.local = {
+            mode,
+            end: spec.end && toRegex(spec.end),
+            endScan: spec.end && spec.forceEnd !== false && toRegex(spec.end, false),
+            endToken: token && token.join ? token[token.length - 1] : token
+          };
+        }
+        function indexOf(val, arr) {
+          for (var i = 0; i < arr.length; i++) {
+            if (arr[i] === val) return true;
+          }
+        }
+        function indentFunction(states, meta) {
+          return function (state, textAfter, line) {
+            if (state.local && state.local.mode.indent) return state.local.mode.indent(state.localState, textAfter, line);
+            if (state.indent == null || state.local || meta.dontIndentStates && indexOf(state.state, meta.dontIndentStates) > -1) return CodeMirror4.Pass;
+            var pos = state.indent.length - 1,
+              rules = states[state.state];
+            scan: for (;;) {
+              for (var i = 0; i < rules.length; i++) {
+                var rule = rules[i];
+                if (rule.data.dedent && rule.data.dedentIfLineStart !== false) {
+                  var m = rule.regex.exec(textAfter);
+                  if (m && m[0]) {
+                    pos--;
+                    if (rule.next || rule.push) rules = states[rule.next || rule.push];
+                    textAfter = textAfter.slice(m[0].length);
+                    continue scan;
+                  }
+                }
+              }
+              break;
+            }
+            return pos < 0 ? 0 : state.indent[pos];
+          };
+        }
+      });
     }
   });
+
+  // node_modules/svelte/internal/index.mjs
+  function noop() {}
+  function assign(tar, src) {
+    for (var k in src) {
+      tar[k] = src[k];
+    }
+    return tar;
+  }
+  function run(fn) {
+    return fn();
+  }
+  function blank_object() {
+    return /* @__PURE__ */Object.create(null);
+  }
+  function run_all(fns) {
+    fns.forEach(run);
+  }
+  function is_function(thing) {
+    return typeof thing === "function";
+  }
+  function safe_not_equal(a, b) {
+    return a != a ? b == b : a !== b || a && typeof a === "object" || typeof a === "function";
+  }
+  function is_empty(obj) {
+    return Object.keys(obj).length === 0;
+  }
+  function create_slot(definition, ctx, $$scope, fn) {
+    if (definition) {
+      var slot_ctx = get_slot_context(definition, ctx, $$scope, fn);
+      return definition[0](slot_ctx);
+    }
+  }
+  function get_slot_context(definition, ctx, $$scope, fn) {
+    return definition[1] && fn ? assign($$scope.ctx.slice(), definition[1](fn(ctx))) : $$scope.ctx;
+  }
+  function get_slot_changes(definition, $$scope, dirty, fn) {
+    if (definition[2] && fn) {
+      var lets = definition[2](fn(dirty));
+      if ($$scope.dirty === void 0) {
+        return lets;
+      }
+      if (typeof lets === "object") {
+        var merged = [];
+        var len = Math.max($$scope.dirty.length, lets.length);
+        for (var i = 0; i < len; i += 1) {
+          merged[i] = $$scope.dirty[i] | lets[i];
+        }
+        return merged;
+      }
+      return $$scope.dirty | lets;
+    }
+    return $$scope.dirty;
+  }
+  function update_slot_base(slot, slot_definition, ctx, $$scope, slot_changes, get_slot_context_fn) {
+    if (slot_changes) {
+      var slot_context = get_slot_context(slot_definition, ctx, $$scope, get_slot_context_fn);
+      slot.p(slot_context, slot_changes);
+    }
+  }
+  function get_all_dirty_from_scope($$scope) {
+    if ($$scope.ctx.length > 32) {
+      var dirty = [];
+      var length = $$scope.ctx.length / 32;
+      for (var i = 0; i < length; i++) {
+        dirty[i] = -1;
+      }
+      return dirty;
+    }
+    return -1;
+  }
+  function compute_slots(slots) {
+    var result = {};
+    for (var key in slots) {
+      result[key] = true;
+    }
+    return result;
+  }
+  var is_hydrating = false;
+  function start_hydrating() {
+    is_hydrating = true;
+  }
+  function end_hydrating() {
+    is_hydrating = false;
+  }
+  function append(target, node) {
+    target.appendChild(node);
+  }
+  function insert(target, node, anchor) {
+    target.insertBefore(node, anchor || null);
+  }
+  function detach(node) {
+    if (node.parentNode) {
+      node.parentNode.removeChild(node);
+    }
+  }
+  function destroy_each(iterations, detaching) {
+    for (var i = 0; i < iterations.length; i += 1) {
+      if (iterations[i]) iterations[i].d(detaching);
+    }
+  }
+  function element(name) {
+    return document.createElement(name);
+  }
+  function text(data) {
+    return document.createTextNode(data);
+  }
+  function space() {
+    return text(" ");
+  }
+  function empty() {
+    return text("");
+  }
+  function listen(node, event, handler, options) {
+    node.addEventListener(event, handler, options);
+    return () => node.removeEventListener(event, handler, options);
+  }
+  function attr(node, attribute, value) {
+    if (value == null) node.removeAttribute(attribute);else if (node.getAttribute(attribute) !== value) node.setAttribute(attribute, value);
+  }
+  function to_number(value) {
+    return value === "" ? null : +value;
+  }
+  function children(element2) {
+    return Array.from(element2.childNodes);
+  }
+  function set_data(text2, data) {
+    data = "" + data;
+    if (text2.wholeText !== data) text2.data = data;
+  }
+  function set_input_value(input, value) {
+    input.value = value == null ? "" : value;
+  }
+  function toggle_class(element2, name, toggle) {
+    element2.classList[toggle ? "add" : "remove"](name);
+  }
+  function custom_event(type, detail) {
+    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+      _ref$bubbles = _ref.bubbles,
+      bubbles = _ref$bubbles === void 0 ? false : _ref$bubbles,
+      _ref$cancelable = _ref.cancelable,
+      cancelable = _ref$cancelable === void 0 ? false : _ref$cancelable;
+    var e = document.createEvent("CustomEvent");
+    e.initCustomEvent(type, bubbles, cancelable, detail);
+    return e;
+  }
+  var current_component;
+  function set_current_component(component) {
+    current_component = component;
+  }
+  function get_current_component() {
+    if (!current_component) throw new Error("Function called outside component initialization");
+    return current_component;
+  }
+  function onMount(fn) {
+    get_current_component().$$.on_mount.push(fn);
+  }
+  function createEventDispatcher() {
+    var component = get_current_component();
+    return function (type, detail) {
+      var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref2$cancelable = _ref2.cancelable,
+        cancelable = _ref2$cancelable === void 0 ? false : _ref2$cancelable;
+      var callbacks = component.$$.callbacks[type];
+      if (callbacks) {
+        var event = custom_event(type, detail, {
+          cancelable
+        });
+        callbacks.slice().forEach(fn => {
+          fn.call(component, event);
+        });
+        return !event.defaultPrevented;
+      }
+      return true;
+    };
+  }
+  var dirty_components = [];
+  var binding_callbacks = [];
+  var render_callbacks = [];
+  var flush_callbacks = [];
+  var resolved_promise = Promise.resolve();
+  var update_scheduled = false;
+  function schedule_update() {
+    if (!update_scheduled) {
+      update_scheduled = true;
+      resolved_promise.then(flush);
+    }
+  }
+  function add_render_callback(fn) {
+    render_callbacks.push(fn);
+  }
+  function add_flush_callback(fn) {
+    flush_callbacks.push(fn);
+  }
+  var seen_callbacks = /* @__PURE__ */new Set();
+  var flushidx = 0;
+  function flush() {
+    var saved_component = current_component;
+    do {
+      while (flushidx < dirty_components.length) {
+        var component = dirty_components[flushidx];
+        flushidx++;
+        set_current_component(component);
+        update(component.$$);
+      }
+      set_current_component(null);
+      dirty_components.length = 0;
+      flushidx = 0;
+      while (binding_callbacks.length) {
+        binding_callbacks.pop()();
+      }
+      for (var i = 0; i < render_callbacks.length; i += 1) {
+        var callback = render_callbacks[i];
+        if (!seen_callbacks.has(callback)) {
+          seen_callbacks.add(callback);
+          callback();
+        }
+      }
+      render_callbacks.length = 0;
+    } while (dirty_components.length);
+    while (flush_callbacks.length) {
+      flush_callbacks.pop()();
+    }
+    update_scheduled = false;
+    seen_callbacks.clear();
+    set_current_component(saved_component);
+  }
+  function update($$) {
+    if ($$.fragment !== null) {
+      $$.update();
+      run_all($$.before_update);
+      var dirty = $$.dirty;
+      $$.dirty = [-1];
+      $$.fragment && $$.fragment.p($$.ctx, dirty);
+      $$.after_update.forEach(add_render_callback);
+    }
+  }
+  var outroing = /* @__PURE__ */new Set();
+  var outros;
+  function group_outros() {
+    outros = {
+      r: 0,
+      c: [],
+      p: outros
+    };
+  }
+  function check_outros() {
+    if (!outros.r) {
+      run_all(outros.c);
+    }
+    outros = outros.p;
+  }
+  function transition_in(block, local) {
+    if (block && block.i) {
+      outroing.delete(block);
+      block.i(local);
+    }
+  }
+  function transition_out(block, local, detach2, callback) {
+    if (block && block.o) {
+      if (outroing.has(block)) return;
+      outroing.add(block);
+      outros.c.push(() => {
+        outroing.delete(block);
+        if (callback) {
+          if (detach2) block.d(1);
+          callback();
+        }
+      });
+      block.o(local);
+    } else if (callback) {
+      callback();
+    }
+  }
+  var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
+  function bind(component, name, callback) {
+    var index = component.$$.props[name];
+    if (index !== void 0) {
+      component.$$.bound[index] = callback;
+      callback(component.$$.ctx[index]);
+    }
+  }
+  function create_component(block) {
+    block && block.c();
+  }
+  function mount_component(component, target, anchor, customElement) {
+    var _component$$$ = component.$$,
+      fragment = _component$$$.fragment,
+      after_update = _component$$$.after_update;
+    fragment && fragment.m(target, anchor);
+    if (!customElement) {
+      add_render_callback(() => {
+        var new_on_destroy = component.$$.on_mount.map(run).filter(is_function);
+        if (component.$$.on_destroy) {
+          component.$$.on_destroy.push(...new_on_destroy);
+        } else {
+          run_all(new_on_destroy);
+        }
+        component.$$.on_mount = [];
+      });
+    }
+    after_update.forEach(add_render_callback);
+  }
+  function destroy_component(component, detaching) {
+    var $$ = component.$$;
+    if ($$.fragment !== null) {
+      run_all($$.on_destroy);
+      $$.fragment && $$.fragment.d(detaching);
+      $$.on_destroy = $$.fragment = null;
+      $$.ctx = [];
+    }
+  }
+  function make_dirty(component, i) {
+    if (component.$$.dirty[0] === -1) {
+      dirty_components.push(component);
+      schedule_update();
+      component.$$.dirty.fill(0);
+    }
+    component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
+  }
+  function init(component, options, instance17, create_fragment17, not_equal, props, append_styles) {
+    var dirty = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : [-1];
+    var parent_component = current_component;
+    set_current_component(component);
+    var $$ = component.$$ = {
+      fragment: null,
+      ctx: [],
+      props,
+      update: noop,
+      not_equal,
+      bound: blank_object(),
+      on_mount: [],
+      on_destroy: [],
+      on_disconnect: [],
+      before_update: [],
+      after_update: [],
+      context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
+      callbacks: blank_object(),
+      dirty,
+      skip_bound: false,
+      root: options.target || parent_component.$$.root
+    };
+    append_styles && append_styles($$.root);
+    var ready = false;
+    $$.ctx = instance17 ? instance17(component, options.props || {}, function (i, ret) {
+      var value = (arguments.length <= 2 ? 0 : arguments.length - 2) ? arguments.length <= 2 ? undefined : arguments[2] : ret;
+      if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
+        if (!$$.skip_bound && $$.bound[i]) $$.bound[i](value);
+        if (ready) make_dirty(component, i);
+      }
+      return ret;
+    }) : [];
+    $$.update();
+    ready = true;
+    run_all($$.before_update);
+    $$.fragment = create_fragment17 ? create_fragment17($$.ctx) : false;
+    if (options.target) {
+      if (options.hydrate) {
+        start_hydrating();
+        var nodes = children(options.target);
+        $$.fragment && $$.fragment.l(nodes);
+        nodes.forEach(detach);
+      } else {
+        $$.fragment && $$.fragment.c();
+      }
+      if (options.intro) transition_in(component.$$.fragment);
+      mount_component(component, options.target, options.anchor, options.customElement);
+      end_hydrating();
+      flush();
+    }
+    set_current_component(parent_component);
+  }
+  var SvelteElement;
+  if (typeof HTMLElement === "function") {
+    SvelteElement = class extends HTMLElement {
+      constructor() {
+        super();
+        this.attachShadow({
+          mode: "open"
+        });
+      }
+      connectedCallback() {
+        var on_mount = this.$$.on_mount;
+        this.$$.on_disconnect = on_mount.map(run).filter(is_function);
+        for (var key in this.$$.slotted) {
+          this.appendChild(this.$$.slotted[key]);
+        }
+      }
+      attributeChangedCallback(attr2, _oldValue, newValue) {
+        this[attr2] = newValue;
+      }
+      disconnectedCallback() {
+        run_all(this.$$.on_disconnect);
+      }
+      $destroy() {
+        destroy_component(this, 1);
+        this.$destroy = noop;
+      }
+      $on(type, callback) {
+        if (!is_function(callback)) {
+          return noop;
+        }
+        var callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
+        callbacks.push(callback);
+        return () => {
+          var index = callbacks.indexOf(callback);
+          if (index !== -1) callbacks.splice(index, 1);
+        };
+      }
+      $set($$props) {
+        if (this.$$set && !is_empty($$props)) {
+          this.$$.skip_bound = true;
+          this.$$set($$props);
+          this.$$.skip_bound = false;
+        }
+      }
+    };
+  }
+  var SvelteComponent = class {
+    $destroy() {
+      destroy_component(this, 1);
+      this.$destroy = noop;
+    }
+    $on(type, callback) {
+      if (!is_function(callback)) {
+        return noop;
+      }
+      var callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
+      callbacks.push(callback);
+      return () => {
+        var index = callbacks.indexOf(callback);
+        if (index !== -1) callbacks.splice(index, 1);
+      };
+    }
+    $set($$props) {
+      if (this.$$set && !is_empty($$props)) {
+        this.$$.skip_bound = true;
+        this.$$set($$props);
+        this.$$.skip_bound = false;
+      }
+    }
+  };
 
   // src/bibtex-parser.ts
+  var RootNode = class {
+    constructor() {
+      var children2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+      this.children = children2;
+      this.type = "root";
+    }
+  };
+  var TextNode = class {
+    constructor(parent, text2) {
+      this.parent = parent;
+      this.text = text2;
+      this.type = "text";
+      parent.children.push(this);
+    }
+  };
+  var BlockNode = class {
+    constructor(parent) {
+      this.parent = parent;
+      this.type = "block";
+      this.command = "";
+      parent.children.push(this);
+    }
+  };
+  var CommentNode = class {
+    constructor(parent, raw, braces, parens) {
+      this.parent = parent;
+      this.raw = raw;
+      this.braces = braces;
+      this.parens = parens;
+      this.type = "comment";
+      parent.block = this;
+    }
+  };
+  var PreambleNode = class {
+    constructor(parent, raw, braces, parens) {
+      this.parent = parent;
+      this.raw = raw;
+      this.braces = braces;
+      this.parens = parens;
+      this.type = "preamble";
+      parent.block = this;
+    }
+  };
+  var StringNode = class {
+    constructor(parent, raw, braces, parens) {
+      this.parent = parent;
+      this.raw = raw;
+      this.braces = braces;
+      this.parens = parens;
+      this.type = "string";
+      parent.block = this;
+    }
+  };
+  var EntryNode = class {
+    constructor(parent, wrapType) {
+      this.parent = parent;
+      this.wrapType = wrapType;
+      this.type = "entry";
+      parent.block = this;
+      this.fields = [];
+    }
+  };
+  var FieldNode = class {
+    constructor(parent) {
+      var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
+      this.parent = parent;
+      this.name = name;
+      this.type = "field";
+      this.value = new ConcatNode(this);
+    }
+  };
+  var ConcatNode = class {
+    constructor(parent) {
+      this.parent = parent;
+      this.type = "concat";
+      this.canConsumeValue = true;
+      this.concat = [];
+    }
+  };
+  var LiteralNode = class {
+    constructor(parent, value) {
+      this.parent = parent;
+      this.value = value;
+      this.type = "literal";
+      parent.concat.push(this);
+    }
+  };
+  var BracedNode = class {
+    constructor(parent) {
+      this.parent = parent;
+      this.type = "braced";
+      this.value = "";
+      this.depth = 0;
+      parent.concat.push(this);
+    }
+  };
+  var QuotedNode = class {
+    constructor(parent) {
+      this.parent = parent;
+      this.type = "quoted";
+      this.value = "";
+      this.depth = 0;
+      parent.concat.push(this);
+    }
+  };
   function generateAST(input) {
     var _a;
     var rootNode = new RootNode();
@@ -11698,10 +12034,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               } else {
                 node.command = commandTrimmed;
                 var command = node.command.toLowerCase();
-                var _ref = char === "{" ? [1, 0] : [0, 1],
-                  _ref2 = _slicedToArray(_ref, 2),
-                  braces = _ref2[0],
-                  parens = _ref2[1];
+                var _ref3 = char === "{" ? [1, 0] : [0, 1],
+                  _ref4 = _slicedToArray(_ref3, 2),
+                  braces = _ref4[0],
+                  parens = _ref4[1];
                 var raw = "@" + command + char;
                 switch (command) {
                   case "string":
@@ -11872,139 +12208,442 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   function isValidFieldName(char) {
     return !/[=,{}()\[\]]/.test(char);
   }
-  var RootNode, TextNode, BlockNode, CommentNode, PreambleNode, StringNode, EntryNode, FieldNode, ConcatNode, LiteralNode, BracedNode, QuotedNode, BibTeXSyntaxError;
-  var init_bibtex_parser = __esm({
-    "src/bibtex-parser.ts"() {
-      "use strict";
-
-      RootNode = class {
-        constructor() {
-          var children = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-          this.children = children;
-          this.type = "root";
-        }
-      };
-      TextNode = class {
-        constructor(parent, text) {
-          this.parent = parent;
-          this.text = text;
-          this.type = "text";
-          parent.children.push(this);
-        }
-      };
-      BlockNode = class {
-        constructor(parent) {
-          this.parent = parent;
-          this.type = "block";
-          this.command = "";
-          parent.children.push(this);
-        }
-      };
-      CommentNode = class {
-        constructor(parent, raw, braces, parens) {
-          this.parent = parent;
-          this.raw = raw;
-          this.braces = braces;
-          this.parens = parens;
-          this.type = "comment";
-          parent.block = this;
-        }
-      };
-      PreambleNode = class {
-        constructor(parent, raw, braces, parens) {
-          this.parent = parent;
-          this.raw = raw;
-          this.braces = braces;
-          this.parens = parens;
-          this.type = "preamble";
-          parent.block = this;
-        }
-      };
-      StringNode = class {
-        constructor(parent, raw, braces, parens) {
-          this.parent = parent;
-          this.raw = raw;
-          this.braces = braces;
-          this.parens = parens;
-          this.type = "string";
-          parent.block = this;
-        }
-      };
-      EntryNode = class {
-        constructor(parent, wrapType) {
-          this.parent = parent;
-          this.wrapType = wrapType;
-          this.type = "entry";
-          parent.block = this;
-          this.fields = [];
-        }
-      };
-      FieldNode = class {
-        constructor(parent) {
-          var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
-          this.parent = parent;
-          this.name = name;
-          this.type = "field";
-          this.value = new ConcatNode(this);
-        }
-      };
-      ConcatNode = class {
-        constructor(parent) {
-          this.parent = parent;
-          this.type = "concat";
-          this.canConsumeValue = true;
-          this.concat = [];
-        }
-      };
-      LiteralNode = class {
-        constructor(parent, value) {
-          this.parent = parent;
-          this.value = value;
-          this.type = "literal";
-          parent.concat.push(this);
-        }
-      };
-      BracedNode = class {
-        constructor(parent) {
-          this.parent = parent;
-          this.type = "braced";
-          this.value = "";
-          this.depth = 0;
-          parent.concat.push(this);
-        }
-      };
-      QuotedNode = class {
-        constructor(parent) {
-          this.parent = parent;
-          this.type = "quoted";
-          this.value = "";
-          this.depth = 0;
-          parent.concat.push(this);
-        }
-      };
-      BibTeXSyntaxError = class extends Error {
-        constructor(input, node, pos, line, column, hint) {
-          super("Line ".concat(line, ":").concat(column, ": Syntax Error in ").concat(node.type, " (").concat(hint, ")\n") + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
-          this.node = node;
-          this.line = line;
-          this.column = column;
-          this.hint = hint;
-          this.name = "Syntax Error";
-          this.char = input[pos];
-        }
-      };
+  var BibTeXSyntaxError = class extends Error {
+    constructor(input, node, pos, line, column, hint) {
+      super("Line ".concat(line, ":").concat(column, ": Syntax Error in ").concat(node.type, " (").concat(hint, ")\n") + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
+      this.node = node;
+      this.line = line;
+      this.column = column;
+      this.hint = hint;
+      this.name = "Syntax Error";
+      this.char = input[pos];
     }
-  });
+  };
+
+  // src/optionDefinitions.ts
+  var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
+  var DEFAULT_ALIGN = 14;
+  var DEFAULT_SPACE = 2;
+  var DEFAULT_WRAP = 80;
+  var DEFAULT_FIELD_SORT = ["title", "shorttitle", "author", "year", "month", "day", "journal", "booktitle", "location", "on", "publisher", "address", "series", "volume", "number", "pages", "doi", "isbn", "issn", "url", "urldate", "copyright", "category", "note", "metadata"];
+  var DEFAULT_SORT = ["key"];
+  var optionDefinitions = [{
+    key: "help",
+    cli: {
+      "--help": true,
+      "-h": true
+    },
+    title: "Help",
+    description: ["Show help"],
+    type: "boolean"
+  }, {
+    key: "omit",
+    cli: {
+      "--omit": args => {
+        if (args.length === 0) {
+          console.error("Expected a omit list");
+          process.exit(1);
+        }
+        return args;
+      }
+    },
+    toCLI: val => Array.isArray(val) && val.length > 0 ? "--omit=".concat(val.join(",")) : void 0,
+    title: "Remove fields",
+    description: ["Remove specified fields from bibliography entries."],
+    examples: ["--omit=id,name"],
+    type: "string[]",
+    defaultValue: []
+  }, {
+    key: "curly",
+    cli: {
+      "--curly": true,
+      "--no-curly": false
+    },
+    toCLI: val => val ? "--curly" : void 0,
+    title: "Enclose values in braces",
+    description: ['Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'],
+    type: "boolean",
+    defaultValue: false
+  }, {
+    key: "numeric",
+    cli: {
+      "--numeric": true,
+      "--no-numeric": false
+    },
+    toCLI: val => val ? "--numeric" : void 0,
+    title: "Use numeric values where possible",
+    description: ["Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."],
+    type: "boolean",
+    defaultValue: false
+  }, {
+    key: "space",
+    cli: {
+      "--space": args => args.length > 0 ? Number(args[0]) : true
+    },
+    toCLI: val => {
+      if (typeof val === "number" && val !== DEFAULT_SPACE) return "--space=".concat(val);
+      if (val && val !== DEFAULT_SPACE) return "--space";
+      return void 0;
+    },
+    title: "Indent with spaces",
+    description: ["Indent all fields with the specified number of spaces. Ignored if tab is set."],
+    examples: ["--space=2 (default)", "--space=4"],
+    type: "boolean | number",
+    valueIfTrue: DEFAULT_SPACE,
+    defaultValue: DEFAULT_SPACE
+  }, {
+    key: "tab",
+    cli: {
+      "--tab": true,
+      "--no-tab": false
+    },
+    toCLI: val => val ? "--tab" : void 0,
+    title: "Indent with tabs",
+    description: ["Indent all fields with a tab."],
+    type: "boolean",
+    defaultValue: false
+  }, {
+    key: "align",
+    cli: {
+      "--align": args => Number(args[0]),
+      "--no-align": false
+    },
+    toCLI: val => {
+      if (typeof val === "number" && val !== DEFAULT_ALIGN) return "--align=".concat(val);
+      if (val === false) return "--no-align";
+      return void 0;
+    },
+    title: "Align values",
+    description: ["Insert whitespace between fields and values so that values are visually aligned."],
+    examples: ["--align=14 (default)"],
+    type: "boolean | number",
+    valueIfFalse: 1,
+    defaultValue: DEFAULT_ALIGN
+  }, {
+    key: "blankLines",
+    cli: {
+      "--blank-lines": true,
+      "--no-blank-lines": false
+    },
+    toCLI: val => val ? "--blank-lines" : void 0,
+    title: "Insert blank lines",
+    description: ["Insert an empty line between each entry."],
+    type: "boolean"
+  }, {
+    key: "sort",
+    cli: {
+      "--sort": args => args.length > 0 ? args : true,
+      "--no-sort": false
+    },
+    toCLI: val => {
+      if (Array.isArray(val) && val.length > 0) return "--sort=".concat(val.join(","));
+      if (val === true) return "--sort";
+      return void 0;
+    },
+    title: "Sort bibliography entries",
+    description: ["Sort entries by specified fields. For descending order, prefix the field with a dash (-)."],
+    examples: ["--sort (sort by id)", "--sort=-year,name (sort year descending then name ascending)", "--sort=name,year"],
+    type: "boolean | string[]",
+    valueIfTrue: DEFAULT_SORT
+  }, {
+    key: "duplicates",
+    cli: {
+      "--duplicates": args => {
+        if (args.length === 0) return true;
+        var _iterator2 = _createForOfIteratorHelper(args),
+          _step2;
+        try {
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var i = _step2.value;
+            if (i !== "doi" && i !== "key" && i !== "abstract" && i !== "citation") {
+              console.error("Invalid key for merge option: \"".concat(i, "\""));
+              process.exit(1);
+            }
+          }
+        } catch (err) {
+          _iterator2.e(err);
+        } finally {
+          _iterator2.f();
+        }
+        return args;
+      }
+    },
+    toCLI: val => {
+      if (Array.isArray(val) && val.length > 0) return "--duplicates=".concat(val.join(","));
+      if (val === true) return "--duplicates";
+      return void 0;
+    },
+    title: "Check for duplicates",
+    description: ["Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."],
+    examples: ["--duplicates doi (same DOIs)", "--duplicates key (same IDs)", "--duplicates abstract (similar abstracts)", "--duplicates citation (similar author and titles)", "--duplicates doi, key (identical DOI or keys)", "--duplicates (same DOI, key, abstract, or citation)"],
+    type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
+    valueIfTrue: DEFAULT_MERGE_CHECK,
+    valueIfFalse: void 0,
+    defaultValue: options => options.merge ? DEFAULT_MERGE_CHECK : void 0
+  }, {
+    key: "merge",
+    cli: {
+      "--merge": args => {
+        if (args.length === 0) return true;
+        if (args[0] !== "first" && args[0] !== "last" && args[0] !== "combine" && args[0] !== "overwrite") {
+          console.error("Invalid merge strategy: \"".concat(args[0], "\""));
+          process.exit(1);
+        }
+        return args[0];
+      },
+      "--no-merge": false
+    },
+    toCLI: val => {
+      if (typeof val === "string") return "--merge=".concat(val);
+      if (val) return "--merge";
+      return void 0;
+    },
+    title: "Merge duplicate entries",
+    description: ["Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:", "- first: only keep the original entry", "- last: only keep the last found duplicate", "- combine: keep original entry and merge in fields of duplicates if they do not already exist", "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"],
+    type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
+    valueIfTrue: "combine"
+  }, {
+    key: "stripEnclosingBraces",
+    cli: {
+      "--strip-enclosing-braces": true
+    },
+    toCLI: val => val ? "--strip-enclosing-braces" : void 0,
+    title: "Strip double-braced values",
+    description: ["Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}."],
+    type: "boolean",
+    defaultValue: false
+  }, {
+    key: "dropAllCaps",
+    cli: {
+      "--drop-all-caps": true
+    },
+    toCLI: val => val ? "--drop-all-caps" : void 0,
+    title: "Drop all caps",
+    description: ["Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}."],
+    type: "boolean",
+    defaultValue: false
+  }, {
+    key: "escape",
+    cli: {
+      "--escape": true,
+      "--no-escape": false
+    },
+    toCLI: val => val === false ? "--no-escape" : void 0,
+    title: "Escape special characters",
+    description: ["Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default."],
+    type: "boolean",
+    defaultValue: true
+  }, {
+    key: "sortFields",
+    cli: {
+      "--sort-fields": args => args.length > 0 ? args : true
+    },
+    toCLI: val => {
+      if (Array.isArray(val) && val.length > 0) {
+        if (JSON.stringify(val) === JSON.stringify(DEFAULT_FIELD_SORT)) {
+          return "--sort_fields";
+        }
+        return "--sort-fields=".concat(val.join(","));
+      }
+      if (val === true) return "--sort-fields";
+      return void 0;
+    },
+    title: "Sort fields",
+    description: ["Sort the fields within entries.", "If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata"],
+    examples: ["--sort-fields=name,author"],
+    type: "boolean | string[]",
+    valueIfTrue: DEFAULT_FIELD_SORT,
+    valueIfFalse: void 0,
+    defaultValue: void 0
+  }, {
+    key: "sortProperties",
+    cli: {
+      "--sort-properties": args => args.length > 0 ? args : true
+    },
+    title: "Sort properties",
+    description: ["Alias of sort fields (legacy)"],
+    type: "boolean | string[]",
+    deprecated: true
+  }, {
+    key: "stripComments",
+    cli: {
+      "--strip-comments": true,
+      "--no-strip-comments": false
+    },
+    toCLI: val => val ? "--strip-comments" : void 0,
+    title: "Remove comments",
+    description: ["Remove all comments from the bibtex source."],
+    type: "boolean",
+    defaultValue: false
+  }, {
+    key: "trailingCommas",
+    cli: {
+      "--trailing-commas": true,
+      "--no-trailing-commas": true
+    },
+    toCLI: val => val ? "--trailing-commas" : void 0,
+    title: "Trailing commas",
+    description: ["End the last key value pair in each entry with a comma."],
+    type: "boolean",
+    defaultValue: false
+  }, {
+    key: "encodeUrls",
+    cli: {
+      "--encode-urls": true,
+      "--no-encode-urls": true
+    },
+    toCLI: val => val ? "--encode-urls" : void 0,
+    title: "Encode URLs",
+    description: ["Replace invalid URL characters with percent encoded values."],
+    type: "boolean",
+    defaultValue: false
+  }, {
+    key: "tidyComments",
+    cli: {
+      "--tidy-comments": true,
+      "--no-tidy-comments": false
+    },
+    toCLI: val => val === false ? "--no-tidy-comments" : void 0,
+    title: "Tidy comments",
+    description: ["Remove whitespace surrounding comments."],
+    type: "boolean",
+    defaultValue: true
+  }, {
+    key: "removeEmptyFields",
+    cli: {
+      "--remove-empty-fields": true,
+      "--no-remove-empty-fields": false
+    },
+    toCLI: val => val ? "--remove-empty-fields" : void 0,
+    title: "Remove empty fields",
+    description: ["Remove any fields that have empty values."],
+    type: "boolean",
+    defaultValue: false
+  }, {
+    key: "removeDuplicateFields",
+    cli: {
+      "--remove-dupe-fields": true,
+      "--no-remove-dupe-fields": false
+    },
+    toCLI: val => val === false ? "--no-remove-dupe-fields" : void 0,
+    title: "Remove duplicate fields",
+    description: ["Only allow one of each field in each entry. Enabled by default."],
+    type: "boolean",
+    defaultValue: true
+  }, {
+    key: "generateKeys",
+    cli: {
+      "--generate-keys": args => args.length > 0 ? args : true
+    },
+    toCLI: val => {
+      if (typeof val === "string") return "--generate-keys=\"".concat(val.replace(/"/g, '\\"'), "\"");
+      if (val) return "--generate-keys";
+      return void 0;
+    },
+    title: "Generate citation keys",
+    description: ["[Experimental] For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided."],
+    type: "boolean | string",
+    valueIfTrue: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
+    defaultValue: void 0
+  }, {
+    key: "maxAuthors",
+    cli: {
+      "--max-authors": args => Number(args[0])
+    },
+    toCLI: val => val ? "--max-authors=".concat(val) : void 0,
+    title: "Maximum authors",
+    description: ['Truncate authors if above a given number into "and others".'],
+    type: "number"
+  }, {
+    key: "lowercase",
+    cli: {
+      "--no-lowercase": false
+    },
+    toCLI: val => val === false ? "--no-lowercase" : void 0,
+    title: "Lowercase fields",
+    description: ["Lowercase field names and entry type. Enabled by default."],
+    type: "boolean",
+    defaultValue: true
+  }, {
+    key: "enclosingBraces",
+    cli: {
+      "--enclosing-braces": args => args.length > 0 ? args : true
+    },
+    toCLI: val => {
+      if (Array.isArray(val) && val.length > 0) return "--enclosing-braces=".concat(val.join(","));
+      if (val === true) return "--enclosing-braces";
+      return void 0;
+    },
+    title: "Enclose values in double braces",
+    description: ["Enclose the given fields in double braces, such that case is preserved during BibTeX compilation."],
+    examples: ["--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})", "--enclosing-braces (equivalent to ---enclosing-braces=title)"],
+    type: "boolean | string[]",
+    valueIfTrue: ["title"]
+  }, {
+    key: "wrap",
+    cli: {
+      "--wrap": args => args.length > 0 ? Number(args[0]) : true,
+      "--no-wrap": false
+    },
+    toCLI: val => val ? "--wrap=".concat(val) : void 0,
+    title: "Wrap values",
+    description: ["Wrap long values at the given column"],
+    examples: ["--wrap (80 by default)", "--wrap=82"],
+    type: "boolean | number",
+    valueIfTrue: DEFAULT_WRAP
+  }, {
+    key: "version",
+    cli: {
+      "--version": true,
+      "-v": true
+    },
+    title: "Version",
+    description: ["Show bibtex-tidy version."],
+    type: "boolean"
+  }, {
+    key: "quiet",
+    cli: {
+      "--quiet": true
+    },
+    title: "Quiet",
+    description: ["Suppress logs and warnings."],
+    type: "boolean"
+  }, {
+    key: "backup",
+    cli: {
+      "--backup": true,
+      "--no-backup": false
+    },
+    title: "Backup",
+    description: ["Make a backup <filename>.original. Enabled by default."],
+    type: "boolean",
+    defaultValue: true
+  }];
+  var optionDefinitionByKey = Object.fromEntries(optionDefinitions.map(opt => [opt.key, opt]));
+
+  // src/optionUtils.ts
+  function normalizeOptions(options) {
+    return Object.fromEntries(optionDefinitions.map(def => {
+      var key = def.key;
+      var value = options[key];
+      if (value === true && "valueIfTrue" in def) {
+        return [key, def.valueIfTrue];
+      }
+      if (value === false && "valueIfFalse" in def) {
+        return [key, def.valueIfFalse];
+      }
+      if (typeof value === "undefined" && def.defaultValue !== void 0) {
+        if (typeof def.defaultValue === "function") {
+          return [key, def.defaultValue(options)];
+        }
+        return [key, def.defaultValue];
+      }
+      return [key, value];
+    }));
+  }
 
   // src/unicode.ts
-  var specialCharacters;
-  var init_unicode = __esm({
-    "src/unicode.ts"() {
-      "use strict";
-
-      specialCharacters = /* @__PURE__ */new Map([["0023", "\\#"], ["0024", "\\$"], ["0025", "\\%"], ["0026", "\\&"], ["0027", "'"], ["0040", "\\@"], ["002a", "\\textasteriskcentered"], ["005f", "\\_"], ["007c", "\\vert{}"], ["00a0", "~"], ["00a1", "\\textexclamdown{}"], ["00a2", "\\textcent{}"], ["00a3", "\\textsterling{}"], ["00a4", "\\textcurrency{}"], ["00a5", "\\textyen{}"], ["00a6", "\\textbrokenbar{}"], ["00a7", "\\textsection{}"], ["00a8", "\\textasciidieresis{}"], ["00a9", "\\textcopyright{}"], ["00aa", "\\textordfeminine{}"], ["00ab", "\\guillemotleft{}"], ["00ac", "\\lnot{}"], ["00ad", "\\-"], ["00ae", "\\textregistered{}"], ["00af", "\\textasciimacron{}"], ["00b0", "\\textdegree{}"], ["00b1", "\\pm{}"], ["00b2", "\\ensuremath{^2}"], ["00b3", "\\ensuremath{^3}"], ["00b4", "\\textasciiacute{}"], ["00b5", "\\mathrm{\\mu}"], ["00b6", "\\textparagraph{}"], ["00b7", "\\cdot{}"], ["00b8", "\\c{}"], ["00b9", "\\ensuremath{^1}"], ["00ba", "\\textordmasculine{}"], ["00bb", "\\guillemotright{}"], ["00bc", "\\textonequarter{}"], ["00bd", "\\textonehalf{}"], ["00be", "\\textthreequarters{}"], ["00bf", "\\textquestiondown{}"], ["00c0", "\\`{A}"], ["00c1", "\\'{A}"], ["00c2", "\\^{A}"], ["00c3", "\\~{A}"], ["00c4", '\\"{A}'], ["00c5", "\\AA{}"], ["00c6", "\\AE{}"], ["00c7", "\\c{C}"], ["00c8", "\\`{E}"], ["00c9", "\\'{E}"], ["00ca", "\\^{E}"], ["00cb", '\\"{E}'], ["00cc", "\\`{I}"], ["00cd", "\\'{I}"], ["00ce", "\\^{I}"], ["00cf", '\\"{I}'], ["00d0", "\\DH{}"], ["00d1", "\\~{N}"], ["00d2", "\\`{O}"], ["00d3", "\\'{O}"], ["00d4", "\\^{O}"], ["00d5", "\\~{O}"], ["00d6", '\\"{O}'], ["00d7", "\\texttimes{}"], ["00d8", "\\O{}"], ["00d9", "\\`{U}"], ["00da", "\\'{U}"], ["00db", "\\^{U}"], ["00dc", '\\"{U}'], ["00dd", "\\'{Y}"], ["00de", "\\TH{}"], ["00df", "\\ss{}"], ["00e0", "\\`{a}"], ["00e1", "\\'{a}"], ["00e2", "\\^{a}"], ["00e3", "\\~{a}"], ["00e4", '\\"{a}'], ["00e5", "\\aa{}"], ["00e6", "\\ae{}"], ["00e7", "\\c{c}"], ["00e8", "\\`{e}"], ["00e9", "\\'{e}"], ["00ea", "\\^{e}"], ["00eb", '\\"{e}'], ["00ec", "\\`{\\i}"], ["00ed", "\\'{\\i}"], ["00ee", "\\^{\\i}"], ["00ef", '\\"{\\i}'], ["00f0", "\\dh{}"], ["00f1", "\\~{n}"], ["00f2", "\\`{o}"], ["00f3", "\\'{o}"], ["00f4", "\\^{o}"], ["00f5", "\\~{o}"], ["00f6", '\\"{o}'], ["00f7", "\\div{}"], ["00f8", "\\o{}"], ["00f9", "\\`{u}"], ["00fa", "\\'{u}"], ["00fb", "\\^{u}"], ["00fc", '\\"{u}'], ["00fd", "\\'{y}"], ["00fe", "\\th{}"], ["00ff", '\\"{y}'], ["0100", "\\={A}"], ["0101", "\\={a}"], ["0102", "\\u{A}"], ["0103", "\\u{a}"], ["0104", "\\k{A}"], ["0105", "\\k{a}"], ["0106", "\\'{C}"], ["0107", "\\'{c}"], ["0108", "\\^{C}"], ["0109", "\\^{c}"], ["010a", "\\.{C}"], ["010b", "\\.{c}"], ["010c", "\\v{C}"], ["010d", "\\v{c}"], ["010e", "\\v{D}"], ["010f", "\\v{d}"], ["0110", "\\DJ{}"], ["0111", "\\dj{}"], ["0112", "\\={E}"], ["0113", "\\={e}"], ["0114", "\\u{E}"], ["0115", "\\u{e}"], ["0116", "\\.{E}"], ["0117", "\\.{e}"], ["0118", "\\k{E}"], ["0119", "\\k{e}"], ["011a", "\\v{E}"], ["011b", "\\v{e}"], ["011c", "\\^{G}"], ["011d", "\\^{g}"], ["011e", "\\u{G}"], ["011f", "\\u{g}"], ["0120", "\\.{G}"], ["0121", "\\.{g}"], ["0122", "\\c{G}"], ["0123", "\\c{g}"], ["0124", "\\^{H}"], ["0125", "\\^{h}"], ["0126", "{\\fontencoding{LELA}\\selectfont\\char40}"], ["0127", "\\Elzxh{}"], ["0128", "\\~{I}"], ["0129", "\\~{\\i}"], ["012a", "\\={I}"], ["012b", "\\={\\i}"], ["012c", "\\u{I}"], ["012d", "\\u{\\i}"], ["012e", "\\k{I}"], ["012f", "\\k{i}"], ["0130", "\\.{I}"], ["0131", "\\i{}"], ["0132", "IJ"], ["0133", "ij"], ["0134", "\\^{J}"], ["0135", "\\^{\\j}"], ["0136", "\\c{K}"], ["0137", "\\c{k}"], ["0138", "{\\fontencoding{LELA}\\selectfont\\char91}"], ["0139", "\\'{L}"], ["013a", "\\'{l}"], ["013b", "\\c{L}"], ["013c", "\\c{l}"], ["013d", "\\v{L}"], ["013e", "\\v{l}"], ["013f", "{\\fontencoding{LELA}\\selectfont\\char201}"], ["0140", "{\\fontencoding{LELA}\\selectfont\\char202}"], ["0141", "\\L{}"], ["0142", "\\l{}"], ["0143", "\\'{N}"], ["0144", "\\'{n}"], ["0145", "\\c{N}"], ["0146", "\\c{n}"], ["0147", "\\v{N}"], ["0148", "\\v{n}"], ["0149", "'n"], ["014a", "\\NG{}"], ["014b", "\\ng{}"], ["014c", "\\={O}"], ["014d", "\\={o}"], ["014e", "\\u{O}"], ["014f", "\\u{o}"], ["0150", "\\H{O}"], ["0151", "\\H{o}"], ["0152", "\\OE{}"], ["0153", "\\oe{}"], ["0154", "\\'{R}"], ["0155", "\\'{r}"], ["0156", "\\c{R}"], ["0157", "\\c{r}"], ["0158", "\\v{R}"], ["0159", "\\v{r}"], ["015a", "\\'{S}"], ["015b", "\\'{s}"], ["015c", "\\^{S}"], ["015d", "\\^{s}"], ["015e", "\\c{S}"], ["015f", "\\c{s}"], ["0160", "\\v{S}"], ["0161", "\\v{s}"], ["0162", "\\c{T}"], ["0163", "\\c{t}"], ["0164", "\\v{T}"], ["0165", "\\v{t}"], ["0166", "{\\fontencoding{LELA}\\selectfont\\char47}"], ["0167", "{\\fontencoding{LELA}\\selectfont\\char63}"], ["0168", "\\~{U}"], ["0169", "\\~{u}"], ["016a", "\\={U}"], ["016b", "\\={u}"], ["016c", "\\u{U}"], ["016d", "\\u{u}"], ["016e", "\\r{U}"], ["016f", "\\r{u}"], ["0170", "\\H{U}"], ["0171", "\\H{u}"], ["0172", "\\k{U}"], ["0173", "\\k{u}"], ["0174", "\\^{W}"], ["0175", "\\^{w}"], ["0176", "\\^{Y}"], ["0177", "\\^{y}"], ["0178", '\\"{Y}'], ["0179", "\\'{Z}"], ["017a", "\\'{z}"], ["017b", "\\.{Z}"], ["017c", "\\.{z}"], ["017d", "\\v{Z}"], ["017e", "\\v{z}"], ["0195", "\\texthvlig{}"], ["019e", "\\textnrleg{}"], ["01aa", "\\eth{}"], ["01ba", "{\\fontencoding{LELA}\\selectfont\\char195}"], ["01c2", "\\textdoublepipe{}"], ["01f5", "\\'{g}"], ["0250", "\\Elztrna{}"], ["0252", "\\Elztrnsa{}"], ["0254", "\\Elzopeno{}"], ["0256", "\\Elzrtld{}"], ["0258", "{\\fontencoding{LEIP}\\selectfont\\char61}"], ["0259", "\\Elzschwa{}"], ["025b", "\\varepsilon{}"], ["0263", "\\Elzpgamma{}"], ["0264", "\\Elzpbgam{}"], ["0265", "\\Elztrnh{}"], ["026c", "\\Elzbtdl{}"], ["026d", "\\Elzrtll{}"], ["026f", "\\Elztrnm{}"], ["0270", "\\Elztrnmlr{}"], ["0271", "\\Elzltlmr{}"], ["0272", "\\Elzltln{}"], ["0273", "\\Elzrtln{}"], ["0277", "\\Elzclomeg{}"], ["0278", "\\textphi{}"], ["0279", "\\Elztrnr{}"], ["027a", "\\Elztrnrl{}"], ["027b", "\\Elzrttrnr{}"], ["027c", "\\Elzrl{}"], ["027d", "\\Elzrtlr{}"], ["027e", "\\Elzfhr{}"], ["027f", "{\\fontencoding{LEIP}\\selectfont\\char202}"], ["0282", "\\Elzrtls{}"], ["0283", "\\Elzesh{}"], ["0287", "\\Elztrnt{}"], ["0288", "\\Elzrtlt{}"], ["028a", "\\Elzpupsil{}"], ["028b", "\\Elzpscrv{}"], ["028c", "\\Elzinvv{}"], ["028d", "\\Elzinvw{}"], ["028e", "\\Elztrny{}"], ["0290", "\\Elzrtlz{}"], ["0292", "\\Elzyogh{}"], ["0294", "\\Elzglst{}"], ["0295", "\\Elzreglst{}"], ["0296", "\\Elzinglst{}"], ["029e", "\\textturnk{}"], ["02a4", "\\Elzdyogh{}"], ["02a7", "\\Elztesh{}"], ["02c7", "\\textasciicaron{}"], ["02c8", "\\Elzverts{}"], ["02cc", "\\Elzverti{}"], ["02d0", "\\Elzlmrk{}"], ["02d1", "\\Elzhlmrk{}"], ["02d2", "\\Elzsbrhr{}"], ["02d3", "\\Elzsblhr{}"], ["02d4", "\\Elzrais{}"], ["02d5", "\\Elzlow{}"], ["02d8", "\\textasciibreve{}"], ["02d9", "\\textperiodcentered{}"], ["02da", "\\r{}"], ["02db", "\\k{}"], ["02dc", "\\texttildelow{}"], ["02dd", "\\H{}"], ["02e5", "\\tone{55}"], ["02e6", "\\tone{44}"], ["02e7", "\\tone{33}"], ["02e8", "\\tone{22}"], ["02e9", "\\tone{11}"], ["0300", "\\`"], ["0301", "\\'"], ["0302", "\\^"], ["0303", "\\~"], ["0304", "\\="], ["0306", "\\u"], ["0307", "\\."], ["0308", '\\"'], ["030a", "\\r"], ["030b", "\\H"], ["030c", "\\v"], ["030f", "\\cyrchar\\C"], ["0311", "{\\fontencoding{LECO}\\selectfont\\char177}"], ["0318", "{\\fontencoding{LECO}\\selectfont\\char184}"], ["0319", "{\\fontencoding{LECO}\\selectfont\\char185}"], ["0321", "\\Elzpalh{}"], ["0322", "\\Elzrh{}"], ["0327", "\\c"], ["0328", "\\k"], ["032a", "\\Elzsbbrg{}"], ["032b", "{\\fontencoding{LECO}\\selectfont\\char203}"], ["032f", "{\\fontencoding{LECO}\\selectfont\\char207}"], ["0335", "\\Elzxl{}"], ["0336", "\\Elzbar{}"], ["0337", "{\\fontencoding{LECO}\\selectfont\\char215}"], ["0338", "{\\fontencoding{LECO}\\selectfont\\char216}"], ["033a", "{\\fontencoding{LECO}\\selectfont\\char218}"], ["033b", "{\\fontencoding{LECO}\\selectfont\\char219}"], ["033c", "{\\fontencoding{LECO}\\selectfont\\char220}"], ["033d", "{\\fontencoding{LECO}\\selectfont\\char221}"], ["0361", "{\\fontencoding{LECO}\\selectfont\\char225}"], ["0386", "\\'{A}"], ["0388", "\\'{E}"], ["0389", "\\'{H}"], ["038a", "\\'{}{I}"], ["038c", "\\'{}O"], ["038e", "\\mathrm{'Y}"], ["038f", "\\mathrm{'\\Omega}"], ["0390", "\\acute{\\ddot{\\iota}}"], ["0391", "\\ensuremath{\\Alpha}"], ["0392", "\\ensuremath{\\Beta}"], ["0393", "\\ensuremath{\\Gamma}"], ["0394", "\\ensuremath{\\Delta}"], ["0395", "\\ensuremath{\\Epsilon}"], ["0396", "\\ensuremath{\\Zeta}"], ["0397", "\\ensuremath{\\Eta}"], ["0398", "\\ensuremath{\\Theta}"], ["0399", "\\ensuremath{\\Iota}"], ["039a", "\\ensuremath{\\Kappa}"], ["039b", "\\ensuremath{\\Lambda}"], ["039e", "\\ensuremath{\\Xi}"], ["03a0", "\\ensuremath{\\Pi}"], ["03a1", "\\ensuremath{\\Rho}"], ["03a3", "\\ensuremath{\\Sigma}"], ["03a4", "\\ensuremath{\\Tau}"], ["03a5", "\\ensuremath{\\Upsilon}"], ["03a6", "\\ensuremath{\\Phi}"], ["03a7", "\\ensuremath{\\Chi}"], ["03a8", "\\ensuremath{\\Psi}"], ["03a9", "\\ensuremath{\\Omega}"], ["03aa", "\\mathrm{\\ddot{I}}"], ["03ab", "\\mathrm{\\ddot{Y}}"], ["03ac", "\\'{$\\alpha$}"], ["03ad", "\\acute{\\epsilon}"], ["03ae", "\\acute{\\eta}"], ["03af", "\\acute{\\iota}"], ["03b0", "\\acute{\\ddot{\\upsilon}}"], ["03b1", "\\ensuremath{\\alpha}"], ["03b2", "\\ensuremath{\\beta}"], ["03b3", "\\ensuremath{\\gamma}"], ["03b4", "\\ensuremath{\\delta}"], ["03b5", "\\ensuremath{\\epsilon}"], ["03b6", "\\ensuremath{\\zeta}"], ["03b7", "\\ensuremath{\\eta}"], ["03b8", "\\texttheta{}"], ["03b9", "\\ensuremath{\\iota}"], ["03ba", "\\ensuremath{\\kappa}"], ["03bb", "\\ensuremath{\\lambda}"], ["03bc", "\\ensuremath{\\mu}"], ["03bd", "\\ensuremath{\\nu}"], ["03be", "\\ensuremath{\\xi}"], ["03c0", "\\ensuremath{\\pi}"], ["03c1", "\\ensuremath{\\rho}"], ["03c2", "\\ensuremath{\\varsigma}"], ["03c3", "\\ensuremath{\\sigma}"], ["03c4", "\\ensuremath{\\tau}"], ["03c5", "\\ensuremath{\\upsilon}"], ["03c6", "\\ensuremath{\\varphi}"], ["03c7", "\\ensuremath{\\chi}"], ["03c8", "\\ensuremath{\\psi}"], ["03c9", "\\ensuremath{\\omega}"], ["03ca", "\\ensuremath{\\ddot{\\iota}}"], ["03cb", "\\ensuremath{\\ddot{\\upsilon}}"], ["03cc", "\\'{o}"], ["03cd", "\\acute{\\upsilon}"], ["03ce", "\\acute{\\omega}"], ["03d0", "\\Pisymbol{ppi022}{87}"], ["03d1", "\\textvartheta{}"], ["03d2", "\\ensuremath{\\Upsilon}"], ["03d5", "\\ensuremath{\\phi}"], ["03d6", "\\ensuremath{\\varpi}"], ["03da", "\\Stigma{}"], ["03dc", "\\Digamma{}"], ["03dd", "\\digamma{}"], ["03de", "\\Koppa{}"], ["03e0", "\\Sampi{}"], ["03f0", "\\varkappa{}"], ["03f1", "\\varrho{}"], ["03f4", "\\textTheta{}"], ["03f6", "\\backepsilon{}"], ["0401", "\\cyrchar\\CYRYO{}"], ["0402", "\\cyrchar\\CYRDJE{}"], ["0403", "\\cyrchar{\\'\\CYRG}"], ["0404", "\\cyrchar\\CYRIE{}"], ["0405", "\\cyrchar\\CYRDZE{}"], ["0406", "\\cyrchar\\CYRII{}"], ["0407", "\\cyrchar\\CYRYI{}"], ["0408", "\\cyrchar\\CYRJE{}"], ["0409", "\\cyrchar\\CYRLJE{}"], ["040a", "\\cyrchar\\CYRNJE{}"], ["040b", "\\cyrchar\\CYRTSHE{}"], ["040c", "\\cyrchar{\\'\\CYRK}"], ["040e", "\\cyrchar\\CYRUSHRT{}"], ["040f", "\\cyrchar\\CYRDZHE{}"], ["0410", "\\cyrchar\\CYRA{}"], ["0411", "\\cyrchar\\CYRB{}"], ["0412", "\\cyrchar\\CYRV{}"], ["0413", "\\cyrchar\\CYRG{}"], ["0414", "\\cyrchar\\CYRD{}"], ["0415", "\\cyrchar\\CYRE{}"], ["0416", "\\cyrchar\\CYRZH{}"], ["0417", "\\cyrchar\\CYRZ{}"], ["0418", "\\cyrchar\\CYRI{}"], ["0419", "\\cyrchar\\CYRISHRT{}"], ["041a", "\\cyrchar\\CYRK{}"], ["041b", "\\cyrchar\\CYRL{}"], ["041c", "\\cyrchar\\CYRM{}"], ["041d", "\\cyrchar\\CYRN{}"], ["041e", "\\cyrchar\\CYRO{}"], ["041f", "\\cyrchar\\CYRP{}"], ["0420", "\\cyrchar\\CYRR{}"], ["0421", "\\cyrchar\\CYRS{}"], ["0422", "\\cyrchar\\CYRT{}"], ["0423", "\\cyrchar\\CYRU{}"], ["0424", "\\cyrchar\\CYRF{}"], ["0425", "\\cyrchar\\CYRH{}"], ["0426", "\\cyrchar\\CYRC{}"], ["0427", "\\cyrchar\\CYRCH{}"], ["0428", "\\cyrchar\\CYRSH{}"], ["0429", "\\cyrchar\\CYRSHCH{}"], ["042a", "\\cyrchar\\CYRHRDSN{}"], ["042b", "\\cyrchar\\CYRERY{}"], ["042c", "\\cyrchar\\CYRSFTSN{}"], ["042d", "\\cyrchar\\CYREREV{}"], ["042e", "\\cyrchar\\CYRYU{}"], ["042f", "\\cyrchar\\CYRYA{}"], ["0430", "\\cyrchar\\cyra{}"], ["0431", "\\cyrchar\\cyrb{}"], ["0432", "\\cyrchar\\cyrv{}"], ["0433", "\\cyrchar\\cyrg{}"], ["0434", "\\cyrchar\\cyrd{}"], ["0435", "\\cyrchar\\cyre{}"], ["0436", "\\cyrchar\\cyrzh{}"], ["0437", "\\cyrchar\\cyrz{}"], ["0438", "\\cyrchar\\cyri{}"], ["0439", "\\cyrchar\\cyrishrt{}"], ["043a", "\\cyrchar\\cyrk{}"], ["043b", "\\cyrchar\\cyrl{}"], ["043c", "\\cyrchar\\cyrm{}"], ["043d", "\\cyrchar\\cyrn{}"], ["043e", "\\cyrchar\\cyro{}"], ["043f", "\\cyrchar\\cyrp{}"], ["0440", "\\cyrchar\\cyrr{}"], ["0441", "\\cyrchar\\cyrs{}"], ["0442", "\\cyrchar\\cyrt{}"], ["0443", "\\cyrchar\\cyru{}"], ["0444", "\\cyrchar\\cyrf{}"], ["0445", "\\cyrchar\\cyrh{}"], ["0446", "\\cyrchar\\cyrc{}"], ["0447", "\\cyrchar\\cyrch{}"], ["0448", "\\cyrchar\\cyrsh{}"], ["0449", "\\cyrchar\\cyrshch{}"], ["044a", "\\cyrchar\\cyrhrdsn{}"], ["044b", "\\cyrchar\\cyrery{}"], ["044c", "\\cyrchar\\cyrsftsn{}"], ["044d", "\\cyrchar\\cyrerev{}"], ["044e", "\\cyrchar\\cyryu{}"], ["044f", "\\cyrchar\\cyrya{}"], ["0451", "\\cyrchar\\cyryo{}"], ["0452", "\\cyrchar\\cyrdje{}"], ["0453", "\\cyrchar{\\'\\cyrg}"], ["0454", "\\cyrchar\\cyrie{}"], ["0455", "\\cyrchar\\cyrdze{}"], ["0456", "\\cyrchar\\cyrii{}"], ["0457", "\\cyrchar\\cyryi{}"], ["0458", "\\cyrchar\\cyrje{}"], ["0459", "\\cyrchar\\cyrlje{}"], ["045a", "\\cyrchar\\cyrnje{}"], ["045b", "\\cyrchar\\cyrtshe{}"], ["045c", "\\cyrchar{\\'\\cyrk}"], ["045e", "\\cyrchar\\cyrushrt{}"], ["045f", "\\cyrchar\\cyrdzhe{}"], ["0460", "\\cyrchar\\CYROMEGA{}"], ["0461", "\\cyrchar\\cyromega{}"], ["0462", "\\cyrchar\\CYRYAT{}"], ["0464", "\\cyrchar\\CYRIOTE{}"], ["0465", "\\cyrchar\\cyriote{}"], ["0466", "\\cyrchar\\CYRLYUS{}"], ["0467", "\\cyrchar\\cyrlyus{}"], ["0468", "\\cyrchar\\CYRIOTLYUS{}"], ["0469", "\\cyrchar\\cyriotlyus{}"], ["046a", "\\cyrchar\\CYRBYUS{}"], ["046c", "\\cyrchar\\CYRIOTBYUS{}"], ["046d", "\\cyrchar\\cyriotbyus{}"], ["046e", "\\cyrchar\\CYRKSI{}"], ["046f", "\\cyrchar\\cyrksi{}"], ["0470", "\\cyrchar\\CYRPSI{}"], ["0471", "\\cyrchar\\cyrpsi{}"], ["0472", "\\cyrchar\\CYRFITA{}"], ["0474", "\\cyrchar\\CYRIZH{}"], ["0478", "\\cyrchar\\CYRUK{}"], ["0479", "\\cyrchar\\cyruk{}"], ["047a", "\\cyrchar\\CYROMEGARND{}"], ["047b", "\\cyrchar\\cyromegarnd{}"], ["047c", "\\cyrchar\\CYROMEGATITLO{}"], ["047d", "\\cyrchar\\cyromegatitlo{}"], ["047e", "\\cyrchar\\CYROT{}"], ["047f", "\\cyrchar\\cyrot{}"], ["0480", "\\cyrchar\\CYRKOPPA{}"], ["0481", "\\cyrchar\\cyrkoppa{}"], ["0482", "\\cyrchar\\cyrthousands{}"], ["0488", "\\cyrchar\\cyrhundredthousands{}"], ["0489", "\\cyrchar\\cyrmillions{}"], ["048c", "\\cyrchar\\CYRSEMISFTSN{}"], ["048d", "\\cyrchar\\cyrsemisftsn{}"], ["048e", "\\cyrchar\\CYRRTICK{}"], ["048f", "\\cyrchar\\cyrrtick{}"], ["0490", "\\cyrchar\\CYRGUP{}"], ["0491", "\\cyrchar\\cyrgup{}"], ["0492", "\\cyrchar\\CYRGHCRS{}"], ["0493", "\\cyrchar\\cyrghcrs{}"], ["0494", "\\cyrchar\\CYRGHK{}"], ["0495", "\\cyrchar\\cyrghk{}"], ["0496", "\\cyrchar\\CYRZHDSC{}"], ["0497", "\\cyrchar\\cyrzhdsc{}"], ["0498", "\\cyrchar\\CYRZDSC{}"], ["0499", "\\cyrchar\\cyrzdsc{}"], ["049a", "\\cyrchar\\CYRKDSC{}"], ["049b", "\\cyrchar\\cyrkdsc{}"], ["049c", "\\cyrchar\\CYRKVCRS{}"], ["049d", "\\cyrchar\\cyrkvcrs{}"], ["049e", "\\cyrchar\\CYRKHCRS{}"], ["049f", "\\cyrchar\\cyrkhcrs{}"], ["04a0", "\\cyrchar\\CYRKBEAK{}"], ["04a1", "\\cyrchar\\cyrkbeak{}"], ["04a2", "\\cyrchar\\CYRNDSC{}"], ["04a3", "\\cyrchar\\cyrndsc{}"], ["04a4", "\\cyrchar\\CYRNG{}"], ["04a5", "\\cyrchar\\cyrng{}"], ["04a6", "\\cyrchar\\CYRPHK{}"], ["04a7", "\\cyrchar\\cyrphk{}"], ["04a8", "\\cyrchar\\CYRABHHA{}"], ["04a9", "\\cyrchar\\cyrabhha{}"], ["04aa", "\\cyrchar\\CYRSDSC{}"], ["04ab", "\\cyrchar\\cyrsdsc{}"], ["04ac", "\\cyrchar\\CYRTDSC{}"], ["04ad", "\\cyrchar\\cyrtdsc{}"], ["04ae", "\\cyrchar\\CYRY{}"], ["04af", "\\cyrchar\\cyry{}"], ["04b0", "\\cyrchar\\CYRYHCRS{}"], ["04b1", "\\cyrchar\\cyryhcrs{}"], ["04b2", "\\cyrchar\\CYRHDSC{}"], ["04b3", "\\cyrchar\\cyrhdsc{}"], ["04b4", "\\cyrchar\\CYRTETSE{}"], ["04b5", "\\cyrchar\\cyrtetse{}"], ["04b6", "\\cyrchar\\CYRCHRDSC{}"], ["04b7", "\\cyrchar\\cyrchrdsc{}"], ["04b8", "\\cyrchar\\CYRCHVCRS{}"], ["04b9", "\\cyrchar\\cyrchvcrs{}"], ["04ba", "\\cyrchar\\CYRSHHA{}"], ["04bb", "\\cyrchar\\cyrshha{}"], ["04bc", "\\cyrchar\\CYRABHCH{}"], ["04bd", "\\cyrchar\\cyrabhch{}"], ["04be", "\\cyrchar\\CYRABHCHDSC{}"], ["04bf", "\\cyrchar\\cyrabhchdsc{}"], ["04c0", "\\cyrchar\\CYRpalochka{}"], ["04c3", "\\cyrchar\\CYRKHK{}"], ["04c4", "\\cyrchar\\cyrkhk{}"], ["04c7", "\\cyrchar\\CYRNHK{}"], ["04c8", "\\cyrchar\\cyrnhk{}"], ["04cb", "\\cyrchar\\CYRCHLDSC{}"], ["04cc", "\\cyrchar\\cyrchldsc{}"], ["04d4", "\\cyrchar\\CYRAE{}"], ["04d5", "\\cyrchar\\cyrae{}"], ["04d8", "\\cyrchar\\CYRSCHWA{}"], ["04d9", "\\cyrchar\\cyrschwa{}"], ["04e0", "\\cyrchar\\CYRABHDZE{}"], ["04e1", "\\cyrchar\\cyrabhdze{}"], ["04e8", "\\cyrchar\\CYROTLD{}"], ["04e9", "\\cyrchar\\cyrotld{}"], ["2002", "\\hspace{0.6em}"], ["2003", "\\hspace{1em}"], ["2004", "\\hspace{0.33em}"], ["2005", "\\hspace{0.25em}"], ["2006", "\\hspace{0.166em}"], ["2007", "\\hphantom{0}"], ["2008", "\\hphantom{,}"], ["2009", "\\hspace{0.167em}"], ["200a", "\\mkern1mu{}"], ["2010", "-"], ["2014", "--"], ["2015", "\\rule{1em}{1pt}"], ["2016", "\\Vert{}"], ["2018", "`"], ["2019", "'"], ["201b", "\\Elzreapos{}"], ["201c", "``"], ["201d", "''"], ["201e", ",,"], ["2020", "\\textdagger{}"], ["2021", "\\textdaggerdbl{}"], ["2022", "\\textbullet{}"], ["2025", ".."], ["2026", "\\ldots{}"], ["2030", "\\textperthousand{}"], ["2031", "\\textpertenthousand{}"], ["2032", "\\ensuremath{'}"], ["2033", "\\ensuremath{''}"], ["2034", "\\ensuremath{'''}"], ["2035", "\\backprime{}"], ["2039", "\\guilsinglleft{}"], ["203a", "\\guilsinglright{}"], ["2057", "''''"], ["205f", "\\mkern4mu{}"], ["2060", "\\nolinebreak{}"], ["20a7", "\\ensuremath{\\Elzpes}"], ["20ac", "\\mbox{\\texteuro}{}"], ["20db", "\\dddot{}"], ["20dc", "\\ddddot{}"], ["2102", "\\mathbb{C}"], ["210a", "\\mathscr{g}"], ["210b", "\\mathscr{H}"], ["210c", "\\mathfrak{H}"], ["210d", "\\mathbb{H}"], ["210f", "\\hslash{}"], ["2110", "\\mathscr{I}"], ["2111", "\\mathfrak{I}"], ["2112", "\\mathscr{L}"], ["2113", "\\mathscr{l}"], ["2115", "\\mathbb{N}"], ["2116", "\\cyrchar\\textnumero{}"], ["2118", "\\wp{}"], ["2119", "\\mathbb{P}"], ["211a", "\\mathbb{Q}"], ["211b", "\\mathscr{R}"], ["211c", "\\mathfrak{R}"], ["211d", "\\mathbb{R}"], ["211e", "\\Elzxrat{}"], ["2122", "\\texttrademark{}"], ["2124", "\\mathbb{Z}"], ["2126", "\\Omega{}"], ["2127", "\\mho{}"], ["2128", "\\mathfrak{Z}"], ["2129", "\\ElsevierGlyph{2129}"], ["212b", "\\AA{}"], ["212c", "\\mathscr{B}"], ["212d", "\\mathfrak{C}"], ["212f", "\\mathscr{e}"], ["2130", "\\mathscr{E}"], ["2131", "\\mathscr{F}"], ["2133", "\\mathscr{M}"], ["2134", "\\mathscr{o}"], ["2135", "\\aleph{}"], ["2136", "\\beth{}"], ["2137", "\\gimel{}"], ["2138", "\\daleth{}"], ["2153", "\\textfrac{1}{3}"], ["2154", "\\textfrac{2}{3}"], ["2155", "\\textfrac{1}{5}"], ["2156", "\\textfrac{2}{5}"], ["2157", "\\textfrac{3}{5}"], ["2158", "\\textfrac{4}{5}"], ["2159", "\\textfrac{1}{6}"], ["215a", "\\textfrac{5}{6}"], ["215b", "\\textfrac{1}{8}"], ["215c", "\\textfrac{3}{8}"], ["215d", "\\textfrac{5}{8}"], ["215e", "\\textfrac{7}{8}"], ["2190", "\\leftarrow{}"], ["2191", "\\uparrow{}"], ["2192", "\\rightarrow{}"], ["2193", "\\downarrow{}"], ["2194", "\\leftrightarrow{}"], ["2195", "\\updownarrow{}"], ["2196", "\\nwarrow{}"], ["2197", "\\nearrow{}"], ["2198", "\\searrow{}"], ["2199", "\\swarrow{}"], ["219a", "\\nleftarrow{}"], ["219b", "\\nrightarrow{}"], ["219c", "\\arrowwaveright{}"], ["219d", "\\arrowwaveright{}"], ["219e", "\\twoheadleftarrow{}"], ["21a0", "\\twoheadrightarrow{}"], ["21a2", "\\leftarrowtail{}"], ["21a3", "\\rightarrowtail{}"], ["21a6", "\\mapsto{}"], ["21a9", "\\hookleftarrow{}"], ["21aa", "\\hookrightarrow{}"], ["21ab", "\\looparrowleft{}"], ["21ac", "\\looparrowright{}"], ["21ad", "\\leftrightsquigarrow{}"], ["21ae", "\\nleftrightarrow{}"], ["21b0", "\\Lsh{}"], ["21b1", "\\Rsh{}"], ["21b3", "\\ElsevierGlyph{21B3}"], ["21b6", "\\curvearrowleft{}"], ["21b7", "\\curvearrowright{}"], ["21ba", "\\circlearrowleft{}"], ["21bb", "\\circlearrowright{}"], ["21bc", "\\leftharpoonup{}"], ["21bd", "\\leftharpoondown{}"], ["21be", "\\upharpoonright{}"], ["21bf", "\\upharpoonleft{}"], ["21c0", "\\rightharpoonup{}"], ["21c1", "\\rightharpoondown{}"], ["21c2", "\\downharpoonright{}"], ["21c3", "\\downharpoonleft{}"], ["21c4", "\\rightleftarrows{}"], ["21c5", "\\dblarrowupdown{}"], ["21c6", "\\leftrightarrows{}"], ["21c7", "\\leftleftarrows{}"], ["21c8", "\\upuparrows{}"], ["21c9", "\\rightrightarrows{}"], ["21ca", "\\downdownarrows{}"], ["21cb", "\\leftrightharpoons{}"], ["21cc", "\\rightleftharpoons{}"], ["21cd", "\\nLeftarrow{}"], ["21ce", "\\nLeftrightarrow{}"], ["21cf", "\\nRightarrow{}"], ["21d0", "\\Leftarrow{}"], ["21d1", "\\Uparrow{}"], ["21d2", "\\Rightarrow{}"], ["21d3", "\\Downarrow{}"], ["21d4", "\\Leftrightarrow{}"], ["21d5", "\\Updownarrow{}"], ["21da", "\\Lleftarrow{}"], ["21db", "\\Rrightarrow{}"], ["21dd", "\\rightsquigarrow{}"], ["21f5", "\\DownArrowUpArrow{}"], ["2200", "\\forall{}"], ["2201", "\\complement{}"], ["2202", "\\partial{}"], ["2203", "\\exists{}"], ["2204", "\\nexists{}"], ["2205", "\\varnothing{}"], ["2207", "\\nabla{}"], ["2208", "\\in{}"], ["2209", "\\not\\in{}"], ["220b", "\\ni{}"], ["220c", "\\not\\ni{}"], ["220f", "\\prod{}"], ["2210", "\\coprod{}"], ["2211", "\\sum{}"], ["2212", "-"], ["2213", "\\mp{}"], ["2214", "\\dotplus{}"], ["2216", "\\setminus{}"], ["2217", "{\\_\\ast}"], ["2218", "\\circ{}"], ["2219", "\\bullet{}"], ["221a", "\\surd{}"], ["221d", "\\propto{}"], ["221e", "\\infty{}"], ["221f", "\\rightangle{}"], ["2220", "\\angle{}"], ["2221", "\\measuredangle{}"], ["2222", "\\sphericalangle{}"], ["2223", "\\mid{}"], ["2224", "\\nmid{}"], ["2225", "\\parallel{}"], ["2226", "\\nparallel{}"], ["2227", "\\wedge{}"], ["2228", "\\vee{}"], ["2229", "\\cap{}"], ["222a", "\\cup{}"], ["222b", "\\int{}"], ["222c", "\\int\\!\\int{}"], ["222d", "\\int\\!\\int\\!\\int{}"], ["222e", "\\oint{}"], ["222f", "\\surfintegral{}"], ["2230", "\\volintegral{}"], ["2231", "\\clwintegral{}"], ["2232", "\\ElsevierGlyph{2232}"], ["2233", "\\ElsevierGlyph{2233}"], ["2234", "\\therefore{}"], ["2235", "\\because{}"], ["2237", "\\Colon{}"], ["2238", "\\ElsevierGlyph{2238}"], ["223a", "\\mathbin{{:}\\!\\!{-}\\!\\!{:}}"], ["223b", "\\homothetic{}"], ["223c", "\\sim{}"], ["223d", "\\backsim{}"], ["223e", "\\lazysinv{}"], ["2240", "\\wr{}"], ["2241", "\\not\\sim{}"], ["2242", "\\ElsevierGlyph{2242}"], ["2243", "\\simeq{}"], ["2244", "\\not\\simeq{}"], ["2245", "\\cong{}"], ["2246", "\\approxnotequal{}"], ["2247", "\\not\\cong{}"], ["2248", "\\approx{}"], ["2249", "\\not\\approx{}"], ["224a", "\\approxeq{}"], ["224b", "\\tildetrpl{}"], ["224c", "\\allequal{}"], ["224d", "\\asymp{}"], ["224e", "\\Bumpeq{}"], ["224f", "\\bumpeq{}"], ["2250", "\\doteq{}"], ["2251", "\\doteqdot{}"], ["2252", "\\fallingdotseq{}"], ["2253", "\\risingdotseq{}"], ["2254", ":="], ["2255", "=:"], ["2256", "\\eqcirc{}"], ["2257", "\\circeq{}"], ["2259", "\\estimates{}"], ["225a", "\\ElsevierGlyph{225A}"], ["225b", "\\starequal{}"], ["225c", "\\triangleq{}"], ["225f", "\\ElsevierGlyph{225F}"], ["2260", "\\not ="], ["2261", "\\equiv{}"], ["2262", "\\not\\equiv{}"], ["2264", "\\leq{}"], ["2265", "\\geq{}"], ["2266", "\\leqq{}"], ["2267", "\\geqq{}"], ["2268", "\\lneqq{}"], ["2269", "\\gneqq{}"], ["226a", "\\ll{}"], ["226b", "\\gg{}"], ["226c", "\\between{}"], ["226d", "\\not\\kern-0.3em\\times{}"], ["226e", "\\not&lt;"], ["226f", "\\not&gt;"], ["2270", "\\not\\leq{}"], ["2271", "\\not\\geq{}"], ["2272", "\\lessequivlnt{}"], ["2273", "\\greaterequivlnt{}"], ["2274", "\\ElsevierGlyph{2274}"], ["2275", "\\ElsevierGlyph{2275}"], ["2276", "\\lessgtr{}"], ["2277", "\\gtrless{}"], ["2278", "\\notlessgreater{}"], ["2279", "\\notgreaterless{}"], ["227a", "\\prec{}"], ["227b", "\\succ{}"], ["227c", "\\preccurlyeq{}"], ["227d", "\\succcurlyeq{}"], ["227e", "\\precapprox{}"], ["227f", "\\succapprox{}"], ["2280", "\\not\\prec{}"], ["2281", "\\not\\succ{}"], ["2282", "\\subset{}"], ["2283", "\\supset{}"], ["2284", "\\not\\subset{}"], ["2285", "\\not\\supset{}"], ["2286", "\\subseteq{}"], ["2287", "\\supseteq{}"], ["2288", "\\not\\subseteq{}"], ["2289", "\\not\\supseteq{}"], ["228a", "\\subsetneq{}"], ["228b", "\\supsetneq{}"], ["228e", "\\uplus{}"], ["228f", "\\sqsubset{}"], ["2290", "\\sqsupset{}"], ["2291", "\\sqsubseteq{}"], ["2292", "\\sqsupseteq{}"], ["2293", "\\sqcap{}"], ["2294", "\\sqcup{}"], ["2295", "\\oplus{}"], ["2296", "\\ominus{}"], ["2297", "\\otimes{}"], ["2298", "\\oslash{}"], ["2299", "\\odot{}"], ["229a", "\\circledcirc{}"], ["229b", "\\circledast{}"], ["229d", "\\circleddash{}"], ["229e", "\\boxplus{}"], ["229f", "\\boxminus{}"], ["22a0", "\\boxtimes{}"], ["22a1", "\\boxdot{}"], ["22a2", "\\vdash{}"], ["22a3", "\\dashv{}"], ["22a4", "\\top{}"], ["22a5", "\\perp{}"], ["22a7", "\\truestate{}"], ["22a8", "\\forcesextra{}"], ["22a9", "\\Vdash{}"], ["22aa", "\\Vvdash{}"], ["22ab", "\\VDash{}"], ["22ac", "\\nvdash{}"], ["22ad", "\\nvDash{}"], ["22ae", "\\nVdash{}"], ["22af", "\\nVDash{}"], ["22b2", "\\vartriangleleft{}"], ["22b3", "\\vartriangleright{}"], ["22b4", "\\trianglelefteq{}"], ["22b5", "\\trianglerighteq{}"], ["22b6", "\\original{}"], ["22b7", "\\image{}"], ["22b8", "\\multimap{}"], ["22b9", "\\hermitconjmatrix{}"], ["22ba", "\\intercal{}"], ["22bb", "\\veebar{}"], ["22be", "\\rightanglearc{}"], ["22c0", "\\ElsevierGlyph{22C0}"], ["22c1", "\\ElsevierGlyph{22C1}"], ["22c2", "\\bigcap{}"], ["22c3", "\\bigcup{}"], ["22c4", "\\diamond{}"], ["22c5", "\\cdot{}"], ["22c6", "\\star{}"], ["22c7", "\\divideontimes{}"], ["22c8", "\\bowtie{}"], ["22c9", "\\ltimes{}"], ["22ca", "\\rtimes{}"], ["22cb", "\\leftthreetimes{}"], ["22cc", "\\rightthreetimes{}"], ["22cd", "\\backsimeq{}"], ["22ce", "\\curlyvee{}"], ["22cf", "\\curlywedge{}"], ["22d0", "\\Subset{}"], ["22d1", "\\Supset{}"], ["22d2", "\\Cap{}"], ["22d3", "\\Cup{}"], ["22d4", "\\pitchfork{}"], ["22d6", "\\lessdot{}"], ["22d7", "\\gtrdot{}"], ["22d8", "\\verymuchless{}"], ["22d9", "\\verymuchgreater{}"], ["22da", "\\lesseqgtr{}"], ["22db", "\\gtreqless{}"], ["22de", "\\curlyeqprec{}"], ["22df", "\\curlyeqsucc{}"], ["22e2", "\\not\\sqsubseteq{}"], ["22e3", "\\not\\sqsupseteq{}"], ["22e5", "\\Elzsqspne{}"], ["22e6", "\\lnsim{}"], ["22e7", "\\gnsim{}"], ["22e8", "\\precedesnotsimilar{}"], ["22e9", "\\succnsim{}"], ["22ea", "\\ntriangleleft{}"], ["22eb", "\\ntriangleright{}"], ["22ec", "\\ntrianglelefteq{}"], ["22ed", "\\ntrianglerighteq{}"], ["22ee", "\\vdots{}"], ["22ef", "\\cdots{}"], ["22f0", "\\upslopeellipsis{}"], ["22f1", "\\downslopeellipsis{}"], ["2305", "\\barwedge{}"], ["2306", "\\perspcorrespond{}"], ["2308", "\\lceil{}"], ["2309", "\\rceil{}"], ["230a", "\\lfloor{}"], ["230b", "\\rfloor{}"], ["2315", "\\recorder{}"], ["2316", '\\mathchar"2208'], ["231c", "\\ulcorner{}"], ["231d", "\\urcorner{}"], ["231e", "\\llcorner{}"], ["231f", "\\lrcorner{}"], ["2322", "\\frown{}"], ["2323", "\\smile{}"], ["2329", "\\langle{}"], ["232a", "\\rangle{}"], ["233d", "\\ElsevierGlyph{E838}"], ["23a3", "\\Elzdlcorn{}"], ["23b0", "\\lmoustache{}"], ["23b1", "\\rmoustache{}"], ["2423", "\\textvisiblespace{}"], ["2460", "\\ding{172}"], ["2461", "\\ding{173}"], ["2462", "\\ding{174}"], ["2463", "\\ding{175}"], ["2464", "\\ding{176}"], ["2465", "\\ding{177}"], ["2466", "\\ding{178}"], ["2467", "\\ding{179}"], ["2468", "\\ding{180}"], ["2469", "\\ding{181}"], ["24c8", "\\circledS{}"], ["2506", "\\Elzdshfnc{}"], ["2519", "\\Elzsqfnw{}"], ["2571", "\\diagup{}"], ["25a0", "\\ding{110}"], ["25a1", "\\square{}"], ["25aa", "\\blacksquare{}"], ["25ad", "\\fbox{~~}"], ["25af", "\\Elzvrecto{}"], ["25b1", "\\ElsevierGlyph{E381}"], ["25b2", "\\ding{115}"], ["25b3", "\\bigtriangleup{}"], ["25b4", "\\blacktriangle{}"], ["25b5", "\\vartriangle{}"], ["25b8", "\\blacktriangleright{}"], ["25b9", "\\triangleright{}"], ["25bc", "\\ding{116}"], ["25bd", "\\bigtriangledown{}"], ["25be", "\\blacktriangledown{}"], ["25bf", "\\triangledown{}"], ["25c2", "\\blacktriangleleft{}"], ["25c3", "\\triangleleft{}"], ["25c6", "\\ding{117}"], ["25ca", "\\lozenge{}"], ["25cb", "\\bigcirc{}"], ["25cf", "\\ding{108}"], ["25d0", "\\Elzcirfl{}"], ["25d1", "\\Elzcirfr{}"], ["25d2", "\\Elzcirfb{}"], ["25d7", "\\ding{119}"], ["25d8", "\\Elzrvbull{}"], ["25e7", "\\Elzsqfl{}"], ["25e8", "\\Elzsqfr{}"], ["25ea", "\\Elzsqfse{}"], ["25ef", "\\bigcirc{}"], ["2605", "\\ding{72}"], ["2606", "\\ding{73}"], ["260e", "\\ding{37}"], ["261b", "\\ding{42}"], ["261e", "\\ding{43}"], ["263e", "\\rightmoon{}"], ["263f", "\\mercury{}"], ["2640", "\\venus{}"], ["2642", "\\male{}"], ["2643", "\\jupiter{}"], ["2644", "\\saturn{}"], ["2645", "\\uranus{}"], ["2646", "\\neptune{}"], ["2647", "\\pluto{}"], ["2648", "\\aries{}"], ["2649", "\\taurus{}"], ["264a", "\\gemini{}"], ["264b", "\\cancer{}"], ["264c", "\\leo{}"], ["264d", "\\virgo{}"], ["264e", "\\libra{}"], ["264f", "\\scorpio{}"], ["2650", "\\sagittarius{}"], ["2651", "\\capricornus{}"], ["2652", "\\aquarius{}"], ["2653", "\\pisces{}"], ["2660", "\\ding{171}"], ["2662", "\\diamond{}"], ["2663", "\\ding{168}"], ["2665", "\\ding{170}"], ["2666", "\\ding{169}"], ["2669", "\\quarternote{}"], ["266a", "\\eighthnote{}"], ["266d", "\\flat{}"], ["266e", "\\natural{}"], ["266f", "\\sharp{}"], ["2701", "\\ding{33}"], ["2702", "\\ding{34}"], ["2703", "\\ding{35}"], ["2704", "\\ding{36}"], ["2706", "\\ding{38}"], ["2707", "\\ding{39}"], ["2708", "\\ding{40}"], ["2709", "\\ding{41}"], ["270c", "\\ding{44}"], ["270d", "\\ding{45}"], ["270e", "\\ding{46}"], ["270f", "\\ding{47}"], ["2710", "\\ding{48}"], ["2711", "\\ding{49}"], ["2712", "\\ding{50}"], ["2713", "\\ding{51}"], ["2714", "\\ding{52}"], ["2715", "\\ding{53}"], ["2716", "\\ding{54}"], ["2717", "\\ding{55}"], ["2718", "\\ding{56}"], ["2719", "\\ding{57}"], ["271a", "\\ding{58}"], ["271b", "\\ding{59}"], ["271c", "\\ding{60}"], ["271d", "\\ding{61}"], ["271e", "\\ding{62}"], ["271f", "\\ding{63}"], ["2720", "\\ding{64}"], ["2721", "\\ding{65}"], ["2722", "\\ding{66}"], ["2723", "\\ding{67}"], ["2724", "\\ding{68}"], ["2725", "\\ding{69}"], ["2726", "\\ding{70}"], ["2727", "\\ding{71}"], ["2729", "\\ding{73}"], ["272a", "\\ding{74}"], ["272b", "\\ding{75}"], ["272c", "\\ding{76}"], ["272d", "\\ding{77}"], ["272e", "\\ding{78}"], ["272f", "\\ding{79}"], ["2730", "\\ding{80}"], ["2731", "\\ding{81}"], ["2732", "\\ding{82}"], ["2733", "\\ding{83}"], ["2734", "\\ding{84}"], ["2735", "\\ding{85}"], ["2736", "\\ding{86}"], ["2737", "\\ding{87}"], ["2738", "\\ding{88}"], ["2739", "\\ding{89}"], ["273a", "\\ding{90}"], ["273b", "\\ding{91}"], ["273c", "\\ding{92}"], ["273d", "\\ding{93}"], ["273e", "\\ding{94}"], ["273f", "\\ding{95}"], ["2740", "\\ding{96}"], ["2741", "\\ding{97}"], ["2742", "\\ding{98}"], ["2743", "\\ding{99}"], ["2744", "\\ding{100}"], ["2745", "\\ding{101}"], ["2746", "\\ding{102}"], ["2747", "\\ding{103}"], ["2748", "\\ding{104}"], ["2749", "\\ding{105}"], ["274a", "\\ding{106}"], ["274b", "\\ding{107}"], ["274d", "\\ding{109}"], ["274f", "\\ding{111}"], ["2750", "\\ding{112}"], ["2751", "\\ding{113}"], ["2752", "\\ding{114}"], ["2756", "\\ding{118}"], ["2758", "\\ding{120}"], ["2759", "\\ding{121}"], ["275a", "\\ding{122}"], ["275b", "\\ding{123}"], ["275c", "\\ding{124}"], ["275d", "\\ding{125}"], ["275e", "\\ding{126}"], ["2761", "\\ding{161}"], ["2762", "\\ding{162}"], ["2763", "\\ding{163}"], ["2764", "\\ding{164}"], ["2765", "\\ding{165}"], ["2766", "\\ding{166}"], ["2767", "\\ding{167}"], ["2776", "\\ding{182}"], ["2777", "\\ding{183}"], ["2778", "\\ding{184}"], ["2779", "\\ding{185}"], ["277a", "\\ding{186}"], ["277b", "\\ding{187}"], ["277c", "\\ding{188}"], ["277d", "\\ding{189}"], ["277e", "\\ding{190}"], ["277f", "\\ding{191}"], ["2780", "\\ding{192}"], ["2781", "\\ding{193}"], ["2782", "\\ding{194}"], ["2783", "\\ding{195}"], ["2784", "\\ding{196}"], ["2785", "\\ding{197}"], ["2786", "\\ding{198}"], ["2787", "\\ding{199}"], ["2788", "\\ding{200}"], ["2789", "\\ding{201}"], ["278a", "\\ding{202}"], ["278b", "\\ding{203}"], ["278c", "\\ding{204}"], ["278d", "\\ding{205}"], ["278e", "\\ding{206}"], ["278f", "\\ding{207}"], ["2790", "\\ding{208}"], ["2791", "\\ding{209}"], ["2792", "\\ding{210}"], ["2793", "\\ding{211}"], ["2794", "\\ding{212}"], ["2798", "\\ding{216}"], ["2799", "\\ding{217}"], ["279a", "\\ding{218}"], ["279b", "\\ding{219}"], ["279c", "\\ding{220}"], ["279d", "\\ding{221}"], ["279e", "\\ding{222}"], ["279f", "\\ding{223}"], ["27a0", "\\ding{224}"], ["27a1", "\\ding{225}"], ["27a2", "\\ding{226}"], ["27a3", "\\ding{227}"], ["27a4", "\\ding{228}"], ["27a5", "\\ding{229}"], ["27a6", "\\ding{230}"], ["27a7", "\\ding{231}"], ["27a8", "\\ding{232}"], ["27a9", "\\ding{233}"], ["27aa", "\\ding{234}"], ["27ab", "\\ding{235}"], ["27ac", "\\ding{236}"], ["27ad", "\\ding{237}"], ["27ae", "\\ding{238}"], ["27af", "\\ding{239}"], ["27b1", "\\ding{241}"], ["27b2", "\\ding{242}"], ["27b3", "\\ding{243}"], ["27b4", "\\ding{244}"], ["27b5", "\\ding{245}"], ["27b6", "\\ding{246}"], ["27b7", "\\ding{247}"], ["27b8", "\\ding{248}"], ["27b9", "\\ding{249}"], ["27ba", "\\ding{250}"], ["27bb", "\\ding{251}"], ["27bc", "\\ding{252}"], ["27bd", "\\ding{253}"], ["27be", "\\ding{254}"], ["27f5", "\\longleftarrow{}"], ["27f6", "\\longrightarrow{}"], ["27f7", "\\longleftrightarrow{}"], ["27f8", "\\Longleftarrow{}"], ["27f9", "\\Longrightarrow{}"], ["27fa", "\\Longleftrightarrow{}"], ["27fc", "\\longmapsto{}"], ["27ff", "\\sim\\joinrel\\leadsto"], ["2905", "\\ElsevierGlyph{E212}"], ["2912", "\\UpArrowBar{}"], ["2913", "\\DownArrowBar{}"], ["2923", "\\ElsevierGlyph{E20C}"], ["2924", "\\ElsevierGlyph{E20D}"], ["2925", "\\ElsevierGlyph{E20B}"], ["2926", "\\ElsevierGlyph{E20A}"], ["2927", "\\ElsevierGlyph{E211}"], ["2928", "\\ElsevierGlyph{E20E}"], ["2929", "\\ElsevierGlyph{E20F}"], ["292a", "\\ElsevierGlyph{E210}"], ["2933", "\\ElsevierGlyph{E21C}"], ["2936", "\\ElsevierGlyph{E21A}"], ["2937", "\\ElsevierGlyph{E219}"], ["2940", "\\Elolarr{}"], ["2941", "\\Elorarr{}"], ["2942", "\\ElzRlarr{}"], ["2944", "\\ElzrLarr{}"], ["2947", "\\Elzrarrx{}"], ["294e", "\\LeftRightVector{}"], ["294f", "\\RightUpDownVector{}"], ["2950", "\\DownLeftRightVector{}"], ["2951", "\\LeftUpDownVector{}"], ["2952", "\\LeftVectorBar{}"], ["2953", "\\RightVectorBar{}"], ["2954", "\\RightUpVectorBar{}"], ["2955", "\\RightDownVectorBar{}"], ["2956", "\\DownLeftVectorBar{}"], ["2957", "\\DownRightVectorBar{}"], ["2958", "\\LeftUpVectorBar{}"], ["2959", "\\LeftDownVectorBar{}"], ["295a", "\\LeftTeeVector{}"], ["295b", "\\RightTeeVector{}"], ["295c", "\\RightUpTeeVector{}"], ["295d", "\\RightDownTeeVector{}"], ["295e", "\\DownLeftTeeVector{}"], ["295f", "\\DownRightTeeVector{}"], ["2960", "\\LeftUpTeeVector{}"], ["2961", "\\LeftDownTeeVector{}"], ["296e", "\\UpEquilibrium{}"], ["296f", "\\ReverseUpEquilibrium{}"], ["2970", "\\RoundImplies{}"], ["297c", "\\ElsevierGlyph{E214}"], ["297d", "\\ElsevierGlyph{E215}"], ["2980", "\\Elztfnc{}"], ["2985", "\\ElsevierGlyph{3018}"], ["2986", "\\Elroang{}"], ["2993", "&lt;\\kern-0.58em("], ["2994", "\\ElsevierGlyph{E291}"], ["2999", "\\Elzddfnc{}"], ["299c", "\\Angle{}"], ["29a0", "\\Elzlpargt{}"], ["29b5", "\\ElsevierGlyph{E260}"], ["29b6", "\\ElsevierGlyph{E61B}"], ["29ca", "\\ElzLap{}"], ["29cb", "\\Elzdefas{}"], ["29cf", "\\LeftTriangleBar{}"], ["29d0", "\\RightTriangleBar{}"], ["29dc", "\\ElsevierGlyph{E372}"], ["29eb", "\\blacklozenge{}"], ["29f4", "\\RuleDelayed{}"], ["2a04", "\\Elxuplus{}"], ["2a05", "\\ElzThr{}"], ["2a06", "\\Elxsqcup{}"], ["2a07", "\\ElzInf{}"], ["2a08", "\\ElzSup{}"], ["2a0d", "\\ElzCint{}"], ["2a0f", "\\clockoint{}"], ["2a10", "\\ElsevierGlyph{E395}"], ["2a16", "\\sqrint{}"], ["2a25", "\\ElsevierGlyph{E25A}"], ["2a2a", "\\ElsevierGlyph{E25B}"], ["2a2d", "\\ElsevierGlyph{E25C}"], ["2a2e", "\\ElsevierGlyph{E25D}"], ["2a2f", "\\ElzTimes{}"], ["2a34", "\\ElsevierGlyph{E25E}"], ["2a35", "\\ElsevierGlyph{E25E}"], ["2a3c", "\\ElsevierGlyph{E259}"], ["2a3f", "\\amalg{}"], ["2a53", "\\ElzAnd{}"], ["2a54", "\\ElzOr{}"], ["2a55", "\\ElsevierGlyph{E36E}"], ["2a56", "\\ElOr{}"], ["2a5e", "\\perspcorrespond{}"], ["2a5f", "\\Elzminhat{}"], ["2a63", "\\ElsevierGlyph{225A}"], ["2a6e", "\\stackrel{*}{=}"], ["2a75", "\\Equal{}"], ["2a7d", "\\leqslant{}"], ["2a7e", "\\geqslant{}"], ["2a85", "\\lessapprox{}"], ["2a86", "\\gtrapprox{}"], ["2a87", "\\lneq{}"], ["2a88", "\\gneq{}"], ["2a89", "\\lnapprox{}"], ["2a8a", "\\gnapprox{}"], ["2a8b", "\\lesseqqgtr{}"], ["2a8c", "\\gtreqqless{}"], ["2a95", "\\eqslantless{}"], ["2a96", "\\eqslantgtr{}"], ["2a9d", "\\Pisymbol{ppi020}{117}"], ["2a9e", "\\Pisymbol{ppi020}{105}"], ["2aa1", "\\NestedLessLess{}"], ["2aa2", "\\NestedGreaterGreater{}"], ["2aaf", "\\preceq{}"], ["2ab0", "\\succeq{}"], ["2ab5", "\\precneqq{}"], ["2ab6", "\\succneqq{}"], ["2ab7", "\\precapprox{}"], ["2ab8", "\\succapprox{}"], ["2ab9", "\\precnapprox{}"], ["2aba", "\\succnapprox{}"], ["2ac5", "\\subseteqq{}"], ["2ac6", "\\supseteqq{}"], ["2acb", "\\subsetneqq{}"], ["2acc", "\\supsetneqq{}"], ["2aeb", "\\ElsevierGlyph{E30D}"], ["2af6", "\\Elztdcol{}"], ["2afd", "{{/}\\!\\!{/}}"], ["300a", "\\ElsevierGlyph{300A}"], ["300b", "\\ElsevierGlyph{300B}"], ["3018", "\\ElsevierGlyph{3018}"], ["3019", "\\ElsevierGlyph{3019}"], ["301a", "\\openbracketleft{}"], ["301b", "\\openbracketright{}"], ["fb00", "ff"], ["fb01", "fi"], ["fb02", "fl"], ["fb03", "ffi"], ["fb04", "ffl"], ["d400", "\\mathbf{A}"], ["d401", "\\mathbf{B}"], ["d402", "\\mathbf{C}"], ["d403", "\\mathbf{D}"], ["d404", "\\mathbf{E}"], ["d405", "\\mathbf{F}"], ["d406", "\\mathbf{G}"], ["d407", "\\mathbf{H}"], ["d408", "\\mathbf{I}"], ["d409", "\\mathbf{J}"], ["d40a", "\\mathbf{K}"], ["d40b", "\\mathbf{L}"], ["d40c", "\\mathbf{M}"], ["d40d", "\\mathbf{N}"], ["d40e", "\\mathbf{O}"], ["d40f", "\\mathbf{P}"], ["d410", "\\mathbf{Q}"], ["d411", "\\mathbf{R}"], ["d412", "\\mathbf{S}"], ["d413", "\\mathbf{T}"], ["d414", "\\mathbf{U}"], ["d415", "\\mathbf{V}"], ["d416", "\\mathbf{W}"], ["d417", "\\mathbf{X}"], ["d418", "\\mathbf{Y}"], ["d419", "\\mathbf{Z}"], ["d41a", "\\mathbf{a}"], ["d41b", "\\mathbf{b}"], ["d41c", "\\mathbf{c}"], ["d41d", "\\mathbf{d}"], ["d41e", "\\mathbf{e}"], ["d41f", "\\mathbf{f}"], ["d420", "\\mathbf{g}"], ["d421", "\\mathbf{h}"], ["d422", "\\mathbf{i}"], ["d423", "\\mathbf{j}"], ["d424", "\\mathbf{k}"], ["d425", "\\mathbf{l}"], ["d426", "\\mathbf{m}"], ["d427", "\\mathbf{n}"], ["d428", "\\mathbf{o}"], ["d429", "\\mathbf{p}"], ["d42a", "\\mathbf{q}"], ["d42b", "\\mathbf{r}"], ["d42c", "\\mathbf{s}"], ["d42d", "\\mathbf{t}"], ["d42e", "\\mathbf{u}"], ["d42f", "\\mathbf{v}"], ["d430", "\\mathbf{w}"], ["d431", "\\mathbf{x}"], ["d432", "\\mathbf{y}"], ["d433", "\\mathbf{z}"], ["d434", "\\mathsl{A}"], ["d435", "\\mathsl{B}"], ["d436", "\\mathsl{C}"], ["d437", "\\mathsl{D}"], ["d438", "\\mathsl{E}"], ["d439", "\\mathsl{F}"], ["d43a", "\\mathsl{G}"], ["d43b", "\\mathsl{H}"], ["d43c", "\\mathsl{I}"], ["d43d", "\\mathsl{J}"], ["d43e", "\\mathsl{K}"], ["d43f", "\\mathsl{L}"], ["d440", "\\mathsl{M}"], ["d441", "\\mathsl{N}"], ["d442", "\\mathsl{O}"], ["d443", "\\mathsl{P}"], ["d444", "\\mathsl{Q}"], ["d445", "\\mathsl{R}"], ["d446", "\\mathsl{S}"], ["d447", "\\mathsl{T}"], ["d448", "\\mathsl{U}"], ["d449", "\\mathsl{V}"], ["d44a", "\\mathsl{W}"], ["d44b", "\\mathsl{X}"], ["d44c", "\\mathsl{Y}"], ["d44d", "\\mathsl{Z}"], ["d44e", "\\mathsl{a}"], ["d44f", "\\mathsl{b}"], ["d450", "\\mathsl{c}"], ["d451", "\\mathsl{d}"], ["d452", "\\mathsl{e}"], ["d453", "\\mathsl{f}"], ["d454", "\\mathsl{g}"], ["d456", "\\mathsl{i}"], ["d457", "\\mathsl{j}"], ["d458", "\\mathsl{k}"], ["d459", "\\mathsl{l}"], ["d45a", "\\mathsl{m}"], ["d45b", "\\mathsl{n}"], ["d45c", "\\mathsl{o}"], ["d45d", "\\mathsl{p}"], ["d45e", "\\mathsl{q}"], ["d45f", "\\mathsl{r}"], ["d460", "\\mathsl{s}"], ["d461", "\\mathsl{t}"], ["d462", "\\mathsl{u}"], ["d463", "\\mathsl{v}"], ["d464", "\\mathsl{w}"], ["d465", "\\mathsl{x}"], ["d466", "\\mathsl{y}"], ["d467", "\\mathsl{z}"], ["d468", "\\mathbit{A}"], ["d469", "\\mathbit{B}"], ["d46a", "\\mathbit{C}"], ["d46b", "\\mathbit{D}"], ["d46c", "\\mathbit{E}"], ["d46d", "\\mathbit{F}"], ["d46e", "\\mathbit{G}"], ["d46f", "\\mathbit{H}"], ["d470", "\\mathbit{I}"], ["d471", "\\mathbit{J}"], ["d472", "\\mathbit{K}"], ["d473", "\\mathbit{L}"], ["d474", "\\mathbit{M}"], ["d475", "\\mathbit{N}"], ["d476", "\\mathbit{O}"], ["d477", "\\mathbit{P}"], ["d478", "\\mathbit{Q}"], ["d479", "\\mathbit{R}"], ["d47a", "\\mathbit{S}"], ["d47b", "\\mathbit{T}"], ["d47c", "\\mathbit{U}"], ["d47d", "\\mathbit{V}"], ["d47e", "\\mathbit{W}"], ["d47f", "\\mathbit{X}"], ["d480", "\\mathbit{Y}"], ["d481", "\\mathbit{Z}"], ["d482", "\\mathbit{a}"], ["d483", "\\mathbit{b}"], ["d484", "\\mathbit{c}"], ["d485", "\\mathbit{d}"], ["d486", "\\mathbit{e}"], ["d487", "\\mathbit{f}"], ["d488", "\\mathbit{g}"], ["d489", "\\mathbit{h}"], ["d48a", "\\mathbit{i}"], ["d48b", "\\mathbit{j}"], ["d48c", "\\mathbit{k}"], ["d48d", "\\mathbit{l}"], ["d48e", "\\mathbit{m}"], ["d48f", "\\mathbit{n}"], ["d490", "\\mathbit{o}"], ["d491", "\\mathbit{p}"], ["d492", "\\mathbit{q}"], ["d493", "\\mathbit{r}"], ["d494", "\\mathbit{s}"], ["d495", "\\mathbit{t}"], ["d496", "\\mathbit{u}"], ["d497", "\\mathbit{v}"], ["d498", "\\mathbit{w}"], ["d499", "\\mathbit{x}"], ["d49a", "\\mathbit{y}"], ["d49b", "\\mathbit{z}"], ["d49c", "\\mathscr{A}"], ["d49e", "\\mathscr{C}"], ["d49f", "\\mathscr{D}"], ["d4a2", "\\mathscr{G}"], ["d4a5", "\\mathscr{J}"], ["d4a6", "\\mathscr{K}"], ["d4a9", "\\mathscr{N}"], ["d4aa", "\\mathscr{O}"], ["d4ab", "\\mathscr{P}"], ["d4ac", "\\mathscr{Q}"], ["d4ae", "\\mathscr{S}"], ["d4af", "\\mathscr{T}"], ["d4b0", "\\mathscr{U}"], ["d4b1", "\\mathscr{V}"], ["d4b2", "\\mathscr{W}"], ["d4b3", "\\mathscr{X}"], ["d4b4", "\\mathscr{Y}"], ["d4b5", "\\mathscr{Z}"], ["d4b6", "\\mathscr{a}"], ["d4b7", "\\mathscr{b}"], ["d4b8", "\\mathscr{c}"], ["d4b9", "\\mathscr{d}"], ["d4bb", "\\mathscr{f}"], ["d4bd", "\\mathscr{h}"], ["d4be", "\\mathscr{i}"], ["d4bf", "\\mathscr{j}"], ["d4c0", "\\mathscr{k}"], ["d4c1", "\\mathscr{l}"], ["d4c2", "\\mathscr{m}"], ["d4c3", "\\mathscr{n}"], ["d4c5", "\\mathscr{p}"], ["d4c6", "\\mathscr{q}"], ["d4c7", "\\mathscr{r}"], ["d4c8", "\\mathscr{s}"], ["d4c9", "\\mathscr{t}"], ["d4ca", "\\mathscr{u}"], ["d4cb", "\\mathscr{v}"], ["d4cc", "\\mathscr{w}"], ["d4cd", "\\mathscr{x}"], ["d4ce", "\\mathscr{y}"], ["d4cf", "\\mathscr{z}"], ["d4d0", "\\mathmit{A}"], ["d4d1", "\\mathmit{B}"], ["d4d2", "\\mathmit{C}"], ["d4d3", "\\mathmit{D}"], ["d4d4", "\\mathmit{E}"], ["d4d5", "\\mathmit{F}"], ["d4d6", "\\mathmit{G}"], ["d4d7", "\\mathmit{H}"], ["d4d8", "\\mathmit{I}"], ["d4d9", "\\mathmit{J}"], ["d4da", "\\mathmit{K}"], ["d4db", "\\mathmit{L}"], ["d4dc", "\\mathmit{M}"], ["d4dd", "\\mathmit{N}"], ["d4de", "\\mathmit{O}"], ["d4df", "\\mathmit{P}"], ["d4e0", "\\mathmit{Q}"], ["d4e1", "\\mathmit{R}"], ["d4e2", "\\mathmit{S}"], ["d4e3", "\\mathmit{T}"], ["d4e4", "\\mathmit{U}"], ["d4e5", "\\mathmit{V}"], ["d4e6", "\\mathmit{W}"], ["d4e7", "\\mathmit{X}"], ["d4e8", "\\mathmit{Y}"], ["d4e9", "\\mathmit{Z}"], ["d4ea", "\\mathmit{a}"], ["d4eb", "\\mathmit{b}"], ["d4ec", "\\mathmit{c}"], ["d4ed", "\\mathmit{d}"], ["d4ee", "\\mathmit{e}"], ["d4ef", "\\mathmit{f}"], ["d4f0", "\\mathmit{g}"], ["d4f1", "\\mathmit{h}"], ["d4f2", "\\mathmit{i}"], ["d4f3", "\\mathmit{j}"], ["d4f4", "\\mathmit{k}"], ["d4f5", "\\mathmit{l}"], ["d4f6", "\\mathmit{m}"], ["d4f7", "\\mathmit{n}"], ["d4f8", "\\mathmit{o}"], ["d4f9", "\\mathmit{p}"], ["d4fa", "\\mathmit{q}"], ["d4fb", "\\mathmit{r}"], ["d4fc", "\\mathmit{s}"], ["d4fd", "\\mathmit{t}"], ["d4fe", "\\mathmit{u}"], ["d4ff", "\\mathmit{v}"], ["d500", "\\mathmit{w}"], ["d501", "\\mathmit{x}"], ["d502", "\\mathmit{y}"], ["d503", "\\mathmit{z}"], ["d504", "\\mathfrak{A}"], ["d505", "\\mathfrak{B}"], ["d507", "\\mathfrak{D}"], ["d508", "\\mathfrak{E}"], ["d509", "\\mathfrak{F}"], ["d50a", "\\mathfrak{G}"], ["d50d", "\\mathfrak{J}"], ["d50e", "\\mathfrak{K}"], ["d50f", "\\mathfrak{L}"], ["d510", "\\mathfrak{M}"], ["d511", "\\mathfrak{N}"], ["d512", "\\mathfrak{O}"], ["d513", "\\mathfrak{P}"], ["d514", "\\mathfrak{Q}"], ["d516", "\\mathfrak{S}"], ["d517", "\\mathfrak{T}"], ["d518", "\\mathfrak{U}"], ["d519", "\\mathfrak{V}"], ["d51a", "\\mathfrak{W}"], ["d51b", "\\mathfrak{X}"], ["d51c", "\\mathfrak{Y}"], ["d51e", "\\mathfrak{a}"], ["d51f", "\\mathfrak{b}"], ["d520", "\\mathfrak{c}"], ["d521", "\\mathfrak{d}"], ["d522", "\\mathfrak{e}"], ["d523", "\\mathfrak{f}"], ["d524", "\\mathfrak{g}"], ["d525", "\\mathfrak{h}"], ["d526", "\\mathfrak{i}"], ["d527", "\\mathfrak{j}"], ["d528", "\\mathfrak{k}"], ["d529", "\\mathfrak{l}"], ["d52a", "\\mathfrak{m}"], ["d52b", "\\mathfrak{n}"], ["d52c", "\\mathfrak{o}"], ["d52d", "\\mathfrak{p}"], ["d52e", "\\mathfrak{q}"], ["d52f", "\\mathfrak{r}"], ["d530", "\\mathfrak{s}"], ["d531", "\\mathfrak{t}"], ["d532", "\\mathfrak{u}"], ["d533", "\\mathfrak{v}"], ["d534", "\\mathfrak{w}"], ["d535", "\\mathfrak{x}"], ["d536", "\\mathfrak{y}"], ["d537", "\\mathfrak{z}"], ["d538", "\\mathbb{A}"], ["d539", "\\mathbb{B}"], ["d53b", "\\mathbb{D}"], ["d53c", "\\mathbb{E}"], ["d53d", "\\mathbb{F}"], ["d53e", "\\mathbb{G}"], ["d540", "\\mathbb{I}"], ["d541", "\\mathbb{J}"], ["d542", "\\mathbb{K}"], ["d543", "\\mathbb{L}"], ["d544", "\\mathbb{M}"], ["d546", "\\mathbb{O}"], ["d54a", "\\mathbb{S}"], ["d54b", "\\mathbb{T}"], ["d54c", "\\mathbb{U}"], ["d54d", "\\mathbb{V}"], ["d54e", "\\mathbb{W}"], ["d54f", "\\mathbb{X}"], ["d550", "\\mathbb{Y}"], ["d552", "\\mathbb{a}"], ["d553", "\\mathbb{b}"], ["d554", "\\mathbb{c}"], ["d555", "\\mathbb{d}"], ["d556", "\\mathbb{e}"], ["d557", "\\mathbb{f}"], ["d558", "\\mathbb{g}"], ["d559", "\\mathbb{h}"], ["d55a", "\\mathbb{i}"], ["d55b", "\\mathbb{j}"], ["d55c", "\\mathbb{k}"], ["d55d", "\\mathbb{l}"], ["d55e", "\\mathbb{m}"], ["d55f", "\\mathbb{n}"], ["d560", "\\mathbb{o}"], ["d561", "\\mathbb{p}"], ["d562", "\\mathbb{q}"], ["d563", "\\mathbb{r}"], ["d564", "\\mathbb{s}"], ["d565", "\\mathbb{t}"], ["d566", "\\mathbb{u}"], ["d567", "\\mathbb{v}"], ["d568", "\\mathbb{w}"], ["d569", "\\mathbb{x}"], ["d56a", "\\mathbb{y}"], ["d56b", "\\mathbb{z}"], ["d56c", "\\mathslbb{A}"], ["d56d", "\\mathslbb{B}"], ["d56e", "\\mathslbb{C}"], ["d56f", "\\mathslbb{D}"], ["d570", "\\mathslbb{E}"], ["d571", "\\mathslbb{F}"], ["d572", "\\mathslbb{G}"], ["d573", "\\mathslbb{H}"], ["d574", "\\mathslbb{I}"], ["d575", "\\mathslbb{J}"], ["d576", "\\mathslbb{K}"], ["d577", "\\mathslbb{L}"], ["d578", "\\mathslbb{M}"], ["d579", "\\mathslbb{N}"], ["d57a", "\\mathslbb{O}"], ["d57b", "\\mathslbb{P}"], ["d57c", "\\mathslbb{Q}"], ["d57d", "\\mathslbb{R}"], ["d57e", "\\mathslbb{S}"], ["d57f", "\\mathslbb{T}"], ["d580", "\\mathslbb{U}"], ["d581", "\\mathslbb{V}"], ["d582", "\\mathslbb{W}"], ["d583", "\\mathslbb{X}"], ["d584", "\\mathslbb{Y}"], ["d585", "\\mathslbb{Z}"], ["d586", "\\mathslbb{a}"], ["d587", "\\mathslbb{b}"], ["d588", "\\mathslbb{c}"], ["d589", "\\mathslbb{d}"], ["d58a", "\\mathslbb{e}"], ["d58b", "\\mathslbb{f}"], ["d58c", "\\mathslbb{g}"], ["d58d", "\\mathslbb{h}"], ["d58e", "\\mathslbb{i}"], ["d58f", "\\mathslbb{j}"], ["d590", "\\mathslbb{k}"], ["d591", "\\mathslbb{l}"], ["d592", "\\mathslbb{m}"], ["d593", "\\mathslbb{n}"], ["d594", "\\mathslbb{o}"], ["d595", "\\mathslbb{p}"], ["d596", "\\mathslbb{q}"], ["d597", "\\mathslbb{r}"], ["d598", "\\mathslbb{s}"], ["d599", "\\mathslbb{t}"], ["d59a", "\\mathslbb{u}"], ["d59b", "\\mathslbb{v}"], ["d59c", "\\mathslbb{w}"], ["d59d", "\\mathslbb{x}"], ["d59e", "\\mathslbb{y}"], ["d59f", "\\mathslbb{z}"], ["d5a0", "\\mathsf{A}"], ["d5a1", "\\mathsf{B}"], ["d5a2", "\\mathsf{C}"], ["d5a3", "\\mathsf{D}"], ["d5a4", "\\mathsf{E}"], ["d5a5", "\\mathsf{F}"], ["d5a6", "\\mathsf{G}"], ["d5a7", "\\mathsf{H}"], ["d5a8", "\\mathsf{I}"], ["d5a9", "\\mathsf{J}"], ["d5aa", "\\mathsf{K}"], ["d5ab", "\\mathsf{L}"], ["d5ac", "\\mathsf{M}"], ["d5ad", "\\mathsf{N}"], ["d5ae", "\\mathsf{O}"], ["d5af", "\\mathsf{P}"], ["d5b0", "\\mathsf{Q}"], ["d5b1", "\\mathsf{R}"], ["d5b2", "\\mathsf{S}"], ["d5b3", "\\mathsf{T}"], ["d5b4", "\\mathsf{U}"], ["d5b5", "\\mathsf{V}"], ["d5b6", "\\mathsf{W}"], ["d5b7", "\\mathsf{X}"], ["d5b8", "\\mathsf{Y}"], ["d5b9", "\\mathsf{Z}"], ["d5ba", "\\mathsf{a}"], ["d5bb", "\\mathsf{b}"], ["d5bc", "\\mathsf{c}"], ["d5bd", "\\mathsf{d}"], ["d5be", "\\mathsf{e}"], ["d5bf", "\\mathsf{f}"], ["d5c0", "\\mathsf{g}"], ["d5c1", "\\mathsf{h}"], ["d5c2", "\\mathsf{i}"], ["d5c3", "\\mathsf{j}"], ["d5c4", "\\mathsf{k}"], ["d5c5", "\\mathsf{l}"], ["d5c6", "\\mathsf{m}"], ["d5c7", "\\mathsf{n}"], ["d5c8", "\\mathsf{o}"], ["d5c9", "\\mathsf{p}"], ["d5ca", "\\mathsf{q}"], ["d5cb", "\\mathsf{r}"], ["d5cc", "\\mathsf{s}"], ["d5cd", "\\mathsf{t}"], ["d5ce", "\\mathsf{u}"], ["d5cf", "\\mathsf{v}"], ["d5d0", "\\mathsf{w}"], ["d5d1", "\\mathsf{x}"], ["d5d2", "\\mathsf{y}"], ["d5d3", "\\mathsf{z}"], ["d5d4", "\\mathsfbf{A}"], ["d5d5", "\\mathsfbf{B}"], ["d5d6", "\\mathsfbf{C}"], ["d5d7", "\\mathsfbf{D}"], ["d5d8", "\\mathsfbf{E}"], ["d5d9", "\\mathsfbf{F}"], ["d5da", "\\mathsfbf{G}"], ["d5db", "\\mathsfbf{H}"], ["d5dc", "\\mathsfbf{I}"], ["d5dd", "\\mathsfbf{J}"], ["d5de", "\\mathsfbf{K}"], ["d5df", "\\mathsfbf{L}"], ["d5e0", "\\mathsfbf{M}"], ["d5e1", "\\mathsfbf{N}"], ["d5e2", "\\mathsfbf{O}"], ["d5e3", "\\mathsfbf{P}"], ["d5e4", "\\mathsfbf{Q}"], ["d5e5", "\\mathsfbf{R}"], ["d5e6", "\\mathsfbf{S}"], ["d5e7", "\\mathsfbf{T}"], ["d5e8", "\\mathsfbf{U}"], ["d5e9", "\\mathsfbf{V}"], ["d5ea", "\\mathsfbf{W}"], ["d5eb", "\\mathsfbf{X}"], ["d5ec", "\\mathsfbf{Y}"], ["d5ed", "\\mathsfbf{Z}"], ["d5ee", "\\mathsfbf{a}"], ["d5ef", "\\mathsfbf{b}"], ["d5f0", "\\mathsfbf{c}"], ["d5f1", "\\mathsfbf{d}"], ["d5f2", "\\mathsfbf{e}"], ["d5f3", "\\mathsfbf{f}"], ["d5f4", "\\mathsfbf{g}"], ["d5f5", "\\mathsfbf{h}"], ["d5f6", "\\mathsfbf{i}"], ["d5f7", "\\mathsfbf{j}"], ["d5f8", "\\mathsfbf{k}"], ["d5f9", "\\mathsfbf{l}"], ["d5fa", "\\mathsfbf{m}"], ["d5fb", "\\mathsfbf{n}"], ["d5fc", "\\mathsfbf{o}"], ["d5fd", "\\mathsfbf{p}"], ["d5fe", "\\mathsfbf{q}"], ["d5ff", "\\mathsfbf{r}"], ["d600", "\\mathsfbf{s}"], ["d601", "\\mathsfbf{t}"], ["d602", "\\mathsfbf{u}"], ["d603", "\\mathsfbf{v}"], ["d604", "\\mathsfbf{w}"], ["d605", "\\mathsfbf{x}"], ["d606", "\\mathsfbf{y}"], ["d607", "\\mathsfbf{z}"], ["d608", "\\mathsfsl{A}"], ["d609", "\\mathsfsl{B}"], ["d60a", "\\mathsfsl{C}"], ["d60b", "\\mathsfsl{D}"], ["d60c", "\\mathsfsl{E}"], ["d60d", "\\mathsfsl{F}"], ["d60e", "\\mathsfsl{G}"], ["d60f", "\\mathsfsl{H}"], ["d610", "\\mathsfsl{I}"], ["d611", "\\mathsfsl{J}"], ["d612", "\\mathsfsl{K}"], ["d613", "\\mathsfsl{L}"], ["d614", "\\mathsfsl{M}"], ["d615", "\\mathsfsl{N}"], ["d616", "\\mathsfsl{O}"], ["d617", "\\mathsfsl{P}"], ["d618", "\\mathsfsl{Q}"], ["d619", "\\mathsfsl{R}"], ["d61a", "\\mathsfsl{S}"], ["d61b", "\\mathsfsl{T}"], ["d61c", "\\mathsfsl{U}"], ["d61d", "\\mathsfsl{V}"], ["d61e", "\\mathsfsl{W}"], ["d61f", "\\mathsfsl{X}"], ["d620", "\\mathsfsl{Y}"], ["d621", "\\mathsfsl{Z}"], ["d622", "\\mathsfsl{a}"], ["d623", "\\mathsfsl{b}"], ["d624", "\\mathsfsl{c}"], ["d625", "\\mathsfsl{d}"], ["d626", "\\mathsfsl{e}"], ["d627", "\\mathsfsl{f}"], ["d628", "\\mathsfsl{g}"], ["d629", "\\mathsfsl{h}"], ["d62a", "\\mathsfsl{i}"], ["d62b", "\\mathsfsl{j}"], ["d62c", "\\mathsfsl{k}"], ["d62d", "\\mathsfsl{l}"], ["d62e", "\\mathsfsl{m}"], ["d62f", "\\mathsfsl{n}"], ["d630", "\\mathsfsl{o}"], ["d631", "\\mathsfsl{p}"], ["d632", "\\mathsfsl{q}"], ["d633", "\\mathsfsl{r}"], ["d634", "\\mathsfsl{s}"], ["d635", "\\mathsfsl{t}"], ["d636", "\\mathsfsl{u}"], ["d637", "\\mathsfsl{v}"], ["d638", "\\mathsfsl{w}"], ["d639", "\\mathsfsl{x}"], ["d63a", "\\mathsfsl{y}"], ["d63b", "\\mathsfsl{z}"], ["d63c", "\\mathsfbfsl{A}"], ["d63d", "\\mathsfbfsl{B}"], ["d63e", "\\mathsfbfsl{C}"], ["d63f", "\\mathsfbfsl{D}"], ["d640", "\\mathsfbfsl{E}"], ["d641", "\\mathsfbfsl{F}"], ["d642", "\\mathsfbfsl{G}"], ["d643", "\\mathsfbfsl{H}"], ["d644", "\\mathsfbfsl{I}"], ["d645", "\\mathsfbfsl{J}"], ["d646", "\\mathsfbfsl{K}"], ["d647", "\\mathsfbfsl{L}"], ["d648", "\\mathsfbfsl{M}"], ["d649", "\\mathsfbfsl{N}"], ["d64a", "\\mathsfbfsl{O}"], ["d64b", "\\mathsfbfsl{P}"], ["d64c", "\\mathsfbfsl{Q}"], ["d64d", "\\mathsfbfsl{R}"], ["d64e", "\\mathsfbfsl{S}"], ["d64f", "\\mathsfbfsl{T}"], ["d650", "\\mathsfbfsl{U}"], ["d651", "\\mathsfbfsl{V}"], ["d652", "\\mathsfbfsl{W}"], ["d653", "\\mathsfbfsl{X}"], ["d654", "\\mathsfbfsl{Y}"], ["d655", "\\mathsfbfsl{Z}"], ["d656", "\\mathsfbfsl{a}"], ["d657", "\\mathsfbfsl{b}"], ["d658", "\\mathsfbfsl{c}"], ["d659", "\\mathsfbfsl{d}"], ["d65a", "\\mathsfbfsl{e}"], ["d65b", "\\mathsfbfsl{f}"], ["d65c", "\\mathsfbfsl{g}"], ["d65d", "\\mathsfbfsl{h}"], ["d65e", "\\mathsfbfsl{i}"], ["d65f", "\\mathsfbfsl{j}"], ["d660", "\\mathsfbfsl{k}"], ["d661", "\\mathsfbfsl{l}"], ["d662", "\\mathsfbfsl{m}"], ["d663", "\\mathsfbfsl{n}"], ["d664", "\\mathsfbfsl{o}"], ["d665", "\\mathsfbfsl{p}"], ["d666", "\\mathsfbfsl{q}"], ["d667", "\\mathsfbfsl{r}"], ["d668", "\\mathsfbfsl{s}"], ["d669", "\\mathsfbfsl{t}"], ["d66a", "\\mathsfbfsl{u}"], ["d66b", "\\mathsfbfsl{v}"], ["d66c", "\\mathsfbfsl{w}"], ["d66d", "\\mathsfbfsl{x}"], ["d66e", "\\mathsfbfsl{y}"], ["d66f", "\\mathsfbfsl{z}"], ["d670", "\\mathtt{A}"], ["d671", "\\mathtt{B}"], ["d672", "\\mathtt{C}"], ["d673", "\\mathtt{D}"], ["d674", "\\mathtt{E}"], ["d675", "\\mathtt{F}"], ["d676", "\\mathtt{G}"], ["d677", "\\mathtt{H}"], ["d678", "\\mathtt{I}"], ["d679", "\\mathtt{J}"], ["d67a", "\\mathtt{K}"], ["d67b", "\\mathtt{L}"], ["d67c", "\\mathtt{M}"], ["d67d", "\\mathtt{N}"], ["d67e", "\\mathtt{O}"], ["d67f", "\\mathtt{P}"], ["d680", "\\mathtt{Q}"], ["d681", "\\mathtt{R}"], ["d682", "\\mathtt{S}"], ["d683", "\\mathtt{T}"], ["d684", "\\mathtt{U}"], ["d685", "\\mathtt{V}"], ["d686", "\\mathtt{W}"], ["d687", "\\mathtt{X}"], ["d688", "\\mathtt{Y}"], ["d689", "\\mathtt{Z}"], ["d68a", "\\mathtt{a}"], ["d68b", "\\mathtt{b}"], ["d68c", "\\mathtt{c}"], ["d68d", "\\mathtt{d}"], ["d68e", "\\mathtt{e}"], ["d68f", "\\mathtt{f}"], ["d690", "\\mathtt{g}"], ["d691", "\\mathtt{h}"], ["d692", "\\mathtt{i}"], ["d693", "\\mathtt{j}"], ["d694", "\\mathtt{k}"], ["d695", "\\mathtt{l}"], ["d696", "\\mathtt{m}"], ["d697", "\\mathtt{n}"], ["d698", "\\mathtt{o}"], ["d699", "\\mathtt{p}"], ["d69a", "\\mathtt{q}"], ["d69b", "\\mathtt{r}"], ["d69c", "\\mathtt{s}"], ["d69d", "\\mathtt{t}"], ["d69e", "\\mathtt{u}"], ["d69f", "\\mathtt{v}"], ["d6a0", "\\mathtt{w}"], ["d6a1", "\\mathtt{x}"], ["d6a2", "\\mathtt{y}"], ["d6a3", "\\mathtt{z}"], ["d6a8", "\\mathbf{\\Alpha}"], ["d6a9", "\\mathbf{\\Beta}"], ["d6aa", "\\mathbf{\\Gamma}"], ["d6ab", "\\mathbf{\\Delta}"], ["d6ac", "\\mathbf{\\Epsilon}"], ["d6ad", "\\mathbf{\\Zeta}"], ["d6ae", "\\mathbf{\\Eta}"], ["d6af", "\\mathbf{\\Theta}"], ["d6b0", "\\mathbf{\\Iota}"], ["d6b1", "\\mathbf{\\Kappa}"], ["d6b2", "\\mathbf{\\Lambda}"], ["d6b5", "\\mathbf{\\Xi}"], ["d6b7", "\\mathbf{\\Pi}"], ["d6b8", "\\mathbf{\\Rho}"], ["d6b9", "\\mathbf{\\vartheta}"], ["d6ba", "\\mathbf{\\Sigma}"], ["d6bb", "\\mathbf{\\Tau}"], ["d6bc", "\\mathbf{\\Upsilon}"], ["d6bd", "\\mathbf{\\Phi}"], ["d6be", "\\mathbf{\\Chi}"], ["d6bf", "\\mathbf{\\Psi}"], ["d6c0", "\\mathbf{\\Omega}"], ["d6c1", "\\mathbf{\\nabla}"], ["d6c2", "\\mathbf{\\Alpha}"], ["d6c3", "\\mathbf{\\Beta}"], ["d6c4", "\\mathbf{\\Gamma}"], ["d6c5", "\\mathbf{\\Delta}"], ["d6c6", "\\mathbf{\\Epsilon}"], ["d6c7", "\\mathbf{\\Zeta}"], ["d6c8", "\\mathbf{\\Eta}"], ["d6c9", "\\mathbf{\\theta}"], ["d6ca", "\\mathbf{\\Iota}"], ["d6cb", "\\mathbf{\\Kappa}"], ["d6cc", "\\mathbf{\\Lambda}"], ["d6cf", "\\mathbf{\\Xi}"], ["d6d1", "\\mathbf{\\Pi}"], ["d6d2", "\\mathbf{\\Rho}"], ["d6d3", "\\mathbf{\\varsigma}"], ["d6d4", "\\mathbf{\\Sigma}"], ["d6d5", "\\mathbf{\\Tau}"], ["d6d6", "\\mathbf{\\Upsilon}"], ["d6d7", "\\mathbf{\\Phi}"], ["d6d8", "\\mathbf{\\Chi}"], ["d6d9", "\\mathbf{\\Psi}"], ["d6da", "\\mathbf{\\Omega}"], ["d6db", "\\partial{}"], ["d6dc", "\\in"], ["d6dd", "\\mathbf{\\vartheta}"], ["d6de", "\\mathbf{\\varkappa}"], ["d6df", "\\mathbf{\\phi}"], ["d6e0", "\\mathbf{\\varrho}"], ["d6e1", "\\mathbf{\\varpi}"], ["d6e2", "\\mathsl{\\Alpha}"], ["d6e3", "\\mathsl{\\Beta}"], ["d6e4", "\\mathsl{\\Gamma}"], ["d6e5", "\\mathsl{\\Delta}"], ["d6e6", "\\mathsl{\\Epsilon}"], ["d6e7", "\\mathsl{\\Zeta}"], ["d6e8", "\\mathsl{\\Eta}"], ["d6e9", "\\mathsl{\\Theta}"], ["d6ea", "\\mathsl{\\Iota}"], ["d6eb", "\\mathsl{\\Kappa}"], ["d6ec", "\\mathsl{\\Lambda}"], ["d6ef", "\\mathsl{\\Xi}"], ["d6f1", "\\mathsl{\\Pi}"], ["d6f2", "\\mathsl{\\Rho}"], ["d6f3", "\\mathsl{\\vartheta}"], ["d6f4", "\\mathsl{\\Sigma}"], ["d6f5", "\\mathsl{\\Tau}"], ["d6f6", "\\mathsl{\\Upsilon}"], ["d6f7", "\\mathsl{\\Phi}"], ["d6f8", "\\mathsl{\\Chi}"], ["d6f9", "\\mathsl{\\Psi}"], ["d6fa", "\\mathsl{\\Omega}"], ["d6fb", "\\mathsl{\\nabla}"], ["d6fc", "\\mathsl{\\Alpha}"], ["d6fd", "\\mathsl{\\Beta}"], ["d6fe", "\\mathsl{\\Gamma}"], ["d6ff", "\\mathsl{\\Delta}"], ["d700", "\\mathsl{\\Epsilon}"], ["d701", "\\mathsl{\\Zeta}"], ["d702", "\\mathsl{\\Eta}"], ["d703", "\\mathsl{\\Theta}"], ["d704", "\\mathsl{\\Iota}"], ["d705", "\\mathsl{\\Kappa}"], ["d706", "\\mathsl{\\Lambda}"], ["d709", "\\mathsl{\\Xi}"], ["d70b", "\\mathsl{\\Pi}"], ["d70c", "\\mathsl{\\Rho}"], ["d70d", "\\mathsl{\\varsigma}"], ["d70e", "\\mathsl{\\Sigma}"], ["d70f", "\\mathsl{\\Tau}"], ["d710", "\\mathsl{\\Upsilon}"], ["d711", "\\mathsl{\\Phi}"], ["d712", "\\mathsl{\\Chi}"], ["d713", "\\mathsl{\\Psi}"], ["d714", "\\mathsl{\\Omega}"], ["d715", "\\partial{}"], ["d716", "\\in"], ["d717", "\\mathsl{\\vartheta}"], ["d718", "\\mathsl{\\varkappa}"], ["d719", "\\mathsl{\\phi}"], ["d71a", "\\mathsl{\\varrho}"], ["d71b", "\\mathsl{\\varpi}"], ["d71c", "\\mathbit{\\Alpha}"], ["d71d", "\\mathbit{\\Beta}"], ["d71e", "\\mathbit{\\Gamma}"], ["d71f", "\\mathbit{\\Delta}"], ["d720", "\\mathbit{\\Epsilon}"], ["d721", "\\mathbit{\\Zeta}"], ["d722", "\\mathbit{\\Eta}"], ["d723", "\\mathbit{\\Theta}"], ["d724", "\\mathbit{\\Iota}"], ["d725", "\\mathbit{\\Kappa}"], ["d726", "\\mathbit{\\Lambda}"], ["d729", "\\mathbit{\\Xi}"], ["d72b", "\\mathbit{\\Pi}"], ["d72c", "\\mathbit{\\Rho}"], ["d72d", "\\mathbit{O}"], ["d72e", "\\mathbit{\\Sigma}"], ["d72f", "\\mathbit{\\Tau}"], ["d730", "\\mathbit{\\Upsilon}"], ["d731", "\\mathbit{\\Phi}"], ["d732", "\\mathbit{\\Chi}"], ["d733", "\\mathbit{\\Psi}"], ["d734", "\\mathbit{\\Omega}"], ["d735", "\\mathbit{\\nabla}"], ["d736", "\\mathbit{\\Alpha}"], ["d737", "\\mathbit{\\Beta}"], ["d738", "\\mathbit{\\Gamma}"], ["d739", "\\mathbit{\\Delta}"], ["d73a", "\\mathbit{\\Epsilon}"], ["d73b", "\\mathbit{\\Zeta}"], ["d73c", "\\mathbit{\\Eta}"], ["d73d", "\\mathbit{\\Theta}"], ["d73e", "\\mathbit{\\Iota}"], ["d73f", "\\mathbit{\\Kappa}"], ["d740", "\\mathbit{\\Lambda}"], ["d743", "\\mathbit{\\Xi}"], ["d745", "\\mathbit{\\Pi}"], ["d746", "\\mathbit{\\Rho}"], ["d747", "\\mathbit{\\varsigma}"], ["d748", "\\mathbit{\\Sigma}"], ["d749", "\\mathbit{\\Tau}"], ["d74a", "\\mathbit{\\Upsilon}"], ["d74b", "\\mathbit{\\Phi}"], ["d74c", "\\mathbit{\\Chi}"], ["d74d", "\\mathbit{\\Psi}"], ["d74e", "\\mathbit{\\Omega}"], ["d74f", "\\partial{}"], ["d750", "\\in"], ["d751", "\\mathbit{\\vartheta}"], ["d752", "\\mathbit{\\varkappa}"], ["d753", "\\mathbit{\\phi}"], ["d754", "\\mathbit{\\varrho}"], ["d755", "\\mathbit{\\varpi}"], ["d756", "\\mathsfbf{\\Alpha}"], ["d757", "\\mathsfbf{\\Beta}"], ["d758", "\\mathsfbf{\\Gamma}"], ["d759", "\\mathsfbf{\\Delta}"], ["d75a", "\\mathsfbf{\\Epsilon}"], ["d75b", "\\mathsfbf{\\Zeta}"], ["d75c", "\\mathsfbf{\\Eta}"], ["d75d", "\\mathsfbf{\\Theta}"], ["d75e", "\\mathsfbf{\\Iota}"], ["d75f", "\\mathsfbf{\\Kappa}"], ["d760", "\\mathsfbf{\\Lambda}"], ["d763", "\\mathsfbf{\\Xi}"], ["d765", "\\mathsfbf{\\Pi}"], ["d766", "\\mathsfbf{\\Rho}"], ["d767", "\\mathsfbf{\\vartheta}"], ["d768", "\\mathsfbf{\\Sigma}"], ["d769", "\\mathsfbf{\\Tau}"], ["d76a", "\\mathsfbf{\\Upsilon}"], ["d76b", "\\mathsfbf{\\Phi}"], ["d76c", "\\mathsfbf{\\Chi}"], ["d76d", "\\mathsfbf{\\Psi}"], ["d76e", "\\mathsfbf{\\Omega}"], ["d76f", "\\mathsfbf{\\nabla}"], ["d770", "\\mathsfbf{\\Alpha}"], ["d771", "\\mathsfbf{\\Beta}"], ["d772", "\\mathsfbf{\\Gamma}"], ["d773", "\\mathsfbf{\\Delta}"], ["d774", "\\mathsfbf{\\Epsilon}"], ["d775", "\\mathsfbf{\\Zeta}"], ["d776", "\\mathsfbf{\\Eta}"], ["d777", "\\mathsfbf{\\Theta}"], ["d778", "\\mathsfbf{\\Iota}"], ["d779", "\\mathsfbf{\\Kappa}"], ["d77a", "\\mathsfbf{\\Lambda}"], ["d77d", "\\mathsfbf{\\Xi}"], ["d77f", "\\mathsfbf{\\Pi}"], ["d780", "\\mathsfbf{\\Rho}"], ["d781", "\\mathsfbf{\\varsigma}"], ["d782", "\\mathsfbf{\\Sigma}"], ["d783", "\\mathsfbf{\\Tau}"], ["d784", "\\mathsfbf{\\Upsilon}"], ["d785", "\\mathsfbf{\\Phi}"], ["d786", "\\mathsfbf{\\Chi}"], ["d787", "\\mathsfbf{\\Psi}"], ["d788", "\\mathsfbf{\\Omega}"], ["d789", "\\partial{}"], ["d78a", "\\in"], ["d78b", "\\mathsfbf{\\vartheta}"], ["d78c", "\\mathsfbf{\\varkappa}"], ["d78d", "\\mathsfbf{\\phi}"], ["d78e", "\\mathsfbf{\\varrho}"], ["d78f", "\\mathsfbf{\\varpi}"], ["d790", "\\mathsfbfsl{\\Alpha}"], ["d791", "\\mathsfbfsl{\\Beta}"], ["d792", "\\mathsfbfsl{\\Gamma}"], ["d793", "\\mathsfbfsl{\\Delta}"], ["d794", "\\mathsfbfsl{\\Epsilon}"], ["d795", "\\mathsfbfsl{\\Zeta}"], ["d796", "\\mathsfbfsl{\\Eta}"], ["d797", "\\mathsfbfsl{\\vartheta}"], ["d798", "\\mathsfbfsl{\\Iota}"], ["d799", "\\mathsfbfsl{\\Kappa}"], ["d79a", "\\mathsfbfsl{\\Lambda}"], ["d79d", "\\mathsfbfsl{\\Xi}"], ["d79f", "\\mathsfbfsl{\\Pi}"], ["d7a0", "\\mathsfbfsl{\\Rho}"], ["d7a1", "\\mathsfbfsl{\\vartheta}"], ["d7a2", "\\mathsfbfsl{\\Sigma}"], ["d7a3", "\\mathsfbfsl{\\Tau}"], ["d7a4", "\\mathsfbfsl{\\Upsilon}"], ["d7a5", "\\mathsfbfsl{\\Phi}"], ["d7a6", "\\mathsfbfsl{\\Chi}"], ["d7a7", "\\mathsfbfsl{\\Psi}"], ["d7a8", "\\mathsfbfsl{\\Omega}"], ["d7a9", "\\mathsfbfsl{\\nabla}"], ["d7aa", "\\mathsfbfsl{\\Alpha}"], ["d7ab", "\\mathsfbfsl{\\Beta}"], ["d7ac", "\\mathsfbfsl{\\Gamma}"], ["d7ad", "\\mathsfbfsl{\\Delta}"], ["d7ae", "\\mathsfbfsl{\\Epsilon}"], ["d7af", "\\mathsfbfsl{\\Zeta}"], ["d7b0", "\\mathsfbfsl{\\Eta}"], ["d7b1", "\\mathsfbfsl{\\vartheta}"], ["d7b2", "\\mathsfbfsl{\\Iota}"], ["d7b3", "\\mathsfbfsl{\\Kappa}"], ["d7b4", "\\mathsfbfsl{\\Lambda}"], ["d7b7", "\\mathsfbfsl{\\Xi}"], ["d7b9", "\\mathsfbfsl{\\Pi}"], ["d7ba", "\\mathsfbfsl{\\Rho}"], ["d7bb", "\\mathsfbfsl{\\varsigma}"], ["d7bc", "\\mathsfbfsl{\\Sigma}"], ["d7bd", "\\mathsfbfsl{\\Tau}"], ["d7be", "\\mathsfbfsl{\\Upsilon}"], ["d7bf", "\\mathsfbfsl{\\Phi}"], ["d7c0", "\\mathsfbfsl{\\Chi}"], ["d7c1", "\\mathsfbfsl{\\Psi}"], ["d7c2", "\\mathsfbfsl{\\Omega}"], ["d7c3", "\\partial{}"], ["d7c4", "\\in"], ["d7c5", "\\mathsfbfsl{\\vartheta}"], ["d7c6", "\\mathsfbfsl{\\varkappa}"], ["d7c7", "\\mathsfbfsl{\\phi}"], ["d7c8", "\\mathsfbfsl{\\varrho}"], ["d7c9", "\\mathsfbfsl{\\varpi}"], ["d7ce", "\\mathbf{0}"], ["d7cf", "\\mathbf{1}"], ["d7d0", "\\mathbf{2}"], ["d7d1", "\\mathbf{3}"], ["d7d2", "\\mathbf{4}"], ["d7d3", "\\mathbf{5}"], ["d7d4", "\\mathbf{6}"], ["d7d5", "\\mathbf{7}"], ["d7d6", "\\mathbf{8}"], ["d7d7", "\\mathbf{9}"], ["d7d8", "\\mathbb{0}"], ["d7d9", "\\mathbb{1}"], ["d7da", "\\mathbb{2}"], ["d7db", "\\mathbb{3}"], ["d7dc", "\\mathbb{4}"], ["d7dd", "\\mathbb{5}"], ["d7de", "\\mathbb{6}"], ["d7df", "\\mathbb{7}"], ["d7e0", "\\mathbb{8}"], ["d7e1", "\\mathbb{9}"], ["d7e2", "\\mathsf{0}"], ["d7e3", "\\mathsf{1}"], ["d7e4", "\\mathsf{2}"], ["d7e5", "\\mathsf{3}"], ["d7e6", "\\mathsf{4}"], ["d7e7", "\\mathsf{5}"], ["d7e8", "\\mathsf{6}"], ["d7e9", "\\mathsf{7}"], ["d7ea", "\\mathsf{8}"], ["d7eb", "\\mathsf{9}"], ["d7ec", "\\mathsfbf{0}"], ["d7ed", "\\mathsfbf{1}"], ["d7ee", "\\mathsfbf{2}"], ["d7ef", "\\mathsfbf{3}"], ["d7f0", "\\mathsfbf{4}"], ["d7f1", "\\mathsfbf{5}"], ["d7f2", "\\mathsfbf{6}"], ["d7f3", "\\mathsfbf{7}"], ["d7f4", "\\mathsfbf{8}"], ["d7f5", "\\mathsfbf{9}"], ["d7f6", "\\mathtt{0}"], ["d7f7", "\\mathtt{1}"], ["d7f8", "\\mathtt{2}"], ["d7f9", "\\mathtt{3}"], ["d7fa", "\\mathtt{4}"], ["d7fb", "\\mathtt{5}"], ["d7fc", "\\mathtt{6}"], ["d7fd", "\\mathtt{7}"], ["d7fe", "\\mathtt{8}"], ["d7ff", "\\mathtt{9}"]]);
-    }
-  });
+  var specialCharacters = /* @__PURE__ */new Map([["0023", "\\#"], ["0024", "\\$"], ["0025", "\\%"], ["0026", "\\&"], ["0027", "'"], ["0040", "\\@"], ["002a", "\\textasteriskcentered"], ["005f", "\\_"], ["007c", "\\vert{}"], ["00a0", "~"], ["00a1", "\\textexclamdown{}"], ["00a2", "\\textcent{}"], ["00a3", "\\textsterling{}"], ["00a4", "\\textcurrency{}"], ["00a5", "\\textyen{}"], ["00a6", "\\textbrokenbar{}"], ["00a7", "\\textsection{}"], ["00a8", "\\textasciidieresis{}"], ["00a9", "\\textcopyright{}"], ["00aa", "\\textordfeminine{}"], ["00ab", "\\guillemotleft{}"], ["00ac", "\\lnot{}"], ["00ad", "\\-"], ["00ae", "\\textregistered{}"], ["00af", "\\textasciimacron{}"], ["00b0", "\\textdegree{}"], ["00b1", "\\pm{}"], ["00b2", "\\ensuremath{^2}"], ["00b3", "\\ensuremath{^3}"], ["00b4", "\\textasciiacute{}"], ["00b5", "\\mathrm{\\mu}"], ["00b6", "\\textparagraph{}"], ["00b7", "\\cdot{}"], ["00b8", "\\c{}"], ["00b9", "\\ensuremath{^1}"], ["00ba", "\\textordmasculine{}"], ["00bb", "\\guillemotright{}"], ["00bc", "\\textonequarter{}"], ["00bd", "\\textonehalf{}"], ["00be", "\\textthreequarters{}"], ["00bf", "\\textquestiondown{}"], ["00c0", "\\`{A}"], ["00c1", "\\'{A}"], ["00c2", "\\^{A}"], ["00c3", "\\~{A}"], ["00c4", '\\"{A}'], ["00c5", "\\AA{}"], ["00c6", "\\AE{}"], ["00c7", "\\c{C}"], ["00c8", "\\`{E}"], ["00c9", "\\'{E}"], ["00ca", "\\^{E}"], ["00cb", '\\"{E}'], ["00cc", "\\`{I}"], ["00cd", "\\'{I}"], ["00ce", "\\^{I}"], ["00cf", '\\"{I}'], ["00d0", "\\DH{}"], ["00d1", "\\~{N}"], ["00d2", "\\`{O}"], ["00d3", "\\'{O}"], ["00d4", "\\^{O}"], ["00d5", "\\~{O}"], ["00d6", '\\"{O}'], ["00d7", "\\texttimes{}"], ["00d8", "\\O{}"], ["00d9", "\\`{U}"], ["00da", "\\'{U}"], ["00db", "\\^{U}"], ["00dc", '\\"{U}'], ["00dd", "\\'{Y}"], ["00de", "\\TH{}"], ["00df", "\\ss{}"], ["00e0", "\\`{a}"], ["00e1", "\\'{a}"], ["00e2", "\\^{a}"], ["00e3", "\\~{a}"], ["00e4", '\\"{a}'], ["00e5", "\\aa{}"], ["00e6", "\\ae{}"], ["00e7", "\\c{c}"], ["00e8", "\\`{e}"], ["00e9", "\\'{e}"], ["00ea", "\\^{e}"], ["00eb", '\\"{e}'], ["00ec", "\\`{\\i}"], ["00ed", "\\'{\\i}"], ["00ee", "\\^{\\i}"], ["00ef", '\\"{\\i}'], ["00f0", "\\dh{}"], ["00f1", "\\~{n}"], ["00f2", "\\`{o}"], ["00f3", "\\'{o}"], ["00f4", "\\^{o}"], ["00f5", "\\~{o}"], ["00f6", '\\"{o}'], ["00f7", "\\div{}"], ["00f8", "\\o{}"], ["00f9", "\\`{u}"], ["00fa", "\\'{u}"], ["00fb", "\\^{u}"], ["00fc", '\\"{u}'], ["00fd", "\\'{y}"], ["00fe", "\\th{}"], ["00ff", '\\"{y}'], ["0100", "\\={A}"], ["0101", "\\={a}"], ["0102", "\\u{A}"], ["0103", "\\u{a}"], ["0104", "\\k{A}"], ["0105", "\\k{a}"], ["0106", "\\'{C}"], ["0107", "\\'{c}"], ["0108", "\\^{C}"], ["0109", "\\^{c}"], ["010a", "\\.{C}"], ["010b", "\\.{c}"], ["010c", "\\v{C}"], ["010d", "\\v{c}"], ["010e", "\\v{D}"], ["010f", "\\v{d}"], ["0110", "\\DJ{}"], ["0111", "\\dj{}"], ["0112", "\\={E}"], ["0113", "\\={e}"], ["0114", "\\u{E}"], ["0115", "\\u{e}"], ["0116", "\\.{E}"], ["0117", "\\.{e}"], ["0118", "\\k{E}"], ["0119", "\\k{e}"], ["011a", "\\v{E}"], ["011b", "\\v{e}"], ["011c", "\\^{G}"], ["011d", "\\^{g}"], ["011e", "\\u{G}"], ["011f", "\\u{g}"], ["0120", "\\.{G}"], ["0121", "\\.{g}"], ["0122", "\\c{G}"], ["0123", "\\c{g}"], ["0124", "\\^{H}"], ["0125", "\\^{h}"], ["0126", "{\\fontencoding{LELA}\\selectfont\\char40}"], ["0127", "\\Elzxh{}"], ["0128", "\\~{I}"], ["0129", "\\~{\\i}"], ["012a", "\\={I}"], ["012b", "\\={\\i}"], ["012c", "\\u{I}"], ["012d", "\\u{\\i}"], ["012e", "\\k{I}"], ["012f", "\\k{i}"], ["0130", "\\.{I}"], ["0131", "\\i{}"], ["0132", "IJ"], ["0133", "ij"], ["0134", "\\^{J}"], ["0135", "\\^{\\j}"], ["0136", "\\c{K}"], ["0137", "\\c{k}"], ["0138", "{\\fontencoding{LELA}\\selectfont\\char91}"], ["0139", "\\'{L}"], ["013a", "\\'{l}"], ["013b", "\\c{L}"], ["013c", "\\c{l}"], ["013d", "\\v{L}"], ["013e", "\\v{l}"], ["013f", "{\\fontencoding{LELA}\\selectfont\\char201}"], ["0140", "{\\fontencoding{LELA}\\selectfont\\char202}"], ["0141", "\\L{}"], ["0142", "\\l{}"], ["0143", "\\'{N}"], ["0144", "\\'{n}"], ["0145", "\\c{N}"], ["0146", "\\c{n}"], ["0147", "\\v{N}"], ["0148", "\\v{n}"], ["0149", "'n"], ["014a", "\\NG{}"], ["014b", "\\ng{}"], ["014c", "\\={O}"], ["014d", "\\={o}"], ["014e", "\\u{O}"], ["014f", "\\u{o}"], ["0150", "\\H{O}"], ["0151", "\\H{o}"], ["0152", "\\OE{}"], ["0153", "\\oe{}"], ["0154", "\\'{R}"], ["0155", "\\'{r}"], ["0156", "\\c{R}"], ["0157", "\\c{r}"], ["0158", "\\v{R}"], ["0159", "\\v{r}"], ["015a", "\\'{S}"], ["015b", "\\'{s}"], ["015c", "\\^{S}"], ["015d", "\\^{s}"], ["015e", "\\c{S}"], ["015f", "\\c{s}"], ["0160", "\\v{S}"], ["0161", "\\v{s}"], ["0162", "\\c{T}"], ["0163", "\\c{t}"], ["0164", "\\v{T}"], ["0165", "\\v{t}"], ["0166", "{\\fontencoding{LELA}\\selectfont\\char47}"], ["0167", "{\\fontencoding{LELA}\\selectfont\\char63}"], ["0168", "\\~{U}"], ["0169", "\\~{u}"], ["016a", "\\={U}"], ["016b", "\\={u}"], ["016c", "\\u{U}"], ["016d", "\\u{u}"], ["016e", "\\r{U}"], ["016f", "\\r{u}"], ["0170", "\\H{U}"], ["0171", "\\H{u}"], ["0172", "\\k{U}"], ["0173", "\\k{u}"], ["0174", "\\^{W}"], ["0175", "\\^{w}"], ["0176", "\\^{Y}"], ["0177", "\\^{y}"], ["0178", '\\"{Y}'], ["0179", "\\'{Z}"], ["017a", "\\'{z}"], ["017b", "\\.{Z}"], ["017c", "\\.{z}"], ["017d", "\\v{Z}"], ["017e", "\\v{z}"], ["0195", "\\texthvlig{}"], ["019e", "\\textnrleg{}"], ["01aa", "\\eth{}"], ["01ba", "{\\fontencoding{LELA}\\selectfont\\char195}"], ["01c2", "\\textdoublepipe{}"], ["01f5", "\\'{g}"], ["0250", "\\Elztrna{}"], ["0252", "\\Elztrnsa{}"], ["0254", "\\Elzopeno{}"], ["0256", "\\Elzrtld{}"], ["0258", "{\\fontencoding{LEIP}\\selectfont\\char61}"], ["0259", "\\Elzschwa{}"], ["025b", "\\varepsilon{}"], ["0263", "\\Elzpgamma{}"], ["0264", "\\Elzpbgam{}"], ["0265", "\\Elztrnh{}"], ["026c", "\\Elzbtdl{}"], ["026d", "\\Elzrtll{}"], ["026f", "\\Elztrnm{}"], ["0270", "\\Elztrnmlr{}"], ["0271", "\\Elzltlmr{}"], ["0272", "\\Elzltln{}"], ["0273", "\\Elzrtln{}"], ["0277", "\\Elzclomeg{}"], ["0278", "\\textphi{}"], ["0279", "\\Elztrnr{}"], ["027a", "\\Elztrnrl{}"], ["027b", "\\Elzrttrnr{}"], ["027c", "\\Elzrl{}"], ["027d", "\\Elzrtlr{}"], ["027e", "\\Elzfhr{}"], ["027f", "{\\fontencoding{LEIP}\\selectfont\\char202}"], ["0282", "\\Elzrtls{}"], ["0283", "\\Elzesh{}"], ["0287", "\\Elztrnt{}"], ["0288", "\\Elzrtlt{}"], ["028a", "\\Elzpupsil{}"], ["028b", "\\Elzpscrv{}"], ["028c", "\\Elzinvv{}"], ["028d", "\\Elzinvw{}"], ["028e", "\\Elztrny{}"], ["0290", "\\Elzrtlz{}"], ["0292", "\\Elzyogh{}"], ["0294", "\\Elzglst{}"], ["0295", "\\Elzreglst{}"], ["0296", "\\Elzinglst{}"], ["029e", "\\textturnk{}"], ["02a4", "\\Elzdyogh{}"], ["02a7", "\\Elztesh{}"], ["02c7", "\\textasciicaron{}"], ["02c8", "\\Elzverts{}"], ["02cc", "\\Elzverti{}"], ["02d0", "\\Elzlmrk{}"], ["02d1", "\\Elzhlmrk{}"], ["02d2", "\\Elzsbrhr{}"], ["02d3", "\\Elzsblhr{}"], ["02d4", "\\Elzrais{}"], ["02d5", "\\Elzlow{}"], ["02d8", "\\textasciibreve{}"], ["02d9", "\\textperiodcentered{}"], ["02da", "\\r{}"], ["02db", "\\k{}"], ["02dc", "\\texttildelow{}"], ["02dd", "\\H{}"], ["02e5", "\\tone{55}"], ["02e6", "\\tone{44}"], ["02e7", "\\tone{33}"], ["02e8", "\\tone{22}"], ["02e9", "\\tone{11}"], ["0300", "\\`"], ["0301", "\\'"], ["0302", "\\^"], ["0303", "\\~"], ["0304", "\\="], ["0306", "\\u"], ["0307", "\\."], ["0308", '\\"'], ["030a", "\\r"], ["030b", "\\H"], ["030c", "\\v"], ["030f", "\\cyrchar\\C"], ["0311", "{\\fontencoding{LECO}\\selectfont\\char177}"], ["0318", "{\\fontencoding{LECO}\\selectfont\\char184}"], ["0319", "{\\fontencoding{LECO}\\selectfont\\char185}"], ["0321", "\\Elzpalh{}"], ["0322", "\\Elzrh{}"], ["0327", "\\c"], ["0328", "\\k"], ["032a", "\\Elzsbbrg{}"], ["032b", "{\\fontencoding{LECO}\\selectfont\\char203}"], ["032f", "{\\fontencoding{LECO}\\selectfont\\char207}"], ["0335", "\\Elzxl{}"], ["0336", "\\Elzbar{}"], ["0337", "{\\fontencoding{LECO}\\selectfont\\char215}"], ["0338", "{\\fontencoding{LECO}\\selectfont\\char216}"], ["033a", "{\\fontencoding{LECO}\\selectfont\\char218}"], ["033b", "{\\fontencoding{LECO}\\selectfont\\char219}"], ["033c", "{\\fontencoding{LECO}\\selectfont\\char220}"], ["033d", "{\\fontencoding{LECO}\\selectfont\\char221}"], ["0361", "{\\fontencoding{LECO}\\selectfont\\char225}"], ["0386", "\\'{A}"], ["0388", "\\'{E}"], ["0389", "\\'{H}"], ["038a", "\\'{}{I}"], ["038c", "\\'{}O"], ["038e", "\\mathrm{'Y}"], ["038f", "\\mathrm{'\\Omega}"], ["0390", "\\acute{\\ddot{\\iota}}"], ["0391", "\\ensuremath{\\Alpha}"], ["0392", "\\ensuremath{\\Beta}"], ["0393", "\\ensuremath{\\Gamma}"], ["0394", "\\ensuremath{\\Delta}"], ["0395", "\\ensuremath{\\Epsilon}"], ["0396", "\\ensuremath{\\Zeta}"], ["0397", "\\ensuremath{\\Eta}"], ["0398", "\\ensuremath{\\Theta}"], ["0399", "\\ensuremath{\\Iota}"], ["039a", "\\ensuremath{\\Kappa}"], ["039b", "\\ensuremath{\\Lambda}"], ["039e", "\\ensuremath{\\Xi}"], ["03a0", "\\ensuremath{\\Pi}"], ["03a1", "\\ensuremath{\\Rho}"], ["03a3", "\\ensuremath{\\Sigma}"], ["03a4", "\\ensuremath{\\Tau}"], ["03a5", "\\ensuremath{\\Upsilon}"], ["03a6", "\\ensuremath{\\Phi}"], ["03a7", "\\ensuremath{\\Chi}"], ["03a8", "\\ensuremath{\\Psi}"], ["03a9", "\\ensuremath{\\Omega}"], ["03aa", "\\mathrm{\\ddot{I}}"], ["03ab", "\\mathrm{\\ddot{Y}}"], ["03ac", "\\'{$\\alpha$}"], ["03ad", "\\acute{\\epsilon}"], ["03ae", "\\acute{\\eta}"], ["03af", "\\acute{\\iota}"], ["03b0", "\\acute{\\ddot{\\upsilon}}"], ["03b1", "\\ensuremath{\\alpha}"], ["03b2", "\\ensuremath{\\beta}"], ["03b3", "\\ensuremath{\\gamma}"], ["03b4", "\\ensuremath{\\delta}"], ["03b5", "\\ensuremath{\\epsilon}"], ["03b6", "\\ensuremath{\\zeta}"], ["03b7", "\\ensuremath{\\eta}"], ["03b8", "\\texttheta{}"], ["03b9", "\\ensuremath{\\iota}"], ["03ba", "\\ensuremath{\\kappa}"], ["03bb", "\\ensuremath{\\lambda}"], ["03bc", "\\ensuremath{\\mu}"], ["03bd", "\\ensuremath{\\nu}"], ["03be", "\\ensuremath{\\xi}"], ["03c0", "\\ensuremath{\\pi}"], ["03c1", "\\ensuremath{\\rho}"], ["03c2", "\\ensuremath{\\varsigma}"], ["03c3", "\\ensuremath{\\sigma}"], ["03c4", "\\ensuremath{\\tau}"], ["03c5", "\\ensuremath{\\upsilon}"], ["03c6", "\\ensuremath{\\varphi}"], ["03c7", "\\ensuremath{\\chi}"], ["03c8", "\\ensuremath{\\psi}"], ["03c9", "\\ensuremath{\\omega}"], ["03ca", "\\ensuremath{\\ddot{\\iota}}"], ["03cb", "\\ensuremath{\\ddot{\\upsilon}}"], ["03cc", "\\'{o}"], ["03cd", "\\acute{\\upsilon}"], ["03ce", "\\acute{\\omega}"], ["03d0", "\\Pisymbol{ppi022}{87}"], ["03d1", "\\textvartheta{}"], ["03d2", "\\ensuremath{\\Upsilon}"], ["03d5", "\\ensuremath{\\phi}"], ["03d6", "\\ensuremath{\\varpi}"], ["03da", "\\Stigma{}"], ["03dc", "\\Digamma{}"], ["03dd", "\\digamma{}"], ["03de", "\\Koppa{}"], ["03e0", "\\Sampi{}"], ["03f0", "\\varkappa{}"], ["03f1", "\\varrho{}"], ["03f4", "\\textTheta{}"], ["03f6", "\\backepsilon{}"], ["0401", "\\cyrchar\\CYRYO{}"], ["0402", "\\cyrchar\\CYRDJE{}"], ["0403", "\\cyrchar{\\'\\CYRG}"], ["0404", "\\cyrchar\\CYRIE{}"], ["0405", "\\cyrchar\\CYRDZE{}"], ["0406", "\\cyrchar\\CYRII{}"], ["0407", "\\cyrchar\\CYRYI{}"], ["0408", "\\cyrchar\\CYRJE{}"], ["0409", "\\cyrchar\\CYRLJE{}"], ["040a", "\\cyrchar\\CYRNJE{}"], ["040b", "\\cyrchar\\CYRTSHE{}"], ["040c", "\\cyrchar{\\'\\CYRK}"], ["040e", "\\cyrchar\\CYRUSHRT{}"], ["040f", "\\cyrchar\\CYRDZHE{}"], ["0410", "\\cyrchar\\CYRA{}"], ["0411", "\\cyrchar\\CYRB{}"], ["0412", "\\cyrchar\\CYRV{}"], ["0413", "\\cyrchar\\CYRG{}"], ["0414", "\\cyrchar\\CYRD{}"], ["0415", "\\cyrchar\\CYRE{}"], ["0416", "\\cyrchar\\CYRZH{}"], ["0417", "\\cyrchar\\CYRZ{}"], ["0418", "\\cyrchar\\CYRI{}"], ["0419", "\\cyrchar\\CYRISHRT{}"], ["041a", "\\cyrchar\\CYRK{}"], ["041b", "\\cyrchar\\CYRL{}"], ["041c", "\\cyrchar\\CYRM{}"], ["041d", "\\cyrchar\\CYRN{}"], ["041e", "\\cyrchar\\CYRO{}"], ["041f", "\\cyrchar\\CYRP{}"], ["0420", "\\cyrchar\\CYRR{}"], ["0421", "\\cyrchar\\CYRS{}"], ["0422", "\\cyrchar\\CYRT{}"], ["0423", "\\cyrchar\\CYRU{}"], ["0424", "\\cyrchar\\CYRF{}"], ["0425", "\\cyrchar\\CYRH{}"], ["0426", "\\cyrchar\\CYRC{}"], ["0427", "\\cyrchar\\CYRCH{}"], ["0428", "\\cyrchar\\CYRSH{}"], ["0429", "\\cyrchar\\CYRSHCH{}"], ["042a", "\\cyrchar\\CYRHRDSN{}"], ["042b", "\\cyrchar\\CYRERY{}"], ["042c", "\\cyrchar\\CYRSFTSN{}"], ["042d", "\\cyrchar\\CYREREV{}"], ["042e", "\\cyrchar\\CYRYU{}"], ["042f", "\\cyrchar\\CYRYA{}"], ["0430", "\\cyrchar\\cyra{}"], ["0431", "\\cyrchar\\cyrb{}"], ["0432", "\\cyrchar\\cyrv{}"], ["0433", "\\cyrchar\\cyrg{}"], ["0434", "\\cyrchar\\cyrd{}"], ["0435", "\\cyrchar\\cyre{}"], ["0436", "\\cyrchar\\cyrzh{}"], ["0437", "\\cyrchar\\cyrz{}"], ["0438", "\\cyrchar\\cyri{}"], ["0439", "\\cyrchar\\cyrishrt{}"], ["043a", "\\cyrchar\\cyrk{}"], ["043b", "\\cyrchar\\cyrl{}"], ["043c", "\\cyrchar\\cyrm{}"], ["043d", "\\cyrchar\\cyrn{}"], ["043e", "\\cyrchar\\cyro{}"], ["043f", "\\cyrchar\\cyrp{}"], ["0440", "\\cyrchar\\cyrr{}"], ["0441", "\\cyrchar\\cyrs{}"], ["0442", "\\cyrchar\\cyrt{}"], ["0443", "\\cyrchar\\cyru{}"], ["0444", "\\cyrchar\\cyrf{}"], ["0445", "\\cyrchar\\cyrh{}"], ["0446", "\\cyrchar\\cyrc{}"], ["0447", "\\cyrchar\\cyrch{}"], ["0448", "\\cyrchar\\cyrsh{}"], ["0449", "\\cyrchar\\cyrshch{}"], ["044a", "\\cyrchar\\cyrhrdsn{}"], ["044b", "\\cyrchar\\cyrery{}"], ["044c", "\\cyrchar\\cyrsftsn{}"], ["044d", "\\cyrchar\\cyrerev{}"], ["044e", "\\cyrchar\\cyryu{}"], ["044f", "\\cyrchar\\cyrya{}"], ["0451", "\\cyrchar\\cyryo{}"], ["0452", "\\cyrchar\\cyrdje{}"], ["0453", "\\cyrchar{\\'\\cyrg}"], ["0454", "\\cyrchar\\cyrie{}"], ["0455", "\\cyrchar\\cyrdze{}"], ["0456", "\\cyrchar\\cyrii{}"], ["0457", "\\cyrchar\\cyryi{}"], ["0458", "\\cyrchar\\cyrje{}"], ["0459", "\\cyrchar\\cyrlje{}"], ["045a", "\\cyrchar\\cyrnje{}"], ["045b", "\\cyrchar\\cyrtshe{}"], ["045c", "\\cyrchar{\\'\\cyrk}"], ["045e", "\\cyrchar\\cyrushrt{}"], ["045f", "\\cyrchar\\cyrdzhe{}"], ["0460", "\\cyrchar\\CYROMEGA{}"], ["0461", "\\cyrchar\\cyromega{}"], ["0462", "\\cyrchar\\CYRYAT{}"], ["0464", "\\cyrchar\\CYRIOTE{}"], ["0465", "\\cyrchar\\cyriote{}"], ["0466", "\\cyrchar\\CYRLYUS{}"], ["0467", "\\cyrchar\\cyrlyus{}"], ["0468", "\\cyrchar\\CYRIOTLYUS{}"], ["0469", "\\cyrchar\\cyriotlyus{}"], ["046a", "\\cyrchar\\CYRBYUS{}"], ["046c", "\\cyrchar\\CYRIOTBYUS{}"], ["046d", "\\cyrchar\\cyriotbyus{}"], ["046e", "\\cyrchar\\CYRKSI{}"], ["046f", "\\cyrchar\\cyrksi{}"], ["0470", "\\cyrchar\\CYRPSI{}"], ["0471", "\\cyrchar\\cyrpsi{}"], ["0472", "\\cyrchar\\CYRFITA{}"], ["0474", "\\cyrchar\\CYRIZH{}"], ["0478", "\\cyrchar\\CYRUK{}"], ["0479", "\\cyrchar\\cyruk{}"], ["047a", "\\cyrchar\\CYROMEGARND{}"], ["047b", "\\cyrchar\\cyromegarnd{}"], ["047c", "\\cyrchar\\CYROMEGATITLO{}"], ["047d", "\\cyrchar\\cyromegatitlo{}"], ["047e", "\\cyrchar\\CYROT{}"], ["047f", "\\cyrchar\\cyrot{}"], ["0480", "\\cyrchar\\CYRKOPPA{}"], ["0481", "\\cyrchar\\cyrkoppa{}"], ["0482", "\\cyrchar\\cyrthousands{}"], ["0488", "\\cyrchar\\cyrhundredthousands{}"], ["0489", "\\cyrchar\\cyrmillions{}"], ["048c", "\\cyrchar\\CYRSEMISFTSN{}"], ["048d", "\\cyrchar\\cyrsemisftsn{}"], ["048e", "\\cyrchar\\CYRRTICK{}"], ["048f", "\\cyrchar\\cyrrtick{}"], ["0490", "\\cyrchar\\CYRGUP{}"], ["0491", "\\cyrchar\\cyrgup{}"], ["0492", "\\cyrchar\\CYRGHCRS{}"], ["0493", "\\cyrchar\\cyrghcrs{}"], ["0494", "\\cyrchar\\CYRGHK{}"], ["0495", "\\cyrchar\\cyrghk{}"], ["0496", "\\cyrchar\\CYRZHDSC{}"], ["0497", "\\cyrchar\\cyrzhdsc{}"], ["0498", "\\cyrchar\\CYRZDSC{}"], ["0499", "\\cyrchar\\cyrzdsc{}"], ["049a", "\\cyrchar\\CYRKDSC{}"], ["049b", "\\cyrchar\\cyrkdsc{}"], ["049c", "\\cyrchar\\CYRKVCRS{}"], ["049d", "\\cyrchar\\cyrkvcrs{}"], ["049e", "\\cyrchar\\CYRKHCRS{}"], ["049f", "\\cyrchar\\cyrkhcrs{}"], ["04a0", "\\cyrchar\\CYRKBEAK{}"], ["04a1", "\\cyrchar\\cyrkbeak{}"], ["04a2", "\\cyrchar\\CYRNDSC{}"], ["04a3", "\\cyrchar\\cyrndsc{}"], ["04a4", "\\cyrchar\\CYRNG{}"], ["04a5", "\\cyrchar\\cyrng{}"], ["04a6", "\\cyrchar\\CYRPHK{}"], ["04a7", "\\cyrchar\\cyrphk{}"], ["04a8", "\\cyrchar\\CYRABHHA{}"], ["04a9", "\\cyrchar\\cyrabhha{}"], ["04aa", "\\cyrchar\\CYRSDSC{}"], ["04ab", "\\cyrchar\\cyrsdsc{}"], ["04ac", "\\cyrchar\\CYRTDSC{}"], ["04ad", "\\cyrchar\\cyrtdsc{}"], ["04ae", "\\cyrchar\\CYRY{}"], ["04af", "\\cyrchar\\cyry{}"], ["04b0", "\\cyrchar\\CYRYHCRS{}"], ["04b1", "\\cyrchar\\cyryhcrs{}"], ["04b2", "\\cyrchar\\CYRHDSC{}"], ["04b3", "\\cyrchar\\cyrhdsc{}"], ["04b4", "\\cyrchar\\CYRTETSE{}"], ["04b5", "\\cyrchar\\cyrtetse{}"], ["04b6", "\\cyrchar\\CYRCHRDSC{}"], ["04b7", "\\cyrchar\\cyrchrdsc{}"], ["04b8", "\\cyrchar\\CYRCHVCRS{}"], ["04b9", "\\cyrchar\\cyrchvcrs{}"], ["04ba", "\\cyrchar\\CYRSHHA{}"], ["04bb", "\\cyrchar\\cyrshha{}"], ["04bc", "\\cyrchar\\CYRABHCH{}"], ["04bd", "\\cyrchar\\cyrabhch{}"], ["04be", "\\cyrchar\\CYRABHCHDSC{}"], ["04bf", "\\cyrchar\\cyrabhchdsc{}"], ["04c0", "\\cyrchar\\CYRpalochka{}"], ["04c3", "\\cyrchar\\CYRKHK{}"], ["04c4", "\\cyrchar\\cyrkhk{}"], ["04c7", "\\cyrchar\\CYRNHK{}"], ["04c8", "\\cyrchar\\cyrnhk{}"], ["04cb", "\\cyrchar\\CYRCHLDSC{}"], ["04cc", "\\cyrchar\\cyrchldsc{}"], ["04d4", "\\cyrchar\\CYRAE{}"], ["04d5", "\\cyrchar\\cyrae{}"], ["04d8", "\\cyrchar\\CYRSCHWA{}"], ["04d9", "\\cyrchar\\cyrschwa{}"], ["04e0", "\\cyrchar\\CYRABHDZE{}"], ["04e1", "\\cyrchar\\cyrabhdze{}"], ["04e8", "\\cyrchar\\CYROTLD{}"], ["04e9", "\\cyrchar\\cyrotld{}"], ["2002", "\\hspace{0.6em}"], ["2003", "\\hspace{1em}"], ["2004", "\\hspace{0.33em}"], ["2005", "\\hspace{0.25em}"], ["2006", "\\hspace{0.166em}"], ["2007", "\\hphantom{0}"], ["2008", "\\hphantom{,}"], ["2009", "\\hspace{0.167em}"], ["200a", "\\mkern1mu{}"], ["2010", "-"], ["2014", "--"], ["2015", "\\rule{1em}{1pt}"], ["2016", "\\Vert{}"], ["2018", "`"], ["2019", "'"], ["201b", "\\Elzreapos{}"], ["201c", "``"], ["201d", "''"], ["201e", ",,"], ["2020", "\\textdagger{}"], ["2021", "\\textdaggerdbl{}"], ["2022", "\\textbullet{}"], ["2025", ".."], ["2026", "\\ldots{}"], ["2030", "\\textperthousand{}"], ["2031", "\\textpertenthousand{}"], ["2032", "\\ensuremath{'}"], ["2033", "\\ensuremath{''}"], ["2034", "\\ensuremath{'''}"], ["2035", "\\backprime{}"], ["2039", "\\guilsinglleft{}"], ["203a", "\\guilsinglright{}"], ["2057", "''''"], ["205f", "\\mkern4mu{}"], ["2060", "\\nolinebreak{}"], ["20a7", "\\ensuremath{\\Elzpes}"], ["20ac", "\\mbox{\\texteuro}{}"], ["20db", "\\dddot{}"], ["20dc", "\\ddddot{}"], ["2102", "\\mathbb{C}"], ["210a", "\\mathscr{g}"], ["210b", "\\mathscr{H}"], ["210c", "\\mathfrak{H}"], ["210d", "\\mathbb{H}"], ["210f", "\\hslash{}"], ["2110", "\\mathscr{I}"], ["2111", "\\mathfrak{I}"], ["2112", "\\mathscr{L}"], ["2113", "\\mathscr{l}"], ["2115", "\\mathbb{N}"], ["2116", "\\cyrchar\\textnumero{}"], ["2118", "\\wp{}"], ["2119", "\\mathbb{P}"], ["211a", "\\mathbb{Q}"], ["211b", "\\mathscr{R}"], ["211c", "\\mathfrak{R}"], ["211d", "\\mathbb{R}"], ["211e", "\\Elzxrat{}"], ["2122", "\\texttrademark{}"], ["2124", "\\mathbb{Z}"], ["2126", "\\Omega{}"], ["2127", "\\mho{}"], ["2128", "\\mathfrak{Z}"], ["2129", "\\ElsevierGlyph{2129}"], ["212b", "\\AA{}"], ["212c", "\\mathscr{B}"], ["212d", "\\mathfrak{C}"], ["212f", "\\mathscr{e}"], ["2130", "\\mathscr{E}"], ["2131", "\\mathscr{F}"], ["2133", "\\mathscr{M}"], ["2134", "\\mathscr{o}"], ["2135", "\\aleph{}"], ["2136", "\\beth{}"], ["2137", "\\gimel{}"], ["2138", "\\daleth{}"], ["2153", "\\textfrac{1}{3}"], ["2154", "\\textfrac{2}{3}"], ["2155", "\\textfrac{1}{5}"], ["2156", "\\textfrac{2}{5}"], ["2157", "\\textfrac{3}{5}"], ["2158", "\\textfrac{4}{5}"], ["2159", "\\textfrac{1}{6}"], ["215a", "\\textfrac{5}{6}"], ["215b", "\\textfrac{1}{8}"], ["215c", "\\textfrac{3}{8}"], ["215d", "\\textfrac{5}{8}"], ["215e", "\\textfrac{7}{8}"], ["2190", "\\leftarrow{}"], ["2191", "\\uparrow{}"], ["2192", "\\rightarrow{}"], ["2193", "\\downarrow{}"], ["2194", "\\leftrightarrow{}"], ["2195", "\\updownarrow{}"], ["2196", "\\nwarrow{}"], ["2197", "\\nearrow{}"], ["2198", "\\searrow{}"], ["2199", "\\swarrow{}"], ["219a", "\\nleftarrow{}"], ["219b", "\\nrightarrow{}"], ["219c", "\\arrowwaveright{}"], ["219d", "\\arrowwaveright{}"], ["219e", "\\twoheadleftarrow{}"], ["21a0", "\\twoheadrightarrow{}"], ["21a2", "\\leftarrowtail{}"], ["21a3", "\\rightarrowtail{}"], ["21a6", "\\mapsto{}"], ["21a9", "\\hookleftarrow{}"], ["21aa", "\\hookrightarrow{}"], ["21ab", "\\looparrowleft{}"], ["21ac", "\\looparrowright{}"], ["21ad", "\\leftrightsquigarrow{}"], ["21ae", "\\nleftrightarrow{}"], ["21b0", "\\Lsh{}"], ["21b1", "\\Rsh{}"], ["21b3", "\\ElsevierGlyph{21B3}"], ["21b6", "\\curvearrowleft{}"], ["21b7", "\\curvearrowright{}"], ["21ba", "\\circlearrowleft{}"], ["21bb", "\\circlearrowright{}"], ["21bc", "\\leftharpoonup{}"], ["21bd", "\\leftharpoondown{}"], ["21be", "\\upharpoonright{}"], ["21bf", "\\upharpoonleft{}"], ["21c0", "\\rightharpoonup{}"], ["21c1", "\\rightharpoondown{}"], ["21c2", "\\downharpoonright{}"], ["21c3", "\\downharpoonleft{}"], ["21c4", "\\rightleftarrows{}"], ["21c5", "\\dblarrowupdown{}"], ["21c6", "\\leftrightarrows{}"], ["21c7", "\\leftleftarrows{}"], ["21c8", "\\upuparrows{}"], ["21c9", "\\rightrightarrows{}"], ["21ca", "\\downdownarrows{}"], ["21cb", "\\leftrightharpoons{}"], ["21cc", "\\rightleftharpoons{}"], ["21cd", "\\nLeftarrow{}"], ["21ce", "\\nLeftrightarrow{}"], ["21cf", "\\nRightarrow{}"], ["21d0", "\\Leftarrow{}"], ["21d1", "\\Uparrow{}"], ["21d2", "\\Rightarrow{}"], ["21d3", "\\Downarrow{}"], ["21d4", "\\Leftrightarrow{}"], ["21d5", "\\Updownarrow{}"], ["21da", "\\Lleftarrow{}"], ["21db", "\\Rrightarrow{}"], ["21dd", "\\rightsquigarrow{}"], ["21f5", "\\DownArrowUpArrow{}"], ["2200", "\\forall{}"], ["2201", "\\complement{}"], ["2202", "\\partial{}"], ["2203", "\\exists{}"], ["2204", "\\nexists{}"], ["2205", "\\varnothing{}"], ["2207", "\\nabla{}"], ["2208", "\\in{}"], ["2209", "\\not\\in{}"], ["220b", "\\ni{}"], ["220c", "\\not\\ni{}"], ["220f", "\\prod{}"], ["2210", "\\coprod{}"], ["2211", "\\sum{}"], ["2212", "-"], ["2213", "\\mp{}"], ["2214", "\\dotplus{}"], ["2216", "\\setminus{}"], ["2217", "{\\_\\ast}"], ["2218", "\\circ{}"], ["2219", "\\bullet{}"], ["221a", "\\surd{}"], ["221d", "\\propto{}"], ["221e", "\\infty{}"], ["221f", "\\rightangle{}"], ["2220", "\\angle{}"], ["2221", "\\measuredangle{}"], ["2222", "\\sphericalangle{}"], ["2223", "\\mid{}"], ["2224", "\\nmid{}"], ["2225", "\\parallel{}"], ["2226", "\\nparallel{}"], ["2227", "\\wedge{}"], ["2228", "\\vee{}"], ["2229", "\\cap{}"], ["222a", "\\cup{}"], ["222b", "\\int{}"], ["222c", "\\int\\!\\int{}"], ["222d", "\\int\\!\\int\\!\\int{}"], ["222e", "\\oint{}"], ["222f", "\\surfintegral{}"], ["2230", "\\volintegral{}"], ["2231", "\\clwintegral{}"], ["2232", "\\ElsevierGlyph{2232}"], ["2233", "\\ElsevierGlyph{2233}"], ["2234", "\\therefore{}"], ["2235", "\\because{}"], ["2237", "\\Colon{}"], ["2238", "\\ElsevierGlyph{2238}"], ["223a", "\\mathbin{{:}\\!\\!{-}\\!\\!{:}}"], ["223b", "\\homothetic{}"], ["223c", "\\sim{}"], ["223d", "\\backsim{}"], ["223e", "\\lazysinv{}"], ["2240", "\\wr{}"], ["2241", "\\not\\sim{}"], ["2242", "\\ElsevierGlyph{2242}"], ["2243", "\\simeq{}"], ["2244", "\\not\\simeq{}"], ["2245", "\\cong{}"], ["2246", "\\approxnotequal{}"], ["2247", "\\not\\cong{}"], ["2248", "\\approx{}"], ["2249", "\\not\\approx{}"], ["224a", "\\approxeq{}"], ["224b", "\\tildetrpl{}"], ["224c", "\\allequal{}"], ["224d", "\\asymp{}"], ["224e", "\\Bumpeq{}"], ["224f", "\\bumpeq{}"], ["2250", "\\doteq{}"], ["2251", "\\doteqdot{}"], ["2252", "\\fallingdotseq{}"], ["2253", "\\risingdotseq{}"], ["2254", ":="], ["2255", "=:"], ["2256", "\\eqcirc{}"], ["2257", "\\circeq{}"], ["2259", "\\estimates{}"], ["225a", "\\ElsevierGlyph{225A}"], ["225b", "\\starequal{}"], ["225c", "\\triangleq{}"], ["225f", "\\ElsevierGlyph{225F}"], ["2260", "\\not ="], ["2261", "\\equiv{}"], ["2262", "\\not\\equiv{}"], ["2264", "\\leq{}"], ["2265", "\\geq{}"], ["2266", "\\leqq{}"], ["2267", "\\geqq{}"], ["2268", "\\lneqq{}"], ["2269", "\\gneqq{}"], ["226a", "\\ll{}"], ["226b", "\\gg{}"], ["226c", "\\between{}"], ["226d", "\\not\\kern-0.3em\\times{}"], ["226e", "\\not&lt;"], ["226f", "\\not&gt;"], ["2270", "\\not\\leq{}"], ["2271", "\\not\\geq{}"], ["2272", "\\lessequivlnt{}"], ["2273", "\\greaterequivlnt{}"], ["2274", "\\ElsevierGlyph{2274}"], ["2275", "\\ElsevierGlyph{2275}"], ["2276", "\\lessgtr{}"], ["2277", "\\gtrless{}"], ["2278", "\\notlessgreater{}"], ["2279", "\\notgreaterless{}"], ["227a", "\\prec{}"], ["227b", "\\succ{}"], ["227c", "\\preccurlyeq{}"], ["227d", "\\succcurlyeq{}"], ["227e", "\\precapprox{}"], ["227f", "\\succapprox{}"], ["2280", "\\not\\prec{}"], ["2281", "\\not\\succ{}"], ["2282", "\\subset{}"], ["2283", "\\supset{}"], ["2284", "\\not\\subset{}"], ["2285", "\\not\\supset{}"], ["2286", "\\subseteq{}"], ["2287", "\\supseteq{}"], ["2288", "\\not\\subseteq{}"], ["2289", "\\not\\supseteq{}"], ["228a", "\\subsetneq{}"], ["228b", "\\supsetneq{}"], ["228e", "\\uplus{}"], ["228f", "\\sqsubset{}"], ["2290", "\\sqsupset{}"], ["2291", "\\sqsubseteq{}"], ["2292", "\\sqsupseteq{}"], ["2293", "\\sqcap{}"], ["2294", "\\sqcup{}"], ["2295", "\\oplus{}"], ["2296", "\\ominus{}"], ["2297", "\\otimes{}"], ["2298", "\\oslash{}"], ["2299", "\\odot{}"], ["229a", "\\circledcirc{}"], ["229b", "\\circledast{}"], ["229d", "\\circleddash{}"], ["229e", "\\boxplus{}"], ["229f", "\\boxminus{}"], ["22a0", "\\boxtimes{}"], ["22a1", "\\boxdot{}"], ["22a2", "\\vdash{}"], ["22a3", "\\dashv{}"], ["22a4", "\\top{}"], ["22a5", "\\perp{}"], ["22a7", "\\truestate{}"], ["22a8", "\\forcesextra{}"], ["22a9", "\\Vdash{}"], ["22aa", "\\Vvdash{}"], ["22ab", "\\VDash{}"], ["22ac", "\\nvdash{}"], ["22ad", "\\nvDash{}"], ["22ae", "\\nVdash{}"], ["22af", "\\nVDash{}"], ["22b2", "\\vartriangleleft{}"], ["22b3", "\\vartriangleright{}"], ["22b4", "\\trianglelefteq{}"], ["22b5", "\\trianglerighteq{}"], ["22b6", "\\original{}"], ["22b7", "\\image{}"], ["22b8", "\\multimap{}"], ["22b9", "\\hermitconjmatrix{}"], ["22ba", "\\intercal{}"], ["22bb", "\\veebar{}"], ["22be", "\\rightanglearc{}"], ["22c0", "\\ElsevierGlyph{22C0}"], ["22c1", "\\ElsevierGlyph{22C1}"], ["22c2", "\\bigcap{}"], ["22c3", "\\bigcup{}"], ["22c4", "\\diamond{}"], ["22c5", "\\cdot{}"], ["22c6", "\\star{}"], ["22c7", "\\divideontimes{}"], ["22c8", "\\bowtie{}"], ["22c9", "\\ltimes{}"], ["22ca", "\\rtimes{}"], ["22cb", "\\leftthreetimes{}"], ["22cc", "\\rightthreetimes{}"], ["22cd", "\\backsimeq{}"], ["22ce", "\\curlyvee{}"], ["22cf", "\\curlywedge{}"], ["22d0", "\\Subset{}"], ["22d1", "\\Supset{}"], ["22d2", "\\Cap{}"], ["22d3", "\\Cup{}"], ["22d4", "\\pitchfork{}"], ["22d6", "\\lessdot{}"], ["22d7", "\\gtrdot{}"], ["22d8", "\\verymuchless{}"], ["22d9", "\\verymuchgreater{}"], ["22da", "\\lesseqgtr{}"], ["22db", "\\gtreqless{}"], ["22de", "\\curlyeqprec{}"], ["22df", "\\curlyeqsucc{}"], ["22e2", "\\not\\sqsubseteq{}"], ["22e3", "\\not\\sqsupseteq{}"], ["22e5", "\\Elzsqspne{}"], ["22e6", "\\lnsim{}"], ["22e7", "\\gnsim{}"], ["22e8", "\\precedesnotsimilar{}"], ["22e9", "\\succnsim{}"], ["22ea", "\\ntriangleleft{}"], ["22eb", "\\ntriangleright{}"], ["22ec", "\\ntrianglelefteq{}"], ["22ed", "\\ntrianglerighteq{}"], ["22ee", "\\vdots{}"], ["22ef", "\\cdots{}"], ["22f0", "\\upslopeellipsis{}"], ["22f1", "\\downslopeellipsis{}"], ["2305", "\\barwedge{}"], ["2306", "\\perspcorrespond{}"], ["2308", "\\lceil{}"], ["2309", "\\rceil{}"], ["230a", "\\lfloor{}"], ["230b", "\\rfloor{}"], ["2315", "\\recorder{}"], ["2316", '\\mathchar"2208'], ["231c", "\\ulcorner{}"], ["231d", "\\urcorner{}"], ["231e", "\\llcorner{}"], ["231f", "\\lrcorner{}"], ["2322", "\\frown{}"], ["2323", "\\smile{}"], ["2329", "\\langle{}"], ["232a", "\\rangle{}"], ["233d", "\\ElsevierGlyph{E838}"], ["23a3", "\\Elzdlcorn{}"], ["23b0", "\\lmoustache{}"], ["23b1", "\\rmoustache{}"], ["2423", "\\textvisiblespace{}"], ["2460", "\\ding{172}"], ["2461", "\\ding{173}"], ["2462", "\\ding{174}"], ["2463", "\\ding{175}"], ["2464", "\\ding{176}"], ["2465", "\\ding{177}"], ["2466", "\\ding{178}"], ["2467", "\\ding{179}"], ["2468", "\\ding{180}"], ["2469", "\\ding{181}"], ["24c8", "\\circledS{}"], ["2506", "\\Elzdshfnc{}"], ["2519", "\\Elzsqfnw{}"], ["2571", "\\diagup{}"], ["25a0", "\\ding{110}"], ["25a1", "\\square{}"], ["25aa", "\\blacksquare{}"], ["25ad", "\\fbox{~~}"], ["25af", "\\Elzvrecto{}"], ["25b1", "\\ElsevierGlyph{E381}"], ["25b2", "\\ding{115}"], ["25b3", "\\bigtriangleup{}"], ["25b4", "\\blacktriangle{}"], ["25b5", "\\vartriangle{}"], ["25b8", "\\blacktriangleright{}"], ["25b9", "\\triangleright{}"], ["25bc", "\\ding{116}"], ["25bd", "\\bigtriangledown{}"], ["25be", "\\blacktriangledown{}"], ["25bf", "\\triangledown{}"], ["25c2", "\\blacktriangleleft{}"], ["25c3", "\\triangleleft{}"], ["25c6", "\\ding{117}"], ["25ca", "\\lozenge{}"], ["25cb", "\\bigcirc{}"], ["25cf", "\\ding{108}"], ["25d0", "\\Elzcirfl{}"], ["25d1", "\\Elzcirfr{}"], ["25d2", "\\Elzcirfb{}"], ["25d7", "\\ding{119}"], ["25d8", "\\Elzrvbull{}"], ["25e7", "\\Elzsqfl{}"], ["25e8", "\\Elzsqfr{}"], ["25ea", "\\Elzsqfse{}"], ["25ef", "\\bigcirc{}"], ["2605", "\\ding{72}"], ["2606", "\\ding{73}"], ["260e", "\\ding{37}"], ["261b", "\\ding{42}"], ["261e", "\\ding{43}"], ["263e", "\\rightmoon{}"], ["263f", "\\mercury{}"], ["2640", "\\venus{}"], ["2642", "\\male{}"], ["2643", "\\jupiter{}"], ["2644", "\\saturn{}"], ["2645", "\\uranus{}"], ["2646", "\\neptune{}"], ["2647", "\\pluto{}"], ["2648", "\\aries{}"], ["2649", "\\taurus{}"], ["264a", "\\gemini{}"], ["264b", "\\cancer{}"], ["264c", "\\leo{}"], ["264d", "\\virgo{}"], ["264e", "\\libra{}"], ["264f", "\\scorpio{}"], ["2650", "\\sagittarius{}"], ["2651", "\\capricornus{}"], ["2652", "\\aquarius{}"], ["2653", "\\pisces{}"], ["2660", "\\ding{171}"], ["2662", "\\diamond{}"], ["2663", "\\ding{168}"], ["2665", "\\ding{170}"], ["2666", "\\ding{169}"], ["2669", "\\quarternote{}"], ["266a", "\\eighthnote{}"], ["266d", "\\flat{}"], ["266e", "\\natural{}"], ["266f", "\\sharp{}"], ["2701", "\\ding{33}"], ["2702", "\\ding{34}"], ["2703", "\\ding{35}"], ["2704", "\\ding{36}"], ["2706", "\\ding{38}"], ["2707", "\\ding{39}"], ["2708", "\\ding{40}"], ["2709", "\\ding{41}"], ["270c", "\\ding{44}"], ["270d", "\\ding{45}"], ["270e", "\\ding{46}"], ["270f", "\\ding{47}"], ["2710", "\\ding{48}"], ["2711", "\\ding{49}"], ["2712", "\\ding{50}"], ["2713", "\\ding{51}"], ["2714", "\\ding{52}"], ["2715", "\\ding{53}"], ["2716", "\\ding{54}"], ["2717", "\\ding{55}"], ["2718", "\\ding{56}"], ["2719", "\\ding{57}"], ["271a", "\\ding{58}"], ["271b", "\\ding{59}"], ["271c", "\\ding{60}"], ["271d", "\\ding{61}"], ["271e", "\\ding{62}"], ["271f", "\\ding{63}"], ["2720", "\\ding{64}"], ["2721", "\\ding{65}"], ["2722", "\\ding{66}"], ["2723", "\\ding{67}"], ["2724", "\\ding{68}"], ["2725", "\\ding{69}"], ["2726", "\\ding{70}"], ["2727", "\\ding{71}"], ["2729", "\\ding{73}"], ["272a", "\\ding{74}"], ["272b", "\\ding{75}"], ["272c", "\\ding{76}"], ["272d", "\\ding{77}"], ["272e", "\\ding{78}"], ["272f", "\\ding{79}"], ["2730", "\\ding{80}"], ["2731", "\\ding{81}"], ["2732", "\\ding{82}"], ["2733", "\\ding{83}"], ["2734", "\\ding{84}"], ["2735", "\\ding{85}"], ["2736", "\\ding{86}"], ["2737", "\\ding{87}"], ["2738", "\\ding{88}"], ["2739", "\\ding{89}"], ["273a", "\\ding{90}"], ["273b", "\\ding{91}"], ["273c", "\\ding{92}"], ["273d", "\\ding{93}"], ["273e", "\\ding{94}"], ["273f", "\\ding{95}"], ["2740", "\\ding{96}"], ["2741", "\\ding{97}"], ["2742", "\\ding{98}"], ["2743", "\\ding{99}"], ["2744", "\\ding{100}"], ["2745", "\\ding{101}"], ["2746", "\\ding{102}"], ["2747", "\\ding{103}"], ["2748", "\\ding{104}"], ["2749", "\\ding{105}"], ["274a", "\\ding{106}"], ["274b", "\\ding{107}"], ["274d", "\\ding{109}"], ["274f", "\\ding{111}"], ["2750", "\\ding{112}"], ["2751", "\\ding{113}"], ["2752", "\\ding{114}"], ["2756", "\\ding{118}"], ["2758", "\\ding{120}"], ["2759", "\\ding{121}"], ["275a", "\\ding{122}"], ["275b", "\\ding{123}"], ["275c", "\\ding{124}"], ["275d", "\\ding{125}"], ["275e", "\\ding{126}"], ["2761", "\\ding{161}"], ["2762", "\\ding{162}"], ["2763", "\\ding{163}"], ["2764", "\\ding{164}"], ["2765", "\\ding{165}"], ["2766", "\\ding{166}"], ["2767", "\\ding{167}"], ["2776", "\\ding{182}"], ["2777", "\\ding{183}"], ["2778", "\\ding{184}"], ["2779", "\\ding{185}"], ["277a", "\\ding{186}"], ["277b", "\\ding{187}"], ["277c", "\\ding{188}"], ["277d", "\\ding{189}"], ["277e", "\\ding{190}"], ["277f", "\\ding{191}"], ["2780", "\\ding{192}"], ["2781", "\\ding{193}"], ["2782", "\\ding{194}"], ["2783", "\\ding{195}"], ["2784", "\\ding{196}"], ["2785", "\\ding{197}"], ["2786", "\\ding{198}"], ["2787", "\\ding{199}"], ["2788", "\\ding{200}"], ["2789", "\\ding{201}"], ["278a", "\\ding{202}"], ["278b", "\\ding{203}"], ["278c", "\\ding{204}"], ["278d", "\\ding{205}"], ["278e", "\\ding{206}"], ["278f", "\\ding{207}"], ["2790", "\\ding{208}"], ["2791", "\\ding{209}"], ["2792", "\\ding{210}"], ["2793", "\\ding{211}"], ["2794", "\\ding{212}"], ["2798", "\\ding{216}"], ["2799", "\\ding{217}"], ["279a", "\\ding{218}"], ["279b", "\\ding{219}"], ["279c", "\\ding{220}"], ["279d", "\\ding{221}"], ["279e", "\\ding{222}"], ["279f", "\\ding{223}"], ["27a0", "\\ding{224}"], ["27a1", "\\ding{225}"], ["27a2", "\\ding{226}"], ["27a3", "\\ding{227}"], ["27a4", "\\ding{228}"], ["27a5", "\\ding{229}"], ["27a6", "\\ding{230}"], ["27a7", "\\ding{231}"], ["27a8", "\\ding{232}"], ["27a9", "\\ding{233}"], ["27aa", "\\ding{234}"], ["27ab", "\\ding{235}"], ["27ac", "\\ding{236}"], ["27ad", "\\ding{237}"], ["27ae", "\\ding{238}"], ["27af", "\\ding{239}"], ["27b1", "\\ding{241}"], ["27b2", "\\ding{242}"], ["27b3", "\\ding{243}"], ["27b4", "\\ding{244}"], ["27b5", "\\ding{245}"], ["27b6", "\\ding{246}"], ["27b7", "\\ding{247}"], ["27b8", "\\ding{248}"], ["27b9", "\\ding{249}"], ["27ba", "\\ding{250}"], ["27bb", "\\ding{251}"], ["27bc", "\\ding{252}"], ["27bd", "\\ding{253}"], ["27be", "\\ding{254}"], ["27f5", "\\longleftarrow{}"], ["27f6", "\\longrightarrow{}"], ["27f7", "\\longleftrightarrow{}"], ["27f8", "\\Longleftarrow{}"], ["27f9", "\\Longrightarrow{}"], ["27fa", "\\Longleftrightarrow{}"], ["27fc", "\\longmapsto{}"], ["27ff", "\\sim\\joinrel\\leadsto"], ["2905", "\\ElsevierGlyph{E212}"], ["2912", "\\UpArrowBar{}"], ["2913", "\\DownArrowBar{}"], ["2923", "\\ElsevierGlyph{E20C}"], ["2924", "\\ElsevierGlyph{E20D}"], ["2925", "\\ElsevierGlyph{E20B}"], ["2926", "\\ElsevierGlyph{E20A}"], ["2927", "\\ElsevierGlyph{E211}"], ["2928", "\\ElsevierGlyph{E20E}"], ["2929", "\\ElsevierGlyph{E20F}"], ["292a", "\\ElsevierGlyph{E210}"], ["2933", "\\ElsevierGlyph{E21C}"], ["2936", "\\ElsevierGlyph{E21A}"], ["2937", "\\ElsevierGlyph{E219}"], ["2940", "\\Elolarr{}"], ["2941", "\\Elorarr{}"], ["2942", "\\ElzRlarr{}"], ["2944", "\\ElzrLarr{}"], ["2947", "\\Elzrarrx{}"], ["294e", "\\LeftRightVector{}"], ["294f", "\\RightUpDownVector{}"], ["2950", "\\DownLeftRightVector{}"], ["2951", "\\LeftUpDownVector{}"], ["2952", "\\LeftVectorBar{}"], ["2953", "\\RightVectorBar{}"], ["2954", "\\RightUpVectorBar{}"], ["2955", "\\RightDownVectorBar{}"], ["2956", "\\DownLeftVectorBar{}"], ["2957", "\\DownRightVectorBar{}"], ["2958", "\\LeftUpVectorBar{}"], ["2959", "\\LeftDownVectorBar{}"], ["295a", "\\LeftTeeVector{}"], ["295b", "\\RightTeeVector{}"], ["295c", "\\RightUpTeeVector{}"], ["295d", "\\RightDownTeeVector{}"], ["295e", "\\DownLeftTeeVector{}"], ["295f", "\\DownRightTeeVector{}"], ["2960", "\\LeftUpTeeVector{}"], ["2961", "\\LeftDownTeeVector{}"], ["296e", "\\UpEquilibrium{}"], ["296f", "\\ReverseUpEquilibrium{}"], ["2970", "\\RoundImplies{}"], ["297c", "\\ElsevierGlyph{E214}"], ["297d", "\\ElsevierGlyph{E215}"], ["2980", "\\Elztfnc{}"], ["2985", "\\ElsevierGlyph{3018}"], ["2986", "\\Elroang{}"], ["2993", "&lt;\\kern-0.58em("], ["2994", "\\ElsevierGlyph{E291}"], ["2999", "\\Elzddfnc{}"], ["299c", "\\Angle{}"], ["29a0", "\\Elzlpargt{}"], ["29b5", "\\ElsevierGlyph{E260}"], ["29b6", "\\ElsevierGlyph{E61B}"], ["29ca", "\\ElzLap{}"], ["29cb", "\\Elzdefas{}"], ["29cf", "\\LeftTriangleBar{}"], ["29d0", "\\RightTriangleBar{}"], ["29dc", "\\ElsevierGlyph{E372}"], ["29eb", "\\blacklozenge{}"], ["29f4", "\\RuleDelayed{}"], ["2a04", "\\Elxuplus{}"], ["2a05", "\\ElzThr{}"], ["2a06", "\\Elxsqcup{}"], ["2a07", "\\ElzInf{}"], ["2a08", "\\ElzSup{}"], ["2a0d", "\\ElzCint{}"], ["2a0f", "\\clockoint{}"], ["2a10", "\\ElsevierGlyph{E395}"], ["2a16", "\\sqrint{}"], ["2a25", "\\ElsevierGlyph{E25A}"], ["2a2a", "\\ElsevierGlyph{E25B}"], ["2a2d", "\\ElsevierGlyph{E25C}"], ["2a2e", "\\ElsevierGlyph{E25D}"], ["2a2f", "\\ElzTimes{}"], ["2a34", "\\ElsevierGlyph{E25E}"], ["2a35", "\\ElsevierGlyph{E25E}"], ["2a3c", "\\ElsevierGlyph{E259}"], ["2a3f", "\\amalg{}"], ["2a53", "\\ElzAnd{}"], ["2a54", "\\ElzOr{}"], ["2a55", "\\ElsevierGlyph{E36E}"], ["2a56", "\\ElOr{}"], ["2a5e", "\\perspcorrespond{}"], ["2a5f", "\\Elzminhat{}"], ["2a63", "\\ElsevierGlyph{225A}"], ["2a6e", "\\stackrel{*}{=}"], ["2a75", "\\Equal{}"], ["2a7d", "\\leqslant{}"], ["2a7e", "\\geqslant{}"], ["2a85", "\\lessapprox{}"], ["2a86", "\\gtrapprox{}"], ["2a87", "\\lneq{}"], ["2a88", "\\gneq{}"], ["2a89", "\\lnapprox{}"], ["2a8a", "\\gnapprox{}"], ["2a8b", "\\lesseqqgtr{}"], ["2a8c", "\\gtreqqless{}"], ["2a95", "\\eqslantless{}"], ["2a96", "\\eqslantgtr{}"], ["2a9d", "\\Pisymbol{ppi020}{117}"], ["2a9e", "\\Pisymbol{ppi020}{105}"], ["2aa1", "\\NestedLessLess{}"], ["2aa2", "\\NestedGreaterGreater{}"], ["2aaf", "\\preceq{}"], ["2ab0", "\\succeq{}"], ["2ab5", "\\precneqq{}"], ["2ab6", "\\succneqq{}"], ["2ab7", "\\precapprox{}"], ["2ab8", "\\succapprox{}"], ["2ab9", "\\precnapprox{}"], ["2aba", "\\succnapprox{}"], ["2ac5", "\\subseteqq{}"], ["2ac6", "\\supseteqq{}"], ["2acb", "\\subsetneqq{}"], ["2acc", "\\supsetneqq{}"], ["2aeb", "\\ElsevierGlyph{E30D}"], ["2af6", "\\Elztdcol{}"], ["2afd", "{{/}\\!\\!{/}}"], ["300a", "\\ElsevierGlyph{300A}"], ["300b", "\\ElsevierGlyph{300B}"], ["3018", "\\ElsevierGlyph{3018}"], ["3019", "\\ElsevierGlyph{3019}"], ["301a", "\\openbracketleft{}"], ["301b", "\\openbracketright{}"], ["fb00", "ff"], ["fb01", "fi"], ["fb02", "fl"], ["fb03", "ffi"], ["fb04", "ffl"], ["d400", "\\mathbf{A}"], ["d401", "\\mathbf{B}"], ["d402", "\\mathbf{C}"], ["d403", "\\mathbf{D}"], ["d404", "\\mathbf{E}"], ["d405", "\\mathbf{F}"], ["d406", "\\mathbf{G}"], ["d407", "\\mathbf{H}"], ["d408", "\\mathbf{I}"], ["d409", "\\mathbf{J}"], ["d40a", "\\mathbf{K}"], ["d40b", "\\mathbf{L}"], ["d40c", "\\mathbf{M}"], ["d40d", "\\mathbf{N}"], ["d40e", "\\mathbf{O}"], ["d40f", "\\mathbf{P}"], ["d410", "\\mathbf{Q}"], ["d411", "\\mathbf{R}"], ["d412", "\\mathbf{S}"], ["d413", "\\mathbf{T}"], ["d414", "\\mathbf{U}"], ["d415", "\\mathbf{V}"], ["d416", "\\mathbf{W}"], ["d417", "\\mathbf{X}"], ["d418", "\\mathbf{Y}"], ["d419", "\\mathbf{Z}"], ["d41a", "\\mathbf{a}"], ["d41b", "\\mathbf{b}"], ["d41c", "\\mathbf{c}"], ["d41d", "\\mathbf{d}"], ["d41e", "\\mathbf{e}"], ["d41f", "\\mathbf{f}"], ["d420", "\\mathbf{g}"], ["d421", "\\mathbf{h}"], ["d422", "\\mathbf{i}"], ["d423", "\\mathbf{j}"], ["d424", "\\mathbf{k}"], ["d425", "\\mathbf{l}"], ["d426", "\\mathbf{m}"], ["d427", "\\mathbf{n}"], ["d428", "\\mathbf{o}"], ["d429", "\\mathbf{p}"], ["d42a", "\\mathbf{q}"], ["d42b", "\\mathbf{r}"], ["d42c", "\\mathbf{s}"], ["d42d", "\\mathbf{t}"], ["d42e", "\\mathbf{u}"], ["d42f", "\\mathbf{v}"], ["d430", "\\mathbf{w}"], ["d431", "\\mathbf{x}"], ["d432", "\\mathbf{y}"], ["d433", "\\mathbf{z}"], ["d434", "\\mathsl{A}"], ["d435", "\\mathsl{B}"], ["d436", "\\mathsl{C}"], ["d437", "\\mathsl{D}"], ["d438", "\\mathsl{E}"], ["d439", "\\mathsl{F}"], ["d43a", "\\mathsl{G}"], ["d43b", "\\mathsl{H}"], ["d43c", "\\mathsl{I}"], ["d43d", "\\mathsl{J}"], ["d43e", "\\mathsl{K}"], ["d43f", "\\mathsl{L}"], ["d440", "\\mathsl{M}"], ["d441", "\\mathsl{N}"], ["d442", "\\mathsl{O}"], ["d443", "\\mathsl{P}"], ["d444", "\\mathsl{Q}"], ["d445", "\\mathsl{R}"], ["d446", "\\mathsl{S}"], ["d447", "\\mathsl{T}"], ["d448", "\\mathsl{U}"], ["d449", "\\mathsl{V}"], ["d44a", "\\mathsl{W}"], ["d44b", "\\mathsl{X}"], ["d44c", "\\mathsl{Y}"], ["d44d", "\\mathsl{Z}"], ["d44e", "\\mathsl{a}"], ["d44f", "\\mathsl{b}"], ["d450", "\\mathsl{c}"], ["d451", "\\mathsl{d}"], ["d452", "\\mathsl{e}"], ["d453", "\\mathsl{f}"], ["d454", "\\mathsl{g}"], ["d456", "\\mathsl{i}"], ["d457", "\\mathsl{j}"], ["d458", "\\mathsl{k}"], ["d459", "\\mathsl{l}"], ["d45a", "\\mathsl{m}"], ["d45b", "\\mathsl{n}"], ["d45c", "\\mathsl{o}"], ["d45d", "\\mathsl{p}"], ["d45e", "\\mathsl{q}"], ["d45f", "\\mathsl{r}"], ["d460", "\\mathsl{s}"], ["d461", "\\mathsl{t}"], ["d462", "\\mathsl{u}"], ["d463", "\\mathsl{v}"], ["d464", "\\mathsl{w}"], ["d465", "\\mathsl{x}"], ["d466", "\\mathsl{y}"], ["d467", "\\mathsl{z}"], ["d468", "\\mathbit{A}"], ["d469", "\\mathbit{B}"], ["d46a", "\\mathbit{C}"], ["d46b", "\\mathbit{D}"], ["d46c", "\\mathbit{E}"], ["d46d", "\\mathbit{F}"], ["d46e", "\\mathbit{G}"], ["d46f", "\\mathbit{H}"], ["d470", "\\mathbit{I}"], ["d471", "\\mathbit{J}"], ["d472", "\\mathbit{K}"], ["d473", "\\mathbit{L}"], ["d474", "\\mathbit{M}"], ["d475", "\\mathbit{N}"], ["d476", "\\mathbit{O}"], ["d477", "\\mathbit{P}"], ["d478", "\\mathbit{Q}"], ["d479", "\\mathbit{R}"], ["d47a", "\\mathbit{S}"], ["d47b", "\\mathbit{T}"], ["d47c", "\\mathbit{U}"], ["d47d", "\\mathbit{V}"], ["d47e", "\\mathbit{W}"], ["d47f", "\\mathbit{X}"], ["d480", "\\mathbit{Y}"], ["d481", "\\mathbit{Z}"], ["d482", "\\mathbit{a}"], ["d483", "\\mathbit{b}"], ["d484", "\\mathbit{c}"], ["d485", "\\mathbit{d}"], ["d486", "\\mathbit{e}"], ["d487", "\\mathbit{f}"], ["d488", "\\mathbit{g}"], ["d489", "\\mathbit{h}"], ["d48a", "\\mathbit{i}"], ["d48b", "\\mathbit{j}"], ["d48c", "\\mathbit{k}"], ["d48d", "\\mathbit{l}"], ["d48e", "\\mathbit{m}"], ["d48f", "\\mathbit{n}"], ["d490", "\\mathbit{o}"], ["d491", "\\mathbit{p}"], ["d492", "\\mathbit{q}"], ["d493", "\\mathbit{r}"], ["d494", "\\mathbit{s}"], ["d495", "\\mathbit{t}"], ["d496", "\\mathbit{u}"], ["d497", "\\mathbit{v}"], ["d498", "\\mathbit{w}"], ["d499", "\\mathbit{x}"], ["d49a", "\\mathbit{y}"], ["d49b", "\\mathbit{z}"], ["d49c", "\\mathscr{A}"], ["d49e", "\\mathscr{C}"], ["d49f", "\\mathscr{D}"], ["d4a2", "\\mathscr{G}"], ["d4a5", "\\mathscr{J}"], ["d4a6", "\\mathscr{K}"], ["d4a9", "\\mathscr{N}"], ["d4aa", "\\mathscr{O}"], ["d4ab", "\\mathscr{P}"], ["d4ac", "\\mathscr{Q}"], ["d4ae", "\\mathscr{S}"], ["d4af", "\\mathscr{T}"], ["d4b0", "\\mathscr{U}"], ["d4b1", "\\mathscr{V}"], ["d4b2", "\\mathscr{W}"], ["d4b3", "\\mathscr{X}"], ["d4b4", "\\mathscr{Y}"], ["d4b5", "\\mathscr{Z}"], ["d4b6", "\\mathscr{a}"], ["d4b7", "\\mathscr{b}"], ["d4b8", "\\mathscr{c}"], ["d4b9", "\\mathscr{d}"], ["d4bb", "\\mathscr{f}"], ["d4bd", "\\mathscr{h}"], ["d4be", "\\mathscr{i}"], ["d4bf", "\\mathscr{j}"], ["d4c0", "\\mathscr{k}"], ["d4c1", "\\mathscr{l}"], ["d4c2", "\\mathscr{m}"], ["d4c3", "\\mathscr{n}"], ["d4c5", "\\mathscr{p}"], ["d4c6", "\\mathscr{q}"], ["d4c7", "\\mathscr{r}"], ["d4c8", "\\mathscr{s}"], ["d4c9", "\\mathscr{t}"], ["d4ca", "\\mathscr{u}"], ["d4cb", "\\mathscr{v}"], ["d4cc", "\\mathscr{w}"], ["d4cd", "\\mathscr{x}"], ["d4ce", "\\mathscr{y}"], ["d4cf", "\\mathscr{z}"], ["d4d0", "\\mathmit{A}"], ["d4d1", "\\mathmit{B}"], ["d4d2", "\\mathmit{C}"], ["d4d3", "\\mathmit{D}"], ["d4d4", "\\mathmit{E}"], ["d4d5", "\\mathmit{F}"], ["d4d6", "\\mathmit{G}"], ["d4d7", "\\mathmit{H}"], ["d4d8", "\\mathmit{I}"], ["d4d9", "\\mathmit{J}"], ["d4da", "\\mathmit{K}"], ["d4db", "\\mathmit{L}"], ["d4dc", "\\mathmit{M}"], ["d4dd", "\\mathmit{N}"], ["d4de", "\\mathmit{O}"], ["d4df", "\\mathmit{P}"], ["d4e0", "\\mathmit{Q}"], ["d4e1", "\\mathmit{R}"], ["d4e2", "\\mathmit{S}"], ["d4e3", "\\mathmit{T}"], ["d4e4", "\\mathmit{U}"], ["d4e5", "\\mathmit{V}"], ["d4e6", "\\mathmit{W}"], ["d4e7", "\\mathmit{X}"], ["d4e8", "\\mathmit{Y}"], ["d4e9", "\\mathmit{Z}"], ["d4ea", "\\mathmit{a}"], ["d4eb", "\\mathmit{b}"], ["d4ec", "\\mathmit{c}"], ["d4ed", "\\mathmit{d}"], ["d4ee", "\\mathmit{e}"], ["d4ef", "\\mathmit{f}"], ["d4f0", "\\mathmit{g}"], ["d4f1", "\\mathmit{h}"], ["d4f2", "\\mathmit{i}"], ["d4f3", "\\mathmit{j}"], ["d4f4", "\\mathmit{k}"], ["d4f5", "\\mathmit{l}"], ["d4f6", "\\mathmit{m}"], ["d4f7", "\\mathmit{n}"], ["d4f8", "\\mathmit{o}"], ["d4f9", "\\mathmit{p}"], ["d4fa", "\\mathmit{q}"], ["d4fb", "\\mathmit{r}"], ["d4fc", "\\mathmit{s}"], ["d4fd", "\\mathmit{t}"], ["d4fe", "\\mathmit{u}"], ["d4ff", "\\mathmit{v}"], ["d500", "\\mathmit{w}"], ["d501", "\\mathmit{x}"], ["d502", "\\mathmit{y}"], ["d503", "\\mathmit{z}"], ["d504", "\\mathfrak{A}"], ["d505", "\\mathfrak{B}"], ["d507", "\\mathfrak{D}"], ["d508", "\\mathfrak{E}"], ["d509", "\\mathfrak{F}"], ["d50a", "\\mathfrak{G}"], ["d50d", "\\mathfrak{J}"], ["d50e", "\\mathfrak{K}"], ["d50f", "\\mathfrak{L}"], ["d510", "\\mathfrak{M}"], ["d511", "\\mathfrak{N}"], ["d512", "\\mathfrak{O}"], ["d513", "\\mathfrak{P}"], ["d514", "\\mathfrak{Q}"], ["d516", "\\mathfrak{S}"], ["d517", "\\mathfrak{T}"], ["d518", "\\mathfrak{U}"], ["d519", "\\mathfrak{V}"], ["d51a", "\\mathfrak{W}"], ["d51b", "\\mathfrak{X}"], ["d51c", "\\mathfrak{Y}"], ["d51e", "\\mathfrak{a}"], ["d51f", "\\mathfrak{b}"], ["d520", "\\mathfrak{c}"], ["d521", "\\mathfrak{d}"], ["d522", "\\mathfrak{e}"], ["d523", "\\mathfrak{f}"], ["d524", "\\mathfrak{g}"], ["d525", "\\mathfrak{h}"], ["d526", "\\mathfrak{i}"], ["d527", "\\mathfrak{j}"], ["d528", "\\mathfrak{k}"], ["d529", "\\mathfrak{l}"], ["d52a", "\\mathfrak{m}"], ["d52b", "\\mathfrak{n}"], ["d52c", "\\mathfrak{o}"], ["d52d", "\\mathfrak{p}"], ["d52e", "\\mathfrak{q}"], ["d52f", "\\mathfrak{r}"], ["d530", "\\mathfrak{s}"], ["d531", "\\mathfrak{t}"], ["d532", "\\mathfrak{u}"], ["d533", "\\mathfrak{v}"], ["d534", "\\mathfrak{w}"], ["d535", "\\mathfrak{x}"], ["d536", "\\mathfrak{y}"], ["d537", "\\mathfrak{z}"], ["d538", "\\mathbb{A}"], ["d539", "\\mathbb{B}"], ["d53b", "\\mathbb{D}"], ["d53c", "\\mathbb{E}"], ["d53d", "\\mathbb{F}"], ["d53e", "\\mathbb{G}"], ["d540", "\\mathbb{I}"], ["d541", "\\mathbb{J}"], ["d542", "\\mathbb{K}"], ["d543", "\\mathbb{L}"], ["d544", "\\mathbb{M}"], ["d546", "\\mathbb{O}"], ["d54a", "\\mathbb{S}"], ["d54b", "\\mathbb{T}"], ["d54c", "\\mathbb{U}"], ["d54d", "\\mathbb{V}"], ["d54e", "\\mathbb{W}"], ["d54f", "\\mathbb{X}"], ["d550", "\\mathbb{Y}"], ["d552", "\\mathbb{a}"], ["d553", "\\mathbb{b}"], ["d554", "\\mathbb{c}"], ["d555", "\\mathbb{d}"], ["d556", "\\mathbb{e}"], ["d557", "\\mathbb{f}"], ["d558", "\\mathbb{g}"], ["d559", "\\mathbb{h}"], ["d55a", "\\mathbb{i}"], ["d55b", "\\mathbb{j}"], ["d55c", "\\mathbb{k}"], ["d55d", "\\mathbb{l}"], ["d55e", "\\mathbb{m}"], ["d55f", "\\mathbb{n}"], ["d560", "\\mathbb{o}"], ["d561", "\\mathbb{p}"], ["d562", "\\mathbb{q}"], ["d563", "\\mathbb{r}"], ["d564", "\\mathbb{s}"], ["d565", "\\mathbb{t}"], ["d566", "\\mathbb{u}"], ["d567", "\\mathbb{v}"], ["d568", "\\mathbb{w}"], ["d569", "\\mathbb{x}"], ["d56a", "\\mathbb{y}"], ["d56b", "\\mathbb{z}"], ["d56c", "\\mathslbb{A}"], ["d56d", "\\mathslbb{B}"], ["d56e", "\\mathslbb{C}"], ["d56f", "\\mathslbb{D}"], ["d570", "\\mathslbb{E}"], ["d571", "\\mathslbb{F}"], ["d572", "\\mathslbb{G}"], ["d573", "\\mathslbb{H}"], ["d574", "\\mathslbb{I}"], ["d575", "\\mathslbb{J}"], ["d576", "\\mathslbb{K}"], ["d577", "\\mathslbb{L}"], ["d578", "\\mathslbb{M}"], ["d579", "\\mathslbb{N}"], ["d57a", "\\mathslbb{O}"], ["d57b", "\\mathslbb{P}"], ["d57c", "\\mathslbb{Q}"], ["d57d", "\\mathslbb{R}"], ["d57e", "\\mathslbb{S}"], ["d57f", "\\mathslbb{T}"], ["d580", "\\mathslbb{U}"], ["d581", "\\mathslbb{V}"], ["d582", "\\mathslbb{W}"], ["d583", "\\mathslbb{X}"], ["d584", "\\mathslbb{Y}"], ["d585", "\\mathslbb{Z}"], ["d586", "\\mathslbb{a}"], ["d587", "\\mathslbb{b}"], ["d588", "\\mathslbb{c}"], ["d589", "\\mathslbb{d}"], ["d58a", "\\mathslbb{e}"], ["d58b", "\\mathslbb{f}"], ["d58c", "\\mathslbb{g}"], ["d58d", "\\mathslbb{h}"], ["d58e", "\\mathslbb{i}"], ["d58f", "\\mathslbb{j}"], ["d590", "\\mathslbb{k}"], ["d591", "\\mathslbb{l}"], ["d592", "\\mathslbb{m}"], ["d593", "\\mathslbb{n}"], ["d594", "\\mathslbb{o}"], ["d595", "\\mathslbb{p}"], ["d596", "\\mathslbb{q}"], ["d597", "\\mathslbb{r}"], ["d598", "\\mathslbb{s}"], ["d599", "\\mathslbb{t}"], ["d59a", "\\mathslbb{u}"], ["d59b", "\\mathslbb{v}"], ["d59c", "\\mathslbb{w}"], ["d59d", "\\mathslbb{x}"], ["d59e", "\\mathslbb{y}"], ["d59f", "\\mathslbb{z}"], ["d5a0", "\\mathsf{A}"], ["d5a1", "\\mathsf{B}"], ["d5a2", "\\mathsf{C}"], ["d5a3", "\\mathsf{D}"], ["d5a4", "\\mathsf{E}"], ["d5a5", "\\mathsf{F}"], ["d5a6", "\\mathsf{G}"], ["d5a7", "\\mathsf{H}"], ["d5a8", "\\mathsf{I}"], ["d5a9", "\\mathsf{J}"], ["d5aa", "\\mathsf{K}"], ["d5ab", "\\mathsf{L}"], ["d5ac", "\\mathsf{M}"], ["d5ad", "\\mathsf{N}"], ["d5ae", "\\mathsf{O}"], ["d5af", "\\mathsf{P}"], ["d5b0", "\\mathsf{Q}"], ["d5b1", "\\mathsf{R}"], ["d5b2", "\\mathsf{S}"], ["d5b3", "\\mathsf{T}"], ["d5b4", "\\mathsf{U}"], ["d5b5", "\\mathsf{V}"], ["d5b6", "\\mathsf{W}"], ["d5b7", "\\mathsf{X}"], ["d5b8", "\\mathsf{Y}"], ["d5b9", "\\mathsf{Z}"], ["d5ba", "\\mathsf{a}"], ["d5bb", "\\mathsf{b}"], ["d5bc", "\\mathsf{c}"], ["d5bd", "\\mathsf{d}"], ["d5be", "\\mathsf{e}"], ["d5bf", "\\mathsf{f}"], ["d5c0", "\\mathsf{g}"], ["d5c1", "\\mathsf{h}"], ["d5c2", "\\mathsf{i}"], ["d5c3", "\\mathsf{j}"], ["d5c4", "\\mathsf{k}"], ["d5c5", "\\mathsf{l}"], ["d5c6", "\\mathsf{m}"], ["d5c7", "\\mathsf{n}"], ["d5c8", "\\mathsf{o}"], ["d5c9", "\\mathsf{p}"], ["d5ca", "\\mathsf{q}"], ["d5cb", "\\mathsf{r}"], ["d5cc", "\\mathsf{s}"], ["d5cd", "\\mathsf{t}"], ["d5ce", "\\mathsf{u}"], ["d5cf", "\\mathsf{v}"], ["d5d0", "\\mathsf{w}"], ["d5d1", "\\mathsf{x}"], ["d5d2", "\\mathsf{y}"], ["d5d3", "\\mathsf{z}"], ["d5d4", "\\mathsfbf{A}"], ["d5d5", "\\mathsfbf{B}"], ["d5d6", "\\mathsfbf{C}"], ["d5d7", "\\mathsfbf{D}"], ["d5d8", "\\mathsfbf{E}"], ["d5d9", "\\mathsfbf{F}"], ["d5da", "\\mathsfbf{G}"], ["d5db", "\\mathsfbf{H}"], ["d5dc", "\\mathsfbf{I}"], ["d5dd", "\\mathsfbf{J}"], ["d5de", "\\mathsfbf{K}"], ["d5df", "\\mathsfbf{L}"], ["d5e0", "\\mathsfbf{M}"], ["d5e1", "\\mathsfbf{N}"], ["d5e2", "\\mathsfbf{O}"], ["d5e3", "\\mathsfbf{P}"], ["d5e4", "\\mathsfbf{Q}"], ["d5e5", "\\mathsfbf{R}"], ["d5e6", "\\mathsfbf{S}"], ["d5e7", "\\mathsfbf{T}"], ["d5e8", "\\mathsfbf{U}"], ["d5e9", "\\mathsfbf{V}"], ["d5ea", "\\mathsfbf{W}"], ["d5eb", "\\mathsfbf{X}"], ["d5ec", "\\mathsfbf{Y}"], ["d5ed", "\\mathsfbf{Z}"], ["d5ee", "\\mathsfbf{a}"], ["d5ef", "\\mathsfbf{b}"], ["d5f0", "\\mathsfbf{c}"], ["d5f1", "\\mathsfbf{d}"], ["d5f2", "\\mathsfbf{e}"], ["d5f3", "\\mathsfbf{f}"], ["d5f4", "\\mathsfbf{g}"], ["d5f5", "\\mathsfbf{h}"], ["d5f6", "\\mathsfbf{i}"], ["d5f7", "\\mathsfbf{j}"], ["d5f8", "\\mathsfbf{k}"], ["d5f9", "\\mathsfbf{l}"], ["d5fa", "\\mathsfbf{m}"], ["d5fb", "\\mathsfbf{n}"], ["d5fc", "\\mathsfbf{o}"], ["d5fd", "\\mathsfbf{p}"], ["d5fe", "\\mathsfbf{q}"], ["d5ff", "\\mathsfbf{r}"], ["d600", "\\mathsfbf{s}"], ["d601", "\\mathsfbf{t}"], ["d602", "\\mathsfbf{u}"], ["d603", "\\mathsfbf{v}"], ["d604", "\\mathsfbf{w}"], ["d605", "\\mathsfbf{x}"], ["d606", "\\mathsfbf{y}"], ["d607", "\\mathsfbf{z}"], ["d608", "\\mathsfsl{A}"], ["d609", "\\mathsfsl{B}"], ["d60a", "\\mathsfsl{C}"], ["d60b", "\\mathsfsl{D}"], ["d60c", "\\mathsfsl{E}"], ["d60d", "\\mathsfsl{F}"], ["d60e", "\\mathsfsl{G}"], ["d60f", "\\mathsfsl{H}"], ["d610", "\\mathsfsl{I}"], ["d611", "\\mathsfsl{J}"], ["d612", "\\mathsfsl{K}"], ["d613", "\\mathsfsl{L}"], ["d614", "\\mathsfsl{M}"], ["d615", "\\mathsfsl{N}"], ["d616", "\\mathsfsl{O}"], ["d617", "\\mathsfsl{P}"], ["d618", "\\mathsfsl{Q}"], ["d619", "\\mathsfsl{R}"], ["d61a", "\\mathsfsl{S}"], ["d61b", "\\mathsfsl{T}"], ["d61c", "\\mathsfsl{U}"], ["d61d", "\\mathsfsl{V}"], ["d61e", "\\mathsfsl{W}"], ["d61f", "\\mathsfsl{X}"], ["d620", "\\mathsfsl{Y}"], ["d621", "\\mathsfsl{Z}"], ["d622", "\\mathsfsl{a}"], ["d623", "\\mathsfsl{b}"], ["d624", "\\mathsfsl{c}"], ["d625", "\\mathsfsl{d}"], ["d626", "\\mathsfsl{e}"], ["d627", "\\mathsfsl{f}"], ["d628", "\\mathsfsl{g}"], ["d629", "\\mathsfsl{h}"], ["d62a", "\\mathsfsl{i}"], ["d62b", "\\mathsfsl{j}"], ["d62c", "\\mathsfsl{k}"], ["d62d", "\\mathsfsl{l}"], ["d62e", "\\mathsfsl{m}"], ["d62f", "\\mathsfsl{n}"], ["d630", "\\mathsfsl{o}"], ["d631", "\\mathsfsl{p}"], ["d632", "\\mathsfsl{q}"], ["d633", "\\mathsfsl{r}"], ["d634", "\\mathsfsl{s}"], ["d635", "\\mathsfsl{t}"], ["d636", "\\mathsfsl{u}"], ["d637", "\\mathsfsl{v}"], ["d638", "\\mathsfsl{w}"], ["d639", "\\mathsfsl{x}"], ["d63a", "\\mathsfsl{y}"], ["d63b", "\\mathsfsl{z}"], ["d63c", "\\mathsfbfsl{A}"], ["d63d", "\\mathsfbfsl{B}"], ["d63e", "\\mathsfbfsl{C}"], ["d63f", "\\mathsfbfsl{D}"], ["d640", "\\mathsfbfsl{E}"], ["d641", "\\mathsfbfsl{F}"], ["d642", "\\mathsfbfsl{G}"], ["d643", "\\mathsfbfsl{H}"], ["d644", "\\mathsfbfsl{I}"], ["d645", "\\mathsfbfsl{J}"], ["d646", "\\mathsfbfsl{K}"], ["d647", "\\mathsfbfsl{L}"], ["d648", "\\mathsfbfsl{M}"], ["d649", "\\mathsfbfsl{N}"], ["d64a", "\\mathsfbfsl{O}"], ["d64b", "\\mathsfbfsl{P}"], ["d64c", "\\mathsfbfsl{Q}"], ["d64d", "\\mathsfbfsl{R}"], ["d64e", "\\mathsfbfsl{S}"], ["d64f", "\\mathsfbfsl{T}"], ["d650", "\\mathsfbfsl{U}"], ["d651", "\\mathsfbfsl{V}"], ["d652", "\\mathsfbfsl{W}"], ["d653", "\\mathsfbfsl{X}"], ["d654", "\\mathsfbfsl{Y}"], ["d655", "\\mathsfbfsl{Z}"], ["d656", "\\mathsfbfsl{a}"], ["d657", "\\mathsfbfsl{b}"], ["d658", "\\mathsfbfsl{c}"], ["d659", "\\mathsfbfsl{d}"], ["d65a", "\\mathsfbfsl{e}"], ["d65b", "\\mathsfbfsl{f}"], ["d65c", "\\mathsfbfsl{g}"], ["d65d", "\\mathsfbfsl{h}"], ["d65e", "\\mathsfbfsl{i}"], ["d65f", "\\mathsfbfsl{j}"], ["d660", "\\mathsfbfsl{k}"], ["d661", "\\mathsfbfsl{l}"], ["d662", "\\mathsfbfsl{m}"], ["d663", "\\mathsfbfsl{n}"], ["d664", "\\mathsfbfsl{o}"], ["d665", "\\mathsfbfsl{p}"], ["d666", "\\mathsfbfsl{q}"], ["d667", "\\mathsfbfsl{r}"], ["d668", "\\mathsfbfsl{s}"], ["d669", "\\mathsfbfsl{t}"], ["d66a", "\\mathsfbfsl{u}"], ["d66b", "\\mathsfbfsl{v}"], ["d66c", "\\mathsfbfsl{w}"], ["d66d", "\\mathsfbfsl{x}"], ["d66e", "\\mathsfbfsl{y}"], ["d66f", "\\mathsfbfsl{z}"], ["d670", "\\mathtt{A}"], ["d671", "\\mathtt{B}"], ["d672", "\\mathtt{C}"], ["d673", "\\mathtt{D}"], ["d674", "\\mathtt{E}"], ["d675", "\\mathtt{F}"], ["d676", "\\mathtt{G}"], ["d677", "\\mathtt{H}"], ["d678", "\\mathtt{I}"], ["d679", "\\mathtt{J}"], ["d67a", "\\mathtt{K}"], ["d67b", "\\mathtt{L}"], ["d67c", "\\mathtt{M}"], ["d67d", "\\mathtt{N}"], ["d67e", "\\mathtt{O}"], ["d67f", "\\mathtt{P}"], ["d680", "\\mathtt{Q}"], ["d681", "\\mathtt{R}"], ["d682", "\\mathtt{S}"], ["d683", "\\mathtt{T}"], ["d684", "\\mathtt{U}"], ["d685", "\\mathtt{V}"], ["d686", "\\mathtt{W}"], ["d687", "\\mathtt{X}"], ["d688", "\\mathtt{Y}"], ["d689", "\\mathtt{Z}"], ["d68a", "\\mathtt{a}"], ["d68b", "\\mathtt{b}"], ["d68c", "\\mathtt{c}"], ["d68d", "\\mathtt{d}"], ["d68e", "\\mathtt{e}"], ["d68f", "\\mathtt{f}"], ["d690", "\\mathtt{g}"], ["d691", "\\mathtt{h}"], ["d692", "\\mathtt{i}"], ["d693", "\\mathtt{j}"], ["d694", "\\mathtt{k}"], ["d695", "\\mathtt{l}"], ["d696", "\\mathtt{m}"], ["d697", "\\mathtt{n}"], ["d698", "\\mathtt{o}"], ["d699", "\\mathtt{p}"], ["d69a", "\\mathtt{q}"], ["d69b", "\\mathtt{r}"], ["d69c", "\\mathtt{s}"], ["d69d", "\\mathtt{t}"], ["d69e", "\\mathtt{u}"], ["d69f", "\\mathtt{v}"], ["d6a0", "\\mathtt{w}"], ["d6a1", "\\mathtt{x}"], ["d6a2", "\\mathtt{y}"], ["d6a3", "\\mathtt{z}"], ["d6a8", "\\mathbf{\\Alpha}"], ["d6a9", "\\mathbf{\\Beta}"], ["d6aa", "\\mathbf{\\Gamma}"], ["d6ab", "\\mathbf{\\Delta}"], ["d6ac", "\\mathbf{\\Epsilon}"], ["d6ad", "\\mathbf{\\Zeta}"], ["d6ae", "\\mathbf{\\Eta}"], ["d6af", "\\mathbf{\\Theta}"], ["d6b0", "\\mathbf{\\Iota}"], ["d6b1", "\\mathbf{\\Kappa}"], ["d6b2", "\\mathbf{\\Lambda}"], ["d6b5", "\\mathbf{\\Xi}"], ["d6b7", "\\mathbf{\\Pi}"], ["d6b8", "\\mathbf{\\Rho}"], ["d6b9", "\\mathbf{\\vartheta}"], ["d6ba", "\\mathbf{\\Sigma}"], ["d6bb", "\\mathbf{\\Tau}"], ["d6bc", "\\mathbf{\\Upsilon}"], ["d6bd", "\\mathbf{\\Phi}"], ["d6be", "\\mathbf{\\Chi}"], ["d6bf", "\\mathbf{\\Psi}"], ["d6c0", "\\mathbf{\\Omega}"], ["d6c1", "\\mathbf{\\nabla}"], ["d6c2", "\\mathbf{\\Alpha}"], ["d6c3", "\\mathbf{\\Beta}"], ["d6c4", "\\mathbf{\\Gamma}"], ["d6c5", "\\mathbf{\\Delta}"], ["d6c6", "\\mathbf{\\Epsilon}"], ["d6c7", "\\mathbf{\\Zeta}"], ["d6c8", "\\mathbf{\\Eta}"], ["d6c9", "\\mathbf{\\theta}"], ["d6ca", "\\mathbf{\\Iota}"], ["d6cb", "\\mathbf{\\Kappa}"], ["d6cc", "\\mathbf{\\Lambda}"], ["d6cf", "\\mathbf{\\Xi}"], ["d6d1", "\\mathbf{\\Pi}"], ["d6d2", "\\mathbf{\\Rho}"], ["d6d3", "\\mathbf{\\varsigma}"], ["d6d4", "\\mathbf{\\Sigma}"], ["d6d5", "\\mathbf{\\Tau}"], ["d6d6", "\\mathbf{\\Upsilon}"], ["d6d7", "\\mathbf{\\Phi}"], ["d6d8", "\\mathbf{\\Chi}"], ["d6d9", "\\mathbf{\\Psi}"], ["d6da", "\\mathbf{\\Omega}"], ["d6db", "\\partial{}"], ["d6dc", "\\in"], ["d6dd", "\\mathbf{\\vartheta}"], ["d6de", "\\mathbf{\\varkappa}"], ["d6df", "\\mathbf{\\phi}"], ["d6e0", "\\mathbf{\\varrho}"], ["d6e1", "\\mathbf{\\varpi}"], ["d6e2", "\\mathsl{\\Alpha}"], ["d6e3", "\\mathsl{\\Beta}"], ["d6e4", "\\mathsl{\\Gamma}"], ["d6e5", "\\mathsl{\\Delta}"], ["d6e6", "\\mathsl{\\Epsilon}"], ["d6e7", "\\mathsl{\\Zeta}"], ["d6e8", "\\mathsl{\\Eta}"], ["d6e9", "\\mathsl{\\Theta}"], ["d6ea", "\\mathsl{\\Iota}"], ["d6eb", "\\mathsl{\\Kappa}"], ["d6ec", "\\mathsl{\\Lambda}"], ["d6ef", "\\mathsl{\\Xi}"], ["d6f1", "\\mathsl{\\Pi}"], ["d6f2", "\\mathsl{\\Rho}"], ["d6f3", "\\mathsl{\\vartheta}"], ["d6f4", "\\mathsl{\\Sigma}"], ["d6f5", "\\mathsl{\\Tau}"], ["d6f6", "\\mathsl{\\Upsilon}"], ["d6f7", "\\mathsl{\\Phi}"], ["d6f8", "\\mathsl{\\Chi}"], ["d6f9", "\\mathsl{\\Psi}"], ["d6fa", "\\mathsl{\\Omega}"], ["d6fb", "\\mathsl{\\nabla}"], ["d6fc", "\\mathsl{\\Alpha}"], ["d6fd", "\\mathsl{\\Beta}"], ["d6fe", "\\mathsl{\\Gamma}"], ["d6ff", "\\mathsl{\\Delta}"], ["d700", "\\mathsl{\\Epsilon}"], ["d701", "\\mathsl{\\Zeta}"], ["d702", "\\mathsl{\\Eta}"], ["d703", "\\mathsl{\\Theta}"], ["d704", "\\mathsl{\\Iota}"], ["d705", "\\mathsl{\\Kappa}"], ["d706", "\\mathsl{\\Lambda}"], ["d709", "\\mathsl{\\Xi}"], ["d70b", "\\mathsl{\\Pi}"], ["d70c", "\\mathsl{\\Rho}"], ["d70d", "\\mathsl{\\varsigma}"], ["d70e", "\\mathsl{\\Sigma}"], ["d70f", "\\mathsl{\\Tau}"], ["d710", "\\mathsl{\\Upsilon}"], ["d711", "\\mathsl{\\Phi}"], ["d712", "\\mathsl{\\Chi}"], ["d713", "\\mathsl{\\Psi}"], ["d714", "\\mathsl{\\Omega}"], ["d715", "\\partial{}"], ["d716", "\\in"], ["d717", "\\mathsl{\\vartheta}"], ["d718", "\\mathsl{\\varkappa}"], ["d719", "\\mathsl{\\phi}"], ["d71a", "\\mathsl{\\varrho}"], ["d71b", "\\mathsl{\\varpi}"], ["d71c", "\\mathbit{\\Alpha}"], ["d71d", "\\mathbit{\\Beta}"], ["d71e", "\\mathbit{\\Gamma}"], ["d71f", "\\mathbit{\\Delta}"], ["d720", "\\mathbit{\\Epsilon}"], ["d721", "\\mathbit{\\Zeta}"], ["d722", "\\mathbit{\\Eta}"], ["d723", "\\mathbit{\\Theta}"], ["d724", "\\mathbit{\\Iota}"], ["d725", "\\mathbit{\\Kappa}"], ["d726", "\\mathbit{\\Lambda}"], ["d729", "\\mathbit{\\Xi}"], ["d72b", "\\mathbit{\\Pi}"], ["d72c", "\\mathbit{\\Rho}"], ["d72d", "\\mathbit{O}"], ["d72e", "\\mathbit{\\Sigma}"], ["d72f", "\\mathbit{\\Tau}"], ["d730", "\\mathbit{\\Upsilon}"], ["d731", "\\mathbit{\\Phi}"], ["d732", "\\mathbit{\\Chi}"], ["d733", "\\mathbit{\\Psi}"], ["d734", "\\mathbit{\\Omega}"], ["d735", "\\mathbit{\\nabla}"], ["d736", "\\mathbit{\\Alpha}"], ["d737", "\\mathbit{\\Beta}"], ["d738", "\\mathbit{\\Gamma}"], ["d739", "\\mathbit{\\Delta}"], ["d73a", "\\mathbit{\\Epsilon}"], ["d73b", "\\mathbit{\\Zeta}"], ["d73c", "\\mathbit{\\Eta}"], ["d73d", "\\mathbit{\\Theta}"], ["d73e", "\\mathbit{\\Iota}"], ["d73f", "\\mathbit{\\Kappa}"], ["d740", "\\mathbit{\\Lambda}"], ["d743", "\\mathbit{\\Xi}"], ["d745", "\\mathbit{\\Pi}"], ["d746", "\\mathbit{\\Rho}"], ["d747", "\\mathbit{\\varsigma}"], ["d748", "\\mathbit{\\Sigma}"], ["d749", "\\mathbit{\\Tau}"], ["d74a", "\\mathbit{\\Upsilon}"], ["d74b", "\\mathbit{\\Phi}"], ["d74c", "\\mathbit{\\Chi}"], ["d74d", "\\mathbit{\\Psi}"], ["d74e", "\\mathbit{\\Omega}"], ["d74f", "\\partial{}"], ["d750", "\\in"], ["d751", "\\mathbit{\\vartheta}"], ["d752", "\\mathbit{\\varkappa}"], ["d753", "\\mathbit{\\phi}"], ["d754", "\\mathbit{\\varrho}"], ["d755", "\\mathbit{\\varpi}"], ["d756", "\\mathsfbf{\\Alpha}"], ["d757", "\\mathsfbf{\\Beta}"], ["d758", "\\mathsfbf{\\Gamma}"], ["d759", "\\mathsfbf{\\Delta}"], ["d75a", "\\mathsfbf{\\Epsilon}"], ["d75b", "\\mathsfbf{\\Zeta}"], ["d75c", "\\mathsfbf{\\Eta}"], ["d75d", "\\mathsfbf{\\Theta}"], ["d75e", "\\mathsfbf{\\Iota}"], ["d75f", "\\mathsfbf{\\Kappa}"], ["d760", "\\mathsfbf{\\Lambda}"], ["d763", "\\mathsfbf{\\Xi}"], ["d765", "\\mathsfbf{\\Pi}"], ["d766", "\\mathsfbf{\\Rho}"], ["d767", "\\mathsfbf{\\vartheta}"], ["d768", "\\mathsfbf{\\Sigma}"], ["d769", "\\mathsfbf{\\Tau}"], ["d76a", "\\mathsfbf{\\Upsilon}"], ["d76b", "\\mathsfbf{\\Phi}"], ["d76c", "\\mathsfbf{\\Chi}"], ["d76d", "\\mathsfbf{\\Psi}"], ["d76e", "\\mathsfbf{\\Omega}"], ["d76f", "\\mathsfbf{\\nabla}"], ["d770", "\\mathsfbf{\\Alpha}"], ["d771", "\\mathsfbf{\\Beta}"], ["d772", "\\mathsfbf{\\Gamma}"], ["d773", "\\mathsfbf{\\Delta}"], ["d774", "\\mathsfbf{\\Epsilon}"], ["d775", "\\mathsfbf{\\Zeta}"], ["d776", "\\mathsfbf{\\Eta}"], ["d777", "\\mathsfbf{\\Theta}"], ["d778", "\\mathsfbf{\\Iota}"], ["d779", "\\mathsfbf{\\Kappa}"], ["d77a", "\\mathsfbf{\\Lambda}"], ["d77d", "\\mathsfbf{\\Xi}"], ["d77f", "\\mathsfbf{\\Pi}"], ["d780", "\\mathsfbf{\\Rho}"], ["d781", "\\mathsfbf{\\varsigma}"], ["d782", "\\mathsfbf{\\Sigma}"], ["d783", "\\mathsfbf{\\Tau}"], ["d784", "\\mathsfbf{\\Upsilon}"], ["d785", "\\mathsfbf{\\Phi}"], ["d786", "\\mathsfbf{\\Chi}"], ["d787", "\\mathsfbf{\\Psi}"], ["d788", "\\mathsfbf{\\Omega}"], ["d789", "\\partial{}"], ["d78a", "\\in"], ["d78b", "\\mathsfbf{\\vartheta}"], ["d78c", "\\mathsfbf{\\varkappa}"], ["d78d", "\\mathsfbf{\\phi}"], ["d78e", "\\mathsfbf{\\varrho}"], ["d78f", "\\mathsfbf{\\varpi}"], ["d790", "\\mathsfbfsl{\\Alpha}"], ["d791", "\\mathsfbfsl{\\Beta}"], ["d792", "\\mathsfbfsl{\\Gamma}"], ["d793", "\\mathsfbfsl{\\Delta}"], ["d794", "\\mathsfbfsl{\\Epsilon}"], ["d795", "\\mathsfbfsl{\\Zeta}"], ["d796", "\\mathsfbfsl{\\Eta}"], ["d797", "\\mathsfbfsl{\\vartheta}"], ["d798", "\\mathsfbfsl{\\Iota}"], ["d799", "\\mathsfbfsl{\\Kappa}"], ["d79a", "\\mathsfbfsl{\\Lambda}"], ["d79d", "\\mathsfbfsl{\\Xi}"], ["d79f", "\\mathsfbfsl{\\Pi}"], ["d7a0", "\\mathsfbfsl{\\Rho}"], ["d7a1", "\\mathsfbfsl{\\vartheta}"], ["d7a2", "\\mathsfbfsl{\\Sigma}"], ["d7a3", "\\mathsfbfsl{\\Tau}"], ["d7a4", "\\mathsfbfsl{\\Upsilon}"], ["d7a5", "\\mathsfbfsl{\\Phi}"], ["d7a6", "\\mathsfbfsl{\\Chi}"], ["d7a7", "\\mathsfbfsl{\\Psi}"], ["d7a8", "\\mathsfbfsl{\\Omega}"], ["d7a9", "\\mathsfbfsl{\\nabla}"], ["d7aa", "\\mathsfbfsl{\\Alpha}"], ["d7ab", "\\mathsfbfsl{\\Beta}"], ["d7ac", "\\mathsfbfsl{\\Gamma}"], ["d7ad", "\\mathsfbfsl{\\Delta}"], ["d7ae", "\\mathsfbfsl{\\Epsilon}"], ["d7af", "\\mathsfbfsl{\\Zeta}"], ["d7b0", "\\mathsfbfsl{\\Eta}"], ["d7b1", "\\mathsfbfsl{\\vartheta}"], ["d7b2", "\\mathsfbfsl{\\Iota}"], ["d7b3", "\\mathsfbfsl{\\Kappa}"], ["d7b4", "\\mathsfbfsl{\\Lambda}"], ["d7b7", "\\mathsfbfsl{\\Xi}"], ["d7b9", "\\mathsfbfsl{\\Pi}"], ["d7ba", "\\mathsfbfsl{\\Rho}"], ["d7bb", "\\mathsfbfsl{\\varsigma}"], ["d7bc", "\\mathsfbfsl{\\Sigma}"], ["d7bd", "\\mathsfbfsl{\\Tau}"], ["d7be", "\\mathsfbfsl{\\Upsilon}"], ["d7bf", "\\mathsfbfsl{\\Phi}"], ["d7c0", "\\mathsfbfsl{\\Chi}"], ["d7c1", "\\mathsfbfsl{\\Psi}"], ["d7c2", "\\mathsfbfsl{\\Omega}"], ["d7c3", "\\partial{}"], ["d7c4", "\\in"], ["d7c5", "\\mathsfbfsl{\\vartheta}"], ["d7c6", "\\mathsfbfsl{\\varkappa}"], ["d7c7", "\\mathsfbfsl{\\phi}"], ["d7c8", "\\mathsfbfsl{\\varrho}"], ["d7c9", "\\mathsfbfsl{\\varpi}"], ["d7ce", "\\mathbf{0}"], ["d7cf", "\\mathbf{1}"], ["d7d0", "\\mathbf{2}"], ["d7d1", "\\mathbf{3}"], ["d7d2", "\\mathbf{4}"], ["d7d3", "\\mathbf{5}"], ["d7d4", "\\mathbf{6}"], ["d7d5", "\\mathbf{7}"], ["d7d6", "\\mathbf{8}"], ["d7d7", "\\mathbf{9}"], ["d7d8", "\\mathbb{0}"], ["d7d9", "\\mathbb{1}"], ["d7da", "\\mathbb{2}"], ["d7db", "\\mathbb{3}"], ["d7dc", "\\mathbb{4}"], ["d7dd", "\\mathbb{5}"], ["d7de", "\\mathbb{6}"], ["d7df", "\\mathbb{7}"], ["d7e0", "\\mathbb{8}"], ["d7e1", "\\mathbb{9}"], ["d7e2", "\\mathsf{0}"], ["d7e3", "\\mathsf{1}"], ["d7e4", "\\mathsf{2}"], ["d7e5", "\\mathsf{3}"], ["d7e6", "\\mathsf{4}"], ["d7e7", "\\mathsf{5}"], ["d7e8", "\\mathsf{6}"], ["d7e9", "\\mathsf{7}"], ["d7ea", "\\mathsf{8}"], ["d7eb", "\\mathsf{9}"], ["d7ec", "\\mathsfbf{0}"], ["d7ed", "\\mathsfbf{1}"], ["d7ee", "\\mathsfbf{2}"], ["d7ef", "\\mathsfbf{3}"], ["d7f0", "\\mathsfbf{4}"], ["d7f1", "\\mathsfbf{5}"], ["d7f2", "\\mathsfbf{6}"], ["d7f3", "\\mathsfbf{7}"], ["d7f4", "\\mathsfbf{8}"], ["d7f5", "\\mathsfbf{9}"], ["d7f6", "\\mathtt{0}"], ["d7f7", "\\mathtt{1}"], ["d7f8", "\\mathtt{2}"], ["d7f9", "\\mathtt{3}"], ["d7fa", "\\mathtt{4}"], ["d7fb", "\\mathtt{5}"], ["d7fc", "\\mathtt{6}"], ["d7fd", "\\mathtt{7}"], ["d7fe", "\\mathtt{8}"], ["d7ff", "\\mathtt{9}"]]);
 
   // src/utils.ts
   function escapeSpecialCharacters(str) {
@@ -12090,15 +12729,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     var _a;
     return node.type !== "text" && ((_a = node.block) == null ? void 0 : _a.type) === "entry";
   }
-  var init_utils = __esm({
-    "src/utils.ts"() {
-      "use strict";
-
-      init_unicode();
-    }
-  });
 
   // src/sort.ts
+  var MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
   function sortEntries(ast, fieldMaps, sort) {
     var _a, _b, _c, _d, _e;
     if (!sort) return;
@@ -12188,22 +12821,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       _iterator6.f();
     }
   }
-  var MONTHS;
-  var init_sort = __esm({
-    "src/sort.ts"() {
-      "use strict";
-
-      init_src();
-      MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-    }
-  });
 
   // src/format.ts
+  var MONTH_SET = new Set(MONTHS);
   function formatBibtex(ast, options, replacementKeys) {
     var omit = options.omit,
       tab = options.tab,
-      space = options.space;
-    var indent = tab ? "	" : " ".repeat(space);
+      space2 = options.space;
+    var indent = tab ? "	" : " ".repeat(space2);
     var omitFields = new Set(omit);
     var bibtex = ast.children.map(child => formatNode(child, options, indent, omitFields, replacementKeys)).join("").trimEnd();
     if (!bibtex.endsWith("\n")) bibtex += "\n";
@@ -12257,9 +12882,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     bibtex += "\n}\n";
     return bibtex;
   }
-  function formatComment(comment, _ref3) {
-    var stripComments = _ref3.stripComments,
-      tidyComments = _ref3.tidyComments;
+  function formatComment(comment, _ref5) {
+    var stripComments = _ref5.stripComments,
+      tidyComments = _ref5.tidyComments;
     if (stripComments) return "";
     if (tidyComments) {
       var trimmed = comment.trim();
@@ -12280,14 +12905,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       wrap = options.wrap,
       maxAuthors = options.maxAuthors,
       tab = options.tab,
-      space = options.space,
+      space2 = options.space,
       enclosingBraces = options.enclosingBraces;
     var nameLowerCase = field.name.toLocaleLowerCase();
-    var indent = tab ? "	" : " ".repeat(space);
+    var indent = tab ? "	" : " ".repeat(space2);
     var enclosingBracesFields = new Set((enclosingBraces || []).map(field2 => field2.toLocaleLowerCase()));
-    return field.value.concat.map(_ref4 => {
-      var type = _ref4.type,
-        value = _ref4.value;
+    return field.value.concat.map(_ref6 => {
+      var type = _ref6.type,
+        value = _ref6.value;
       var isNumeric = value.match(/^[1-9][0-9]*$/);
       if (isNumeric && curly) {
         type = "braced";
@@ -12342,16 +12967,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     }).join(" # ");
   }
-  var MONTH_SET;
-  var init_format = __esm({
-    "src/format.ts"() {
-      "use strict";
-
-      init_utils();
-      init_sort();
-      MONTH_SET = new Set(MONTHS);
-    }
-  });
 
   // src/duplicates.ts
   function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
@@ -12502,14 +13117,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         break;
     }
   }
-  var init_duplicates = __esm({
-    "src/duplicates.ts"() {
-      "use strict";
-
-      init_utils();
-      init_src();
-    }
-  });
 
   // src/parseAuthors.ts
   function parseAuthors(authors, sanitize) {
@@ -12533,13 +13140,89 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     });
   }
-  var init_parseAuthors = __esm({
-    "src/parseAuthors.ts"() {
-      "use strict";
-    }
-  });
 
   // src/generateKeys.ts
+  var SPECIAL_MARKERS = {
+    auth: {
+      description: "Last name of first authors",
+      callback: v => {
+        var _a, _b;
+        var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+        var author = (_b = authors[0]) == null ? void 0 : _b.lastName.replace(/(?:(?![A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD50-\uDD52\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E]|\uD838[\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF38\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A])[\s\S])+/g, "_");
+        return author ? [author] : [];
+      }
+    },
+    authEtAl: {
+      description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
+      callback: v => {
+        var _a;
+        var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+        return [...authors.slice(0, 2).map(author => author == null ? void 0 : author.lastName.replace(/(?:(?![A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD50-\uDD52\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E]|\uD838[\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF38\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A])[\s\S])+/g, "_")), ...(authors.length > 2 ? ["Et", "Al"] : [])];
+      }
+    },
+    authors: {
+      description: "Last name all authors",
+      callback: v => {
+        var _a;
+        var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+        return authors.map(author => author == null ? void 0 : author.lastName.replace(/(?:(?![A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD50-\uDD52\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E]|\uD838[\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF38\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A])[\s\S])+/g, "_"));
+      }
+    },
+    authorsN: {
+      description: "Last name N authors, with EtAl if more",
+      callback: (v, n) => {
+        var _a;
+        var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+        return [...authors.slice(0, n).map(author => author == null ? void 0 : author.lastName.replace(/(?:(?![A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD50-\uDD52\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E]|\uD838[\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF38\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A])[\s\S])+/g, "_")), ...(authors.length > n ? ["Et", "Al"] : [])];
+      }
+    },
+    veryshorttitle: {
+      callback: v => nonFunctionWords(title(v)).slice(0, 1)
+    },
+    shorttitle: {
+      callback: v => nonFunctionWords(title(v)).slice(0, 3)
+    },
+    title: {
+      callback: v => capitalize(words(title(v)))
+    },
+    fulltitle: {
+      callback: v => words(title(v))
+    },
+    year: {
+      callback: v => {
+        var _a;
+        var year = (_a = v.get("year")) == null ? void 0 : _a.replace(/[^0-9]/g, "");
+        return year ? [year] : [];
+      }
+    },
+    duplicateLetter: {
+      description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
+      callback: () => ["[duplicateLetter]"]
+    },
+    duplicateNumber: {
+      description: "If the multiple entries end up with the same key, then insert a number 0-1.",
+      callback: () => ["[duplicateNumber]"]
+    }
+  };
+  var MODIFIERS = {
+    required: {
+      description: "If data is missing, revert to existing key",
+      callback: words2 => {
+        if (words2.length === 0) throw new MissingRequiredData();
+        return words2;
+      }
+    },
+    lower: {
+      callback: words2 => words2.map(word => word.toLocaleLowerCase())
+    },
+    upper: {
+      callback: words2 => words2.map(word => word.toLocaleUpperCase())
+    },
+    capitalize: {
+      callback: capitalize
+    }
+  };
+  var MissingRequiredData = class extends Error {};
   function generateKeys(ast, valueLookup, template) {
     var _a;
     var template2 = template;
@@ -12639,6 +13322,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       throw e;
     }
   }
+  var functionWords = /* @__PURE__ */new Set(["a", "about", "above", "across", "against", "along", "among", "an", "and", "around", "at", "before", "behind", "below", "beneath", "beside", "between", "beyond", "but", "by", "down", "during", "except", "for", "for", "from", "in", "inside", "into", "like", "near", "nor", "of", "off", "on", "onto", "or", "since", "so", "the", "through", "to", "toward", "under", "until", "up", "upon", "with", "within", "without", "yet"]);
   function nonFunctionWords(value) {
     return words(value).filter(word => !functionWords.has(word.toLocaleLowerCase()));
   }
@@ -12652,97 +13336,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     var _a, _b;
     return (_b = (_a = entryValues.get("title")) != null ? _a : entryValues.get("booktitle")) != null ? _b : "";
   }
-  var SPECIAL_MARKERS, MODIFIERS, MissingRequiredData, functionWords;
-  var init_generateKeys = __esm({
-    "src/generateKeys.ts"() {
-      "use strict";
-
-      init_utils();
-      init_parseAuthors();
-      SPECIAL_MARKERS = {
-        auth: {
-          description: "Last name of first authors",
-          callback: v => {
-            var _a, _b;
-            var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
-            var author = (_b = authors[0]) == null ? void 0 : _b.lastName.replace(/(?:(?![A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD50-\uDD52\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E]|\uD838[\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF38\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A])[\s\S])+/g, "_");
-            return author ? [author] : [];
-          }
-        },
-        authEtAl: {
-          description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
-          callback: v => {
-            var _a;
-            var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
-            return [...authors.slice(0, 2).map(author => author == null ? void 0 : author.lastName.replace(/(?:(?![A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD50-\uDD52\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E]|\uD838[\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF38\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A])[\s\S])+/g, "_")), ...(authors.length > 2 ? ["Et", "Al"] : [])];
-          }
-        },
-        authors: {
-          description: "Last name all authors",
-          callback: v => {
-            var _a;
-            var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
-            return authors.map(author => author == null ? void 0 : author.lastName.replace(/(?:(?![A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD50-\uDD52\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E]|\uD838[\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF38\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A])[\s\S])+/g, "_"));
-          }
-        },
-        authorsN: {
-          description: "Last name N authors, with EtAl if more",
-          callback: (v, n) => {
-            var _a;
-            var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
-            return [...authors.slice(0, n).map(author => author == null ? void 0 : author.lastName.replace(/(?:(?![A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD50-\uDD52\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E]|\uD838[\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF38\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A])[\s\S])+/g, "_")), ...(authors.length > n ? ["Et", "Al"] : [])];
-          }
-        },
-        veryshorttitle: {
-          callback: v => nonFunctionWords(title(v)).slice(0, 1)
-        },
-        shorttitle: {
-          callback: v => nonFunctionWords(title(v)).slice(0, 3)
-        },
-        title: {
-          callback: v => capitalize(words(title(v)))
-        },
-        fulltitle: {
-          callback: v => words(title(v))
-        },
-        year: {
-          callback: v => {
-            var _a;
-            var year = (_a = v.get("year")) == null ? void 0 : _a.replace(/[^0-9]/g, "");
-            return year ? [year] : [];
-          }
-        },
-        duplicateLetter: {
-          description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
-          callback: () => ["[duplicateLetter]"]
-        },
-        duplicateNumber: {
-          description: "If the multiple entries end up with the same key, then insert a number 0-1.",
-          callback: () => ["[duplicateNumber]"]
-        }
-      };
-      MODIFIERS = {
-        required: {
-          description: "If data is missing, revert to existing key",
-          callback: words2 => {
-            if (words2.length === 0) throw new MissingRequiredData();
-            return words2;
-          }
-        },
-        lower: {
-          callback: words2 => words2.map(word => word.toLocaleLowerCase())
-        },
-        upper: {
-          callback: words2 => words2.map(word => word.toLocaleUpperCase())
-        },
-        capitalize: {
-          callback: capitalize
-        }
-      };
-      MissingRequiredData = class extends Error {};
-      functionWords = /* @__PURE__ */new Set(["a", "about", "above", "across", "against", "along", "among", "an", "and", "around", "at", "before", "behind", "below", "beneath", "beside", "between", "beyond", "but", "by", "down", "during", "except", "for", "for", "from", "in", "inside", "into", "like", "near", "nor", "of", "off", "on", "onto", "or", "since", "so", "the", "through", "to", "toward", "under", "until", "up", "upon", "with", "within", "without", "yet"]);
-    }
-  });
 
   // src/index.ts
   function tidy(input) {
@@ -12777,660 +13370,4880 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       return [field.name.toLocaleLowerCase(), (_a = formatValue(field, options)) != null ? _a : ""];
     }))]));
   }
-  var src_default;
-  var init_src = __esm({
-    "src/index.ts"() {
-      "use strict";
+  var src_default = {
+    tidy
+  };
 
-      init_optionUtils();
-      init_bibtex_parser();
-      init_utils();
-      init_format();
-      init_sort();
-      init_duplicates();
-      init_generateKeys();
-      src_default = {
-        tidy
-      };
+  // src/ui/CopyButton.svelte
+  function create_fragment(ctx) {
+    var button;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        button = element("button");
+        button.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1000 1000\" class=\"svelte-oet81a\"><path d=\"M704 896H64V320h640v192h64V192c0-35-29-64-64-64H512C512 57 455 0 384 0S256 57 256 128H64c-35 0-64 29-64 64v704c0 35 29 64 64 64h640c35 0 64-29 64-64V768h-64v128zM192 192h64s64-29 64-64 29-64 64-64 64 29 64 64 32 64 64 64h64s64 29 64 64H128c0-39 28-64 64-64zm-64 512h128v-64H128v64zm448-128V448L320 640l256 192V704h320V576H576zM128 832h192v-64H128v64zm320-448H128v64h320v-64zM256 512H128v64h128v-64z\"></path></svg>";
+        attr(button, "class", "btn svelte-oet81a");
+        attr(button, "id", "copy");
+        attr(button, "title", "Copy bibtex");
+        toggle_class(button, "copied", ctx[0]);
+      },
+      m(target, anchor) {
+        insert(target, button, anchor);
+        if (!mounted) {
+          dispose = listen(button, "click", ctx[1]);
+          mounted = true;
+        }
+      },
+      p(ctx2, _ref7) {
+        var _ref8 = _slicedToArray(_ref7, 1),
+          dirty = _ref8[0];
+        if (dirty & 1) {
+          toggle_class(button, "copied", ctx2[0]);
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching) detach(button);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function instance($$self, $$props, $$invalidate) {
+    var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+      function adopt(value) {
+        return value instanceof P ? value : new P(function (resolve) {
+          resolve(value);
+        });
+      }
+      return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) {
+          try {
+            step(generator.next(value));
+          } catch (e) {
+            reject(e);
+          }
+        }
+        function rejected(value) {
+          try {
+            step(generator["throw"](value));
+          } catch (e) {
+            reject(e);
+          }
+        }
+        function step(result) {
+          result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+      });
+    };
+    var resetCopyBtnTimeout;
+    var showAsCopied = false;
+    var bibtex = $$props.bibtex;
+    var handleCopy = () => __awaiter(void 0, void 0, void 0, /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.prev = 0;
+              _context.next = 3;
+              return navigator.clipboard.writeText(bibtex);
+            case 3:
+              $$invalidate(0, showAsCopied = true);
+              clearInterval(resetCopyBtnTimeout);
+              resetCopyBtnTimeout = setTimeout(() => $$invalidate(0, showAsCopied = false), 3e3);
+              _context.next = 11;
+              break;
+            case 8:
+              _context.prev = 8;
+              _context.t0 = _context["catch"](0);
+              alert("Failed to copy");
+            case 11:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, null, [[0, 8]]);
+    }));
+    $$self.$$set = $$props2 => {
+      if ("bibtex" in $$props2) $$invalidate(2, bibtex = $$props2.bibtex);
+    };
+    return [showAsCopied, handleCopy, bibtex];
+  }
+  var CopyButton = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance, create_fragment, safe_not_equal, {
+        bibtex: 2
+      });
     }
+  };
+  var CopyButton_default = CopyButton;
+
+  // src/ui/Editor.svelte
+  var import_codemirror2 = __toESM(require_codemirror());
+
+  // src/ui/bibtex-highlighting.ts
+  var import_codemirror = __toESM(require_codemirror());
+  var import_simple = __toESM(require_simple());
+  import_codemirror.default.defineSimpleMode("simplemode", {
+    start: [{
+      regex: /.*@comment/i,
+      token: "comment",
+      push: "comment"
+    }, {
+      regex: /(\s*)(@preamble)(\s*{)/i,
+      token: ["", "variable-2"],
+      push: "braced"
+    }, {
+      regex: /(\s*)(@preamble)(\s*\()/i,
+      token: ["", "variable-2"],
+      push: "parenthesised"
+    }, {
+      regex: /(\s*)(@string)(\s*{)/i,
+      token: ["", "variable-2"],
+      push: "braced"
+    }, {
+      regex: /(\s*)(@string)(\s*\()/i,
+      token: ["", "variable-2"],
+      push: "parenthesised"
+    }, {
+      regex: /(\s*)(@[^=#,{}()[\] \t\n\r]+)(\s*\{\s*)([^=#,{}()[\] \t\n\r]+)(\s*,)/,
+      token: ["", "variable-2", "", "variable-3"],
+      push: "entry"
+    }, {
+      regex: /.*/,
+      token: "comment"
+    }],
+    entry: [{
+      regex: /([^=,{}()[\]\t\n\r]+)(\s*)(=)/,
+      token: ["keyword", "", "operator"]
+    }, {
+      regex: /"/,
+      push: "quoted"
+    }, {
+      regex: /\d+/i,
+      token: "number"
+    }, {
+      regex: /\{/,
+      push: "braced"
+    }, {
+      regex: /}/,
+      pop: true
+    }],
+    quoted: [{
+      regex: /\{/,
+      push: "braced"
+    }, {
+      regex: /[^{"]+/,
+      token: "string"
+    }, {
+      regex: /"/,
+      pop: true
+    }],
+    braced: [{
+      regex: /\{/,
+      push: "braced"
+    }, {
+      regex: /[^{}]+/,
+      token: "string"
+    }, {
+      regex: /\}/,
+      pop: true
+    }],
+    parenthesised: [{
+      regex: /\{/,
+      token: "comment",
+      push: "braced"
+    }, {
+      regex: /[^{)]+/,
+      token: "string"
+    }, {
+      regex: /\)/,
+      pop: true
+    }],
+    comment: [{
+      regex: /.*\}/,
+      token: "comment",
+      pop: true
+    }, {
+      regex: /.*/,
+      token: "comment"
+    }]
   });
 
+  // src/ui/Editor.svelte
+  function create_fragment2(ctx) {
+    var div;
+    var textarea_1;
+    var t;
+    var copybutton;
+    var current;
+    copybutton = new CopyButton_default({
+      props: {
+        bibtex: ctx[0]
+      }
+    });
+    return {
+      c() {
+        div = element("div");
+        textarea_1 = element("textarea");
+        t = space();
+        create_component(copybutton.$$.fragment);
+        attr(textarea_1, "class", "svelte-19r6amv");
+        attr(div, "id", "editor");
+        attr(div, "class", "svelte-19r6amv");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, textarea_1);
+        ctx[5](textarea_1);
+        append(div, t);
+        mount_component(copybutton, div, null);
+        current = true;
+      },
+      p(ctx2, _ref9) {
+        var _ref10 = _slicedToArray(_ref9, 1),
+          dirty = _ref10[0];
+        var copybutton_changes = {};
+        if (dirty & 1) copybutton_changes.bibtex = ctx2[0];
+        copybutton.$set(copybutton_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(copybutton.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(copybutton.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching) detach(div);
+        ctx[5](null);
+        destroy_component(copybutton);
+      }
+    };
+  }
+  function instance2($$self, $$props, $$invalidate) {
+    var errorRange = $$props.errorRange;
+    var bibtex = $$props.bibtex;
+    var textarea;
+    var cmEditor;
+    var errorHighlight;
+    onMount(() => {
+      if (textarea) {
+        $$invalidate(3, cmEditor = import_codemirror2.default.fromTextArea(textarea, {
+          lineNumbers: true,
+          autofocus: true
+        }));
+        cmEditor.on("change", () => $$invalidate(0, bibtex = cmEditor.getValue()));
+        window.cmEditor = cmEditor;
+      }
+    });
+    function textarea_1_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        textarea = $$value;
+        $$invalidate(1, textarea);
+      });
+    }
+    $$self.$$set = $$props2 => {
+      if ("errorRange" in $$props2) $$invalidate(2, errorRange = $$props2.errorRange);
+      if ("bibtex" in $$props2) $$invalidate(0, bibtex = $$props2.bibtex);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 28) {
+        $: {
+          if (errorRange) {
+            $$invalidate(4, errorHighlight = cmEditor.markText(errorRange.start, errorRange.end, {
+              className: "bibtex-error"
+            }));
+          } else if (errorHighlight) {
+            errorHighlight.clear();
+          }
+        }
+      }
+      if ($$self.$$.dirty & 9) {
+        $: {
+          if (cmEditor && bibtex !== cmEditor.getValue()) {
+            cmEditor.setValue(bibtex);
+          }
+        }
+      }
+    };
+    return [bibtex, textarea, errorRange, cmEditor, errorHighlight, textarea_1_binding];
+  }
+  var Editor = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance2, create_fragment2, safe_not_equal, {
+        errorRange: 2,
+        bibtex: 0
+      });
+    }
+  };
+  var Editor_default = Editor;
+
+  // src/ui/Label.svelte
+  function create_fragment3(ctx) {
+    var label;
+    var current;
+    var default_slot_template = ctx[2].default;
+    var default_slot = create_slot(default_slot_template, ctx, ctx[1], null);
+    return {
+      c() {
+        label = element("label");
+        if (default_slot) default_slot.c();
+        attr(label, "title", ctx[0]);
+        attr(label, "class", "svelte-12n4po9");
+      },
+      m(target, anchor) {
+        insert(target, label, anchor);
+        if (default_slot) {
+          default_slot.m(label, null);
+        }
+        current = true;
+      },
+      p(ctx2, _ref11) {
+        var _ref12 = _slicedToArray(_ref11, 1),
+          dirty = _ref12[0];
+        if (default_slot) {
+          if (default_slot.p && (!current || dirty & 2)) {
+            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[1], !current ? get_all_dirty_from_scope(ctx2[1]) : get_slot_changes(default_slot_template, ctx2[1], dirty, null), null);
+          }
+        }
+        if (!current || dirty & 1) {
+          attr(label, "title", ctx2[0]);
+        }
+      },
+      i(local) {
+        if (current) return;
+        transition_in(default_slot, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(default_slot, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching) detach(label);
+        if (default_slot) default_slot.d(detaching);
+      }
+    };
+  }
+  function instance3($$self, $$props, $$invalidate) {
+    var _$$props$$$slots = $$props.$$slots,
+      slots = _$$props$$$slots === void 0 ? {} : _$$props$$$slots,
+      $$scope = $$props.$$scope;
+    var _$$props$title = $$props.title,
+      title2 = _$$props$title === void 0 ? void 0 : _$$props$title;
+    $$self.$$set = $$props2 => {
+      if ("title" in $$props2) $$invalidate(0, title2 = $$props2.title);
+      if ("$$scope" in $$props2) $$invalidate(1, $$scope = $$props2.$$scope);
+    };
+    return [title2, $$scope, slots];
+  }
+  var Label = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance3, create_fragment3, safe_not_equal, {
+        title: 0
+      });
+    }
+  };
+  var Label_default = Label;
+
+  // src/ui/Option.svelte
+  function create_else_block(ctx) {
+    var input;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        input = element("input");
+        attr(input, "name", ctx[2]);
+        attr(input, "type", "checkbox");
+        attr(input, "class", "svelte-3302s7");
+      },
+      m(target, anchor) {
+        insert(target, input, anchor);
+        input.checked = ctx[0];
+        if (!mounted) {
+          dispose = [listen(input, "change", ctx[11]), listen(input, "change", ctx[12])];
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 4) {
+          attr(input, "name", ctx2[2]);
+        }
+        if (dirty & 1) {
+          input.checked = ctx2[0];
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(input);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function create_if_block_2(ctx) {
+    var input;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        input = element("input");
+        attr(input, "type", "radio");
+        attr(input, "name", ctx[3]);
+        input.__value = ctx[4];
+        input.value = input.__value;
+        attr(input, "class", "svelte-3302s7");
+        ctx[10][0].push(input);
+      },
+      m(target, anchor) {
+        insert(target, input, anchor);
+        input.checked = input.__value === ctx[1];
+        if (!mounted) {
+          dispose = listen(input, "change", ctx[9]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 8) {
+          attr(input, "name", ctx2[3]);
+        }
+        if (dirty & 16) {
+          input.__value = ctx2[4];
+          input.value = input.__value;
+        }
+        if (dirty & 2) {
+          input.checked = input.__value === ctx2[1];
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(input);
+        ctx[10][0].splice(ctx[10][0].indexOf(input), 1);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_if_block(ctx) {
+    var if_block_anchor;
+    var current;
+    var if_block = (ctx[0] || ctx[3] && ctx[1] === ctx[4]) && create_if_block_1(ctx);
+    return {
+      c() {
+        if (if_block) if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block) if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        if (ctx2[0] || ctx2[3] && ctx2[1] === ctx2[4]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+            if (dirty & 27) {
+              transition_in(if_block, 1);
+            }
+          } else {
+            if_block = create_if_block_1(ctx2);
+            if_block.c();
+            transition_in(if_block, 1);
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          group_outros();
+          transition_out(if_block, 1, 1, () => {
+            if_block = null;
+          });
+          check_outros();
+        }
+      },
+      i(local) {
+        if (current) return;
+        transition_in(if_block);
+        current = true;
+      },
+      o(local) {
+        transition_out(if_block);
+        current = false;
+      },
+      d(detaching) {
+        if (if_block) if_block.d(detaching);
+        if (detaching) detach(if_block_anchor);
+      }
+    };
+  }
+  function create_if_block_1(ctx) {
+    var div;
+    var current;
+    var default_slot_template = ctx[8].default;
+    var default_slot = create_slot(default_slot_template, ctx, ctx[13], null);
+    return {
+      c() {
+        div = element("div");
+        if (default_slot) default_slot.c();
+        attr(div, "class", "suboptions svelte-3302s7");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        if (default_slot) {
+          default_slot.m(div, null);
+        }
+        current = true;
+      },
+      p(ctx2, dirty) {
+        if (default_slot) {
+          if (default_slot.p && (!current || dirty & 8192)) {
+            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[13], !current ? get_all_dirty_from_scope(ctx2[13]) : get_slot_changes(default_slot_template, ctx2[13], dirty, null), null);
+          }
+        }
+      },
+      i(local) {
+        if (current) return;
+        transition_in(default_slot, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(default_slot, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching) detach(div);
+        if (default_slot) default_slot.d(detaching);
+      }
+    };
+  }
+  function create_default_slot(ctx) {
+    var t0;
+    var span;
+    var t2;
+    var if_block1_anchor;
+    var current;
+    function select_block_type(ctx2, dirty) {
+      if (ctx2[1]) return create_if_block_2;
+      return create_else_block;
+    }
+    var current_block_type = select_block_type(ctx, -1);
+    var if_block0 = current_block_type(ctx);
+    var if_block1 = ctx[7].default && create_if_block(ctx);
+    return {
+      c() {
+        if_block0.c();
+        t0 = space();
+        span = element("span");
+        span.textContent = "".concat(ctx[6].title);
+        t2 = space();
+        if (if_block1) if_block1.c();
+        if_block1_anchor = empty();
+        attr(span, "class", "name");
+      },
+      m(target, anchor) {
+        if_block0.m(target, anchor);
+        insert(target, t0, anchor);
+        insert(target, span, anchor);
+        insert(target, t2, anchor);
+        if (if_block1) if_block1.m(target, anchor);
+        insert(target, if_block1_anchor, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        if (current_block_type === (current_block_type = select_block_type(ctx2, dirty)) && if_block0) {
+          if_block0.p(ctx2, dirty);
+        } else {
+          if_block0.d(1);
+          if_block0 = current_block_type(ctx2);
+          if (if_block0) {
+            if_block0.c();
+            if_block0.m(t0.parentNode, t0);
+          }
+        }
+        if (ctx2[7].default) {
+          if (if_block1) {
+            if_block1.p(ctx2, dirty);
+            if (dirty & 128) {
+              transition_in(if_block1, 1);
+            }
+          } else {
+            if_block1 = create_if_block(ctx2);
+            if_block1.c();
+            transition_in(if_block1, 1);
+            if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
+          }
+        } else if (if_block1) {
+          group_outros();
+          transition_out(if_block1, 1, 1, () => {
+            if_block1 = null;
+          });
+          check_outros();
+        }
+      },
+      i(local) {
+        if (current) return;
+        transition_in(if_block1);
+        current = true;
+      },
+      o(local) {
+        transition_out(if_block1);
+        current = false;
+      },
+      d(detaching) {
+        if_block0.d(detaching);
+        if (detaching) detach(t0);
+        if (detaching) detach(span);
+        if (detaching) detach(t2);
+        if (if_block1) if_block1.d(detaching);
+        if (detaching) detach(if_block1_anchor);
+      }
+    };
+  }
+  function create_fragment4(ctx) {
+    var _a;
+    var label;
+    var current;
+    label = new Label_default({
+      props: {
+        title: (_a = ctx[6].description) == null ? void 0 : _a.join("\n"),
+        $$slots: {
+          default: [create_default_slot]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    return {
+      c() {
+        create_component(label.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(label, target, anchor);
+        current = true;
+      },
+      p(ctx2, _ref13) {
+        var _ref14 = _slicedToArray(_ref13, 1),
+          dirty = _ref14[0];
+        var label_changes = {};
+        if (dirty & 8351) {
+          label_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        label.$set(label_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(label.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(label.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(label, detaching);
+      }
+    };
+  }
+  function instance4($$self, $$props, $$invalidate) {
+    var _$$props$$$slots2 = $$props.$$slots,
+      slots = _$$props$$$slots2 === void 0 ? {} : _$$props$$$slots2,
+      $$scope = $$props.$$scope;
+    var $$slots = compute_slots(slots);
+    var option = $$props.option;
+    var _$$props$checked = $$props.checked,
+      checked = _$$props$checked === void 0 ? void 0 : _$$props$checked;
+    var _$$props$group = $$props.group,
+      group = _$$props$group === void 0 ? void 0 : _$$props$group;
+    var _$$props$groupName = $$props.groupName,
+      groupName = _$$props$groupName === void 0 ? void 0 : _$$props$groupName;
+    var _$$props$groupValue = $$props.groupValue,
+      groupValue = _$$props$groupValue === void 0 ? void 0 : _$$props$groupValue;
+    var dispatch = createEventDispatcher();
+    var def = optionDefinitionByKey[option];
+    var $$binding_groups = [[]];
+    function input_change_handler() {
+      group = this.__value;
+      $$invalidate(1, group);
+    }
+    function input_change_handler_1() {
+      checked = this.checked;
+      $$invalidate(0, checked);
+    }
+    var change_handler = () => dispatch("change", checked);
+    $$self.$$set = $$props2 => {
+      if ("option" in $$props2) $$invalidate(2, option = $$props2.option);
+      if ("checked" in $$props2) $$invalidate(0, checked = $$props2.checked);
+      if ("group" in $$props2) $$invalidate(1, group = $$props2.group);
+      if ("groupName" in $$props2) $$invalidate(3, groupName = $$props2.groupName);
+      if ("groupValue" in $$props2) $$invalidate(4, groupValue = $$props2.groupValue);
+      if ("$$scope" in $$props2) $$invalidate(13, $$scope = $$props2.$$scope);
+    };
+    return [checked, group, option, groupName, groupValue, dispatch, def, $$slots, slots, input_change_handler, $$binding_groups, input_change_handler_1, change_handler, $$scope];
+  }
+  var Option = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance4, create_fragment4, safe_not_equal, {
+        option: 2,
+        checked: 0,
+        group: 1,
+        groupName: 3,
+        groupValue: 4
+      });
+    }
+  };
+  var Option_default = Option;
+
+  // src/ui/Collapsible.svelte
+  function create_fragment5(ctx) {
+    var details;
+    var summary;
+    var div;
+    var t0;
+    var t1;
+    var current;
+    var default_slot_template = ctx[3].default;
+    var default_slot = create_slot(default_slot_template, ctx, ctx[2], null);
+    return {
+      c() {
+        details = element("details");
+        summary = element("summary");
+        div = element("div");
+        t0 = text(ctx[0]);
+        t1 = space();
+        if (default_slot) default_slot.c();
+        attr(div, "class", "section-title svelte-3dqs55");
+        attr(summary, "class", "svelte-3dqs55");
+        details.open = ctx[1];
+      },
+      m(target, anchor) {
+        insert(target, details, anchor);
+        append(details, summary);
+        append(summary, div);
+        append(div, t0);
+        append(details, t1);
+        if (default_slot) {
+          default_slot.m(details, null);
+        }
+        current = true;
+      },
+      p(ctx2, _ref15) {
+        var _ref16 = _slicedToArray(_ref15, 1),
+          dirty = _ref16[0];
+        if (!current || dirty & 1) set_data(t0, ctx2[0]);
+        if (default_slot) {
+          if (default_slot.p && (!current || dirty & 4)) {
+            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[2], !current ? get_all_dirty_from_scope(ctx2[2]) : get_slot_changes(default_slot_template, ctx2[2], dirty, null), null);
+          }
+        }
+        if (!current || dirty & 2) {
+          details.open = ctx2[1];
+        }
+      },
+      i(local) {
+        if (current) return;
+        transition_in(default_slot, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(default_slot, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching) detach(details);
+        if (default_slot) default_slot.d(detaching);
+      }
+    };
+  }
+  function instance5($$self, $$props, $$invalidate) {
+    var _$$props$$$slots3 = $$props.$$slots,
+      slots = _$$props$$$slots3 === void 0 ? {} : _$$props$$$slots3,
+      $$scope = $$props.$$scope;
+    var title2 = $$props.title;
+    var _$$props$open = $$props.open,
+      open = _$$props$open === void 0 ? false : _$$props$open;
+    $$self.$$set = $$props2 => {
+      if ("title" in $$props2) $$invalidate(0, title2 = $$props2.title);
+      if ("open" in $$props2) $$invalidate(1, open = $$props2.open);
+      if ("$$scope" in $$props2) $$invalidate(2, $$scope = $$props2.$$scope);
+    };
+    return [title2, open, $$scope, slots];
+  }
+  var Collapsible = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance5, create_fragment5, safe_not_equal, {
+        title: 0,
+        open: 1
+      });
+    }
+  };
+  var Collapsible_default = Collapsible;
+
+  // src/ui/WhitespaceOptions.svelte
+  function create_default_slot_3(ctx) {
+    var div;
+    var t;
+    var input;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        div = element("div");
+        t = text("Spaces: ");
+        input = element("input");
+        attr(input, "name", "spaces");
+        attr(input, "type", "number");
+        attr(input, "class", "svelte-htg484");
+        attr(div, "class", "keyvalue svelte-htg484");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, t);
+        append(div, input);
+        set_input_value(input, ctx[6]);
+        if (!mounted) {
+          dispose = listen(input, "input", ctx[8]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 64 && to_number(input.value) !== ctx2[6]) {
+          set_input_value(input, ctx2[6]);
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(div);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_2(ctx) {
+    var div;
+    var t;
+    var input;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        div = element("div");
+        t = text("Column:\n			");
+        input = element("input");
+        attr(input, "name", "alignnum");
+        attr(input, "type", "number");
+        attr(input, "class", "svelte-htg484");
+        attr(div, "class", "keyvalue svelte-htg484");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, t);
+        append(div, input);
+        set_input_value(input, ctx[2]);
+        if (!mounted) {
+          dispose = listen(input, "input", ctx[10]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 4 && to_number(input.value) !== ctx2[2]) {
+          set_input_value(input, ctx2[2]);
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(div);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_1(ctx) {
+    var div;
+    var t;
+    var input;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        div = element("div");
+        t = text("Column:\n			");
+        input = element("input");
+        attr(input, "name", "wrapnum");
+        attr(input, "type", "number");
+        attr(input, "class", "svelte-htg484");
+        attr(div, "class", "keyvalue svelte-htg484");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, t);
+        append(div, input);
+        set_input_value(input, ctx[4]);
+        if (!mounted) {
+          dispose = listen(input, "input", ctx[12]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 16 && to_number(input.value) !== ctx2[4]) {
+          set_input_value(input, ctx2[4]);
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(div);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot2(ctx) {
+    var option0;
+    var updating_group;
+    var t0;
+    var option1;
+    var updating_group_1;
+    var t1;
+    var option2;
+    var updating_checked;
+    var t2;
+    var option3;
+    var updating_checked_1;
+    var t3;
+    var option4;
+    var updating_checked_2;
+    var current;
+    function option0_group_binding(value) {
+      ctx[7](value);
+    }
+    var option0_props = {
+      option: "tab",
+      groupName: "indent",
+      groupValue: "tabs"
+    };
+    if (ctx[5] !== void 0) {
+      option0_props.group = ctx[5];
+    }
+    option0 = new Option_default({
+      props: option0_props
+    });
+    binding_callbacks.push(() => bind(option0, "group", option0_group_binding));
+    function option1_group_binding(value) {
+      ctx[9](value);
+    }
+    var option1_props = {
+      option: "space",
+      groupName: "indent",
+      groupValue: "spaces",
+      $$slots: {
+        default: [create_default_slot_3]
+      },
+      $$scope: {
+        ctx
+      }
+    };
+    if (ctx[5] !== void 0) {
+      option1_props.group = ctx[5];
+    }
+    option1 = new Option_default({
+      props: option1_props
+    });
+    binding_callbacks.push(() => bind(option1, "group", option1_group_binding));
+    function option2_checked_binding(value) {
+      ctx[11](value);
+    }
+    var option2_props = {
+      option: "align",
+      $$slots: {
+        default: [create_default_slot_2]
+      },
+      $$scope: {
+        ctx
+      }
+    };
+    if (ctx[1] !== void 0) {
+      option2_props.checked = ctx[1];
+    }
+    option2 = new Option_default({
+      props: option2_props
+    });
+    binding_callbacks.push(() => bind(option2, "checked", option2_checked_binding));
+    function option3_checked_binding(value) {
+      ctx[13](value);
+    }
+    var option3_props = {
+      option: "wrap",
+      $$slots: {
+        default: [create_default_slot_1]
+      },
+      $$scope: {
+        ctx
+      }
+    };
+    if (ctx[3] !== void 0) {
+      option3_props.checked = ctx[3];
+    }
+    option3 = new Option_default({
+      props: option3_props
+    });
+    binding_callbacks.push(() => bind(option3, "checked", option3_checked_binding));
+    function option4_checked_binding(value) {
+      ctx[14](value);
+    }
+    var option4_props = {
+      option: "blankLines"
+    };
+    if (ctx[0].blankLines !== void 0) {
+      option4_props.checked = ctx[0].blankLines;
+    }
+    option4 = new Option_default({
+      props: option4_props
+    });
+    binding_callbacks.push(() => bind(option4, "checked", option4_checked_binding));
+    return {
+      c() {
+        create_component(option0.$$.fragment);
+        t0 = space();
+        create_component(option1.$$.fragment);
+        t1 = space();
+        create_component(option2.$$.fragment);
+        t2 = space();
+        create_component(option3.$$.fragment);
+        t3 = space();
+        create_component(option4.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(option0, target, anchor);
+        insert(target, t0, anchor);
+        mount_component(option1, target, anchor);
+        insert(target, t1, anchor);
+        mount_component(option2, target, anchor);
+        insert(target, t2, anchor);
+        mount_component(option3, target, anchor);
+        insert(target, t3, anchor);
+        mount_component(option4, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var option0_changes = {};
+        if (!updating_group && dirty & 32) {
+          updating_group = true;
+          option0_changes.group = ctx2[5];
+          add_flush_callback(() => updating_group = false);
+        }
+        option0.$set(option0_changes);
+        var option1_changes = {};
+        if (dirty & 131136) {
+          option1_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_group_1 && dirty & 32) {
+          updating_group_1 = true;
+          option1_changes.group = ctx2[5];
+          add_flush_callback(() => updating_group_1 = false);
+        }
+        option1.$set(option1_changes);
+        var option2_changes = {};
+        if (dirty & 131076) {
+          option2_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_checked && dirty & 2) {
+          updating_checked = true;
+          option2_changes.checked = ctx2[1];
+          add_flush_callback(() => updating_checked = false);
+        }
+        option2.$set(option2_changes);
+        var option3_changes = {};
+        if (dirty & 131088) {
+          option3_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_checked_1 && dirty & 8) {
+          updating_checked_1 = true;
+          option3_changes.checked = ctx2[3];
+          add_flush_callback(() => updating_checked_1 = false);
+        }
+        option3.$set(option3_changes);
+        var option4_changes = {};
+        if (!updating_checked_2 && dirty & 1) {
+          updating_checked_2 = true;
+          option4_changes.checked = ctx2[0].blankLines;
+          add_flush_callback(() => updating_checked_2 = false);
+        }
+        option4.$set(option4_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(option0.$$.fragment, local);
+        transition_in(option1.$$.fragment, local);
+        transition_in(option2.$$.fragment, local);
+        transition_in(option3.$$.fragment, local);
+        transition_in(option4.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(option0.$$.fragment, local);
+        transition_out(option1.$$.fragment, local);
+        transition_out(option2.$$.fragment, local);
+        transition_out(option3.$$.fragment, local);
+        transition_out(option4.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(option0, detaching);
+        if (detaching) detach(t0);
+        destroy_component(option1, detaching);
+        if (detaching) detach(t1);
+        destroy_component(option2, detaching);
+        if (detaching) detach(t2);
+        destroy_component(option3, detaching);
+        if (detaching) detach(t3);
+        destroy_component(option4, detaching);
+      }
+    };
+  }
+  function create_fragment6(ctx) {
+    var collapsible;
+    var current;
+    collapsible = new Collapsible_default({
+      props: {
+        title: "Whitespace",
+        open: true,
+        $$slots: {
+          default: [create_default_slot2]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    return {
+      c() {
+        create_component(collapsible.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(collapsible, target, anchor);
+        current = true;
+      },
+      p(ctx2, _ref17) {
+        var _ref18 = _slicedToArray(_ref17, 1),
+          dirty = _ref18[0];
+        var collapsible_changes = {};
+        if (dirty & 131199) {
+          collapsible_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        collapsible.$set(collapsible_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(collapsible.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(collapsible.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(collapsible, detaching);
+      }
+    };
+  }
+  function instance6($$self, $$props, $$invalidate) {
+    var _a, _b;
+    var options = $$props.options;
+    var alignChecked = options.align !== 1;
+    var alignValue = (_a = options.align) !== null && _a !== void 0 ? _a : DEFAULT_ALIGN;
+    var wrapChecked = options.wrap !== void 0;
+    var wrapValue = (_b = options.wrap) !== null && _b !== void 0 ? _b : DEFAULT_WRAP;
+    var indent = options.tab ? "tabs" : "spaces";
+    var spaceValue = DEFAULT_SPACE;
+    function option0_group_binding(value) {
+      indent = value;
+      $$invalidate(5, indent);
+    }
+    function input_input_handler() {
+      spaceValue = to_number(this.value);
+      $$invalidate(6, spaceValue);
+    }
+    function option1_group_binding(value) {
+      indent = value;
+      $$invalidate(5, indent);
+    }
+    function input_input_handler_1() {
+      alignValue = to_number(this.value);
+      $$invalidate(2, alignValue);
+    }
+    function option2_checked_binding(value) {
+      alignChecked = value;
+      $$invalidate(1, alignChecked);
+    }
+    function input_input_handler_2() {
+      wrapValue = to_number(this.value);
+      $$invalidate(4, wrapValue);
+    }
+    function option3_checked_binding(value) {
+      wrapChecked = value;
+      $$invalidate(3, wrapChecked);
+    }
+    function option4_checked_binding(value) {
+      if ($$self.$$.not_equal(options.blankLines, value)) {
+        options.blankLines = value;
+        $$invalidate(0, options), $$invalidate(1, alignChecked), $$invalidate(2, alignValue), $$invalidate(3, wrapChecked), $$invalidate(4, wrapValue), $$invalidate(6, spaceValue), $$invalidate(5, indent);
+      }
+    }
+    $$self.$$set = $$props2 => {
+      if ("options" in $$props2) $$invalidate(0, options = $$props2.options);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 126) {
+        $: {
+          $$invalidate(0, options.align = alignChecked ? alignValue : 1, options);
+          $$invalidate(0, options.wrap = wrapChecked ? wrapValue : void 0, options);
+          $$invalidate(0, options.space = spaceValue, options);
+          $$invalidate(0, options.tab = indent === "tabs", options);
+        }
+      }
+    };
+    return [options, alignChecked, alignValue, wrapChecked, wrapValue, indent, spaceValue, option0_group_binding, input_input_handler, option1_group_binding, input_input_handler_1, option2_checked_binding, input_input_handler_2, option3_checked_binding, option4_checked_binding];
+  }
+  var WhitespaceOptions = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance6, create_fragment6, safe_not_equal, {
+        options: 0
+      });
+    }
+  };
+  var WhitespaceOptions_default = WhitespaceOptions;
+
+  // src/ui/ValueOptions.svelte
+  function create_default_slot_22(ctx) {
+    var t0;
+    var br0;
+    var t1;
+    var textarea;
+    var br1;
+    var t2;
+    var code0;
+    var t4;
+    var code1;
+    var t6;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        t0 = text("Fields to enclose in double braces: ");
+        br0 = element("br");
+        t1 = space();
+        textarea = element("textarea");
+        br1 = element("br");
+        t2 = text("\n		Space delimited, e.g: ");
+        code0 = element("code");
+        code0.textContent = "title journal";
+        t4 = text(".\n		");
+        code1 = element("code");
+        code1.textContent = "-year author";
+        t6 = text(".");
+        attr(textarea, "name", "enclosingBracesList");
+        attr(textarea, "spellcheck", "false");
+      },
+      m(target, anchor) {
+        insert(target, t0, anchor);
+        insert(target, br0, anchor);
+        insert(target, t1, anchor);
+        insert(target, textarea, anchor);
+        set_input_value(textarea, ctx[11]);
+        insert(target, br1, anchor);
+        insert(target, t2, anchor);
+        insert(target, code0, anchor);
+        insert(target, t4, anchor);
+        insert(target, code1, anchor);
+        insert(target, t6, anchor);
+        if (!mounted) {
+          dispose = listen(textarea, "input", ctx[14]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty[0] & 2048) {
+          set_input_value(textarea, ctx2[11]);
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(t0);
+        if (detaching) detach(br0);
+        if (detaching) detach(t1);
+        if (detaching) detach(textarea);
+        if (detaching) detach(br1);
+        if (detaching) detach(t2);
+        if (detaching) detach(code0);
+        if (detaching) detach(t4);
+        if (detaching) detach(code1);
+        if (detaching) detach(t6);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_12(ctx) {
+    var input;
+    var br;
+    var t;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        input = element("input");
+        br = element("br");
+        t = text('\n		Author lists longer than this will be truncated to "and others".');
+        attr(input, "name", "maxAuthorsNum");
+        attr(input, "type", "number");
+      },
+      m(target, anchor) {
+        insert(target, input, anchor);
+        set_input_value(input, ctx[9]);
+        insert(target, br, anchor);
+        insert(target, t, anchor);
+        if (!mounted) {
+          dispose = listen(input, "input", ctx[23]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty[0] & 512 && to_number(input.value) !== ctx2[9]) {
+          set_input_value(input, ctx2[9]);
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(input);
+        if (detaching) detach(br);
+        if (detaching) detach(t);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot3(ctx) {
+    var div;
+    var t0;
+    var option0;
+    var updating_checked;
+    var t1;
+    var option1;
+    var updating_checked_1;
+    var t2;
+    var option2;
+    var updating_checked_2;
+    var t3;
+    var option3;
+    var updating_checked_3;
+    var t4;
+    var option4;
+    var updating_checked_4;
+    var t5;
+    var option5;
+    var updating_checked_5;
+    var t6;
+    var option6;
+    var updating_checked_6;
+    var t7;
+    var option7;
+    var updating_checked_7;
+    var t8;
+    var option8;
+    var updating_checked_8;
+    var t9;
+    var option9;
+    var updating_checked_9;
+    var current;
+    function option0_checked_binding(value) {
+      ctx[13](value);
+    }
+    var option0_props = {
+      option: "curly"
+    };
+    if (ctx[0] !== void 0) {
+      option0_props.checked = ctx[0];
+    }
+    option0 = new Option_default({
+      props: option0_props
+    });
+    binding_callbacks.push(() => bind(option0, "checked", option0_checked_binding));
+    function option1_checked_binding(value) {
+      ctx[15](value);
+    }
+    var option1_props = {
+      option: "enclosingBraces",
+      $$slots: {
+        default: [create_default_slot_22]
+      },
+      $$scope: {
+        ctx
+      }
+    };
+    if (ctx[10] !== void 0) {
+      option1_props.checked = ctx[10];
+    }
+    option1 = new Option_default({
+      props: option1_props
+    });
+    binding_callbacks.push(() => bind(option1, "checked", option1_checked_binding));
+    function option2_checked_binding(value) {
+      ctx[16](value);
+    }
+    var option2_props = {
+      option: "stripEnclosingBraces"
+    };
+    if (ctx[1] !== void 0) {
+      option2_props.checked = ctx[1];
+    }
+    option2 = new Option_default({
+      props: option2_props
+    });
+    binding_callbacks.push(() => bind(option2, "checked", option2_checked_binding));
+    function option3_checked_binding(value) {
+      ctx[17](value);
+    }
+    var option3_props = {
+      option: "numeric"
+    };
+    if (ctx[2] !== void 0) {
+      option3_props.checked = ctx[2];
+    }
+    option3 = new Option_default({
+      props: option3_props
+    });
+    binding_callbacks.push(() => bind(option3, "checked", option3_checked_binding));
+    function option4_checked_binding(value) {
+      ctx[18](value);
+    }
+    var option4_props = {
+      option: "dropAllCaps"
+    };
+    if (ctx[3] !== void 0) {
+      option4_props.checked = ctx[3];
+    }
+    option4 = new Option_default({
+      props: option4_props
+    });
+    binding_callbacks.push(() => bind(option4, "checked", option4_checked_binding));
+    function option5_checked_binding(value) {
+      ctx[19](value);
+    }
+    var option5_props = {
+      option: "escape"
+    };
+    if (ctx[4] !== void 0) {
+      option5_props.checked = ctx[4];
+    }
+    option5 = new Option_default({
+      props: option5_props
+    });
+    binding_callbacks.push(() => bind(option5, "checked", option5_checked_binding));
+    function option6_checked_binding(value) {
+      ctx[20](value);
+    }
+    var option6_props = {
+      option: "encodeUrls"
+    };
+    if (ctx[5] !== void 0) {
+      option6_props.checked = ctx[5];
+    }
+    option6 = new Option_default({
+      props: option6_props
+    });
+    binding_callbacks.push(() => bind(option6, "checked", option6_checked_binding));
+    function option7_checked_binding(value) {
+      ctx[21](value);
+    }
+    var option7_props = {
+      option: "removeEmptyFields"
+    };
+    if (ctx[6] !== void 0) {
+      option7_props.checked = ctx[6];
+    }
+    option7 = new Option_default({
+      props: option7_props
+    });
+    binding_callbacks.push(() => bind(option7, "checked", option7_checked_binding));
+    function option8_checked_binding(value) {
+      ctx[22](value);
+    }
+    var option8_props = {
+      option: "removeDuplicateFields"
+    };
+    if (ctx[7] !== void 0) {
+      option8_props.checked = ctx[7];
+    }
+    option8 = new Option_default({
+      props: option8_props
+    });
+    binding_callbacks.push(() => bind(option8, "checked", option8_checked_binding));
+    function option9_checked_binding(value) {
+      ctx[24](value);
+    }
+    var option9_props = {
+      option: "maxAuthors",
+      $$slots: {
+        default: [create_default_slot_12]
+      },
+      $$scope: {
+        ctx
+      }
+    };
+    if (ctx[8] !== void 0) {
+      option9_props.checked = ctx[8];
+    }
+    option9 = new Option_default({
+      props: option9_props
+    });
+    binding_callbacks.push(() => bind(option9, "checked", option9_checked_binding));
+    return {
+      c() {
+        div = element("div");
+        t0 = space();
+        create_component(option0.$$.fragment);
+        t1 = space();
+        create_component(option1.$$.fragment);
+        t2 = space();
+        create_component(option2.$$.fragment);
+        t3 = space();
+        create_component(option3.$$.fragment);
+        t4 = space();
+        create_component(option4.$$.fragment);
+        t5 = space();
+        create_component(option5.$$.fragment);
+        t6 = space();
+        create_component(option6.$$.fragment);
+        t7 = space();
+        create_component(option7.$$.fragment);
+        t8 = space();
+        create_component(option8.$$.fragment);
+        t9 = space();
+        create_component(option9.$$.fragment);
+        attr(div, "id", "valueOptions");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        insert(target, t0, anchor);
+        mount_component(option0, target, anchor);
+        insert(target, t1, anchor);
+        mount_component(option1, target, anchor);
+        insert(target, t2, anchor);
+        mount_component(option2, target, anchor);
+        insert(target, t3, anchor);
+        mount_component(option3, target, anchor);
+        insert(target, t4, anchor);
+        mount_component(option4, target, anchor);
+        insert(target, t5, anchor);
+        mount_component(option5, target, anchor);
+        insert(target, t6, anchor);
+        mount_component(option6, target, anchor);
+        insert(target, t7, anchor);
+        mount_component(option7, target, anchor);
+        insert(target, t8, anchor);
+        mount_component(option8, target, anchor);
+        insert(target, t9, anchor);
+        mount_component(option9, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var option0_changes = {};
+        if (!updating_checked && dirty[0] & 1) {
+          updating_checked = true;
+          option0_changes.checked = ctx2[0];
+          add_flush_callback(() => updating_checked = false);
+        }
+        option0.$set(option0_changes);
+        var option1_changes = {};
+        if (dirty[0] & 2048 | dirty[1] & 16) {
+          option1_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_checked_1 && dirty[0] & 1024) {
+          updating_checked_1 = true;
+          option1_changes.checked = ctx2[10];
+          add_flush_callback(() => updating_checked_1 = false);
+        }
+        option1.$set(option1_changes);
+        var option2_changes = {};
+        if (!updating_checked_2 && dirty[0] & 2) {
+          updating_checked_2 = true;
+          option2_changes.checked = ctx2[1];
+          add_flush_callback(() => updating_checked_2 = false);
+        }
+        option2.$set(option2_changes);
+        var option3_changes = {};
+        if (!updating_checked_3 && dirty[0] & 4) {
+          updating_checked_3 = true;
+          option3_changes.checked = ctx2[2];
+          add_flush_callback(() => updating_checked_3 = false);
+        }
+        option3.$set(option3_changes);
+        var option4_changes = {};
+        if (!updating_checked_4 && dirty[0] & 8) {
+          updating_checked_4 = true;
+          option4_changes.checked = ctx2[3];
+          add_flush_callback(() => updating_checked_4 = false);
+        }
+        option4.$set(option4_changes);
+        var option5_changes = {};
+        if (!updating_checked_5 && dirty[0] & 16) {
+          updating_checked_5 = true;
+          option5_changes.checked = ctx2[4];
+          add_flush_callback(() => updating_checked_5 = false);
+        }
+        option5.$set(option5_changes);
+        var option6_changes = {};
+        if (!updating_checked_6 && dirty[0] & 32) {
+          updating_checked_6 = true;
+          option6_changes.checked = ctx2[5];
+          add_flush_callback(() => updating_checked_6 = false);
+        }
+        option6.$set(option6_changes);
+        var option7_changes = {};
+        if (!updating_checked_7 && dirty[0] & 64) {
+          updating_checked_7 = true;
+          option7_changes.checked = ctx2[6];
+          add_flush_callback(() => updating_checked_7 = false);
+        }
+        option7.$set(option7_changes);
+        var option8_changes = {};
+        if (!updating_checked_8 && dirty[0] & 128) {
+          updating_checked_8 = true;
+          option8_changes.checked = ctx2[7];
+          add_flush_callback(() => updating_checked_8 = false);
+        }
+        option8.$set(option8_changes);
+        var option9_changes = {};
+        if (dirty[0] & 512 | dirty[1] & 16) {
+          option9_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_checked_9 && dirty[0] & 256) {
+          updating_checked_9 = true;
+          option9_changes.checked = ctx2[8];
+          add_flush_callback(() => updating_checked_9 = false);
+        }
+        option9.$set(option9_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(option0.$$.fragment, local);
+        transition_in(option1.$$.fragment, local);
+        transition_in(option2.$$.fragment, local);
+        transition_in(option3.$$.fragment, local);
+        transition_in(option4.$$.fragment, local);
+        transition_in(option5.$$.fragment, local);
+        transition_in(option6.$$.fragment, local);
+        transition_in(option7.$$.fragment, local);
+        transition_in(option8.$$.fragment, local);
+        transition_in(option9.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(option0.$$.fragment, local);
+        transition_out(option1.$$.fragment, local);
+        transition_out(option2.$$.fragment, local);
+        transition_out(option3.$$.fragment, local);
+        transition_out(option4.$$.fragment, local);
+        transition_out(option5.$$.fragment, local);
+        transition_out(option6.$$.fragment, local);
+        transition_out(option7.$$.fragment, local);
+        transition_out(option8.$$.fragment, local);
+        transition_out(option9.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching) detach(div);
+        if (detaching) detach(t0);
+        destroy_component(option0, detaching);
+        if (detaching) detach(t1);
+        destroy_component(option1, detaching);
+        if (detaching) detach(t2);
+        destroy_component(option2, detaching);
+        if (detaching) detach(t3);
+        destroy_component(option3, detaching);
+        if (detaching) detach(t4);
+        destroy_component(option4, detaching);
+        if (detaching) detach(t5);
+        destroy_component(option5, detaching);
+        if (detaching) detach(t6);
+        destroy_component(option6, detaching);
+        if (detaching) detach(t7);
+        destroy_component(option7, detaching);
+        if (detaching) detach(t8);
+        destroy_component(option8, detaching);
+        if (detaching) detach(t9);
+        destroy_component(option9, detaching);
+      }
+    };
+  }
+  function create_fragment7(ctx) {
+    var collapsible;
+    var current;
+    collapsible = new Collapsible_default({
+      props: {
+        open: true,
+        title: "Values",
+        $$slots: {
+          default: [create_default_slot3]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    return {
+      c() {
+        create_component(collapsible.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(collapsible, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var collapsible_changes = {};
+        if (dirty[0] & 4095 | dirty[1] & 16) {
+          collapsible_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        collapsible.$set(collapsible_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(collapsible.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(collapsible.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(collapsible, detaching);
+      }
+    };
+  }
+  function instance7($$self, $$props, $$invalidate) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var options = $$props.options;
+    var curly = (_a = options.curly) !== null && _a !== void 0 ? _a : false;
+    var stripEnclosingBraces = (_b = options.stripEnclosingBraces) !== null && _b !== void 0 ? _b : false;
+    var numeric = (_c = options.numeric) !== null && _c !== void 0 ? _c : false;
+    var dropAllCaps = (_d = options.dropAllCaps) !== null && _d !== void 0 ? _d : false;
+    var escape = (_e = options.escape) !== null && _e !== void 0 ? _e : false;
+    var encodeUrls = (_f = options.encodeUrls) !== null && _f !== void 0 ? _f : false;
+    var removeEmptyFields = (_g = options.removeEmptyFields) !== null && _g !== void 0 ? _g : false;
+    var removeDuplicateFields = (_h = options.removeDuplicateFields) !== null && _h !== void 0 ? _h : false;
+    var maxAuthorsChecked = options.maxAuthors !== void 0;
+    var maxAuthorsValue = 3;
+    var enclosingBracesChecked = options.enclosingBraces !== void 0 && options.enclosingBraces.length > 0;
+    var enclosingBracesValue = (_k = (_j = options.enclosingBraces) === null || _j === void 0 ? void 0 : _j.join(" ")) !== null && _k !== void 0 ? _k : "title";
+    function option0_checked_binding(value) {
+      curly = value;
+      $$invalidate(0, curly);
+    }
+    function textarea_input_handler() {
+      enclosingBracesValue = this.value;
+      $$invalidate(11, enclosingBracesValue);
+    }
+    function option1_checked_binding(value) {
+      enclosingBracesChecked = value;
+      $$invalidate(10, enclosingBracesChecked);
+    }
+    function option2_checked_binding(value) {
+      stripEnclosingBraces = value;
+      $$invalidate(1, stripEnclosingBraces);
+    }
+    function option3_checked_binding(value) {
+      numeric = value;
+      $$invalidate(2, numeric);
+    }
+    function option4_checked_binding(value) {
+      dropAllCaps = value;
+      $$invalidate(3, dropAllCaps);
+    }
+    function option5_checked_binding(value) {
+      escape = value;
+      $$invalidate(4, escape);
+    }
+    function option6_checked_binding(value) {
+      encodeUrls = value;
+      $$invalidate(5, encodeUrls);
+    }
+    function option7_checked_binding(value) {
+      removeEmptyFields = value;
+      $$invalidate(6, removeEmptyFields);
+    }
+    function option8_checked_binding(value) {
+      removeDuplicateFields = value;
+      $$invalidate(7, removeDuplicateFields);
+    }
+    function input_input_handler() {
+      maxAuthorsValue = to_number(this.value);
+      $$invalidate(9, maxAuthorsValue);
+    }
+    function option9_checked_binding(value) {
+      maxAuthorsChecked = value;
+      $$invalidate(8, maxAuthorsChecked);
+    }
+    $$self.$$set = $$props2 => {
+      if ("options" in $$props2) $$invalidate(12, options = $$props2.options);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty[0] & 4095) {
+        $: {
+          $$invalidate(12, options.curly = curly, options);
+          $$invalidate(12, options.stripEnclosingBraces = stripEnclosingBraces, options);
+          $$invalidate(12, options.numeric = numeric, options);
+          $$invalidate(12, options.dropAllCaps = dropAllCaps, options);
+          $$invalidate(12, options.escape = escape, options);
+          $$invalidate(12, options.encodeUrls = encodeUrls, options);
+          $$invalidate(12, options.removeEmptyFields = removeEmptyFields, options);
+          $$invalidate(12, options.removeDuplicateFields = removeDuplicateFields, options);
+          $$invalidate(12, options.maxAuthors = maxAuthorsChecked ? maxAuthorsValue : void 0, options);
+          $$invalidate(12, options.enclosingBraces = enclosingBracesChecked && enclosingBracesValue.length > 0 ? enclosingBracesValue.split(/[\n\t ,]+/) : void 0, options);
+        }
+      }
+    };
+    return [curly, stripEnclosingBraces, numeric, dropAllCaps, escape, encodeUrls, removeEmptyFields, removeDuplicateFields, maxAuthorsChecked, maxAuthorsValue, enclosingBracesChecked, enclosingBracesValue, options, option0_checked_binding, textarea_input_handler, option1_checked_binding, option2_checked_binding, option3_checked_binding, option4_checked_binding, option5_checked_binding, option6_checked_binding, option7_checked_binding, option8_checked_binding, input_input_handler, option9_checked_binding];
+  }
+  var ValueOptions = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance7, create_fragment7, safe_not_equal, {
+        options: 12
+      }, null, [-1, -1]);
+    }
+  };
+  var ValueOptions_default = ValueOptions;
+
+  // src/ui/SortingOptions.svelte
+  function create_default_slot_23(ctx) {
+    var t0;
+    var br0;
+    var t1;
+    var textarea;
+    var br1;
+    var t2;
+    var code0;
+    var t4;
+    var code1;
+    var t6;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        t0 = text("Fields to sort by: ");
+        br0 = element("br");
+        t1 = space();
+        textarea = element("textarea");
+        br1 = element("br");
+        t2 = text("\n		Space delimited, e.g: ");
+        code0 = element("code");
+        code0.textContent = "key type publisher author";
+        t4 = text(". For descending\n		order, prefix the field name with a dash, e.g.\n		");
+        code1 = element("code");
+        code1.textContent = "-year author";
+        t6 = text(".");
+        attr(textarea, "name", "sortList");
+        attr(textarea, "spellcheck", "false");
+      },
+      m(target, anchor) {
+        insert(target, t0, anchor);
+        insert(target, br0, anchor);
+        insert(target, t1, anchor);
+        insert(target, textarea, anchor);
+        set_input_value(textarea, ctx[3]);
+        insert(target, br1, anchor);
+        insert(target, t2, anchor);
+        insert(target, code0, anchor);
+        insert(target, t4, anchor);
+        insert(target, code1, anchor);
+        insert(target, t6, anchor);
+        if (!mounted) {
+          dispose = listen(textarea, "input", ctx[5]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 8) {
+          set_input_value(textarea, ctx2[3]);
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(t0);
+        if (detaching) detach(br0);
+        if (detaching) detach(t1);
+        if (detaching) detach(textarea);
+        if (detaching) detach(br1);
+        if (detaching) detach(t2);
+        if (detaching) detach(code0);
+        if (detaching) detach(t4);
+        if (detaching) detach(code1);
+        if (detaching) detach(t6);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_13(ctx) {
+    var t0;
+    var br0;
+    var t1;
+    var textarea;
+    var t2;
+    var br1;
+    var t3;
+    var code;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        t0 = text("Field order: ");
+        br0 = element("br");
+        t1 = space();
+        textarea = element("textarea");
+        t2 = space();
+        br1 = element("br");
+        t3 = text("\n		Space delimited, e.g: ");
+        code = element("code");
+        code.textContent = "title author year";
+        attr(textarea, "name", "sortFieldList");
+        attr(textarea, "spellcheck", "false");
+      },
+      m(target, anchor) {
+        insert(target, t0, anchor);
+        insert(target, br0, anchor);
+        insert(target, t1, anchor);
+        insert(target, textarea, anchor);
+        set_input_value(textarea, ctx[1]);
+        insert(target, t2, anchor);
+        insert(target, br1, anchor);
+        insert(target, t3, anchor);
+        insert(target, code, anchor);
+        if (!mounted) {
+          dispose = listen(textarea, "input", ctx[7]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 2) {
+          set_input_value(textarea, ctx2[1]);
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(t0);
+        if (detaching) detach(br0);
+        if (detaching) detach(t1);
+        if (detaching) detach(textarea);
+        if (detaching) detach(t2);
+        if (detaching) detach(br1);
+        if (detaching) detach(t3);
+        if (detaching) detach(code);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot4(ctx) {
+    var option0;
+    var updating_checked;
+    var t;
+    var option1;
+    var updating_checked_1;
+    var current;
+    function option0_checked_binding(value) {
+      ctx[6](value);
+    }
+    var option0_props = {
+      option: "sort",
+      $$slots: {
+        default: [create_default_slot_23]
+      },
+      $$scope: {
+        ctx
+      }
+    };
+    if (ctx[2] !== void 0) {
+      option0_props.checked = ctx[2];
+    }
+    option0 = new Option_default({
+      props: option0_props
+    });
+    binding_callbacks.push(() => bind(option0, "checked", option0_checked_binding));
+    function option1_checked_binding(value) {
+      ctx[8](value);
+    }
+    var option1_props = {
+      option: "sortFields",
+      $$slots: {
+        default: [create_default_slot_13]
+      },
+      $$scope: {
+        ctx
+      }
+    };
+    if (ctx[0] !== void 0) {
+      option1_props.checked = ctx[0];
+    }
+    option1 = new Option_default({
+      props: option1_props
+    });
+    binding_callbacks.push(() => bind(option1, "checked", option1_checked_binding));
+    return {
+      c() {
+        create_component(option0.$$.fragment);
+        t = space();
+        create_component(option1.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(option0, target, anchor);
+        insert(target, t, anchor);
+        mount_component(option1, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var option0_changes = {};
+        if (dirty & 2056) {
+          option0_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_checked && dirty & 4) {
+          updating_checked = true;
+          option0_changes.checked = ctx2[2];
+          add_flush_callback(() => updating_checked = false);
+        }
+        option0.$set(option0_changes);
+        var option1_changes = {};
+        if (dirty & 2050) {
+          option1_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_checked_1 && dirty & 1) {
+          updating_checked_1 = true;
+          option1_changes.checked = ctx2[0];
+          add_flush_callback(() => updating_checked_1 = false);
+        }
+        option1.$set(option1_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(option0.$$.fragment, local);
+        transition_in(option1.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(option0.$$.fragment, local);
+        transition_out(option1.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(option0, detaching);
+        if (detaching) detach(t);
+        destroy_component(option1, detaching);
+      }
+    };
+  }
+  function create_fragment8(ctx) {
+    var collapsible;
+    var current;
+    collapsible = new Collapsible_default({
+      props: {
+        title: "Sorting",
+        open: true,
+        $$slots: {
+          default: [create_default_slot4]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    return {
+      c() {
+        create_component(collapsible.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(collapsible, target, anchor);
+        current = true;
+      },
+      p(ctx2, _ref19) {
+        var _ref20 = _slicedToArray(_ref19, 1),
+          dirty = _ref20[0];
+        var collapsible_changes = {};
+        if (dirty & 2063) {
+          collapsible_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        collapsible.$set(collapsible_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(collapsible.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(collapsible.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(collapsible, detaching);
+      }
+    };
+  }
+  function instance8($$self, $$props, $$invalidate) {
+    var _a, _b;
+    var options = $$props.options;
+    var sortFieldsChecked = options.sortFields !== void 0 && options.sortFields.length > 0;
+    var sortFieldsValue = ((_a = options.sortFields) !== null && _a !== void 0 ? _a : DEFAULT_FIELD_SORT).join(" ");
+    var sortChecked = options.sort !== void 0 && options.sort.length > 0;
+    var sortValue = ((_b = options.sort) !== null && _b !== void 0 ? _b : DEFAULT_SORT).join(" ");
+    function textarea_input_handler() {
+      sortValue = this.value;
+      $$invalidate(3, sortValue);
+    }
+    function option0_checked_binding(value) {
+      sortChecked = value;
+      $$invalidate(2, sortChecked);
+    }
+    function textarea_input_handler_1() {
+      sortFieldsValue = this.value;
+      $$invalidate(1, sortFieldsValue);
+    }
+    function option1_checked_binding(value) {
+      sortFieldsChecked = value;
+      $$invalidate(0, sortFieldsChecked);
+    }
+    $$self.$$set = $$props2 => {
+      if ("options" in $$props2) $$invalidate(4, options = $$props2.options);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 15) {
+        $: {
+          $$invalidate(4, options.sortFields = sortFieldsChecked && sortFieldsValue.length > 0 ? sortFieldsValue.split(/[\n\t ,]+/) : void 0, options);
+          $$invalidate(4, options.sort = sortChecked && sortValue.length > 0 ? sortValue.split(/[\n\t ,]+/) : void 0, options);
+        }
+      }
+    };
+    return [sortFieldsChecked, sortFieldsValue, sortChecked, sortValue, options, textarea_input_handler, option0_checked_binding, textarea_input_handler_1, option1_checked_binding];
+  }
+  var SortingOptions = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance8, create_fragment8, safe_not_equal, {
+        options: 4
+      });
+    }
+  };
+  var SortingOptions_default = SortingOptions;
+
+  // src/ui/CleanupOptions.svelte
+  function create_default_slot_24(ctx) {
+    var t0;
+    var br0;
+    var t1;
+    var textarea;
+    var br1;
+    var t2;
+    var code;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        t0 = text("Fields to omit: ");
+        br0 = element("br");
+        t1 = space();
+        textarea = element("textarea");
+        br1 = element("br");
+        t2 = text("\n		Space delimited, e.g: ");
+        code = element("code");
+        code.textContent = "id type publisher author";
+        attr(textarea, "name", "omitList");
+        attr(textarea, "class", "omit svelte-1t0249j");
+        attr(textarea, "placeholder", "e.g. abstract keywords");
+        attr(textarea, "spellcheck", "false");
+      },
+      m(target, anchor) {
+        insert(target, t0, anchor);
+        insert(target, br0, anchor);
+        insert(target, t1, anchor);
+        insert(target, textarea, anchor);
+        set_input_value(textarea, ctx[1]);
+        insert(target, br1, anchor);
+        insert(target, t2, anchor);
+        insert(target, code, anchor);
+        if (!mounted) {
+          dispose = listen(textarea, "input", ctx[9]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 2) {
+          set_input_value(textarea, ctx2[1]);
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(t0);
+        if (detaching) detach(br0);
+        if (detaching) detach(t1);
+        if (detaching) detach(textarea);
+        if (detaching) detach(br1);
+        if (detaching) detach(t2);
+        if (detaching) detach(code);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_14(ctx) {
+    var t0;
+    var br;
+    var t1;
+    var textarea;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        t0 = text("Template:");
+        br = element("br");
+        t1 = space();
+        textarea = element("textarea");
+        attr(textarea, "name", "generateKeysTemplate");
+        attr(textarea, "type", "text");
+      },
+      m(target, anchor) {
+        insert(target, t0, anchor);
+        insert(target, br, anchor);
+        insert(target, t1, anchor);
+        insert(target, textarea, anchor);
+        set_input_value(textarea, ctx[7]);
+        if (!mounted) {
+          dispose = listen(textarea, "input", ctx[14]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 128) {
+          set_input_value(textarea, ctx2[7]);
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(t0);
+        if (detaching) detach(br);
+        if (detaching) detach(t1);
+        if (detaching) detach(textarea);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot5(ctx) {
+    var option0;
+    var updating_checked;
+    var t0;
+    var option1;
+    var updating_checked_1;
+    var t1;
+    var option2;
+    var updating_checked_2;
+    var t2;
+    var option3;
+    var updating_checked_3;
+    var t3;
+    var option4;
+    var updating_checked_4;
+    var t4;
+    var option5;
+    var updating_checked_5;
+    var current;
+    function option0_checked_binding(value) {
+      ctx[10](value);
+    }
+    var option0_props = {
+      option: "omit",
+      $$slots: {
+        default: [create_default_slot_24]
+      },
+      $$scope: {
+        ctx
+      }
+    };
+    if (ctx[0] !== void 0) {
+      option0_props.checked = ctx[0];
+    }
+    option0 = new Option_default({
+      props: option0_props
+    });
+    binding_callbacks.push(() => bind(option0, "checked", option0_checked_binding));
+    function option1_checked_binding(value) {
+      ctx[11](value);
+    }
+    var option1_props = {
+      option: "stripComments"
+    };
+    if (ctx[2] !== void 0) {
+      option1_props.checked = ctx[2];
+    }
+    option1 = new Option_default({
+      props: option1_props
+    });
+    binding_callbacks.push(() => bind(option1, "checked", option1_checked_binding));
+    function option2_checked_binding(value) {
+      ctx[12](value);
+    }
+    var option2_props = {
+      option: "tidyComments"
+    };
+    if (ctx[3] !== void 0) {
+      option2_props.checked = ctx[3];
+    }
+    option2 = new Option_default({
+      props: option2_props
+    });
+    binding_callbacks.push(() => bind(option2, "checked", option2_checked_binding));
+    function option3_checked_binding(value) {
+      ctx[13](value);
+    }
+    var option3_props = {
+      option: "lowercase"
+    };
+    if (ctx[4] !== void 0) {
+      option3_props.checked = ctx[4];
+    }
+    option3 = new Option_default({
+      props: option3_props
+    });
+    binding_callbacks.push(() => bind(option3, "checked", option3_checked_binding));
+    function option4_checked_binding(value) {
+      ctx[15](value);
+    }
+    var option4_props = {
+      option: "generateKeys",
+      $$slots: {
+        default: [create_default_slot_14]
+      },
+      $$scope: {
+        ctx
+      }
+    };
+    if (ctx[6] !== void 0) {
+      option4_props.checked = ctx[6];
+    }
+    option4 = new Option_default({
+      props: option4_props
+    });
+    binding_callbacks.push(() => bind(option4, "checked", option4_checked_binding));
+    function option5_checked_binding(value) {
+      ctx[16](value);
+    }
+    var option5_props = {
+      option: "trailingCommas"
+    };
+    if (ctx[5] !== void 0) {
+      option5_props.checked = ctx[5];
+    }
+    option5 = new Option_default({
+      props: option5_props
+    });
+    binding_callbacks.push(() => bind(option5, "checked", option5_checked_binding));
+    return {
+      c() {
+        create_component(option0.$$.fragment);
+        t0 = space();
+        create_component(option1.$$.fragment);
+        t1 = space();
+        create_component(option2.$$.fragment);
+        t2 = space();
+        create_component(option3.$$.fragment);
+        t3 = space();
+        create_component(option4.$$.fragment);
+        t4 = space();
+        create_component(option5.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(option0, target, anchor);
+        insert(target, t0, anchor);
+        mount_component(option1, target, anchor);
+        insert(target, t1, anchor);
+        mount_component(option2, target, anchor);
+        insert(target, t2, anchor);
+        mount_component(option3, target, anchor);
+        insert(target, t3, anchor);
+        mount_component(option4, target, anchor);
+        insert(target, t4, anchor);
+        mount_component(option5, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var option0_changes = {};
+        if (dirty & 16777218) {
+          option0_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_checked && dirty & 1) {
+          updating_checked = true;
+          option0_changes.checked = ctx2[0];
+          add_flush_callback(() => updating_checked = false);
+        }
+        option0.$set(option0_changes);
+        var option1_changes = {};
+        if (!updating_checked_1 && dirty & 4) {
+          updating_checked_1 = true;
+          option1_changes.checked = ctx2[2];
+          add_flush_callback(() => updating_checked_1 = false);
+        }
+        option1.$set(option1_changes);
+        var option2_changes = {};
+        if (!updating_checked_2 && dirty & 8) {
+          updating_checked_2 = true;
+          option2_changes.checked = ctx2[3];
+          add_flush_callback(() => updating_checked_2 = false);
+        }
+        option2.$set(option2_changes);
+        var option3_changes = {};
+        if (!updating_checked_3 && dirty & 16) {
+          updating_checked_3 = true;
+          option3_changes.checked = ctx2[4];
+          add_flush_callback(() => updating_checked_3 = false);
+        }
+        option3.$set(option3_changes);
+        var option4_changes = {};
+        if (dirty & 16777344) {
+          option4_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_checked_4 && dirty & 64) {
+          updating_checked_4 = true;
+          option4_changes.checked = ctx2[6];
+          add_flush_callback(() => updating_checked_4 = false);
+        }
+        option4.$set(option4_changes);
+        var option5_changes = {};
+        if (!updating_checked_5 && dirty & 32) {
+          updating_checked_5 = true;
+          option5_changes.checked = ctx2[5];
+          add_flush_callback(() => updating_checked_5 = false);
+        }
+        option5.$set(option5_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(option0.$$.fragment, local);
+        transition_in(option1.$$.fragment, local);
+        transition_in(option2.$$.fragment, local);
+        transition_in(option3.$$.fragment, local);
+        transition_in(option4.$$.fragment, local);
+        transition_in(option5.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(option0.$$.fragment, local);
+        transition_out(option1.$$.fragment, local);
+        transition_out(option2.$$.fragment, local);
+        transition_out(option3.$$.fragment, local);
+        transition_out(option4.$$.fragment, local);
+        transition_out(option5.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(option0, detaching);
+        if (detaching) detach(t0);
+        destroy_component(option1, detaching);
+        if (detaching) detach(t1);
+        destroy_component(option2, detaching);
+        if (detaching) detach(t2);
+        destroy_component(option3, detaching);
+        if (detaching) detach(t3);
+        destroy_component(option4, detaching);
+        if (detaching) detach(t4);
+        destroy_component(option5, detaching);
+      }
+    };
+  }
+  function create_fragment9(ctx) {
+    var collapsible;
+    var current;
+    collapsible = new Collapsible_default({
+      props: {
+        title: "Clean up",
+        open: true,
+        $$slots: {
+          default: [create_default_slot5]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    return {
+      c() {
+        create_component(collapsible.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(collapsible, target, anchor);
+        current = true;
+      },
+      p(ctx2, _ref21) {
+        var _ref22 = _slicedToArray(_ref21, 1),
+          dirty = _ref22[0];
+        var collapsible_changes = {};
+        if (dirty & 16777471) {
+          collapsible_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        collapsible.$set(collapsible_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(collapsible.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(collapsible.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(collapsible, detaching);
+      }
+    };
+  }
+  function instance9($$self, $$props, $$invalidate) {
+    var _a, _b, _c, _d, _e, _f, _g;
+    var options = $$props.options;
+    var omitChecked = options.omit !== void 0 && options.omit.length > 0;
+    var omitValue = (_b = (_a = options.omit) === null || _a === void 0 ? void 0 : _a.join(" ")) !== null && _b !== void 0 ? _b : "";
+    var stripComments = (_c = options.stripComments) !== null && _c !== void 0 ? _c : false;
+    var tidyComments = (_d = options.tidyComments) !== null && _d !== void 0 ? _d : false;
+    var lowercase = (_e = options.lowercase) !== null && _e !== void 0 ? _e : false;
+    var trailingCommasChecked = (_f = options.trailingCommas) !== null && _f !== void 0 ? _f : false;
+    var generateKeysChecked = options.generateKeys !== void 0 && options.generateKeys.length > 0;
+    var generateKeysValue = (_g = options.generateKeys) !== null && _g !== void 0 ? _g : "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
+    function textarea_input_handler() {
+      omitValue = this.value;
+      $$invalidate(1, omitValue);
+    }
+    function option0_checked_binding(value) {
+      omitChecked = value;
+      $$invalidate(0, omitChecked);
+    }
+    function option1_checked_binding(value) {
+      stripComments = value;
+      $$invalidate(2, stripComments);
+    }
+    function option2_checked_binding(value) {
+      tidyComments = value;
+      $$invalidate(3, tidyComments);
+    }
+    function option3_checked_binding(value) {
+      lowercase = value;
+      $$invalidate(4, lowercase);
+    }
+    function textarea_input_handler_1() {
+      generateKeysValue = this.value;
+      $$invalidate(7, generateKeysValue);
+    }
+    function option4_checked_binding(value) {
+      generateKeysChecked = value;
+      $$invalidate(6, generateKeysChecked);
+    }
+    function option5_checked_binding(value) {
+      trailingCommasChecked = value;
+      $$invalidate(5, trailingCommasChecked);
+    }
+    $$self.$$set = $$props2 => {
+      if ("options" in $$props2) $$invalidate(8, options = $$props2.options);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 255) {
+        $: {
+          $$invalidate(8, options.omit = omitChecked && omitValue.length > 0 ? omitValue.split(/[\n\t ,]+/) : void 0, options);
+          $$invalidate(8, options.stripComments = stripComments, options);
+          $$invalidate(8, options.tidyComments = tidyComments, options);
+          $$invalidate(8, options.lowercase = lowercase, options);
+          $$invalidate(8, options.trailingCommas = trailingCommasChecked, options);
+          $$invalidate(8, options.generateKeys = generateKeysChecked ? generateKeysValue : void 0, options);
+        }
+      }
+    };
+    return [omitChecked, omitValue, stripComments, tidyComments, lowercase, trailingCommasChecked, generateKeysChecked, generateKeysValue, options, textarea_input_handler, option0_checked_binding, option1_checked_binding, option2_checked_binding, option3_checked_binding, textarea_input_handler_1, option4_checked_binding, option5_checked_binding];
+  }
+  var CleanupOptions = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance9, create_fragment9, safe_not_equal, {
+        options: 8
+      });
+    }
+  };
+  var CleanupOptions_default = CleanupOptions;
+
+  // src/ui/DuplicateOptions.svelte
+  function create_default_slot_10(ctx) {
+    var input;
+    var t;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        input = element("input");
+        t = text("\n			Matching Keys");
+        attr(input, "name", "uniqKEY");
+        attr(input, "type", "checkbox");
+      },
+      m(target, anchor) {
+        insert(target, input, anchor);
+        input.checked = ctx[1];
+        insert(target, t, anchor);
+        if (!mounted) {
+          dispose = listen(input, "change", ctx[8]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 2) {
+          input.checked = ctx2[1];
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(input);
+        if (detaching) detach(t);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_9(ctx) {
+    var input;
+    var t;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        input = element("input");
+        t = text("\n			Matching DOIs");
+        attr(input, "name", "uniqDOI");
+        attr(input, "type", "checkbox");
+      },
+      m(target, anchor) {
+        insert(target, input, anchor);
+        input.checked = ctx[2];
+        insert(target, t, anchor);
+        if (!mounted) {
+          dispose = listen(input, "change", ctx[9]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 4) {
+          input.checked = ctx2[2];
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(input);
+        if (detaching) detach(t);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_8(ctx) {
+    var input;
+    var t;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        input = element("input");
+        t = text("\n			Similar author and title");
+        attr(input, "name", "uniqCIT");
+        attr(input, "type", "checkbox");
+      },
+      m(target, anchor) {
+        insert(target, input, anchor);
+        input.checked = ctx[3];
+        insert(target, t, anchor);
+        if (!mounted) {
+          dispose = listen(input, "change", ctx[10]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 8) {
+          input.checked = ctx2[3];
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(input);
+        if (detaching) detach(t);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_7(ctx) {
+    var input;
+    var t;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        input = element("input");
+        t = text("\n			Similar abstracts");
+        attr(input, "name", "uniqABS");
+        attr(input, "type", "checkbox");
+      },
+      m(target, anchor) {
+        insert(target, input, anchor);
+        input.checked = ctx[4];
+        insert(target, t, anchor);
+        if (!mounted) {
+          dispose = listen(input, "change", ctx[11]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 16) {
+          input.checked = ctx2[4];
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(input);
+        if (detaching) detach(t);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_6(ctx) {
+    var p;
+    var t1;
+    var label0;
+    var t2;
+    var label1;
+    var t3;
+    var label2;
+    var t4;
+    var label3;
+    var current;
+    label0 = new Label_default({
+      props: {
+        $$slots: {
+          default: [create_default_slot_10]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    label1 = new Label_default({
+      props: {
+        $$slots: {
+          default: [create_default_slot_9]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    label2 = new Label_default({
+      props: {
+        $$slots: {
+          default: [create_default_slot_8]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    label3 = new Label_default({
+      props: {
+        $$slots: {
+          default: [create_default_slot_7]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    return {
+      c() {
+        p = element("p");
+        p.textContent = "What to check:";
+        t1 = space();
+        create_component(label0.$$.fragment);
+        t2 = space();
+        create_component(label1.$$.fragment);
+        t3 = space();
+        create_component(label2.$$.fragment);
+        t4 = space();
+        create_component(label3.$$.fragment);
+      },
+      m(target, anchor) {
+        insert(target, p, anchor);
+        insert(target, t1, anchor);
+        mount_component(label0, target, anchor);
+        insert(target, t2, anchor);
+        mount_component(label1, target, anchor);
+        insert(target, t3, anchor);
+        mount_component(label2, target, anchor);
+        insert(target, t4, anchor);
+        mount_component(label3, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var label0_changes = {};
+        if (dirty & 268435458) {
+          label0_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        label0.$set(label0_changes);
+        var label1_changes = {};
+        if (dirty & 268435460) {
+          label1_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        label1.$set(label1_changes);
+        var label2_changes = {};
+        if (dirty & 268435464) {
+          label2_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        label2.$set(label2_changes);
+        var label3_changes = {};
+        if (dirty & 268435472) {
+          label3_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        label3.$set(label3_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(label0.$$.fragment, local);
+        transition_in(label1.$$.fragment, local);
+        transition_in(label2.$$.fragment, local);
+        transition_in(label3.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(label0.$$.fragment, local);
+        transition_out(label1.$$.fragment, local);
+        transition_out(label2.$$.fragment, local);
+        transition_out(label3.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching) detach(p);
+        if (detaching) detach(t1);
+        destroy_component(label0, detaching);
+        if (detaching) detach(t2);
+        destroy_component(label1, detaching);
+        if (detaching) detach(t3);
+        destroy_component(label2, detaching);
+        if (detaching) detach(t4);
+        destroy_component(label3, detaching);
+      }
+    };
+  }
+  function create_default_slot_5(ctx) {
+    var input;
+    var t0;
+    var strong;
+    var t2;
+    var br;
+    var t3;
+    var small;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        input = element("input");
+        t0 = space();
+        strong = element("strong");
+        strong.textContent = "Combine";
+        t2 = text(" (default)");
+        br = element("br");
+        t3 = space();
+        small = element("small");
+        small.textContent = "Keep original entry and merge in fields of duplicates if they do not\n				already exist";
+        attr(input, "name", "mergeStrategy");
+        attr(input, "type", "radio");
+        input.__value = "combine";
+        input.value = input.__value;
+        ctx[14][0].push(input);
+      },
+      m(target, anchor) {
+        insert(target, input, anchor);
+        input.checked = input.__value === ctx[6];
+        insert(target, t0, anchor);
+        insert(target, strong, anchor);
+        insert(target, t2, anchor);
+        insert(target, br, anchor);
+        insert(target, t3, anchor);
+        insert(target, small, anchor);
+        if (!mounted) {
+          dispose = listen(input, "change", ctx[13]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 64) {
+          input.checked = input.__value === ctx2[6];
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(input);
+        ctx[14][0].splice(ctx[14][0].indexOf(input), 1);
+        if (detaching) detach(t0);
+        if (detaching) detach(strong);
+        if (detaching) detach(t2);
+        if (detaching) detach(br);
+        if (detaching) detach(t3);
+        if (detaching) detach(small);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_4(ctx) {
+    var input;
+    var t0;
+    var strong;
+    var br;
+    var t2;
+    var small;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        input = element("input");
+        t0 = space();
+        strong = element("strong");
+        strong.textContent = "Overwrite";
+        br = element("br");
+        t2 = space();
+        small = element("small");
+        small.textContent = "Keep original entry and merge in fields of duplicates, overwriting\n				existing fields if they exist";
+        attr(input, "name", "mergeStrategy");
+        attr(input, "type", "radio");
+        input.__value = "overwrite";
+        input.value = input.__value;
+        ctx[14][0].push(input);
+      },
+      m(target, anchor) {
+        insert(target, input, anchor);
+        input.checked = input.__value === ctx[6];
+        insert(target, t0, anchor);
+        insert(target, strong, anchor);
+        insert(target, br, anchor);
+        insert(target, t2, anchor);
+        insert(target, small, anchor);
+        if (!mounted) {
+          dispose = listen(input, "change", ctx[15]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 64) {
+          input.checked = input.__value === ctx2[6];
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(input);
+        ctx[14][0].splice(ctx[14][0].indexOf(input), 1);
+        if (detaching) detach(t0);
+        if (detaching) detach(strong);
+        if (detaching) detach(br);
+        if (detaching) detach(t2);
+        if (detaching) detach(small);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_32(ctx) {
+    var input;
+    var t0;
+    var strong;
+    var br;
+    var t2;
+    var small;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        input = element("input");
+        t0 = space();
+        strong = element("strong");
+        strong.textContent = "First";
+        br = element("br");
+        t2 = space();
+        small = element("small");
+        small.textContent = "Only keep the original entry";
+        attr(input, "name", "mergeStrategy");
+        attr(input, "type", "radio");
+        input.__value = "first";
+        input.value = input.__value;
+        ctx[14][0].push(input);
+      },
+      m(target, anchor) {
+        insert(target, input, anchor);
+        input.checked = input.__value === ctx[6];
+        insert(target, t0, anchor);
+        insert(target, strong, anchor);
+        insert(target, br, anchor);
+        insert(target, t2, anchor);
+        insert(target, small, anchor);
+        if (!mounted) {
+          dispose = listen(input, "change", ctx[16]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 64) {
+          input.checked = input.__value === ctx2[6];
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(input);
+        ctx[14][0].splice(ctx[14][0].indexOf(input), 1);
+        if (detaching) detach(t0);
+        if (detaching) detach(strong);
+        if (detaching) detach(br);
+        if (detaching) detach(t2);
+        if (detaching) detach(small);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_25(ctx) {
+    var input;
+    var t0;
+    var strong;
+    var br;
+    var t2;
+    var small;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        input = element("input");
+        t0 = space();
+        strong = element("strong");
+        strong.textContent = "Last";
+        br = element("br");
+        t2 = space();
+        small = element("small");
+        small.textContent = "Only keep the last found duplicate";
+        attr(input, "name", "mergeStrategy");
+        attr(input, "type", "radio");
+        input.__value = "last";
+        input.value = input.__value;
+        ctx[14][0].push(input);
+      },
+      m(target, anchor) {
+        insert(target, input, anchor);
+        input.checked = input.__value === ctx[6];
+        insert(target, t0, anchor);
+        insert(target, strong, anchor);
+        insert(target, br, anchor);
+        insert(target, t2, anchor);
+        insert(target, small, anchor);
+        if (!mounted) {
+          dispose = listen(input, "change", ctx[17]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 64) {
+          input.checked = input.__value === ctx2[6];
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(input);
+        ctx[14][0].splice(ctx[14][0].indexOf(input), 1);
+        if (detaching) detach(t0);
+        if (detaching) detach(strong);
+        if (detaching) detach(br);
+        if (detaching) detach(t2);
+        if (detaching) detach(small);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_15(ctx) {
+    var label0;
+    var t0;
+    var label1;
+    var t1;
+    var label2;
+    var t2;
+    var label3;
+    var current;
+    label0 = new Label_default({
+      props: {
+        $$slots: {
+          default: [create_default_slot_5]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    label1 = new Label_default({
+      props: {
+        $$slots: {
+          default: [create_default_slot_4]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    label2 = new Label_default({
+      props: {
+        $$slots: {
+          default: [create_default_slot_32]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    label3 = new Label_default({
+      props: {
+        $$slots: {
+          default: [create_default_slot_25]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    return {
+      c() {
+        create_component(label0.$$.fragment);
+        t0 = space();
+        create_component(label1.$$.fragment);
+        t1 = space();
+        create_component(label2.$$.fragment);
+        t2 = space();
+        create_component(label3.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(label0, target, anchor);
+        insert(target, t0, anchor);
+        mount_component(label1, target, anchor);
+        insert(target, t1, anchor);
+        mount_component(label2, target, anchor);
+        insert(target, t2, anchor);
+        mount_component(label3, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var label0_changes = {};
+        if (dirty & 268435520) {
+          label0_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        label0.$set(label0_changes);
+        var label1_changes = {};
+        if (dirty & 268435520) {
+          label1_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        label1.$set(label1_changes);
+        var label2_changes = {};
+        if (dirty & 268435520) {
+          label2_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        label2.$set(label2_changes);
+        var label3_changes = {};
+        if (dirty & 268435520) {
+          label3_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        label3.$set(label3_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(label0.$$.fragment, local);
+        transition_in(label1.$$.fragment, local);
+        transition_in(label2.$$.fragment, local);
+        transition_in(label3.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(label0.$$.fragment, local);
+        transition_out(label1.$$.fragment, local);
+        transition_out(label2.$$.fragment, local);
+        transition_out(label3.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(label0, detaching);
+        if (detaching) detach(t0);
+        destroy_component(label1, detaching);
+        if (detaching) detach(t1);
+        destroy_component(label2, detaching);
+        if (detaching) detach(t2);
+        destroy_component(label3, detaching);
+      }
+    };
+  }
+  function create_default_slot6(ctx) {
+    var option0;
+    var updating_checked;
+    var t;
+    var option1;
+    var updating_checked_1;
+    var current;
+    function option0_checked_binding(value) {
+      ctx[12](value);
+    }
+    var option0_props = {
+      option: "duplicates",
+      $$slots: {
+        default: [create_default_slot_6]
+      },
+      $$scope: {
+        ctx
+      }
+    };
+    if (ctx[0] !== void 0) {
+      option0_props.checked = ctx[0];
+    }
+    option0 = new Option_default({
+      props: option0_props
+    });
+    binding_callbacks.push(() => bind(option0, "checked", option0_checked_binding));
+    function option1_checked_binding(value) {
+      ctx[18](value);
+    }
+    var option1_props = {
+      option: "merge",
+      $$slots: {
+        default: [create_default_slot_15]
+      },
+      $$scope: {
+        ctx
+      }
+    };
+    if (ctx[5] !== void 0) {
+      option1_props.checked = ctx[5];
+    }
+    option1 = new Option_default({
+      props: option1_props
+    });
+    binding_callbacks.push(() => bind(option1, "checked", option1_checked_binding));
+    return {
+      c() {
+        create_component(option0.$$.fragment);
+        t = space();
+        create_component(option1.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(option0, target, anchor);
+        insert(target, t, anchor);
+        mount_component(option1, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var option0_changes = {};
+        if (dirty & 268435486) {
+          option0_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_checked && dirty & 1) {
+          updating_checked = true;
+          option0_changes.checked = ctx2[0];
+          add_flush_callback(() => updating_checked = false);
+        }
+        option0.$set(option0_changes);
+        var option1_changes = {};
+        if (dirty & 268435520) {
+          option1_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_checked_1 && dirty & 32) {
+          updating_checked_1 = true;
+          option1_changes.checked = ctx2[5];
+          add_flush_callback(() => updating_checked_1 = false);
+        }
+        option1.$set(option1_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(option0.$$.fragment, local);
+        transition_in(option1.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(option0.$$.fragment, local);
+        transition_out(option1.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(option0, detaching);
+        if (detaching) detach(t);
+        destroy_component(option1, detaching);
+      }
+    };
+  }
+  function create_fragment10(ctx) {
+    var collapsible;
+    var current;
+    collapsible = new Collapsible_default({
+      props: {
+        title: "Duplicates",
+        open: true,
+        $$slots: {
+          default: [create_default_slot6]
+        },
+        $$scope: {
+          ctx
+        }
+      }
+    });
+    return {
+      c() {
+        create_component(collapsible.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(collapsible, target, anchor);
+        current = true;
+      },
+      p(ctx2, _ref23) {
+        var _ref24 = _slicedToArray(_ref23, 1),
+          dirty = _ref24[0];
+        var collapsible_changes = {};
+        if (dirty & 268435583) {
+          collapsible_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        collapsible.$set(collapsible_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(collapsible.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(collapsible.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(collapsible, detaching);
+      }
+    };
+  }
+  function instance10($$self, $$props, $$invalidate) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    var options = $$props.options;
+    var duplicateCheckChecked = options.duplicates !== void 0;
+    var duplicateCheckKey = (_b = (_a = options.duplicates) === null || _a === void 0 ? void 0 : _a.includes("key")) !== null && _b !== void 0 ? _b : true;
+    var duplicateCheckDOI = (_d = (_c = options.duplicates) === null || _c === void 0 ? void 0 : _c.includes("doi")) !== null && _d !== void 0 ? _d : false;
+    var duplicateCheckCitation = (_f = (_e = options.duplicates) === null || _e === void 0 ? void 0 : _e.includes("citation")) !== null && _f !== void 0 ? _f : false;
+    var duplicateCheckAbstract = (_h = (_g = options.duplicates) === null || _g === void 0 ? void 0 : _g.includes("abstract")) !== null && _h !== void 0 ? _h : false;
+    var mergeChecked = options.merge !== void 0;
+    var mergeValue = (_j = options.merge) !== null && _j !== void 0 ? _j : "combine";
+    var $$binding_groups = [[]];
+    function input_change_handler() {
+      duplicateCheckKey = this.checked;
+      $$invalidate(1, duplicateCheckKey);
+    }
+    function input_change_handler_1() {
+      duplicateCheckDOI = this.checked;
+      $$invalidate(2, duplicateCheckDOI);
+    }
+    function input_change_handler_2() {
+      duplicateCheckCitation = this.checked;
+      $$invalidate(3, duplicateCheckCitation);
+    }
+    function input_change_handler_3() {
+      duplicateCheckAbstract = this.checked;
+      $$invalidate(4, duplicateCheckAbstract);
+    }
+    function option0_checked_binding(value) {
+      duplicateCheckChecked = value;
+      $$invalidate(0, duplicateCheckChecked);
+    }
+    function input_change_handler_4() {
+      mergeValue = this.__value;
+      $$invalidate(6, mergeValue);
+    }
+    function input_change_handler_5() {
+      mergeValue = this.__value;
+      $$invalidate(6, mergeValue);
+    }
+    function input_change_handler_6() {
+      mergeValue = this.__value;
+      $$invalidate(6, mergeValue);
+    }
+    function input_change_handler_7() {
+      mergeValue = this.__value;
+      $$invalidate(6, mergeValue);
+    }
+    function option1_checked_binding(value) {
+      mergeChecked = value;
+      $$invalidate(5, mergeChecked);
+    }
+    $$self.$$set = $$props2 => {
+      if ("options" in $$props2) $$invalidate(7, options = $$props2.options);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 255) {
+        $: {
+          if (duplicateCheckChecked) {
+            $$invalidate(7, options.duplicates = [], options);
+            if (duplicateCheckKey) options.duplicates.push("key");
+            if (duplicateCheckDOI) options.duplicates.push("doi");
+            if (duplicateCheckCitation) options.duplicates.push("citation");
+            if (duplicateCheckAbstract) options.duplicates.push("abstract");
+          } else {
+            $$invalidate(7, options.duplicates = void 0, options);
+          }
+          $$invalidate(7, options.merge = mergeChecked ? mergeValue : void 0, options);
+        }
+      }
+    };
+    return [duplicateCheckChecked, duplicateCheckKey, duplicateCheckDOI, duplicateCheckCitation, duplicateCheckAbstract, mergeChecked, mergeValue, options, input_change_handler, input_change_handler_1, input_change_handler_2, input_change_handler_3, option0_checked_binding, input_change_handler_4, $$binding_groups, input_change_handler_5, input_change_handler_6, input_change_handler_7, option1_checked_binding];
+  }
+  var DuplicateOptions = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance10, create_fragment10, safe_not_equal, {
+        options: 7
+      });
+    }
+  };
+  var DuplicateOptions_default = DuplicateOptions;
+
   // src/cliUtils.ts
+  var OPTIONS = new Set(optionDefinitions.flatMap(def => Object.keys(def.cli)));
   function optionsToCLIArgs(options) {
     return optionDefinitions.map(def => {
       var _a;
       return (_a = def.toCLI) == null ? void 0 : _a.call(def, options[def.key]);
     }).filter(arg => typeof arg === "string");
   }
-  var OPTIONS;
-  var init_cliUtils = __esm({
-    "src/cliUtils.ts"() {
-      "use strict";
 
-      init_optionDefinitions();
-      OPTIONS = new Set(optionDefinitions.flatMap(def => Object.keys(def.cli)));
-    }
-  });
-
-  // node_modules/codemirror/addon/mode/simple.js
-  var require_simple = __commonJS({
-    "node_modules/codemirror/addon/mode/simple.js"(exports, module) {
-      (function (mod) {
-        if (typeof exports == "object" && typeof module == "object") mod(require_codemirror());else if (typeof define == "function" && define.amd) define(["../../lib/codemirror"], mod);else mod(CodeMirror);
-      })(function (CodeMirror3) {
-        "use strict";
-
-        CodeMirror3.defineSimpleMode = function (name, states) {
-          CodeMirror3.defineMode(name, function (config) {
-            return CodeMirror3.simpleMode(config, states);
-          });
-        };
-        CodeMirror3.simpleMode = function (config, states) {
-          ensureState(states, "start");
-          var states_ = {},
-            meta = states.meta || {},
-            hasIndentation = false;
-          for (var state in states) {
-            if (state != meta && states.hasOwnProperty(state)) {
-              var list = states_[state] = [],
-                orig = states[state];
-              for (var i = 0; i < orig.length; i++) {
-                var data = orig[i];
-                list.push(new Rule(data, states));
-                if (data.indent || data.dedent) hasIndentation = true;
-              }
-            }
-          }
-          var mode = {
-            startState: function startState() {
-              return {
-                state: "start",
-                pending: null,
-                local: null,
-                localState: null,
-                indent: hasIndentation ? [] : null
-              };
-            },
-            copyState: function copyState(state2) {
-              var s = {
-                state: state2.state,
-                pending: state2.pending,
-                local: state2.local,
-                localState: null,
-                indent: state2.indent && state2.indent.slice(0)
-              };
-              if (state2.localState) s.localState = CodeMirror3.copyState(state2.local.mode, state2.localState);
-              if (state2.stack) s.stack = state2.stack.slice(0);
-              for (var pers = state2.persistentStates; pers; pers = pers.next) {
-                s.persistentStates = {
-                  mode: pers.mode,
-                  spec: pers.spec,
-                  state: pers.state == state2.localState ? s.localState : CodeMirror3.copyState(pers.mode, pers.state),
-                  next: s.persistentStates
-                };
-              }
-              return s;
-            },
-            token: tokenFunction(states_, config),
-            innerMode: function innerMode(state2) {
-              return state2.local && {
-                mode: state2.local.mode,
-                state: state2.localState
-              };
-            },
-            indent: indentFunction(states_, meta)
-          };
-          if (meta) {
-            for (var prop in meta) {
-              if (meta.hasOwnProperty(prop)) mode[prop] = meta[prop];
-            }
-          }
-          return mode;
-        };
-        function ensureState(states, name) {
-          if (!states.hasOwnProperty(name)) throw new Error("Undefined state " + name + " in simple mode");
-        }
-        function toRegex(val, caret) {
-          if (!val) return /(?:)/;
-          var flags = "";
-          if (val instanceof RegExp) {
-            if (val.ignoreCase) flags = "i";
-            if (val.unicode) flags += "u";
-            val = val.source;
+  // src/ui/Cli.svelte
+  function get_each_context(ctx, list, i) {
+    var child_ctx = ctx.slice();
+    child_ctx[2] = list[i][0];
+    child_ctx[3] = list[i][1];
+    return child_ctx;
+  }
+  function create_if_block2(ctx) {
+    var t0;
+    var span;
+    var t1_value = ctx[3] + "";
+    var t1;
+    var t2;
+    return {
+      c() {
+        t0 = text("=");
+        span = element("span");
+        t1 = text(t1_value);
+        t2 = space();
+        attr(span, "class", "opt-val svelte-1xnx1c1");
+      },
+      m(target, anchor) {
+        insert(target, t0, anchor);
+        insert(target, span, anchor);
+        append(span, t1);
+        insert(target, t2, anchor);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 1 && t1_value !== (t1_value = ctx2[3] + "")) set_data(t1, t1_value);
+      },
+      d(detaching) {
+        if (detaching) detach(t0);
+        if (detaching) detach(span);
+        if (detaching) detach(t2);
+      }
+    };
+  }
+  function create_each_block(ctx) {
+    var span;
+    var t0_value = ctx[2] + "";
+    var t0;
+    var t1_value = " ";
+    var t1;
+    var if_block = ctx[3] && ctx[3].length > 0 && create_if_block2(ctx);
+    return {
+      c() {
+        span = element("span");
+        t0 = text(t0_value);
+        if (if_block) if_block.c();
+        t1 = text(t1_value);
+        attr(span, "class", "opt-name svelte-1xnx1c1");
+      },
+      m(target, anchor) {
+        insert(target, span, anchor);
+        append(span, t0);
+        if (if_block) if_block.m(target, anchor);
+        insert(target, t1, anchor);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 1 && t0_value !== (t0_value = ctx2[2] + "")) set_data(t0, t0_value);
+        if (ctx2[3] && ctx2[3].length > 0) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
           } else {
-            val = String(val);
+            if_block = create_if_block2(ctx2);
+            if_block.c();
+            if_block.m(t1.parentNode, t1);
           }
-          return new RegExp((caret === false ? "" : "^") + "(?:" + val + ")", flags);
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
         }
-        function asToken(val) {
-          if (!val) return null;
-          if (val.apply) return val;
-          if (typeof val == "string") return val.replace(/\./g, " ");
-          var result = [];
-          for (var i = 0; i < val.length; i++) {
-            result.push(val[i] && val[i].replace(/\./g, " "));
+      },
+      d(detaching) {
+        if (detaching) detach(span);
+        if (if_block) if_block.d(detaching);
+        if (detaching) detach(t1);
+      }
+    };
+  }
+  function create_default_slot7(ctx) {
+    var p;
+    var t1;
+    var code;
+    var t2;
+    var t3;
+    var each_value = ctx[0];
+    var each_blocks = [];
+    for (var i = 0; i < each_value.length; i += 1) {
+      each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    }
+    return {
+      c() {
+        p = element("p");
+        p.textContent = "To run this configuration on the command line:";
+        t1 = space();
+        code = element("code");
+        t2 = text("bibtex-tidy ");
+        for (var _i3 = 0; _i3 < each_blocks.length; _i3 += 1) {
+          each_blocks[_i3].c();
+        }
+        t3 = text(" YOUR_FILE.bib");
+        attr(code, "id", "cli");
+        attr(code, "class", "svelte-1xnx1c1");
+      },
+      m(target, anchor) {
+        insert(target, p, anchor);
+        insert(target, t1, anchor);
+        insert(target, code, anchor);
+        append(code, t2);
+        for (var _i4 = 0; _i4 < each_blocks.length; _i4 += 1) {
+          each_blocks[_i4].m(code, null);
+        }
+        append(code, t3);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 1) {
+          each_value = ctx2[0];
+          var _i5;
+          for (_i5 = 0; _i5 < each_value.length; _i5 += 1) {
+            var child_ctx = get_each_context(ctx2, each_value, _i5);
+            if (each_blocks[_i5]) {
+              each_blocks[_i5].p(child_ctx, dirty);
+            } else {
+              each_blocks[_i5] = create_each_block(child_ctx);
+              each_blocks[_i5].c();
+              each_blocks[_i5].m(code, t3);
+            }
           }
-          return result;
+          for (; _i5 < each_blocks.length; _i5 += 1) {
+            each_blocks[_i5].d(1);
+          }
+          each_blocks.length = each_value.length;
         }
-        function Rule(data, states) {
-          if (data.next || data.push) ensureState(states, data.next || data.push);
-          this.regex = toRegex(data.regex);
-          this.token = asToken(data.token);
-          this.data = data;
+      },
+      d(detaching) {
+        if (detaching) detach(p);
+        if (detaching) detach(t1);
+        if (detaching) detach(code);
+        destroy_each(each_blocks, detaching);
+      }
+    };
+  }
+  function create_fragment11(ctx) {
+    var collapsible;
+    var current;
+    collapsible = new Collapsible_default({
+      props: {
+        title: "CLI",
+        $$slots: {
+          default: [create_default_slot7]
+        },
+        $$scope: {
+          ctx
         }
-        function tokenFunction(states, config) {
-          return function (stream, state) {
-            if (state.pending) {
-              var pend = state.pending.shift();
-              if (state.pending.length == 0) state.pending = null;
-              stream.pos += pend.text.length;
-              return pend.token;
-            }
-            if (state.local) {
-              if (state.local.end && stream.match(state.local.end)) {
-                var tok = state.local.endToken || null;
-                state.local = state.localState = null;
-                return tok;
-              } else {
-                var tok = state.local.mode.token(stream, state.localState),
-                  m;
-                if (state.local.endScan && (m = state.local.endScan.exec(stream.current()))) stream.pos = stream.start + m.index;
-                return tok;
-              }
-            }
-            var curState = states[state.state];
-            for (var i = 0; i < curState.length; i++) {
-              var rule = curState[i];
-              var matches = (!rule.data.sol || stream.sol()) && stream.match(rule.regex);
-              if (matches) {
-                if (rule.data.next) {
-                  state.state = rule.data.next;
-                } else if (rule.data.push) {
-                  (state.stack || (state.stack = [])).push(state.state);
-                  state.state = rule.data.push;
-                } else if (rule.data.pop && state.stack && state.stack.length) {
-                  state.state = state.stack.pop();
-                }
-                if (rule.data.mode) enterLocalMode(config, state, rule.data.mode, rule.token);
-                if (rule.data.indent) state.indent.push(stream.indentation() + config.indentUnit);
-                if (rule.data.dedent) state.indent.pop();
-                var token = rule.token;
-                if (token && token.apply) token = token(matches);
-                if (matches.length > 2 && rule.token && typeof rule.token != "string") {
-                  for (var j = 2; j < matches.length; j++) {
-                    if (matches[j]) (state.pending || (state.pending = [])).push({
-                      text: matches[j],
-                      token: rule.token[j - 1]
-                    });
-                  }
-                  stream.backUp(matches[0].length - (matches[1] ? matches[1].length : 0));
-                  return token[0];
-                } else if (token && token.join) {
-                  return token[0];
-                } else {
-                  return token;
-                }
-              }
-            }
-            stream.next();
-            return null;
+      }
+    });
+    return {
+      c() {
+        create_component(collapsible.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(collapsible, target, anchor);
+        current = true;
+      },
+      p(ctx2, _ref25) {
+        var _ref26 = _slicedToArray(_ref25, 1),
+          dirty = _ref26[0];
+        var collapsible_changes = {};
+        if (dirty & 65) {
+          collapsible_changes.$$scope = {
+            dirty,
+            ctx: ctx2
           };
         }
-        function cmp(a, b) {
-          if (a === b) return true;
-          if (!a || typeof a != "object" || !b || typeof b != "object") return false;
-          var props = 0;
-          for (var prop in a) {
-            if (a.hasOwnProperty(prop)) {
-              if (!b.hasOwnProperty(prop) || !cmp(a[prop], b[prop])) return false;
-              props++;
-            }
-          }
-          for (var prop in b) {
-            if (b.hasOwnProperty(prop)) props--;
-          }
-          return props == 0;
+        collapsible.$set(collapsible_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(collapsible.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(collapsible.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(collapsible, detaching);
+      }
+    };
+  }
+  function instance11($$self, $$props, $$invalidate) {
+    var options = $$props.options;
+    var args;
+    $$self.$$set = $$props2 => {
+      if ("options" in $$props2) $$invalidate(1, options = $$props2.options);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 2) {
+        $: {
+          $$invalidate(0, args = optionsToCLIArgs(options).map(opt => {
+            var i = opt.indexOf("=");
+            return i === -1 ? [opt] : [opt.slice(0, i), opt.slice(i + 1)];
+          }));
         }
-        function enterLocalMode(config, state, spec, token) {
-          var pers;
-          if (spec.persistent) {
-            for (var p = state.persistentStates; p && !pers; p = p.next) {
-              if (spec.spec ? cmp(spec.spec, p.spec) : spec.mode == p.mode) pers = p;
-            }
-          }
-          var mode = pers ? pers.mode : spec.mode || CodeMirror3.getMode(config, spec.spec);
-          var lState = pers ? pers.state : CodeMirror3.startState(mode);
-          if (spec.persistent && !pers) state.persistentStates = {
-            mode,
-            spec: spec.spec,
-            state: lState,
-            next: state.persistentStates
-          };
-          state.localState = lState;
-          state.local = {
-            mode,
-            end: spec.end && toRegex(spec.end),
-            endScan: spec.end && spec.forceEnd !== false && toRegex(spec.end, false),
-            endToken: token && token.join ? token[token.length - 1] : token
-          };
-        }
-        function indexOf(val, arr) {
-          for (var i = 0; i < arr.length; i++) {
-            if (arr[i] === val) return true;
-          }
-        }
-        function indentFunction(states, meta) {
-          return function (state, textAfter, line) {
-            if (state.local && state.local.mode.indent) return state.local.mode.indent(state.localState, textAfter, line);
-            if (state.indent == null || state.local || meta.dontIndentStates && indexOf(state.state, meta.dontIndentStates) > -1) return CodeMirror3.Pass;
-            var pos = state.indent.length - 1,
-              rules = states[state.state];
-            scan: for (;;) {
-              for (var i = 0; i < rules.length; i++) {
-                var rule = rules[i];
-                if (rule.data.dedent && rule.data.dedentIfLineStart !== false) {
-                  var m = rule.regex.exec(textAfter);
-                  if (m && m[0]) {
-                    pos--;
-                    if (rule.next || rule.push) rules = states[rule.next || rule.push];
-                    textAfter = textAfter.slice(m[0].length);
-                    continue scan;
-                  }
-                }
-              }
-              break;
-            }
-            return pos < 0 ? 0 : state.indent[pos];
-          };
-        }
+      }
+    };
+    return [args, options];
+  }
+  var Cli = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance11, create_fragment11, safe_not_equal, {
+        options: 1
       });
     }
-  });
+  };
+  var Cli_default = Cli;
 
-  // docs/bibtex-highlighting.ts
-  var import_codemirror, import_simple;
-  var init_bibtex_highlighting = __esm({
-    "docs/bibtex-highlighting.ts"() {
-      "use strict";
-
-      import_codemirror = __toESM(require_codemirror());
-      import_simple = __toESM(require_simple());
-      import_codemirror.default.defineSimpleMode("simplemode", {
-        start: [{
-          regex: /.*@comment/i,
-          token: "comment",
-          push: "comment"
-        }, {
-          regex: /(\s*)(@preamble)(\s*{)/i,
-          token: ["", "variable-2"],
-          push: "braced"
-        }, {
-          regex: /(\s*)(@preamble)(\s*\()/i,
-          token: ["", "variable-2"],
-          push: "parenthesised"
-        }, {
-          regex: /(\s*)(@string)(\s*{)/i,
-          token: ["", "variable-2"],
-          push: "braced"
-        }, {
-          regex: /(\s*)(@string)(\s*\()/i,
-          token: ["", "variable-2"],
-          push: "parenthesised"
-        }, {
-          regex: /(\s*)(@[^=#,{}()[\] \t\n\r]+)(\s*\{\s*)([^=#,{}()[\] \t\n\r]+)(\s*,)/,
-          token: ["", "variable-2", "", "variable-3"],
-          push: "entry"
-        }, {
-          regex: /.*/,
-          token: "comment"
-        }],
-        entry: [{
-          regex: /([^=,{}()[\]\t\n\r]+)(\s*)(=)/,
-          token: ["keyword", "", "operator"]
-        }, {
-          regex: /"/,
-          push: "quoted"
-        }, {
-          regex: /\d+/i,
-          token: "number"
-        }, {
-          regex: /\{/,
-          push: "braced"
-        }, {
-          regex: /}/,
-          pop: true
-        }],
-        quoted: [{
-          regex: /\{/,
-          push: "braced"
-        }, {
-          regex: /[^{"]+/,
-          token: "string"
-        }, {
-          regex: /"/,
-          pop: true
-        }],
-        braced: [{
-          regex: /\{/,
-          push: "braced"
-        }, {
-          regex: /[^{}]+/,
-          token: "string"
-        }, {
-          regex: /\}/,
-          pop: true
-        }],
-        parenthesised: [{
-          regex: /\{/,
-          token: "comment",
-          push: "braced"
-        }, {
-          regex: /[^{)]+/,
-          token: "string"
-        }, {
-          regex: /\)/,
-          pop: true
-        }],
-        comment: [{
-          regex: /.*\}/,
-          token: "comment",
-          pop: true
-        }, {
-          regex: /.*/,
-          token: "comment"
-        }]
+  // src/ui/FeedbackError.svelte
+  function create_else_block2(ctx) {
+    var strong;
+    var br0;
+    var t1;
+    var t2;
+    var br1;
+    var t3;
+    return {
+      c() {
+        strong = element("strong");
+        strong.textContent = "There's a problem with the bibtex";
+        br0 = element("br");
+        t1 = text("\n	Unknown error: ");
+        t2 = text(ctx[0]);
+        br1 = element("br");
+        t3 = text("\n	This is probably a bug.");
+      },
+      m(target, anchor) {
+        insert(target, strong, anchor);
+        insert(target, br0, anchor);
+        insert(target, t1, anchor);
+        insert(target, t2, anchor);
+        insert(target, br1, anchor);
+        insert(target, t3, anchor);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 1) set_data(t2, ctx2[0]);
+      },
+      d(detaching) {
+        if (detaching) detach(strong);
+        if (detaching) detach(br0);
+        if (detaching) detach(t1);
+        if (detaching) detach(t2);
+        if (detaching) detach(br1);
+        if (detaching) detach(t3);
+      }
+    };
+  }
+  function create_if_block3(ctx) {
+    var _a;
+    var strong;
+    var t0;
+    var t1_value = ctx[0].name + "";
+    var t1;
+    var t2;
+    var br0;
+    var t3;
+    var t4_value = ctx[0].line + "";
+    var t4;
+    var t5;
+    var t6_value = ctx[0].column + "";
+    var t6;
+    var br1;
+    var t7;
+    var t8_value = ((_a = ctx[0].hint) != null ? _a : "Unexpected ".concat(JSON.stringify(ctx[0].char), " in ").concat(ctx[0].node.type, ".")) + "";
+    var t8;
+    return {
+      c() {
+        strong = element("strong");
+        t0 = text("There's a problem with the bibtex ($");
+        t1 = text(t1_value);
+        t2 = text(")");
+        br0 = element("br");
+        t3 = text("\n	Syntax Error on line $");
+        t4 = text(t4_value);
+        t5 = text(" column $");
+        t6 = text(t6_value);
+        br1 = element("br");
+        t7 = space();
+        t8 = text(t8_value);
+      },
+      m(target, anchor) {
+        insert(target, strong, anchor);
+        append(strong, t0);
+        append(strong, t1);
+        append(strong, t2);
+        insert(target, br0, anchor);
+        insert(target, t3, anchor);
+        insert(target, t4, anchor);
+        insert(target, t5, anchor);
+        insert(target, t6, anchor);
+        insert(target, br1, anchor);
+        insert(target, t7, anchor);
+        insert(target, t8, anchor);
+      },
+      p(ctx2, dirty) {
+        var _a2;
+        if (dirty & 1 && t1_value !== (t1_value = ctx2[0].name + "")) set_data(t1, t1_value);
+        if (dirty & 1 && t4_value !== (t4_value = ctx2[0].line + "")) set_data(t4, t4_value);
+        if (dirty & 1 && t6_value !== (t6_value = ctx2[0].column + "")) set_data(t6, t6_value);
+        if (dirty & 1 && t8_value !== (t8_value = ((_a2 = ctx2[0].hint) != null ? _a2 : "Unexpected ".concat(JSON.stringify(ctx2[0].char), " in ").concat(ctx2[0].node.type, ".")) + "")) set_data(t8, t8_value);
+      },
+      d(detaching) {
+        if (detaching) detach(strong);
+        if (detaching) detach(br0);
+        if (detaching) detach(t3);
+        if (detaching) detach(t4);
+        if (detaching) detach(t5);
+        if (detaching) detach(t6);
+        if (detaching) detach(br1);
+        if (detaching) detach(t7);
+        if (detaching) detach(t8);
+      }
+    };
+  }
+  function create_fragment12(ctx) {
+    var if_block_anchor;
+    function select_block_type(ctx2, dirty) {
+      if (ctx2[0] instanceof BibTeXSyntaxError) return create_if_block3;
+      return create_else_block2;
+    }
+    var current_block_type = select_block_type(ctx, -1);
+    var if_block = current_block_type(ctx);
+    return {
+      c() {
+        if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, _ref27) {
+        var _ref28 = _slicedToArray(_ref27, 1),
+          dirty = _ref28[0];
+        if (current_block_type === (current_block_type = select_block_type(ctx2, dirty)) && if_block) {
+          if_block.p(ctx2, dirty);
+        } else {
+          if_block.d(1);
+          if_block = current_block_type(ctx2);
+          if (if_block) {
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if_block.d(detaching);
+        if (detaching) detach(if_block_anchor);
+      }
+    };
+  }
+  function instance12($$self, $$props, $$invalidate) {
+    var error = $$props.error;
+    $$self.$$set = $$props2 => {
+      if ("error" in $$props2) $$invalidate(0, error = $$props2.error);
+    };
+    return [error];
+  }
+  var FeedbackError = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance12, create_fragment12, safe_not_equal, {
+        error: 0
       });
     }
-  });
+  };
+  var FeedbackError_default = FeedbackError;
 
-  // docs/index.ts
-  var require_docs = __commonJS({
-    "docs/index.ts"(exports) {
-      var import_codemirror2 = __toESM(require_codemirror());
-      init_src();
-      init_optionDefinitions();
-      init_cliUtils();
-      init_bibtex_parser();
-      init_bibtex_highlighting();
-      function $(selector, parent) {
-        return (parent != null ? parent : document).querySelector(selector);
+  // src/ui/FeedbackSuccess.svelte
+  function get_each_context2(ctx, list, i) {
+    var child_ctx = ctx.slice();
+    child_ctx[4] = list[i];
+    return child_ctx;
+  }
+  function get_each_context_1(ctx, list, i) {
+    var child_ctx = ctx.slice();
+    child_ctx[7] = list[i];
+    return child_ctx;
+  }
+  function create_each_block_1(ctx) {
+    var li;
+    var t0;
+    var t1_value = ctx[7].message + "";
+    var t1;
+    return {
+      c() {
+        li = element("li");
+        t0 = text("$");
+        t1 = text(t1_value);
+      },
+      m(target, anchor) {
+        insert(target, li, anchor);
+        append(li, t0);
+        append(li, t1);
+      },
+      p: noop,
+      d(detaching) {
+        if (detaching) detach(li);
       }
-      function $$(selector, parent) {
-        return (parent != null ? parent : document).querySelectorAll(selector);
+    };
+  }
+  function create_if_block4(ctx) {
+    var if_block_anchor;
+    function select_block_type(ctx2, dirty) {
+      if (ctx2[3].length === 0) return create_if_block_12;
+      return create_else_block3;
+    }
+    var current_block_type = select_block_type(ctx, -1);
+    var if_block = current_block_type(ctx);
+    return {
+      c() {
+        if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, dirty) {
+        if_block.p(ctx2, dirty);
+      },
+      d(detaching) {
+        if_block.d(detaching);
+        if (detaching) detach(if_block_anchor);
       }
-      function renderSuboptions() {
-        var _iterator14 = _createForOfIteratorHelper($$(".suboptions")),
-          _step14;
+    };
+  }
+  function create_else_block3(ctx) {
+    var strong;
+    var t0_value = ctx[3].length + "";
+    var t0;
+    var t1;
+    var ul;
+    var each_value = ctx[3];
+    var each_blocks = [];
+    for (var i = 0; i < each_value.length; i += 1) {
+      each_blocks[i] = create_each_block2(get_each_context2(ctx, each_value, i));
+    }
+    return {
+      c() {
+        strong = element("strong");
+        t0 = text(t0_value);
+        t1 = text(" merged:\n			");
+        ul = element("ul");
+        for (var _i6 = 0; _i6 < each_blocks.length; _i6 += 1) {
+          each_blocks[_i6].c();
+        }
+      },
+      m(target, anchor) {
+        insert(target, strong, anchor);
+        append(strong, t0);
+        append(strong, t1);
+        append(strong, ul);
+        for (var _i7 = 0; _i7 < each_blocks.length; _i7 += 1) {
+          each_blocks[_i7].m(ul, null);
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 8) {
+          each_value = ctx2[3];
+          var _i8;
+          for (_i8 = 0; _i8 < each_value.length; _i8 += 1) {
+            var child_ctx = get_each_context2(ctx2, each_value, _i8);
+            if (each_blocks[_i8]) {
+              each_blocks[_i8].p(child_ctx, dirty);
+            } else {
+              each_blocks[_i8] = create_each_block2(child_ctx);
+              each_blocks[_i8].c();
+              each_blocks[_i8].m(ul, null);
+            }
+          }
+          for (; _i8 < each_blocks.length; _i8 += 1) {
+            each_blocks[_i8].d(1);
+          }
+          each_blocks.length = each_value.length;
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(strong);
+        destroy_each(each_blocks, detaching);
+      }
+    };
+  }
+  function create_if_block_12(ctx) {
+    var t;
+    return {
+      c() {
+        t = text("No duplicates");
+      },
+      m(target, anchor) {
+        insert(target, t, anchor);
+      },
+      p: noop,
+      d(detaching) {
+        if (detaching) detach(t);
+      }
+    };
+  }
+  function create_each_block2(ctx) {
+    var li;
+    var t_value = ctx[4].message + "";
+    var t;
+    return {
+      c() {
+        li = element("li");
+        t = text(t_value);
+      },
+      m(target, anchor) {
+        insert(target, li, anchor);
+        append(li, t);
+      },
+      p: noop,
+      d(detaching) {
+        if (detaching) detach(li);
+      }
+    };
+  }
+  function create_fragment13(ctx) {
+    var strong;
+    var br0;
+    var t1;
+    var t2_value = ctx[1].count + "";
+    var t2;
+    var t3;
+    var br1;
+    var br2;
+    var t4;
+    var ul;
+    var t5;
+    var if_block_anchor;
+    var each_value_1 = ctx[2];
+    var each_blocks = [];
+    for (var i = 0; i < each_value_1.length; i += 1) {
+      each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    }
+    var if_block = ctx[0].merge && create_if_block4(ctx);
+    return {
+      c() {
+        strong = element("strong");
+        strong.textContent = "Successful!";
+        br0 = element("br");
+        t1 = text("\nTidied ");
+        t2 = text(t2_value);
+        t3 = text(" entries.");
+        br1 = element("br");
+        br2 = element("br");
+        t4 = space();
+        ul = element("ul");
+        for (var _i9 = 0; _i9 < each_blocks.length; _i9 += 1) {
+          each_blocks[_i9].c();
+        }
+        t5 = space();
+        if (if_block) if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        insert(target, strong, anchor);
+        insert(target, br0, anchor);
+        insert(target, t1, anchor);
+        insert(target, t2, anchor);
+        insert(target, t3, anchor);
+        insert(target, br1, anchor);
+        insert(target, br2, anchor);
+        insert(target, t4, anchor);
+        insert(target, ul, anchor);
+        for (var _i10 = 0; _i10 < each_blocks.length; _i10 += 1) {
+          each_blocks[_i10].m(ul, null);
+        }
+        insert(target, t5, anchor);
+        if (if_block) if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, _ref29) {
+        var _ref30 = _slicedToArray(_ref29, 1),
+          dirty = _ref30[0];
+        if (dirty & 2 && t2_value !== (t2_value = ctx2[1].count + "")) set_data(t2, t2_value);
+        if (dirty & 4) {
+          each_value_1 = ctx2[2];
+          var _i11;
+          for (_i11 = 0; _i11 < each_value_1.length; _i11 += 1) {
+            var child_ctx = get_each_context_1(ctx2, each_value_1, _i11);
+            if (each_blocks[_i11]) {
+              each_blocks[_i11].p(child_ctx, dirty);
+            } else {
+              each_blocks[_i11] = create_each_block_1(child_ctx);
+              each_blocks[_i11].c();
+              each_blocks[_i11].m(ul, null);
+            }
+          }
+          for (; _i11 < each_blocks.length; _i11 += 1) {
+            each_blocks[_i11].d(1);
+          }
+          each_blocks.length = each_value_1.length;
+        }
+        if (ctx2[0].merge) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block4(ctx2);
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching) detach(strong);
+        if (detaching) detach(br0);
+        if (detaching) detach(t1);
+        if (detaching) detach(t2);
+        if (detaching) detach(t3);
+        if (detaching) detach(br1);
+        if (detaching) detach(br2);
+        if (detaching) detach(t4);
+        if (detaching) detach(ul);
+        destroy_each(each_blocks, detaching);
+        if (detaching) detach(t5);
+        if (if_block) if_block.d(detaching);
+        if (detaching) detach(if_block_anchor);
+      }
+    };
+  }
+  function instance13($$self, $$props, $$invalidate) {
+    var options = $$props.options;
+    var result = $$props.result;
+    var warnings = result.warnings.filter(w => w.code !== "DUPLICATE_ENTRY");
+    var dupes = result.warnings.filter(w => w.code === "DUPLICATE_ENTRY");
+    $$self.$$set = $$props2 => {
+      if ("options" in $$props2) $$invalidate(0, options = $$props2.options);
+      if ("result" in $$props2) $$invalidate(1, result = $$props2.result);
+    };
+    return [options, result, warnings, dupes];
+  }
+  var FeedbackSuccess = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance13, create_fragment13, safe_not_equal, {
+        options: 0,
+        result: 1
+      });
+    }
+  };
+  var FeedbackSuccess_default = FeedbackSuccess;
+
+  // src/ui/Feedback.svelte
+  function create_else_block4(ctx) {
+    var feedbackerror;
+    var current;
+    feedbackerror = new FeedbackError_default({
+      props: {
+        error: ctx[1].error
+      }
+    });
+    return {
+      c() {
+        create_component(feedbackerror.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(feedbackerror, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var feedbackerror_changes = {};
+        if (dirty & 2) feedbackerror_changes.error = ctx2[1].error;
+        feedbackerror.$set(feedbackerror_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(feedbackerror.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(feedbackerror.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(feedbackerror, detaching);
+      }
+    };
+  }
+  function create_if_block5(ctx) {
+    var feedbacksuccess;
+    var current;
+    feedbacksuccess = new FeedbackSuccess_default({
+      props: {
+        options: ctx[0],
+        result: ctx[1].result
+      }
+    });
+    return {
+      c() {
+        create_component(feedbacksuccess.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(feedbacksuccess, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var feedbacksuccess_changes = {};
+        if (dirty & 1) feedbacksuccess_changes.options = ctx2[0];
+        if (dirty & 2) feedbacksuccess_changes.result = ctx2[1].result;
+        feedbacksuccess.$set(feedbacksuccess_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(feedbacksuccess.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(feedbacksuccess.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(feedbacksuccess, detaching);
+      }
+    };
+  }
+  function create_fragment14(ctx) {
+    var div;
+    var current_block_type_index;
+    var if_block;
+    var current;
+    var if_block_creators = [create_if_block5, create_else_block4];
+    var if_blocks = [];
+    function select_block_type(ctx2, dirty) {
+      if (ctx2[1].status === "success") return 0;
+      return 1;
+    }
+    current_block_type_index = select_block_type(ctx, -1);
+    if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    return {
+      c() {
+        div = element("div");
+        if_block.c();
+        attr(div, "class", "feedback svelte-8zkapm");
+        toggle_class(div, "error", ctx[1].status === "error");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        if_blocks[current_block_type_index].m(div, null);
+        current = true;
+      },
+      p(ctx2, _ref31) {
+        var _ref32 = _slicedToArray(_ref31, 1),
+          dirty = _ref32[0];
+        var previous_block_index = current_block_type_index;
+        current_block_type_index = select_block_type(ctx2, dirty);
+        if (current_block_type_index === previous_block_index) {
+          if_blocks[current_block_type_index].p(ctx2, dirty);
+        } else {
+          group_outros();
+          transition_out(if_blocks[previous_block_index], 1, 1, () => {
+            if_blocks[previous_block_index] = null;
+          });
+          check_outros();
+          if_block = if_blocks[current_block_type_index];
+          if (!if_block) {
+            if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx2);
+            if_block.c();
+          } else {
+            if_block.p(ctx2, dirty);
+          }
+          transition_in(if_block, 1);
+          if_block.m(div, null);
+        }
+        if (!current || dirty & 2) {
+          toggle_class(div, "error", ctx2[1].status === "error");
+        }
+      },
+      i(local) {
+        if (current) return;
+        transition_in(if_block);
+        current = true;
+      },
+      o(local) {
+        transition_out(if_block);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching) detach(div);
+        if_blocks[current_block_type_index].d();
+      }
+    };
+  }
+  function instance14($$self, $$props, $$invalidate) {
+    var options = $$props.options;
+    var status = $$props.status;
+    $$self.$$set = $$props2 => {
+      if ("options" in $$props2) $$invalidate(0, options = $$props2.options);
+      if ("status" in $$props2) $$invalidate(1, status = $$props2.status);
+    };
+    return [options, status];
+  }
+  var Feedback = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance14, create_fragment14, safe_not_equal, {
+        options: 0,
+        status: 1
+      });
+    }
+  };
+  var Feedback_default = Feedback;
+
+  // src/ui/Sidebar.svelte
+  function create_if_block6(ctx) {
+    var feedback;
+    var current;
+    feedback = new Feedback_default({
+      props: {
+        options: ctx[0],
+        status: ctx[1]
+      }
+    });
+    return {
+      c() {
+        create_component(feedback.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(feedback, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var feedback_changes = {};
+        if (dirty & 1) feedback_changes.options = ctx2[0];
+        if (dirty & 2) feedback_changes.status = ctx2[1];
+        feedback.$set(feedback_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(feedback.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(feedback.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(feedback, detaching);
+      }
+    };
+  }
+  function create_fragment15(ctx) {
+    var div1;
+    var form;
+    var h1;
+    var t1;
+    var p0;
+    var t3;
+    var p1;
+    var t7;
+    var whitespaceoptions;
+    var updating_options;
+    var t8;
+    var valueoptions;
+    var updating_options_1;
+    var t9;
+    var sortingoptions;
+    var updating_options_2;
+    var t10;
+    var duplicateoptions;
+    var updating_options_3;
+    var t11;
+    var cleanupoptions;
+    var updating_options_4;
+    var t12;
+    var cli;
+    var t13;
+    var div0;
+    var t14;
+    var button;
+    var t15;
+    var current;
+    var mounted;
+    var dispose;
+    function whitespaceoptions_options_binding(value) {
+      ctx[4](value);
+    }
+    var whitespaceoptions_props = {};
+    if (ctx[0] !== void 0) {
+      whitespaceoptions_props.options = ctx[0];
+    }
+    whitespaceoptions = new WhitespaceOptions_default({
+      props: whitespaceoptions_props
+    });
+    binding_callbacks.push(() => bind(whitespaceoptions, "options", whitespaceoptions_options_binding));
+    function valueoptions_options_binding(value) {
+      ctx[5](value);
+    }
+    var valueoptions_props = {};
+    if (ctx[0] !== void 0) {
+      valueoptions_props.options = ctx[0];
+    }
+    valueoptions = new ValueOptions_default({
+      props: valueoptions_props
+    });
+    binding_callbacks.push(() => bind(valueoptions, "options", valueoptions_options_binding));
+    function sortingoptions_options_binding(value) {
+      ctx[6](value);
+    }
+    var sortingoptions_props = {};
+    if (ctx[0] !== void 0) {
+      sortingoptions_props.options = ctx[0];
+    }
+    sortingoptions = new SortingOptions_default({
+      props: sortingoptions_props
+    });
+    binding_callbacks.push(() => bind(sortingoptions, "options", sortingoptions_options_binding));
+    function duplicateoptions_options_binding(value) {
+      ctx[7](value);
+    }
+    var duplicateoptions_props = {};
+    if (ctx[0] !== void 0) {
+      duplicateoptions_props.options = ctx[0];
+    }
+    duplicateoptions = new DuplicateOptions_default({
+      props: duplicateoptions_props
+    });
+    binding_callbacks.push(() => bind(duplicateoptions, "options", duplicateoptions_options_binding));
+    function cleanupoptions_options_binding(value) {
+      ctx[8](value);
+    }
+    var cleanupoptions_props = {};
+    if (ctx[0] !== void 0) {
+      cleanupoptions_props.options = ctx[0];
+    }
+    cleanupoptions = new CleanupOptions_default({
+      props: cleanupoptions_props
+    });
+    binding_callbacks.push(() => bind(cleanupoptions, "options", cleanupoptions_options_binding));
+    cli = new Cli_default({
+      props: {
+        options: ctx[0]
+      }
+    });
+    var if_block = ctx[1] && create_if_block6(ctx);
+    return {
+      c() {
+        div1 = element("div");
+        form = element("form");
+        h1 = element("h1");
+        h1.textContent = "BibTeX Tidy";
+        t1 = space();
+        p0 = element("p");
+        p0.textContent = "This tool tidies bibtex files by fixing inconsistent whitespace, removing\n			duplicates, removing unwanted fields, and sorting entries.";
+        t3 = space();
+        p1 = element("p");
+        p1.innerHTML = "<a class=\"btn\" href=\"https://github.com/FlamingTempura/bibtex-tidy\">Github</a> \n\t\t\t<a class=\"btn\" href=\"https://github.com/FlamingTempura/bibtex-tidy/issues\">Report a bug</a>";
+        t7 = space();
+        create_component(whitespaceoptions.$$.fragment);
+        t8 = space();
+        create_component(valueoptions.$$.fragment);
+        t9 = space();
+        create_component(sortingoptions.$$.fragment);
+        t10 = space();
+        create_component(duplicateoptions.$$.fragment);
+        t11 = space();
+        create_component(cleanupoptions.$$.fragment);
+        t12 = space();
+        create_component(cli.$$.fragment);
+        t13 = space();
+        div0 = element("div");
+        if (if_block) if_block.c();
+        t14 = space();
+        button = element("button");
+        t15 = text("Tidy");
+        attr(form, "class", "svelte-im2ep9");
+        attr(button, "id", "tidy");
+        button.disabled = ctx[2];
+        attr(button, "class", "svelte-im2ep9");
+        attr(div0, "class", "run svelte-im2ep9");
+        attr(div1, "id", "sidebar");
+        attr(div1, "class", "svelte-im2ep9");
+      },
+      m(target, anchor) {
+        insert(target, div1, anchor);
+        append(div1, form);
+        append(form, h1);
+        append(form, t1);
+        append(form, p0);
+        append(form, t3);
+        append(form, p1);
+        append(form, t7);
+        mount_component(whitespaceoptions, form, null);
+        append(form, t8);
+        mount_component(valueoptions, form, null);
+        append(form, t9);
+        mount_component(sortingoptions, form, null);
+        append(form, t10);
+        mount_component(duplicateoptions, form, null);
+        append(form, t11);
+        mount_component(cleanupoptions, form, null);
+        append(form, t12);
+        mount_component(cli, form, null);
+        append(div1, t13);
+        append(div1, div0);
+        if (if_block) if_block.m(div0, null);
+        append(div0, t14);
+        append(div0, button);
+        append(button, t15);
+        current = true;
+        if (!mounted) {
+          dispose = [listen(form, "submit", submit_handler), listen(button, "click", ctx[9])];
+          mounted = true;
+        }
+      },
+      p(ctx2, _ref33) {
+        var _ref34 = _slicedToArray(_ref33, 1),
+          dirty = _ref34[0];
+        var whitespaceoptions_changes = {};
+        if (!updating_options && dirty & 1) {
+          updating_options = true;
+          whitespaceoptions_changes.options = ctx2[0];
+          add_flush_callback(() => updating_options = false);
+        }
+        whitespaceoptions.$set(whitespaceoptions_changes);
+        var valueoptions_changes = {};
+        if (!updating_options_1 && dirty & 1) {
+          updating_options_1 = true;
+          valueoptions_changes.options = ctx2[0];
+          add_flush_callback(() => updating_options_1 = false);
+        }
+        valueoptions.$set(valueoptions_changes);
+        var sortingoptions_changes = {};
+        if (!updating_options_2 && dirty & 1) {
+          updating_options_2 = true;
+          sortingoptions_changes.options = ctx2[0];
+          add_flush_callback(() => updating_options_2 = false);
+        }
+        sortingoptions.$set(sortingoptions_changes);
+        var duplicateoptions_changes = {};
+        if (!updating_options_3 && dirty & 1) {
+          updating_options_3 = true;
+          duplicateoptions_changes.options = ctx2[0];
+          add_flush_callback(() => updating_options_3 = false);
+        }
+        duplicateoptions.$set(duplicateoptions_changes);
+        var cleanupoptions_changes = {};
+        if (!updating_options_4 && dirty & 1) {
+          updating_options_4 = true;
+          cleanupoptions_changes.options = ctx2[0];
+          add_flush_callback(() => updating_options_4 = false);
+        }
+        cleanupoptions.$set(cleanupoptions_changes);
+        var cli_changes = {};
+        if (dirty & 1) cli_changes.options = ctx2[0];
+        cli.$set(cli_changes);
+        if (ctx2[1]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+            if (dirty & 2) {
+              transition_in(if_block, 1);
+            }
+          } else {
+            if_block = create_if_block6(ctx2);
+            if_block.c();
+            transition_in(if_block, 1);
+            if_block.m(div0, t14);
+          }
+        } else if (if_block) {
+          group_outros();
+          transition_out(if_block, 1, 1, () => {
+            if_block = null;
+          });
+          check_outros();
+        }
+        if (!current || dirty & 4) {
+          button.disabled = ctx2[2];
+        }
+      },
+      i(local) {
+        if (current) return;
+        transition_in(whitespaceoptions.$$.fragment, local);
+        transition_in(valueoptions.$$.fragment, local);
+        transition_in(sortingoptions.$$.fragment, local);
+        transition_in(duplicateoptions.$$.fragment, local);
+        transition_in(cleanupoptions.$$.fragment, local);
+        transition_in(cli.$$.fragment, local);
+        transition_in(if_block);
+        current = true;
+      },
+      o(local) {
+        transition_out(whitespaceoptions.$$.fragment, local);
+        transition_out(valueoptions.$$.fragment, local);
+        transition_out(sortingoptions.$$.fragment, local);
+        transition_out(duplicateoptions.$$.fragment, local);
+        transition_out(cleanupoptions.$$.fragment, local);
+        transition_out(cli.$$.fragment, local);
+        transition_out(if_block);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching) detach(div1);
+        destroy_component(whitespaceoptions);
+        destroy_component(valueoptions);
+        destroy_component(sortingoptions);
+        destroy_component(duplicateoptions);
+        destroy_component(cleanupoptions);
+        destroy_component(cli);
+        if (if_block) if_block.d();
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  var submit_handler = () => false;
+  function instance15($$self, $$props, $$invalidate) {
+    var status = $$props.status;
+    var running = $$props.running;
+    var options = $$props.options;
+    var dispatch = createEventDispatcher();
+    function whitespaceoptions_options_binding(value) {
+      options = value;
+      $$invalidate(0, options);
+    }
+    function valueoptions_options_binding(value) {
+      options = value;
+      $$invalidate(0, options);
+    }
+    function sortingoptions_options_binding(value) {
+      options = value;
+      $$invalidate(0, options);
+    }
+    function duplicateoptions_options_binding(value) {
+      options = value;
+      $$invalidate(0, options);
+    }
+    function cleanupoptions_options_binding(value) {
+      options = value;
+      $$invalidate(0, options);
+    }
+    var click_handler = () => dispatch("tidy");
+    $$self.$$set = $$props2 => {
+      if ("status" in $$props2) $$invalidate(1, status = $$props2.status);
+      if ("running" in $$props2) $$invalidate(2, running = $$props2.running);
+      if ("options" in $$props2) $$invalidate(0, options = $$props2.options);
+    };
+    return [options, status, running, dispatch, whitespaceoptions_options_binding, valueoptions_options_binding, sortingoptions_options_binding, duplicateoptions_options_binding, cleanupoptions_options_binding, click_handler];
+  }
+  var Sidebar = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance15, create_fragment15, safe_not_equal, {
+        status: 1,
+        running: 2,
+        options: 0
+      });
+    }
+  };
+  var Sidebar_default = Sidebar;
+
+  // src/ui/defaultBibtex.ts
+  var DEFAULT_BIBTEX = "Click Tidy to clean up the entries below      \n@Book{sweig42,\n  Author =\t { Stefa{n} Sweig },\n  title =\t { The impossible book },\n  publisher =\t { Dead Poet Society},\n  year =\t 1942,\n  month =        mar\n}\n@article{steward03,\n  author =\t {Martha Steward},\n  title =\t {Cooking behind bars}, publisher = \"Culinary Expert Series\",\n  year = {2003}\n}\n@Book{impossible,\n  Author =\t { Stefan Sweig },\n  title =\t { The impossible book },\n  publisher =\t { Dead Poet Society},\n  year =\t 1942,\n  month =        mar\n}\n";
+
+  // src/ui/App.svelte
+  function create_fragment16(ctx) {
+    var editor;
+    var updating_bibtex;
+    var t;
+    var sidebar;
+    var updating_options;
+    var current;
+    function editor_bibtex_binding(value) {
+      ctx[6](value);
+    }
+    var editor_props = {
+      errorRange: ctx[4]
+    };
+    if (ctx[2] !== void 0) {
+      editor_props.bibtex = ctx[2];
+    }
+    editor = new Editor_default({
+      props: editor_props
+    });
+    binding_callbacks.push(() => bind(editor, "bibtex", editor_bibtex_binding));
+    function sidebar_options_binding(value) {
+      ctx[7](value);
+    }
+    var sidebar_props = {
+      status: ctx[3],
+      running: ctx[1]
+    };
+    if (ctx[0] !== void 0) {
+      sidebar_props.options = ctx[0];
+    }
+    sidebar = new Sidebar_default({
+      props: sidebar_props
+    });
+    binding_callbacks.push(() => bind(sidebar, "options", sidebar_options_binding));
+    sidebar.$on("tidy", ctx[5]);
+    return {
+      c() {
+        create_component(editor.$$.fragment);
+        t = space();
+        create_component(sidebar.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(editor, target, anchor);
+        insert(target, t, anchor);
+        mount_component(sidebar, target, anchor);
+        current = true;
+      },
+      p(ctx2, _ref35) {
+        var _ref36 = _slicedToArray(_ref35, 1),
+          dirty = _ref36[0];
+        var editor_changes = {};
+        if (dirty & 16) editor_changes.errorRange = ctx2[4];
+        if (!updating_bibtex && dirty & 4) {
+          updating_bibtex = true;
+          editor_changes.bibtex = ctx2[2];
+          add_flush_callback(() => updating_bibtex = false);
+        }
+        editor.$set(editor_changes);
+        var sidebar_changes = {};
+        if (dirty & 8) sidebar_changes.status = ctx2[3];
+        if (dirty & 2) sidebar_changes.running = ctx2[1];
+        if (!updating_options && dirty & 1) {
+          updating_options = true;
+          sidebar_changes.options = ctx2[0];
+          add_flush_callback(() => updating_options = false);
+        }
+        sidebar.$set(sidebar_changes);
+      },
+      i(local) {
+        if (current) return;
+        transition_in(editor.$$.fragment, local);
+        transition_in(sidebar.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(editor.$$.fragment, local);
+        transition_out(sidebar.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(editor, detaching);
+        if (detaching) detach(t);
+        destroy_component(sidebar, detaching);
+      }
+    };
+  }
+  function instance16($$self, $$props, $$invalidate) {
+    var _a;
+    var optionDefaults = normalizeOptions({
+      tab: true,
+      align: 13,
+      curly: true,
+      numeric: true,
+      escape: false,
+      duplicates: ["key"],
+      sortFields: true,
+      removeDuplicateFields: false
+    });
+    var running = false;
+    var bibtex = DEFAULT_BIBTEX;
+    var options = (_a = getOptionsFromURL()) !== null && _a !== void 0 ? _a : optionDefaults;
+    var status;
+    var errorRange;
+    function handleTidy() {
+      $$invalidate(1, running = true);
+      $$invalidate(3, status = void 0);
+      $$invalidate(4, errorRange = void 0);
+      setTimeout(() => {
         try {
-          for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
-            var suboption = _step14.value;
-            var checkbox = $("input", suboption.parentNode);
-            suboption.style.display = checkbox.matches(":checked") ? "block" : "none";
-          }
-        } catch (err) {
-          _iterator14.e(err);
-        } finally {
-          _iterator14.f();
-        }
-      }
-      function delay(fn, ms) {
-        var timer;
-        return function () {
-          clearTimeout(timer);
-          for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-          }
-          timer = setTimeout(fn.bind(this, ...args), ms || 0);
-        };
-      }
-      function inputUpdate() {
-        renderSuboptions();
-        formatCLICommand();
-        updateURLParams();
-      }
-      var _iterator15 = _createForOfIteratorHelper($$("input")),
-        _step15;
-      try {
-        for (_iterator15.s(); !(_step15 = _iterator15.n()).done;) {
-          var input = _step15.value;
-          input.addEventListener("input", inputUpdate);
-        }
-      } catch (err) {
-        _iterator15.e(err);
-      } finally {
-        _iterator15.f();
-      }
-      var _iterator16 = _createForOfIteratorHelper($$("textarea")),
-        _step16;
-      try {
-        for (_iterator16.s(); !(_step16 = _iterator16.n()).done;) {
-          var _input = _step16.value;
-          _input.addEventListener("input", delay(inputUpdate, 500));
-        }
-      } catch (err) {
-        _iterator16.e(err);
-      } finally {
-        _iterator16.f();
-      }
-      renderSuboptions();
-      var options = document.forms.options;
-      var cmEditor = import_codemirror2.default.fromTextArea($("#editor textarea"), {
-        lineNumbers: true,
-        autofocus: true
-      });
-      var errorHighlight;
-      var optionDocs = {};
-      var _iterator17 = _createForOfIteratorHelper(optionDefinitions),
-        _step17;
-      try {
-        for (_iterator17.s(); !(_step17 = _iterator17.n()).done;) {
-          var option = _step17.value;
-          optionDocs[option.key] = option;
-        }
-      } catch (err) {
-        _iterator17.e(err);
-      } finally {
-        _iterator17.f();
-      }
-      var _iterator18 = _createForOfIteratorHelper($$("label[data-option]")),
-        _step18;
-      try {
-        for (_iterator18.s(); !(_step18 = _iterator18.n()).done;) {
-          var $label = _step18.value;
-          var key = $label.dataset.option;
-          var _option = optionDocs[key];
-          var $input = $label.querySelector("input");
-          if (_option.description) $label.setAttribute("title", _option.description.join("\n"));
-          $label.querySelector(".name").textContent = _option.title;
-          if (!$input.getAttribute("name")) {
-            $input.setAttribute("name", key);
-          }
-        }
-      } catch (err) {
-        _iterator18.e(err);
-      } finally {
-        _iterator18.f();
-      }
-      $("#tidy").addEventListener("click", () => {
-        $("#tidy").setAttribute("disabled", "true");
-        $("#feedback").style.display = "none";
-        $("#feedback").innerHTML = "";
-        document.body.classList.toggle("error", false);
-        if (errorHighlight) errorHighlight.clear();
-        var bibtex = cmEditor.getValue();
-        var result;
-        var opt = getOptions();
-        setTimeout(() => {
-          try {
-            result = src_default.tidy(bibtex, opt);
-            cmEditor.setValue(result.bibtex);
-            $("#feedback").innerHTML += formatSuccessMessage(opt, result);
-          } catch (e) {
-            console.error("bibtex parse problem:", e);
-            document.body.classList.toggle("error", true);
-            $("#feedback").innerHTML = formatError(e);
-            if (e instanceof BibTeXSyntaxError) {
-              console.log(e.line, e.column);
-              errorHighlight = cmEditor.markText({
+          var result = src_default.tidy(bibtex, options);
+          $$invalidate(2, bibtex = result.bibtex);
+          $$invalidate(3, status = {
+            status: "success",
+            result
+          });
+        } catch (e) {
+          console.error("bibtex parse problem:", e);
+          $$invalidate(3, status = {
+            status: "error",
+            error: e
+          });
+          if (e instanceof BibTeXSyntaxError) {
+            $$invalidate(4, errorRange = {
+              start: {
                 line: e.line - 1,
                 ch: e.column - 2
-              }, {
+              },
+              end: {
                 line: e.line - 1,
                 ch: e.column - 1
-              }, {
-                className: "bibtex-error"
-              });
-            }
+              }
+            });
           }
-          $("#feedback").style.display = "block";
-          $("#tidy").removeAttribute("disabled");
-        }, 100);
-      });
-      var resetCopyBtnTimeout;
-      $("#copy").addEventListener("click", () => __async(exports, null, /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.prev = 0;
-                _context.next = 3;
-                return navigator.clipboard.writeText(cmEditor.getValue());
-              case 3:
-                $("#copy").classList.toggle("copied", true);
-                clearInterval(resetCopyBtnTimeout);
-                resetCopyBtnTimeout = setTimeout(() => $("#copy").classList.toggle("copied", false), 3e3);
-                _context.next = 11;
-                break;
-              case 8:
-                _context.prev = 8;
-                _context.t0 = _context["catch"](0);
-                alert("Failed to copy");
-              case 11:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, null, [[0, 8]]);
-      })));
-      function formatSuccessMessage(options2, result) {
-        var warnings = result.warnings.filter(w => w.code !== "DUPLICATE_ENTRY");
-        return "\n\t\t<strong>Successful!</strong><br>\n\t\tTidied ".concat(result.count, " entries.<br><br>\n\t\t<ul>\n\t\t\t").concat(warnings.map(warning => "<li>".concat(warning.message, "</li>")).join(""), "\n\t\t</ul>\n\t\t").concat(options2.merge ? formatDuplicateSummary(result) : "");
-      }
-      function formatDuplicateSummary(result) {
-        var dupes = result.warnings.filter(w => w.code === "DUPLICATE_ENTRY");
-        if (dupes.length > 0) {
-          return "No duplicates.";
+        } finally {
+          $$invalidate(1, running = false);
         }
-        return "\n\t\t<strong>".concat(dupes.length, " merged:\n\t\t\t<ul>\n\t\t\t\t").concat(dupes.map(dupe => "<li>".concat(dupe.message, "</li>")).join(""), "\n\t\t\t</ul>\n\t\t</strong>");
-      }
-      function formatError(e) {
-        var _a;
-        if (e instanceof BibTeXSyntaxError) {
-          return "\n\t\t<strong>There's a problem with the bibtex (".concat(e.name, ")</strong><br>\n\t\tSyntax Error on line ").concat(e.line, " column ").concat(e.column, "<br>\n\t\t").concat((_a = e.hint) != null ? _a : "Unexpected ".concat(JSON.stringify(e.char), " in ").concat(e.node.type, "."));
-        }
-        return "\n\t\t<strong>There's a problem with the bibtex</strong><br>\n\t\tUnknown error: ".concat(e, "<br>\n\t\tThis is probably a bug.");
-      }
-      window.cmEditor = cmEditor;
-      function getOptions() {
-        return {
-          curly: options.curly.checked,
-          numeric: options.numeric.checked,
-          sort: options.sort.checked && options.sortList.value.length > 0 && options.sortList.value.split(/[\n\t ,]+/),
-          omit: options.omit.checked && options.omitList.value.length > 0 ? options.omitList.value.split(/[\n\t ,]+/) : void 0,
-          space: Number(options.spaces.value),
-          tab: options.indent.value === "tabs",
-          align: options.align.checked ? Number(options.alignnum.value) : 0,
-          wrap: options.wrap.checked ? Number(options.wrapnum.value) : false,
-          blankLines: options.blankLines.checked,
-          duplicates: options.duplicates.checked ? [options.uniqKEY.checked ? "key" : null, options.uniqDOI.checked ? "doi" : null, options.uniqABS.checked ? "abstract" : null, options.uniqCIT.checked ? "citation" : null].filter(a => a !== null) : false,
-          merge: options.merge.checked ? options.mergeStrategy.value : false,
-          enclosingBraces: options.enclosingBraces.checked && options.enclosingBracesList.value.length > 0 && options.enclosingBracesList.value.split(/[\n\t ,]+/),
-          stripEnclosingBraces: options.stripEnclosingBraces.checked,
-          dropAllCaps: options.dropAllCaps.checked,
-          sortFields: options.sortFields.checked && options.sortFieldList.value.length > 0 && options.sortFieldList.value.split(/[\n\t ,]+/),
-          stripComments: options.stripComments.checked,
-          tidyComments: options.tidyComments.checked,
-          encodeUrls: options.encodeUrls.checked,
-          escape: options.escape.checked,
-          trailingCommas: options.trailingCommas.checked,
-          removeEmptyFields: options.removeEmptyFields.checked,
-          removeDuplicateFields: options.removeDuplicateFields.checked,
-          lowercase: options.lowercase.checked,
-          generateKeys: options.generateKeys.checked && options.generateKeysTemplate.value,
-          maxAuthors: options.maxAuthors.checked ? Number(options.maxAuthorsNum.value) : void 0
-        };
-      }
-      function setOptions(opts) {
-        options.curly.checked = opts.curly;
-        options.numeric.checked = opts.numeric;
-        options.sort.checked = opts.sort && opts.sort.length > 0;
-        options.sortList.value = opts.sort && opts.sort.join(",") || "";
-        options.omit.checked = opts.omit !== null;
-        options.omitList.value = opts.omit && opts.omit.length > 0 && opts.omit.join(",") || "";
-        options.spaces.value = String(opts.space);
-        options.indent.value = opts.tab ? "tabs" : "spaces";
-        options.align.checked = opts.align && opts.align != 0;
-        options.alignnum.value = String(opts.align || 0);
-        options.wrap.checked = opts.wrap !== false;
-        options.blankLines.checked = opts.blankLines === true;
-        options.wrapnum.value = String(opts.wrap || 0);
-        options.duplicates.checked = Boolean(opts.duplicates);
-        options.uniqKEY.checked = opts.duplicates && opts.duplicates.includes("key") || false;
-        options.uniqDOI.checked = opts.duplicates && opts.duplicates.includes("doi") || false;
-        options.uniqABS.checked = opts.duplicates && opts.duplicates.includes("abstract") || false;
-        options.uniqCIT.checked = opts.duplicates && opts.duplicates.includes("citation") || false;
-        options.merge.checked = Boolean(opts.merge);
-        options.mergeStrategy.value = opts.merge || "";
-        options.enclosingBraces.checked = opts.enclosingBraces && opts.enclosingBraces.length > 0;
-        options.enclosingBracesList.value = opts.enclosingBraces && opts.enclosingBraces.join(",") || "";
-        options.dropAllCaps.checked = opts.dropAllCaps;
-        options.sortFields.checked = opts.sortFields && opts.sortFields.length > 0;
-        options.sortFieldList.value = opts.sortFields && opts.sortFields.join(",") || "";
-        options.stripComments.checked = opts.stripComments;
-        options.tidyComments.checked = opts.tidyComments;
-        options.encodeUrls.checked = opts.encodeUrls;
-        options.escape.checked = opts.escape;
-        options.trailingCommas.checked = opts.trailingCommas;
-        options.removeEmptyFields.checked = opts.removeEmptyFields;
-        options.removeDuplicateFields.checked = opts.removeDuplicateFields;
-        options.lowercase.checked = opts.lowercase;
-        options.generateKeys.checked = Boolean(opts.generateKeys);
-        options.generateKeysTemplate.value = opts.generateKeys;
-        options.maxAuthors.checked = opts.maxAuthors !== null;
-        options.maxAuthorsNum.value = String(opts.maxAuthors || 0);
-      }
-      function updateURLParams() {
-        var options2 = getOptions();
-        var options_json = JSON.stringify(options2);
-        window.history.pushState(options2, "", "index.html?opt=".concat(encodeURIComponent(options_json)));
-      }
-      function getOptionsFromURL() {
-        var queryString = window.location.search;
-        var urlParams = new URLSearchParams(queryString);
-        var options_json = urlParams.get("opt") || "";
-        return JSON.parse(options_json);
-      }
-      function formatCLICommand() {
-        var options2 = getOptions();
-        $("#cli").innerHTML = "bibtex-tidy " + optionsToCLIArgs(options2).map(opt => {
-          var i = opt.indexOf("=");
-          if (i === -1) {
-            return "<span class=\"opt-name\">".concat(opt, "</span>");
-          } else {
-            return ["<span class=\"opt-name\">".concat(opt.slice(0, i), "</span>"), "<span class=\"opt-val\">".concat(opt.slice(i + 1), "</span>")].join("=");
-          }
-        }).join(" ") + " YOUR_FILE.bib";
-      }
-      window.requestAnimationFrame(formatCLICommand);
-      function onPopState(event) {
-        setOptions(event.state);
-        renderSuboptions();
-      }
-      window.onpopstate = onPopState;
-      setOptions(getOptionsFromURL());
-      renderSuboptions();
-      formatCLICommand();
+      }, 100);
     }
+    function getOptionsFromURL() {
+      var queryString = window.location.search;
+      var urlParams = new URLSearchParams(queryString);
+      var optionsJSON = urlParams.get("opt");
+      if (!optionsJSON) return;
+      try {
+        return normalizeOptions(JSON.parse(optionsJSON));
+      } catch (e) {
+        console.error("Error parsing options in URL");
+        return;
+      }
+    }
+    window.addEventListener("popstate", () => {
+      var _a2;
+      $$invalidate(0, options = (_a2 = getOptionsFromURL()) !== null && _a2 !== void 0 ? _a2 : optionDefaults);
+    });
+    function editor_bibtex_binding(value) {
+      bibtex = value;
+      $$invalidate(2, bibtex);
+    }
+    function sidebar_options_binding(value) {
+      options = value;
+      $$invalidate(0, options);
+    }
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 1) {
+        $: {
+          var optionsJSON = JSON.stringify(options);
+          var params = new URLSearchParams([["opt", optionsJSON]]);
+          window.history.pushState(options, "", "index.html?".concat(params.toString()));
+        }
+      }
+    };
+    return [options, running, bibtex, status, errorRange, handleTidy, editor_bibtex_binding, sidebar_options_binding];
+  }
+  var App = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance16, create_fragment16, safe_not_equal, {});
+    }
+  };
+  var App_default = App;
+
+  // src/ui/index.ts
+  new App_default({
+    target: document.body
   });
-  require_docs();
 })();
