@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  bibtex-tidy:
+    image: bibtex-tidy
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+
