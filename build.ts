@@ -11,12 +11,19 @@ const BUILD_PATH = join(SRC_PATH, '__generated__');
 const WEB_PATH = join(__dirname, 'docs');
 const CLI_BIN = join(__dirname, 'bin', 'bibtex-tidy');
 
-// For Summary/Details HTML element and CSS variable support:
-// * No IE versions
-// * Edge 79+
-// * Firefox 49+
-// * Chrome 49+
-// * Safari 10+
+/**
+ * Browser features
+ *
+ * -----------------------------------------------------
+ *                            Chrome  Edge  Safari  FF
+ * -----------------------------------------------------
+ * Summary/details element      12     79      6    49
+ * CSS variables                49     16     10    36
+ * Flexbox                      21     12     6.1   28
+ * -----------------------------------------------------
+ * Min supported                49     79     10    49
+ * -----------------------------------------------------
+ */
 // TODO: test on browserstack
 
 const BROWSER_TARGETS = {
