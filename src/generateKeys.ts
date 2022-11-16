@@ -1,5 +1,5 @@
 import { isEntryNode } from './utils';
-import { RootNode, EntryNode } from './bibtex-parser';
+import type { RootNode, EntryNode } from './bibtex-parser';
 import { parseAuthors } from './parseAuthors';
 
 const SPECIAL_MARKERS: Record<

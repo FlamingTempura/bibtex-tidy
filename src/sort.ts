@@ -1,5 +1,5 @@
 import { getEntries } from '.';
-import { BlockNode, TextNode, EntryNode, RootNode } from './bibtex-parser';
+import type { BlockNode, TextNode, EntryNode, RootNode } from './bibtex-parser';
 
 export const MONTHS = [
 	'jan',

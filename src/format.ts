@@ -1,5 +1,5 @@
-import { OptionsNormalized } from './optionUtils';
-import {
+import type { OptionsNormalized } from './optionUtils';
+import type {
 	BlockNode,
 	FieldNode,
 	TextNode,

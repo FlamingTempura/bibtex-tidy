@@ -1,5 +1,5 @@
 import { optionDefinitions } from './optionDefinitions';
-import { BibTeXTidyOptions } from './__generated__/optionsType';
+import type { BibTeXTidyOptions } from './__generated__/optionsType';
 
 export type CLIOptions = BibTeXTidyOptions;
 

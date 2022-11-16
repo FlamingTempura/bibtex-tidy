@@ -1,4 +1,4 @@
-import { BlockNode, EntryNode, TextNode } from './bibtex-parser';
+import type { BlockNode, EntryNode, TextNode } from './bibtex-parser';
 import { specialCharacters } from './unicode';
 
 export function escapeSpecialCharacters(str: string): string {

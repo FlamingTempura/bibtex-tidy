@@ -1,9 +1,5 @@
-import {
-	Options,
-	normalizeOptions,
-	OptionsNormalized,
-	DuplicateRule,
-} from './optionUtils';
+import { normalizeOptions } from './optionUtils';
+import type { Options, OptionsNormalized, DuplicateRule } from './optionUtils';
 import { generateAST, EntryNode, RootNode } from './bibtex-parser';
 import { convertCRLF, isEntryNode } from './utils';
 import { formatValue, formatBibtex } from './format';

@@ -1,7 +1,8 @@
-import { DuplicateRule, MergeStrategy } from './optionUtils';
-import { EntryNode, RootNode } from './bibtex-parser';
+import type { DuplicateRule, MergeStrategy } from './optionUtils';
+import type { EntryNode, RootNode } from './bibtex-parser';
 import { alphaNum } from './utils';
-import { getEntries, Warning } from '.';
+import { getEntries } from '.';
+import type { Warning } from '.';
 
 export function checkForDuplicates(
 	ast: RootNode,
