@@ -30,7 +30,8 @@
 		"cover": "NODE_ENV=coverage nyc --reporter html node -r esbuild-register test/index.ts",
 		"preversion": "git pull --rebase",
 		"version": "./scripts/prepare-release.sh",
-		"postversion": "git push --follow-tags && npm publish"
+		"postversion": "git push --follow-tags && npm publish",
+		"serve": "esbuild docs/index.ts --servedir=docs --outfile=docs/bundle.js --bundle --sourcemap=inline"
 	},
 	"engines": {
 		"node": ">12"
