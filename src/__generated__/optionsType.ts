@@ -86,7 +86,7 @@ export type BibTeXTidyOptions = {
 	/**
 	 * Drop all caps
 	 *
-	 * Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.
+	 * Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}. Roman numerals will be left unchanged.
 	 */
 	dropAllCaps?: boolean;
 	/**

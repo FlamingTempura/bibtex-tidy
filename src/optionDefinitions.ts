@@ -260,7 +260,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		toCLI: (val) => (val ? '--drop-all-caps' : undefined),
 		title: 'Drop all caps',
 		description: [
-			'Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}.',
+			'Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}. Roman numerals will be left unchanged.',
 		],
 		type: 'boolean',
 		defaultValue: false,

@@ -84,7 +84,7 @@ export const manPage = [
 	"      ",
 	"  --drop-all-caps",
 	"      Where values are all caps, make them title case. For example, {JOURNAL OF",
-	"      TEA} will become {Journal of Tea}.",
+	"      TEA} will become {Journal of Tea}. Roman numerals will be left unchanged.",
 	"      ",
 	"  --escape, --no-escape",
 	"      Escape special characters, such as umlaut. This ensures correct typesetting",

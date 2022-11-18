@@ -12466,7 +12466,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     },
     toCLI: val => val ? "--drop-all-caps" : void 0,
     title: "Drop all caps",
-    description: ["Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}."],
+    description: ["Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}. Roman numerals will be left unchanged."],
     type: "boolean",
     defaultValue: false
   }, {
@@ -12881,7 +12881,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     return newstr.replace(/MATH\.EXP\.(\d+)/, (_, i) => mathExpressions[Number(i)]);
   }
   function titleCase(str) {
-    return str.replace(/(\w)(\S*)/g, (_, first, rest) => first.toLocaleUpperCase() + rest.toLocaleLowerCase());
+    return str.replace(/(\w)(\S*)/g, (_, first, rest) => {
+      var word = first + rest;
+      if (isRomanNumeral(word)) return word;
+      return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
+    });
+  }
+  function isRomanNumeral(str) {
+    return /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/.test(str);
   }
   function alphaNum(str) {
     return str.replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
