@@ -15,7 +15,7 @@
 	let removeDuplicateFields = options.removeDuplicateFields ?? false;
 
 	let maxAuthorsChecked = options.maxAuthors !== undefined;
-	let maxAuthorsValue = 3;
+	let maxAuthorsValue = options.maxAuthors ?? 3;
 
 	let enclosingBracesChecked =
 		options.enclosingBraces !== undefined && options.enclosingBraces.length > 0;

@@ -122,7 +122,7 @@ export function splitCLIArgs(args: string[]): {
 
 export function optionsToCLIArgs(options: Options): string[] {
 	return optionDefinitions
-		.map((def) => def.toCLI?.(options[def.key as keyof Options]))
+		.map((def) => def.toCLI?.(options[def.key as keyof Options], options))
 		.filter((arg): arg is string => typeof arg === 'string');
 }
 

@@ -3,7 +3,7 @@ import type { Options } from './optionUtils';
 export type OptionDefinition = {
 	key: string;
 	cli: Record<string, boolean | ((args: string[]) => void)>;
-	toCLI?: (val: any) => string | undefined;
+	toCLI?: (val: any, opt: Options) => string | undefined;
 	title: string;
 	description?: string[];
 	examples?: string[];
@@ -88,7 +88,8 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--space': (args) => (args.length > 0 ? Number(args[0]) : true),
 		},
 
-		toCLI: (val) => {
+		toCLI: (val, opt) => {
+			if (opt.tab) return undefined;
 			if (typeof val === 'number' && val !== DEFAULT_SPACE)
 				return `--space=${val}`;
 			if (val && val !== DEFAULT_SPACE) return '--space';
@@ -119,9 +120,9 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--no-align': false,
 		},
 		toCLI: (val) => {
+			if (val === false || val === 1 || val === 0) return '--no-align';
 			if (typeof val === 'number' && val !== DEFAULT_ALIGN)
 				return `--align=${val}`;
-			if (val === false) return '--no-align';
 			return undefined;
 		},
 		title: 'Align values',
@@ -372,9 +373,10 @@ export const optionDefinitions: OptionDefinition[] = [
 		key: 'generateKeys',
 		cli: { '--generate-keys': (args) => (args.length > 0 ? args : true) },
 		toCLI: (val) => {
+			if (val === true || val === DEFAULT_KEY_TEMPLATE)
+				return '--generate-keys';
 			if (typeof val === 'string')
 				return `--generate-keys="${val.replace(/"/g, '\\"')}"`;
-			if (val) return '--generate-keys';
 			return undefined;
 		},
 		title: 'Generate citation keys [Experimental]',

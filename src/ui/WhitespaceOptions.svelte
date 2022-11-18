@@ -1,22 +1,18 @@
 <script lang="ts">
 	import Option from './Option.svelte';
 	import type { OptionsNormalized } from '../optionUtils';
-	import {
-		DEFAULT_ALIGN,
-		DEFAULT_SPACE,
-		DEFAULT_WRAP,
-	} from '../optionDefinitions';
+	import { DEFAULT_WRAP } from '../optionDefinitions';
 	import Collapsible from './Collapsible.svelte';
 
 	export let options: OptionsNormalized;
 
-	let alignChecked = options.align !== 1; // FIXME: allow undefined
-	let alignValue = options.align ?? DEFAULT_ALIGN;
+	let alignChecked = options.align > 1; // FIXME: allow undefined
+	let alignValue = alignChecked ? options.align : 13;
 	let wrapChecked = options.wrap !== undefined;
 	let wrapValue = options.wrap ?? DEFAULT_WRAP;
 	let indent: 'tabs' | 'spaces' = options.tab ? 'tabs' : 'spaces';
 
-	let spaceValue = DEFAULT_SPACE;
+	let spaceValue = options.space;
 
 	$: {
 		options.align = alignChecked ? alignValue : 1; // FIXME: allow undefined
