@@ -12289,7 +12289,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     description: ["Indent all fields with the specified number of spaces. Ignored if tab is set."],
     examples: ["--space=2 (default)", "--space=4"],
     type: "boolean | number",
-    valueIfTrue: DEFAULT_SPACE,
+    convertBoolean: {
+      true: DEFAULT_SPACE,
+      false: void 0
+    },
     defaultValue: DEFAULT_SPACE
   }, {
     key: "tab",
@@ -12317,7 +12320,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     description: ["Insert whitespace between fields and values so that values are visually aligned."],
     examples: ["--align=14 (default)"],
     type: "boolean | number",
-    valueIfFalse: 1,
+    convertBoolean: {
+      true: DEFAULT_ALIGN,
+      false: 1
+    },
     defaultValue: DEFAULT_ALIGN
   }, {
     key: "blankLines",
@@ -12344,8 +12350,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     description: ["Sort entries by specified fields. For descending order, prefix the field with a dash (-)."],
     examples: ["--sort (sort by id)", "--sort=-year,name (sort year descending then name ascending)", "--sort=name,year"],
     type: "boolean | string[]",
-    valueIfTrue: DEFAULT_SORT,
-    valueIfFalse: void 0
+    convertBoolean: {
+      true: DEFAULT_SORT,
+      false: void 0
+    }
   }, {
     key: "duplicates",
     cli: {
@@ -12378,8 +12386,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     description: ["Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."],
     examples: ["--duplicates doi (same DOIs)", "--duplicates key (same IDs)", "--duplicates abstract (similar abstracts)", "--duplicates citation (similar author and titles)", "--duplicates doi, key (identical DOI or keys)", "--duplicates (same DOI, key, abstract, or citation)"],
     type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
-    valueIfTrue: DEFAULT_MERGE_CHECK,
-    valueIfFalse: void 0,
+    convertBoolean: {
+      true: DEFAULT_MERGE_CHECK,
+      false: void 0
+    },
     defaultValue: options => options.merge ? DEFAULT_MERGE_CHECK : void 0
   }, {
     key: "merge",
@@ -12402,8 +12412,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     title: "Merge duplicate entries",
     description: ["Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:", "- first: only keep the original entry", "- last: only keep the last found duplicate", "- combine: keep original entry and merge in fields of duplicates if they do not already exist", "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"],
     type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
-    valueIfTrue: "combine",
-    valueIfFalse: void 0
+    convertBoolean: {
+      true: "combine",
+      false: void 0
+    }
   }, {
     key: "stripEnclosingBraces",
     cli: {
@@ -12454,8 +12466,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     description: ["Sort the fields within entries.", "If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata"],
     examples: ["--sort-fields=name,author"],
     type: "boolean | string[]",
-    valueIfTrue: DEFAULT_FIELD_SORT,
-    valueIfFalse: void 0,
+    convertBoolean: {
+      true: DEFAULT_FIELD_SORT,
+      false: void 0
+    },
     defaultValue: void 0
   }, {
     key: "sortProperties",
@@ -12545,7 +12559,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     title: "Generate citation keys [Experimental]",
     description: ["For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning."],
     type: "boolean | string",
-    valueIfTrue: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
+    convertBoolean: {
+      true: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
+      false: void 0
+    },
     defaultValue: void 0
   }, {
     key: "maxAuthors",
@@ -12580,8 +12597,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     description: ["Enclose the given fields in double braces, such that case is preserved during BibTeX compilation."],
     examples: ["--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})", "--enclosing-braces (equivalent to ---enclosing-braces=title)"],
     type: "boolean | string[]",
-    valueIfTrue: ["title"],
-    valueIfFalse: void 0
+    convertBoolean: {
+      true: ["title"],
+      false: void 0
+    }
   }, {
     key: "wrap",
     cli: {
@@ -12593,8 +12612,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     description: ["Wrap long values at the given column"],
     examples: ["--wrap (80 by default)", "--wrap=82"],
     type: "boolean | number",
-    valueIfTrue: DEFAULT_WRAP,
-    valueIfFalse: void 0
+    convertBoolean: {
+      true: DEFAULT_WRAP,
+      false: void 0
+    }
   }, {
     key: "version",
     cli: {
@@ -12630,11 +12651,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     return Object.fromEntries(optionDefinitions.map(def => {
       var key = def.key;
       var value = options[key];
-      if (value === true && "valueIfTrue" in def) {
-        return [key, def.valueIfTrue];
-      }
-      if (value === false && "valueIfFalse" in def) {
-        return [key, def.valueIfFalse];
+      if (def.convertBoolean && typeof value === "boolean") {
+        return [key, value ? def.convertBoolean.true : def.convertBoolean.false];
       }
       if (typeof value === "undefined" && def.defaultValue !== void 0) {
         if (typeof def.defaultValue === "function") {

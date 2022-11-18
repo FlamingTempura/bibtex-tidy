@@ -10,8 +10,10 @@ export type OptionDefinition = {
 	type: string;
 	deprecated?: boolean;
 	defaultValue?: unknown;
-	valueIfTrue?: unknown;
-	valueIfFalse?: unknown;
+	convertBoolean?: {
+		true: unknown;
+		false: unknown;
+	};
 };
 
 const DEFAULT_MERGE_CHECK: string[] = ['doi', 'citation', 'abstract'];
@@ -96,7 +98,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		examples: ['--space=2 (default)', '--space=4'],
 		type: 'boolean | number',
-		valueIfTrue: DEFAULT_SPACE,
+		convertBoolean: { true: DEFAULT_SPACE, false: undefined },
 		defaultValue: DEFAULT_SPACE,
 	},
 	{
@@ -126,7 +128,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		examples: ['--align=14 (default)'],
 		type: 'boolean | number',
-		valueIfFalse: 1,
+		convertBoolean: { true: DEFAULT_ALIGN, false: 1 },
 		defaultValue: DEFAULT_ALIGN,
 	},
 	{
@@ -159,8 +161,7 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--sort=name,year',
 		],
 		type: 'boolean | string[]',
-		valueIfTrue: DEFAULT_SORT,
-		valueIfFalse: undefined,
+		convertBoolean: { true: DEFAULT_SORT, false: undefined },
 	},
 	{
 		key: 'duplicates',
@@ -200,8 +201,7 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--duplicates (same DOI, key, abstract, or citation)',
 		],
 		type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
-		valueIfTrue: DEFAULT_MERGE_CHECK,
-		valueIfFalse: undefined,
+		convertBoolean: { true: DEFAULT_MERGE_CHECK, false: undefined },
 		defaultValue: (options: any) =>
 			options.merge ? DEFAULT_MERGE_CHECK : undefined,
 	},
@@ -238,8 +238,7 @@ export const optionDefinitions: OptionDefinition[] = [
 			'- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist',
 		],
 		type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
-		valueIfTrue: 'combine',
-		valueIfFalse: undefined,
+		convertBoolean: { true: 'combine', false: undefined },
 	},
 	{
 		key: 'stripEnclosingBraces',
@@ -294,8 +293,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		examples: ['--sort-fields=name,author'],
 		type: 'boolean | string[]',
-		valueIfTrue: DEFAULT_FIELD_SORT,
-		valueIfFalse: undefined,
+		convertBoolean: { true: DEFAULT_FIELD_SORT, false: undefined },
 		defaultValue: undefined,
 	},
 	{
@@ -382,8 +380,10 @@ export const optionDefinitions: OptionDefinition[] = [
 			'For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning.',
 		],
 		type: 'boolean | string',
-		valueIfTrue:
-			'[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]',
+		convertBoolean: {
+			true: '[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]',
+			false: undefined,
+		},
 		defaultValue: undefined,
 	},
 	{
@@ -425,8 +425,7 @@ export const optionDefinitions: OptionDefinition[] = [
 			'--enclosing-braces (equivalent to ---enclosing-braces=title)',
 		],
 		type: 'boolean | string[]',
-		valueIfTrue: ['title'],
-		valueIfFalse: undefined,
+		convertBoolean: { true: ['title'], false: undefined },
 	},
 	{
 		key: 'wrap',
@@ -439,8 +438,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		description: ['Wrap long values at the given column'],
 		examples: ['--wrap (80 by default)', '--wrap=82'],
 		type: 'boolean | number',
-		valueIfTrue: DEFAULT_WRAP,
-		valueIfFalse: undefined,
+		convertBoolean: { true: DEFAULT_WRAP, false: undefined },
 	},
 	{
 		key: 'version',

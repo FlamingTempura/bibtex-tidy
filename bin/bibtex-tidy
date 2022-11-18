@@ -108,7 +108,7 @@ var optionDefinitions = [
     ],
     examples: ["--space=2 (default)", "--space=4"],
     type: "boolean | number",
-    valueIfTrue: DEFAULT_SPACE,
+    convertBoolean: { true: DEFAULT_SPACE, false: void 0 },
     defaultValue: DEFAULT_SPACE
   },
   {
@@ -139,7 +139,7 @@ var optionDefinitions = [
     ],
     examples: ["--align=14 (default)"],
     type: "boolean | number",
-    valueIfFalse: 1,
+    convertBoolean: { true: DEFAULT_ALIGN, false: 1 },
     defaultValue: DEFAULT_ALIGN
   },
   {
@@ -173,8 +173,7 @@ var optionDefinitions = [
       "--sort=name,year"
     ],
     type: "boolean | string[]",
-    valueIfTrue: DEFAULT_SORT,
-    valueIfFalse: void 0
+    convertBoolean: { true: DEFAULT_SORT, false: void 0 }
   },
   {
     key: "duplicates",
@@ -211,8 +210,7 @@ var optionDefinitions = [
       "--duplicates (same DOI, key, abstract, or citation)"
     ],
     type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
-    valueIfTrue: DEFAULT_MERGE_CHECK,
-    valueIfFalse: void 0,
+    convertBoolean: { true: DEFAULT_MERGE_CHECK, false: void 0 },
     defaultValue: (options) => options.merge ? DEFAULT_MERGE_CHECK : void 0
   },
   {
@@ -245,8 +243,7 @@ var optionDefinitions = [
       "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"
     ],
     type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
-    valueIfTrue: "combine",
-    valueIfFalse: void 0
+    convertBoolean: { true: "combine", false: void 0 }
   },
   {
     key: "stripEnclosingBraces",
@@ -302,8 +299,7 @@ var optionDefinitions = [
     ],
     examples: ["--sort-fields=name,author"],
     type: "boolean | string[]",
-    valueIfTrue: DEFAULT_FIELD_SORT,
-    valueIfFalse: void 0,
+    convertBoolean: { true: DEFAULT_FIELD_SORT, false: void 0 },
     defaultValue: void 0
   },
   {
@@ -390,7 +386,10 @@ var optionDefinitions = [
       "For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning."
     ],
     type: "boolean | string",
-    valueIfTrue: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
+    convertBoolean: {
+      true: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
+      false: void 0
+    },
     defaultValue: void 0
   },
   {
@@ -433,8 +432,7 @@ var optionDefinitions = [
       "--enclosing-braces (equivalent to ---enclosing-braces=title)"
     ],
     type: "boolean | string[]",
-    valueIfTrue: ["title"],
-    valueIfFalse: void 0
+    convertBoolean: { true: ["title"], false: void 0 }
   },
   {
     key: "wrap",
@@ -447,8 +445,7 @@ var optionDefinitions = [
     description: ["Wrap long values at the given column"],
     examples: ["--wrap (80 by default)", "--wrap=82"],
     type: "boolean | number",
-    valueIfTrue: DEFAULT_WRAP,
-    valueIfFalse: void 0
+    convertBoolean: { true: DEFAULT_WRAP, false: void 0 }
   },
   {
     key: "version",
@@ -481,11 +478,11 @@ function normalizeOptions(options) {
     optionDefinitions.map((def) => {
       const key = def.key;
       const value = options[key];
-      if (value === true && "valueIfTrue" in def) {
-        return [key, def.valueIfTrue];
-      }
-      if (value === false && "valueIfFalse" in def) {
-        return [key, def.valueIfFalse];
+      if (def.convertBoolean && typeof value === "boolean") {
+        return [
+          key,
+          value ? def.convertBoolean.true : def.convertBoolean.false
+        ];
       }
       if (typeof value === "undefined" && def.defaultValue !== void 0) {
         if (typeof def.defaultValue === "function") {

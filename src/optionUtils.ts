@@ -47,11 +47,11 @@ export function normalizeOptions(options: Options): OptionsNormalized {
 		optionDefinitions.map((def): [keyof OptionsNormalized, any] => {
 			const key = def.key as keyof OptionsNormalized;
 			const value = options[key];
-			if (value === true && 'valueIfTrue' in def) {
-				return [key, def.valueIfTrue];
-			}
-			if (value === false && 'valueIfFalse' in def) {
-				return [key, def.valueIfFalse];
+			if (def.convertBoolean && typeof value === 'boolean') {
+				return [
+					key,
+					value ? def.convertBoolean.true : def.convertBoolean.false,
+				];
 			}
 			if (typeof value === 'undefined' && def.defaultValue !== undefined) {
 				if (typeof def.defaultValue === 'function') {
