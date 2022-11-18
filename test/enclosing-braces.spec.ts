@@ -4,7 +4,7 @@ import { bibtex, bibtexTidy, test } from './utils';
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
     number={1},
-    title={A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
+    title={A technique for \\command{param1}[1]{param2} DNA restriction endonuclease fragments to high specific activity},
     shorttitle={A technique for radiolabeling {DNA} restriction endonuclease fragments to high specific activity},
   author="Feinberg, Andrew P and Vogelstein, Bert",
     journal    = "Analytical biochemistry",
@@ -17,7 +17,7 @@ const input = bibtex`
 const output1 = bibtex`
 @article{feinberg1983technique,
   number        = {1},
-  title         = {{A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity}},
+  title         = {{A technique for \\command{param1}[1]{param2} DNA restriction endonuclease fragments to high specific activity}},
   shorttitle    = {{A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity}},
   author        = {Feinberg, Andrew P and Vogelstein, Bert},
   journal       = {{Analytical biochemistry}},
@@ -32,7 +32,7 @@ const output1 = bibtex`
 const output2 = bibtex`
 @article{feinberg1983technique,
   number        = {1},
-  title         = {{A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity}},
+  title         = {{A technique for \\command{param1}[1]{param2} DNA restriction endonuclease fragments to high specific activity}},
   shorttitle    = {A technique for radiolabeling {DNA} restriction endonuclease fragments to high specific activity},
   author        = "Feinberg, Andrew P and Vogelstein, Bert",
   journal       = "Analytical biochemistry",

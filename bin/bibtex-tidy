@@ -847,6 +847,125 @@ var BibTeXSyntaxError = class extends Error {
   }
 };
 
+// src/latexParser.ts
+var BlockNode2 = class {
+  constructor(kind, parent, children = []) {
+    this.kind = kind;
+    this.parent = parent;
+    this.children = children;
+    this.type = "block";
+    if (parent instanceof BlockNode2) {
+      parent.children.push(this);
+    } else if (parent instanceof CommandNode) {
+      parent.args.push(this);
+    }
+  }
+};
+var TextNode2 = class {
+  constructor(parent, text = "") {
+    this.parent = parent;
+    this.text = text;
+    this.type = "text";
+    parent.children.push(this);
+  }
+};
+var CommandNode = class {
+  constructor(parent, command = "", args = []) {
+    this.parent = parent;
+    this.command = command;
+    this.args = args;
+    this.type = "command";
+    parent.children.push(this);
+  }
+};
+function parseLaTeX(input) {
+  const rootNode = new BlockNode2("root");
+  let node = rootNode;
+  for (let i = 0; i < input.length; i++) {
+    const char = input[i];
+    switch (node.type) {
+      case "block": {
+        if (char === "\\") {
+          node = new CommandNode(node);
+        } else if (char === "{") {
+          node = new BlockNode2("curly", node);
+        } else if ((char === "}" && node.kind === "curly" || char === "]" && node.kind === "square") && node.parent) {
+          node = node.parent;
+        } else {
+          node = new TextNode2(node, char);
+        }
+        break;
+      }
+      case "text": {
+        if (char === "\\" || char === "{") {
+          node = node.parent;
+          i--;
+        } else if (char === "}" && node.parent.kind === "curly" || char === "]" && node.parent.kind === "square") {
+          node = node.parent;
+          i--;
+        } else {
+          if (char === "}") {
+            console.log(node.parent);
+          }
+          node.text += char;
+        }
+        break;
+      }
+      case "command": {
+        if (char === "{") {
+          node = new BlockNode2("curly", node);
+        } else if (char === "[") {
+          node = new BlockNode2("square", node);
+        } else if (node.args.length === 0) {
+          node.command += char;
+        } else {
+          node = node.parent;
+          i--;
+        }
+      }
+    }
+  }
+  return rootNode;
+}
+function stringifyLaTeX(ast) {
+  return stringifyBlock(ast);
+}
+function stringifyBlock(block) {
+  const content = block.children.map((node) => {
+    switch (node.type) {
+      case "block":
+        return stringifyBlock(node);
+      case "command":
+        return stringifyCommand(node);
+      case "text":
+        return node.text;
+    }
+  }).join("");
+  switch (block.kind) {
+    case "root":
+      return content;
+    case "curly":
+      return "{" + content + "}";
+    case "square":
+      return "[" + content + "]";
+  }
+}
+function stringifyCommand(node) {
+  return "\\" + node.command + node.args.map(stringifyBlock).join("");
+}
+function flattenLaTeX(block) {
+  const newBlock = { ...block, children: [] };
+  for (const child of block.children) {
+    if (child.type === "block" && child.kind === "curly") {
+      const newChild = flattenLaTeX(child);
+      newBlock.children.push(...newChild.children);
+    } else {
+      newBlock.children.push(child);
+    }
+  }
+  return newBlock;
+}
+
 // src/unicode.ts
 var specialCharacters = /* @__PURE__ */ new Map([
   ["0023", "\\#"],
@@ -3232,8 +3351,9 @@ function unwrapText(str) {
   return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
 }
 function addEnclosingBraces(str, removeInsideBraces) {
-  if (removeInsideBraces)
-    str = str.replace(/[{}]/g, "");
+  if (removeInsideBraces) {
+    str = stringifyLaTeX(flattenLaTeX(parseLaTeX(str)));
+  }
   return `{${str}}`;
 }
 function removeEnclosingBraces(str) {

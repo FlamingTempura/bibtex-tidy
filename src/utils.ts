@@ -1,4 +1,5 @@
 import type { BlockNode, EntryNode, TextNode } from './bibtex-parser';
+import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from './latexParser';
 import { specialCharacters } from './unicode';
 
 export function escapeSpecialCharacters(str: string): string {
@@ -76,12 +77,17 @@ export function unwrapText(str: string): string {
 		.replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n');
 }
 
-/** Remove all braces and enclose entire value in braces */
+/**
+ * Remove all braces (unless part of a command) and enclose entire value in
+ * braces
+ */
 export function addEnclosingBraces(
 	str: string,
 	removeInsideBraces?: boolean
 ): string {
-	if (removeInsideBraces) str = str.replace(/[{}]/g, '');
+	if (removeInsideBraces) {
+		str = stringifyLaTeX(flattenLaTeX(parseLaTeX(str)));
+	}
 	return `{${str}}`;
 }
 
