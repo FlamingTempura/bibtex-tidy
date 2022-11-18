@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 
 import { join } from 'path';
 import { spawnSync } from 'child_process';
-import { CLIOptions } from '../../src/optionUtils';
+import type { CLIOptions } from '../../src/optionUtils';
 import { optionsToCLIArgs } from '../../src/cliUtils';
 
 const TMP_DIR = join(__dirname, '..', '..', '.tmp');

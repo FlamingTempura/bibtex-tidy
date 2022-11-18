@@ -12281,7 +12281,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     cli: {
       "--space": args => args.length > 0 ? Number(args[0]) : true
     },
-    toCLI: val => {
+    toCLI: (val, opt) => {
+      if (opt.tab) return void 0;
       if (typeof val === "number" && val !== DEFAULT_SPACE) return "--space=".concat(val);
       if (val && val !== DEFAULT_SPACE) return "--space";
       return void 0;
@@ -12313,8 +12314,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       "--no-align": false
     },
     toCLI: val => {
+      if (val === false || val === 1 || val === 0) return "--no-align";
       if (typeof val === "number" && val !== DEFAULT_ALIGN) return "--align=".concat(val);
-      if (val === false) return "--no-align";
       return void 0;
     },
     title: "Align values",
@@ -12553,8 +12554,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       "--generate-keys": args => args.length > 0 ? args : true
     },
     toCLI: val => {
+      if (val === true || val === DEFAULT_KEY_TEMPLATE) return "--generate-keys";
       if (typeof val === "string") return "--generate-keys=\"".concat(val.replace(/"/g, '\\"'), "\"");
-      if (val) return "--generate-keys";
       return void 0;
     },
     title: "Generate citation keys [Experimental]",
@@ -14472,7 +14473,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         option0.$set(option0_changes);
         var option1_changes = {};
-        if (dirty & 131136) {
+        if (dirty & 65600) {
           option1_changes.$$scope = {
             dirty,
             ctx: ctx2
@@ -14485,7 +14486,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         option1.$set(option1_changes);
         var option2_changes = {};
-        if (dirty & 131076) {
+        if (dirty & 65540) {
           option2_changes.$$scope = {
             dirty,
             ctx: ctx2
@@ -14498,7 +14499,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         option2.$set(option2_changes);
         var option3_changes = {};
-        if (dirty & 131088) {
+        if (dirty & 65552) {
           option3_changes.$$scope = {
             dirty,
             ctx: ctx2
@@ -14575,7 +14576,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         var _ref18 = _slicedToArray(_ref17, 1),
           dirty = _ref18[0];
         var collapsible_changes = {};
-        if (dirty & 131199) {
+        if (dirty & 65663) {
           collapsible_changes.$$scope = {
             dirty,
             ctx: ctx2
@@ -14598,14 +14599,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     };
   }
   function instance6($$self, $$props, $$invalidate) {
-    var _a, _b;
+    var _a;
     var options = $$props.options;
-    var alignChecked = options.align !== 1;
-    var alignValue = (_a = options.align) !== null && _a !== void 0 ? _a : DEFAULT_ALIGN;
+    var alignChecked = options.align > 1;
+    var alignValue = alignChecked ? options.align : 13;
     var wrapChecked = options.wrap !== void 0;
-    var wrapValue = (_b = options.wrap) !== null && _b !== void 0 ? _b : DEFAULT_WRAP;
+    var wrapValue = (_a = options.wrap) !== null && _a !== void 0 ? _a : DEFAULT_WRAP;
     var indent = options.tab ? "tabs" : "spaces";
-    var spaceValue = DEFAULT_SPACE;
+    var spaceValue = options.space;
     function option0_group_binding(value) {
       indent = value;
       $$invalidate(5, indent);
@@ -15005,7 +15006,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         option0.$set(option0_changes);
         var option1_changes = {};
-        if (dirty[0] & 2048 | dirty[1] & 16) {
+        if (dirty[0] & 2048 | dirty[1] & 32) {
           option1_changes.$$scope = {
             dirty,
             ctx: ctx2
@@ -15067,7 +15068,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         option8.$set(option8_changes);
         var option9_changes = {};
-        if (dirty[0] & 512 | dirty[1] & 16) {
+        if (dirty[0] & 512 | dirty[1] & 32) {
           option9_changes.$$scope = {
             dirty,
             ctx: ctx2
@@ -15157,7 +15158,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       },
       p(ctx2, dirty) {
         var collapsible_changes = {};
-        if (dirty[0] & 4095 | dirty[1] & 16) {
+        if (dirty[0] & 4095 | dirty[1] & 32) {
           collapsible_changes.$$scope = {
             dirty,
             ctx: ctx2
@@ -15180,7 +15181,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     };
   }
   function instance7($$self, $$props, $$invalidate) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
     var options = $$props.options;
     var curly = (_a = options.curly) !== null && _a !== void 0 ? _a : false;
     var stripEnclosingBraces = (_b = options.stripEnclosingBraces) !== null && _b !== void 0 ? _b : false;
@@ -15191,9 +15192,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     var removeEmptyFields = (_g = options.removeEmptyFields) !== null && _g !== void 0 ? _g : false;
     var removeDuplicateFields = (_h = options.removeDuplicateFields) !== null && _h !== void 0 ? _h : false;
     var maxAuthorsChecked = options.maxAuthors !== void 0;
-    var maxAuthorsValue = 3;
+    var maxAuthorsValue = (_j = options.maxAuthors) !== null && _j !== void 0 ? _j : 3;
     var enclosingBracesChecked = options.enclosingBraces !== void 0 && options.enclosingBraces.length > 0;
-    var enclosingBracesValue = (_k = (_j = options.enclosingBraces) === null || _j === void 0 ? void 0 : _j.join(" ")) !== null && _k !== void 0 ? _k : "title";
+    var enclosingBracesValue = (_l = (_k = options.enclosingBraces) === null || _k === void 0 ? void 0 : _k.join(" ")) !== null && _l !== void 0 ? _l : "title";
     function option0_checked_binding(value) {
       curly = value;
       $$invalidate(0, curly);
@@ -16923,7 +16924,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   function optionsToCLIArgs(options) {
     return optionDefinitions.map(def => {
       var _a;
-      return (_a = def.toCLI) == null ? void 0 : _a.call(def, options[def.key]);
+      return (_a = def.toCLI) == null ? void 0 : _a.call(def, options[def.key], options);
     }).filter(arg => typeof arg === "string");
   }
 

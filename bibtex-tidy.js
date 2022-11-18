@@ -84,7 +84,8 @@ var optionDefinitions = [{
   cli: {
     "--space": args => args.length > 0 ? Number(args[0]) : true
   },
-  toCLI: val => {
+  toCLI: (val, opt) => {
+    if (opt.tab) return void 0;
     if (typeof val === "number" && val !== DEFAULT_SPACE) return "--space=".concat(val);
     if (val && val !== DEFAULT_SPACE) return "--space";
     return void 0;
@@ -116,8 +117,8 @@ var optionDefinitions = [{
     "--no-align": false
   },
   toCLI: val => {
+    if (val === false || val === 1 || val === 0) return "--no-align";
     if (typeof val === "number" && val !== DEFAULT_ALIGN) return "--align=".concat(val);
-    if (val === false) return "--no-align";
     return void 0;
   },
   title: "Align values",
@@ -356,8 +357,8 @@ var optionDefinitions = [{
     "--generate-keys": args => args.length > 0 ? args : true
   },
   toCLI: val => {
+    if (val === true || val === DEFAULT_KEY_TEMPLATE) return "--generate-keys";
     if (typeof val === "string") return "--generate-keys=\"".concat(val.replace(/"/g, '\\"'), "\"");
-    if (val) return "--generate-keys";
     return void 0;
   },
   title: "Generate citation keys [Experimental]",

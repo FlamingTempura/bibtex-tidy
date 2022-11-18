@@ -1,7 +1,7 @@
-import { CLIOptions } from '../src/optionUtils';
-import { CLIResult, testCLI } from './targets/cli';
-import { APIResult, testAPI } from './targets/api';
-import { testWeb, WebResult, teardown } from './targets/web';
+import type { CLIOptions } from '../src/optionUtils';
+import { type CLIResult, testCLI } from './targets/cli';
+import { type APIResult, testAPI } from './targets/api';
+import { testWeb, type WebResult, teardown } from './targets/web';
 import assert, { AssertionError, deepStrictEqual, strictEqual } from 'assert';
 
 const queue: (() => Promise<void>)[] = [];
