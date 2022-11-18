@@ -12344,7 +12344,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     description: ["Sort entries by specified fields. For descending order, prefix the field with a dash (-)."],
     examples: ["--sort (sort by id)", "--sort=-year,name (sort year descending then name ascending)", "--sort=name,year"],
     type: "boolean | string[]",
-    valueIfTrue: DEFAULT_SORT
+    valueIfTrue: DEFAULT_SORT,
+    valueIfFalse: void 0
   }, {
     key: "duplicates",
     cli: {
@@ -12401,7 +12402,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     title: "Merge duplicate entries",
     description: ["Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:", "- first: only keep the original entry", "- last: only keep the last found duplicate", "- combine: keep original entry and merge in fields of duplicates if they do not already exist", "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"],
     type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
-    valueIfTrue: "combine"
+    valueIfTrue: "combine",
+    valueIfFalse: void 0
   }, {
     key: "stripEnclosingBraces",
     cli: {
@@ -12578,7 +12580,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     description: ["Enclose the given fields in double braces, such that case is preserved during BibTeX compilation."],
     examples: ["--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})", "--enclosing-braces (equivalent to ---enclosing-braces=title)"],
     type: "boolean | string[]",
-    valueIfTrue: ["title"]
+    valueIfTrue: ["title"],
+    valueIfFalse: void 0
   }, {
     key: "wrap",
     cli: {
@@ -12590,7 +12593,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     description: ["Wrap long values at the given column"],
     examples: ["--wrap (80 by default)", "--wrap=82"],
     type: "boolean | number",
-    valueIfTrue: DEFAULT_WRAP
+    valueIfTrue: DEFAULT_WRAP,
+    valueIfFalse: void 0
   }, {
     key: "version",
     cli: {

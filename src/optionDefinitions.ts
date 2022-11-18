@@ -160,6 +160,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		type: 'boolean | string[]',
 		valueIfTrue: DEFAULT_SORT,
+		valueIfFalse: undefined,
 	},
 	{
 		key: 'duplicates',
@@ -238,6 +239,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
 		valueIfTrue: 'combine',
+		valueIfFalse: undefined,
 	},
 	{
 		key: 'stripEnclosingBraces',
@@ -424,6 +426,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		type: 'boolean | string[]',
 		valueIfTrue: ['title'],
+		valueIfFalse: undefined,
 	},
 	{
 		key: 'wrap',
@@ -437,6 +440,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		examples: ['--wrap (80 by default)', '--wrap=82'],
 		type: 'boolean | number',
 		valueIfTrue: DEFAULT_WRAP,
+		valueIfFalse: undefined,
 	},
 	{
 		key: 'version',

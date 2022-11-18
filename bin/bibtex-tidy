@@ -173,7 +173,8 @@ var optionDefinitions = [
       "--sort=name,year"
     ],
     type: "boolean | string[]",
-    valueIfTrue: DEFAULT_SORT
+    valueIfTrue: DEFAULT_SORT,
+    valueIfFalse: void 0
   },
   {
     key: "duplicates",
@@ -244,7 +245,8 @@ var optionDefinitions = [
       "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"
     ],
     type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
-    valueIfTrue: "combine"
+    valueIfTrue: "combine",
+    valueIfFalse: void 0
   },
   {
     key: "stripEnclosingBraces",
@@ -431,7 +433,8 @@ var optionDefinitions = [
       "--enclosing-braces (equivalent to ---enclosing-braces=title)"
     ],
     type: "boolean | string[]",
-    valueIfTrue: ["title"]
+    valueIfTrue: ["title"],
+    valueIfFalse: void 0
   },
   {
     key: "wrap",
@@ -444,7 +447,8 @@ var optionDefinitions = [
     description: ["Wrap long values at the given column"],
     examples: ["--wrap (80 by default)", "--wrap=82"],
     type: "boolean | number",
-    valueIfTrue: DEFAULT_WRAP
+    valueIfTrue: DEFAULT_WRAP,
+    valueIfFalse: void 0
   },
   {
     key: "version",
