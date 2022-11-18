@@ -1039,20 +1039,12 @@ function convertCRLF(str) {
 function wrapText(line, lineWidth) {
   var words2 = line.split(" ");
   var lines = [""];
-  var _iterator4 = _createForOfIteratorHelper(words2),
-    _step4;
-  try {
-    for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-      var word = _step4.value;
-      if (lines[lines.length - 1].length + word.length + 1 > lineWidth) {
-        lines.push("");
-      }
-      lines[lines.length - 1] += word + " ";
+  for (var i = 0; i < words2.length; i++) {
+    var word = words2[i];
+    if (lines[lines.length - 1].length + word.length + 1 > lineWidth && i > 0) {
+      lines.push("");
     }
-  } catch (err) {
-    _iterator4.e(err);
-  } finally {
-    _iterator4.f();
+    lines[lines.length - 1] += word + " ";
   }
   return lines.map(line2 => line2.trim());
 }
@@ -1096,21 +1088,21 @@ function sortEntries(ast, fieldMaps, sort) {
   if (!sort) return;
   var sortIndexes = /* @__PURE__ */new Map();
   var precedingMeta = [];
-  var _iterator5 = _createForOfIteratorHelper(ast.children),
-    _step5;
+  var _iterator4 = _createForOfIteratorHelper(ast.children),
+    _step4;
   try {
-    for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-      var item = _step5.value;
+    for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+      var item = _step4.value;
       if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
         precedingMeta.push(item);
         continue;
       }
       var sortIndex = /* @__PURE__ */new Map();
-      var _iterator6 = _createForOfIteratorHelper(sort),
-        _step6;
+      var _iterator5 = _createForOfIteratorHelper(sort),
+        _step5;
       try {
-        for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-          var key = _step6.value;
+        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+          var key = _step5.value;
           if (key.startsWith("-")) key = key.slice(1);
           var val = void 0;
           if (key === "key") {
@@ -1127,9 +1119,9 @@ function sortEntries(ast, fieldMaps, sort) {
           sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
         }
       } catch (err) {
-        _iterator6.e(err);
+        _iterator5.e(err);
       } finally {
-        _iterator6.f();
+        _iterator5.f();
       }
       sortIndexes.set(item, sortIndex);
       while (precedingMeta.length > 0) {
@@ -1137,9 +1129,9 @@ function sortEntries(ast, fieldMaps, sort) {
       }
     }
   } catch (err) {
-    _iterator5.e(err);
+    _iterator4.e(err);
   } finally {
-    _iterator5.f();
+    _iterator4.f();
   }
   var _loop = function _loop(i) {
     var desc = sort[i].startsWith("-");
@@ -1158,11 +1150,11 @@ function sortEntries(ast, fieldMaps, sort) {
   }
 }
 function sortEntryFields(ast, fieldOrder) {
-  var _iterator7 = _createForOfIteratorHelper(getEntries(ast)),
-    _step7;
+  var _iterator6 = _createForOfIteratorHelper(getEntries(ast)),
+    _step6;
   try {
-    for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-      var entry = _step7.value;
+    for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+      var entry = _step6.value;
       entry.fields.sort((a, b) => {
         var orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
         var orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
@@ -1175,9 +1167,9 @@ function sortEntryFields(ast, fieldOrder) {
       });
     }
   } catch (err) {
-    _iterator7.e(err);
+    _iterator6.e(err);
   } finally {
-    _iterator7.f();
+    _iterator6.f();
   }
 }
 
@@ -1337,17 +1329,17 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
   var _a, _b;
   var rules = /* @__PURE__ */new Map();
   if (duplicateRules) {
-    var _iterator8 = _createForOfIteratorHelper(duplicateRules),
-      _step8;
+    var _iterator7 = _createForOfIteratorHelper(duplicateRules),
+      _step7;
     try {
-      for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-        var rule = _step8.value;
+      for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+        var rule = _step7.value;
         rules.set(rule, !!merge);
       }
     } catch (err) {
-      _iterator8.e(err);
+      _iterator7.e(err);
     } finally {
-      _iterator8.f();
+      _iterator7.f();
     }
   }
   if (!rules.has("key")) {
@@ -1359,19 +1351,19 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
   var dois = /* @__PURE__ */new Map();
   var citations = /* @__PURE__ */new Map();
   var abstracts = /* @__PURE__ */new Map();
-  var _iterator9 = _createForOfIteratorHelper(getEntries(ast)),
-    _step9;
+  var _iterator8 = _createForOfIteratorHelper(getEntries(ast)),
+    _step8;
   try {
-    for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-      var entry = _step9.value;
+    for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+      var entry = _step8.value;
       var entryValues = valueLookup.get(entry);
-      var _iterator10 = _createForOfIteratorHelper(rules),
-        _step10;
+      var _iterator9 = _createForOfIteratorHelper(rules),
+        _step9;
       try {
-        for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-          var _step10$value = _slicedToArray(_step10.value, 2),
-            _rule = _step10$value[0],
-            doMerge = _step10$value[1];
+        for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+          var _step9$value = _slicedToArray(_step9.value, 2),
+            _rule = _step9$value[0],
+            doMerge = _step9$value[1];
           var duplicateOf = void 0;
           var warning = void 0;
           switch (_rule) {
@@ -1435,15 +1427,15 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
           }
         }
       } catch (err) {
-        _iterator10.e(err);
+        _iterator9.e(err);
       } finally {
-        _iterator10.f();
+        _iterator9.f();
       }
     }
   } catch (err) {
-    _iterator9.e(err);
+    _iterator8.e(err);
   } finally {
-    _iterator9.f();
+    _iterator8.f();
   }
   return {
     entries: duplicateEntries,
@@ -1458,11 +1450,11 @@ function mergeEntries(merge, duplicateOf, entry) {
       break;
     case "combine":
     case "overwrite":
-      var _iterator11 = _createForOfIteratorHelper(entry.fields),
-        _step11;
+      var _iterator10 = _createForOfIteratorHelper(entry.fields),
+        _step10;
       try {
         var _loop2 = function _loop2() {
-          var field = _step11.value;
+          var field = _step10.value;
           var existing = duplicateOf.fields.find(f => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase());
           if (!existing) {
             duplicateOf.fields.push(field);
@@ -1470,13 +1462,13 @@ function mergeEntries(merge, duplicateOf, entry) {
             existing.value = field.value;
           }
         };
-        for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
+        for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
           _loop2();
         }
       } catch (err) {
-        _iterator11.e(err);
+        _iterator10.e(err);
       } finally {
-        _iterator11.f();
+        _iterator10.f();
       }
       break;
   }
@@ -1602,11 +1594,11 @@ function generateKeys(ast, valueLookup, template) {
     template2 = template + "[duplicateLetter]";
   }
   var entriesByKey = /* @__PURE__ */new Map();
-  var _iterator12 = _createForOfIteratorHelper(ast.children),
-    _step12;
+  var _iterator11 = _createForOfIteratorHelper(ast.children),
+    _step11;
   try {
-    for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
-      var node = _step12.value;
+    for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
+      var node = _step11.value;
       if (isEntryNode(node)) {
         var entryValues = valueLookup.get(node.block);
         if (!entryValues) continue;
@@ -1617,18 +1609,18 @@ function generateKeys(ast, valueLookup, template) {
       }
     }
   } catch (err) {
-    _iterator12.e(err);
+    _iterator11.e(err);
   } finally {
-    _iterator12.f();
+    _iterator11.f();
   }
   var keys = /* @__PURE__ */new Map();
-  var _iterator13 = _createForOfIteratorHelper(entriesByKey),
-    _step13;
+  var _iterator12 = _createForOfIteratorHelper(entriesByKey),
+    _step12;
   try {
-    for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
-      var _step13$value = _slicedToArray(_step13.value, 2),
-        key = _step13$value[0],
-        entries = _step13$value[1];
+    for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
+      var _step12$value = _slicedToArray(_step12.value, 2),
+        key = _step12$value[0],
+        entries = _step12$value[1];
       for (var i = 0; i < entries.length; i++) {
         var entry = entries[i];
         var duplicateLetter = entries.length > 1 ? String.fromCharCode(97 + i) : "";
@@ -1637,9 +1629,9 @@ function generateKeys(ast, valueLookup, template) {
       }
     }
   } catch (err) {
-    _iterator13.e(err);
+    _iterator12.e(err);
   } finally {
-    _iterator13.f();
+    _iterator12.f();
   }
   return keys;
 }
@@ -1666,11 +1658,11 @@ function generateKey(valueLookup, template) {
       } else {
         throw new Error("Invalid citation key token ".concat(tokenKey));
       }
-      var _iterator14 = _createForOfIteratorHelper(modifierKeys),
-        _step14;
+      var _iterator13 = _createForOfIteratorHelper(modifierKeys),
+        _step13;
       try {
-        for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
-          var modifierKey = _step14.value;
+        for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
+          var modifierKey = _step13.value;
           var modifier = MODIFIERS[modifierKey];
           if (modifier) {
             key = modifier.callback(key);
@@ -1679,9 +1671,9 @@ function generateKey(valueLookup, template) {
           }
         }
       } catch (err) {
-        _iterator14.e(err);
+        _iterator13.e(err);
       } finally {
-        _iterator14.f();
+        _iterator13.f();
       }
       return key.join("");
     });

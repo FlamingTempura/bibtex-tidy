@@ -56,8 +56,9 @@ export function convertCRLF(str: string): string {
 export function wrapText(line: string, lineWidth: number): string[] {
 	const words: string[] = line.split(' ');
 	const lines: string[] = [''];
-	for (const word of words) {
-		if (lines[lines.length - 1].length + word.length + 1 > lineWidth) {
+	for (let i = 0; i < words.length; i++) {
+		const word = words[i];
+		if (lines[lines.length - 1].length + word.length + 1 > lineWidth && i > 0) {
 			lines.push('');
 		}
 		lines[lines.length - 1] += word + ' ';

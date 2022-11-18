@@ -3362,8 +3362,9 @@ function convertCRLF(str) {
 function wrapText(line, lineWidth) {
   const words2 = line.split(" ");
   const lines = [""];
-  for (const word of words2) {
-    if (lines[lines.length - 1].length + word.length + 1 > lineWidth) {
+  for (let i = 0; i < words2.length; i++) {
+    const word = words2[i];
+    if (lines[lines.length - 1].length + word.length + 1 > lineWidth && i > 0) {
       lines.push("");
     }
     lines[lines.length - 1] += word + " ";

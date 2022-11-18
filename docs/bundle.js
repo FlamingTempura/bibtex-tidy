@@ -12892,20 +12892,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   function wrapText(line, lineWidth) {
     var words2 = line.split(" ");
     var lines = [""];
-    var _iterator5 = _createForOfIteratorHelper(words2),
-      _step5;
-    try {
-      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-        var word = _step5.value;
-        if (lines[lines.length - 1].length + word.length + 1 > lineWidth) {
-          lines.push("");
-        }
-        lines[lines.length - 1] += word + " ";
+    for (var i = 0; i < words2.length; i++) {
+      var word = words2[i];
+      if (lines[lines.length - 1].length + word.length + 1 > lineWidth && i > 0) {
+        lines.push("");
       }
-    } catch (err) {
-      _iterator5.e(err);
-    } finally {
-      _iterator5.f();
+      lines[lines.length - 1] += word + " ";
     }
     return lines.map(line2 => line2.trim());
   }
@@ -12949,21 +12941,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     if (!sort) return;
     var sortIndexes = /* @__PURE__ */new Map();
     var precedingMeta = [];
-    var _iterator6 = _createForOfIteratorHelper(ast.children),
-      _step6;
+    var _iterator5 = _createForOfIteratorHelper(ast.children),
+      _step5;
     try {
-      for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-        var item = _step6.value;
+      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+        var item = _step5.value;
         if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
           precedingMeta.push(item);
           continue;
         }
         var sortIndex = /* @__PURE__ */new Map();
-        var _iterator7 = _createForOfIteratorHelper(sort),
-          _step7;
+        var _iterator6 = _createForOfIteratorHelper(sort),
+          _step6;
         try {
-          for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-            var key = _step7.value;
+          for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+            var key = _step6.value;
             if (key.startsWith("-")) key = key.slice(1);
             var val = void 0;
             if (key === "key") {
@@ -12980,9 +12972,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
           }
         } catch (err) {
-          _iterator7.e(err);
+          _iterator6.e(err);
         } finally {
-          _iterator7.f();
+          _iterator6.f();
         }
         sortIndexes.set(item, sortIndex);
         while (precedingMeta.length > 0) {
@@ -12990,9 +12982,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
       }
     } catch (err) {
-      _iterator6.e(err);
+      _iterator5.e(err);
     } finally {
-      _iterator6.f();
+      _iterator5.f();
     }
     var _loop2 = function _loop2(i) {
       var desc = sort[i].startsWith("-");
@@ -13011,11 +13003,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     }
   }
   function sortEntryFields(ast, fieldOrder) {
-    var _iterator8 = _createForOfIteratorHelper(getEntries(ast)),
-      _step8;
+    var _iterator7 = _createForOfIteratorHelper(getEntries(ast)),
+      _step7;
     try {
-      for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-        var entry = _step8.value;
+      for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+        var entry = _step7.value;
         entry.fields.sort((a, b) => {
           var orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
           var orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
@@ -13028,9 +13020,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         });
       }
     } catch (err) {
-      _iterator8.e(err);
+      _iterator7.e(err);
     } finally {
-      _iterator8.f();
+      _iterator7.f();
     }
   }
 
@@ -13190,17 +13182,17 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     var _a, _b;
     var rules = /* @__PURE__ */new Map();
     if (duplicateRules) {
-      var _iterator9 = _createForOfIteratorHelper(duplicateRules),
-        _step9;
+      var _iterator8 = _createForOfIteratorHelper(duplicateRules),
+        _step8;
       try {
-        for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-          var rule = _step9.value;
+        for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+          var rule = _step8.value;
           rules.set(rule, !!merge);
         }
       } catch (err) {
-        _iterator9.e(err);
+        _iterator8.e(err);
       } finally {
-        _iterator9.f();
+        _iterator8.f();
       }
     }
     if (!rules.has("key")) {
@@ -13212,19 +13204,19 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     var dois = /* @__PURE__ */new Map();
     var citations = /* @__PURE__ */new Map();
     var abstracts = /* @__PURE__ */new Map();
-    var _iterator10 = _createForOfIteratorHelper(getEntries(ast)),
-      _step10;
+    var _iterator9 = _createForOfIteratorHelper(getEntries(ast)),
+      _step9;
     try {
-      for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-        var entry = _step10.value;
+      for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+        var entry = _step9.value;
         var entryValues = valueLookup.get(entry);
-        var _iterator11 = _createForOfIteratorHelper(rules),
-          _step11;
+        var _iterator10 = _createForOfIteratorHelper(rules),
+          _step10;
         try {
-          for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
-            var _step11$value = _slicedToArray(_step11.value, 2),
-              _rule = _step11$value[0],
-              doMerge = _step11$value[1];
+          for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+            var _step10$value = _slicedToArray(_step10.value, 2),
+              _rule = _step10$value[0],
+              doMerge = _step10$value[1];
             var duplicateOf = void 0;
             var warning = void 0;
             switch (_rule) {
@@ -13288,15 +13280,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             }
           }
         } catch (err) {
-          _iterator11.e(err);
+          _iterator10.e(err);
         } finally {
-          _iterator11.f();
+          _iterator10.f();
         }
       }
     } catch (err) {
-      _iterator10.e(err);
+      _iterator9.e(err);
     } finally {
-      _iterator10.f();
+      _iterator9.f();
     }
     return {
       entries: duplicateEntries,
@@ -13311,11 +13303,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         break;
       case "combine":
       case "overwrite":
-        var _iterator12 = _createForOfIteratorHelper(entry.fields),
-          _step12;
+        var _iterator11 = _createForOfIteratorHelper(entry.fields),
+          _step11;
         try {
           var _loop3 = function _loop3() {
-            var field = _step12.value;
+            var field = _step11.value;
             var existing = duplicateOf.fields.find(f => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase());
             if (!existing) {
               duplicateOf.fields.push(field);
@@ -13323,13 +13315,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               existing.value = field.value;
             }
           };
-          for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
+          for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
             _loop3();
           }
         } catch (err) {
-          _iterator12.e(err);
+          _iterator11.e(err);
         } finally {
-          _iterator12.f();
+          _iterator11.f();
         }
         break;
     }
@@ -13455,11 +13447,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       template2 = template + "[duplicateLetter]";
     }
     var entriesByKey = /* @__PURE__ */new Map();
-    var _iterator13 = _createForOfIteratorHelper(ast.children),
-      _step13;
+    var _iterator12 = _createForOfIteratorHelper(ast.children),
+      _step12;
     try {
-      for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
-        var node = _step13.value;
+      for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
+        var node = _step12.value;
         if (isEntryNode(node)) {
           var entryValues = valueLookup.get(node.block);
           if (!entryValues) continue;
@@ -13470,18 +13462,18 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
       }
     } catch (err) {
-      _iterator13.e(err);
+      _iterator12.e(err);
     } finally {
-      _iterator13.f();
+      _iterator12.f();
     }
     var keys = /* @__PURE__ */new Map();
-    var _iterator14 = _createForOfIteratorHelper(entriesByKey),
-      _step14;
+    var _iterator13 = _createForOfIteratorHelper(entriesByKey),
+      _step13;
     try {
-      for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
-        var _step14$value = _slicedToArray(_step14.value, 2),
-          key = _step14$value[0],
-          entries = _step14$value[1];
+      for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
+        var _step13$value = _slicedToArray(_step13.value, 2),
+          key = _step13$value[0],
+          entries = _step13$value[1];
         for (var i = 0; i < entries.length; i++) {
           var entry = entries[i];
           var duplicateLetter = entries.length > 1 ? String.fromCharCode(97 + i) : "";
@@ -13490,9 +13482,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
       }
     } catch (err) {
-      _iterator14.e(err);
+      _iterator13.e(err);
     } finally {
-      _iterator14.f();
+      _iterator13.f();
     }
     return keys;
   }
@@ -13519,11 +13511,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         } else {
           throw new Error("Invalid citation key token ".concat(tokenKey));
         }
-        var _iterator15 = _createForOfIteratorHelper(modifierKeys),
-          _step15;
+        var _iterator14 = _createForOfIteratorHelper(modifierKeys),
+          _step14;
         try {
-          for (_iterator15.s(); !(_step15 = _iterator15.n()).done;) {
-            var modifierKey = _step15.value;
+          for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
+            var modifierKey = _step14.value;
             var modifier = MODIFIERS[modifierKey];
             if (modifier) {
               key = modifier.callback(key);
@@ -13532,9 +13524,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             }
           }
         } catch (err) {
-          _iterator15.e(err);
+          _iterator14.e(err);
         } finally {
-          _iterator15.f();
+          _iterator14.f();
         }
         return key.join("");
       });

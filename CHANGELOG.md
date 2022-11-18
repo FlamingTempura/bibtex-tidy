@@ -108,6 +108,7 @@ Bug fixes:
 - Convert invalid key characters to \_ when generating keys (#304)
 - More permitted characters in citation key, including parentheses, which were triggering a parser error (#358).
 - Support escaping quotes in quoted value, which were triggering a parser error (#98)
+- Fix extra empty line when wrapping long word (#141)
 
 Other enhancements:
 
