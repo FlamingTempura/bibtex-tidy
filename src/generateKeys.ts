@@ -108,6 +108,8 @@ class MissingRequiredData extends Error {}
  * https://docs.jabref.org/setup/citationkeypatterns
  *
  * Not all JabRef special markers and modifiers have been implemented.
+ *
+ * TODO: Check the output against Jabref itself
  */
 export function generateKeys(
 	ast: RootNode,

@@ -175,8 +175,9 @@ bibtex-tidy references.bib
       Only allow one of each field in each entry. Enabled by default.
       
   --generate-keys
-      [Experimental] For all entries replace the key with a new key of the form
-      <author><year><title>. A JabRef citation pattern can be provided.
+      For all entries replace the key with a new key of the form
+      <author><year><title>. A JabRef citation pattern can be provided. This is an
+      experimental option that may change without warning.
       
   --max-authors
       Truncate authors if above a given number into "and others".

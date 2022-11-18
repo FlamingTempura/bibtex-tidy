@@ -12540,8 +12540,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       if (val) return "--generate-keys";
       return void 0;
     },
-    title: "Generate citation keys",
-    description: ["[Experimental] For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided."],
+    title: "Generate citation keys [Experimental]",
+    description: ["For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning."],
     type: "boolean | string",
     valueIfTrue: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
     defaultValue: void 0

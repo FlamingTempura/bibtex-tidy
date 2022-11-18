@@ -375,9 +375,9 @@ export const optionDefinitions: OptionDefinition[] = [
 			if (val) return '--generate-keys';
 			return undefined;
 		},
-		title: 'Generate citation keys',
+		title: 'Generate citation keys [Experimental]',
 		description: [
-			'[Experimental] For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided.',
+			'For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning.',
 		],
 		type: 'boolean | string',
 		valueIfTrue:

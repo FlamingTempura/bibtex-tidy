@@ -145,9 +145,9 @@ export type BibTeXTidyOptions = {
 	 */
 	removeDuplicateFields?: boolean;
 	/**
-	 * Generate citation keys
+	 * Generate citation keys [Experimental]
 	 *
-	 * [Experimental] For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided.
+	 * For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning.
 	 */
 	generateKeys?: boolean | string;
 	/**
