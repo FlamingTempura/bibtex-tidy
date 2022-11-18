@@ -21,6 +21,10 @@
 		options.enclosingBraces !== undefined && options.enclosingBraces.length > 0;
 	let enclosingBracesValue = options.enclosingBraces?.join(' ') ?? 'title';
 
+	let removeBracesChecked =
+		options.removeBraces !== undefined && options.removeBraces.length > 0;
+	let removeBracesValue = options.enclosingBraces?.join(' ') ?? 'title';
+
 	$: {
 		options.curly = curly;
 		options.stripEnclosingBraces = stripEnclosingBraces;
@@ -34,6 +38,10 @@
 		options.enclosingBraces =
 			enclosingBracesChecked && enclosingBracesValue.length > 0
 				? enclosingBracesValue.split(/[\n\t ,]+/)
+				: undefined;
+		options.removeBraces =
+			removeBracesChecked && removeBracesValue.length > 0
+				? removeBracesValue.split(/[\n\t ,]+/)
 				: undefined;
 	}
 </script>
@@ -51,7 +59,16 @@
 			bind:value={enclosingBracesValue}
 		/><br />
 		Space delimited, e.g: <code>title journal</code>.
-		<code>-year author</code>.
+	</Option>
+
+	<Option option="removeBraces" bind:checked={removeBracesChecked}>
+		Remove braces from values of these fields: <br />
+		<textarea
+			name="removeBracesList"
+			spellcheck="false"
+			bind:value={removeBracesValue}
+		/><br />
+		Space delimited, e.g: <code>title journal</code>.
 	</Option>
 
 	<Option option="stripEnclosingBraces" bind:checked={stripEnclosingBraces} />

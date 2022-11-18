@@ -101,6 +101,7 @@ Features:
 - Docker configuration added (#371)
 - The web UI will now persist the user's bibtex-tidy configuration in the URL (#344)
 - Add copy button to web UI (#177)
+- Add removeBraces to remove all braces from specified fields (#33)
 
 Bug fixes:
 

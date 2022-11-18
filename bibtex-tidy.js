@@ -441,6 +441,24 @@ var optionDefinitions = [{
     false: void 0
   }
 }, {
+  key: "removeBraces",
+  cli: {
+    "--remove-braces": args => args.length > 0 ? args : true
+  },
+  toCLI: val => {
+    if (Array.isArray(val) && val.length > 0) return "--remove-braces=".concat(val.join(","));
+    if (val === true) return "--remove-braces";
+    return void 0;
+  },
+  title: "Remove braces",
+  description: ["Remove any curly braces within the value, unless they are part of a command."],
+  examples: ["--remove-braces=title,journal", "--remove-braces (equivalent to ---remove-braces=title)"],
+  type: "boolean | string[]",
+  convertBoolean: {
+    true: ["title"],
+    false: void 0
+  }
+}, {
   key: "wrap",
   cli: {
     "--wrap": args => args.length > 0 ? Number(args[0]) : true,
@@ -1247,10 +1265,12 @@ function formatValue(field, options) {
     maxAuthors = options.maxAuthors,
     tab = options.tab,
     space = options.space,
-    enclosingBraces = options.enclosingBraces;
+    enclosingBraces = options.enclosingBraces,
+    removeBraces = options.removeBraces;
   var nameLowerCase = field.name.toLocaleLowerCase();
   var indent = tab ? "	" : " ".repeat(space);
-  var enclosingBracesFields = new Set((enclosingBraces || []).map(field2 => field2.toLocaleLowerCase()));
+  var enclosingBracesFields = new Set((enclosingBraces != null ? enclosingBraces : []).map(field2 => field2.toLocaleLowerCase()));
+  var removeBracesFields = new Set((removeBraces != null ? removeBraces : []).map(field2 => field2.toLocaleLowerCase()));
   return field.value.concat.map(_ref4 => {
     var type = _ref4.type,
       value = _ref4.value;
@@ -1283,6 +1303,9 @@ function formatValue(field, options) {
     }
     if (nameLowerCase === "author" && maxAuthors) {
       value = limitAuthors(value, maxAuthors);
+    }
+    if (removeBracesFields.has(nameLowerCase)) {
+      value = stringifyLaTeX(flattenLaTeX(parseLaTeX(value)));
     }
     if (enclosingBracesFields.has(nameLowerCase) && (type === "braced" || curly)) {
       value = addEnclosingBraces(value, true);

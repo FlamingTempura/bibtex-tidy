@@ -27,6 +27,7 @@ export type OptionsNormalized = Omit<
 	| 'sortFields'
 	| 'wrap'
 	| 'enclosingBraces'
+	| 'removeBraces'
 	| 'generateKeys'
 	| 'blankLines'
 > & {
@@ -38,6 +39,7 @@ export type OptionsNormalized = Omit<
 	duplicates?: DuplicateRule[];
 	wrap?: number;
 	enclosingBraces?: string[];
+	removeBraces?: string[];
 	generateKeys?: string;
 	blankLines: boolean;
 };

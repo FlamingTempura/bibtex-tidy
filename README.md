@@ -194,6 +194,13 @@ bibtex-tidy references.bib
       the form {{This is a title}}), --enclosing-braces (equivalent to
       ---enclosing-braces=title)
       
+  --remove-braces
+      Remove any curly braces within the value, unless they are part of a command.
+      
+      Examples:
+      --remove-braces=title,journal, --remove-braces (equivalent to
+      ---remove-braces=title)
+      
   --wrap, --no-wrap
       Wrap long values at the given column
       

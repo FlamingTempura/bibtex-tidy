@@ -18,6 +18,7 @@ import {
 	formatPageRange,
 } from './utils';
 import { MONTHS } from './sort';
+import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from './latexParser';
 
 const MONTH_SET = new Set<string>(MONTHS);
 
@@ -157,13 +158,17 @@ export function formatValue(
 		tab,
 		space,
 		enclosingBraces,
+		removeBraces,
 	} = options;
 
 	const nameLowerCase = field.name.toLocaleLowerCase();
 
 	const indent: string = tab ? '\t' : ' '.repeat(space);
 	const enclosingBracesFields: Set<string> = new Set(
-		(enclosingBraces || []).map((field) => field.toLocaleLowerCase())
+		(enclosingBraces ?? []).map((field) => field.toLocaleLowerCase())
+	);
+	const removeBracesFields: Set<string> = new Set(
+		(removeBraces ?? []).map((field) => field.toLocaleLowerCase())
 	);
 
 	return field.value.concat
@@ -206,6 +211,10 @@ export function formatValue(
 			}
 			if (nameLowerCase === 'author' && maxAuthors) {
 				value = limitAuthors(value, maxAuthors);
+			}
+
+			if (removeBracesFields.has(nameLowerCase)) {
+				value = stringifyLaTeX(flattenLaTeX(parseLaTeX(value)));
 			}
 			// if the user requested, wrap the value in braces (this forces bibtex
 			// compiler to preserve case)

@@ -432,6 +432,28 @@ export const optionDefinitions: OptionDefinition[] = [
 		convertBoolean: { true: ['title'], false: undefined },
 	},
 	{
+		key: 'removeBraces',
+		cli: {
+			'--remove-braces': (args) => (args.length > 0 ? args : true),
+		},
+		toCLI: (val) => {
+			if (Array.isArray(val) && val.length > 0)
+				return `--remove-braces=${val.join(',')}`;
+			if (val === true) return '--remove-braces';
+			return undefined;
+		},
+		title: 'Remove braces',
+		description: [
+			'Remove any curly braces within the value, unless they are part of a command.',
+		],
+		examples: [
+			'--remove-braces=title,journal',
+			'--remove-braces (equivalent to ---remove-braces=title)',
+		],
+		type: 'boolean | string[]',
+		convertBoolean: { true: ['title'], false: undefined },
+	},
+	{
 		key: 'wrap',
 		cli: {
 			'--wrap': (args) => (args.length > 0 ? Number(args[0]) : true),

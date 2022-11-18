@@ -438,6 +438,29 @@ var optionDefinitions = [
     convertBoolean: { true: ["title"], false: void 0 }
   },
   {
+    key: "removeBraces",
+    cli: {
+      "--remove-braces": (args) => args.length > 0 ? args : true
+    },
+    toCLI: (val) => {
+      if (Array.isArray(val) && val.length > 0)
+        return `--remove-braces=${val.join(",")}`;
+      if (val === true)
+        return "--remove-braces";
+      return void 0;
+    },
+    title: "Remove braces",
+    description: [
+      "Remove any curly braces within the value, unless they are part of a command."
+    ],
+    examples: [
+      "--remove-braces=title,journal",
+      "--remove-braces (equivalent to ---remove-braces=title)"
+    ],
+    type: "boolean | string[]",
+    convertBoolean: { true: ["title"], false: void 0 }
+  },
+  {
     key: "wrap",
     cli: {
       "--wrap": (args) => args.length > 0 ? Number(args[0]) : true,
@@ -3572,12 +3595,16 @@ function formatValue(field, options) {
     maxAuthors,
     tab,
     space,
-    enclosingBraces
+    enclosingBraces,
+    removeBraces
   } = options;
   const nameLowerCase = field.name.toLocaleLowerCase();
   const indent = tab ? "	" : " ".repeat(space);
   const enclosingBracesFields = new Set(
-    (enclosingBraces || []).map((field2) => field2.toLocaleLowerCase())
+    (enclosingBraces != null ? enclosingBraces : []).map((field2) => field2.toLocaleLowerCase())
+  );
+  const removeBracesFields = new Set(
+    (removeBraces != null ? removeBraces : []).map((field2) => field2.toLocaleLowerCase())
   );
   return field.value.concat.map(({ type, value }) => {
     const isNumeric = value.match(/^[1-9][0-9]*$/);
@@ -3609,6 +3636,9 @@ function formatValue(field, options) {
     }
     if (nameLowerCase === "author" && maxAuthors) {
       value = limitAuthors(value, maxAuthors);
+    }
+    if (removeBracesFields.has(nameLowerCase)) {
+      value = stringifyLaTeX(flattenLaTeX(parseLaTeX(value)));
     }
     if (enclosingBracesFields.has(nameLowerCase) && (type === "braced" || curly)) {
       value = addEnclosingBraces(value, true);
@@ -4298,6 +4328,13 @@ var manPage = [
   "      --enclosing-braces=title,journal (output title and journal fields will be of",
   "      the form {{This is a title}}), --enclosing-braces (equivalent to",
   "      ---enclosing-braces=title)",
+  "      ",
+  "  --remove-braces",
+  "      Remove any curly braces within the value, unless they are part of a command.",
+  "      ",
+  "      Examples:",
+  "      --remove-braces=title,journal, --remove-braces (equivalent to",
+  "      ---remove-braces=title)",
   "      ",
   "  --wrap, --no-wrap",
   "      Wrap long values at the given column",

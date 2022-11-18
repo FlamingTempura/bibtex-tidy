@@ -168,6 +168,12 @@ export type BibTeXTidyOptions = {
 	 */
 	enclosingBraces?: boolean | string[];
 	/**
+	 * Remove braces
+	 *
+	 * Remove any curly braces within the value, unless they are part of a command.
+	 */
+	removeBraces?: boolean | string[];
+	/**
 	 * Wrap values
 	 *
 	 * Wrap long values at the given column

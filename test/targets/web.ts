@@ -147,6 +147,13 @@ export async function testWeb(
 		await setCheckbox('enclosingBraces', false);
 	}
 
+	if (options.removeBraces) {
+		await setCheckbox('removeBraces', true);
+		await setValue('removeBracesList', options.removeBraces.join(' '));
+	} else {
+		await setCheckbox('removeBraces', false);
+	}
+
 	if (options.maxAuthors) {
 		await setCheckbox('maxAuthors', true);
 		await setValue('maxAuthorsNum', String(options.maxAuthors));

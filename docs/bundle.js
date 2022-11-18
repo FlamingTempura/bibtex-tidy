@@ -12635,6 +12635,24 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       false: void 0
     }
   }, {
+    key: "removeBraces",
+    cli: {
+      "--remove-braces": args => args.length > 0 ? args : true
+    },
+    toCLI: val => {
+      if (Array.isArray(val) && val.length > 0) return "--remove-braces=".concat(val.join(","));
+      if (val === true) return "--remove-braces";
+      return void 0;
+    },
+    title: "Remove braces",
+    description: ["Remove any curly braces within the value, unless they are part of a command."],
+    examples: ["--remove-braces=title,journal", "--remove-braces (equivalent to ---remove-braces=title)"],
+    type: "boolean | string[]",
+    convertBoolean: {
+      true: ["title"],
+      false: void 0
+    }
+  }, {
     key: "wrap",
     cli: {
       "--wrap": args => args.length > 0 ? Number(args[0]) : true,
@@ -13100,10 +13118,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       maxAuthors = options.maxAuthors,
       tab = options.tab,
       space2 = options.space,
-      enclosingBraces = options.enclosingBraces;
+      enclosingBraces = options.enclosingBraces,
+      removeBraces = options.removeBraces;
     var nameLowerCase = field.name.toLocaleLowerCase();
     var indent = tab ? "	" : " ".repeat(space2);
-    var enclosingBracesFields = new Set((enclosingBraces || []).map(field2 => field2.toLocaleLowerCase()));
+    var enclosingBracesFields = new Set((enclosingBraces != null ? enclosingBraces : []).map(field2 => field2.toLocaleLowerCase()));
+    var removeBracesFields = new Set((removeBraces != null ? removeBraces : []).map(field2 => field2.toLocaleLowerCase()));
     return field.value.concat.map(_ref6 => {
       var type = _ref6.type,
         value = _ref6.value;
@@ -13136,6 +13156,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
       if (nameLowerCase === "author" && maxAuthors) {
         value = limitAuthors(value, maxAuthors);
+      }
+      if (removeBracesFields.has(nameLowerCase)) {
+        value = stringifyLaTeX(flattenLaTeX(parseLaTeX(value)));
       }
       if (enclosingBracesFields.has(nameLowerCase) && (type === "braced" || curly)) {
         value = addEnclosingBraces(value, true);
@@ -14837,17 +14860,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   var WhitespaceOptions_default = WhitespaceOptions;
 
   // src/ui/ValueOptions.svelte
-  function create_default_slot_22(ctx) {
+  function create_default_slot_32(ctx) {
     var t0;
     var br0;
     var t1;
     var textarea;
     var br1;
     var t2;
-    var code0;
+    var code;
     var t4;
-    var code1;
-    var t6;
     var mounted;
     var dispose;
     return {
@@ -14858,12 +14879,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         textarea = element("textarea");
         br1 = element("br");
         t2 = text("\n		Space delimited, e.g: ");
-        code0 = element("code");
-        code0.textContent = "title journal";
-        t4 = text(".\n		");
-        code1 = element("code");
-        code1.textContent = "-year author";
-        t6 = text(".");
+        code = element("code");
+        code.textContent = "title journal";
+        t4 = text(".");
         attr(textarea, "name", "enclosingBracesList");
         attr(textarea, "spellcheck", "false");
       },
@@ -14875,12 +14893,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         set_input_value(textarea, ctx[11]);
         insert(target, br1, anchor);
         insert(target, t2, anchor);
-        insert(target, code0, anchor);
+        insert(target, code, anchor);
         insert(target, t4, anchor);
-        insert(target, code1, anchor);
-        insert(target, t6, anchor);
         if (!mounted) {
-          dispose = listen(textarea, "input", ctx[14]);
+          dispose = listen(textarea, "input", ctx[16]);
           mounted = true;
         }
       },
@@ -14896,10 +14912,67 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         if (detaching) detach(textarea);
         if (detaching) detach(br1);
         if (detaching) detach(t2);
-        if (detaching) detach(code0);
+        if (detaching) detach(code);
         if (detaching) detach(t4);
-        if (detaching) detach(code1);
-        if (detaching) detach(t6);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot_22(ctx) {
+    var t0;
+    var br0;
+    var t1;
+    var textarea;
+    var br1;
+    var t2;
+    var code;
+    var t4;
+    var mounted;
+    var dispose;
+    return {
+      c() {
+        t0 = text("Remove braces from values of these fields: ");
+        br0 = element("br");
+        t1 = space();
+        textarea = element("textarea");
+        br1 = element("br");
+        t2 = text("\n		Space delimited, e.g: ");
+        code = element("code");
+        code.textContent = "title journal";
+        t4 = text(".");
+        attr(textarea, "name", "removeBracesList");
+        attr(textarea, "spellcheck", "false");
+      },
+      m(target, anchor) {
+        insert(target, t0, anchor);
+        insert(target, br0, anchor);
+        insert(target, t1, anchor);
+        insert(target, textarea, anchor);
+        set_input_value(textarea, ctx[13]);
+        insert(target, br1, anchor);
+        insert(target, t2, anchor);
+        insert(target, code, anchor);
+        insert(target, t4, anchor);
+        if (!mounted) {
+          dispose = listen(textarea, "input", ctx[18]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty[0] & 8192) {
+          set_input_value(textarea, ctx2[13]);
+        }
+      },
+      d(detaching) {
+        if (detaching) detach(t0);
+        if (detaching) detach(br0);
+        if (detaching) detach(t1);
+        if (detaching) detach(textarea);
+        if (detaching) detach(br1);
+        if (detaching) detach(t2);
+        if (detaching) detach(code);
+        if (detaching) detach(t4);
         mounted = false;
         dispose();
       }
@@ -14925,7 +14998,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         insert(target, br, anchor);
         insert(target, t, anchor);
         if (!mounted) {
-          dispose = listen(input, "input", ctx[23]);
+          dispose = listen(input, "input", ctx[27]);
           mounted = true;
         }
       },
@@ -14975,9 +15048,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     var t9;
     var option9;
     var updating_checked_9;
+    var t10;
+    var option10;
+    var updating_checked_10;
     var current;
     function option0_checked_binding(value) {
-      ctx[13](value);
+      ctx[15](value);
     }
     var option0_props = {
       option: "curly"
@@ -14990,12 +15066,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     });
     binding_callbacks.push(() => bind(option0, "checked", option0_checked_binding));
     function option1_checked_binding(value) {
-      ctx[15](value);
+      ctx[17](value);
     }
     var option1_props = {
       option: "enclosingBraces",
       $$slots: {
-        default: [create_default_slot_22]
+        default: [create_default_slot_32]
       },
       $$scope: {
         ctx
@@ -15009,100 +15085,119 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     });
     binding_callbacks.push(() => bind(option1, "checked", option1_checked_binding));
     function option2_checked_binding(value) {
-      ctx[16](value);
+      ctx[19](value);
     }
     var option2_props = {
-      option: "stripEnclosingBraces"
+      option: "removeBraces",
+      $$slots: {
+        default: [create_default_slot_22]
+      },
+      $$scope: {
+        ctx
+      }
     };
-    if (ctx[1] !== void 0) {
-      option2_props.checked = ctx[1];
+    if (ctx[12] !== void 0) {
+      option2_props.checked = ctx[12];
     }
     option2 = new Option_default({
       props: option2_props
     });
     binding_callbacks.push(() => bind(option2, "checked", option2_checked_binding));
     function option3_checked_binding(value) {
-      ctx[17](value);
+      ctx[20](value);
     }
     var option3_props = {
-      option: "numeric"
+      option: "stripEnclosingBraces"
     };
-    if (ctx[2] !== void 0) {
-      option3_props.checked = ctx[2];
+    if (ctx[1] !== void 0) {
+      option3_props.checked = ctx[1];
     }
     option3 = new Option_default({
       props: option3_props
     });
     binding_callbacks.push(() => bind(option3, "checked", option3_checked_binding));
     function option4_checked_binding(value) {
-      ctx[18](value);
+      ctx[21](value);
     }
     var option4_props = {
-      option: "dropAllCaps"
+      option: "numeric"
     };
-    if (ctx[3] !== void 0) {
-      option4_props.checked = ctx[3];
+    if (ctx[2] !== void 0) {
+      option4_props.checked = ctx[2];
     }
     option4 = new Option_default({
       props: option4_props
     });
     binding_callbacks.push(() => bind(option4, "checked", option4_checked_binding));
     function option5_checked_binding(value) {
-      ctx[19](value);
+      ctx[22](value);
     }
     var option5_props = {
-      option: "escape"
+      option: "dropAllCaps"
     };
-    if (ctx[4] !== void 0) {
-      option5_props.checked = ctx[4];
+    if (ctx[3] !== void 0) {
+      option5_props.checked = ctx[3];
     }
     option5 = new Option_default({
       props: option5_props
     });
     binding_callbacks.push(() => bind(option5, "checked", option5_checked_binding));
     function option6_checked_binding(value) {
-      ctx[20](value);
+      ctx[23](value);
     }
     var option6_props = {
-      option: "encodeUrls"
+      option: "escape"
     };
-    if (ctx[5] !== void 0) {
-      option6_props.checked = ctx[5];
+    if (ctx[4] !== void 0) {
+      option6_props.checked = ctx[4];
     }
     option6 = new Option_default({
       props: option6_props
     });
     binding_callbacks.push(() => bind(option6, "checked", option6_checked_binding));
     function option7_checked_binding(value) {
-      ctx[21](value);
+      ctx[24](value);
     }
     var option7_props = {
-      option: "removeEmptyFields"
+      option: "encodeUrls"
     };
-    if (ctx[6] !== void 0) {
-      option7_props.checked = ctx[6];
+    if (ctx[5] !== void 0) {
+      option7_props.checked = ctx[5];
     }
     option7 = new Option_default({
       props: option7_props
     });
     binding_callbacks.push(() => bind(option7, "checked", option7_checked_binding));
     function option8_checked_binding(value) {
-      ctx[22](value);
+      ctx[25](value);
     }
     var option8_props = {
-      option: "removeDuplicateFields"
+      option: "removeEmptyFields"
     };
-    if (ctx[7] !== void 0) {
-      option8_props.checked = ctx[7];
+    if (ctx[6] !== void 0) {
+      option8_props.checked = ctx[6];
     }
     option8 = new Option_default({
       props: option8_props
     });
     binding_callbacks.push(() => bind(option8, "checked", option8_checked_binding));
     function option9_checked_binding(value) {
-      ctx[24](value);
+      ctx[26](value);
     }
     var option9_props = {
+      option: "removeDuplicateFields"
+    };
+    if (ctx[7] !== void 0) {
+      option9_props.checked = ctx[7];
+    }
+    option9 = new Option_default({
+      props: option9_props
+    });
+    binding_callbacks.push(() => bind(option9, "checked", option9_checked_binding));
+    function option10_checked_binding(value) {
+      ctx[28](value);
+    }
+    var option10_props = {
       option: "maxAuthors",
       $$slots: {
         default: [create_default_slot_12]
@@ -15112,12 +15207,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     };
     if (ctx[8] !== void 0) {
-      option9_props.checked = ctx[8];
+      option10_props.checked = ctx[8];
     }
-    option9 = new Option_default({
-      props: option9_props
+    option10 = new Option_default({
+      props: option10_props
     });
-    binding_callbacks.push(() => bind(option9, "checked", option9_checked_binding));
+    binding_callbacks.push(() => bind(option10, "checked", option10_checked_binding));
     return {
       c() {
         div = element("div");
@@ -15141,6 +15236,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         create_component(option8.$$.fragment);
         t9 = space();
         create_component(option9.$$.fragment);
+        t10 = space();
+        create_component(option10.$$.fragment);
         attr(div, "id", "valueOptions");
       },
       m(target, anchor) {
@@ -15165,6 +15262,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         mount_component(option8, target, anchor);
         insert(target, t9, anchor);
         mount_component(option9, target, anchor);
+        insert(target, t10, anchor);
+        mount_component(option10, target, anchor);
         current = true;
       },
       p(ctx2, dirty) {
@@ -15176,7 +15275,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         option0.$set(option0_changes);
         var option1_changes = {};
-        if (dirty[0] & 2048 | dirty[1] & 32) {
+        if (dirty[0] & 2048 | dirty[1] & 2048) {
           option1_changes.$$scope = {
             dirty,
             ctx: ctx2
@@ -15189,67 +15288,80 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         option1.$set(option1_changes);
         var option2_changes = {};
-        if (!updating_checked_2 && dirty[0] & 2) {
-          updating_checked_2 = true;
-          option2_changes.checked = ctx2[1];
-          add_flush_callback(() => updating_checked_2 = false);
-        }
-        option2.$set(option2_changes);
-        var option3_changes = {};
-        if (!updating_checked_3 && dirty[0] & 4) {
-          updating_checked_3 = true;
-          option3_changes.checked = ctx2[2];
-          add_flush_callback(() => updating_checked_3 = false);
-        }
-        option3.$set(option3_changes);
-        var option4_changes = {};
-        if (!updating_checked_4 && dirty[0] & 8) {
-          updating_checked_4 = true;
-          option4_changes.checked = ctx2[3];
-          add_flush_callback(() => updating_checked_4 = false);
-        }
-        option4.$set(option4_changes);
-        var option5_changes = {};
-        if (!updating_checked_5 && dirty[0] & 16) {
-          updating_checked_5 = true;
-          option5_changes.checked = ctx2[4];
-          add_flush_callback(() => updating_checked_5 = false);
-        }
-        option5.$set(option5_changes);
-        var option6_changes = {};
-        if (!updating_checked_6 && dirty[0] & 32) {
-          updating_checked_6 = true;
-          option6_changes.checked = ctx2[5];
-          add_flush_callback(() => updating_checked_6 = false);
-        }
-        option6.$set(option6_changes);
-        var option7_changes = {};
-        if (!updating_checked_7 && dirty[0] & 64) {
-          updating_checked_7 = true;
-          option7_changes.checked = ctx2[6];
-          add_flush_callback(() => updating_checked_7 = false);
-        }
-        option7.$set(option7_changes);
-        var option8_changes = {};
-        if (!updating_checked_8 && dirty[0] & 128) {
-          updating_checked_8 = true;
-          option8_changes.checked = ctx2[7];
-          add_flush_callback(() => updating_checked_8 = false);
-        }
-        option8.$set(option8_changes);
-        var option9_changes = {};
-        if (dirty[0] & 512 | dirty[1] & 32) {
-          option9_changes.$$scope = {
+        if (dirty[0] & 8192 | dirty[1] & 2048) {
+          option2_changes.$$scope = {
             dirty,
             ctx: ctx2
           };
         }
-        if (!updating_checked_9 && dirty[0] & 256) {
+        if (!updating_checked_2 && dirty[0] & 4096) {
+          updating_checked_2 = true;
+          option2_changes.checked = ctx2[12];
+          add_flush_callback(() => updating_checked_2 = false);
+        }
+        option2.$set(option2_changes);
+        var option3_changes = {};
+        if (!updating_checked_3 && dirty[0] & 2) {
+          updating_checked_3 = true;
+          option3_changes.checked = ctx2[1];
+          add_flush_callback(() => updating_checked_3 = false);
+        }
+        option3.$set(option3_changes);
+        var option4_changes = {};
+        if (!updating_checked_4 && dirty[0] & 4) {
+          updating_checked_4 = true;
+          option4_changes.checked = ctx2[2];
+          add_flush_callback(() => updating_checked_4 = false);
+        }
+        option4.$set(option4_changes);
+        var option5_changes = {};
+        if (!updating_checked_5 && dirty[0] & 8) {
+          updating_checked_5 = true;
+          option5_changes.checked = ctx2[3];
+          add_flush_callback(() => updating_checked_5 = false);
+        }
+        option5.$set(option5_changes);
+        var option6_changes = {};
+        if (!updating_checked_6 && dirty[0] & 16) {
+          updating_checked_6 = true;
+          option6_changes.checked = ctx2[4];
+          add_flush_callback(() => updating_checked_6 = false);
+        }
+        option6.$set(option6_changes);
+        var option7_changes = {};
+        if (!updating_checked_7 && dirty[0] & 32) {
+          updating_checked_7 = true;
+          option7_changes.checked = ctx2[5];
+          add_flush_callback(() => updating_checked_7 = false);
+        }
+        option7.$set(option7_changes);
+        var option8_changes = {};
+        if (!updating_checked_8 && dirty[0] & 64) {
+          updating_checked_8 = true;
+          option8_changes.checked = ctx2[6];
+          add_flush_callback(() => updating_checked_8 = false);
+        }
+        option8.$set(option8_changes);
+        var option9_changes = {};
+        if (!updating_checked_9 && dirty[0] & 128) {
           updating_checked_9 = true;
-          option9_changes.checked = ctx2[8];
+          option9_changes.checked = ctx2[7];
           add_flush_callback(() => updating_checked_9 = false);
         }
         option9.$set(option9_changes);
+        var option10_changes = {};
+        if (dirty[0] & 512 | dirty[1] & 2048) {
+          option10_changes.$$scope = {
+            dirty,
+            ctx: ctx2
+          };
+        }
+        if (!updating_checked_10 && dirty[0] & 256) {
+          updating_checked_10 = true;
+          option10_changes.checked = ctx2[8];
+          add_flush_callback(() => updating_checked_10 = false);
+        }
+        option10.$set(option10_changes);
       },
       i(local) {
         if (current) return;
@@ -15263,6 +15375,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         transition_in(option7.$$.fragment, local);
         transition_in(option8.$$.fragment, local);
         transition_in(option9.$$.fragment, local);
+        transition_in(option10.$$.fragment, local);
         current = true;
       },
       o(local) {
@@ -15276,6 +15389,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         transition_out(option7.$$.fragment, local);
         transition_out(option8.$$.fragment, local);
         transition_out(option9.$$.fragment, local);
+        transition_out(option10.$$.fragment, local);
         current = false;
       },
       d(detaching) {
@@ -15300,6 +15414,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         destroy_component(option8, detaching);
         if (detaching) detach(t9);
         destroy_component(option9, detaching);
+        if (detaching) detach(t10);
+        destroy_component(option10, detaching);
       }
     };
   }
@@ -15328,7 +15444,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       },
       p(ctx2, dirty) {
         var collapsible_changes = {};
-        if (dirty[0] & 4095 | dirty[1] & 32) {
+        if (dirty[0] & 16383 | dirty[1] & 2048) {
           collapsible_changes.$$scope = {
             dirty,
             ctx: ctx2
@@ -15351,7 +15467,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     };
   }
   function instance7($$self, $$props, $$invalidate) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
     var options = $$props.options;
     var curly = (_a = options.curly) !== null && _a !== void 0 ? _a : false;
     var stripEnclosingBraces = (_b = options.stripEnclosingBraces) !== null && _b !== void 0 ? _b : false;
@@ -15365,6 +15481,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     var maxAuthorsValue = (_j = options.maxAuthors) !== null && _j !== void 0 ? _j : 3;
     var enclosingBracesChecked = options.enclosingBraces !== void 0 && options.enclosingBraces.length > 0;
     var enclosingBracesValue = (_l = (_k = options.enclosingBraces) === null || _k === void 0 ? void 0 : _k.join(" ")) !== null && _l !== void 0 ? _l : "title";
+    var removeBracesChecked = options.removeBraces !== void 0 && options.removeBraces.length > 0;
+    var removeBracesValue = (_o = (_m = options.enclosingBraces) === null || _m === void 0 ? void 0 : _m.join(" ")) !== null && _o !== void 0 ? _o : "title";
     function option0_checked_binding(value) {
       curly = value;
       $$invalidate(0, curly);
@@ -15377,31 +15495,39 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       enclosingBracesChecked = value;
       $$invalidate(10, enclosingBracesChecked);
     }
+    function textarea_input_handler_1() {
+      removeBracesValue = this.value;
+      $$invalidate(13, removeBracesValue);
+    }
     function option2_checked_binding(value) {
+      removeBracesChecked = value;
+      $$invalidate(12, removeBracesChecked);
+    }
+    function option3_checked_binding(value) {
       stripEnclosingBraces = value;
       $$invalidate(1, stripEnclosingBraces);
     }
-    function option3_checked_binding(value) {
+    function option4_checked_binding(value) {
       numeric = value;
       $$invalidate(2, numeric);
     }
-    function option4_checked_binding(value) {
+    function option5_checked_binding(value) {
       dropAllCaps = value;
       $$invalidate(3, dropAllCaps);
     }
-    function option5_checked_binding(value) {
+    function option6_checked_binding(value) {
       escape = value;
       $$invalidate(4, escape);
     }
-    function option6_checked_binding(value) {
+    function option7_checked_binding(value) {
       encodeUrls = value;
       $$invalidate(5, encodeUrls);
     }
-    function option7_checked_binding(value) {
+    function option8_checked_binding(value) {
       removeEmptyFields = value;
       $$invalidate(6, removeEmptyFields);
     }
-    function option8_checked_binding(value) {
+    function option9_checked_binding(value) {
       removeDuplicateFields = value;
       $$invalidate(7, removeDuplicateFields);
     }
@@ -15409,36 +15535,37 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       maxAuthorsValue = to_number(this.value);
       $$invalidate(9, maxAuthorsValue);
     }
-    function option9_checked_binding(value) {
+    function option10_checked_binding(value) {
       maxAuthorsChecked = value;
       $$invalidate(8, maxAuthorsChecked);
     }
     $$self.$$set = $$props2 => {
-      if ("options" in $$props2) $$invalidate(12, options = $$props2.options);
+      if ("options" in $$props2) $$invalidate(14, options = $$props2.options);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & 4095) {
+      if ($$self.$$.dirty[0] & 16383) {
         $: {
-          $$invalidate(12, options.curly = curly, options);
-          $$invalidate(12, options.stripEnclosingBraces = stripEnclosingBraces, options);
-          $$invalidate(12, options.numeric = numeric, options);
-          $$invalidate(12, options.dropAllCaps = dropAllCaps, options);
-          $$invalidate(12, options.escape = escape, options);
-          $$invalidate(12, options.encodeUrls = encodeUrls, options);
-          $$invalidate(12, options.removeEmptyFields = removeEmptyFields, options);
-          $$invalidate(12, options.removeDuplicateFields = removeDuplicateFields, options);
-          $$invalidate(12, options.maxAuthors = maxAuthorsChecked ? maxAuthorsValue : void 0, options);
-          $$invalidate(12, options.enclosingBraces = enclosingBracesChecked && enclosingBracesValue.length > 0 ? enclosingBracesValue.split(/[\n\t ,]+/) : void 0, options);
+          $$invalidate(14, options.curly = curly, options);
+          $$invalidate(14, options.stripEnclosingBraces = stripEnclosingBraces, options);
+          $$invalidate(14, options.numeric = numeric, options);
+          $$invalidate(14, options.dropAllCaps = dropAllCaps, options);
+          $$invalidate(14, options.escape = escape, options);
+          $$invalidate(14, options.encodeUrls = encodeUrls, options);
+          $$invalidate(14, options.removeEmptyFields = removeEmptyFields, options);
+          $$invalidate(14, options.removeDuplicateFields = removeDuplicateFields, options);
+          $$invalidate(14, options.maxAuthors = maxAuthorsChecked ? maxAuthorsValue : void 0, options);
+          $$invalidate(14, options.enclosingBraces = enclosingBracesChecked && enclosingBracesValue.length > 0 ? enclosingBracesValue.split(/[\n\t ,]+/) : void 0, options);
+          $$invalidate(14, options.removeBraces = removeBracesChecked && removeBracesValue.length > 0 ? removeBracesValue.split(/[\n\t ,]+/) : void 0, options);
         }
       }
     };
-    return [curly, stripEnclosingBraces, numeric, dropAllCaps, escape, encodeUrls, removeEmptyFields, removeDuplicateFields, maxAuthorsChecked, maxAuthorsValue, enclosingBracesChecked, enclosingBracesValue, options, option0_checked_binding, textarea_input_handler, option1_checked_binding, option2_checked_binding, option3_checked_binding, option4_checked_binding, option5_checked_binding, option6_checked_binding, option7_checked_binding, option8_checked_binding, input_input_handler, option9_checked_binding];
+    return [curly, stripEnclosingBraces, numeric, dropAllCaps, escape, encodeUrls, removeEmptyFields, removeDuplicateFields, maxAuthorsChecked, maxAuthorsValue, enclosingBracesChecked, enclosingBracesValue, removeBracesChecked, removeBracesValue, options, option0_checked_binding, textarea_input_handler, option1_checked_binding, textarea_input_handler_1, option2_checked_binding, option3_checked_binding, option4_checked_binding, option5_checked_binding, option6_checked_binding, option7_checked_binding, option8_checked_binding, option9_checked_binding, input_input_handler, option10_checked_binding];
   }
   var ValueOptions = class extends SvelteComponent {
     constructor(options) {
       super();
       init(this, options, instance7, create_fragment7, safe_not_equal, {
-        options: 12
+        options: 14
       }, null, [-1, -1]);
     }
   };
@@ -16614,7 +16741,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     };
   }
-  function create_default_slot_32(ctx) {
+  function create_default_slot_33(ctx) {
     var input;
     var t0;
     var strong;
@@ -16758,7 +16885,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     label2 = new Label_default({
       props: {
         $$slots: {
-          default: [create_default_slot_32]
+          default: [create_default_slot_33]
         },
         $$scope: {
           ctx
