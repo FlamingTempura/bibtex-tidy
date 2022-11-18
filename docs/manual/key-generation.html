@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>BibTex Tidy: Key Generation</title>
+		<style>
+			body {
+				font-family: sans-serif;
+				color: rgb(27, 28, 28);
+				line-height: 1.5em;
+				margin: 28px;
+			}
+			code {
+				background: #f1f1f1;
+				padding: 0 4px;
+				color: rgb(43, 45, 45);
+				border-radius: 3px;
+			}
+			h1,
+			h2 {
+				border-bottom: 1px solid #e3e2e2;
+				padding-bottom: 12px;
+				margin-top: 1.2em;
+			}
+			li {
+				margin: 0.2em 0;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>BibTeX Tidy: Key Generation</h1>
+
+		<p style="background: pink; padding: 12px; border-radius: 5px">
+			<strong>Experimental:</strong> This is an experimental feature that could
+			change without warning.
+		</p>
+
+		<p>
+			BibTeX Tidy allows you to generate new keys for each BibTeX entry using a
+			template language based on the
+			<a href="https://docs.jabref.org/setup/citationkeypatterns"
+				>JabRef key pattern</a
+			>.
+		</p>
+
+		<p>
+			You can either use the default template
+			<code
+				><!--DEFAULT_KEY-->[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]<!--END--></code
+			>
+			or specify a custom template.
+		</p>
+
+		<p>
+			You can include any text in the template. Any text within square braces
+			will be evaluated as markers.
+		</p>
+
+		<h2>Field markers</h2>
+
+		<p>
+			Write <code>[PUBLISHER]</code> to output the publisher field. Note that
+			invalid characters (such as spaces) will be removed. The output can be
+			adjusted using modifiers (see Modifiers section below).
+		</p>
+
+		<h2>Special markers</h2>
+
+		<ul>
+			<!--MARKERS--><li><code>[auth]</code>: Last name of first authors</li>
+<li><code>[authEtAl]</code>: If 1 or 2 authors, both authors, otherwise first author and EtAl</li>
+<li><code>[authors]</code>: Last name all authors</li>
+<li><code>[authorsN]</code>: Last name N authors, with EtAl if more</li>
+<li><code>[veryshorttitle]</code>: First non-function word of the title</li>
+<li><code>[shorttitle]</code>: First three non-function words of the title</li>
+<li><code>[title]</code>: Full title, capitalized</li>
+<li><code>[fulltitle]</code>: Full title, verbatim</li>
+<li><code>[year]</code>: Year</li>
+<li><code>[duplicateLetter]</code>: If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.</li>
+<li><code>[duplicateNumber]</code>: If the multiple entries end up with the same key, then insert a number.</li><!--END-->
+		</ul>
+
+		<p>
+			Function words:
+			<span
+				><!--WORDS-->a, about, above, across, against, along, among, an, and, around, at, before, behind, below, beneath, beside, between, beyond, but, by, down, during, except, for, from, in, inside, into, like, near, nor, of, off, on, onto, or, since, so, the, through, to, toward, under, until, up, upon, with, within, without, yet<!--END--></span
+			>
+		</p>
+
+		<h2>Modifiers</h2>
+
+		<p>
+			Modifiers allow you to change the output of a marker. For example,
+			<code>[PUBLISHER:lower]</code> will output the publisher field in
+			lowercase.
+		</p>
+
+		<ul>
+			<!--MODIFIERS--><li><code>:required</code>: If data is missing, revert to existing key</li>
+<li><code>:lower</code>: Convert to lowercase</li>
+<li><code>:upper</code>: Convert to uppercase</li>
+<li><code>:capitalize</code>: Capitalize first letter of each word</li><!--END-->
+		</ul>
+	</body>
+</html>

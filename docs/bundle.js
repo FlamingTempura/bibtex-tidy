@@ -12227,6 +12227,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   var DEFAULT_WRAP = 80;
   var DEFAULT_FIELD_SORT = ["title", "shorttitle", "author", "year", "month", "day", "journal", "booktitle", "location", "on", "publisher", "address", "series", "volume", "number", "pages", "doi", "isbn", "issn", "url", "urldate", "copyright", "category", "note", "metadata"];
   var DEFAULT_SORT = ["key"];
+  var DEFAULT_KEY_TEMPLATE = "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
   var optionDefinitions = [{
     key: "help",
     cli: {
@@ -12560,7 +12561,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     description: ["For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning."],
     type: "boolean | string",
     convertBoolean: {
-      true: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
+      true: DEFAULT_KEY_TEMPLATE,
       false: void 0
     },
     defaultValue: void 0
@@ -13199,18 +13200,23 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     },
     veryshorttitle: {
+      description: "First non-function word of the title",
       callback: v => nonFunctionWords(title(v)).slice(0, 1)
     },
     shorttitle: {
+      description: "First three non-function words of the title",
       callback: v => nonFunctionWords(title(v)).slice(0, 3)
     },
     title: {
+      description: "Full title, capitalized",
       callback: v => capitalize(words(title(v)))
     },
     fulltitle: {
+      description: "Full title, verbatim",
       callback: v => words(title(v))
     },
     year: {
+      description: "Year",
       callback: v => {
         var _a;
         var year = (_a = v.get("year")) == null ? void 0 : _a.replace(/[^0-9]/g, "");
@@ -13222,7 +13228,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       callback: () => ["[duplicateLetter]"]
     },
     duplicateNumber: {
-      description: "If the multiple entries end up with the same key, then insert a number 0-1.",
+      description: "If the multiple entries end up with the same key, then insert a number.",
       callback: () => ["[duplicateNumber]"]
     }
   };
@@ -13235,12 +13241,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     },
     lower: {
+      description: "Convert to lowercase",
       callback: words2 => words2.map(word => word.toLocaleLowerCase())
     },
     upper: {
+      description: "Convert to uppercase",
       callback: words2 => words2.map(word => word.toLocaleUpperCase())
     },
     capitalize: {
+      description: "Capitalize first letter of each word",
       callback: capitalize
     }
   };
@@ -15650,24 +15659,30 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   }
   function create_default_slot_14(ctx) {
     var t0;
+    var a;
     var br;
-    var t1;
+    var t2;
     var textarea;
     var mounted;
     var dispose;
     return {
       c() {
-        t0 = text("Template:");
+        t0 = text("Template: ");
+        a = element("a");
+        a.textContent = "More info";
         br = element("br");
-        t1 = space();
+        t2 = space();
         textarea = element("textarea");
+        attr(a, "href", "./manual/key-generation.html");
+        attr(a, "target", "_blank");
         attr(textarea, "name", "generateKeysTemplate");
         attr(textarea, "type", "text");
       },
       m(target, anchor) {
         insert(target, t0, anchor);
+        insert(target, a, anchor);
         insert(target, br, anchor);
-        insert(target, t1, anchor);
+        insert(target, t2, anchor);
         insert(target, textarea, anchor);
         set_input_value(textarea, ctx[7]);
         if (!mounted) {
@@ -15682,8 +15697,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       },
       d(detaching) {
         if (detaching) detach(t0);
+        if (detaching) detach(a);
         if (detaching) detach(br);
-        if (detaching) detach(t1);
+        if (detaching) detach(t2);
         if (detaching) detach(textarea);
         mounted = false;
         dispose();

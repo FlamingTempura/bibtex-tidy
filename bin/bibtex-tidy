@@ -42,6 +42,7 @@ var DEFAULT_FIELD_SORT = [
   "metadata"
 ];
 var DEFAULT_SORT = ["key"];
+var DEFAULT_KEY_TEMPLATE = "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
 var optionDefinitions = [
   {
     key: "help",
@@ -387,7 +388,7 @@ var optionDefinitions = [
     ],
     type: "boolean | string",
     convertBoolean: {
-      true: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
+      true: DEFAULT_KEY_TEMPLATE,
       false: void 0
     },
     defaultValue: void 0
@@ -3700,18 +3701,23 @@ var SPECIAL_MARKERS = {
     }
   },
   veryshorttitle: {
+    description: "First non-function word of the title",
     callback: (v) => nonFunctionWords(title(v)).slice(0, 1)
   },
   shorttitle: {
+    description: "First three non-function words of the title",
     callback: (v) => nonFunctionWords(title(v)).slice(0, 3)
   },
   title: {
+    description: "Full title, capitalized",
     callback: (v) => capitalize(words(title(v)))
   },
   fulltitle: {
+    description: "Full title, verbatim",
     callback: (v) => words(title(v))
   },
   year: {
+    description: "Year",
     callback: (v) => {
       var _a;
       const year = (_a = v.get("year")) == null ? void 0 : _a.replace(/[^0-9]/g, "");
@@ -3723,7 +3729,7 @@ var SPECIAL_MARKERS = {
     callback: () => ["[duplicateLetter]"]
   },
   duplicateNumber: {
-    description: "If the multiple entries end up with the same key, then insert a number 0-1.",
+    description: "If the multiple entries end up with the same key, then insert a number.",
     callback: () => ["[duplicateNumber]"]
   }
 };
@@ -3736,9 +3742,18 @@ var MODIFIERS = {
       return words2;
     }
   },
-  lower: { callback: (words2) => words2.map((word) => word.toLocaleLowerCase()) },
-  upper: { callback: (words2) => words2.map((word) => word.toLocaleUpperCase()) },
-  capitalize: { callback: capitalize }
+  lower: {
+    description: "Convert to lowercase",
+    callback: (words2) => words2.map((word) => word.toLocaleLowerCase())
+  },
+  upper: {
+    description: "Convert to uppercase",
+    callback: (words2) => words2.map((word) => word.toLocaleUpperCase())
+  },
+  capitalize: {
+    description: "Capitalize first letter of each word",
+    callback: capitalize
+  }
 };
 var MissingRequiredData = class extends Error {
 };

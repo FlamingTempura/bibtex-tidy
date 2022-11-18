@@ -2,10 +2,10 @@ import { isEntryNode } from './utils';
 import type { RootNode, EntryNode } from './bibtex-parser';
 import { parseAuthors } from './parseAuthors';
 
-const SPECIAL_MARKERS: Record<
+export const SPECIAL_MARKERS: Record<
 	string,
 	{
-		description?: string;
+		description: string;
 		callback: (
 			valueLookup: Map<string, string>,
 			n: number | undefined
@@ -55,18 +55,23 @@ const SPECIAL_MARKERS: Record<
 		},
 	},
 	veryshorttitle: {
+		description: 'First non-function word of the title',
 		callback: (v) => nonFunctionWords(title(v)).slice(0, 1),
 	},
 	shorttitle: {
+		description: 'First three non-function words of the title',
 		callback: (v) => nonFunctionWords(title(v)).slice(0, 3),
 	},
 	title: {
+		description: 'Full title, capitalized',
 		callback: (v) => capitalize(words(title(v))),
 	},
 	fulltitle: {
+		description: 'Full title, verbatim',
 		callback: (v) => words(title(v)),
 	},
 	year: {
+		description: 'Year',
 		callback: (v) => {
 			const year = v.get('year')?.replace(/[^0-9]/g, '');
 			return year ? [year] : [];
@@ -79,14 +84,14 @@ const SPECIAL_MARKERS: Record<
 	},
 	duplicateNumber: {
 		description:
-			'If the multiple entries end up with the same key, then insert a number 0-1.',
+			'If the multiple entries end up with the same key, then insert a number.',
 		callback: () => ['[duplicateNumber]'],
 	},
 };
 
-const MODIFIERS: Record<
+export const MODIFIERS: Record<
 	string,
-	{ description?: string; callback: (value: string[]) => string[] }
+	{ description: string; callback: (value: string[]) => string[] }
 > = {
 	required: {
 		description: 'If data is missing, revert to existing key',
@@ -95,9 +100,18 @@ const MODIFIERS: Record<
 			return words;
 		},
 	},
-	lower: { callback: (words) => words.map((word) => word.toLocaleLowerCase()) },
-	upper: { callback: (words) => words.map((word) => word.toLocaleUpperCase()) },
-	capitalize: { callback: capitalize },
+	lower: {
+		description: 'Convert to lowercase',
+		callback: (words) => words.map((word) => word.toLocaleLowerCase()),
+	},
+	upper: {
+		description: 'Convert to uppercase',
+		callback: (words) => words.map((word) => word.toLocaleUpperCase()),
+	},
+	capitalize: {
+		description: 'Capitalize first letter of each word',
+		callback: capitalize,
+	},
 };
 
 class MissingRequiredData extends Error {}
@@ -143,7 +157,7 @@ export function generateKeys(
 		for (let i = 0; i < entries.length; i++) {
 			const entry = entries[i];
 			const duplicateLetter =
-				entries.length > 1 ? String.fromCharCode(97 + i) : '';
+				entries.length > 1 ? String.fromCharCode(97 + i) : ''; // FIXME: this will break after 26 duplicates
 			const duplicateNumber = entries.length > 1 ? String(i + 1) : '';
 			entry.key = key
 				?.replace(/\[duplicateLetter\]/g, duplicateLetter)
@@ -200,7 +214,7 @@ export function generateKey(
 }
 
 //prettier-ignore
-const functionWords = new Set([
+export const functionWords = new Set([
   'a', 'about', 'above', 'across', 'against', 'along', 'among', 'an', 'and', 
   'around', 'at', 'before', 'behind', 'below', 'beneath', 'beside', 'between', 
   'beyond', 'but', 'by', 'down', 'during', 'except', 'for', 'for', 'from', 

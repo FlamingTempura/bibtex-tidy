@@ -5,6 +5,8 @@
 
 	export let options: OptionsNormalized;
 
+	let showKeyTemplateGuide: boolean = false;
+
 	let omitChecked = options.omit !== undefined && options.omit.length > 0;
 	let omitValue = options.omit?.join(' ') ?? '';
 
@@ -53,7 +55,9 @@
 	<Option option="lowercase" bind:checked={lowercase} />
 
 	<Option option="generateKeys" bind:checked={generateKeysChecked}>
-		Template:<br />
+		Template: <a href="./manual/key-generation.html" target="_blank"
+			>More info</a
+		><br />
 		<textarea
 			name="generateKeysTemplate"
 			type="text"

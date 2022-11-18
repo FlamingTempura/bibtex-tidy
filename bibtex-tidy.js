@@ -30,6 +30,7 @@ var DEFAULT_SPACE = 2;
 var DEFAULT_WRAP = 80;
 var DEFAULT_FIELD_SORT = ["title", "shorttitle", "author", "year", "month", "day", "journal", "booktitle", "location", "on", "publisher", "address", "series", "volume", "number", "pages", "doi", "isbn", "issn", "url", "urldate", "copyright", "category", "note", "metadata"];
 var DEFAULT_SORT = ["key"];
+var DEFAULT_KEY_TEMPLATE = "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
 var optionDefinitions = [{
   key: "help",
   cli: {
@@ -363,7 +364,7 @@ var optionDefinitions = [{
   description: ["For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning."],
   type: "boolean | string",
   convertBoolean: {
-    true: "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
+    true: DEFAULT_KEY_TEMPLATE,
     false: void 0
   },
   defaultValue: void 0
@@ -1343,18 +1344,23 @@ var SPECIAL_MARKERS = {
     }
   },
   veryshorttitle: {
+    description: "First non-function word of the title",
     callback: v => nonFunctionWords(title(v)).slice(0, 1)
   },
   shorttitle: {
+    description: "First three non-function words of the title",
     callback: v => nonFunctionWords(title(v)).slice(0, 3)
   },
   title: {
+    description: "Full title, capitalized",
     callback: v => capitalize(words(title(v)))
   },
   fulltitle: {
+    description: "Full title, verbatim",
     callback: v => words(title(v))
   },
   year: {
+    description: "Year",
     callback: v => {
       var _a;
       var year = (_a = v.get("year")) == null ? void 0 : _a.replace(/[^0-9]/g, "");
@@ -1366,7 +1372,7 @@ var SPECIAL_MARKERS = {
     callback: () => ["[duplicateLetter]"]
   },
   duplicateNumber: {
-    description: "If the multiple entries end up with the same key, then insert a number 0-1.",
+    description: "If the multiple entries end up with the same key, then insert a number.",
     callback: () => ["[duplicateNumber]"]
   }
 };
@@ -1379,12 +1385,15 @@ var MODIFIERS = {
     }
   },
   lower: {
+    description: "Convert to lowercase",
     callback: words2 => words2.map(word => word.toLocaleLowerCase())
   },
   upper: {
+    description: "Convert to uppercase",
     callback: words2 => words2.map(word => word.toLocaleUpperCase())
   },
   capitalize: {
+    description: "Capitalize first letter of each word",
     callback: capitalize
   }
 };

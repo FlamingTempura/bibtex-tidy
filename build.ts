@@ -1,12 +1,17 @@
 import { version, author, homepage } from './package.json';
 import { writeFile, mkdir, chmod, readFile } from 'fs/promises';
-import { join, relative } from 'path';
+import { join } from 'path';
 import { build, buildSync, serve, type Plugin } from 'esbuild';
 import { transform as babel } from '@babel/core';
-import { optionDefinitions } from './src/optionDefinitions';
+import {
+	DEFAULT_KEY_TEMPLATE,
+	optionDefinitions,
+} from './src/optionDefinitions';
 import { wrapText } from './src/utils';
 import sveltePlugin from 'esbuild-svelte';
 import autoPreprocess from 'svelte-preprocess';
+import { generateDtsBundle } from 'dts-bundle-generator';
+import { functionWords, MODIFIERS, SPECIAL_MARKERS } from './src/generateKeys';
 
 const SRC_PATH = join(__dirname, 'src');
 const BUILD_PATH = join(SRC_PATH, '__generated__');
@@ -149,6 +154,38 @@ async function generateReadme() {
 	);
 }
 
+async function generateKeyTemplatePage() {
+	let doc = await readFile(
+		join(__dirname, 'docs/manual/key-generation.html'),
+		'utf8'
+	);
+	const markers = Object.entries(SPECIAL_MARKERS).map(
+		([k, { description }]) => `<li><code>[${k}]</code>: ${description}</li>`
+	);
+	const modifiers = Object.entries(MODIFIERS).map(
+		([k, { description }]) => `<li><code>:${k}</code>: ${description}</li>`
+	);
+
+	doc = doc
+		.replace(
+			/<!--DEFAULT_KEY-->.*?<!--END-->/s,
+			`<!--DEFAULT_KEY-->${DEFAULT_KEY_TEMPLATE}<!--END-->`
+		)
+		.replace(
+			/<!--MARKERS-->.*?<!--END-->/s,
+			`<!--MARKERS-->${markers.join('\n')}<!--END-->`
+		)
+		.replace(
+			/<!--MODIFIERS-->.*?<!--END-->/s,
+			`<!--MODIFIERS-->${modifiers.join('\n')}<!--END-->`
+		)
+		.replace(
+			/<!--WORDS-->.*?<!--END-->/s,
+			`<!--WORDS-->${[...functionWords].join(', ')}<!--END-->`
+		);
+	await writeFile(join(__dirname, 'docs/manual/key-generation.html'), doc);
+}
+
 function formatOptions(indent: number, lineWidth: number): string[] {
 	return optionDefinitions.flatMap((opt) => {
 		if (opt.deprecated) return [];
@@ -198,8 +235,6 @@ async function buildJSBundle() {
 	console.timeEnd('JS bundle built');
 }
 
-import { generateDtsBundle } from 'dts-bundle-generator';
-
 async function buildTypeDeclarations() {
 	console.time('Type declarations');
 	const typeFiles = generateDtsBundle([
@@ -224,7 +259,7 @@ async function buildCLI() {
 	console.timeEnd('CLI built');
 }
 
-async function buildWebBundle(serve?: boolean) {
+async function buildWebBundle() {
 	console.time('Web bundle built');
 
 	const { outputFiles } = await build({
@@ -294,6 +329,7 @@ if (process.argv.includes('--serve')) {
 				generateOptionTypes(),
 				generateVersionFile(),
 				generateManPage(),
+				generateKeyTemplatePage(),
 				generateCLIHelp(),
 				generateReadme(),
 			])

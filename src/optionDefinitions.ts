@@ -28,6 +28,8 @@ export const DEFAULT_FIELD_SORT =  [
 	'urldate', 'copyright', 'category', 'note', 'metadata'
 ]
 export const DEFAULT_SORT = ['key'];
+export const DEFAULT_KEY_TEMPLATE =
+	'[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]';
 
 export const optionDefinitions: OptionDefinition[] = [
 	{
@@ -381,7 +383,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		type: 'boolean | string',
 		convertBoolean: {
-			true: '[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]',
+			true: DEFAULT_KEY_TEMPLATE,
 			false: undefined,
 		},
 		defaultValue: undefined,
