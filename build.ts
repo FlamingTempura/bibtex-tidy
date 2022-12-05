@@ -1,7 +1,13 @@
 import { version, author, homepage } from './package.json';
 import { writeFile, mkdir, chmod, readFile } from 'fs/promises';
 import { join } from 'path';
-import { build, buildSync, serve, type Plugin } from 'esbuild';
+import {
+	build,
+	buildSync,
+	serve,
+	type OnLoadResult,
+	type Plugin,
+} from 'esbuild';
 import { transform as babel } from '@babel/core';
 import {
 	DEFAULT_KEY_TEMPLATE,
@@ -270,7 +276,11 @@ async function buildWebBundle() {
 		bundle: true,
 		write: false,
 		banner: { js: jsBanner.join('\n') },
-		plugins: [sveltePlugin({ preprocess: autoPreprocess() }), babelPlugin],
+		plugins: [
+			sveltePlugin({ preprocess: autoPreprocess() }),
+			googleFontPlugin,
+			babelPlugin,
+		],
 	});
 
 	for (const file of outputFiles) {
@@ -295,6 +305,7 @@ async function serveWeb() {
 					preprocess: autoPreprocess(),
 					compilerOptions: { enableSourcemap: true },
 				}),
+				googleFontPlugin,
 			],
 		}
 	);
@@ -317,6 +328,26 @@ const babelPlugin: Plugin = {
 				}
 			}
 		});
+	},
+};
+
+// Downloads google fonts and injects them as base64 urls into bundle css
+const googleFontPlugin: Plugin = {
+	name: 'google-font-loader',
+	setup(build) {
+		build.onResolve({ filter: /^https?:\/\/fonts\./ }, (args) => ({
+			path: args.path,
+			namespace: 'http-url',
+		}));
+		build.onLoad(
+			{ filter: /.*/, namespace: 'http-url' },
+			async (args): Promise<OnLoadResult> => {
+				const res = await fetch(args.path);
+				const contents = Buffer.from(await res.arrayBuffer());
+				const loader = args.path.endsWith('.ttf') ? 'dataurl' : 'css';
+				return { contents, loader };
+			}
+		);
 	},
 };
 
