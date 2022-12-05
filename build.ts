@@ -342,9 +342,14 @@ const googleFontPlugin: Plugin = {
 		build.onLoad(
 			{ filter: /.*/, namespace: 'http-url' },
 			async (args): Promise<OnLoadResult> => {
-				const res = await fetch(args.path);
+				const res = await fetch(args.path, {
+					headers: {
+						// ensures google responds with woff2 fonts
+						'User-Agent': 'Mozilla/5.0 Firefox/90.0',
+					},
+				});
 				const contents = Buffer.from(await res.arrayBuffer());
-				const loader = args.path.endsWith('.ttf') ? 'dataurl' : 'css';
+				const loader = args.path.endsWith('.woff2') ? 'dataurl' : 'css';
 				return { contents, loader };
 			}
 		);
