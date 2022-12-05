@@ -1,4 +1,5 @@
 <script lang="ts">
+	import IndentOptions from './IndentOptions.svelte';
 	import WhitespaceOptions from './WhitespaceOptions.svelte';
 	import ValueOptions from './ValueOptions.svelte';
 	import SortingOptions from './SortingOptions.svelte';
@@ -20,22 +21,28 @@
 	let dispatch = createEventDispatcher<{ tidy: void }>();
 </script>
 
-<div id="sidebar">
+<aside id="sidebar">
 	<form on:submit={() => false}>
-		<h1>BibTeX Tidy</h1>
-		<p>
-			This tool tidies bibtex files by fixing inconsistent whitespace, removing
-			duplicates, removing unwanted fields, and sorting entries.
-		</p>
-		<p>
-			<a class="btn" href="https://github.com/FlamingTempura/bibtex-tidy"
-				>Github</a
-			>
-			<a class="btn" href="https://github.com/FlamingTempura/bibtex-tidy/issues"
-				>Report a bug</a
-			>
-		</p>
+		<header class="intro">
+			<h1>BibTeX Tidy</h1>
+			<p>
+				This tool tidies bibtex files by fixing inconsistent whitespace,
+				removing duplicates, removing unwanted fields, and sorting entries.
+			</p>
+			<p>
+				<a class="btn" href="https://github.com/FlamingTempura/bibtex-tidy">
+					Github
+				</a>
+				<a
+					class="btn"
+					href="https://github.com/FlamingTempura/bibtex-tidy/issues"
+				>
+					Report a bug
+				</a>
+			</p>
+		</header>
 
+		<IndentOptions bind:options />
 		<WhitespaceOptions bind:options />
 		<ValueOptions bind:options />
 		<SortingOptions bind:options />
@@ -48,42 +55,49 @@
 		{#if status}
 			<Feedback {options} {status} />
 		{/if}
-		<button id="tidy" disabled={running} on:click={() => dispatch('tidy')}
-			>Tidy</button
-		>
+		<button id="tidy" disabled={running} on:click={() => dispatch('tidy')}>
+			Tidy
+		</button>
 	</div>
-</div>
+</aside>
 
 <style>
 	#sidebar {
-		background: rgba(154, 199, 255, 0.2);
-		bottom: 0;
-		box-shadow: 0 0 7px #000;
+		flex: 0 0 400px;
+		border-left: 1px solid var(--border-color);
 		display: flex;
 		flex-direction: column;
-		position: absolute;
-		right: 0;
-		top: 0;
-		width: 320px;
-		z-index: 10;
+		scrollbar-gutter: stable;
 	}
 	#sidebar form {
 		flex: 1 1 auto;
+		padding: 20px;
 		overflow: auto;
-		padding: 0 12px 200px 12px;
+	}
+	#sidebar h1 {
+		font: var(--sans-h1);
+		color: var(--header-fg);
+		margin: 0 0 16px 0;
+		padding: 0;
+	}
+	.intro {
+		margin-bottom: 20px;
 	}
 	#sidebar .run {
 		flex: 0 0 auto;
+		padding: 20px;
+		border-top: 1px solid var(--border-color);
 	}
 	#sidebar #tidy {
-		background: var(--blue);
+		background: var(--light-blue);
 		border: 0;
-		box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-		color: #fff;
-		font: var(--sans-title);
-		font-size: 21px;
-		height: 60px;
+		color: var(--main-bg);
+		font: var(--sans-h1);
+		font-size: 15px;
+		height: 36px;
 		width: 100%;
+		border-radius: 3px;
+		position: relative;
 	}
 	#sidebar #tidy[disabled] {
 		background: var(--dark-gray);
@@ -92,13 +106,14 @@
 	}
 	#sidebar #tidy[disabled]:after {
 		animation: pulse 0.9s infinite linear;
+		animation-delay: -0.45s;
 		background: #fff;
 		border-radius: 50%;
 		content: '';
 		height: 20px;
-		left: 140px;
+		left: 160px;
 		position: absolute;
-		top: 22px;
+		top: 8px;
 		width: 20px;
 	}
 

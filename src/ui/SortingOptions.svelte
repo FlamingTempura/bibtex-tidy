@@ -27,22 +27,27 @@
 
 <Collapsible title="Sorting" open={true}>
 	<Option option="sort" bind:checked={sortChecked}>
-		Fields to sort by: <br />
-		<textarea name="sortList" spellcheck="false" bind:value={sortValue} /><br />
-		Space delimited, e.g: <code>key type publisher author</code>. For descending
-		order, prefix the field name with a dash, e.g.
-		<code>-year author</code>.
+		<label>
+			Fields to sort by:
+			<textarea name="sortList" spellcheck="false" bind:value={sortValue} />
+		</label>
+		<p>
+			Space delimited, e.g: <code>key type publisher author</code>. For
+			descending order, prefix the field name with a dash, e.g.
+			<code>-year author</code>.
+		</p>
 	</Option>
 
 	<Option option="sortFields" bind:checked={sortFieldsChecked}>
-		Field order: <br />
-		<textarea
-			name="sortFieldList"
-			spellcheck="false"
-			bind:value={sortFieldsValue}
-		/>
-		<br />
-		Space delimited, e.g: <code>title author year</code>
+		<label>
+			Field order:
+			<textarea
+				name="sortFieldList"
+				spellcheck="false"
+				bind:value={sortFieldsValue}
+			/>
+		</label>
+		<p>Space delimited, e.g: <code>title author year</code></p>
 	</Option>
 </Collapsible>
 

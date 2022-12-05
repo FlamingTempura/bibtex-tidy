@@ -44,20 +44,17 @@
 	}
 </script>
 
-<div id="editor">
+<main id="editor">
 	<textarea bind:this={textarea} />
 	<CopyButton {bibtex} />
-</div>
+</main>
 
 <style>
 	@import 'codemirror/lib/codemirror.css';
 
 	#editor {
-		bottom: 0;
-		left: 0;
-		position: absolute;
-		right: 320px;
-		top: 0;
+		flex-grow: 1;
+		position: relative;
 	}
 	#editor textarea {
 		height: 100%;

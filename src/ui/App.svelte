@@ -85,28 +85,56 @@
 <Sidebar on:tidy={handleTidy} {status} {running} bind:options />
 
 <style>
-	@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400&family=Inconsolata:wght@400;600&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Inconsolata:wght@400;600&display=swap');
 
 	:global(:root) {
-		--header-bg: rgba(0, 0, 0, 0.2);
-		--main-bg: #1e272e;
-		--main-fg: #edf0f3;
+		/* https://coolors.co/gradient-palette/1c222a-505f69?number=10 */
+		--dark1: #1c222aff;
+		--dark2: #222931ff;
+		--dark3: #283038ff;
+		--dark4: #2d363fff;
+		--dark5: #333d46ff;
+		--dark6: #39444dff;
+		--dark7: #3f4b54ff;
+		--dark8: #44515bff;
+		--dark9: #4a5862ff;
+		--dark10: #505f69ff;
+
+		/* https://coolors.co/gradient-palette/eaeaea-968c8d?number=6 */
+		--light1: #eaeaeaff;
+		--light2: #d9d7d7ff;
+		--light3: #c8c4c5ff;
+		--light4: #b8b2b2ff;
+		--light5: #a79fa0ff;
+		--light6: #968c8dff;
+
 		--red: #de3040;
 		--green: #05c46b;
 		--orange: #f9b653;
 		--pink: #f36eb7;
 		--light-blue: #71cafd;
-		--blue: #179fef;
-		--light-gray: #bdbdbd;
-		--dark-gray: #696867;
+
+		--main-bg: var(--dark1);
+		--border-color: var(--dark6);
+		--hover-bg: var(--dark3);
+		--main-fg: var(--light2);
+		--header-fg: var(--light1);
+		--textfield-bg: var(--dark3);
+		--light-gray: var(--light3);
+		--dark-gray: var(--light6);
+
 		--mono-normal: 400 14px 'Inconsolata', monospace;
 		--mono-bold: 600 14px 'Inconsolata', monospace;
-		--sans-normal: 300 13px 'IBM Plex Sans', sans-serif;
-		--sans-title: 400 15px 'IBM Plex Sans', sans-serif;
+		--sans-normal: 300 14px 'IBM Plex Sans', sans-serif;
+		--sans-h1: 500 16px 'IBM Plex Sans', sans-serif;
+		--sans-h2: 500 14px 'IBM Plex Sans', sans-serif;
 	}
 
 	:global(*) {
 		box-sizing: border-box;
+	}
+	:global(html) {
+		height: 100%;
 	}
 	:global(body) {
 		background: var(--main-bg);
@@ -114,30 +142,50 @@
 		font: var(--sans-normal);
 		line-height: 1.5em;
 		margin: 0;
+		display: flex;
+		height: 100%;
 	}
 	:global(button) {
 		cursor: pointer;
 	}
-	:global(h1) {
-		font: var(--sans-title);
-		padding: 12px;
-		margin: 0px -12px 8px;
-		background: var(--header-bg);
+	:global(input[type='number']),
+	:global(textarea) {
+		background: var(--textfield-bg);
+		color: var(--header-fg);
+		border: 1px solid var(--border-color);
+		padding: 8px;
+		font: var(--sans-normal);
+		border-radius: 3px;
+		font-size: 15px;
+		min-height: 24px;
 	}
 	:global(input[type='number']) {
 		-moz-appearance: textfield;
+		margin-left: 8px;
 	}
 	:global(input[type='number']::-webkit-inner-spin-button) {
 		-webkit-appearance: none;
 	}
+	:global(textarea) {
+		margin-top: 4px;
+		line-height: 1.4em;
+	}
 	:global(a) {
-		color: #fff;
+		color: inherit;
+	}
+	:global(p:first-child) {
+		margin-top: 0;
+	}
+	:global(p:last-child) {
+		margin-bottom: 0;
 	}
 
 	:global(.btn) {
-		background: rgba(255, 255, 255, 0.2);
+		background: var(--main-bg);
+		border: 1px solid var(--border-color);
 		border-radius: 3px;
-		color: var(--main-fg);
+		color: var(--header-fg);
+		font: var(--sans-normal);
 		display: inline-block;
 		margin-right: 6px;
 		padding: 5px 12px;

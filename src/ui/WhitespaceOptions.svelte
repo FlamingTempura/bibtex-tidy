@@ -10,57 +10,27 @@
 	let alignValue = alignChecked ? options.align : 13;
 	let wrapChecked = options.wrap !== undefined;
 	let wrapValue = options.wrap ?? DEFAULT_WRAP;
-	let indent: 'tabs' | 'spaces' = options.tab ? 'tabs' : 'spaces';
-
-	let spaceValue = options.space;
 
 	$: {
 		options.align = alignChecked ? alignValue : 1; // FIXME: allow undefined
 		options.wrap = wrapChecked ? wrapValue : undefined;
-
-		options.space = spaceValue; // FIXME: allow undefined if tab
-		options.tab = indent === 'tabs';
 	}
 </script>
 
 <Collapsible title="Whitespace" open={true}>
-	<Option
-		option="tab"
-		groupName="indent"
-		groupValue="tabs"
-		bind:group={indent}
-	/>
-
-	<Option
-		option="space"
-		groupName="indent"
-		groupValue="spaces"
-		bind:group={indent}
-	>
-		<div class="keyvalue">
-			Spaces: <input name="spaces" type="number" bind:value={spaceValue} />
-		</div>
-	</Option>
-
 	<Option option="align" bind:checked={alignChecked}>
-		<div class=" keyvalue">
+		<label>
 			Column:
 			<input name="alignnum" type="number" bind:value={alignValue} />
-		</div>
+		</label>
 	</Option>
 
 	<Option option="wrap" bind:checked={wrapChecked}>
-		<div class=" keyvalue">
+		<label>
 			Column:
 			<input name="wrapnum" type="number" bind:value={wrapValue} />
-		</div>
+		</label>
 	</Option>
 
 	<Option option="blankLines" bind:checked={options.blankLines} />
 </Collapsible>
-
-<style>
-	.keyvalue input {
-		margin-left: 8px;
-	}
-</style>

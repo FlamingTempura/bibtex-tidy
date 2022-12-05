@@ -52,23 +52,29 @@
 	<Option option="curly" bind:checked={curly} />
 
 	<Option option="enclosingBraces" bind:checked={enclosingBracesChecked}>
-		Fields to enclose in double braces: <br />
-		<textarea
-			name="enclosingBracesList"
-			spellcheck="false"
-			bind:value={enclosingBracesValue}
-		/><br />
-		Space delimited, e.g: <code>title journal</code>.
+		<label>
+			Fields to enclose in double braces:
+			<textarea
+				name="enclosingBracesList"
+				spellcheck="false"
+				bind:value={enclosingBracesValue}
+			/>
+		</label>
+		<p>
+			Space delimited, e.g: <code>title journal</code>.
+		</p>
 	</Option>
 
 	<Option option="removeBraces" bind:checked={removeBracesChecked}>
-		Remove braces from values of these fields: <br />
-		<textarea
-			name="removeBracesList"
-			spellcheck="false"
-			bind:value={removeBracesValue}
-		/><br />
-		Space delimited, e.g: <code>title journal</code>.
+		<label>
+			Remove braces from values of these fields:
+			<textarea
+				name="removeBracesList"
+				spellcheck="false"
+				bind:value={removeBracesValue}
+			/>
+		</label>
+		<p>Space delimited, e.g: <code>title journal</code>.</p>
 	</Option>
 
 	<Option option="stripEnclosingBraces" bind:checked={stripEnclosingBraces} />
@@ -86,8 +92,10 @@
 	<Option option="removeDuplicateFields" bind:checked={removeDuplicateFields} />
 
 	<Option option="maxAuthors" bind:checked={maxAuthorsChecked}>
-		<input name="maxAuthorsNum" type="number" bind:value={maxAuthorsValue} /><br
-		/>
-		Author lists longer than this will be truncated to "and others".
+		<label>
+			Maximum number of authors:
+			<input name="maxAuthorsNum" type="number" bind:value={maxAuthorsValue} />
+		</label>
+		<p>Author lists longer than this will be truncated to "and others".</p>
 	</Option>
 </Collapsible>

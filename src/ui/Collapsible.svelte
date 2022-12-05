@@ -4,28 +4,44 @@
 </script>
 
 <details {open}>
-	<summary><div class="section-title">{title}</div></summary>
+	<summary>{title}</summary>
 	<slot />
 </details>
 
 <style>
+	details[open] {
+		padding-bottom: 20px;
+	}
+	details:not([open]) summary {
+		padding-bottom: 20px;
+	}
 	summary {
-		font: var(--sans-title);
-		font-size: 11px;
-		text-transform: uppercase;
+		font: var(--sans-h2);
+		margin: 0 -20px;
 		cursor: pointer;
 		user-select: none;
-		padding: 8px 20px;
-		margin: 16px -12px 12px;
-		background: var(--header-bg);
-		position: relative;
+		padding: 20px 20px 12px 20px;
+		border-top: 1px solid var(--border-color);
+		display: flex;
+		gap: 8px;
+		align-items: center;
 	}
-	summary:hover {
-		background: rgba(0, 0, 0, 0.15);
+	summary::-webkit-details-marker {
+		/* safari */
+		display: none;
 	}
-	summary .section-title {
-		position: absolute;
-		left: 40px;
-		top: 8px;
+	summary::marker {
+		content: none;
+	}
+	summary::after {
+		content: '►';
+		font-size: 8px;
+		color: rgba(255, 255, 255, 0.6);
+	}
+	details[open] summary:after {
+		content: none;
+	}
+	details[open] summary:hover:after {
+		content: '▼';
 	}
 </style>

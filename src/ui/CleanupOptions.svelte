@@ -37,15 +37,15 @@
 
 <Collapsible title="Clean up" open={true}>
 	<Option option="omit" bind:checked={omitChecked}>
-		Fields to omit: <br />
+		Fields to omit:
 		<textarea
 			name="omitList"
 			class="omit"
 			placeholder="e.g. abstract keywords"
 			spellcheck="false"
 			bind:value={omitValue}
-		/><br />
-		Space delimited, e.g: <code>id type publisher author</code>
+		/>
+		<p>Space delimited, e.g: <code>id type publisher author</code></p>
 	</Option>
 
 	<Option option="stripComments" bind:checked={stripComments} />
@@ -55,14 +55,15 @@
 	<Option option="lowercase" bind:checked={lowercase} />
 
 	<Option option="generateKeys" bind:checked={generateKeysChecked}>
-		Template: <a href="./manual/key-generation.html" target="_blank"
-			>More info</a
-		><br />
-		<textarea
-			name="generateKeysTemplate"
-			type="text"
-			bind:value={generateKeysValue}
-		/>
+		<label>
+			Template:
+			<textarea name="generateKeysTemplate" bind:value={generateKeysValue} />
+		</label>
+		<p>
+			<a href="./manual/key-generation.html" target="_blank">
+				Template documentation
+			</a>
+		</p>
 	</Option>
 
 	<Option option="trailingCommas" bind:checked={trailingCommasChecked} />

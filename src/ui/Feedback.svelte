@@ -10,7 +10,7 @@
 		| { status: 'error'; error: unknown };
 </script>
 
-<div class="feedback" class:error={status.status === 'error'}>
+<div data-test-feedback>
 	{#if status.status === 'success'}
 		<FeedbackSuccess {options} result={status.result} />
 	{:else}
@@ -19,13 +19,11 @@
 </div>
 
 <style>
-	.feedback {
-		background: var(--green);
-		color: #fff;
-		font-size: 15px;
+	div {
+		background: var(--dark2);
+		border: 1px solid var(--border-color);
 		padding: 12px;
-	}
-	.error {
-		background: var(--red);
+		margin-bottom: 20px;
+		border-radius: 8px;
 	}
 </style>

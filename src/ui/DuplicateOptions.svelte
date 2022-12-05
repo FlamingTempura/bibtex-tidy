@@ -1,8 +1,10 @@
 <script lang="ts">
 	import Option from './Option.svelte';
+	import Checkbox from './Checkbox.svelte';
 	import type { MergeStrategy, OptionsNormalized } from '../optionUtils';
 	import Collapsible from './Collapsible.svelte';
 	import Label from './Label.svelte';
+	import Radio from './Radio.svelte';
 
 	export let options: OptionsNormalized;
 
@@ -35,77 +37,57 @@
 	<Option option="duplicates" bind:checked={duplicateCheckChecked}>
 		<p>What to check:</p>
 		<Label>
-			<input name="uniqKEY" type="checkbox" bind:checked={duplicateCheckKey} />
+			<Checkbox name="uniqKEY" bind:checked={duplicateCheckKey} />
 			Matching Keys
 		</Label>
 		<Label>
-			<input name="uniqDOI" type="checkbox" bind:checked={duplicateCheckDOI} />
+			<Checkbox name="uniqDOI" bind:checked={duplicateCheckDOI} />
 			Matching DOIs
 		</Label>
 		<Label>
-			<input
-				name="uniqCIT"
-				type="checkbox"
-				bind:checked={duplicateCheckCitation}
-			/>
+			<Checkbox name="uniqCIT" bind:checked={duplicateCheckCitation} />
 			Similar author and title
 		</Label>
 		<Label>
-			<input
-				name="uniqABS"
-				type="checkbox"
-				bind:checked={duplicateCheckAbstract}
-			/>
+			<Checkbox name="uniqABS" bind:checked={duplicateCheckAbstract} />
 			Similar abstracts
 		</Label>
 	</Option>
 
 	<Option option="merge" bind:checked={mergeChecked}>
 		<Label>
-			<input
-				name="mergeStrategy"
-				type="radio"
-				value="combine"
-				bind:group={mergeValue}
-			/>
-			<strong>Combine</strong> (default)<br />
-			<small>
-				Keep original entry and merge in fields of duplicates if they do not
-				already exist
-			</small>
+			<Radio name="mergeStrategy" value="combine" bind:group={mergeValue} />
+			<span>
+				<strong>Combine</strong><br />
+				<small>
+					Keep original entry and merge in fields of duplicates if they do not
+					already exist
+				</small>
+			</span>
 		</Label>
 		<Label>
-			<input
-				name="mergeStrategy"
-				type="radio"
-				value="overwrite"
-				bind:group={mergeValue}
-			/>
-			<strong>Overwrite</strong><br />
-			<small>
-				Keep original entry and merge in fields of duplicates, overwriting
-				existing fields if they exist
-			</small>
+			<Radio name="mergeStrategy" value="overwrite" bind:group={mergeValue} />
+			<span>
+				<strong>Overwrite</strong><br />
+				<small>
+					Keep original entry and merge in fields of duplicates, overwriting
+					existing fields if they exist
+				</small>
+			</span>
 		</Label>
 		<Label>
-			<input
-				name="mergeStrategy"
-				type="radio"
-				value="first"
-				bind:group={mergeValue}
-			/>
-			<strong>First</strong><br />
-			<small>Only keep the original entry</small>
+			<Radio name="mergeStrategy" value="first" bind:group={mergeValue} />
+			<span>
+				<strong>First</strong><br />
+				<small>Only keep the original entry</small>
+			</span>
 		</Label>
 		<Label>
-			<input
-				name="mergeStrategy"
-				type="radio"
-				value="last"
-				bind:group={mergeValue}
-			/>
-			<strong>Last</strong><br />
-			<small>Only keep the last found duplicate</small>
+			<Radio name="mergeStrategy" value="last" bind:group={mergeValue} />
+			<span>
+				<strong>Last</strong><br />
+				<small>Only keep the last found duplicate</small>
+			</span>
 		</Label>
 	</Option>
 </Collapsible>

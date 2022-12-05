@@ -34,7 +34,6 @@
 		position: absolute;
 		top: 12px;
 		right: 12px;
-		border: none;
 		font-weight: bold;
 		font-size: 15px;
 		z-index: 100;
