@@ -55,6 +55,7 @@
 	#editor {
 		flex-grow: 1;
 		position: relative;
+		overflow: hidden;
 	}
 	#editor textarea {
 		height: 100%;
