@@ -13819,9 +13819,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         textarea_1 = element("textarea");
         t = space();
         create_component(copybutton.$$.fragment);
-        attr(textarea_1, "class", "svelte-3bdxl");
+        attr(textarea_1, "class", "svelte-1b7wljc");
         attr(main, "id", "editor");
-        attr(main, "class", "svelte-3bdxl");
+        attr(main, "class", "svelte-1b7wljc");
       },
       m(target, anchor) {
         insert(target, main, anchor);

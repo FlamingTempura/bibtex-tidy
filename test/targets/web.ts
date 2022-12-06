@@ -1,6 +1,6 @@
 import { normalizeOptions, type Options } from '../../src/optionUtils';
 import type { Warning } from '../../src/index';
-import puppeteer from 'puppeteer';
+import puppeteer, { Page } from 'puppeteer';
 import { join } from 'path';
 
 const WEB_ROOT = join(__dirname, '..', '..', 'docs', 'index.html');
@@ -16,8 +16,8 @@ export type WebResult = {
 	warnings: Warning[];
 };
 
-let page: puppeteer.Page | undefined;
-async function getPage(): Promise<puppeteer.Page> {
+let page: Page | undefined;
+async function getPage(): Promise<Page> {
 	if (page) return page;
 	const browser = await puppeteer.launch();
 	page = await browser.newPage();

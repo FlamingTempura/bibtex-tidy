@@ -460,11 +460,12 @@ span.CodeMirror-selectedtext {
 }
 
 /* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Editor.esbuild-svelte-fake-css */
-#editor.svelte-3bdxl.svelte-3bdxl {
+#editor.svelte-1b7wljc.svelte-1b7wljc {
   flex-grow: 1;
   position: relative;
+  overflow: hidden;
 }
-#editor.svelte-3bdxl textarea.svelte-3bdxl {
+#editor.svelte-1b7wljc textarea.svelte-1b7wljc {
   height: 100%;
   width: 100%;
 }
