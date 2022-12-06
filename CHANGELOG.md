@@ -100,6 +100,7 @@ Features:
 - Add --blank-lines option to separate entries with a blank line (#245)
 - Docker configuration added (#371)
 - The web UI will now persist the user's bibtex-tidy configuration in the URL (#344)
+- The web UI has a new look and feel based on material v3. This includes larger text, more space between interactive elements, higher contrast colours, and better consistency across browsers and OS's.
 - Add copy button to web UI (#177)
 - Add removeBraces to remove all braces from specified fields (#33)
 
