@@ -1,112 +1,152 @@
 <script lang="ts">
 	import CopyButton from './CopyButton.svelte';
-	import CodeMirror from 'codemirror';
-	import './bibtex-highlighting';
+	import { indentWithTab, history, historyKeymap } from '@codemirror/commands';
+	import { EditorState, Compartment } from '@codemirror/state';
+	import {
+		EditorView,
+		drawSelection,
+		lineNumbers,
+		keymap,
+		ViewUpdate,
+		dropCursor,
+		highlightActiveLineGutter,
+	} from '@codemirror/view';
+	import {
+		bibtexLanguage,
+		bibtexSyntaxHighlighting,
+	} from './codemirrorExtensions';
 	import { onMount } from 'svelte';
+	import { linter } from '@codemirror/lint';
+	import { bracketMatching } from '@codemirror/language';
+	import type { BibTeXSyntaxError } from '../bibtex-parser';
 
-	export let errorRange:
-		| { start: { line: number; ch: number }; end: { line: number; ch: number } }
-		| undefined;
 	export let bibtex: string;
-	let textarea: HTMLTextAreaElement;
-	let cmEditor: CodeMirror.EditorFromTextArea;
+	export let error: BibTeXSyntaxError | undefined;
 
-	let errorHighlight: CodeMirror.TextMarker | undefined;
+	let editorRef: HTMLElement;
+	let cmEditor: EditorView;
+	let lintCompartment: Compartment;
 
 	onMount(() => {
-		if (textarea) {
-			cmEditor = CodeMirror.fromTextArea(textarea, {
-				lineNumbers: true,
-				autofocus: true,
-			});
-			cmEditor.on('change', () => (bibtex = cmEditor.getValue()));
+		const onUpdate = EditorView.updateListener.of((v: ViewUpdate) => {
+			if (v.docChanged) {
+				bibtex = cmEditor.state.doc.toString();
+			}
+		});
 
-			// make editor available for tests
-			//@ts-ignore
-			window.cmEditor = cmEditor;
-		}
+		lintCompartment = new Compartment();
+
+		cmEditor = new EditorView({
+			parent: editorRef,
+			state: EditorState.create({
+				doc: bibtex,
+				extensions: [
+					lineNumbers(),
+
+					highlightActiveLineGutter(),
+
+					// For dragging text onto the editor
+					dropCursor(),
+
+					EditorState.allowMultipleSelections.of(true),
+
+					// Highlight matching brackets
+					bracketMatching(),
+
+					// Replace native selection with customisable one (e.g. background
+					// color)
+					drawSelection(),
+
+					bibtexLanguage(),
+					bibtexSyntaxHighlighting(),
+
+					keymap.of([...historyKeymap, indentWithTab]),
+					// Enables undo/redo. Without this, codemirror completely bugs out on
+					// undo/redo
+					history(),
+					// Listen for changes and propagate to state
+					onUpdate,
+
+					lintCompartment.of([]),
+				],
+			}),
+		});
+
+		cmEditor.focus();
+
+		// make editor available for tests
+		window.cmEditor = cmEditor;
 	});
 
 	$: {
-		if (errorRange) {
-			errorHighlight = cmEditor.markText(errorRange.start, errorRange.end, {
-				className: 'bibtex-error',
-			});
-		} else if (errorHighlight) {
-			errorHighlight.clear();
-		}
+		cmEditor?.dispatch({
+			effects: lintCompartment.reconfigure(
+				linter(() => {
+					if (error) {
+						const line = cmEditor.state.doc.line(error.line);
+						const from = line.from;
+						const to = line.to;
+						return [{ from, to, severity: 'error', message: 'Syntax Error' }];
+					} else {
+						return [];
+					}
+				})
+			),
+		});
 	}
 
 	$: {
-		if (cmEditor && bibtex !== cmEditor.getValue()) {
-			cmEditor.setValue(bibtex);
+		// update editor content from incoming state
+		if (cmEditor && bibtex !== cmEditor.state.doc.toString()) {
+			cmEditor.dispatch({
+				changes: { from: 0, to: cmEditor.state.doc.length, insert: bibtex },
+			});
 		}
 	}
 </script>
 
-<main id="editor">
-	<textarea bind:this={textarea} />
+<main id="editor" bind:this={editorRef}>
 	<CopyButton {bibtex} />
 </main>
 
 <style>
-	@import 'codemirror/lib/codemirror.css';
-
 	#editor {
 		flex-grow: 1;
 		position: relative;
 		overflow: hidden;
 	}
-	#editor textarea {
+	:global(.cm-editor) {
+		color: var(--dark-gray);
 		height: 100%;
-		width: 100%;
 	}
-	:global(.CodeMirror) {
-		background: var(--main-bg);
-		color: var(--main-fg);
+
+	:global(.cm-editor .cm-scroller) {
 		font: var(--mono-normal);
-		height: 100%;
+		font-size: 14px;
 		line-height: 1.3em;
-		padding: 12px;
-		width: 100%;
+		padding: 12px 0 12px 0;
 	}
-	:global(.CodeMirror .CodeMirror-gutters) {
+	:global(.cm-editor .cm-gutters) {
 		background: var(--main-bg);
 		border-right: 14px solid var(--main-bg);
+		color: var(--light6);
+		padding-left: 12px;
 	}
-	:global(.CodeMirror .CodeMirror-linenumber) {
-		color: var(--dark-gray);
+	:global(.cm-editor .cm-activeLineGutter) {
+		background: var(--main-bg);
+		color: var(--light1);
 	}
-	:global(.CodeMirror .CodeMirror-selected) {
-		background: #283655;
+	:global(.cm-editor .cm-gutters .cm-gutter) {
+		min-width: 32px;
 	}
-	:global(.CodeMirror .CodeMirror-cursor) {
-		border-left: 1px solid #ffffec;
+	:global(.cm-editor .cm-selectionBackground) {
+		background: #283655 !important;
 	}
-	:global(.CodeMirror .cm-comment) {
-		color: var(--dark-gray);
+	:global(.cm-editor .cm-cursor) {
+		border-left: 2px solid #ffffec;
 	}
-	:global(.CodeMirror .cm-keyword) {
-		color: #fff;
-	}
-	:global(.CodeMirror .cm-variable-2) {
-		color: var(--pink);
-	}
-	:global(.CodeMirror .cm-variable-3) {
-		color: var(--orange);
-	}
-	:global(.CodeMirror .cm-operator) {
-		color: var(--light-gray);
-	}
-	:global(.CodeMirror .cm-string) {
-		color: var(--green);
-	}
-	:global(.CodeMirror .cm-number) {
-		color: var(--light-blue);
-	}
-	:global(.CodeMirror .bibtex-error) {
-		background: var(--red);
-		color: white;
-		font: var(--mono-bold);
+	:global(.cm-editor .cm-lintRange-error) {
+		background: none;
+		border-bottom: 2px solid var(--red);
 	}
 </style>

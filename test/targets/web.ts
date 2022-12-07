@@ -64,8 +64,13 @@ export async function testWeb(
 
 	await page.evaluate(
 		(value) =>
-			//@ts-ignore
-			window.cmEditor.setValue(value),
+			window.cmEditor.dispatch({
+				changes: {
+					from: 0,
+					to: window.cmEditor.state.doc.length,
+					insert: value,
+				},
+			}),
 		input
 	);
 
@@ -173,8 +178,7 @@ export async function testWeb(
 	await page.waitForSelector('[data-test-feedback]', { timeout: 3000 });
 
 	const bibtex = await page.evaluate(() =>
-		//@ts-ignore
-		window.cmEditor.getValue()
+		window.cmEditor.state.doc.toString()
 	);
 
 	const warnings = (await page.evaluate(() =>

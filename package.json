@@ -31,7 +31,8 @@
 		"cover": "NODE_ENV=coverage nyc --reporter html node -r esbuild-register test/index.ts",
 		"preversion": "git pull --rebase",
 		"version": "./scripts/prepare-release.sh",
-		"postversion": "git push --follow-tags && npm publish"
+		"postversion": "git push --follow-tags && npm publish",
+		"codemirror-grammar": "node ./node_modules/@lezer/generator/dist/lezer-generator.cjs src/ui/bibtex.grammar -o src/ui/bibtex.ts"
 	},
 	"engines": {
 		"node": ">12"
@@ -39,11 +40,15 @@
 	"devDependencies": {
 		"@babel/core": "^7.20.5",
 		"@babel/preset-env": "^7.20.2",
+		"@codemirror/commands": "^6.1.2",
+		"@codemirror/language": "^6.3.1",
+		"@codemirror/lint": "^6.1.0",
+		"@codemirror/view": "^6.7.0",
+		"@lezer/generator": "^1.1.3",
+		"@lezer/highlight": "^1.1.3",
 		"@tsconfig/svelte": "^3.0.0",
 		"@types/babel__core": "^7.1.20",
-		"@types/codemirror": "^5.60.5",
 		"@types/node": "^18.11.11",
-		"codemirror": "^5.63.3",
 		"dts-bundle-generator": "^7.1.0",
 		"esbuild": "^0.15.18",
 		"esbuild-register": "^3.4.1",

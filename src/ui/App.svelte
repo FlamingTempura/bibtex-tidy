@@ -28,14 +28,12 @@
 		| { status: 'success'; result: BibTeXTidyResult }
 		| { status: 'error'; error: unknown }
 		| undefined;
-	let errorRange:
-		| { start: { line: number; ch: number }; end: { line: number; ch: number } }
-		| undefined;
+	let error: BibTeXSyntaxError | undefined;
 
 	function handleTidy() {
 		running = true;
 		status = undefined;
-		errorRange = undefined;
+		error = undefined;
 		setTimeout(() => {
 			// TODO: requestAnimationFrame
 			try {
@@ -46,10 +44,7 @@
 				console.error('bibtex parse problem:', e);
 				status = { status: 'error', error: e };
 				if (e instanceof BibTeXSyntaxError) {
-					errorRange = {
-						start: { line: e.line - 1, ch: e.column - 2 },
-						end: { line: e.line - 1, ch: e.column - 1 },
-					};
+					error = e;
 				}
 			} finally {
 				running = false;
@@ -81,7 +76,7 @@
 	}
 </script>
 
-<Editor bind:bibtex {errorRange} />
+<Editor bind:bibtex {error} />
 <Sidebar on:tidy={handleTidy} {status} {running} bind:options />
 
 <style>

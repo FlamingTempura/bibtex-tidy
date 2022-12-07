@@ -1,0 +1,68 @@
+@top Program { node* }
+
+@skip { space }
+
+node {
+  blockComment |
+  preamble |
+  string |
+  entry |
+  Comment
+}
+
+blockComment {
+  CommentCommand Braced
+}
+
+preamble {
+  PreambleCommand '{' expression '}'
+}
+
+string {
+  StringCommand '{' keyValue '}'
+}
+
+entry {
+  Command '{' Key ',' keyValue (',' keyValue)* ','? '}'
+}
+
+keyValue {
+  Identifier '=' expression
+}
+
+expression {
+  literal ('#' literal)*
+}
+
+literal {
+  Braced |
+  Quoted |
+  Number |
+  Identifier
+}
+
+Braced {
+  '{' BraceContent? (Braced BraceContent?)* '}'
+}
+
+@tokens {
+  space { @whitespace+ }
+  Number { @digit+ }
+  Quoted { '"' (!["] | '\\"')* '"' }
+  BraceContent { ![{}]+ }
+  CommentCommand { '@' $[cC] $[oO] $[mM] $[mM] $[eE] $[nN] $[tT] }
+  PreambleCommand { '@' $[pP] $[rR] $[eE] $[aA] $[mM] $[bB] $[lL] $[eE] }
+  StringCommand { '@' $[sS] $[tT] $[rR] $[iI] $[nN] $[gG] }
+  Command { '@' Identifier  }
+  Comment { 'no idea why this string is needed but whatever' ![@{} ]+ }
+  Key { Identifier }
+  Identifier { $[a-zA-Z_] $[a-zA-Z_\-0-9]+ }
+  @precedence {
+    CommentCommand,
+    PreambleCommand,
+    StringCommand,
+    Command,
+    BraceContent,
+    space
+  }
+}
