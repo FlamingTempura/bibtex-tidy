@@ -1,11 +1,11 @@
+import { generateAST, EntryNode, RootNode } from './bibtex-parser';
+import { checkForDuplicates } from './duplicates';
+import { formatValue, formatBibtex } from './format';
+import { generateKeys } from './generateKeys';
 import { normalizeOptions } from './optionUtils';
 import type { Options, OptionsNormalized, DuplicateRule } from './optionUtils';
-import { generateAST, EntryNode, RootNode } from './bibtex-parser';
-import { convertCRLF, isEntryNode } from './utils';
-import { formatValue, formatBibtex } from './format';
 import { sortEntries, sortEntryFields } from './sort';
-import { checkForDuplicates } from './duplicates';
-import { generateKeys } from './generateKeys';
+import { convertCRLF, isEntryNode } from './utils';
 
 export type Warning = (
 	| { code: 'MISSING_KEY' }

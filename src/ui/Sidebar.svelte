@@ -1,15 +1,15 @@
 <script lang="ts">
-	import IndentOptions from './IndentOptions.svelte';
-	import WhitespaceOptions from './WhitespaceOptions.svelte';
-	import ValueOptions from './ValueOptions.svelte';
-	import SortingOptions from './SortingOptions.svelte';
-	import CleanupOptions from './CleanupOptions.svelte';
-	import DuplicateOptions from './DuplicateOptions.svelte';
-	import Cli from './Cli.svelte';
-	import type { OptionsNormalized } from '../optionUtils';
 	import { createEventDispatcher } from 'svelte';
-	import Feedback from './Feedback.svelte';
 	import type { BibTeXTidyResult } from '..';
+	import type { OptionsNormalized } from '../optionUtils';
+	import CleanupOptions from './CleanupOptions.svelte';
+	import Cli from './Cli.svelte';
+	import DuplicateOptions from './DuplicateOptions.svelte';
+	import Feedback from './Feedback.svelte';
+	import IndentOptions from './IndentOptions.svelte';
+	import SortingOptions from './SortingOptions.svelte';
+	import ValueOptions from './ValueOptions.svelte';
+	import WhitespaceOptions from './WhitespaceOptions.svelte';
 
 	export let status:
 		| { status: 'success'; result: BibTeXTidyResult }
@@ -18,7 +18,7 @@
 	export let running: boolean;
 	export let options: OptionsNormalized;
 
-	let dispatch = createEventDispatcher<{ tidy: void }>();
+	let dispatch = createEventDispatcher<{ tidy: undefined }>();
 </script>
 
 <aside id="sidebar">

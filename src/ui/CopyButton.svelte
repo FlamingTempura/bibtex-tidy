@@ -1,6 +1,6 @@
 <script lang="ts">
-	let resetCopyBtnTimeout: NodeJS.Timeout;
-	let showAsCopied: boolean = false;
+	let resetCopyBtnTimeout: ReturnType<typeof setTimeout>;
+	let showAsCopied = false;
 	export let bibtex: string;
 
 	const handleCopy = async () => {

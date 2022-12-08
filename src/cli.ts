@@ -1,9 +1,9 @@
-import tidy from './index';
-import { argv, versions, exit } from 'process';
-import { parseArguments } from './cliUtils';
-import { version } from './__generated__/version';
-import { manPage } from './__generated__/manPage';
 import { readFileSync, writeFileSync } from 'fs';
+import { argv, versions, exit } from 'process';
+import { manPage } from './__generated__/manPage';
+import { version } from './__generated__/version';
+import { parseArguments } from './cliUtils';
+import { tidy } from './index';
 
 const nodeVer = Number(versions.node.split('.')[0]);
 
@@ -37,8 +37,8 @@ async function start(): Promise<void> {
 		exit(0);
 	}
 	if (options.quiet) {
-		console.log = () => {};
-		console.error = () => {};
+		console.log = () => undefined;
+		console.error = () => undefined;
 	}
 	console.log('Tidying...');
 	for (const inputFile of inputFiles) {
@@ -46,8 +46,7 @@ async function start(): Promise<void> {
 		const bibtex = isStdIO
 			? await readStdin()
 			: readFileSync(inputFile, 'utf8');
-		console.log(bibtex);
-		const result = tidy.tidy(bibtex, options);
+		const result = tidy(bibtex, options);
 		for (const warning of result.warnings) {
 			console.error(`${warning.code}: ${warning.message}`);
 		}

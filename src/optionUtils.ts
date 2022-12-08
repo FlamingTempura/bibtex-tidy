@@ -1,5 +1,5 @@
-import { optionDefinitions } from './optionDefinitions';
 import type { BibTeXTidyOptions } from './__generated__/optionsType';
+import { optionDefinitions } from './optionDefinitions';
 
 export type CLIOptions = BibTeXTidyOptions;
 
@@ -46,7 +46,7 @@ export type OptionsNormalized = Omit<
 
 export function normalizeOptions(options: Options): OptionsNormalized {
 	return Object.fromEntries(
-		optionDefinitions.map((def): [keyof OptionsNormalized, any] => {
+		optionDefinitions.map((def): [keyof OptionsNormalized, unknown] => {
 			const key = def.key as keyof OptionsNormalized;
 			const value = options[key];
 			if (def.convertBoolean && typeof value === 'boolean') {

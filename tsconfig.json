@@ -1,15 +1,18 @@
 {
 	"extends": "@tsconfig/svelte/tsconfig.json",
 	"compilerOptions": {
-		"module": "ES6",
 		"esModuleInterop": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitReturns": true,
 		"strict": true,
 		"resolveJsonModule": true,
-		"moduleResolution": "Node",
-		"lib": ["ESNext", "DOM", "DOM.Iterable"],
-		"target": "ES6"
+		"noUncheckedIndexedAccess": true,
+		"lib": ["ESNext", "DOM", "DOM.Iterable"]
 	},
-	"include": ["./src/*", "./test/*", "./build.ts"]
+	"include": [
+		"src/**/*",
+		"test/**/*",
+		"build.ts",
+		"node_modules/svelte/types/runtime/ambient.d.ts"
+	]
 }

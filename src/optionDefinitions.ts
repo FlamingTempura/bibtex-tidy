@@ -1,18 +1,20 @@
 import type { Options } from './optionUtils';
 
+type Value = number | string | string[] | boolean | undefined;
+
 export type OptionDefinition = {
 	key: string;
 	cli: Record<string, boolean | ((args: string[]) => void)>;
-	toCLI?: (val: any, opt: Options) => string | undefined;
+	toCLI?: (val: Value, opt: Options) => string | undefined;
 	title: string;
 	description?: string[];
 	examples?: string[];
 	type: string;
 	deprecated?: boolean;
-	defaultValue?: unknown;
+	defaultValue?: ((options: Options) => Value) | Value;
 	convertBoolean?: {
-		true: unknown;
-		false: unknown;
+		true: Value;
+		false: Value;
 	};
 };
 
@@ -205,7 +207,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		],
 		type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
 		convertBoolean: { true: DEFAULT_MERGE_CHECK, false: undefined },
-		defaultValue: (options: any) =>
+		defaultValue: (options) =>
 			options.merge ? DEFAULT_MERGE_CHECK : undefined,
 	},
 	{

@@ -1,9 +1,9 @@
+import { spawnSync } from 'child_process';
 import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 
 import { join } from 'path';
-import { spawnSync } from 'child_process';
-import type { CLIOptions } from '../../src/optionUtils';
 import { optionsToCLIArgs } from '../../src/cliUtils';
+import type { CLIOptions } from '../../src/optionUtils';
 
 const TMP_DIR = join(__dirname, '..', '..', '.tmp');
 const BIN_PATH = join(__dirname, '..', '..', 'bin', 'bibtex-tidy');
@@ -31,8 +31,7 @@ export function testCLI(
 	const args: string[] = [];
 	const files: string[] = [];
 	if (Array.isArray(bibtexs)) {
-		for (let i = 0; i < bibtexs.length; i++) {
-			const bibtex = bibtexs[i];
+		for (const [i, bibtex] of bibtexs.entries()) {
 			const tmpFile = getTmpPath(i);
 			writeFileSync(tmpFile, bibtex, 'utf8');
 			args.push(tmpFile);
@@ -57,10 +56,10 @@ export function testCLI(
 
 	const tidiedOutputs = files.map((file) => readFileSync(file, 'utf8'));
 
-	const warnings = (proc.stderr ?? '')
+	const warnings = proc.stderr
 		.split('\n')
 		.filter((line) => line.includes(': '))
-		.map((line) => line.split(':')[0]);
+		.map((line) => line.split(':')[0]!);
 
 	files.forEach((tmpFile) => unlinkSync(tmpFile));
 

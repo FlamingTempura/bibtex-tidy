@@ -11,7 +11,7 @@ export class TextNode {
 }
 export class BlockNode {
 	type = 'block' as const;
-	public command: string = '';
+	public command = '';
 	public block?: CommentNode | PreambleNode | StringNode | EntryNode;
 	constructor(public parent: RootNode) {
 		parent.children.push(this);
@@ -71,7 +71,7 @@ export class FieldNode {
 class ConcatNode {
 	type = 'concat' as const;
 	concat: (LiteralNode | BracedNode | QuotedNode)[];
-	canConsumeValue: boolean = true;
+	canConsumeValue = true;
 	constructor(public parent: FieldNode) {
 		this.concat = [];
 	}
@@ -84,18 +84,18 @@ class LiteralNode {
 }
 class BracedNode {
 	type = 'braced' as const;
-	value: string = '';
+	value = '';
 	/** Used to count opening and closing braces */
-	depth: number = 0;
+	depth = 0;
 	constructor(public parent: ConcatNode) {
 		parent.concat.push(this);
 	}
 }
 class QuotedNode {
 	type = 'quoted' as const;
-	value: string = '';
+	value = '';
 	/** Used to count opening and closing braces */
-	depth: number = 0;
+	depth = 0;
 	constructor(public parent: ConcatNode) {
 		parent.concat.push(this);
 	}
@@ -122,8 +122,8 @@ export function generateAST(input: string): RootNode {
 	let column = 0;
 
 	for (let i = 0; i < input.length; i++) {
-		const char = input[i];
-		const prev = input[i - 1];
+		const char = input[i]!;
+		const prev = input[i - 1]!;
 
 		if (char === '\n') {
 			line++;
@@ -190,7 +190,7 @@ export function generateAST(input: string): RootNode {
 								break;
 						}
 					}
-				} else if (char.match(/[=#,})\[\]]/)) {
+				} else if (char.match(/[=#,})[\]]/)) {
 					// replace the block node
 					node.parent.children.pop();
 					node = new TextNode(node.parent, '@' + node.command + char);
@@ -292,7 +292,7 @@ export function generateAST(input: string): RootNode {
 				if (isWhitespace(char)) {
 					break; // noop
 				} else if (node.canConsumeValue) {
-					if (/[#=,}()\[\]]/.test(char)) {
+					if (/[#=,}()[\]]/.test(char)) {
 						throw new BibTeXSyntaxError(input, node, i, line, column);
 					} else {
 						node.canConsumeValue = false;
@@ -385,7 +385,7 @@ function isValidKeyCharacter(char: string): boolean {
 }
 
 function isValidFieldName(char: string): boolean {
-	return !/[=,{}()\[\]]/.test(char);
+	return !/[=,{}()[\]]/.test(char);
 }
 
 export class BibTeXSyntaxError extends Error {
@@ -407,6 +407,6 @@ export class BibTeXSyntaxError extends Error {
 				input.slice(pos + 1, pos + 20)
 		);
 		this.name = 'Syntax Error';
-		this.char = input[pos];
+		this.char = input[pos]!;
 	}
 }

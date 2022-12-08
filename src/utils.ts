@@ -3,15 +3,15 @@ import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from './latexParser';
 import { specialCharacters } from './unicode';
 
 export function escapeSpecialCharacters(str: string): string {
-	let mathExpressions: string[] = [];
+	const mathExpressions: string[] = [];
 
 	str = str.replace(/\$[^$]+\$/, (match) => {
 		mathExpressions.push(match);
 		return `MATH.EXP.${mathExpressions.length - 1}`;
 	});
 
-	let newstr: string = '';
-	let escapeMode: boolean = false;
+	let newstr = '';
+	let escapeMode = false;
 
 	for (let i = 0; i < str.length; i++) {
 		if (escapeMode) {
@@ -26,11 +26,11 @@ export function escapeSpecialCharacters(str: string): string {
 		}
 		// iterate through each character and if it's a special char replace with latex code
 		const c = str.charCodeAt(i).toString(16).padStart(4, '0');
-		newstr += specialCharacters.get(c) || str[i];
+		newstr += specialCharacters.get(c) ?? str[i];
 	}
 	return newstr.replace(
 		/MATH\.EXP\.(\d+)/,
-		(_, i) => mathExpressions[Number(i)]
+		(_, i) => mathExpressions[Number(i)] ?? ''
 	);
 }
 
@@ -60,15 +60,16 @@ export function convertCRLF(str: string): string {
 
 export function wrapText(line: string, lineWidth: number): string[] {
 	const words: string[] = line.split(' ');
-	const lines: string[] = [''];
-	for (let i = 0; i < words.length; i++) {
-		const word = words[i];
-		if (lines[lines.length - 1].length + word.length + 1 > lineWidth && i > 0) {
-			lines.push('');
+	const lines: string[] = [];
+	let currLine = '';
+	for (const [i, word] of words.entries()) {
+		if (currLine.length + word.length + 1 > lineWidth && i > 0) {
+			lines.push(currLine.trim());
+			currLine = '';
 		}
-		lines[lines.length - 1] += word + ' ';
+		currLine += word + ' ';
 	}
-	return lines.map((line) => line.trim());
+	return [...lines, currLine.trim()];
 }
 
 /**

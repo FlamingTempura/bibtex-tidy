@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { OptionsNormalized } from '../optionUtils';
-	import { optionDefinitionByKey } from '../optionDefinitions';
 	import { createEventDispatcher } from 'svelte';
+	import { optionDefinitionByKey } from '../optionDefinitions';
+	import type { OptionsNormalized } from '../optionUtils';
+	import Checkbox from './Checkbox.svelte';
 	import Label from './Label.svelte';
 	import SubOptions from './SubOptions.svelte';
-	import Checkbox from './Checkbox.svelte';
 
 	export let option: keyof OptionsNormalized;
 	export let checked: boolean | undefined = undefined;

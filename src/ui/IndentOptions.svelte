@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { OptionsNormalized } from '../optionUtils';
 	import Collapsible from './Collapsible.svelte';
-	import SubOptions from './SubOptions.svelte';
 	import Label from './Label.svelte';
 	import Radio from './Radio.svelte';
+	import SubOptions from './SubOptions.svelte';
 
 	export let options: OptionsNormalized;
 

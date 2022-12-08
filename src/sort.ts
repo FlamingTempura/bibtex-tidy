@@ -1,5 +1,5 @@
-import { getEntries } from '.';
 import type { BlockNode, TextNode, EntryNode, RootNode } from './bibtex-parser';
+import { getEntries } from '.';
 
 export const MONTHS = [
 	'jan',
@@ -23,10 +23,8 @@ export function sortEntries(
 	fieldMaps: Map<EntryNode, Map<string, string | undefined>>,
 	sort: string[]
 ): void {
-	if (!sort) return;
-
 	// Map of items to sort values e.g. { year: 2009, author: 'West', ... }
-	const sortIndexes: Map<TextNode | BlockNode, SortIndex> = new Map();
+	const sortIndexes = new Map<TextNode | BlockNode, SortIndex>();
 
 	// comments, preambles, and strings which should be kept with an entry
 	const precedingMeta: (TextNode | BlockNode)[] = [];
@@ -64,9 +62,9 @@ export function sortEntries(
 	}
 
 	// Now iterate through sort keys and sort entries
-	for (let i = sort.length - 1; i >= 0; i--) {
-		const desc = sort[i].startsWith('-');
-		const key = desc ? sort[i].slice(1) : sort[i];
+	for (const prefixedKey of [...sort].reverse()) {
+		const desc = prefixedKey.startsWith('-');
+		const key = desc ? prefixedKey.slice(1) : prefixedKey;
 		ast.children.sort((a, b) => {
 			// if no value, then use \ufff0 so entry will be last
 			let ia = sortIndexes.get(a)?.get(key) ?? '\ufff0';

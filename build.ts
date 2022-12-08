@@ -1,6 +1,7 @@
-import { version, author, homepage } from './package.json';
 import { writeFile, mkdir, chmod, readFile } from 'fs/promises';
 import { join } from 'path';
+import { transform as babel } from '@babel/core';
+import { generateDtsBundle } from 'dts-bundle-generator';
 import {
 	build,
 	buildSync,
@@ -8,16 +9,15 @@ import {
 	type OnLoadResult,
 	type Plugin,
 } from 'esbuild';
-import { transform as babel } from '@babel/core';
+import sveltePlugin from 'esbuild-svelte';
+import autoPreprocess from 'svelte-preprocess';
+import { version, author, homepage } from './package.json';
+import { functionWords, MODIFIERS, SPECIAL_MARKERS } from './src/generateKeys';
 import {
 	DEFAULT_KEY_TEMPLATE,
 	optionDefinitions,
 } from './src/optionDefinitions';
 import { wrapText } from './src/utils';
-import sveltePlugin from 'esbuild-svelte';
-import autoPreprocess from 'svelte-preprocess';
-import { generateDtsBundle } from 'dts-bundle-generator';
-import { functionWords, MODIFIERS, SPECIAL_MARKERS } from './src/generateKeys';
 
 const SRC_PATH = join(__dirname, 'src');
 const BUILD_PATH = join(SRC_PATH, '__generated__');
@@ -71,7 +71,9 @@ async function generateOptionTypes() {
 		write: false,
 		format: 'esm',
 	});
-	const bundle = new TextDecoder().decode(outputFiles[0].contents);
+	const outputFile = outputFiles[0];
+	if (!outputFile) throw new Error('Error building options definitions');
+	const bundle = new TextDecoder().decode(outputFile.contents);
 	// Bundle creates an export which eval doesn't know what to do with. Assign to
 	// var instead.
 	const options = eval(bundle.replace(/^export/m, 'const res = ') + '; res');
@@ -229,6 +231,7 @@ async function buildJSBundle() {
 		banner: { js: jsBanner.join('\n') },
 	});
 	const bundle = outputFiles[0];
+	if (!bundle) throw new Error('Failed to build JS bundle');
 	const result = babel(bundle.text, {
 		presets: [['@babel/env', { targets: BROWSER_TARGETS }]],
 		compact: false,
@@ -243,10 +246,11 @@ async function buildJSBundle() {
 
 async function buildTypeDeclarations() {
 	console.time('Type declarations');
-	const typeFiles = generateDtsBundle([
+	const typeFile = generateDtsBundle([
 		{ filePath: './src/index.ts', output: { noBanner: true } },
-	]);
-	await writeFile('bibtex-tidy.d.ts', typeFiles[0]);
+	])[0];
+	if (!typeFile) throw new Error('Failed to generate type file');
+	await writeFile('bibtex-tidy.d.ts', typeFile);
 	console.timeEnd('Type declarations');
 }
 
@@ -260,7 +264,9 @@ async function buildCLI() {
 		target: NODE_TARGET,
 		entryPoints: [join(SRC_PATH, 'cli.ts')],
 	});
-	await writeFile(CLI_BIN, '#!/usr/bin/env node\n' + outputFiles[0].text);
+	const file = outputFiles[0];
+	if (!file) throw new Error('Failed to build CLI');
+	await writeFile(CLI_BIN, '#!/usr/bin/env node\n' + file.text);
 	await chmod(CLI_BIN, 0o755); // rwxr-xr-x
 	console.timeEnd('CLI built');
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { tidy, type BibTeXTidyResult } from '../';
 	import { BibTeXSyntaxError } from '../bibtex-parser';
-	import bibtexTidy, { type BibTeXTidyResult } from '../';
 	import { normalizeOptions, type OptionsNormalized } from '../optionUtils';
 	import Editor from './Editor.svelte';
 	import Sidebar from './Sidebar.svelte';
@@ -20,7 +20,7 @@
 		removeDuplicateFields: false,
 	});
 
-	let running: boolean = false;
+	let running = false;
 	let bibtex: string = DEFAULT_BIBTEX;
 	let options: OptionsNormalized = getOptionsFromURL() ?? optionDefaults;
 
@@ -37,7 +37,7 @@
 		setTimeout(() => {
 			// TODO: requestAnimationFrame
 			try {
-				const result = bibtexTidy.tidy(bibtex, options);
+				const result = tidy(bibtex, options);
 				bibtex = result.bibtex;
 				status = { status: 'success', result };
 			} catch (e: unknown) {

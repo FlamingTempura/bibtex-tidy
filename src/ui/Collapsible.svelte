@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let title: string;
-	export let open: boolean = false;
+	export let open = false;
 </script>
 
 <details {open}>

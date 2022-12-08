@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Option from './Option.svelte';
-	import Checkbox from './Checkbox.svelte';
 	import type { MergeStrategy, OptionsNormalized } from '../optionUtils';
+	import Checkbox from './Checkbox.svelte';
 	import Collapsible from './Collapsible.svelte';
 	import Label from './Label.svelte';
+	import Option from './Option.svelte';
 	import Radio from './Radio.svelte';
 
 	export let options: OptionsNormalized;

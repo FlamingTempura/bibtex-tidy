@@ -32,7 +32,8 @@
 		"preversion": "git pull --rebase",
 		"version": "./scripts/prepare-release.sh",
 		"postversion": "git push --follow-tags && npm publish",
-		"codemirror-grammar": "node ./node_modules/@lezer/generator/dist/lezer-generator.cjs src/ui/bibtex.grammar -o src/ui/bibtex.ts"
+		"codemirror-grammar": "node ./node_modules/@lezer/generator/dist/lezer-generator.cjs src/ui/bibtex.grammar -o src/ui/bibtex.ts",
+		"lint": "eslint src"
 	},
 	"engines": {
 		"node": ">12"
@@ -49,10 +50,15 @@
 		"@tsconfig/svelte": "^3.0.0",
 		"@types/babel__core": "^7.1.20",
 		"@types/node": "^18.11.11",
+		"@typescript-eslint/eslint-plugin": "^5.45.1",
+		"@typescript-eslint/parser": "^5.45.1",
 		"dts-bundle-generator": "^7.1.0",
 		"esbuild": "^0.15.18",
 		"esbuild-register": "^3.4.1",
 		"esbuild-svelte": "^0.7.3",
+		"eslint": "^8.29.0",
+		"eslint-plugin-import": "^2.26.0",
+		"eslint-plugin-svelte3": "^4.0.0",
 		"nyc": "^15.1.0",
 		"prettier": "^2.8.0",
 		"puppeteer": "^19.3.0",
@@ -62,5 +68,59 @@
 	"prettier": {
 		"useTabs": true,
 		"singleQuote": true
+	},
+	"eslintConfig": {
+		"root": true,
+		"parser": "@typescript-eslint/parser",
+		"parserOptions": {
+			"project": [
+				"./tsconfig.json"
+			],
+			"extraFileExtensions": [
+				".svelte"
+			]
+		},
+		"plugins": [
+			"@typescript-eslint",
+			"svelte3"
+		],
+		"extends": [
+			"eslint:recommended",
+			"plugin:@typescript-eslint/eslint-recommended",
+			"plugin:@typescript-eslint/strict",
+			"plugin:import/recommended",
+			"plugin:import/typescript"
+		],
+		"overrides": [
+			{
+				"files": [
+					"*.svelte"
+				],
+				"processor": "svelte3/svelte3"
+			}
+		],
+		"settings": {
+			"svelte3/typescript": true
+		},
+		"env": {
+			"es6": true,
+			"browser": true
+		},
+		"rules": {
+			"import/order": [
+				"warn",
+				{
+					"alphabetize": {
+						"order": "asc"
+					}
+				}
+			],
+			"@typescript-eslint/consistent-type-definitions": [
+				"warn",
+				"type"
+			],
+			"no-unused-vars": "off",
+			"@typescript-eslint/switch-exhaustiveness-check": "warn"
+		}
 	}
 }

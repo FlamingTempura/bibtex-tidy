@@ -24,12 +24,13 @@ export function parseArguments(args: string[]): {
 
 	for (const def of optionDefinitions) {
 		for (const [opt, val] of Object.entries(def.cli)) {
-			if (!optionArgs[opt]) continue;
+			const arg = optionArgs[opt];
+			if (!arg) continue;
 			const key = def.key as keyof CLIOptions;
 			if (typeof val === 'function') {
-				options[key] = val(optionArgs[opt]) as any;
+				options[key] = val(arg) as any;
 			} else {
-				options[key] = val as any;
+				options[key] = val as CLIOptions[typeof key] as any;
 			}
 		}
 	}
@@ -57,6 +58,7 @@ export function splitCLIArgs(args: string[]): {
 		isValue?: boolean;
 	}[] = args.map((arg) => ({ arg }));
 
+	// eslint-disable-next-line no-constant-condition, @typescript-eslint/no-unnecessary-condition
 	while (true) {
 		// Keep getting first argument until there are none left
 		const next = argsToProcess.shift();
@@ -88,7 +90,7 @@ export function splitCLIArgs(args: string[]): {
 				continue;
 			}
 			if (currOption) {
-				optionArgVals[currOption].push(...valueOrInputArgs);
+				optionArgVals[currOption]?.push(...valueOrInputArgs);
 			} else if (valueOrInputArgs.length > 0) {
 				// If no option has been seen yet but args have been seen, then they are
 				// in the input args.
@@ -98,7 +100,7 @@ export function splitCLIArgs(args: string[]): {
 			optionArgVals[currOption] = [];
 			valueOrInputArgs = [];
 		} else if (isValue && currOption) {
-			optionArgVals[currOption].push(unquote(arg));
+			optionArgVals[currOption]?.push(unquote(arg));
 		} else {
 			valueOrInputArgs.push(arg);
 		}
@@ -107,7 +109,7 @@ export function splitCLIArgs(args: string[]): {
 	if (!inputArgs) {
 		inputArgs = valueOrInputArgs;
 	} else if (currOption) {
-		optionArgVals[currOption].push(...valueOrInputArgs);
+		optionArgVals[currOption]?.push(...valueOrInputArgs);
 	} else {
 		// should never happen
 		throw new Error(`Invalid args: ${args.join(' ')}`);

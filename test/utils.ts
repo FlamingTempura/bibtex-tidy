@@ -1,8 +1,8 @@
-import type { CLIOptions } from '../src/optionUtils';
-import { type CLIResult, testCLI } from './targets/cli';
-import { type APIResult, testAPI } from './targets/api';
-import { testWeb, type WebResult, teardown } from './targets/web';
 import assert, { AssertionError, deepStrictEqual, strictEqual } from 'assert';
+import type { CLIOptions } from '../src/optionUtils';
+import { type APIResult, testAPI } from './targets/api';
+import { type CLIResult, testCLI } from './targets/cli';
+import { testWeb, type WebResult, teardown } from './targets/web';
 
 const queue: (() => Promise<void>)[] = [];
 
@@ -69,7 +69,7 @@ export async function bibtexTidy(
 	if (targets.includes('api')) {
 		assert(!('stdin' in inputs), 'API does not support stdin');
 		assert(inputs.length === 1, 'API only supports one input bibtex');
-		api = testAPI(inputs[0], options);
+		api = testAPI(inputs[0]!, options);
 		const check = testAPI(api.bibtex, options);
 		deepStrictEqual(api.bibtex, check.bibtex, 'API result unstable');
 	}
@@ -85,7 +85,7 @@ export async function bibtexTidy(
 	if (targets.includes('web') && process.env.NODE_ENV !== 'coverage') {
 		assert(!('stdin' in inputs), 'Web does not support stdin');
 		assert(inputs.length === 1, 'Web only supports one input bibtex');
-		web = await testWeb(inputs[0], options);
+		web = await testWeb(inputs[0]!, options);
 		const check = await testWeb(web.bibtex, options);
 		deepStrictEqual(web.bibtex, check.bibtex, 'Web result unstable');
 	}

@@ -8,14 +8,14 @@
 // In future we could modify bibtex-tidy's parser to be incremental and not halt
 // on errors, allowing us to remove this lezer based parser.
 
-import { parser } from './bibtex';
-import { styleTags, tags as t } from '@lezer/highlight';
 import {
 	LRLanguage,
 	LanguageSupport,
 	HighlightStyle,
 	syntaxHighlighting,
 } from '@codemirror/language';
+import { styleTags, tags as t } from '@lezer/highlight';
+import { parser } from './bibtex';
 
 const language = LRLanguage.define({
 	parser: parser.configure({

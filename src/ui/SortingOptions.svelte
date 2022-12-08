@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Option from './Option.svelte';
-	import type { OptionsNormalized } from '../optionUtils';
 	import { DEFAULT_FIELD_SORT, DEFAULT_SORT } from '../optionDefinitions';
+	import type { OptionsNormalized } from '../optionUtils';
 	import Collapsible from './Collapsible.svelte';
+	import Option from './Option.svelte';
 
 	export let options: OptionsNormalized;
 

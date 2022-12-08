@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { OptionsNormalized } from '../optionUtils';
 	import type { BibTeXTidyResult } from '..';
+	import type { OptionsNormalized } from '../optionUtils';
 	import FeedbackError from './FeedbackError.svelte';
 	import FeedbackSuccess from './FeedbackSuccess.svelte';
 

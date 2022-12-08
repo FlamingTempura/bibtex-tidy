@@ -1,4 +1,3 @@
-import type { OptionsNormalized } from './optionUtils';
 import type {
 	BlockNode,
 	FieldNode,
@@ -6,6 +5,9 @@ import type {
 	EntryNode,
 	RootNode,
 } from './bibtex-parser';
+import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from './latexParser';
+import type { OptionsNormalized } from './optionUtils';
+import { MONTHS } from './sort';
 import {
 	titleCase,
 	escapeSpecialCharacters,
@@ -17,8 +19,6 @@ import {
 	limitAuthors,
 	formatPageRange,
 } from './utils';
-import { MONTHS } from './sort';
-import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from './latexParser';
 
 const MONTH_SET = new Set<string>(MONTHS);
 
@@ -30,7 +30,7 @@ export function formatBibtex(
 	const { omit, tab, space } = options;
 
 	const indent: string = tab ? '\t' : ' '.repeat(space);
-	const omitFields: Set<string> = new Set(omit);
+	const omitFields = new Set<string>(omit);
 	let bibtex: string = ast.children
 		.map((child) =>
 			formatNode(child, options, indent, omitFields, replacementKeys)
@@ -100,8 +100,7 @@ function formatEntry(
 	if (key) bibtex += `${key},`;
 
 	const fieldSeen = new Set<string>();
-	for (let i = 0; i < entry.fields.length; i++) {
-		const field = entry.fields[i];
+	for (const [i, field] of entry.fields.entries()) {
 		const nameLowerCase = field.name.toLocaleLowerCase();
 		const name = lowercase ? nameLowerCase : field.name;
 
@@ -164,10 +163,10 @@ export function formatValue(
 	const nameLowerCase = field.name.toLocaleLowerCase();
 
 	const indent: string = tab ? '\t' : ' '.repeat(space);
-	const enclosingBracesFields: Set<string> = new Set(
+	const enclosingBracesFields = new Set<string>(
 		(enclosingBraces ?? []).map((field) => field.toLocaleLowerCase())
 	);
-	const removeBracesFields: Set<string> = new Set(
+	const removeBracesFields = new Set<string>(
 		(removeBraces ?? []).map((field) => field.toLocaleLowerCase())
 	);
 

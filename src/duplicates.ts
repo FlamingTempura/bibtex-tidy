@@ -1,5 +1,5 @@
-import type { DuplicateRule, MergeStrategy } from './optionUtils';
 import type { EntryNode, RootNode } from './bibtex-parser';
+import type { DuplicateRule, MergeStrategy } from './optionUtils';
 import { alphaNum } from './utils';
 import { getEntries } from '.';
 import type { Warning } from '.';
@@ -10,7 +10,7 @@ export function checkForDuplicates(
 	duplicateRules?: DuplicateRule[],
 	merge?: MergeStrategy
 ): { entries: Set<EntryNode>; warnings: Warning[] } {
-	const rules: Map<DuplicateRule, boolean> = new Map();
+	const rules = new Map<DuplicateRule, boolean>();
 
 	if (duplicateRules) {
 		for (const rule of duplicateRules) {
@@ -28,10 +28,10 @@ export function checkForDuplicates(
 	const warnings: Warning[] = [];
 
 	// Set of entry keys, used to check for duplicate key warnings
-	const keys: Map<string, EntryNode> = new Map();
-	const dois: Map<string, EntryNode> = new Map();
-	const citations: Map<string, EntryNode> = new Map();
-	const abstracts: Map<string, EntryNode> = new Map();
+	const keys = new Map<string, EntryNode>();
+	const dois = new Map<string, EntryNode>();
+	const citations = new Map<string, EntryNode>();
+	const abstracts = new Map<string, EntryNode>();
 
 	for (const entry of getEntries(ast)) {
 		const entryValues = valueLookup.get(entry)!;
@@ -55,7 +55,7 @@ export function checkForDuplicates(
 					break;
 				}
 
-				case 'doi':
+				case 'doi': {
 					const doi = alphaNum(entryValues.get('doi') ?? '');
 					if (!doi) continue;
 					duplicateOf = dois.get(doi);
@@ -65,15 +65,16 @@ export function checkForDuplicates(
 						warning = `Entry ${entry.key} has an identical DOI to entry ${duplicateOf.key}.`;
 					}
 					break;
+				}
 
-				case 'citation':
+				case 'citation': {
 					const ttl = entryValues.get('title');
 					const aut = entryValues.get('author');
 					// Author/title can be identical for numbered reports https://github.com/FlamingTempura/bibtex-tidy/issues/364
 					const num = entryValues.get('number');
 					if (!ttl || !aut) continue;
 					const cit: string = [
-						alphaNum(aut.split(/,| and/)[0]),
+						alphaNum(aut.split(/,| and/)[0]!),
 						alphaNum(ttl),
 						alphaNum(num ?? '0'),
 					].join(':');
@@ -84,10 +85,11 @@ export function checkForDuplicates(
 						warning = `Entry ${entry.key} has similar content to entry ${duplicateOf.key}.`;
 					}
 					break;
+				}
 
-				case 'abstract':
+				case 'abstract': {
 					const abstract = alphaNum(entryValues.get('abstract') ?? '');
-					const abs = abstract?.slice(0, 100);
+					const abs = abstract.slice(0, 100);
 					if (!abs) continue;
 					duplicateOf = abstracts.get(abs);
 					if (!duplicateOf) {
@@ -96,6 +98,7 @@ export function checkForDuplicates(
 						warning = `Entry ${entry.key} has a similar abstract to entry ${duplicateOf.key}.`;
 					}
 					break;
+				}
 			}
 
 			if (duplicateOf && doMerge) {
@@ -120,6 +123,7 @@ function mergeEntries(
 	duplicateOf: EntryNode,
 	entry: EntryNode
 ): void {
+	if (!merge) return;
 	switch (merge) {
 		case 'last':
 			duplicateOf.key = entry.key;
@@ -140,5 +144,7 @@ function mergeEntries(
 			}
 			break;
 		// TODO: case 'keep-both'
+		case 'first':
+			return;
 	}
 }

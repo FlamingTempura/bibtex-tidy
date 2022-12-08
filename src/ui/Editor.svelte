@@ -1,6 +1,7 @@
 <script lang="ts">
-	import CopyButton from './CopyButton.svelte';
 	import { indentWithTab, history, historyKeymap } from '@codemirror/commands';
+	import { bracketMatching } from '@codemirror/language';
+	import { linter } from '@codemirror/lint';
 	import { EditorState, Compartment } from '@codemirror/state';
 	import {
 		EditorView,
@@ -11,25 +12,24 @@
 		dropCursor,
 		highlightActiveLineGutter,
 	} from '@codemirror/view';
+	import { onMount } from 'svelte';
+	import type { BibTeXSyntaxError } from '../bibtex-parser';
+	import CopyButton from './CopyButton.svelte';
 	import {
 		bibtexLanguage,
 		bibtexSyntaxHighlighting,
 	} from './codemirrorExtensions';
-	import { onMount } from 'svelte';
-	import { linter } from '@codemirror/lint';
-	import { bracketMatching } from '@codemirror/language';
-	import type { BibTeXSyntaxError } from '../bibtex-parser';
 
 	export let bibtex: string;
 	export let error: BibTeXSyntaxError | undefined;
 
 	let editorRef: HTMLElement;
-	let cmEditor: EditorView;
+	let cmEditor: EditorView | undefined;
 	let lintCompartment: Compartment;
 
 	onMount(() => {
 		const onUpdate = EditorView.updateListener.of((v: ViewUpdate) => {
-			if (v.docChanged) {
+			if (cmEditor && v.docChanged) {
 				bibtex = cmEditor.state.doc.toString();
 			}
 		});
@@ -82,7 +82,7 @@
 		cmEditor?.dispatch({
 			effects: lintCompartment.reconfigure(
 				linter(() => {
-					if (error) {
+					if (error && cmEditor) {
 						const line = cmEditor.state.doc.line(error.line);
 						const from = line.from;
 						const to = line.to;

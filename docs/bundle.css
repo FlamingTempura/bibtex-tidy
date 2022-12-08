@@ -110,72 +110,6 @@ details[open].svelte-ee92zc summary.svelte-ee92zc:hover:after {
   content: "\25bc";
 }
 
-/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/SubOptions.esbuild-svelte-fake-css */
-.suboptions.svelte-1gkj6ol {
-  margin: 0px 0 28px 45px;
-}
-.suboptions.svelte-1gkj6ol:last-child {
-  margin-bottom: 0;
-}
-.suboptions.svelte-1gkj6ol textarea {
-  resize: vertical;
-  width: 100%;
-  height: 100px;
-}
-.suboptions.svelte-1gkj6ol input[type=number] {
-  display: inline-block;
-  width: 62px;
-}
-
-/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Label.esbuild-svelte-fake-css */
-label.svelte-a2tm3u {
-  padding: 8px 12px;
-  margin: 12px 0;
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  cursor: pointer;
-}
-label.svelte-a2tm3u:hover {
-  background: var(--hover-bg);
-  box-shadow: 0 0 0 1px var(--border-color);
-}
-label.svelte-a2tm3u:first-of-type {
-  margin-top: 4px;
-}
-label.svelte-a2tm3u:last-child {
-  margin-bottom: 0;
-}
-
-/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Radio.esbuild-svelte-fake-css */
-input.svelte-qhlda7 {
-  appearance: none;
-  -webkit-appearance: none;
-  background: transparent;
-  margin: 0;
-  border: 2px solid var(--light6);
-  border-radius: 8.5px;
-  width: 17px;
-  height: 17px;
-  position: relative;
-  flex: 0 0 17px;
-}
-input.svelte-qhlda7:checked {
-  border-color: var(--light-blue);
-  background: transparent;
-}
-input.svelte-qhlda7:checked:after {
-  content: "";
-  position: absolute;
-  background: var(--light-blue);
-  width: 7px;
-  height: 7px;
-  left: 3px;
-  top: 3px;
-  border-radius: 10px;
-}
-
 /* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Checkbox.esbuild-svelte-fake-css */
 input.svelte-doypik {
   appearance: none;
@@ -212,6 +146,44 @@ input.svelte-doypik:checked:after {
   transform: rotate(-45deg);
 }
 
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Label.esbuild-svelte-fake-css */
+label.svelte-a2tm3u {
+  padding: 8px 12px;
+  margin: 12px 0;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+}
+label.svelte-a2tm3u:hover {
+  background: var(--hover-bg);
+  box-shadow: 0 0 0 1px var(--border-color);
+}
+label.svelte-a2tm3u:first-of-type {
+  margin-top: 4px;
+}
+label.svelte-a2tm3u:last-child {
+  margin-bottom: 0;
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/SubOptions.esbuild-svelte-fake-css */
+.suboptions.svelte-1gkj6ol {
+  margin: 0px 0 28px 45px;
+}
+.suboptions.svelte-1gkj6ol:last-child {
+  margin-bottom: 0;
+}
+.suboptions.svelte-1gkj6ol textarea {
+  resize: vertical;
+  width: 100%;
+  height: 100px;
+}
+.suboptions.svelte-1gkj6ol input[type=number] {
+  display: inline-block;
+  width: 62px;
+}
+
 /* fakecss:/home/peter/projects/bibtex-tidy/src/ui/CleanupOptions.esbuild-svelte-fake-css */
 textarea.omit.svelte-1t0249j {
   height: 50px;
@@ -228,6 +200,34 @@ textarea.omit.svelte-1t0249j {
 }
 #cli.svelte-1xnx1c1 .opt-val.svelte-1xnx1c1 {
   color: var(--orange);
+}
+
+/* fakecss:/home/peter/projects/bibtex-tidy/src/ui/Radio.esbuild-svelte-fake-css */
+input.svelte-qhlda7 {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  margin: 0;
+  border: 2px solid var(--light6);
+  border-radius: 8.5px;
+  width: 17px;
+  height: 17px;
+  position: relative;
+  flex: 0 0 17px;
+}
+input.svelte-qhlda7:checked {
+  border-color: var(--light-blue);
+  background: transparent;
+}
+input.svelte-qhlda7:checked:after {
+  content: "";
+  position: absolute;
+  background: var(--light-blue);
+  width: 7px;
+  height: 7px;
+  left: 3px;
+  top: 3px;
+  border-radius: 10px;
 }
 
 /* fakecss:/home/peter/projects/bibtex-tidy/src/ui/FeedbackError.esbuild-svelte-fake-css */

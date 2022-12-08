@@ -1,6 +1,6 @@
-import { isEntryNode } from './utils';
 import type { RootNode, EntryNode } from './bibtex-parser';
 import { parseAuthors } from './parseAuthors';
+import { isEntryNode } from './utils';
 
 export const SPECIAL_MARKERS: Record<
 	string,
@@ -28,7 +28,7 @@ export const SPECIAL_MARKERS: Record<
 			return [
 				...authors
 					.slice(0, 2)
-					.map((author) => author?.lastName.replace(/[^\p{Letter}]+/gu, '_')),
+					.map((author) => author.lastName.replace(/[^\p{Letter}]+/gu, '_')),
 				...(authors.length > 2 ? ['Et', 'Al'] : []),
 			];
 		},
@@ -38,7 +38,7 @@ export const SPECIAL_MARKERS: Record<
 		callback: (v) => {
 			const authors = parseAuthors(v.get('author') ?? '', true);
 			return authors.map((author) =>
-				author?.lastName.replace(/[^\p{Letter}]+/gu, '_')
+				author.lastName.replace(/[^\p{Letter}]+/gu, '_')
 			);
 		},
 	},
@@ -49,7 +49,7 @@ export const SPECIAL_MARKERS: Record<
 			return [
 				...authors
 					.slice(0, n)
-					.map((author) => author?.lastName.replace(/[^\p{Letter}]+/gu, '_')),
+					.map((author) => author.lastName.replace(/[^\p{Letter}]+/gu, '_')),
 				...(authors.length > n! ? ['Et', 'Al'] : []),
 			];
 		},
@@ -154,13 +154,12 @@ export function generateKeys(
 	const keys = new Map<EntryNode, string>();
 
 	for (const [key, entries] of entriesByKey) {
-		for (let i = 0; i < entries.length; i++) {
-			const entry = entries[i];
+		for (const [i, entry] of entries.entries()) {
 			const duplicateLetter =
 				entries.length > 1 ? String.fromCharCode(97 + i) : ''; // FIXME: this will break after 26 duplicates
 			const duplicateNumber = entries.length > 1 ? String(i + 1) : '';
 			entry.key = key
-				?.replace(/\[duplicateLetter\]/g, duplicateLetter)
+				.replace(/\[duplicateLetter\]/g, duplicateLetter)
 				.replace(/\[duplicateNumber\]/g, duplicateNumber);
 		}
 	}
@@ -175,6 +174,9 @@ export function generateKey(
 	try {
 		const newKey = template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (m) => {
 			const [tokenKeyN, ...modifierKeys] = m.slice(1, -1).split(':');
+			if (!tokenKeyN) {
+				throw new Error('Token parse error');
+			}
 			let n: number | undefined;
 			const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
 				n = Number(m);
@@ -183,7 +185,7 @@ export function generateKey(
 			const token = SPECIAL_MARKERS[tokenKey];
 			let key: string[];
 			if (token) {
-				key = token.callback(valueLookup, n) ?? '';
+				key = token.callback(valueLookup, n);
 			} else if (tokenKey === tokenKey.toLocaleUpperCase()) {
 				const value = valueLookup.get(tokenKey.toLocaleLowerCase());
 				key = value ? words(value) : [];
