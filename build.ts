@@ -1,15 +1,18 @@
 import { writeFile, mkdir, chmod, readFile } from 'fs/promises';
 import { join } from 'path';
-import { transform as babel } from '@babel/core';
+import { transform as swc, type Options, type Output } from '@swc/core';
 import { generateDtsBundle } from 'dts-bundle-generator';
 import {
 	build,
-	buildSync,
 	serve,
 	type OnLoadResult,
+	type OutputFile,
 	type Plugin,
 } from 'esbuild';
 import sveltePlugin from 'esbuild-svelte';
+import prettier from 'prettier';
+//@ts-expect-error
+import rewritePattern from 'regexpu-core';
 import autoPreprocess from 'svelte-preprocess';
 import { version, author, homepage } from './package.json';
 import { functionWords, MODIFIERS, SPECIAL_MARKERS } from './src/generateKeys';
@@ -27,23 +30,28 @@ const CLI_BIN = join(__dirname, 'bin', 'bibtex-tidy');
 /**
  * Browser features
  *
- * -----------------------------------------------------
- *                            Chrome  Edge  Safari  FF
- * -----------------------------------------------------
- * Summary/details element      12     79      6    49
- * CSS variables                49     16     10    36
- * Flexbox                      21     12     6.1   28
- * -----------------------------------------------------
- * Min supported                49     79     10    49
- * -----------------------------------------------------
+ * -----------------------------------------------------------
+ *                            Chrome  Edge  Safari  FF   IE
+ * -----------------------------------------------------------
+ * Summary/details element      12     79      6    49  None
+ * CSS variables                49     16     10    36  None
+ * Flexbox                      21     12     6.1   28   11
+ * WOFF2                        35     14     10    39  None
+ * HTML main                    26     12      7    21  None
+ * CSS appearance: none          4     12     3.1   2   None   (not essential)
+ * regexp u flag                50     12     10    46  None   (polyfilled)
+ * regexp \p{} char classes     64     79     11.1  78  None   (polyfilled)
+ * -----------------------------------------------------------
+ * Min supported                49     79     10    49  None
+ * -----------------------------------------------------------
  */
 // TODO: test on browserstack
 
 const BROWSER_TARGETS = {
-	edge: '79',
-	firefox: '49',
 	chrome: '49',
+	edge: '79',
 	safari: '10',
+	firefox: '49',
 };
 
 const NODE_TARGET: string[] = ['node12'];
@@ -223,23 +231,27 @@ function formatOptions(indent: number, lineWidth: number): string[] {
 
 async function buildJSBundle() {
 	console.time('JS bundle built');
-	const { outputFiles } = buildSync({
+	const { outputFiles } = await build({
 		entryPoints: ['./src/index.ts'],
 		bundle: true,
 		write: false,
 		format: 'esm',
+		keepNames: true,
 		banner: { js: jsBanner.join('\n') },
+		plugins: [regexpuPlugin],
 	});
 	const bundle = outputFiles[0];
 	if (!bundle) throw new Error('Failed to build JS bundle');
-	const result = babel(bundle.text, {
-		presets: [['@babel/env', { targets: BROWSER_TARGETS }]],
-		compact: false,
+	const result = await transpileForOldBrowsers(bundle, {
+		module: { type: 'commonjs' },
 	});
-	if (!result?.code) throw new Error('Expected babel output');
+	const text = prettier.format(result.code, {
+		parser: 'babel',
+		printWidth: 1000,
+	});
 	await writeFile(
 		'bibtex-tidy.js',
-		result.code + `\nmodule.exports = exports.default;`
+		text + `\nmodule.exports = exports.default;`
 	);
 	console.timeEnd('JS bundle built');
 }
@@ -281,16 +293,22 @@ async function buildWebBundle() {
 		outfile: join(WEB_PATH, 'bundle.js'),
 		bundle: true,
 		write: false,
+		keepNames: true,
 		banner: { js: jsBanner.join('\n') },
 		plugins: [
 			sveltePlugin({ preprocess: autoPreprocess() }),
 			googleFontPlugin,
-			babelPlugin,
+			regexpuPlugin,
 		],
 	});
 
 	for (const file of outputFiles) {
-		await writeFile(file.path, file.text);
+		let text = file.text;
+		if (file.path.endsWith('.js')) {
+			text = (await transpileForOldBrowsers(file)).code;
+			text = prettier.format(text, { parser: 'babel', printWidth: 400 });
+		}
+		await writeFile(file.path, text);
 	}
 
 	console.timeEnd('Web bundle built');
@@ -318,21 +336,26 @@ async function serveWeb() {
 	console.log(`Access on http://localhost:${server.port}`);
 }
 
-const babelPlugin: Plugin = {
-	name: 'babel',
+// Transforms unicode regexps for older browsers. This needs to be an esbuild
+// plugin so it can transform regexp literals before esbuild transforms them
+// into RegExp constructors. May be supported by swc in future
+// https://github.com/swc-project/swc/issues/1649
+const regexpuPlugin: Plugin = {
+	name: 'regexpu',
 	setup(build) {
-		// This will not run on serve mode https://github.com/evanw/esbuild/issues/1384
-		build.onEnd((result) => {
-			for (const file of result.outputFiles ?? []) {
-				if (file.path.endsWith('.js')) {
-					const result = babel(file.text, {
-						presets: [['@babel/env', { targets: BROWSER_TARGETS }]],
-						compact: false,
+		build.onLoad({ filter: /\.m?[jt]s$/, namespace: '' }, async (args) => {
+			const contents = await readFile(args.path, 'utf8');
+			const newContents = contents.replace(
+				/\(\/(.*)\/([a-z]*u[a-z]*)/g,
+				(_, pattern, flags) => {
+					const newPattern = rewritePattern(pattern, flags, {
+						unicodeFlag: 'transform',
+						unicodePropertyEscapes: 'transform',
 					});
-					if (!result?.code) throw new Error('Expected babel output');
-					file.contents = Buffer.from(result.code);
+					return `(/${newPattern}/${flags.replace('u', '')}`;
 				}
-			}
+			);
+			return { contents: newContents, loader: 'ts' };
 		});
 	},
 };
@@ -361,6 +384,23 @@ const googleFontPlugin: Plugin = {
 		);
 	},
 };
+
+/**
+ * swc converts js syntax to support older browsers. ESBuild can kinda do this
+ * but only for more recent browsers. swc is also far easier to configure than
+ * babel. This has to happen after esbuild has finished because esbuild adds
+ * syntax that needs to be transformed.
+ */
+async function transpileForOldBrowsers(
+	bundle: OutputFile,
+	options?: Options
+): Promise<Output> {
+	return await swc(bundle.text, {
+		filename: bundle.path,
+		env: { targets: BROWSER_TARGETS },
+		...options,
+	});
+}
 
 if (process.argv.includes('--serve')) {
 	serveWeb();
