@@ -50,7 +50,7 @@
 		"@types/babel__core": "^7.1.20",
 		"@types/node": "^18.11.11",
 		"dts-bundle-generator": "^7.1.0",
-		"esbuild": "^0.15.18",
+		"esbuild": "^0.16.5",
 		"esbuild-register": "^3.4.1",
 		"esbuild-svelte": "^0.7.3",
 		"nyc": "^15.1.0",
