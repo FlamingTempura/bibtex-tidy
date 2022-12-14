@@ -11612,6 +11612,23 @@ var __generator =
     }
   }
   __name(scrollRectIntoView, "scrollRectIntoView");
+  function scrollableParent(dom) {
+    var doc2 = dom.ownerDocument;
+    for (var cur = dom.parentNode; cur; ) {
+      if (cur == doc2.body) {
+        break;
+      } else if (cur.nodeType == 1) {
+        if (cur.scrollHeight > cur.clientHeight || cur.scrollWidth > cur.clientWidth) return cur;
+        cur = cur.assignedSlot || cur.parentNode;
+      } else if (cur.nodeType == 11) {
+        cur = cur.host;
+      } else {
+        break;
+      }
+    }
+    return null;
+  }
+  __name(scrollableParent, "scrollableParent");
   var DOMSelectionState = class DOMSelectionState {
     eq(domSel) {
       return this.anchorNode == domSel.anchorNode && this.anchorOffset == domSel.anchorOffset && this.focusNode == domSel.focusNode && this.focusOffset == domSel.focusOffset;
@@ -15030,11 +15047,7 @@ var __generator =
           view.contentDOM.addEventListener(
             type,
             (event) => {
-              if (!eventBelongsToEditor(view, event) || _this.ignoreDuringComposition(event)) return;
-              if (type == "keydown" && _this.keydown(view, event)) return;
-              if (_this.mustFlushObserver(event)) view.observer.forceFlush();
-              if (_this.runCustomHandlers(type, view, event)) event.preventDefault();
-              else handler(view, event);
+              if (eventBelongsToEditor(view, event)) handleEvent(handler, event);
             },
             handlerOptions[type]
           );
@@ -15059,7 +15072,17 @@ var __generator =
       this.compositionFirstChange = null;
       this.compositionEndedAt = 0;
       this.mouseSelection = null;
+      var handleEvent = /* @__PURE__ */ __name((handler, event) => {
+        if (this.ignoreDuringComposition(event)) return;
+        if (event.type == "keydown" && this.keydown(view, event)) return;
+        if (this.mustFlushObserver(event)) view.observer.forceFlush();
+        if (this.runCustomHandlers(event.type, view, event)) event.preventDefault();
+        else handler(view, event);
+      }, "handleEvent");
       for (var type in handlers) _loop(type);
+      view.scrollDOM.addEventListener("mousedown", (event) => {
+        if (event.target == view.scrollDOM) handleEvent(handlers.mousedown, event);
+      });
       if (browser.chrome && browser.chrome_version == 102) {
         view.scrollDOM.addEventListener(
           "wheel",
@@ -15100,11 +15123,29 @@ var __generator =
   ];
   var EmacsyPendingKeys = "dthko";
   var modifierCodes = [16, 17, 18, 20, 91, 92, 224, 225];
+  function dragScrollSpeed(dist) {
+    return dist * 0.7 + 8;
+  }
+  __name(dragScrollSpeed, "dragScrollSpeed");
   var MouseSelection = class MouseSelection {
     move(event) {
+      var _a2;
       if (event.buttons == 0) return this.destroy();
       if (this.dragging !== false) return;
       this.select((this.lastEvent = event));
+      var sx = 0,
+        sy = 0;
+      var rect = ((_a2 = this.scrollParent) === null || _a2 === void 0 ? void 0 : _a2.getBoundingClientRect()) || {
+        left: 0,
+        top: 0,
+        right: this.view.win.innerWidth,
+        bottom: this.view.win.innerHeight,
+      };
+      if (event.clientX <= rect.left) sx = -dragScrollSpeed(rect.left - event.clientX);
+      else if (event.clientX >= rect.right) sx = dragScrollSpeed(event.clientX - rect.right);
+      if (event.clientY <= rect.top) sy = -dragScrollSpeed(rect.top - event.clientY);
+      else if (event.clientY >= rect.bottom) sy = dragScrollSpeed(event.clientY - rect.bottom);
+      this.setScrollSpeed(sx, sy);
     }
     up(event) {
       if (this.dragging == null) this.select(this.lastEvent);
@@ -15112,10 +15153,32 @@ var __generator =
       this.destroy();
     }
     destroy() {
+      this.setScrollSpeed(0, 0);
       var doc2 = this.view.contentDOM.ownerDocument;
       doc2.removeEventListener("mousemove", this.move);
       doc2.removeEventListener("mouseup", this.up);
       this.view.inputState.mouseSelection = null;
+    }
+    setScrollSpeed(sx, sy) {
+      this.scrollSpeed = {
+        x: sx,
+        y: sy,
+      };
+      if (sx || sy) {
+        if (this.scrolling < 0) this.scrolling = setInterval(() => this.scroll(), 50);
+      } else if (this.scrolling > -1) {
+        clearInterval(this.scrolling);
+        this.scrolling = -1;
+      }
+    }
+    scroll() {
+      if (this.scrollParent) {
+        this.scrollParent.scrollLeft += this.scrollSpeed.x;
+        this.scrollParent.scrollTop += this.scrollSpeed.y;
+      } else {
+        this.view.win.scrollBy(this.scrollSpeed.x, this.scrollSpeed.y);
+      }
+      if (this.dragging === false) this.select(this.lastEvent);
     }
     select(event) {
       var selection = this.style.get(event, this.extend, this.multiple);
@@ -15123,7 +15186,6 @@ var __generator =
         this.view.dispatch({
           selection,
           userEvent: "select.pointer",
-          scrollIntoView: true,
         });
       this.mustSelect = false;
     }
@@ -15135,7 +15197,13 @@ var __generator =
       this.view = view;
       this.style = style;
       this.mustSelect = mustSelect;
+      this.scrollSpeed = {
+        x: 0,
+        y: 0,
+      };
+      this.scrolling = -1;
       this.lastEvent = startEvent;
+      this.scrollParent = scrollableParent(view.contentDOM);
       var doc2 = view.contentDOM.ownerDocument;
       doc2.addEventListener("mousemove", (this.move = this.move.bind(this)));
       doc2.addEventListener("mouseup", (this.up = this.up.bind(this)));
@@ -15352,23 +15420,15 @@ var __generator =
     var start = queryPos(view, event),
       type = getClickType(event);
     var startSel = view.state.selection;
-    var last = start,
-      lastEvent = event;
     return {
       update(update2) {
         if (update2.docChanged) {
           start.pos = update2.changes.mapPos(start.pos);
           startSel = startSel.map(update2.changes);
-          lastEvent = null;
         }
       },
       get(event2, extend2, multiple) {
-        var cur;
-        if (lastEvent && event2.clientX == lastEvent.clientX && event2.clientY == lastEvent.clientY) cur = last;
-        else {
-          cur = last = queryPos(view, event2);
-          lastEvent = event2;
-        }
+        var cur = queryPos(view, event2);
         var range = rangeForClick(view, cur.pos, cur.bias, type);
         if (start.pos != cur.pos && !extend2) {
           var startRange = rangeForClick(view, start.pos, start.bias, type);

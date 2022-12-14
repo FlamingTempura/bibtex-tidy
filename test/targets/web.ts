@@ -1,11 +1,12 @@
-import { normalizeOptions, type Options } from '../../src/optionUtils';
-import type { Warning } from '../../src/index';
-import puppeteer, { Page } from 'puppeteer';
 import { join } from 'path';
+import puppeteer, { Page } from 'puppeteer';
+import type { Warning } from '../../src/index';
+import { normalizeOptions, type Options } from '../../src/optionUtils';
 
 const WEB_ROOT = join(__dirname, '..', '..', 'docs', 'index.html');
 
 declare global {
+	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Window {
 		cmEditor: any;
 	}
@@ -86,7 +87,7 @@ export async function testWeb(
 	await setCheckbox('removeEmptyFields', !!options.removeEmptyFields);
 	await setCheckbox('removeDuplicateFields', !!options.removeDuplicateFields);
 	await setCheckbox('lowercase', !!options.lowercase);
-	await setCheckbox('blankLines', options.blankLines ?? false);
+	await setCheckbox('blankLines', !!options.blankLines);
 
 	if (options.space) {
 		await setRadio('spaces');

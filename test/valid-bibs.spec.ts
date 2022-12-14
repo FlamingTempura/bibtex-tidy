@@ -1,7 +1,7 @@
-import { bibtexTidy, test } from './utils';
-import { readdir, readFile } from 'fs/promises';
 import { strictEqual } from 'assert';
+import { readdir, readFile } from 'fs/promises';
 import { join } from 'path';
+import { bibtexTidy, test } from './utils';
 
 async function testBibsInDir(path: string): Promise<void> {
 	const validfiles = await readdir(path);

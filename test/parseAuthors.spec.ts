@@ -1,6 +1,6 @@
-import { test } from './utils';
 import { deepStrictEqual } from 'assert';
 import { parseAuthors } from '../src/parseAuthors';
+import { test } from './utils';
 
 test('parseAuthors', () => {
 	deepStrictEqual(parseAuthors('Feinberg, Andrew P and Vogelstein, Bert'), [
@@ -18,7 +18,7 @@ test('parseAuthors', () => {
 	]);
 
 	deepStrictEqual(
-		parseAuthors(`Herrmann, Wolfgang A. and {\"O}fele, Karl and Sabine K. Schneider
+		parseAuthors(`Herrmann, Wolfgang A. and {"O}fele, Karl and Sabine K. Schneider
       and Herdtweck, Eberhardt and Hoffmann, Stephan D.`),
 		[
 			{ firstNames: 'Wolfgang A.', lastName: 'Herrmann' },

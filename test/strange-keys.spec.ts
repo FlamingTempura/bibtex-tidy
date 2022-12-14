@@ -58,7 +58,10 @@ test('strange characters in citation key', async () => {
 			err = e;
 		}
 		notEqual(err, undefined);
-		equal(/The entry key cannot contain the character/.test(String(err)), true);
+		equal(
+			String(err).includes('The entry key cannot contain the character'),
+			true
+		);
 	}
 	let err;
 	try {
@@ -67,5 +70,5 @@ test('strange characters in citation key', async () => {
 		err = e;
 	}
 	notEqual(err, undefined);
-	equal(/The entry key cannot contain whitespace/.test(String(err)), true);
+	equal(String(err).includes('The entry key cannot contain whitespace'), true);
 });
