@@ -92,7 +92,7 @@ Remove npm prepare script
 
 - New release process, including tagging releases (#75)
 
-### Unreleased
+### v1.9.0
 
 Features:
 
@@ -110,9 +110,11 @@ Bug fixes:
 - More permitted characters in citation key, including parentheses, which were triggering a parser error (#358).
 - Support escaping quotes in quoted value, which were triggering a parser error (#98)
 - Fix extra empty line when wrapping long word (#141)
+- Fix bug where enclosing-braces would destroy commands (#127)
 
 Other enhancements:
 
+- Support removing ALLCAPS while keeping volume fields as they are (#49)
 - UI rewritten in Svelte. This should't change end user experience but will make maintenance much easier.
 - Entries with similar author and title will not be marked as duplicates if the `number` field is different (#364).
 - DUPLICATE_ENTRY now has a 'rule' property (can be key, doi, citation, or abstract). Note: This includes the removal of DUPLICATE_KEY warning. Look for DUPLICATE_ENTRY with `rule: "key "` instead.

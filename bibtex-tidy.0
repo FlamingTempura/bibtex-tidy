@@ -1,5 +1,5 @@
 NAME
-    BibTeX Tidy v1.8.5
+    BibTeX Tidy v1.9.0
 
 SYNOPSIS
     bibtex-tidy [OPTION]... FILE.BIB
