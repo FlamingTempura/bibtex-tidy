@@ -4,7 +4,7 @@ import { transform as swc, type Options, type Output } from '@swc/core';
 import { generateDtsBundle } from 'dts-bundle-generator';
 import {
 	build,
-	serve,
+	context,
 	type OnLoadResult,
 	type OutputFile,
 	type Plugin,
@@ -294,7 +294,7 @@ async function buildWebBundle() {
 		bundle: true,
 		write: false,
 		keepNames: true,
-		banner: { js: jsBanner.join('\n') },
+		minify: true,
 		plugins: [
 			sveltePlugin({ preprocess: autoPreprocess() }),
 			googleFontPlugin,
@@ -305,7 +305,8 @@ async function buildWebBundle() {
 	for (const file of outputFiles) {
 		let text = file.text;
 		if (file.path.endsWith('.js')) {
-			text = (await transpileForOldBrowsers(file)).code;
+			text = (await transpileForOldBrowsers(file, { minify: true })).code;
+			text = jsBanner.join('\n') + text;
 			text = prettier.format(text, { parser: 'babel', printWidth: 400 });
 		}
 		await writeFile(file.path, text);
@@ -315,24 +316,23 @@ async function buildWebBundle() {
 }
 
 async function serveWeb() {
-	const server = await serve(
-		{ servedir: WEB_PATH },
-		{
-			platform: 'browser',
-			entryPoints: ['./src/ui/index.ts'],
-			// esbuild replaces the extension, e.g. js for css
-			outfile: join(WEB_PATH, 'bundle.js'),
-			bundle: true,
-			sourcemap: true,
-			plugins: [
-				sveltePlugin({
-					preprocess: autoPreprocess(),
-					compilerOptions: { enableSourcemap: true },
-				}),
-				googleFontPlugin,
-			],
-		}
-	);
+	const ctx = await context({
+		platform: 'browser',
+		entryPoints: ['./src/ui/index.ts'],
+		// esbuild replaces the extension, e.g. js for css
+		outfile: join(WEB_PATH, 'bundle.js'),
+		bundle: true,
+		sourcemap: true,
+		write: false,
+		plugins: [
+			sveltePlugin({
+				preprocess: autoPreprocess(),
+				compilerOptions: { enableSourcemap: true },
+			}),
+			googleFontPlugin,
+		],
+	});
+	const server = await ctx.serve({ servedir: WEB_PATH });
 	console.log(`Access on http://localhost:${server.port}`);
 }
 
