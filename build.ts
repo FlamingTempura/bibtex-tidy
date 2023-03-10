@@ -1,5 +1,6 @@
 import { writeFile, mkdir, chmod, readFile } from 'fs/promises';
 import { join } from 'path';
+import { env } from 'process';
 import { transform as swc, type Options, type Output } from '@swc/core';
 import { generateDtsBundle } from 'dts-bundle-generator';
 import {
@@ -25,7 +26,7 @@ import { wrapText } from './src/utils';
 const SRC_PATH = join(__dirname, 'src');
 const BUILD_PATH = join(SRC_PATH, '__generated__');
 const WEB_PATH = join(__dirname, 'docs');
-const CLI_BIN = join(__dirname, 'bin', 'bibtex-tidy');
+const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join(__dirname, 'bin', 'bibtex-tidy');
 
 /**
  * Browser features
@@ -268,17 +269,18 @@ async function buildTypeDeclarations() {
 
 async function buildCLI() {
 	console.time('CLI built');
-	const { outputFiles } = await build({
+	await build({
 		bundle: true,
-		write: false,
 		platform: 'node',
-		banner: { js: jsBanner.join('\n') },
+		banner: {
+			js: '#!/usr/bin/env node\n' + jsBanner.join('\n'),
+		},
 		target: NODE_TARGET,
 		entryPoints: [join(SRC_PATH, 'cli.ts')],
+		sourcemap: env.NODE_ENV === 'coverage' ? 'inline' : false,
+		sourceRoot: './',
+		outfile: CLI_BIN,
 	});
-	const file = outputFiles[0];
-	if (!file) throw new Error('Failed to build CLI');
-	await writeFile(CLI_BIN, '#!/usr/bin/env node\n' + file.text);
 	await chmod(CLI_BIN, 0o755); // rwxr-xr-x
 	console.timeEnd('CLI built');
 }

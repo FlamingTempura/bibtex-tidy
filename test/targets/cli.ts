@@ -6,7 +6,9 @@ import { optionsToCLIArgs } from '../../src/cliUtils';
 import type { CLIOptions } from '../../src/optionUtils';
 
 const TMP_DIR = join(__dirname, '..', '..', '.tmp');
-const BIN_PATH = join(__dirname, '..', '..', 'bin', 'bibtex-tidy');
+const BIN_PATH =
+	process.env.BIBTEX_TIDY_BIN ??
+	join(__dirname, '..', '..', 'bin', 'bibtex-tidy');
 
 mkdirSync(TMP_DIR, { recursive: true });
 
@@ -47,6 +49,7 @@ export function testCLI(
 		timeout: 100000,
 		encoding: 'utf8',
 		input: 'stdin' in bibtexs ? bibtexs.stdin : undefined,
+		stdio: ['stdin' in bibtexs ? 'pipe' : 'inherit', 'pipe', 'pipe'],
 	});
 
 	if (proc.status !== 0) {
