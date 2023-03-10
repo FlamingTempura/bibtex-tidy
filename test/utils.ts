@@ -61,7 +61,8 @@ type BibTeXTidyRunResult = {
 export async function bibtexTidy(
 	inputs: string | string[] | { stdin: string },
 	options?: CLIOptions,
-	targets: ('api' | 'cli' | 'web')[] = ['api', 'cli', 'web']
+	targets: ('api' | 'cli' | 'web')[] = ['api', 'cli', 'web'],
+	additionalCLIArgs?: string[]
 ): Promise<BibTeXTidyRunResult> {
 	if (typeof inputs === 'string') inputs = [inputs];
 
@@ -76,8 +77,8 @@ export async function bibtexTidy(
 
 	let cli: CLIResult | undefined;
 	if (targets.includes('cli')) {
-		cli = testCLI(inputs, options);
-		const check = testCLI(cli.bibtexs, options);
+		cli = testCLI(inputs, options, additionalCLIArgs);
+		const check = testCLI(cli.bibtexs, options, additionalCLIArgs);
 		deepStrictEqual(cli.bibtexs, check.bibtexs, 'CLI result unstable');
 	}
 

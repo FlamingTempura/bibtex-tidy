@@ -28,7 +28,8 @@ export type CLIResult = {
  */
 export function testCLI(
 	bibtexs: string[] | { stdin: string },
-	options: CLIOptions = {}
+	options: CLIOptions = {},
+	additionalArgs?: string[]
 ): CLIResult {
 	const args: string[] = [];
 	const files: string[] = [];
@@ -44,6 +45,10 @@ export function testCLI(
 	}
 
 	args.push(...optionsToCLIArgs(options));
+
+	if (additionalArgs) {
+		args.push(...additionalArgs);
+	}
 
 	const proc = spawnSync(BIN_PATH, args, {
 		timeout: 100000,
