@@ -14,7 +14,7 @@ const OPTIONS = new Set(
  */
 export function parseArguments(
 	args: string[],
-	skipInputArgs: boolean
+	skipInputArgs?: boolean
 ): {
 	inputFiles: string[];
 	options: CLIOptions;
@@ -45,7 +45,7 @@ export function parseArguments(
 }
 export function splitCLIArgs(
 	args: string[],
-	skipInputArgs: boolean
+	skipInputArgs?: boolean
 ): {
 	inputFiles: string[];
 	optionArgVals: Record<string, string[]>;
