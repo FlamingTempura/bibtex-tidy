@@ -471,6 +471,7 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'version',
 		cli: { '--version': true, '-v': true },
+		toCLI: () => '-v',
 		title: 'Version',
 		description: ['Show bibtex-tidy version.'],
 		type: 'boolean',
