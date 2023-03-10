@@ -101,6 +101,24 @@ export type BibTeXTidyOptions = {
 	 */
 	help?: boolean;
 	/**
+	 * Enable planned v2 CLI changes
+	 *
+	 * Input files will no longer be modified by default. Instead, you will need to specify `--modify`/`-m` option to overwrite the file, or `--output`/`-o` to output to a different file.
+	 */
+	v2?: string;
+	/**
+	 * Output path
+	 *
+	 * Write output to specified path. When omitted (and -m/--modify is not used), the result will be printed to stdout.
+	 */
+	outputPath?: string;
+	/**
+	 * Modify input files
+	 *
+	 * Overwrite the original input files with the tidied result. This is enabled by default but will be disabled by default in v2. For v1, use --no-modify to output to stdout instead of overwriting the input files.
+	 */
+	modify?: boolean;
+	/**
 	 * Remove fields
 	 *
 	 * Remove specified fields from bibliography entries.
@@ -276,13 +294,13 @@ export type BibTeXTidyOptions = {
 	/**
 	 * Quiet
 	 *
-	 * Suppress logs and warnings.
+	 * Suppress logs on stdout.
 	 */
 	quiet?: boolean;
 	/**
 	 * Backup
 	 *
-	 * Make a backup <filename>.original. Enabled by default.
+	 * Make a backup <filename>.original. Enabled by default (unless --modify is explicitly provided or outputting to a different file/stdio). Deprecated but provided for backward compatibility.
 	 */
 	backup?: boolean;
 };

@@ -72,8 +72,6 @@ const jsBanner: string[] = [
 	'',
 ];
 
-const manpageBanner: string[] = banner.map((line) => `.\\ ${line}`.trimEnd());
-
 async function generateOptionTypes() {
 	const { outputFiles } = await build({
 		entryPoints: [join(SRC_PATH, 'optionDefinitions.ts')],
@@ -117,13 +115,21 @@ async function generateVersionFile() {
 }
 
 const NAME = `BibTeX Tidy v${version}`;
-const DESCRIPTION = 'Cleaner and formatter for BibTeX files.';
-const SYNOPSIS = 'bibtex-tidy [OPTION]... FILE.BIB';
+const DESCRIPTION = [
+	'Cleaner and formatter for BibTeX files.',
+	'',
+	'If no input or output file is specified, bibtex-tidy reads the standard input or writes to the standard output respectively. Use -m to overwrite the input file.',
+];
+
+const SYNOPSIS = 'bibtex-tidy [infile] [-o outfile] [option...]';
 
 async function generateCLIHelp() {
 	const help: string[] = [
 		`Usage: ${SYNOPSIS}`,
-		`${NAME} - ${DESCRIPTION}`,
+		'',
+		NAME,
+		'='.repeat(NAME.length),
+		...DESCRIPTION.map((d) => wrapText(d, 84).join('\n')),
 		'',
 		'Options:',
 		...formatOptions(2, 84),
@@ -147,7 +153,11 @@ async function generateManPage() {
 			`    ${SYNOPSIS}`,
 			'',
 			'DESCRIPTION',
-			`    ${DESCRIPTION}`,
+			...DESCRIPTION.map((d) =>
+				wrapText(d, 61)
+					.map((line) => `    ${line}`)
+					.join('\n')
+			),
 			'',
 			'OPTIONS',
 			...formatOptions(4, 65),

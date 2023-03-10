@@ -115,7 +115,32 @@ Bug fixes:
 Other enhancements:
 
 - Support removing ALLCAPS while keeping volume fields as they are (#49)
-- UI rewritten in Svelte. This should't change end user experience but will make maintenance much easier.
+- UI rewritten in Svelte. This shouldn't change end user experience but will make maintenance much easier.
 - Entries with similar author and title will not be marked as duplicates if the `number` field is different (#364).
 - DUPLICATE_ENTRY now has a 'rule' property (can be key, doi, citation, or abstract). Note: This includes the removal of DUPLICATE_KEY warning. Look for DUPLICATE_ENTRY with `rule: "key "` instead.
 - Make duplicate key check case insensitive to match [bibtex implementation](https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html)
+
+### Unreleased
+
+**Preview CLI changes**: bibtex-tidy v2 will introduce a breaking change to the CLI to enable working with stdio and prevent inadvertently overwriting files. This change can be enabled now by providing the `--v2` option.
+
+In v2, input files will no longer be modified by default. Instead, you will need to specify `--modify`/`-m` option to overwrite the file, or `--output`/`-o` to output to a different file.
+
+If an input or output file is not provided, bibtex-tidy will read the standard input or write to standard output, respectively. The following are all equivalent:
+
+- `bibtex file1.bib -o file2.bib`
+- `bibtex file1.bib > file2.bib`
+- `bibtex < file1.bib > file2.bib`
+- `cat file1.bib | bibtex | tee file2.bib`
+
+See the table below for how v2 compares to v1:
+
+| --- | --- | ---- |
+| Description | v1 | v2 (use `--v2` for now) |
+| Tidy and overwrite a file | `bibtex file.bib` | `bibtex file.bib -m` |
+| Tidy and output to a different file | `cat file1.bib | bibtex - > file2.bib` | `bibtex file1.bib -o file2.bib` |
+| Tidy stdin and output to file | `foo | bibtex - > file.bib` | `foo | bibtex -o file.bib` |
+| Tidy file and output to stdout | `cat file.bib | bibtex - | bar` | `bibtex file.bib | bar` |
+| Tidy stdin and output to stdout | `foo | bibtex - | bar` | `foo | bibtex | bar` |
+
+Providing multiple input files will only work in `--modify`/`-m` mode.

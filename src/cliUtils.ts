@@ -6,10 +6,16 @@ const OPTIONS = new Set(
 );
 
 /**
- * <input files> <options>
- * <options> <input files>
+ * <input files> <options> <options> <input files>
+ * @param skipInputArgs If the input is stdin, then we should assume that any filename at
+ * the end of the command is part of an option, not an input. E.g. `bibtex-tidy --output
+ * foo.bib` with stdin should be assumed to be outputting to foo.bib (otherwise foo.bib
+ * would be assumed to be the input file)
  */
-export function parseArguments(args: string[]): {
+export function parseArguments(
+	args: string[],
+	skipInputArgs: boolean
+): {
 	inputFiles: string[];
 	options: CLIOptions;
 	unknownArgs: string[];
@@ -18,7 +24,7 @@ export function parseArguments(args: string[]): {
 		inputFiles,
 		optionArgVals: optionArgs,
 		unknownArgs,
-	} = splitCLIArgs(args);
+	} = splitCLIArgs(args, skipInputArgs);
 
 	const options: CLIOptions = {};
 
@@ -35,13 +41,12 @@ export function parseArguments(args: string[]): {
 		}
 	}
 
-	if (inputFiles[0] === '-') {
-		options.quiet = true;
-	}
-
 	return { inputFiles, options, unknownArgs };
 }
-export function splitCLIArgs(args: string[]): {
+export function splitCLIArgs(
+	args: string[],
+	skipInputArgs: boolean
+): {
 	inputFiles: string[];
 	optionArgVals: Record<string, string[]>;
 	unknownArgs: string[];
@@ -106,17 +111,14 @@ export function splitCLIArgs(args: string[]): {
 		}
 	}
 
-	if (!inputArgs) {
+	if (!inputArgs && (!skipInputArgs || valueOrInputArgs.includes('-'))) {
 		inputArgs = valueOrInputArgs;
 	} else if (currOption) {
 		optionArgVals[currOption]?.push(...valueOrInputArgs);
-	} else {
-		// should never happen
-		throw new Error(`Invalid args: ${args.join(' ')}`);
 	}
 
 	return {
-		inputFiles: inputArgs,
+		inputFiles: inputArgs ?? [],
 		optionArgVals,
 		unknownArgs: [...unknownArgs],
 	};

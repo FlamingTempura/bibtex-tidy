@@ -1,15 +1,17 @@
 import { strictEqual, match } from 'assert';
-import { bibtexTidy, test } from './utils';
+import { spawnSync } from 'child_process';
+import { BIN_PATH } from './targets/cli';
+import { test } from './utils';
 
 test('CLI help', async () => {
-	const tidied1 = await bibtexTidy([], undefined, ['cli']);
-	const tidied2 = await bibtexTidy([], { help: true }, ['cli']);
+	const proc1 = spawnSync(BIN_PATH, [], {
+		encoding: 'utf8',
+		stdio: ['inherit', 'pipe', 'pipe'],
+	});
+	const proc2 = spawnSync(BIN_PATH, ['--help'], { encoding: 'utf8' });
 
-	const stdout1 = tidied1.cli?.stdout;
-	const stdout2 = tidied2.cli?.stdout;
-
-	strictEqual(stdout1, stdout2);
-	match(stdout1 ?? '', /cleaner and formatter/i);
-	match(stdout1 ?? '', /Examples/i);
-	match(stdout1 ?? '', /--space/i);
+	strictEqual(proc1.stdout, proc2.stdout);
+	match(proc1.stdout, /cleaner and formatter/i);
+	match(proc1.stdout, /Examples/i);
+	match(proc1.stdout, /--space/i);
 });

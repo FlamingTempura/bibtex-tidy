@@ -1,7 +1,9 @@
 import { match } from 'assert';
-import { bibtexTidy, test } from './utils';
+import { spawnSync } from 'child_process';
+import { BIN_PATH } from './targets/cli';
+import { test } from './utils';
 
 test('CLI version', async () => {
-	const { cli } = await bibtexTidy([], { version: true }, ['cli']);
-	match(cli?.stdout ?? '', /^v\d+\.\d+.\d+\n$/);
+	const proc = spawnSync(BIN_PATH, ['--version'], { encoding: 'utf8' });
+	match(proc.stdout, /^v\d+\.\d+.\d+\n$/);
 });

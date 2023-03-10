@@ -3939,6 +3939,39 @@ var optionDefinitions = [
     type: "boolean",
   },
   {
+    key: "v2",
+    cli: {
+      "--v2": true,
+    },
+    title: "Enable planned v2 CLI changes",
+    description: ["Input files will no longer be modified by default. Instead, you will need to specify `--modify`/`-m` option to overwrite the file, or `--output`/`-o` to output to a different file."],
+    type: "string",
+    defaultValue: void 0,
+  },
+  {
+    key: "outputPath",
+    cli: {
+      "--output": (args) => args[0],
+      "-o": (args) => args[0],
+    },
+    title: "Output path",
+    description: ["Write output to specified path. When omitted (and -m/--modify is not used), the result will be printed to stdout."],
+    type: "string",
+    defaultValue: void 0,
+  },
+  {
+    key: "modify",
+    cli: {
+      "--modify": true,
+      "-m": true,
+      "--no-modify": false,
+    },
+    title: "Modify input files",
+    description: ["Overwrite the original input files with the tidied result. This is enabled by default but will be disabled by default in v2. For v1, use --no-modify to output to stdout instead of overwriting the input files."],
+    type: "boolean",
+    defaultValue: true,
+  },
+  {
     key: "omit",
     cli: {
       "--omit": (args) => {
@@ -4390,7 +4423,7 @@ var optionDefinitions = [
       "--quiet": true,
     },
     title: "Quiet",
-    description: ["Suppress logs and warnings."],
+    description: ["Suppress logs on stdout."],
     type: "boolean",
   },
   {
@@ -4400,9 +4433,10 @@ var optionDefinitions = [
       "--no-backup": false,
     },
     title: "Backup",
-    description: ["Make a backup <filename>.original. Enabled by default."],
+    description: ["Make a backup <filename>.original. Enabled by default (unless --modify is explicitly provided or outputting to a different file/stdio). Deprecated but provided for backward compatibility."],
     type: "boolean",
     defaultValue: true,
+    deprecated: true,
   },
 ];
 var optionDefinitionByKey = Object.fromEntries(optionDefinitions.map((opt) => [opt.key, opt]));

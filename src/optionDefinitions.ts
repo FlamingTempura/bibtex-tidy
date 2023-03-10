@@ -42,6 +42,36 @@ export const optionDefinitions: OptionDefinition[] = [
 		type: 'boolean',
 	},
 	{
+		key: 'v2',
+		cli: { '--v2': true },
+		title: 'Enable planned v2 CLI changes',
+		description: [
+			'Input files will no longer be modified by default. Instead, you will need to specify `--modify`/`-m` option to overwrite the file, or `--output`/`-o` to output to a different file.',
+		],
+		type: 'string',
+		defaultValue: undefined,
+	},
+	{
+		key: 'outputPath',
+		cli: { '--output': (args) => args[0], '-o': (args) => args[0] },
+		title: 'Output path',
+		description: [
+			'Write output to specified path. When omitted (and -m/--modify is not used), the result will be printed to stdout.',
+		],
+		type: 'string',
+		defaultValue: undefined,
+	},
+	{
+		key: 'modify',
+		cli: { '--modify': true, '-m': true, '--no-modify': false },
+		title: 'Modify input files',
+		description: [
+			'Overwrite the original input files with the tidied result. This is enabled by default but will be disabled by default in v2. For v1, use --no-modify to output to stdout instead of overwriting the input files.',
+		],
+		type: 'boolean',
+		defaultValue: true, // TODO: In v2, switch this to false
+	},
+	{
 		key: 'omit',
 		cli: {
 			'--omit': (args) => {
@@ -471,7 +501,6 @@ export const optionDefinitions: OptionDefinition[] = [
 	{
 		key: 'version',
 		cli: { '--version': true, '-v': true },
-		toCLI: () => '-v',
 		title: 'Version',
 		description: ['Show bibtex-tidy version.'],
 		type: 'boolean',
@@ -480,16 +509,19 @@ export const optionDefinitions: OptionDefinition[] = [
 		key: 'quiet',
 		cli: { '--quiet': true },
 		title: 'Quiet',
-		description: ['Suppress logs and warnings.'],
+		description: ['Suppress logs on stdout.'],
 		type: 'boolean',
 	},
 	{
 		key: 'backup',
 		cli: { '--backup': true, '--no-backup': false },
 		title: 'Backup',
-		description: ['Make a backup <filename>.original. Enabled by default.'],
+		description: [
+			'Make a backup <filename>.original. Enabled by default (unless --modify is explicitly provided or outputting to a different file/stdio). Deprecated but provided for backward compatibility.',
+		],
 		type: 'boolean',
 		defaultValue: true,
+		deprecated: true,
 	},
 ];
 

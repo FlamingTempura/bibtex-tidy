@@ -68,6 +68,20 @@ bibtex-tidy references.bib
   --help, -h
       Show help
       
+  --v2
+      Input files will no longer be modified by default. Instead, you will need to
+      specify `--modify`/`-m` option to overwrite the file, or `--output`/`-o` to
+      output to a different file.
+      
+  --output, -o
+      Write output to specified path. When omitted (and -m/--modify is not used),
+      the result will be printed to stdout.
+      
+  --modify, -m, --no-modify
+      Overwrite the original input files with the tidied result. This is enabled by
+      default but will be disabled by default in v2. For v1, use --no-modify to
+      output to stdout instead of overwriting the input files.
+      
   --omit
       Remove specified fields from bibliography entries.
       
@@ -211,10 +225,7 @@ bibtex-tidy references.bib
       Show bibtex-tidy version.
       
   --quiet
-      Suppress logs and warnings.
-      
-  --backup, --no-backup
-      Make a backup <filename>.original. Enabled by default.
+      Suppress logs on stdout.
       
 ```
 

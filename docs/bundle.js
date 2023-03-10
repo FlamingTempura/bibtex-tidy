@@ -5943,6 +5943,9 @@ var __generator =
     m0 = "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]",
     xr = [
       { key: "help", cli: { "--help": !0, "-h": !0 }, title: "Help", description: ["Show help"], type: "boolean" },
+      { key: "v2", cli: { "--v2": !0 }, title: "Enable planned v2 CLI changes", description: ["Input files will no longer be modified by default. Instead, you will need to specify `--modify`/`-m` option to overwrite the file, or `--output`/`-o` to output to a different file."], type: "string", defaultValue: void 0 },
+      { key: "outputPath", cli: { "--output": (r) => r[0], "-o": (r) => r[0] }, title: "Output path", description: ["Write output to specified path. When omitted (and -m/--modify is not used), the result will be printed to stdout."], type: "string", defaultValue: void 0 },
+      { key: "modify", cli: { "--modify": !0, "-m": !0, "--no-modify": !1 }, title: "Modify input files", description: ["Overwrite the original input files with the tidied result. This is enabled by default but will be disabled by default in v2. For v1, use --no-modify to output to stdout instead of overwriting the input files."], type: "boolean", defaultValue: !0 },
       { key: "omit", cli: { "--omit": (r) => (r.length === 0 && (console.error("Expected a omit list"), process.exit(1)), r) }, toCLI: (r) => (Array.isArray(r) && r.length > 0 ? "--omit=".concat(r.join(",")) : void 0), title: "Remove fields", description: ["Remove specified fields from bibliography entries."], examples: ["--omit=id,name"], type: "string[]", defaultValue: [] },
       { key: "curly", cli: { "--curly": !0, "--no-curly": !1 }, toCLI: (r) => (r ? "--curly" : void 0), title: "Enclose values in braces", description: ['Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'], type: "boolean", defaultValue: !1 },
       { key: "numeric", cli: { "--numeric": !0, "--no-numeric": !1 }, toCLI: (r) => (r ? "--numeric" : void 0), title: "Use numeric values where possible", description: ["Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."], type: "boolean", defaultValue: !1 },
@@ -6117,8 +6120,8 @@ var __generator =
       },
       { key: "wrap", cli: { "--wrap": (r) => (r.length > 0 ? Number(r[0]) : !0), "--no-wrap": !1 }, toCLI: (r) => (r ? "--wrap=".concat(r) : void 0), title: "Wrap values", description: ["Wrap long values at the given column"], examples: ["--wrap (80 by default)", "--wrap=82"], type: "boolean | number", convertBoolean: { true: 80, false: void 0 } },
       { key: "version", cli: { "--version": !0, "-v": !0 }, title: "Version", description: ["Show bibtex-tidy version."], type: "boolean" },
-      { key: "quiet", cli: { "--quiet": !0 }, title: "Quiet", description: ["Suppress logs and warnings."], type: "boolean" },
-      { key: "backup", cli: { "--backup": !0, "--no-backup": !1 }, title: "Backup", description: ["Make a backup <filename>.original. Enabled by default."], type: "boolean", defaultValue: !0 },
+      { key: "quiet", cli: { "--quiet": !0 }, title: "Quiet", description: ["Suppress logs on stdout."], type: "boolean" },
+      { key: "backup", cli: { "--backup": !0, "--no-backup": !1 }, title: "Backup", description: ["Make a backup <filename>.original. Enabled by default (unless --modify is explicitly provided or outputting to a different file/stdio). Deprecated but provided for backward compatibility."], type: "boolean", defaultValue: !0, deprecated: !0 },
     ],
     g0 = Object.fromEntries(xr.map((r) => [r.key, r]));
   function kn(r) {

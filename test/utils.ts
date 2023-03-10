@@ -1,7 +1,10 @@
 import assert, { AssertionError, deepStrictEqual, strictEqual } from 'assert';
+import { randomBytes } from 'crypto';
+import { writeFile } from 'fs/promises';
+import { join } from 'path';
 import type { CLIOptions } from '../src/optionUtils';
 import { type APIResult, testAPI } from './targets/api';
-import { type CLIResult, testCLI } from './targets/cli';
+import { type CLIResult, testCLI, TMP_DIR } from './targets/cli';
 import { testWeb, type WebResult, teardown } from './targets/web';
 
 const queue: (() => Promise<void>)[] = [];
@@ -61,8 +64,7 @@ type BibTeXTidyRunResult = {
 export async function bibtexTidy(
 	inputs: string | string[] | { stdin: string },
 	options?: CLIOptions,
-	targets: ('api' | 'cli' | 'web')[] = ['api', 'cli', 'web'],
-	additionalCLIArgs?: string[]
+	targets: ('api' | 'cli' | 'web')[] = ['api', 'cli', 'web']
 ): Promise<BibTeXTidyRunResult> {
 	if (typeof inputs === 'string') inputs = [inputs];
 
@@ -77,8 +79,8 @@ export async function bibtexTidy(
 
 	let cli: CLIResult | undefined;
 	if (targets.includes('cli')) {
-		cli = testCLI(inputs, options, additionalCLIArgs);
-		const check = testCLI(cli.bibtexs, options, additionalCLIArgs);
+		cli = testCLI(inputs, options);
+		const check = testCLI(cli.bibtexs, options);
 		deepStrictEqual(cli.bibtexs, check.bibtexs, 'CLI result unstable');
 	}
 
@@ -112,4 +114,10 @@ export async function bibtexTidy(
 	const bibtex = api?.bibtex ?? cli?.bibtexs[0] ?? web?.bibtex;
 
 	return { api, cli, web, bibtex };
+}
+
+export async function tmpfile(bibtex: string): Promise<string> {
+	const file = join(TMP_DIR, `tmp${randomBytes(16).toString('hex')}.bib`);
+	await writeFile(file, bibtex);
+	return file;
 }

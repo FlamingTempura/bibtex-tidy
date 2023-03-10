@@ -5,8 +5,8 @@ import { join } from 'path';
 import { optionsToCLIArgs } from '../../src/cliUtils';
 import type { CLIOptions } from '../../src/optionUtils';
 
-const TMP_DIR = join(__dirname, '..', '..', '.tmp');
-const BIN_PATH =
+export const TMP_DIR = join(__dirname, '..', '..', '.tmp');
+export const BIN_PATH =
 	process.env.BIBTEX_TIDY_BIN ??
 	join(__dirname, '..', '..', 'bin', 'bibtex-tidy');
 
@@ -28,8 +28,7 @@ export type CLIResult = {
  */
 export function testCLI(
 	bibtexs: string[] | { stdin: string },
-	options: CLIOptions = {},
-	additionalArgs?: string[]
+	options: CLIOptions = {}
 ): CLIResult {
 	const args: string[] = [];
 	const files: string[] = [];
@@ -45,10 +44,6 @@ export function testCLI(
 	}
 
 	args.push(...optionsToCLIArgs(options));
-
-	if (additionalArgs) {
-		args.push(...additionalArgs);
-	}
 
 	const proc = spawnSync(BIN_PATH, args, {
 		timeout: 100000,
