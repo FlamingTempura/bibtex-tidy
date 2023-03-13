@@ -4,7 +4,7 @@ import { argv, versions, exit } from 'process';
 import { manPage } from './__generated__/manPage';
 import type { BibTeXTidyOptions } from './__generated__/optionsType';
 import { version } from './__generated__/version';
-import { parseArguments } from './cliUtils';
+import { argsToOptions } from './cli/argsToOptions';
 import { tidy, type BibTeXTidyResult } from './index';
 
 const { readFile, writeFile } = fsp;
@@ -21,8 +21,8 @@ async function start(): Promise<void> {
 	// process.stdin.isTTY seems to be true only if no input is piped to stdin
 	const hasStdin = !process.stdin.isTTY;
 
-	const { inputFiles, options, unknownArgs } = parseArguments(
-		argv.slice(2),
+	const { inputFiles, options, unknownArgs } = argsToOptions(
+		argv.slice(2).join(' '),
 		hasStdin
 	);
 

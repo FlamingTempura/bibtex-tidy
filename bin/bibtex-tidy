@@ -716,90 +716,157 @@ var optionDefinitions = [
 ];
 var optionDefinitionByKey = Object.fromEntries(optionDefinitions.map((opt) => [opt.key, opt]));
 
-// src/cliUtils.ts
-var OPTIONS = new Set(
-  optionDefinitions.flatMap((def) => Object.keys(def.cli))
-);
-function parseArguments(args, skipInputArgs) {
-  const {
-    inputFiles,
-    optionArgVals: optionArgs,
-    unknownArgs
-  } = splitCLIArgs(args, skipInputArgs);
-  const options = {};
-  for (const def of optionDefinitions) {
-    for (const [opt, val] of Object.entries(def.cli)) {
-      const arg = optionArgs[opt];
-      if (!arg)
-        continue;
-      const key = def.key;
-      if (typeof val === "function") {
-        options[key] = val(arg);
-      } else {
-        options[key] = val;
+// src/cli/argsParser.ts
+var OPTIONS_WITH_SORTED_VALUES = [
+  "--sort",
+  "--sort-fields",
+  "--sort-properties"
+];
+function parseArguments(argv2) {
+  const kvs = [];
+  let mode = "value";
+  let prevMode = "key";
+  let currValue = "";
+  let currKey = "";
+  let currValues = [];
+  function flushKV() {
+    if (currKey || currValues.length > 0) {
+      kvs.push({ key: currKey, values: currValues });
+    }
+    currValues = [];
+    currValue = "";
+    currKey = "";
+  }
+  function flushValue() {
+    if (currValue) {
+      currValues.push(currValue);
+    }
+    currValue = "";
+  }
+  for (let i = 0; i < argv2.length; i++) {
+    const c = argv2[i];
+    const next = argv2[i + 1];
+    switch (mode) {
+      case "value": {
+        if (c === '"') {
+          prevMode = mode;
+          mode = "double-quoted";
+        } else if (c === "'") {
+          prevMode = mode;
+          mode = "single-quoted";
+        } else if (currValue === "-" && c === "-") {
+          flushKV();
+          currKey = "--";
+          mode = "key";
+        } else if (currValue === "" && c === "-" && (next == null ? void 0 : next.match(/[a-zA-Z]/)) && !OPTIONS_WITH_SORTED_VALUES.includes(currKey)) {
+          currValue = "";
+          flushKV();
+          mode = "single-letter-keys";
+        } else if (c === " ") {
+          flushValue();
+        } else {
+          currValue += c;
+        }
+        break;
       }
+      case "csv-value": {
+        if (c === '"') {
+          prevMode = mode;
+          mode = "double-quoted";
+        } else if (c === "'") {
+          prevMode = mode;
+          mode = "single-quoted";
+        } else if (currValue === "-" && c === "-") {
+          flushKV();
+          currKey = "--";
+          mode = "key";
+        } else if (c === ",") {
+          flushValue();
+        } else if (c === " ") {
+          flushValue();
+          flushKV();
+          mode = "value";
+        } else {
+          currValue += c;
+        }
+        break;
+      }
+      case "double-quoted": {
+        if (c === '"') {
+          mode = prevMode;
+        } else {
+          currValue += c;
+        }
+        break;
+      }
+      case "single-quoted": {
+        if (c === "'") {
+          mode = prevMode;
+        } else {
+          currValue += c;
+        }
+        break;
+      }
+      case "key": {
+        if (c === " ") {
+          mode = "value";
+        } else if (c === "=") {
+          mode = "csv-value";
+        } else {
+          currKey += c;
+        }
+        break;
+      }
+      case "single-letter-keys": {
+        if (c === " ") {
+          mode = "value";
+        } else {
+          flushKV();
+          currKey = "-" + c;
+        }
+        break;
+      }
+    }
+  }
+  flushValue();
+  flushKV();
+  return kvs;
+}
+
+// src/cli/argsToOptions.ts
+var cliOptions = {};
+for (const opt of optionDefinitions) {
+  for (const [cliArg, val] of Object.entries(opt.cli)) {
+    cliOptions[cliArg] = { option: opt.key, value: val };
+  }
+}
+function argsToOptions(argv2, skipInputArgs) {
+  const kvs = parseArguments(argv2);
+  const options = {};
+  const inputFiles = [];
+  const unknownArgs = [];
+  const last = kvs.at(-1);
+  if (!kvs.some((kv) => kv.key === "") && !skipInputArgs && last && last.values.length > 0) {
+    kvs.push({ key: "", values: last.values });
+    last.values = [];
+  }
+  for (const { key, values } of kvs) {
+    if (key === "") {
+      inputFiles.push(...values);
+      continue;
+    }
+    const cliOption = cliOptions[key];
+    if (!cliOption) {
+      unknownArgs.push(key);
+      continue;
+    }
+    if (typeof cliOption.value === "function") {
+      options[cliOption.option] = cliOption.value(values);
+    } else {
+      options[cliOption.option] = cliOption.value;
     }
   }
   return { inputFiles, options, unknownArgs };
-}
-function splitCLIArgs(args, skipInputArgs) {
-  var _a, _b, _c;
-  const optionArgVals = {};
-  const unknownArgs = /* @__PURE__ */ new Set();
-  let currOption;
-  let valueOrInputArgs = [];
-  let inputArgs;
-  const argsToProcess = args.map((arg) => ({ arg }));
-  while (true) {
-    const next = argsToProcess.shift();
-    if (!next)
-      break;
-    const { arg, isValue } = next;
-    if (!isValue && arg.startsWith("-") && arg !== "-") {
-      const equalPos = arg.indexOf("=");
-      if (equalPos > -1) {
-        const option = arg.slice(0, equalPos);
-        const values = arg.slice(equalPos + 1).split(",");
-        argsToProcess.unshift(
-          { arg: option },
-          ...values.map((val) => ({ arg: val, isValue: true }))
-        );
-        continue;
-      }
-      if (!OPTIONS.has(arg)) {
-        unknownArgs.add(arg);
-        continue;
-      }
-      if (currOption) {
-        (_a = optionArgVals[currOption]) == null ? void 0 : _a.push(...valueOrInputArgs);
-      } else if (valueOrInputArgs.length > 0) {
-        inputArgs = valueOrInputArgs;
-      }
-      currOption = arg;
-      optionArgVals[currOption] = [];
-      valueOrInputArgs = [];
-    } else if (isValue && currOption) {
-      (_b = optionArgVals[currOption]) == null ? void 0 : _b.push(unquote(arg));
-    } else {
-      valueOrInputArgs.push(arg);
-    }
-  }
-  if (!inputArgs && (!skipInputArgs || valueOrInputArgs.includes("-"))) {
-    inputArgs = valueOrInputArgs;
-  } else if (currOption) {
-    (_c = optionArgVals[currOption]) == null ? void 0 : _c.push(...valueOrInputArgs);
-  }
-  return {
-    inputFiles: inputArgs != null ? inputArgs : [],
-    optionArgVals,
-    unknownArgs: [...unknownArgs]
-  };
-}
-function unquote(value) {
-  if (value.startsWith('"') && value.endsWith('"')) {
-    return JSON.parse(value);
-  }
-  return value;
 }
 
 // src/bibtex-parser.ts
@@ -4429,8 +4496,8 @@ if (nodeVer < 12) {
 }
 async function start() {
   const hasStdin = !process.stdin.isTTY;
-  const { inputFiles, options, unknownArgs } = parseArguments(
-    import_process.argv.slice(2),
+  const { inputFiles, options, unknownArgs } = argsToOptions(
+    import_process.argv.slice(2).join(" "),
     hasStdin
   );
   if (unknownArgs.length > 0) {
