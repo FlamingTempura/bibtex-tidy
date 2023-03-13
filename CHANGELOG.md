@@ -120,7 +120,7 @@ Other enhancements:
 - DUPLICATE_ENTRY now has a 'rule' property (can be key, doi, citation, or abstract). Note: This includes the removal of DUPLICATE_KEY warning. Look for DUPLICATE_ENTRY with `rule: "key "` instead.
 - Make duplicate key check case insensitive to match [bibtex implementation](https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html)
 
-### Unreleased
+### v1.10.0
 
 **Preview CLI changes**: bibtex-tidy v2 will introduce a breaking change to the CLI to enable working with stdio and prevent inadvertently overwriting files. This change can be enabled now by providing the `--v2` option.
 
