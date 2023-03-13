@@ -81,7 +81,7 @@ async function tidyStdIn(options: BibTeXTidyOptions) {
 	}
 
 	console.log('Tidying...');
-	const result = tidy(await readStdin());
+	const result = tidy(await readStdin(), options);
 
 	if (options.outputPath) {
 		await tidyToOutputFile(result, options.outputPath, options);

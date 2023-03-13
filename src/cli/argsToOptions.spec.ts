@@ -42,4 +42,10 @@ test('argsToOptions', async () => {
 		options: {},
 		unknownArgs: [],
 	});
+
+	deepStrictEqual(argsToOptions('--no-align'), {
+		inputFiles: [],
+		options: { align: false },
+		unknownArgs: [],
+	});
 });

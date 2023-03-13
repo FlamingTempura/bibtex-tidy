@@ -4544,7 +4544,7 @@ async function tidyStdIn(options) {
     process.exit(1);
   }
   console.log("Tidying...");
-  const result = tidy(await readStdin());
+  const result = tidy(await readStdin(), options);
   if (options.outputPath) {
     await tidyToOutputFile(result, options.outputPath, options);
   } else {
