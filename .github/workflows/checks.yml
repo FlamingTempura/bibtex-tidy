@@ -11,28 +11,54 @@ on:
   workflow_dispatch:
 
 jobs:
-  checks:
+  run-tests:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Test
+        run: script -e -c "npm run test"
 
-      # Seems to need to be first otherwise npx cannot find bibtex-tidy
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: ESLint
+        run: npm run lint
+
+  check-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Typescript check
+        run: npx tsc --noEmit
+
+  check-deployed-binary:
+    runs-on: ubuntu-latest
+    steps:
       - name: Check NPM global install
         run: npx bibtex-tidy -v
 
-      - uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Typescript check
-        run: npm run typecheck
-
-      - name: Test
-        run: npm run test
-
+  check-deployed-library:
+    runs-on: ubuntu-latest
+    steps:
       - name: Check NPM package works in node
         run: |
           mkdir ~/foobar
