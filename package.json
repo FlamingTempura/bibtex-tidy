@@ -1,6 +1,6 @@
 {
 	"name": "bibtex-tidy",
-	"version": "1.10.0",
+	"version": "1.10.1",
 	"description": "Tidy bibtex files",
 	"homepage": "https://github.com/FlamingTempura/bibtex-tidy",
 	"repository": {

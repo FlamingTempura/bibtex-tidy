@@ -136,7 +136,7 @@ If an input or output file is not provided, bibtex-tidy will read the standard i
 See the table below for how v2 compares to v1:
 
 | Description                         | v1                                      | v2 (use `--v2` for now)         |
-|-------------------------------------|-----------------------------------------|---------------------------------|
+| ----------------------------------- | --------------------------------------- | ------------------------------- |
 | Tidy and overwrite a file           | `bibtex file.bib`                       | `bibtex file.bib -m`            |
 | Tidy and output to a different file | `cat file1.bib \| bibtex - > file2.bib` | `bibtex file1.bib -o file2.bib` |
 | Tidy stdin and output to file       | `foo \| bibtex - > file.bib`            | `foo \| bibtex -o file.bib`     |
@@ -144,3 +144,7 @@ See the table below for how v2 compares to v1:
 | Tidy stdin and output to stdout     | `foo \| bibtex - \| bar`                | `foo \| bibtex \| bar`          |
 
 Providing multiple input files will only work in `--modify`/`-m` mode.
+
+### v1.10.1
+
+- Fix options parsing when reading stdin
