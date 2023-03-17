@@ -1,4 +1,4 @@
-import { bibtex, bibtexTidy, test } from './utils';
+import { bibtex, bibtexTidy, test } from './config/utils';
 
 const input = bibtex`
 @CUSTOMD{LDN3,

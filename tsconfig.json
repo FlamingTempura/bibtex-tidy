@@ -7,7 +7,8 @@
 		"strict": true,
 		"resolveJsonModule": true,
 		"noUncheckedIndexedAccess": true,
-		"lib": ["ESNext", "DOM", "DOM.Iterable"]
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
+		"module": "ESNext"
 	},
 	"include": [
 		"src/**/*",

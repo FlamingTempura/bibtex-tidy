@@ -1,7 +1,7 @@
 import { strictEqual, match } from 'assert';
 import { spawnSync } from 'child_process';
 import { BIN_PATH } from './targets/cli';
-import { test } from './utils';
+import { test } from './config/utils';
 
 test('CLI help', async () => {
 	const proc1 = spawnSync(BIN_PATH, [], {

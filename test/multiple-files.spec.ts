@@ -1,5 +1,5 @@
 import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { bibtex, bibtexTidy, test } from './config/utils';
 
 const file1 = bibtex`
 @article{a,

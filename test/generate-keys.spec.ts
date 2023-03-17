@@ -1,6 +1,6 @@
 import { strictEqual } from 'assert';
 import { generateKey } from '../src/generateKeys';
-import { bibtex, bibtexTidy, test } from './utils';
+import { bibtex, bibtexTidy, test } from './config/utils';
 
 const input = bibtex`
 @ARTICLE{article-minimal,

@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from '../src/latexParser';
-import { test } from './utils';
+import { test } from './config/utils';
 
 const testStrings = [
 	{

@@ -1,5 +1,5 @@
 import { equal, notEqual, strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { bibtex, bibtexTidy, test } from './config/utils';
 
 const input = bibtex`
 @article{ strange(key)=(has_odd-characters?:*£"!<>/ ,

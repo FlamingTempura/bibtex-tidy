@@ -1,5 +1,4 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { bibtex } from '../config/utils';
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -41,10 +40,12 @@ const outputUnaligned = bibtex`
 }
 `;
 
-test('align', async () => {
-	const tidied1 = await bibtexTidy(input, { align: 20 });
-	strictEqual(tidied1.bibtex, outputAligned);
+test('align 20', async () => {
+	const tidied = await bibtexTidy(input, { align: 20 });
+	expect(tidied.bibtex).toBe(outputAligned);
+});
 
-	const tidied2 = await bibtexTidy(input, { align: false });
-	strictEqual(tidied2.bibtex, outputUnaligned);
+test('no align', async () => {
+	const tidied = await bibtexTidy(input, { align: false });
+	expect(tidied.bibtex).toBe(outputUnaligned);
 });

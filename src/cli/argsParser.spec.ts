@@ -1,5 +1,5 @@
 import { deepStrictEqual } from 'assert';
-import { test } from '../../test/utils';
+import { test } from '../../test/config/utils';
 import { parseArguments } from './argsParser';
 
 test('parseArguments', async () => {

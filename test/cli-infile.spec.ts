@@ -2,7 +2,7 @@ import { match, strictEqual } from 'assert';
 import { spawnSync } from 'child_process';
 import { readFile } from 'fs/promises';
 import { BIN_PATH } from './targets/cli';
-import { bibtex, test, tmpfile } from './utils';
+import { bibtex, test, tmpfile } from './config/utils';
 
 const input = bibtex`
 @article{a,

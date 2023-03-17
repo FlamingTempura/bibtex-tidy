@@ -1,5 +1,4 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { bibtex } from '../config/utils';
 
 const input = bibtex`
 @blah @article{foo,foo=bar}
@@ -19,5 +18,5 @@ foo@blah
 
 test('@ in comment', async () => {
 	const tidied = await bibtexTidy(input);
-	strictEqual(tidied.bibtex, output);
+	expect(tidied.bibtex).toBe(output);
 });

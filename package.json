@@ -25,7 +25,7 @@
 	"scripts": {
 		"build": "node -r esbuild-register build.ts",
 		"serve": "node -r esbuild-register build.ts --serve",
-		"test": "node -r esbuild-register build.ts  --no-defs && node -r esbuild-register test/index.ts",
+		"test": "jest --config ./test/config/jest.config.js",
 		"typecheck": "tsc --noEmit",
 		"prettier": "prettier --write build.ts {test,docs}/**/*.ts src/*.ts",
 		"cover": "./scripts/cover.sh",
@@ -47,6 +47,7 @@
 		"@lezer/highlight": "^1.1.3",
 		"@swc/core": "^1.3.40",
 		"@tsconfig/svelte": "^3.0.0",
+		"@types/jest": "^29.4.1",
 		"@types/node": "^18.15.2",
 		"@types/prettier": "^2.7.2",
 		"@typescript-eslint/eslint-plugin": "^5.55.0",
@@ -55,16 +56,20 @@
 		"core-js": "^3.29.1",
 		"dts-bundle-generator": "^7.2.0",
 		"esbuild": "^0.17.11",
+		"esbuild-jest": "^0.5.0",
 		"esbuild-register": "^3.4.2",
 		"esbuild-svelte": "^0.7.3",
 		"eslint": "^8.36.0",
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-svelte3": "^4.0.0",
+		"jest": "^29.5.0",
+		"jest-environment-node": "^29.5.0",
 		"prettier": "^2.8.4",
 		"puppeteer": "^19.7.4",
 		"regexpu-core": "^5.3.2",
 		"svelte-preprocess": "^5.0.1",
-		"typescript": "^4.9.5"
+		"typescript": "^4.9.5",
+		"zeromq": "^6.0.0-beta.16"
 	},
 	"prettier": {
 		"useTabs": true,

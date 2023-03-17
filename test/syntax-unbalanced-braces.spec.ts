@@ -1,5 +1,5 @@
 import { strictEqual } from 'assert';
-import { bibtexTidy, test } from './utils';
+import { bibtexTidy, test } from './config/utils';
 
 test('syntax-error on unbalanced braces', async () => {
 	const err1 = await getError('@misc{foo,title={moo {foo}} bar}}');

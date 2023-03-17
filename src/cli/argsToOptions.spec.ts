@@ -1,5 +1,5 @@
 import { deepStrictEqual } from 'assert';
-import { test } from '../../test/utils';
+import { test } from '../../test/config/utils';
 import { argsToOptions } from './argsToOptions';
 
 test('argsToOptions', async () => {
