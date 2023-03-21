@@ -6060,7 +6060,7 @@ var __generator =
         key: "sortFields",
         cli: { "--sort-fields": (r) => (r.length > 0 ? r : !0) },
         toCLI: (r) => {
-          if (Array.isArray(r) && r.length > 0) return JSON.stringify(r) === JSON.stringify(fo) ? "--sort_fields" : "--sort-fields=".concat(r.join(","));
+          if (Array.isArray(r) && r.length > 0) return JSON.stringify(r) === JSON.stringify(fo) ? "--sort-fields" : "--sort-fields=".concat(r.join(","));
           if (r === !0) return "--sort-fields";
         },
         title: "Sort fields",
