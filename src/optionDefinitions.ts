@@ -314,7 +314,7 @@ export const optionDefinitions: OptionDefinition[] = [
 		toCLI: (val) => {
 			if (Array.isArray(val) && val.length > 0) {
 				if (JSON.stringify(val) === JSON.stringify(DEFAULT_FIELD_SORT)) {
-					return '--sort_fields';
+					return '--sort-fields';
 				}
 				return `--sort-fields=${val.join(',')}`;
 			}
