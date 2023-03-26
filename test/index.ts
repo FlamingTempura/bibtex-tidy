@@ -6,3 +6,5 @@ readdirSync(__dirname)
 
 require('../src/cli/argsParser.spec.ts');
 require('../src/cli/argsToOptions.spec.ts');
+require('../src/latexParser.spec.ts');
+require('../src/parseAuthors.spec.ts');

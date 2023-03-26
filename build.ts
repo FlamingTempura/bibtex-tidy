@@ -286,7 +286,7 @@ async function buildCLI() {
 			js: '#!/usr/bin/env node\n' + jsBanner.join('\n'),
 		},
 		target: NODE_TARGET,
-		entryPoints: [join(SRC_PATH, 'cli.ts')],
+		entryPoints: [join(SRC_PATH, 'cli', 'cli.ts')],
 		sourcemap: env.NODE_ENV === 'coverage' ? 'inline' : false,
 		sourceRoot: './',
 		outfile: CLI_BIN,

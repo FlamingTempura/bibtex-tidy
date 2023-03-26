@@ -13,7 +13,7 @@
 		highlightActiveLineGutter,
 	} from '@codemirror/view';
 	import { onMount } from 'svelte';
-	import type { BibTeXSyntaxError } from '../bibtex-parser';
+	import type { BibTeXSyntaxError } from '../bibtexParser';
 	import CopyButton from './CopyButton.svelte';
 	import {
 		bibtexLanguage,

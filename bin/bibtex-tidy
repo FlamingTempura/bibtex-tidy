@@ -9,7 +9,7 @@
 
 "use strict";
 
-// src/cli.ts
+// src/cli/cli.ts
 var import_fs = require("fs");
 var import_promises = require("fs/promises");
 var import_process = require("process");
@@ -193,683 +193,7 @@ var manPage = [
 // src/__generated__/version.ts
 var version = "1.10.1";
 
-// src/optionDefinitions.ts
-var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
-var DEFAULT_ALIGN = 14;
-var DEFAULT_SPACE = 2;
-var DEFAULT_WRAP = 80;
-var DEFAULT_FIELD_SORT = [
-  "title",
-  "shorttitle",
-  "author",
-  "year",
-  "month",
-  "day",
-  "journal",
-  "booktitle",
-  "location",
-  "on",
-  "publisher",
-  "address",
-  "series",
-  "volume",
-  "number",
-  "pages",
-  "doi",
-  "isbn",
-  "issn",
-  "url",
-  "urldate",
-  "copyright",
-  "category",
-  "note",
-  "metadata"
-];
-var DEFAULT_SORT = ["key"];
-var DEFAULT_KEY_TEMPLATE = "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
-var optionDefinitions = [
-  {
-    key: "help",
-    cli: { "--help": true, "-h": true },
-    title: "Help",
-    description: ["Show help"],
-    type: "boolean"
-  },
-  {
-    key: "v2",
-    cli: { "--v2": true },
-    title: "Enable planned v2 CLI changes",
-    description: [
-      "Input files will no longer be modified by default. Instead, you will need to specify `--modify`/`-m` option to overwrite the file, or `--output`/`-o` to output to a different file."
-    ],
-    type: "string",
-    defaultValue: void 0
-  },
-  {
-    key: "outputPath",
-    cli: { "--output": (args) => args[0], "-o": (args) => args[0] },
-    title: "Output path",
-    description: [
-      "Write output to specified path. When omitted (and -m/--modify is not used), the result will be printed to stdout."
-    ],
-    type: "string",
-    defaultValue: void 0
-  },
-  {
-    key: "modify",
-    cli: { "--modify": true, "-m": true, "--no-modify": false },
-    title: "Modify input files",
-    description: [
-      "Overwrite the original input files with the tidied result. This is enabled by default but will be disabled by default in v2. For v1, use --no-modify to output to stdout instead of overwriting the input files."
-    ],
-    type: "boolean",
-    defaultValue: true
-    // TODO: In v2, switch this to false
-  },
-  {
-    key: "omit",
-    cli: {
-      "--omit": (args) => {
-        if (args.length === 0) {
-          console.error(`Expected a omit list`);
-          process.exit(1);
-        }
-        return args;
-      }
-    },
-    toCLI: (val) => Array.isArray(val) && val.length > 0 ? `--omit=${val.join(",")}` : void 0,
-    title: "Remove fields",
-    description: ["Remove specified fields from bibliography entries."],
-    examples: ["--omit=id,name"],
-    type: "string[]",
-    defaultValue: []
-  },
-  {
-    key: "curly",
-    cli: { "--curly": true, "--no-curly": false },
-    toCLI: (val) => val ? `--curly` : void 0,
-    title: "Enclose values in braces",
-    description: [
-      'Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'
-    ],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "numeric",
-    cli: { "--numeric": true, "--no-numeric": false },
-    toCLI: (val) => val ? `--numeric` : void 0,
-    title: "Use numeric values where possible",
-    description: [
-      "Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."
-    ],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "space",
-    cli: {
-      "--space": (args) => args.length > 0 ? Number(args[0]) : true
-    },
-    toCLI: (val, opt) => {
-      if (opt.tab)
-        return void 0;
-      if (typeof val === "number" && val !== DEFAULT_SPACE)
-        return `--space=${val}`;
-      if (val && val !== DEFAULT_SPACE)
-        return "--space";
-      return void 0;
-    },
-    title: "Indent with spaces",
-    description: [
-      "Indent all fields with the specified number of spaces. Ignored if tab is set."
-    ],
-    examples: ["--space=2 (default)", "--space=4"],
-    type: "boolean | number",
-    convertBoolean: { true: DEFAULT_SPACE, false: void 0 },
-    defaultValue: DEFAULT_SPACE
-  },
-  {
-    key: "tab",
-    cli: { "--tab": true, "--no-tab": false },
-    toCLI: (val) => val ? `--tab` : void 0,
-    title: "Indent with tabs",
-    description: ["Indent all fields with a tab."],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "align",
-    cli: {
-      "--align": (args) => Number(args[0]),
-      "--no-align": false
-    },
-    toCLI: (val) => {
-      if (val === false || val === 1 || val === 0)
-        return "--no-align";
-      if (typeof val === "number" && val !== DEFAULT_ALIGN)
-        return `--align=${val}`;
-      return void 0;
-    },
-    title: "Align values",
-    description: [
-      "Insert whitespace between fields and values so that values are visually aligned."
-    ],
-    examples: ["--align=14 (default)"],
-    type: "boolean | number",
-    convertBoolean: { true: DEFAULT_ALIGN, false: 1 },
-    defaultValue: DEFAULT_ALIGN
-  },
-  {
-    key: "blankLines",
-    cli: { "--blank-lines": true, "--no-blank-lines": false },
-    toCLI: (val) => val ? `--blank-lines` : void 0,
-    title: "Insert blank lines",
-    description: ["Insert an empty line between each entry."],
-    type: "boolean"
-  },
-  {
-    key: "sort",
-    cli: {
-      "--sort": (args) => args.length > 0 ? args : true,
-      "--no-sort": false
-    },
-    toCLI: (val) => {
-      if (Array.isArray(val) && val.length > 0)
-        return `--sort=${val.join(",")}`;
-      if (val === true)
-        return "--sort";
-      return void 0;
-    },
-    title: "Sort bibliography entries",
-    description: [
-      "Sort entries by specified fields. For descending order, prefix the field with a dash (-)."
-    ],
-    examples: [
-      "--sort (sort by id)",
-      "--sort=-year,name (sort year descending then name ascending)",
-      "--sort=name,year"
-    ],
-    type: "boolean | string[]",
-    convertBoolean: { true: DEFAULT_SORT, false: void 0 }
-  },
-  {
-    key: "duplicates",
-    cli: {
-      "--duplicates": (args) => {
-        if (args.length === 0)
-          return true;
-        for (const i of args) {
-          if (i !== "doi" && i !== "key" && i !== "abstract" && i !== "citation") {
-            console.error(`Invalid key for merge option: "${i}"`);
-            process.exit(1);
-          }
-        }
-        return args;
-      }
-    },
-    toCLI: (val) => {
-      if (Array.isArray(val) && val.length > 0)
-        return `--duplicates=${val.join(",")}`;
-      if (val === true)
-        return "--duplicates";
-      return void 0;
-    },
-    title: "Check for duplicates",
-    description: [
-      "Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."
-    ],
-    examples: [
-      "--duplicates doi (same DOIs)",
-      "--duplicates key (same IDs)",
-      "--duplicates abstract (similar abstracts)",
-      "--duplicates citation (similar author and titles)",
-      "--duplicates doi, key (identical DOI or keys)",
-      "--duplicates (same DOI, key, abstract, or citation)"
-    ],
-    type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
-    convertBoolean: { true: DEFAULT_MERGE_CHECK, false: void 0 },
-    defaultValue: (options) => options.merge ? DEFAULT_MERGE_CHECK : void 0
-  },
-  {
-    key: "merge",
-    cli: {
-      "--merge": (args) => {
-        if (args.length === 0)
-          return true;
-        if (args[0] !== "first" && args[0] !== "last" && args[0] !== "combine" && args[0] !== "overwrite") {
-          console.error(`Invalid merge strategy: "${args[0]}"`);
-          process.exit(1);
-        }
-        return args[0];
-      },
-      "--no-merge": false
-    },
-    toCLI: (val) => {
-      if (typeof val === "string")
-        return `--merge=${val}`;
-      if (val)
-        return "--merge";
-      return void 0;
-    },
-    title: "Merge duplicate entries",
-    description: [
-      "Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:",
-      "- first: only keep the original entry",
-      "- last: only keep the last found duplicate",
-      "- combine: keep original entry and merge in fields of duplicates if they do not already exist",
-      "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"
-    ],
-    type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
-    convertBoolean: { true: "combine", false: void 0 }
-  },
-  {
-    key: "stripEnclosingBraces",
-    cli: { "--strip-enclosing-braces": true },
-    toCLI: (val) => val ? "--strip-enclosing-braces" : void 0,
-    title: "Strip double-braced values",
-    description: [
-      "Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}."
-    ],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "dropAllCaps",
-    cli: { "--drop-all-caps": true },
-    toCLI: (val) => val ? "--drop-all-caps" : void 0,
-    title: "Drop all caps",
-    description: [
-      "Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}. Roman numerals will be left unchanged."
-    ],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "escape",
-    cli: { "--escape": true, "--no-escape": false },
-    toCLI: (val) => val === false ? "--no-escape" : void 0,
-    title: "Escape special characters",
-    description: [
-      "Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default."
-    ],
-    type: "boolean",
-    defaultValue: true
-  },
-  {
-    key: "sortFields",
-    cli: { "--sort-fields": (args) => args.length > 0 ? args : true },
-    toCLI: (val) => {
-      if (Array.isArray(val) && val.length > 0) {
-        if (JSON.stringify(val) === JSON.stringify(DEFAULT_FIELD_SORT)) {
-          return "--sort-fields";
-        }
-        return `--sort-fields=${val.join(",")}`;
-      }
-      if (val === true)
-        return "--sort-fields";
-      return void 0;
-    },
-    title: "Sort fields",
-    description: [
-      "Sort the fields within entries.",
-      "If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata"
-    ],
-    examples: ["--sort-fields=name,author"],
-    type: "boolean | string[]",
-    convertBoolean: { true: DEFAULT_FIELD_SORT, false: void 0 },
-    defaultValue: void 0
-  },
-  {
-    key: "sortProperties",
-    cli: { "--sort-properties": (args) => args.length > 0 ? args : true },
-    title: "Sort properties",
-    description: ["Alias of sort fields (legacy)"],
-    type: "boolean | string[]",
-    deprecated: true
-  },
-  {
-    key: "stripComments",
-    cli: { "--strip-comments": true, "--no-strip-comments": false },
-    toCLI: (val) => val ? "--strip-comments" : void 0,
-    title: "Remove comments",
-    description: ["Remove all comments from the bibtex source."],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "trailingCommas",
-    cli: { "--trailing-commas": true, "--no-trailing-commas": true },
-    toCLI: (val) => val ? "--trailing-commas" : void 0,
-    title: "Trailing commas",
-    description: ["End the last key value pair in each entry with a comma."],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "encodeUrls",
-    cli: { "--encode-urls": true, "--no-encode-urls": true },
-    toCLI: (val) => val ? "--encode-urls" : void 0,
-    title: "Encode URLs",
-    description: [
-      "Replace invalid URL characters with percent encoded values."
-    ],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "tidyComments",
-    cli: { "--tidy-comments": true, "--no-tidy-comments": false },
-    toCLI: (val) => val === false ? "--no-tidy-comments" : void 0,
-    title: "Tidy comments",
-    description: ["Remove whitespace surrounding comments."],
-    type: "boolean",
-    defaultValue: true
-  },
-  {
-    key: "removeEmptyFields",
-    cli: { "--remove-empty-fields": true, "--no-remove-empty-fields": false },
-    toCLI: (val) => val ? "--remove-empty-fields" : void 0,
-    title: "Remove empty fields",
-    description: ["Remove any fields that have empty values."],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "removeDuplicateFields",
-    cli: {
-      "--remove-dupe-fields": true,
-      "--no-remove-dupe-fields": false
-    },
-    toCLI: (val) => val === false ? "--no-remove-dupe-fields" : void 0,
-    title: "Remove duplicate fields",
-    description: [
-      "Only allow one of each field in each entry. Enabled by default."
-    ],
-    type: "boolean",
-    defaultValue: true
-  },
-  {
-    key: "generateKeys",
-    cli: { "--generate-keys": (args) => args.length > 0 ? args : true },
-    toCLI: (val) => {
-      if (val === true || val === DEFAULT_KEY_TEMPLATE)
-        return "--generate-keys";
-      if (typeof val === "string")
-        return `--generate-keys="${val.replace(/"/g, '\\"')}"`;
-      return void 0;
-    },
-    title: "Generate citation keys [Experimental]",
-    description: [
-      "For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning."
-    ],
-    type: "boolean | string",
-    convertBoolean: {
-      true: DEFAULT_KEY_TEMPLATE,
-      false: void 0
-    },
-    defaultValue: void 0
-  },
-  {
-    key: "maxAuthors",
-    cli: { "--max-authors": (args) => Number(args[0]) },
-    toCLI: (val) => val ? `--max-authors=${val}` : void 0,
-    title: "Maximum authors",
-    description: [
-      'Truncate authors if above a given number into "and others".'
-    ],
-    type: "number"
-  },
-  {
-    key: "lowercase",
-    cli: { "--no-lowercase": false },
-    toCLI: (val) => val === false ? "--no-lowercase" : void 0,
-    title: "Lowercase fields",
-    description: ["Lowercase field names and entry type. Enabled by default."],
-    type: "boolean",
-    defaultValue: true
-  },
-  {
-    key: "enclosingBraces",
-    cli: {
-      "--enclosing-braces": (args) => args.length > 0 ? args : true
-    },
-    toCLI: (val) => {
-      if (Array.isArray(val) && val.length > 0)
-        return `--enclosing-braces=${val.join(",")}`;
-      if (val === true)
-        return "--enclosing-braces";
-      return void 0;
-    },
-    title: "Enclose values in double braces",
-    description: [
-      "Enclose the given fields in double braces, such that case is preserved during BibTeX compilation."
-    ],
-    examples: [
-      "--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})",
-      "--enclosing-braces (equivalent to ---enclosing-braces=title)"
-    ],
-    type: "boolean | string[]",
-    convertBoolean: { true: ["title"], false: void 0 }
-  },
-  {
-    key: "removeBraces",
-    cli: {
-      "--remove-braces": (args) => args.length > 0 ? args : true
-    },
-    toCLI: (val) => {
-      if (Array.isArray(val) && val.length > 0)
-        return `--remove-braces=${val.join(",")}`;
-      if (val === true)
-        return "--remove-braces";
-      return void 0;
-    },
-    title: "Remove braces",
-    description: [
-      "Remove any curly braces within the value, unless they are part of a command."
-    ],
-    examples: [
-      "--remove-braces=title,journal",
-      "--remove-braces (equivalent to ---remove-braces=title)"
-    ],
-    type: "boolean | string[]",
-    convertBoolean: { true: ["title"], false: void 0 }
-  },
-  {
-    key: "wrap",
-    cli: {
-      "--wrap": (args) => args.length > 0 ? Number(args[0]) : true,
-      "--no-wrap": false
-    },
-    toCLI: (val) => val ? `--wrap=${val}` : void 0,
-    title: "Wrap values",
-    description: ["Wrap long values at the given column"],
-    examples: ["--wrap (80 by default)", "--wrap=82"],
-    type: "boolean | number",
-    convertBoolean: { true: DEFAULT_WRAP, false: void 0 }
-  },
-  {
-    key: "version",
-    cli: { "--version": true, "-v": true },
-    title: "Version",
-    description: ["Show bibtex-tidy version."],
-    type: "boolean"
-  },
-  {
-    key: "quiet",
-    cli: { "--quiet": true },
-    title: "Quiet",
-    description: ["Suppress logs on stdout."],
-    type: "boolean"
-  },
-  {
-    key: "backup",
-    cli: { "--backup": true, "--no-backup": false },
-    title: "Backup",
-    description: [
-      "Make a backup <filename>.original. Enabled by default (unless --modify is explicitly provided or outputting to a different file/stdio). Deprecated but provided for backward compatibility."
-    ],
-    type: "boolean",
-    defaultValue: true,
-    deprecated: true
-  }
-];
-var optionDefinitionByKey = Object.fromEntries(optionDefinitions.map((opt) => [opt.key, opt]));
-
-// src/cli/argsParser.ts
-var OPTIONS_WITH_SORTED_VALUES = [
-  "--sort",
-  "--sort-fields",
-  "--sort-properties"
-];
-function parseArguments(argv2) {
-  const kvs = [];
-  let mode = "value";
-  let prevMode = "key";
-  let currValue = "";
-  let currKey = "";
-  let currValues = [];
-  function flushKV() {
-    if (currKey || currValues.length > 0) {
-      kvs.push({ key: currKey, values: currValues });
-    }
-    currValues = [];
-    currValue = "";
-    currKey = "";
-  }
-  function flushValue() {
-    if (currValue) {
-      currValues.push(currValue);
-    }
-    currValue = "";
-  }
-  for (let i = 0; i < argv2.length; i++) {
-    const c = argv2[i];
-    const next = argv2[i + 1];
-    switch (mode) {
-      case "value": {
-        if (c === '"') {
-          prevMode = mode;
-          mode = "double-quoted";
-        } else if (c === "'") {
-          prevMode = mode;
-          mode = "single-quoted";
-        } else if (currValue === "-" && c === "-") {
-          flushKV();
-          currKey = "--";
-          mode = "key";
-        } else if (currValue === "" && c === "-" && (next == null ? void 0 : next.match(/[a-zA-Z]/)) && !OPTIONS_WITH_SORTED_VALUES.includes(currKey)) {
-          currValue = "";
-          flushKV();
-          mode = "single-letter-keys";
-        } else if (c === " ") {
-          flushValue();
-        } else {
-          currValue += c;
-        }
-        break;
-      }
-      case "csv-value": {
-        if (c === '"') {
-          prevMode = mode;
-          mode = "double-quoted";
-        } else if (c === "'") {
-          prevMode = mode;
-          mode = "single-quoted";
-        } else if (currValue === "-" && c === "-") {
-          flushKV();
-          currKey = "--";
-          mode = "key";
-        } else if (c === ",") {
-          flushValue();
-        } else if (c === " ") {
-          flushValue();
-          flushKV();
-          mode = "value";
-        } else {
-          currValue += c;
-        }
-        break;
-      }
-      case "double-quoted": {
-        if (c === '"') {
-          mode = prevMode;
-        } else {
-          currValue += c;
-        }
-        break;
-      }
-      case "single-quoted": {
-        if (c === "'") {
-          mode = prevMode;
-        } else {
-          currValue += c;
-        }
-        break;
-      }
-      case "key": {
-        if (c === " ") {
-          mode = "value";
-        } else if (c === "=") {
-          mode = "csv-value";
-        } else {
-          currKey += c;
-        }
-        break;
-      }
-      case "single-letter-keys": {
-        if (c === " ") {
-          mode = "value";
-        } else {
-          flushKV();
-          currKey = "-" + c;
-        }
-        break;
-      }
-    }
-  }
-  flushValue();
-  flushKV();
-  return kvs;
-}
-
-// src/cli/argsToOptions.ts
-var cliOptions = {};
-for (const opt of optionDefinitions) {
-  for (const [cliArg, val] of Object.entries(opt.cli)) {
-    cliOptions[cliArg] = { option: opt.key, value: val };
-  }
-}
-function argsToOptions(argv2, skipInputArgs) {
-  const kvs = parseArguments(argv2);
-  const options = {};
-  const inputFiles = [];
-  const unknownArgs = [];
-  const last = kvs.at(-1);
-  if (!kvs.some((kv) => kv.key === "") && !skipInputArgs && last && last.values.length > 0) {
-    kvs.push({ key: "", values: last.values });
-    last.values = [];
-  }
-  for (const { key, values } of kvs) {
-    if (key === "") {
-      inputFiles.push(...values);
-      continue;
-    }
-    const cliOption = cliOptions[key];
-    if (!cliOption) {
-      unknownArgs.push(key);
-      continue;
-    }
-    if (typeof cliOption.value === "function") {
-      options[cliOption.option] = cliOption.value(values);
-    } else {
-      options[cliOption.option] = cliOption.value;
-    }
-  }
-  return { inputFiles, options, unknownArgs };
-}
-
-// src/bibtex-parser.ts
+// src/bibtexParser.ts
 var RootNode = class {
   constructor(children = []) {
     this.children = children;
@@ -4416,6 +3740,529 @@ function title(entryValues) {
   return (_b = (_a = entryValues.get("title")) != null ? _a : entryValues.get("booktitle")) != null ? _b : "";
 }
 
+// src/optionDefinitions.ts
+var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
+var DEFAULT_ALIGN = 14;
+var DEFAULT_SPACE = 2;
+var DEFAULT_WRAP = 80;
+var DEFAULT_FIELD_SORT = [
+  "title",
+  "shorttitle",
+  "author",
+  "year",
+  "month",
+  "day",
+  "journal",
+  "booktitle",
+  "location",
+  "on",
+  "publisher",
+  "address",
+  "series",
+  "volume",
+  "number",
+  "pages",
+  "doi",
+  "isbn",
+  "issn",
+  "url",
+  "urldate",
+  "copyright",
+  "category",
+  "note",
+  "metadata"
+];
+var DEFAULT_SORT = ["key"];
+var DEFAULT_KEY_TEMPLATE = "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
+var optionDefinitions = [
+  {
+    key: "help",
+    cli: { "--help": true, "-h": true },
+    title: "Help",
+    description: ["Show help"],
+    type: "boolean"
+  },
+  {
+    key: "v2",
+    cli: { "--v2": true },
+    title: "Enable planned v2 CLI changes",
+    description: [
+      "Input files will no longer be modified by default. Instead, you will need to specify `--modify`/`-m` option to overwrite the file, or `--output`/`-o` to output to a different file."
+    ],
+    type: "string",
+    defaultValue: void 0
+  },
+  {
+    key: "outputPath",
+    cli: { "--output": (args) => args[0], "-o": (args) => args[0] },
+    title: "Output path",
+    description: [
+      "Write output to specified path. When omitted (and -m/--modify is not used), the result will be printed to stdout."
+    ],
+    type: "string",
+    defaultValue: void 0
+  },
+  {
+    key: "modify",
+    cli: { "--modify": true, "-m": true, "--no-modify": false },
+    title: "Modify input files",
+    description: [
+      "Overwrite the original input files with the tidied result. This is enabled by default but will be disabled by default in v2. For v1, use --no-modify to output to stdout instead of overwriting the input files."
+    ],
+    type: "boolean",
+    defaultValue: true
+    // TODO: In v2, switch this to false
+  },
+  {
+    key: "omit",
+    cli: {
+      "--omit": (args) => {
+        if (args.length === 0) {
+          console.error(`Expected a omit list`);
+          process.exit(1);
+        }
+        return args;
+      }
+    },
+    toCLI: (val) => Array.isArray(val) && val.length > 0 ? `--omit=${val.join(",")}` : void 0,
+    title: "Remove fields",
+    description: ["Remove specified fields from bibliography entries."],
+    examples: ["--omit=id,name"],
+    type: "string[]",
+    defaultValue: []
+  },
+  {
+    key: "curly",
+    cli: { "--curly": true, "--no-curly": false },
+    toCLI: (val) => val ? `--curly` : void 0,
+    title: "Enclose values in braces",
+    description: [
+      'Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "numeric",
+    cli: { "--numeric": true, "--no-numeric": false },
+    toCLI: (val) => val ? `--numeric` : void 0,
+    title: "Use numeric values where possible",
+    description: [
+      "Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "space",
+    cli: {
+      "--space": (args) => args.length > 0 ? Number(args[0]) : true
+    },
+    toCLI: (val, opt) => {
+      if (opt.tab)
+        return void 0;
+      if (typeof val === "number" && val !== DEFAULT_SPACE)
+        return `--space=${val}`;
+      if (val && val !== DEFAULT_SPACE)
+        return "--space";
+      return void 0;
+    },
+    title: "Indent with spaces",
+    description: [
+      "Indent all fields with the specified number of spaces. Ignored if tab is set."
+    ],
+    examples: ["--space=2 (default)", "--space=4"],
+    type: "boolean | number",
+    convertBoolean: { true: DEFAULT_SPACE, false: void 0 },
+    defaultValue: DEFAULT_SPACE
+  },
+  {
+    key: "tab",
+    cli: { "--tab": true, "--no-tab": false },
+    toCLI: (val) => val ? `--tab` : void 0,
+    title: "Indent with tabs",
+    description: ["Indent all fields with a tab."],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "align",
+    cli: {
+      "--align": (args) => Number(args[0]),
+      "--no-align": false
+    },
+    toCLI: (val) => {
+      if (val === false || val === 1 || val === 0)
+        return "--no-align";
+      if (typeof val === "number" && val !== DEFAULT_ALIGN)
+        return `--align=${val}`;
+      return void 0;
+    },
+    title: "Align values",
+    description: [
+      "Insert whitespace between fields and values so that values are visually aligned."
+    ],
+    examples: ["--align=14 (default)"],
+    type: "boolean | number",
+    convertBoolean: { true: DEFAULT_ALIGN, false: 1 },
+    defaultValue: DEFAULT_ALIGN
+  },
+  {
+    key: "blankLines",
+    cli: { "--blank-lines": true, "--no-blank-lines": false },
+    toCLI: (val) => val ? `--blank-lines` : void 0,
+    title: "Insert blank lines",
+    description: ["Insert an empty line between each entry."],
+    type: "boolean"
+  },
+  {
+    key: "sort",
+    cli: {
+      "--sort": (args) => args.length > 0 ? args : true,
+      "--no-sort": false
+    },
+    toCLI: (val) => {
+      if (Array.isArray(val) && val.length > 0)
+        return `--sort=${val.join(",")}`;
+      if (val === true)
+        return "--sort";
+      return void 0;
+    },
+    title: "Sort bibliography entries",
+    description: [
+      "Sort entries by specified fields. For descending order, prefix the field with a dash (-)."
+    ],
+    examples: [
+      "--sort (sort by id)",
+      "--sort=-year,name (sort year descending then name ascending)",
+      "--sort=name,year"
+    ],
+    type: "boolean | string[]",
+    convertBoolean: { true: DEFAULT_SORT, false: void 0 }
+  },
+  {
+    key: "duplicates",
+    cli: {
+      "--duplicates": (args) => {
+        if (args.length === 0)
+          return true;
+        for (const i of args) {
+          if (i !== "doi" && i !== "key" && i !== "abstract" && i !== "citation") {
+            console.error(`Invalid key for merge option: "${i}"`);
+            process.exit(1);
+          }
+        }
+        return args;
+      }
+    },
+    toCLI: (val) => {
+      if (Array.isArray(val) && val.length > 0)
+        return `--duplicates=${val.join(",")}`;
+      if (val === true)
+        return "--duplicates";
+      return void 0;
+    },
+    title: "Check for duplicates",
+    description: [
+      "Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."
+    ],
+    examples: [
+      "--duplicates doi (same DOIs)",
+      "--duplicates key (same IDs)",
+      "--duplicates abstract (similar abstracts)",
+      "--duplicates citation (similar author and titles)",
+      "--duplicates doi, key (identical DOI or keys)",
+      "--duplicates (same DOI, key, abstract, or citation)"
+    ],
+    type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
+    convertBoolean: { true: DEFAULT_MERGE_CHECK, false: void 0 },
+    defaultValue: (options) => options.merge ? DEFAULT_MERGE_CHECK : void 0
+  },
+  {
+    key: "merge",
+    cli: {
+      "--merge": (args) => {
+        if (args.length === 0)
+          return true;
+        if (args[0] !== "first" && args[0] !== "last" && args[0] !== "combine" && args[0] !== "overwrite") {
+          console.error(`Invalid merge strategy: "${args[0]}"`);
+          process.exit(1);
+        }
+        return args[0];
+      },
+      "--no-merge": false
+    },
+    toCLI: (val) => {
+      if (typeof val === "string")
+        return `--merge=${val}`;
+      if (val)
+        return "--merge";
+      return void 0;
+    },
+    title: "Merge duplicate entries",
+    description: [
+      "Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:",
+      "- first: only keep the original entry",
+      "- last: only keep the last found duplicate",
+      "- combine: keep original entry and merge in fields of duplicates if they do not already exist",
+      "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"
+    ],
+    type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
+    convertBoolean: { true: "combine", false: void 0 }
+  },
+  {
+    key: "stripEnclosingBraces",
+    cli: { "--strip-enclosing-braces": true },
+    toCLI: (val) => val ? "--strip-enclosing-braces" : void 0,
+    title: "Strip double-braced values",
+    description: [
+      "Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}."
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "dropAllCaps",
+    cli: { "--drop-all-caps": true },
+    toCLI: (val) => val ? "--drop-all-caps" : void 0,
+    title: "Drop all caps",
+    description: [
+      "Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}. Roman numerals will be left unchanged."
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "escape",
+    cli: { "--escape": true, "--no-escape": false },
+    toCLI: (val) => val === false ? "--no-escape" : void 0,
+    title: "Escape special characters",
+    description: [
+      "Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default."
+    ],
+    type: "boolean",
+    defaultValue: true
+  },
+  {
+    key: "sortFields",
+    cli: { "--sort-fields": (args) => args.length > 0 ? args : true },
+    toCLI: (val) => {
+      if (Array.isArray(val) && val.length > 0) {
+        if (JSON.stringify(val) === JSON.stringify(DEFAULT_FIELD_SORT)) {
+          return "--sort-fields";
+        }
+        return `--sort-fields=${val.join(",")}`;
+      }
+      if (val === true)
+        return "--sort-fields";
+      return void 0;
+    },
+    title: "Sort fields",
+    description: [
+      "Sort the fields within entries.",
+      "If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata"
+    ],
+    examples: ["--sort-fields=name,author"],
+    type: "boolean | string[]",
+    convertBoolean: { true: DEFAULT_FIELD_SORT, false: void 0 },
+    defaultValue: void 0
+  },
+  {
+    key: "sortProperties",
+    cli: { "--sort-properties": (args) => args.length > 0 ? args : true },
+    title: "Sort properties",
+    description: ["Alias of sort fields (legacy)"],
+    type: "boolean | string[]",
+    deprecated: true
+  },
+  {
+    key: "stripComments",
+    cli: { "--strip-comments": true, "--no-strip-comments": false },
+    toCLI: (val) => val ? "--strip-comments" : void 0,
+    title: "Remove comments",
+    description: ["Remove all comments from the bibtex source."],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "trailingCommas",
+    cli: { "--trailing-commas": true, "--no-trailing-commas": true },
+    toCLI: (val) => val ? "--trailing-commas" : void 0,
+    title: "Trailing commas",
+    description: ["End the last key value pair in each entry with a comma."],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "encodeUrls",
+    cli: { "--encode-urls": true, "--no-encode-urls": true },
+    toCLI: (val) => val ? "--encode-urls" : void 0,
+    title: "Encode URLs",
+    description: [
+      "Replace invalid URL characters with percent encoded values."
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "tidyComments",
+    cli: { "--tidy-comments": true, "--no-tidy-comments": false },
+    toCLI: (val) => val === false ? "--no-tidy-comments" : void 0,
+    title: "Tidy comments",
+    description: ["Remove whitespace surrounding comments."],
+    type: "boolean",
+    defaultValue: true
+  },
+  {
+    key: "removeEmptyFields",
+    cli: { "--remove-empty-fields": true, "--no-remove-empty-fields": false },
+    toCLI: (val) => val ? "--remove-empty-fields" : void 0,
+    title: "Remove empty fields",
+    description: ["Remove any fields that have empty values."],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "removeDuplicateFields",
+    cli: {
+      "--remove-dupe-fields": true,
+      "--no-remove-dupe-fields": false
+    },
+    toCLI: (val) => val === false ? "--no-remove-dupe-fields" : void 0,
+    title: "Remove duplicate fields",
+    description: [
+      "Only allow one of each field in each entry. Enabled by default."
+    ],
+    type: "boolean",
+    defaultValue: true
+  },
+  {
+    key: "generateKeys",
+    cli: { "--generate-keys": (args) => args.length > 0 ? args : true },
+    toCLI: (val) => {
+      if (val === true || val === DEFAULT_KEY_TEMPLATE)
+        return "--generate-keys";
+      if (typeof val === "string")
+        return `--generate-keys="${val.replace(/"/g, '\\"')}"`;
+      return void 0;
+    },
+    title: "Generate citation keys [Experimental]",
+    description: [
+      "For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning."
+    ],
+    type: "boolean | string",
+    convertBoolean: {
+      true: DEFAULT_KEY_TEMPLATE,
+      false: void 0
+    },
+    defaultValue: void 0
+  },
+  {
+    key: "maxAuthors",
+    cli: { "--max-authors": (args) => Number(args[0]) },
+    toCLI: (val) => val ? `--max-authors=${val}` : void 0,
+    title: "Maximum authors",
+    description: [
+      'Truncate authors if above a given number into "and others".'
+    ],
+    type: "number"
+  },
+  {
+    key: "lowercase",
+    cli: { "--no-lowercase": false },
+    toCLI: (val) => val === false ? "--no-lowercase" : void 0,
+    title: "Lowercase fields",
+    description: ["Lowercase field names and entry type. Enabled by default."],
+    type: "boolean",
+    defaultValue: true
+  },
+  {
+    key: "enclosingBraces",
+    cli: {
+      "--enclosing-braces": (args) => args.length > 0 ? args : true
+    },
+    toCLI: (val) => {
+      if (Array.isArray(val) && val.length > 0)
+        return `--enclosing-braces=${val.join(",")}`;
+      if (val === true)
+        return "--enclosing-braces";
+      return void 0;
+    },
+    title: "Enclose values in double braces",
+    description: [
+      "Enclose the given fields in double braces, such that case is preserved during BibTeX compilation."
+    ],
+    examples: [
+      "--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})",
+      "--enclosing-braces (equivalent to ---enclosing-braces=title)"
+    ],
+    type: "boolean | string[]",
+    convertBoolean: { true: ["title"], false: void 0 }
+  },
+  {
+    key: "removeBraces",
+    cli: {
+      "--remove-braces": (args) => args.length > 0 ? args : true
+    },
+    toCLI: (val) => {
+      if (Array.isArray(val) && val.length > 0)
+        return `--remove-braces=${val.join(",")}`;
+      if (val === true)
+        return "--remove-braces";
+      return void 0;
+    },
+    title: "Remove braces",
+    description: [
+      "Remove any curly braces within the value, unless they are part of a command."
+    ],
+    examples: [
+      "--remove-braces=title,journal",
+      "--remove-braces (equivalent to ---remove-braces=title)"
+    ],
+    type: "boolean | string[]",
+    convertBoolean: { true: ["title"], false: void 0 }
+  },
+  {
+    key: "wrap",
+    cli: {
+      "--wrap": (args) => args.length > 0 ? Number(args[0]) : true,
+      "--no-wrap": false
+    },
+    toCLI: (val) => val ? `--wrap=${val}` : void 0,
+    title: "Wrap values",
+    description: ["Wrap long values at the given column"],
+    examples: ["--wrap (80 by default)", "--wrap=82"],
+    type: "boolean | number",
+    convertBoolean: { true: DEFAULT_WRAP, false: void 0 }
+  },
+  {
+    key: "version",
+    cli: { "--version": true, "-v": true },
+    title: "Version",
+    description: ["Show bibtex-tidy version."],
+    type: "boolean"
+  },
+  {
+    key: "quiet",
+    cli: { "--quiet": true },
+    title: "Quiet",
+    description: ["Suppress logs on stdout."],
+    type: "boolean"
+  },
+  {
+    key: "backup",
+    cli: { "--backup": true, "--no-backup": false },
+    title: "Backup",
+    description: [
+      "Make a backup <filename>.original. Enabled by default (unless --modify is explicitly provided or outputting to a different file/stdio). Deprecated but provided for backward compatibility."
+    ],
+    type: "boolean",
+    defaultValue: true,
+    deprecated: true
+  }
+];
+var optionDefinitionByKey = Object.fromEntries(optionDefinitions.map((opt) => [opt.key, opt]));
+
 // src/optionUtils.ts
 function normalizeOptions(options) {
   return Object.fromEntries(
@@ -4487,7 +4334,160 @@ function generateValueLookup(ast, options) {
   );
 }
 
-// src/cli.ts
+// src/cli/argsParser.ts
+var OPTIONS_WITH_SORTED_VALUES = [
+  "--sort",
+  "--sort-fields",
+  "--sort-properties"
+];
+function parseArguments(argv2) {
+  const kvs = [];
+  let mode = "value";
+  let prevMode = "key";
+  let currValue = "";
+  let currKey = "";
+  let currValues = [];
+  function flushKV() {
+    if (currKey || currValues.length > 0) {
+      kvs.push({ key: currKey, values: currValues });
+    }
+    currValues = [];
+    currValue = "";
+    currKey = "";
+  }
+  function flushValue() {
+    if (currValue) {
+      currValues.push(currValue);
+    }
+    currValue = "";
+  }
+  for (let i = 0; i < argv2.length; i++) {
+    const c = argv2[i];
+    const next = argv2[i + 1];
+    switch (mode) {
+      case "value": {
+        if (c === '"') {
+          prevMode = mode;
+          mode = "double-quoted";
+        } else if (c === "'") {
+          prevMode = mode;
+          mode = "single-quoted";
+        } else if (currValue === "-" && c === "-") {
+          flushKV();
+          currKey = "--";
+          mode = "key";
+        } else if (currValue === "" && c === "-" && (next == null ? void 0 : next.match(/[a-zA-Z]/)) && !OPTIONS_WITH_SORTED_VALUES.includes(currKey)) {
+          currValue = "";
+          flushKV();
+          mode = "single-letter-keys";
+        } else if (c === " ") {
+          flushValue();
+        } else {
+          currValue += c;
+        }
+        break;
+      }
+      case "csv-value": {
+        if (c === '"') {
+          prevMode = mode;
+          mode = "double-quoted";
+        } else if (c === "'") {
+          prevMode = mode;
+          mode = "single-quoted";
+        } else if (currValue === "-" && c === "-") {
+          flushKV();
+          currKey = "--";
+          mode = "key";
+        } else if (c === ",") {
+          flushValue();
+        } else if (c === " ") {
+          flushValue();
+          flushKV();
+          mode = "value";
+        } else {
+          currValue += c;
+        }
+        break;
+      }
+      case "double-quoted": {
+        if (c === '"') {
+          mode = prevMode;
+        } else {
+          currValue += c;
+        }
+        break;
+      }
+      case "single-quoted": {
+        if (c === "'") {
+          mode = prevMode;
+        } else {
+          currValue += c;
+        }
+        break;
+      }
+      case "key": {
+        if (c === " ") {
+          mode = "value";
+        } else if (c === "=") {
+          mode = "csv-value";
+        } else {
+          currKey += c;
+        }
+        break;
+      }
+      case "single-letter-keys": {
+        if (c === " ") {
+          mode = "value";
+        } else {
+          flushKV();
+          currKey = "-" + c;
+        }
+        break;
+      }
+    }
+  }
+  flushValue();
+  flushKV();
+  return kvs;
+}
+
+// src/cli/argsToOptions.ts
+var cliOptions = {};
+for (const opt of optionDefinitions) {
+  for (const [cliArg, val] of Object.entries(opt.cli)) {
+    cliOptions[cliArg] = { option: opt.key, value: val };
+  }
+}
+function argsToOptions(argv2, skipInputArgs) {
+  const kvs = parseArguments(argv2);
+  const options = {};
+  const inputFiles = [];
+  const unknownArgs = [];
+  const last = kvs.at(-1);
+  if (!kvs.some((kv) => kv.key === "") && !skipInputArgs && last && last.values.length > 0) {
+    kvs.push({ key: "", values: last.values });
+    last.values = [];
+  }
+  for (const { key, values } of kvs) {
+    if (key === "") {
+      inputFiles.push(...values);
+      continue;
+    }
+    const cliOption = cliOptions[key];
+    if (!cliOption) {
+      unknownArgs.push(key);
+      continue;
+    }
+    if (typeof cliOption.value === "function") {
+      options[cliOption.option] = cliOption.value(values);
+    } else {
+      options[cliOption.option] = cliOption.value;
+    }
+  }
+  return { inputFiles, options, unknownArgs };
+}
+
+// src/cli/cli.ts
 var { readFile, writeFile } = import_fs.promises;
 var nodeVer = Number(import_process.versions.node.split(".")[0]);
 if (nodeVer < 12) {

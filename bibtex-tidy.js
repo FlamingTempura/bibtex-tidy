@@ -120,7 +120,7 @@ var __name = (target, value) =>
     value,
     configurable: true,
   });
-// src/bibtex-parser.ts
+// src/bibtexParser.ts
 var RootNode = class RootNode {
   constructor(ref) {
     var children = ref === void 0 ? [] : ref;

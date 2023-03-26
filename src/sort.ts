@@ -1,4 +1,4 @@
-import type { BlockNode, TextNode, EntryNode, RootNode } from './bibtex-parser';
+import type { BlockNode, TextNode, EntryNode, RootNode } from './bibtexParser';
 import { getEntries } from '.';
 
 export const MONTHS = [

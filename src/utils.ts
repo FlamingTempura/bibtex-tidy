@@ -1,4 +1,4 @@
-import type { BlockNode, EntryNode, TextNode } from './bibtex-parser';
+import type { BlockNode, EntryNode, TextNode } from './bibtexParser';
 import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from './latexParser';
 import { specialCharacters } from './unicode';
 

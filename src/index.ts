@@ -1,4 +1,4 @@
-import { generateAST, EntryNode, RootNode } from './bibtex-parser';
+import { generateAST, EntryNode, RootNode } from './bibtexParser';
 import { checkForDuplicates } from './duplicates';
 import { formatValue, formatBibtex } from './format';
 import { generateKeys } from './generateKeys';

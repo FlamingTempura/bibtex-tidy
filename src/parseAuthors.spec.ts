@@ -1,6 +1,6 @@
 import { deepStrictEqual } from 'assert';
-import { parseAuthors } from '../src/parseAuthors';
-import { test } from './utils';
+import { test } from '../test/utils';
+import { parseAuthors } from './parseAuthors';
 
 test('parseAuthors', () => {
 	deepStrictEqual(parseAuthors('Feinberg, Andrew P and Vogelstein, Bert'), [

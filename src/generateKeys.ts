@@ -1,4 +1,4 @@
-import type { RootNode, EntryNode } from './bibtex-parser';
+import type { RootNode, EntryNode } from './bibtexParser';
 import { parseAuthors } from './parseAuthors';
 import { isEntryNode } from './utils';
 

@@ -1,4 +1,4 @@
-import type { EntryNode, RootNode } from './bibtex-parser';
+import type { EntryNode, RootNode } from './bibtexParser';
 import type { DuplicateRule, MergeStrategy } from './optionUtils';
 import { alphaNum } from './utils';
 import { getEntries } from '.';

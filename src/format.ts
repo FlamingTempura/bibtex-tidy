@@ -4,7 +4,7 @@ import type {
 	TextNode,
 	EntryNode,
 	RootNode,
-} from './bibtex-parser';
+} from './bibtexParser';
 import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from './latexParser';
 import type { OptionsNormalized } from './optionUtils';
 import { MONTHS } from './sort';

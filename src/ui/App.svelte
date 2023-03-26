@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { tidy, type BibTeXTidyResult } from '../';
-	import { BibTeXSyntaxError } from '../bibtex-parser';
+	import { BibTeXSyntaxError } from '../bibtexParser';
 	import { normalizeOptions, type OptionsNormalized } from '../optionUtils';
 	import Editor from './Editor.svelte';
 	import Sidebar from './Sidebar.svelte';
