@@ -6,8 +6,9 @@ import type {
 	RootNode,
 } from './bibtexParser';
 import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from './latexParser';
+import { MONTH_CONVERSIONS, MONTH_SET } from './months';
 import type { OptionsNormalized } from './optionUtils';
-import { MONTHS } from './sort';
+
 import {
 	titleCase,
 	escapeSpecialCharacters,
@@ -19,8 +20,6 @@ import {
 	limitAuthors,
 	formatPageRange,
 } from './utils';
-
-const MONTH_SET = new Set<string>(MONTHS);
 
 export function formatBibtex(
 	ast: RootNode,
@@ -158,6 +157,7 @@ export function formatValue(
 		space,
 		enclosingBraces,
 		removeBraces,
+		months: abbreviateMonths,
 	} = options;
 
 	const nameLowerCase = field.name.toLocaleLowerCase();
@@ -173,21 +173,28 @@ export function formatValue(
 	return field.value.concat
 		.map(({ type, value }) => {
 			const isNumeric = value.match(/^[1-9][0-9]*$/);
+
 			if (isNumeric && curly) {
 				type = 'braced';
 			}
+
+			if (abbreviateMonths && nameLowerCase === 'month') {
+				const abbreviation = MONTH_CONVERSIONS[value.toLowerCase()];
+				if (abbreviation) {
+					return abbreviation;
+				}
+			}
+
 			if (type === 'literal' || (numeric && isNumeric)) {
 				return value;
 			}
+
 			const dig3 = value.slice(0, 3).toLowerCase();
-			if (
-				!curly &&
-				numeric &&
-				nameLowerCase === 'month' &&
-				MONTH_SET.has(dig3)
-			) {
+			const isMonthAbbrv = nameLowerCase === 'month' && MONTH_SET.has(dig3);
+			if (!curly && numeric && isMonthAbbrv) {
 				return dig3;
 			}
+
 			value = unwrapText(value);
 			// if a field's value has double braces {{blah}}, lose the inner brace
 			if (stripEnclosingBraces) {

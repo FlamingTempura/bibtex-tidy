@@ -1,20 +1,6 @@
 import type { BlockNode, TextNode, EntryNode, RootNode } from './bibtexParser';
+import { MONTH_MACROS } from './months';
 import { getEntries } from '.';
-
-export const MONTHS = [
-	'jan',
-	'feb',
-	'mar',
-	'apr',
-	'may',
-	'jun',
-	'jul',
-	'aug',
-	'sep',
-	'oct',
-	'nov',
-	'dec',
-];
 
 type SortIndex = Map<string, string | number>;
 
@@ -47,7 +33,7 @@ export function sortEntries(
 				val = item.command;
 			} else if (key === 'month') {
 				const v = fieldMaps.get(item.block)?.get(key);
-				const i = v ? MONTHS.indexOf(v) : -1;
+				const i = v ? (MONTH_MACROS as readonly string[]).indexOf(v) : -1;
 				val = i > -1 ? i : '';
 			} else {
 				val = fieldMaps.get(item.block)?.get(key) ?? '';

@@ -56,6 +56,9 @@ var manPage = [
   "      Strip quotes and braces from numeric/month values. For example, {1998} will",
   "      become 1998.",
   "      ",
+  "  --months",
+  "      Convert all months to three letter abbreviations (jan, feb, etc).",
+  "      ",
   "  --space",
   "      Indent all fields with the specified number of spaces. Ignored if tab is set.",
   "      ",
@@ -3210,8 +3213,8 @@ function mergeEntries(merge, duplicateOf, entry) {
   }
 }
 
-// src/sort.ts
-var MONTHS = [
+// src/months.ts
+var MONTH_MACROS = [
   "jan",
   "feb",
   "mar",
@@ -3225,75 +3228,46 @@ var MONTHS = [
   "nov",
   "dec"
 ];
-function sortEntries(ast, fieldMaps, sort) {
-  var _a, _b, _c, _d, _e;
-  const sortIndexes = /* @__PURE__ */ new Map();
-  const precedingMeta = [];
-  for (const item of ast.children) {
-    if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
-      precedingMeta.push(item);
-      continue;
-    }
-    const sortIndex = /* @__PURE__ */ new Map();
-    for (let key of sort) {
-      if (key.startsWith("-"))
-        key = key.slice(1);
-      let val;
-      if (key === "key") {
-        val = (_b = item.block.key) != null ? _b : "";
-      } else if (key === "type") {
-        val = item.command;
-      } else if (key === "month") {
-        const v = (_c = fieldMaps.get(item.block)) == null ? void 0 : _c.get(key);
-        const i = v ? MONTHS.indexOf(v) : -1;
-        val = i > -1 ? i : "";
-      } else {
-        val = (_e = (_d = fieldMaps.get(item.block)) == null ? void 0 : _d.get(key)) != null ? _e : "";
-      }
-      sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
-    }
-    sortIndexes.set(item, sortIndex);
-    while (precedingMeta.length > 0) {
-      sortIndexes.set(precedingMeta.pop(), sortIndex);
-    }
-  }
-  for (const prefixedKey of [...sort].reverse()) {
-    const desc = prefixedKey.startsWith("-");
-    const key = desc ? prefixedKey.slice(1) : prefixedKey;
-    ast.children.sort((a, b) => {
-      var _a2, _b2, _c2, _d2;
-      let ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "\uFFF0";
-      let ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "\uFFF0";
-      if (typeof ia === "number")
-        ia = String(ia).padStart(50, "0");
-      if (typeof ib === "number")
-        ib = String(ib).padStart(50, "0");
-      return (desc ? ib : ia).localeCompare(desc ? ia : ib);
-    });
-  }
-}
-function sortEntryFields(ast, fieldOrder) {
-  for (const entry of getEntries(ast)) {
-    entry.fields.sort((a, b) => {
-      const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
-      const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
-      if (orderA === -1 && orderB === -1)
-        return 0;
-      if (orderA === -1)
-        return 1;
-      if (orderB === -1)
-        return -1;
-      if (orderB < orderA)
-        return 1;
-      if (orderB > orderA)
-        return -1;
-      return 0;
-    });
-  }
-}
+var MONTH_SET = new Set(MONTH_MACROS);
+var MONTH_CONVERSIONS = {
+  "1": "jan",
+  "2": "feb",
+  "3": "mar",
+  "4": "apr",
+  "5": "may",
+  "6": "jun",
+  "7": "jul",
+  "8": "aug",
+  "9": "sep",
+  "10": "oct",
+  "11": "nov",
+  "12": "dec",
+  jan: "jan",
+  feb: "feb",
+  mar: "mar",
+  apr: "apr",
+  may: "may",
+  jun: "jun",
+  jul: "jul",
+  aug: "aug",
+  sep: "sep",
+  oct: "oct",
+  nov: "nov",
+  dec: "dec",
+  january: "jan",
+  february: "feb",
+  march: "mar",
+  april: "apr",
+  june: "jun",
+  july: "jul",
+  august: "aug",
+  september: "sep",
+  october: "oct",
+  november: "nov",
+  december: "dec"
+};
 
 // src/format.ts
-var MONTH_SET = new Set(MONTHS);
 function formatBibtex(ast, options, replacementKeys) {
   const { omit, tab, space } = options;
   const indent = tab ? "	" : " ".repeat(space);
@@ -3400,7 +3374,8 @@ function formatValue(field, options) {
     tab,
     space,
     enclosingBraces,
-    removeBraces
+    removeBraces,
+    months: abbreviateMonths
   } = options;
   const nameLowerCase = field.name.toLocaleLowerCase();
   const indent = tab ? "	" : " ".repeat(space);
@@ -3415,11 +3390,18 @@ function formatValue(field, options) {
     if (isNumeric && curly) {
       type = "braced";
     }
+    if (abbreviateMonths && nameLowerCase === "month") {
+      const abbreviation = MONTH_CONVERSIONS[value.toLowerCase()];
+      if (abbreviation) {
+        return abbreviation;
+      }
+    }
     if (type === "literal" || numeric && isNumeric) {
       return value;
     }
     const dig3 = value.slice(0, 3).toLowerCase();
-    if (!curly && numeric && nameLowerCase === "month" && MONTH_SET.has(dig3)) {
+    const isMonthAbbrv = nameLowerCase === "month" && MONTH_SET.has(dig3);
+    if (!curly && numeric && isMonthAbbrv) {
       return dig3;
     }
     value = unwrapText(value);
@@ -3849,6 +3831,17 @@ var optionDefinitions = [
     title: "Use numeric values where possible",
     description: [
       "Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "months",
+    cli: { "--months": true },
+    toCLI: (val) => val ? `--months` : void 0,
+    title: "Abbreviate months",
+    description: [
+      "Convert all months to three letter abbreviations (jan, feb, etc)."
     ],
     type: "boolean",
     defaultValue: false
@@ -4284,6 +4277,74 @@ function normalizeOptions(options) {
       return [key, value];
     })
   );
+}
+
+// src/sort.ts
+function sortEntries(ast, fieldMaps, sort) {
+  var _a, _b, _c, _d, _e;
+  const sortIndexes = /* @__PURE__ */ new Map();
+  const precedingMeta = [];
+  for (const item of ast.children) {
+    if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
+      precedingMeta.push(item);
+      continue;
+    }
+    const sortIndex = /* @__PURE__ */ new Map();
+    for (let key of sort) {
+      if (key.startsWith("-"))
+        key = key.slice(1);
+      let val;
+      if (key === "key") {
+        val = (_b = item.block.key) != null ? _b : "";
+      } else if (key === "type") {
+        val = item.command;
+      } else if (key === "month") {
+        const v = (_c = fieldMaps.get(item.block)) == null ? void 0 : _c.get(key);
+        const i = v ? MONTH_MACROS.indexOf(v) : -1;
+        val = i > -1 ? i : "";
+      } else {
+        val = (_e = (_d = fieldMaps.get(item.block)) == null ? void 0 : _d.get(key)) != null ? _e : "";
+      }
+      sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
+    }
+    sortIndexes.set(item, sortIndex);
+    while (precedingMeta.length > 0) {
+      sortIndexes.set(precedingMeta.pop(), sortIndex);
+    }
+  }
+  for (const prefixedKey of [...sort].reverse()) {
+    const desc = prefixedKey.startsWith("-");
+    const key = desc ? prefixedKey.slice(1) : prefixedKey;
+    ast.children.sort((a, b) => {
+      var _a2, _b2, _c2, _d2;
+      let ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "\uFFF0";
+      let ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "\uFFF0";
+      if (typeof ia === "number")
+        ia = String(ia).padStart(50, "0");
+      if (typeof ib === "number")
+        ib = String(ib).padStart(50, "0");
+      return (desc ? ib : ia).localeCompare(desc ? ia : ib);
+    });
+  }
+}
+function sortEntryFields(ast, fieldOrder) {
+  for (const entry of getEntries(ast)) {
+    entry.fields.sort((a, b) => {
+      const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
+      const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
+      if (orderA === -1 && orderB === -1)
+        return 0;
+      if (orderA === -1)
+        return 1;
+      if (orderB === -1)
+        return -1;
+      if (orderB < orderA)
+        return 1;
+      if (orderB > orderA)
+        return -1;
+      return 0;
+    });
+  }
 }
 
 // src/index.ts

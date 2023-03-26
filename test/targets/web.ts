@@ -77,6 +77,7 @@ export async function testWeb(
 
 	await setCheckbox('curly', !!options.curly);
 	await setCheckbox('numeric', !!options.numeric);
+	await setCheckbox('months', !!options.months);
 	await setCheckbox('stripEnclosingBraces', !!options.stripEnclosingBraces);
 	await setCheckbox('dropAllCaps', !!options.dropAllCaps);
 	await setCheckbox('escape', !!options.escape);

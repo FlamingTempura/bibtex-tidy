@@ -8,6 +8,7 @@
 	let curly = options.curly ?? false;
 	let stripEnclosingBraces = options.stripEnclosingBraces ?? false;
 	let numeric = options.numeric ?? false;
+	let months = options.months ?? false;
 	let dropAllCaps = options.dropAllCaps ?? false;
 	let escape = options.escape ?? false;
 	let encodeUrls = options.encodeUrls ?? false;
@@ -29,6 +30,7 @@
 		options.curly = curly;
 		options.stripEnclosingBraces = stripEnclosingBraces;
 		options.numeric = numeric;
+		options.months = months;
 		options.dropAllCaps = dropAllCaps;
 		options.escape = escape;
 		options.encodeUrls = encodeUrls;
@@ -80,6 +82,8 @@
 	<Option option="stripEnclosingBraces" bind:checked={stripEnclosingBraces} />
 
 	<Option option="numeric" bind:checked={numeric} />
+
+	<Option option="months" bind:checked={months} />
 
 	<Option option="dropAllCaps" bind:checked={dropAllCaps} />
 

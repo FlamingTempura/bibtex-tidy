@@ -3275,147 +3275,47 @@ function mergeEntries(merge, duplicateOf, entry) {
   }
 }
 __name(mergeEntries, "mergeEntries");
-// src/sort.ts
-var MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-function sortEntries(ast, fieldMaps, sort) {
-  var _a, _b, _c, _d, _e;
-  var sortIndexes = /* @__PURE__ */ new Map();
-  var precedingMeta = [];
-  var _iteratorNormalCompletion = true,
-    _didIteratorError = false,
-    _iteratorError = undefined;
-  try {
-    for (var _iterator = ast.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var item = _step.value;
-      if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
-        precedingMeta.push(item);
-        continue;
-      }
-      var sortIndex = /* @__PURE__ */ new Map();
-      var _iteratorNormalCompletion1 = true,
-        _didIteratorError1 = false,
-        _iteratorError1 = undefined;
-      try {
-        for (var _iterator1 = sort[Symbol.iterator](), _step1; !(_iteratorNormalCompletion1 = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion1 = true) {
-          var key = _step1.value;
-          if (key.startsWith("-")) key = key.slice(1);
-          var val = void 0;
-          if (key === "key") {
-            val = (_b = item.block.key) != null ? _b : "";
-          } else if (key === "type") {
-            val = item.command;
-          } else if (key === "month") {
-            var v = (_c = fieldMaps.get(item.block)) == null ? void 0 : _c.get(key);
-            var i = v ? MONTHS.indexOf(v) : -1;
-            val = i > -1 ? i : "";
-          } else {
-            val = (_e = (_d = fieldMaps.get(item.block)) == null ? void 0 : _d.get(key)) != null ? _e : "";
-          }
-          sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
-        }
-      } catch (err) {
-        _didIteratorError1 = true;
-        _iteratorError1 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion1 && _iterator1.return != null) {
-            _iterator1.return();
-          }
-        } finally {
-          if (_didIteratorError1) {
-            throw _iteratorError1;
-          }
-        }
-      }
-      sortIndexes.set(item, sortIndex);
-      while (precedingMeta.length > 0) {
-        sortIndexes.set(precedingMeta.pop(), sortIndex);
-      }
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator.return != null) {
-        _iterator.return();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
-    }
-  }
-  var _iteratorNormalCompletion2 = true,
-    _didIteratorError2 = false,
-    _iteratorError2 = undefined;
-  try {
-    var _loop = function () {
-      var prefixedKey = _step2.value;
-      var desc = prefixedKey.startsWith("-");
-      var key = desc ? prefixedKey.slice(1) : prefixedKey;
-      ast.children.sort((a, b) => {
-        var _a2, _b2, _c2, _d2;
-        var ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "￰";
-        var ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "￰";
-        if (typeof ia === "number") ia = String(ia).padStart(50, "0");
-        if (typeof ib === "number") ib = String(ib).padStart(50, "0");
-        return (desc ? ib : ia).localeCompare(desc ? ia : ib);
-      });
-    };
-    for (var _iterator2 = [...sort].reverse()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) _loop();
-  } catch (err) {
-    _didIteratorError2 = true;
-    _iteratorError2 = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-        _iterator2.return();
-      }
-    } finally {
-      if (_didIteratorError2) {
-        throw _iteratorError2;
-      }
-    }
-  }
-}
-__name(sortEntries, "sortEntries");
-function sortEntryFields(ast, fieldOrder) {
-  var _iteratorNormalCompletion = true,
-    _didIteratorError = false,
-    _iteratorError = undefined;
-  try {
-    for (var _iterator = getEntries(ast)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var entry = _step.value;
-      entry.fields.sort((a, b) => {
-        var orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
-        var orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
-        if (orderA === -1 && orderB === -1) return 0;
-        if (orderA === -1) return 1;
-        if (orderB === -1) return -1;
-        if (orderB < orderA) return 1;
-        if (orderB > orderA) return -1;
-        return 0;
-      });
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator.return != null) {
-        _iterator.return();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
-    }
-  }
-}
-__name(sortEntryFields, "sortEntryFields");
+// src/months.ts
+var MONTH_MACROS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+var MONTH_SET = new Set(MONTH_MACROS);
+var MONTH_CONVERSIONS = {
+  1: "jan",
+  2: "feb",
+  3: "mar",
+  4: "apr",
+  5: "may",
+  6: "jun",
+  7: "jul",
+  8: "aug",
+  9: "sep",
+  10: "oct",
+  11: "nov",
+  12: "dec",
+  jan: "jan",
+  feb: "feb",
+  mar: "mar",
+  apr: "apr",
+  may: "may",
+  jun: "jun",
+  jul: "jul",
+  aug: "aug",
+  sep: "sep",
+  oct: "oct",
+  nov: "nov",
+  dec: "dec",
+  january: "jan",
+  february: "feb",
+  march: "mar",
+  april: "apr",
+  june: "jun",
+  july: "jul",
+  august: "aug",
+  september: "sep",
+  october: "oct",
+  november: "nov",
+  december: "dec",
+};
 // src/format.ts
-var MONTH_SET = new Set(MONTHS);
 function formatBibtex(ast, options, replacementKeys) {
   var omit = options.omit,
     tab = options.tab,
@@ -3529,7 +3429,8 @@ function formatValue(field, options) {
     tab = options.tab,
     space = options.space,
     enclosingBraces = options.enclosingBraces,
-    removeBraces = options.removeBraces;
+    removeBraces = options.removeBraces,
+    abbreviateMonths = options.months;
   var nameLowerCase = field.name.toLocaleLowerCase();
   var indent = tab ? "	" : " ".repeat(space);
   var enclosingBracesFields = new Set((enclosingBraces != null ? enclosingBraces : []).map((field2) => field2.toLocaleLowerCase()));
@@ -3542,11 +3443,18 @@ function formatValue(field, options) {
       if (isNumeric && curly) {
         type = "braced";
       }
+      if (abbreviateMonths && nameLowerCase === "month") {
+        var abbreviation = MONTH_CONVERSIONS[value.toLowerCase()];
+        if (abbreviation) {
+          return abbreviation;
+        }
+      }
       if (type === "literal" || (numeric && isNumeric)) {
         return value;
       }
       var dig3 = value.slice(0, 3).toLowerCase();
-      if (!curly && numeric && nameLowerCase === "month" && MONTH_SET.has(dig3)) {
+      var isMonthAbbrv = nameLowerCase === "month" && MONTH_SET.has(dig3);
+      if (!curly && numeric && isMonthAbbrv) {
         return dig3;
       }
       value = unwrapText(value);
@@ -4014,6 +3922,17 @@ var optionDefinitions = [
     defaultValue: false,
   },
   {
+    key: "months",
+    cli: {
+      "--months": true,
+    },
+    toCLI: (val) => (val ? "--months" : void 0),
+    title: "Abbreviate months",
+    description: ["Convert all months to three letter abbreviations (jan, feb, etc)."],
+    type: "boolean",
+    defaultValue: false,
+  },
+  {
     key: "space",
     cli: {
       "--space": (args) => (args.length > 0 ? Number(args[0]) : true),
@@ -4460,6 +4379,144 @@ function normalizeOptions(options) {
   );
 }
 __name(normalizeOptions, "normalizeOptions");
+// src/sort.ts
+function sortEntries(ast, fieldMaps, sort) {
+  var _a, _b, _c, _d, _e;
+  var sortIndexes = /* @__PURE__ */ new Map();
+  var precedingMeta = [];
+  var _iteratorNormalCompletion = true,
+    _didIteratorError = false,
+    _iteratorError = undefined;
+  try {
+    for (var _iterator = ast.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var item = _step.value;
+      if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
+        precedingMeta.push(item);
+        continue;
+      }
+      var sortIndex = /* @__PURE__ */ new Map();
+      var _iteratorNormalCompletion1 = true,
+        _didIteratorError1 = false,
+        _iteratorError1 = undefined;
+      try {
+        for (var _iterator1 = sort[Symbol.iterator](), _step1; !(_iteratorNormalCompletion1 = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion1 = true) {
+          var key = _step1.value;
+          if (key.startsWith("-")) key = key.slice(1);
+          var val = void 0;
+          if (key === "key") {
+            val = (_b = item.block.key) != null ? _b : "";
+          } else if (key === "type") {
+            val = item.command;
+          } else if (key === "month") {
+            var v = (_c = fieldMaps.get(item.block)) == null ? void 0 : _c.get(key);
+            var i = v ? MONTH_MACROS.indexOf(v) : -1;
+            val = i > -1 ? i : "";
+          } else {
+            val = (_e = (_d = fieldMaps.get(item.block)) == null ? void 0 : _d.get(key)) != null ? _e : "";
+          }
+          sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
+        }
+      } catch (err) {
+        _didIteratorError1 = true;
+        _iteratorError1 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion1 && _iterator1.return != null) {
+            _iterator1.return();
+          }
+        } finally {
+          if (_didIteratorError1) {
+            throw _iteratorError1;
+          }
+        }
+      }
+      sortIndexes.set(item, sortIndex);
+      while (precedingMeta.length > 0) {
+        sortIndexes.set(precedingMeta.pop(), sortIndex);
+      }
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return != null) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+  var _iteratorNormalCompletion2 = true,
+    _didIteratorError2 = false,
+    _iteratorError2 = undefined;
+  try {
+    var _loop = function () {
+      var prefixedKey = _step2.value;
+      var desc = prefixedKey.startsWith("-");
+      var key = desc ? prefixedKey.slice(1) : prefixedKey;
+      ast.children.sort((a, b) => {
+        var _a2, _b2, _c2, _d2;
+        var ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "￰";
+        var ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "￰";
+        if (typeof ia === "number") ia = String(ia).padStart(50, "0");
+        if (typeof ib === "number") ib = String(ib).padStart(50, "0");
+        return (desc ? ib : ia).localeCompare(desc ? ia : ib);
+      });
+    };
+    for (var _iterator2 = [...sort].reverse()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) _loop();
+  } catch (err) {
+    _didIteratorError2 = true;
+    _iteratorError2 = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+        _iterator2.return();
+      }
+    } finally {
+      if (_didIteratorError2) {
+        throw _iteratorError2;
+      }
+    }
+  }
+}
+__name(sortEntries, "sortEntries");
+function sortEntryFields(ast, fieldOrder) {
+  var _iteratorNormalCompletion = true,
+    _didIteratorError = false,
+    _iteratorError = undefined;
+  try {
+    for (var _iterator = getEntries(ast)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var entry = _step.value;
+      entry.fields.sort((a, b) => {
+        var orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
+        var orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
+        if (orderA === -1 && orderB === -1) return 0;
+        if (orderA === -1) return 1;
+        if (orderB === -1) return -1;
+        if (orderB < orderA) return 1;
+        if (orderB > orderA) return -1;
+        return 0;
+      });
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return != null) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+}
+__name(sortEntryFields, "sortEntryFields");
 // src/index.ts
 function tidy(input) {
   var options_ = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};

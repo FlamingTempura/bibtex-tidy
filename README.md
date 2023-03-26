@@ -96,6 +96,9 @@ bibtex-tidy references.bib
       Strip quotes and braces from numeric/month values. For example, {1998} will
       become 1998.
       
+  --months
+      Convert all months to three letter abbreviations (jan, feb, etc).
+      
   --space
       Indent all fields with the specified number of spaces. Ignored if tab is set.
       

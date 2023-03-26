@@ -137,6 +137,12 @@ export type BibTeXTidyOptions = {
 	 */
 	numeric?: boolean;
 	/**
+	 * Abbreviate months
+	 *
+	 * Convert all months to three letter abbreviations (jan, feb, etc).
+	 */
+	months?: boolean;
+	/**
 	 * Indent with spaces
 	 *
 	 * Indent all fields with the specified number of spaces. Ignored if tab is set.

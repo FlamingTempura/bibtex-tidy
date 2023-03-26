@@ -115,6 +115,17 @@ export const optionDefinitions: OptionDefinition[] = [
 		defaultValue: false,
 	},
 	{
+		key: 'months',
+		cli: { '--months': true },
+		toCLI: (val) => (val ? `--months` : undefined),
+		title: 'Abbreviate months',
+		description: [
+			'Convert all months to three letter abbreviations (jan, feb, etc).',
+		],
+		type: 'boolean',
+		defaultValue: false,
+	},
+	{
 		key: 'space',
 		cli: {
 			'--space': (args) => (args.length > 0 ? Number(args[0]) : true),
