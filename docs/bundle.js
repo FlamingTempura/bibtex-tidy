@@ -7391,7 +7391,7 @@ var __generator =
             m = d.config.address[s];
           if (m != null) {
             var D = Co(d, m);
-            if (this.dependencies.every((g) => (g instanceof U ? d.facet(g) === f.facet(g) : g instanceof Me ? d.field(g, !1) == f.field(g, !1) : !0)) || (u ? C0((p = i(f)), D, n) : n((p = i(f)), D))) return (f.values[o] = D), 0;
+            if (this.dependencies.every((g) => (g instanceof U ? d.facet(g) === f.facet(g) : g instanceof Pe ? d.field(g, !1) == f.field(g, !1) : !0)) || (u ? C0((p = i(f)), D, n) : n((p = i(f)), D))) return (f.values[o] = D), 0;
           } else p = i(f);
           return (f.values[o] = p), 1;
         },
@@ -7517,9 +7517,9 @@ var __generator =
   }
   h(hv, "dynamicFacetSlot");
   var A0 = U.define({ static: !0 }),
-    Me = class Me1 {
+    Pe = class Pe1 {
       static define(e) {
-        var t = new Me(Na++, e.create, e.update, e.compare || ((i, n) => i === n), e);
+        var t = new Pe(Na++, e.create, e.update, e.compare || ((i, n) => i === n), e);
         return e.provide && (t.provides = e.provide(t)), t;
       }
       create(e) {
@@ -7548,7 +7548,7 @@ var __generator =
         (this.id = e), (this.createF = t), (this.updateF = i), (this.compareF = n), (this.spec = s), (this.provides = void 0);
       }
     };
-  h(Me, "StateField");
+  h(Pe, "StateField");
   var Ui = { lowest: 4, low: 3, default: 2, high: 1, highest: 0 };
   function wn(r) {
     return (e) => new _n(e, r);
@@ -7631,7 +7631,7 @@ var __generator =
       try {
         for (var _iterator = cv(e, t, o)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var d = _step.value;
-          d instanceof Me ? n.push(d) : (s[d.facet.id] || (s[d.facet.id] = [])).push(d);
+          d instanceof Pe ? n.push(d) : (s[d.facet.id] || (s[d.facet.id] = [])).push(d);
         }
       } catch (err) {
         _didIteratorError = true;
@@ -7721,7 +7721,7 @@ var __generator =
         var a2 = e.get(o.compartment) || o.inner;
         t.set(o.compartment, a2), s(a2, u);
       } else if (o instanceof _n) s(o.inner, o.prec);
-      else if (o instanceof Me) i[u].push(o), o.provides && s(o.provides, u);
+      else if (o instanceof Pe) i[u].push(o), o.provides && s(o.provides, u);
       else if (o instanceof Yi) i[u].push(o), o.facet.extensions && s(o.facet.extensions, Ui.default);
       else {
         var a3 = o.extension;
@@ -8105,7 +8105,7 @@ var __generator =
       if (e)
         for (var i in e) {
           var n = e[i];
-          n instanceof Me && this.config.address[n.id] != null && (t[i] = n.spec.toJSON(this.field(e[i]), this));
+          n instanceof Pe && this.config.address[n.id] != null && (t[i] = n.spec.toJSON(this.field(e[i]), this));
         }
       return t;
     }
@@ -9326,19 +9326,19 @@ var __generator =
       }
   }
   h(Sv, "atElementStart");
-  var Pe = class Pe1 {
+  var $e = class $e1 {
     static before(e, t) {
-      return new Pe(e.parentNode, iu(e), t);
+      return new $e(e.parentNode, iu(e), t);
     }
     static after(e, t) {
-      return new Pe(e.parentNode, iu(e) + 1, t);
+      return new $e(e.parentNode, iu(e) + 1, t);
     }
     constructor(e, t, ref) {
       var i = ref === void 0 ? !0 : ref;
       (this.node = e), (this.offset = t), (this.precise = i);
     }
   };
-  h(Pe, "DOMPos");
+  h($e, "DOMPos");
   var mh = [],
     De = class De1 {
       get overrideDOMText() {
@@ -9689,7 +9689,7 @@ var __generator =
         return e == this.dom ? t : t ? this.text.length : 0;
       }
       domAtPos(e) {
-        return new Pe(this.dom, e);
+        return new $e(this.dom, e);
       }
       domBoundsAround(e, t, i) {
         return { from: i, to: i + this.length, startDOM: this.dom, endDOM: this.dom.nextSibling };
@@ -9831,7 +9831,7 @@ var __generator =
       return i ? i.slice(n, n + this.length) : ce.empty;
     }
     domAtPos(e) {
-      return e == 0 ? Pe.before(this.dom) : Pe.after(this.dom, e == this.length);
+      return e == 0 ? $e.before(this.dom) : $e.after(this.dom, e == this.length);
     }
     domBoundsAround() {
       return null;
@@ -9869,9 +9869,9 @@ var __generator =
             t,
             i,
             (n, s) => n.domAtPos(s),
-            (n) => new Pe(i, Math.min(n, i.nodeValue.length))
+            (n) => new $e(i, Math.min(n, i.nodeValue.length))
           )
-        : new Pe(i, Math.min(e, i.nodeValue.length));
+        : new $e(i, Math.min(e, i.nodeValue.length));
     }
     sync() {
       this.setDOM(this.widget.toDOM());
@@ -9930,17 +9930,17 @@ var __generator =
   }
   h(eh, "scanCompositionTree");
   function Mg(r, e, t, i) {
-    var _iteratorNormalCompletion = true,
-      _didIteratorError = false,
-      _iteratorError = undefined;
-    if (t instanceof ht)
+    if (t instanceof ht) {
+      var n = 0;
+      var _iteratorNormalCompletion = true,
+        _didIteratorError = false,
+        _iteratorError = undefined;
       try {
         for (var _iterator = t.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var n = _step.value;
-          var s = 0,
-            o = zr(n.dom, i);
-          if (zr(n.dom, r)) return s + (o ? Mg(r, e, n, i) : n.localPosFromDOM(r, e));
-          s += o ? i.nodeValue.length : n.length;
+          var s = _step.value;
+          var o = zr(s.dom, i);
+          if (zr(s.dom, r)) return n + (o ? Mg(r, e, s, i) : s.localPosFromDOM(r, e));
+          n += o ? i.nodeValue.length : s.length;
         }
       } catch (err) {
         _didIteratorError = true;
@@ -9956,7 +9956,7 @@ var __generator =
           }
         }
       }
-    else if (t.dom == i) return Math.min(e, i.nodeValue.length);
+    } else if (t.dom == i) return Math.min(e, i.nodeValue.length);
     return t.localPosFromDOM(r, e);
   }
   h(Mg, "posFromDOMInCompositionTree");
@@ -9983,7 +9983,7 @@ var __generator =
       return this.side;
     }
     domAtPos(e) {
-      return Pe.before(this.dom);
+      return this.side > 0 ? $e.before(this.dom) : $e.after(this.dom);
     }
     localPosFromDOM() {
       return 0;
@@ -10045,7 +10045,7 @@ var __generator =
       var o2 = i[s2];
       if (o2.dom.parentNode == t) return o2.domAtPos(0);
     }
-    return new Pe(t, 0);
+    return new $e(t, 0);
   }
   h(Pg, "inlineDOMAtPos");
   function Lg(r, e, t) {
@@ -10313,17 +10313,18 @@ var __generator =
     }
     measureTextSize() {
       if (this.children.length == 0 || this.length > 20) return null;
-      var e = 0;
+      var e = 0,
+        t;
       var _iteratorNormalCompletion = true,
         _didIteratorError = false,
         _iteratorError = undefined;
       try {
         for (var _iterator = this.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var t = _step.value;
-          if (!(t instanceof Ot) || /[^ -~]/.test(t.text)) return null;
-          var i = Kn(t.dom);
-          if (i.length != 1) return null;
-          e += i[0].width;
+          var i = _step.value;
+          if (!(i instanceof Ot) || /[^ -~]/.test(i.text)) return null;
+          var n = Kn(i.dom);
+          if (n.length != 1) return null;
+          (e += n[0].width), (t = n[0].height);
         }
       } catch (err) {
         _didIteratorError = true;
@@ -10339,10 +10340,20 @@ var __generator =
           }
         }
       }
-      return e ? { lineHeight: this.dom.getBoundingClientRect().height, charWidth: e / this.length } : null;
+      return e ? { lineHeight: this.dom.getBoundingClientRect().height, charWidth: e / this.length, textHeight: t } : null;
     }
     coordsAt(e, t) {
-      return qg(this, e, t);
+      var i = qg(this, e, t);
+      if (!this.children.length && i && this.parent) {
+        var _this_parent_view_viewState = this.parent.view.viewState,
+          n = _this_parent_view_viewState.heightOracle,
+          s = i.bottom - i.top;
+        if (Math.abs(s - n.lineHeight) < 2 && n.textHeight < s) {
+          var o = (s - n.textHeight) / 2;
+          return { top: i.top + o, bottom: i.bottom - o, left: i.left, right: i.left };
+        }
+      }
+      return i;
     }
     become(e) {
       return !1;
@@ -10372,7 +10383,7 @@ var __generator =
       return i && (!(i instanceof Yt) || !this.widget.compare(i.widget) || (e > 0 && s <= 0) || (t < this.length && o <= 0)) ? !1 : ((this.length = e + (i ? i.length : 0) + (this.length - t)), !0);
     }
     domAtPos(e) {
-      return e == 0 ? Pe.before(this.dom) : Pe.after(this.dom, e == this.length);
+      return e == 0 ? $e.before(this.dom) : $e.after(this.dom, e == this.length);
     }
     split(e) {
       var t = this.length - e;
@@ -11125,7 +11136,7 @@ var __generator =
         o = n.empty ? s : this.domAtPos(n.head);
       if (Y.gecko && n.empty && Vv(s)) {
         var l = document.createTextNode("");
-        this.view.observer.ignore(() => s.node.insertBefore(l, s.node.childNodes[s.offset] || null)), (s = o = new Pe(l, 0)), (i = !0);
+        this.view.observer.ignore(() => s.node.insertBefore(l, s.node.childNodes[s.offset] || null)), (s = o = new $e(l, 0)), (i = !0);
       }
       var u = this.view.observer.selectionRange;
       (i || !u.focusNode || !tu(s.node, s.offset, u.anchorNode, u.anchorOffset) || !tu(o.node, o.offset, u.focusNode, u.focusOffset)) &&
@@ -11138,7 +11149,7 @@ var __generator =
                 var a = Wv(s.node, s.offset);
                 if (a && a != 3) {
                   var c = tD(s.node, s.offset, a == 1 ? 1 : -1);
-                  c && (s = new Pe(c, a == 1 ? 0 : c.nodeValue.length));
+                  c && (s = new $e(c, a == 1 ? 0 : c.nodeValue.length));
                 }
               }
               l.collapse(s.node, s.offset), n.bidiLevel != null && u.cursorBidiLevel != null && (u.cursorBidiLevel = n.bidiLevel);
@@ -11154,8 +11165,8 @@ var __generator =
             }
         }),
         this.view.observer.setSelectionRange(s, o)),
-        (this.impreciseAnchor = s.precise ? null : new Pe(u.anchorNode, u.anchorOffset)),
-        (this.impreciseHead = o.precise ? null : new Pe(u.focusNode, u.focusOffset));
+        (this.impreciseAnchor = s.precise ? null : new $e(u.anchorNode, u.anchorOffset)),
+        (this.impreciseHead = o.precise ? null : new $e(u.focusNode, u.focusOffset));
     }
     enforceCursorAssoc() {
       if (this.compositionDeco.size) return;
@@ -11254,10 +11265,10 @@ var __generator =
         _iteratorError = undefined;
       try {
         for (var _iterator = this.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var n = _step.value;
-          if (n instanceof Ve) {
-            var s = n.measureTextSize();
-            if (s) return s;
+          var s = _step.value;
+          if (s instanceof Ve) {
+            var o = s.measureTextSize();
+            if (o) return o;
           }
         }
       } catch (err) {
@@ -11276,17 +11287,18 @@ var __generator =
       }
       var e = document.createElement("div"),
         t,
-        i;
+        i,
+        n;
       return (
         (e.className = "cm-line"),
         (e.style.width = "99999px"),
         (e.textContent = "abc def ghi jkl mno pqr stu"),
         this.view.observer.ignore(() => {
           this.dom.appendChild(e);
-          var n = Kn(e.firstChild)[0];
-          (t = e.getBoundingClientRect().height), (i = n ? n.width / 27 : 7), e.remove();
+          var s = Kn(e.firstChild)[0];
+          (t = e.getBoundingClientRect().height), (i = s ? s.width / 27 : 7), (n = s ? s.height : t), e.remove();
         }),
-        { lineHeight: t, charWidth: i }
+        { lineHeight: t, charWidth: i, textHeight: n }
       );
     }
     childCursor() {
@@ -11471,12 +11483,19 @@ var __generator =
   };
   h(Mo, "CompositionWidget");
   function tD(r, e, t) {
-    for (;;) {
-      if (r.nodeType == 3) return r;
-      if (r.nodeType == 1 && e > 0 && t <= 0) (r = r.childNodes[e - 1]), (e = Xn(r));
-      else if (r.nodeType == 1 && e < r.childNodes.length && t >= 0) (r = r.childNodes[e]), (e = 0);
-      else return null;
-    }
+    if (t <= 0)
+      for (var i = r, n = e; ; ) {
+        if (i.nodeType == 3) return i;
+        if (i.nodeType == 1 && n > 0) (i = i.childNodes[n - 1]), (n = Xn(i));
+        else break;
+      }
+    if (t >= 0)
+      for (var i1 = r, n1 = e; ; ) {
+        if (i1.nodeType == 3) return i1;
+        if (i1.nodeType == 1 && n1 < i1.childNodes.length && t >= 0) (i1 = i1.childNodes[n1]), (n1 = 0);
+        else break;
+      }
+    return null;
   }
   h(tD, "nearbyTextNode");
   function Wv(r, e) {
@@ -11954,7 +11973,10 @@ var __generator =
       }, "handleEvent");
       for (var i in Le) _loop(i);
       e.scrollDOM.addEventListener("mousedown", (i) => {
-        i.target == e.scrollDOM && i.clientY > e.contentDOM.getBoundingClientRect().bottom && t(Le.mousedown, i);
+        if (i.target == e.scrollDOM && i.clientY > e.contentDOM.getBoundingClientRect().bottom && (t(Le.mousedown, i), !i.defaultPrevented && i.button == 2)) {
+          var n = e.contentDOM.style.minHeight;
+          (e.contentDOM.style.minHeight = "100%"), setTimeout(() => (e.contentDOM.style.minHeight = n), 200);
+        }
       }),
         Y.chrome &&
           Y.chrome_version == 102 &&
@@ -12428,20 +12450,20 @@ var __generator =
         }
         return t;
       }
-      refresh(e, t, i, n, s) {
-        var o = fg.indexOf(e) > -1,
-          u = Math.round(t) != Math.round(this.lineHeight) || this.lineWrapping != o;
-        if (((this.lineWrapping = o), (this.lineHeight = t), (this.charWidth = i), (this.lineLength = n), u)) {
+      refresh(e, t, i, n, s, o) {
+        var u = fg.indexOf(e) > -1,
+          l = Math.round(t) != Math.round(this.lineHeight) || this.lineWrapping != u;
+        if (((this.lineWrapping = u), (this.lineHeight = t), (this.charWidth = i), (this.textHeight = n), (this.lineLength = s), l)) {
           this.heightSamples = {};
-          for (var l = 0; l < s.length; l++) {
-            var a = s[l];
-            a < 0 ? l++ : (this.heightSamples[Math.floor(a * 10)] = !0);
+          for (var a = 0; a < o.length; a++) {
+            var c = o[a];
+            c < 0 ? a++ : (this.heightSamples[Math.floor(c * 10)] = !0);
           }
         }
-        return u;
+        return l;
       }
       constructor(e) {
-        (this.lineWrapping = e), (this.doc = ce.empty), (this.heightSamples = {}), (this.lineHeight = 14), (this.charWidth = 7), (this.lineLength = 30), (this.heightChanged = !1);
+        (this.lineWrapping = e), (this.doc = ce.empty), (this.heightSamples = {}), (this.lineHeight = 14), (this.charWidth = 7), (this.textHeight = 14), (this.lineLength = 30), (this.heightChanged = !1);
       }
     };
   h(Io, "HeightOracle");
@@ -13044,8 +13066,9 @@ var __generator =
         if ((n.mustRefreshForHeights(E) && (o = !0), o || (n.lineWrapping && Math.abs(b - this.contentDOMWidth) > n.charWidth))) {
           var _e_docView_measureTextSize = e.docView.measureTextSize(),
             A = _e_docView_measureTextSize.lineHeight,
-            _ = _e_docView_measureTextSize.charWidth;
-          (o = A > 0 && n.refresh(s, A, _, b / _, E)), o && ((e.docView.minWidth = 0), (a |= 8));
+            _ = _e_docView_measureTextSize.charWidth,
+            B = _e_docView_measureTextSize.textHeight;
+          (o = A > 0 && n.refresh(s, A, _, B, b / _, E)), o && ((e.docView.minWidth = 0), (a |= 8));
         }
         m > 0 && D > 0 ? (c = Math.max(m, D)) : m < 0 && D < 0 && (c = Math.min(m, D)), (n.heightChanged = !1);
         var _iteratorNormalCompletion = true,
@@ -15375,7 +15398,7 @@ var __generator =
         return r == null ? null : e.mapPos(r);
       },
     }),
-    Pn = Me.define({
+    Pn = Pe.define({
       create() {
         return null;
       },
@@ -15967,7 +15990,7 @@ var __generator =
   function vD(r) {
     var e = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
     var t = de.define(),
-      i = Me.define({
+      i = Pe.define({
         create() {
           return null;
         },
@@ -17759,11 +17782,11 @@ var __generator =
         u.next();
         var fe1 = [],
           be1 = [],
-          $e = W >= o ? W : -1,
+          Me = W >= o ? W : -1,
           Ye = 0,
           mt = z;
-        for (; u.pos > ye2; ) $e >= 0 && u.id == $e && u.size >= 0 ? (u.end <= mt - n && (p(fe1, be1, H, Ye, u.end, mt, $e, ae), (Ye = fe1.length), (mt = u.end)), u.next()) : f(H, ye2, fe1, be1, $e);
-        if (($e >= 0 && Ye > 0 && Ye < fe1.length && p(fe1, be1, H, Ye, H, mt, $e, ae), fe1.reverse(), be1.reverse(), $e > -1 && Ye > 0)) {
+        for (; u.pos > ye2; ) Me >= 0 && u.id == Me && u.size >= 0 ? (u.end <= mt - n && (p(fe1, be1, H, Ye, u.end, mt, Me, ae), (Ye = fe1.length), (mt = u.end)), u.next()) : f(H, ye2, fe1, be1, Me);
+        if ((Me >= 0 && Ye > 0 && Ye < fe1.length && p(fe1, be1, H, Ye, H, mt, Me, ae), fe1.reverse(), be1.reverse(), Me > -1 && Ye > 0)) {
           var mi = d(K);
           T = Ch(K, fe1, be1, 0, fe1.length, 0, z - H, mi, mi);
         } else T = m(K, fe1, be1, z - H, ae - z);
@@ -18927,7 +18950,7 @@ var __generator =
     }
   };
   h(ci, "LanguageState");
-  et.state = Me.define({
+  et.state = Pe.define({
     create: ci.init,
     update(r, e) {
       var _iteratorNormalCompletion = true,
@@ -19199,7 +19222,7 @@ var __generator =
     return e.push(t.range(r.start.from, r.start.to)), r.end && e.push(t.range(r.end.from, r.end.to)), e;
   }
   h(mw, "defaultRenderMatch");
-  var gw = Me.define({
+  var gw = Pe.define({
       create() {
         return he.none;
       },
@@ -19398,7 +19421,7 @@ var __generator =
     return r.iterChangedRanges((t, i) => (e = i)), e;
   }
   h(ww, "changeEnd");
-  var XD = Me.define({
+  var XD = Pe.define({
     create() {
       return pt.empty;
     },
@@ -19757,7 +19780,7 @@ var __generator =
   var Ph = de.define(),
     o1 = de.define(),
     u1 = de.define(),
-    $t = Me.define({
+    $t = Pe.define({
       create() {
         return new Jt(he.none, null, null);
       },
@@ -21924,8 +21947,8 @@ var __generator =
           !l && ee & 8 && ((l = !0), (fe.checked = T[3]), J(() => (l = !1))), u.$set(fe);
           var be = {};
           !f && ee & 16 && ((f = !0), (be.checked = T[4]), J(() => (f = !1))), c.$set(be);
-          var $e = {};
-          ee & 16777344 && ($e.$$scope = { dirty: ee, ctx: T }), !m && ee & 64 && ((m = !0), ($e.checked = T[6]), J(() => (m = !1))), p.$set($e);
+          var Me = {};
+          ee & 16777344 && (Me.$$scope = { dirty: ee, ctx: T }), !m && ee & 64 && ((m = !0), (Me.checked = T[6]), J(() => (m = !1))), p.$set(Me);
           var Ye = {};
           !b && ee & 32 && ((b = !0), (Ye.checked = T[5]), J(() => (b = !1))), g.$set(Ye);
         },
@@ -23713,8 +23736,8 @@ var __generator =
       r[15](w);
     }
     h(be, "option0_checked_binding");
-    var $e = { option: "curly" };
-    r[0] !== void 0 && ($e.checked = r[0]), (i = new me({ props: $e })), X.push(() => Z(i, "checked", be));
+    var Me = { option: "curly" };
+    r[0] !== void 0 && (Me.checked = r[0]), (i = new me({ props: Me })), X.push(() => Z(i, "checked", be));
     function Ye(w) {
       r[17](w);
     }
@@ -23891,10 +23914,10 @@ var __generator =
       (F = N), t(1, F);
     }
     h(be, "option3_checked_binding");
-    function $e(N) {
+    function Me(N) {
       (E = N), t(2, E);
     }
-    h($e, "option4_checked_binding");
+    h(Me, "option4_checked_binding");
     function Ye(N) {
       (A = N), t(3, A);
     }
@@ -23941,7 +23964,7 @@ var __generator =
             t(14, (g.enclosingBraces = z && oe.length > 0 ? oe.split(/[\n\t ,]+/) : void 0), g),
             t(14, (g.removeBraces = ae && K.length > 0 ? K.split(/[\n\t ,]+/) : void 0), g);
       }),
-      [b, F, E, A, _, B, I, Q, W, H, z, oe, ae, K, g, T, ee, ge, ye, fe, be, $e, Ye, mt, mi, Li, Qr, qi, _e]
+      [b, F, E, A, _, B, I, Q, W, H, z, oe, ae, K, g, T, ee, ge, ye, fe, be, Me, Ye, mt, mi, Li, Qr, qi, _e]
     );
   }
   h(d3, "instance");
@@ -24160,8 +24183,8 @@ var __generator =
       r[6](N);
     }
     h(be, "valueoptions_options_binding");
-    var $e = {};
-    r[0] !== void 0 && ($e.options = r[0]), (f = new H1({ props: $e })), X.push(() => Z(f, "options", be));
+    var Me = {};
+    r[0] !== void 0 && (Me.options = r[0]), (f = new H1({ props: Me })), X.push(() => Z(f, "options", be));
     function Ye(N) {
       r[7](N);
     }
