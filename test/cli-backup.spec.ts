@@ -25,3 +25,9 @@ test('CLI should error if creating backup in non-modify mode', async () => {
 	strictEqual(proc.stdout, '');
 	strictEqual(proc.status, 1);
 });
+
+test('CLI should create backup by default in legacy modify mode', async () => {
+	const path = await tmpfile(input);
+	spawnSync(BIN_PATH, [path], { encoding: 'utf8' });
+	strictEqual(await readFile(path + '.original', 'utf8'), input);
+});
