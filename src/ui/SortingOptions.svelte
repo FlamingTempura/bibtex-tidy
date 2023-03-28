@@ -36,6 +36,13 @@
 			descending order, prefix the field name with a dash, e.g.
 			<code>-year author</code>.
 		</p>
+		<p>
+			In addition to field names, you can use <code>key</code> to sort by
+			citation key,
+			<code>type</code> to sort by entry type (@article, @misc, etc), and
+			<code>special</code> to sort special entries (@string, @preamble, @xdata, and
+			@set) to the top.
+		</p>
 	</Option>
 
 	<Option option="sortFields" bind:checked={sortFieldsChecked}>

@@ -82,7 +82,9 @@ export type BibTeXTidyOptions = {
 	/**
 	 * Sort bibliography entries
 	 *
-	 * Sort entries by specified fields. For descending order, prefix the field with a dash (-).
+	 * Sort entries by the specified field names (citation key is used if no fields are specified). For descending order, prefix the field with a dash (-).
+	 * Multiple fields may be specified to sort everything by first field, then by the second field whenever the first field for entries are equal, etc.
+	 * The following additional fields are also permitted: key (entry citation key), type (sorts by the type of entry, e.g. article), and special (ensures that @string, @preamble, @set, and @xdata entries are first). 
 	 */
 	sort?: boolean | string[];
 	/**

@@ -17,7 +17,10 @@ export function sortEntries(
 
 	// first, create sort indexes
 	for (const item of ast.children) {
-		if (item.type === 'text' || item.block?.type !== 'entry') {
+		if (
+			item.type === 'text' ||
+			(item.block?.type !== 'entry' && !sort.includes('special'))
+		) {
 			// if string, preamble, or comment, then use sort index of previous entry
 			precedingMeta.push(item);
 			continue;
@@ -27,16 +30,31 @@ export function sortEntries(
 			// dash prefix indicates descending order, deal with this later
 			if (key.startsWith('-')) key = key.slice(1);
 			let val: string | number;
-			if (key === 'key') {
-				val = item.block.key ?? '';
-			} else if (key === 'type') {
-				val = item.command;
-			} else if (key === 'month') {
-				const v = fieldMaps.get(item.block)?.get(key);
-				const i = v ? (MONTH_MACROS as readonly string[]).indexOf(v) : -1;
-				val = i > -1 ? i : '';
-			} else {
-				val = fieldMaps.get(item.block)?.get(key) ?? '';
+			switch (key) {
+				case 'key':
+					if (item.block?.type !== 'entry') continue;
+					val = item.block.key ?? '';
+					break;
+
+				case 'type':
+					val = item.command;
+					break;
+
+				case 'month': {
+					if (item.block?.type !== 'entry') continue;
+					const v = fieldMaps.get(item.block)?.get(key);
+					const i = v ? (MONTH_MACROS as readonly string[]).indexOf(v) : -1;
+					val = i > -1 ? i : '';
+					break;
+				}
+
+				case 'special':
+					val = isBibLaTeXSpecialEntry(item) ? 0 : 1;
+					break;
+
+				default:
+					if (item.block?.type !== 'entry') continue;
+					val = fieldMaps.get(item.block)?.get(key) ?? '';
 			}
 			sortIndex.set(key, typeof val === 'string' ? val.toLowerCase() : val);
 		}
@@ -60,6 +78,22 @@ export function sortEntries(
 			return (desc ? ib : ia).localeCompare(desc ? ia : ib);
 		});
 	}
+}
+
+const SPECIAL_ENTRIES = new Set([
+	'string',
+	'preamble',
+	// http://tug.ctan.org/info/biblatex-cheatsheet/biblatex-cheatsheet.pdf
+	'set',
+	'xdata',
+]);
+
+/**
+ * BibLaTeX has two special entries: set and xdata. If they are at the top of the file, we
+ * should keep them there.
+ */
+function isBibLaTeXSpecialEntry(node: BlockNode) {
+	return SPECIAL_ENTRIES.has(node.command.toLowerCase());
 }
 
 export function sortEntryFields(ast: RootNode, fieldOrder: string[]): void {

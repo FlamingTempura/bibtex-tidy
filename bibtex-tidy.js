@@ -4009,8 +4009,8 @@ var optionDefinitions = [
       return void 0;
     },
     title: "Sort bibliography entries",
-    description: ["Sort entries by specified fields. For descending order, prefix the field with a dash (-)."],
-    examples: ["--sort (sort by id)", "--sort=-year,name (sort year descending then name ascending)", "--sort=name,year"],
+    description: ["Sort entries by the specified field names (citation key is used if no fields are specified). For descending order, prefix the field with a dash (-).", "Multiple fields may be specified to sort everything by first field, then by the second field whenever the first field for entries are equal, etc.", "The following additional fields are also permitted: key (entry citation key), type (sorts by the type of entry, e.g. article), and special (ensures that @string, @preamble, @set, and @xdata entries are first). "],
+    examples: ["--sort (sort by citation key)", "--sort=-year,name (sort year descending then name ascending)", "--sort=name,year"],
     type: "boolean | string[]",
     convertBoolean: {
       true: DEFAULT_SORT,
@@ -4381,7 +4381,7 @@ function normalizeOptions(options) {
 __name(normalizeOptions, "normalizeOptions");
 // src/sort.ts
 function sortEntries(ast, fieldMaps, sort) {
-  var _a, _b, _c, _d, _e;
+  var _a, _b, _c, _d, _e, _f, _g, _h;
   var sortIndexes = /* @__PURE__ */ new Map();
   var precedingMeta = [];
   var _iteratorNormalCompletion = true,
@@ -4390,7 +4390,7 @@ function sortEntries(ast, fieldMaps, sort) {
   try {
     for (var _iterator = ast.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var item = _step.value;
-      if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry") {
+      if (item.type === "text" || (((_a = item.block) == null ? void 0 : _a.type) !== "entry" && !sort.includes("special"))) {
         precedingMeta.push(item);
         continue;
       }
@@ -4403,16 +4403,27 @@ function sortEntries(ast, fieldMaps, sort) {
           var key = _step1.value;
           if (key.startsWith("-")) key = key.slice(1);
           var val = void 0;
-          if (key === "key") {
-            val = (_b = item.block.key) != null ? _b : "";
-          } else if (key === "type") {
-            val = item.command;
-          } else if (key === "month") {
-            var v = (_c = fieldMaps.get(item.block)) == null ? void 0 : _c.get(key);
-            var i = v ? MONTH_MACROS.indexOf(v) : -1;
-            val = i > -1 ? i : "";
-          } else {
-            val = (_e = (_d = fieldMaps.get(item.block)) == null ? void 0 : _d.get(key)) != null ? _e : "";
+          switch (key) {
+            case "key":
+              if (((_b = item.block) == null ? void 0 : _b.type) !== "entry") continue;
+              val = (_c = item.block.key) != null ? _c : "";
+              break;
+            case "type":
+              val = item.command;
+              break;
+            case "month": {
+              if (((_d = item.block) == null ? void 0 : _d.type) !== "entry") continue;
+              var v = (_e = fieldMaps.get(item.block)) == null ? void 0 : _e.get(key);
+              var i = v ? MONTH_MACROS.indexOf(v) : -1;
+              val = i > -1 ? i : "";
+              break;
+            }
+            case "special":
+              val = isBibLaTeXSpecialEntry(item) ? 0 : 1;
+              break;
+            default:
+              if (((_f = item.block) == null ? void 0 : _f.type) !== "entry") continue;
+              val = (_h = (_g = fieldMaps.get(item.block)) == null ? void 0 : _g.get(key)) != null ? _h : "";
           }
           sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
         }
@@ -4483,6 +4494,17 @@ function sortEntries(ast, fieldMaps, sort) {
   }
 }
 __name(sortEntries, "sortEntries");
+var SPECIAL_ENTRIES = /* @__PURE__ */ new Set([
+  "string",
+  "preamble",
+  // http://tug.ctan.org/info/biblatex-cheatsheet/biblatex-cheatsheet.pdf
+  "set",
+  "xdata",
+]);
+function isBibLaTeXSpecialEntry(node) {
+  return SPECIAL_ENTRIES.has(node.command.toLowerCase());
+}
+__name(isBibLaTeXSpecialEntry, "isBibLaTeXSpecialEntry");
 function sortEntryFields(ast, fieldOrder) {
   var _iteratorNormalCompletion = true,
     _didIteratorError = false,

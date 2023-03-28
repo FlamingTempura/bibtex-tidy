@@ -119,12 +119,19 @@ bibtex-tidy references.bib
       Insert an empty line between each entry.
       
   --sort, --no-sort
-      Sort entries by specified fields. For descending order, prefix the field with
-      a dash (-).
+      Sort entries by the specified field names (citation key is used if no fields
+      are specified). For descending order, prefix the field with a dash (-).
+      
+      Multiple fields may be specified to sort everything by first field, then by
+      the second field whenever the first field for entries are equal, etc.
+      
+      The following additional fields are also permitted: key (entry citation key),
+      type (sorts by the type of entry, e.g. article), and special (ensures that
+      @string, @preamble, @set, and @xdata entries are first).
       
       Examples:
-      --sort (sort by id), --sort=-year,name (sort year descending then name
-      ascending), --sort=name,year
+      --sort (sort by citation key), --sort=-year,name (sort year descending then
+      name ascending), --sort=name,year
       
   --duplicates
       Warn if duplicates are found, which are entries where DOI, abstract, or
