@@ -555,13 +555,13 @@ var BibTeXSyntaxError = class extends Error {
 };
 
 // src/latexParser.ts
-var BlockNode2 = class {
+var BlockNode2 = class _BlockNode {
   constructor(kind, parent, children = []) {
     this.kind = kind;
     this.parent = parent;
     this.children = children;
     this.type = "block";
-    if (parent instanceof BlockNode2) {
+    if (parent instanceof _BlockNode) {
       parent.children.push(this);
     } else if (parent instanceof CommandNode) {
       parent.args.push(this);

@@ -16,22 +16,41 @@ function _export(target, all) {
     });
 }
 _export(exports, {
-  default: () => src_default,
-  getEntries: () => getEntries,
-  tidy: () => tidy,
+  default: function () {
+    return src_default;
+  },
+  getEntries: function () {
+    return getEntries;
+  },
+  tidy: function () {
+    return tidy;
+  },
 });
-function _arrayLikeToArray(arr, len) {
+function _array_like_to_array(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
   for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
   return arr2;
 }
-function _arrayWithHoles(arr) {
+function _array_with_holes(arr) {
   if (Array.isArray(arr)) return arr;
 }
-function _iterableToArray(iter) {
+function _define_property(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true,
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+function _iterable_to_array(iter) {
   if ((typeof Symbol !== "undefined" && iter[Symbol.iterator] != null) || iter["@@iterator"] != null) return Array.from(iter);
 }
-function _iterableToArrayLimit(arr, i) {
+function _iterable_to_array_limit(arr, i) {
   var _i = arr == null ? null : (typeof Symbol !== "undefined" && arr[Symbol.iterator]) || arr["@@iterator"];
   if (_i == null) return;
   var _arr = [];
@@ -55,191 +74,238 @@ function _iterableToArrayLimit(arr, i) {
   }
   return _arr;
 }
-function _nonIterableRest() {
+function _non_iterable_rest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+function _object_spread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+    var ownKeys = Object.keys(source);
+    if (typeof Object.getOwnPropertySymbols === "function") {
+      ownKeys = ownKeys.concat(
+        Object.getOwnPropertySymbols(source).filter(function (sym) {
+          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+        })
+      );
+    }
+    ownKeys.forEach(function (key) {
+      _define_property(target, key, source[key]);
+    });
+  }
+  return target;
 }
-function _toArray(arr) {
-  return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest();
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) {
+      symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+    }
+    keys.push.apply(keys, symbols);
+  }
+  return keys;
 }
-function _unsupportedIterableToArray(o, minLen) {
+function _object_spread_props(target, source) {
+  source = source != null ? source : {};
+  if (Object.getOwnPropertyDescriptors) {
+    Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+  } else {
+    ownKeys(Object(source)).forEach(function (key) {
+      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+    });
+  }
+  return target;
+}
+function _sliced_to_array(arr, i) {
+  return _array_with_holes(arr) || _iterable_to_array_limit(arr, i) || _unsupported_iterable_to_array(arr, i) || _non_iterable_rest();
+}
+function _to_array(arr) {
+  return _array_with_holes(arr) || _iterable_to_array(arr) || _unsupported_iterable_to_array(arr) || _non_iterable_rest();
+}
+function _unsupported_iterable_to_array(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  if (typeof o === "string") return _array_like_to_array(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(n);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _array_like_to_array(o, minLen);
 }
+var _class, _class1, _class2, _class3, _class4, _class5, _class6, _class7, _class8, _class9, _class10, _class11, _class12, __BlockNode, _class13, _class14, _class15;
 var __defProp = Object.defineProperty;
-var __defProps = Object.defineProperties;
-var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols = Object.getOwnPropertySymbols;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) =>
-  key in obj
-    ? __defProp(obj, key, {
-        enumerable: true,
-        configurable: true,
-        writable: true,
-        value,
-      })
-    : (obj[key] = value);
-var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {})) if (__hasOwnProp.call(b, prop)) __defNormalProp(a, prop, b[prop]);
-  var _iteratorNormalCompletion = true,
-    _didIteratorError = false,
-    _iteratorError = undefined;
-  if (__getOwnPropSymbols)
-    try {
-      for (var _iterator = __getOwnPropSymbols(b)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var prop = _step.value;
-        if (__propIsEnum.call(b, prop)) __defNormalProp(a, prop, b[prop]);
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return != null) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-  return a;
-};
-var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 var __name = (target, value) =>
   __defProp(target, "name", {
     value,
     configurable: true,
   });
 // src/bibtexParser.ts
-var RootNode = class RootNode {
-  constructor(ref) {
-    var children = ref === void 0 ? [] : ref;
-    this.children = children;
-    this.type = "root";
-  }
-};
-__name(RootNode, "RootNode");
-var TextNode = class TextNode {
-  constructor(parent, text) {
-    this.parent = parent;
-    this.text = text;
-    this.type = "text";
-    parent.children.push(this);
-  }
-};
-__name(TextNode, "TextNode");
-var BlockNode = class BlockNode {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "block";
-    this.command = "";
-    parent.children.push(this);
-  }
-};
-__name(BlockNode, "BlockNode");
-var CommentNode = class CommentNode {
-  constructor(parent, raw, braces, parens) {
-    this.parent = parent;
-    this.raw = raw;
-    this.braces = braces;
-    this.parens = parens;
-    this.type = "comment";
-    parent.block = this;
-  }
-};
-__name(CommentNode, "CommentNode");
-var PreambleNode = class PreambleNode {
-  constructor(parent, raw, braces, parens) {
-    this.parent = parent;
-    this.raw = raw;
-    this.braces = braces;
-    this.parens = parens;
-    this.type = "preamble";
-    parent.block = this;
-  }
-};
-__name(PreambleNode, "PreambleNode");
-var StringNode = class StringNode {
-  constructor(parent, raw, braces, parens) {
-    this.parent = parent;
-    this.raw = raw;
-    this.braces = braces;
-    this.parens = parens;
-    this.type = "string";
-    parent.block = this;
-  }
-};
-__name(StringNode, "StringNode");
-var EntryNode = class EntryNode {
-  constructor(parent, wrapType) {
-    this.parent = parent;
-    this.wrapType = wrapType;
-    this.type = "entry";
-    parent.block = this;
-    this.fields = [];
-  }
-};
-__name(EntryNode, "EntryNode");
-var FieldNode = class FieldNode {
-  constructor(parent, ref) {
-    var name = ref === void 0 ? "" : ref;
-    this.parent = parent;
-    this.name = name;
-    this.type = "field";
-    this.value = new ConcatNode(this);
-  }
-};
-__name(FieldNode, "FieldNode");
-var ConcatNode = class ConcatNode {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "concat";
-    this.canConsumeValue = true;
-    this.concat = [];
-  }
-};
-__name(ConcatNode, "ConcatNode");
-var LiteralNode = class LiteralNode {
-  constructor(parent, value) {
-    this.parent = parent;
-    this.value = value;
-    this.type = "literal";
-    parent.concat.push(this);
-  }
-};
-__name(LiteralNode, "LiteralNode");
-var BracedNode = class BracedNode {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "braced";
-    this.value = "";
-    /** Used to count opening and closing braces */ this.depth = 0;
-    parent.concat.push(this);
-  }
-};
-__name(BracedNode, "BracedNode");
-var QuotedNode = class QuotedNode {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "quoted";
-    this.value = "";
-    /** Used to count opening and closing braces */ this.depth = 0;
-    parent.concat.push(this);
-  }
-};
-__name(QuotedNode, "QuotedNode");
+var RootNode =
+  ((_class = class _class {
+    constructor(ref) {
+      var children = ref === void 0 ? [] : ref;
+      this.children = children;
+      this.type = "root";
+    }
+  }),
+  (() => {
+    __name(_class, "RootNode");
+  })(),
+  _class);
+var TextNode =
+  ((_class1 = class _class {
+    constructor(parent, text) {
+      this.parent = parent;
+      this.text = text;
+      this.type = "text";
+      parent.children.push(this);
+    }
+  }),
+  (() => {
+    __name(_class1, "TextNode");
+  })(),
+  _class1);
+var BlockNode =
+  ((_class2 = class _class {
+    constructor(parent) {
+      this.parent = parent;
+      this.type = "block";
+      this.command = "";
+      parent.children.push(this);
+    }
+  }),
+  (() => {
+    __name(_class2, "BlockNode");
+  })(),
+  _class2);
+var CommentNode =
+  ((_class3 = class _class {
+    constructor(parent, raw, braces, parens) {
+      this.parent = parent;
+      this.raw = raw;
+      this.braces = braces;
+      this.parens = parens;
+      this.type = "comment";
+      parent.block = this;
+    }
+  }),
+  (() => {
+    __name(_class3, "CommentNode");
+  })(),
+  _class3);
+var PreambleNode =
+  ((_class4 = class _class {
+    constructor(parent, raw, braces, parens) {
+      this.parent = parent;
+      this.raw = raw;
+      this.braces = braces;
+      this.parens = parens;
+      this.type = "preamble";
+      parent.block = this;
+    }
+  }),
+  (() => {
+    __name(_class4, "PreambleNode");
+  })(),
+  _class4);
+var StringNode =
+  ((_class5 = class _class {
+    constructor(parent, raw, braces, parens) {
+      this.parent = parent;
+      this.raw = raw;
+      this.braces = braces;
+      this.parens = parens;
+      this.type = "string";
+      parent.block = this;
+    }
+  }),
+  (() => {
+    __name(_class5, "StringNode");
+  })(),
+  _class5);
+var EntryNode =
+  ((_class6 = class _class {
+    constructor(parent, wrapType) {
+      this.parent = parent;
+      this.wrapType = wrapType;
+      this.type = "entry";
+      parent.block = this;
+      this.fields = [];
+    }
+  }),
+  (() => {
+    __name(_class6, "EntryNode");
+  })(),
+  _class6);
+var FieldNode =
+  ((_class7 = class _class {
+    constructor(parent, ref) {
+      var name = ref === void 0 ? "" : ref;
+      this.parent = parent;
+      this.name = name;
+      this.type = "field";
+      this.value = new ConcatNode(this);
+    }
+  }),
+  (() => {
+    __name(_class7, "FieldNode");
+  })(),
+  _class7);
+var ConcatNode =
+  ((_class8 = class _class {
+    constructor(parent) {
+      this.parent = parent;
+      this.type = "concat";
+      this.canConsumeValue = true;
+      this.concat = [];
+    }
+  }),
+  (() => {
+    __name(_class8, "ConcatNode");
+  })(),
+  _class8);
+var LiteralNode =
+  ((_class9 = class _class {
+    constructor(parent, value) {
+      this.parent = parent;
+      this.value = value;
+      this.type = "literal";
+      parent.concat.push(this);
+    }
+  }),
+  (() => {
+    __name(_class9, "LiteralNode");
+  })(),
+  _class9);
+var BracedNode =
+  ((_class10 = class _class {
+    constructor(parent) {
+      this.parent = parent;
+      this.type = "braced";
+      this.value = "";
+      /** Used to count opening and closing braces */ this.depth = 0;
+      parent.concat.push(this);
+    }
+  }),
+  (() => {
+    __name(_class10, "BracedNode");
+  })(),
+  _class10);
+var QuotedNode =
+  ((_class11 = class _class {
+    constructor(parent) {
+      this.parent = parent;
+      this.type = "quoted";
+      this.value = "";
+      /** Used to count opening and closing braces */ this.depth = 0;
+      parent.concat.push(this);
+    }
+  }),
+  (() => {
+    __name(_class11, "QuotedNode");
+  })(),
+  _class11);
 function generateAST(input) {
-  var _a;
   var rootNode = new RootNode();
   var node = rootNode;
   var line = 1;
@@ -267,8 +333,9 @@ function generateAST(input) {
       }
       case "block": {
         if (char === "@") {
+          var _prevNode;
           var prevNode = node.parent.children[node.parent.children.length - 2];
-          if ((prevNode == null ? void 0 : prevNode.type) === "text") {
+          if (((_prevNode = prevNode) === null || _prevNode === void 0 ? void 0 : _prevNode.type) === "text") {
             prevNode.text += "@" + node.command;
           } else {
             node.parent.children.pop();
@@ -284,7 +351,7 @@ function generateAST(input) {
           } else {
             node.command = commandTrimmed;
             var command = node.command.toLowerCase();
-            var _ref = _slicedToArray(char === "{" ? [1, 0] : [0, 1], 2),
+            var _ref = _sliced_to_array(char === "{" ? [1, 0] : [0, 1], 2),
               braces = _ref[0],
               parens = _ref[1];
             var raw = "@" + command + char;
@@ -348,7 +415,8 @@ function generateAST(input) {
         } else if (!isValidKeyCharacter(char)) {
           throw new BibTeXSyntaxError(input, node, i, line, column, "The entry key cannot contain the character (".concat(char, ")"));
         } else {
-          node.key = ((_a = node.key) != null ? _a : "") + char;
+          var _node_key;
+          node.key = ((_node_key = node.key) !== null && _node_key !== void 0 ? _node_key : "") + char;
         }
         break;
       }
@@ -460,56 +528,72 @@ function isValidFieldName(char) {
   return !/[=,{}()[\]]/.test(char);
 }
 __name(isValidFieldName, "isValidFieldName");
-var BibTeXSyntaxError = class BibTeXSyntaxError extends Error {
-  constructor(input, node, pos, line, column, hint) {
-    super("Line ".concat(line, ":").concat(column, ": Syntax Error in ").concat(node.type, " (").concat(hint, ")\n") + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
-    this.node = node;
-    this.line = line;
-    this.column = column;
-    this.hint = hint;
-    this.name = "Syntax Error";
-    this.char = input[pos];
-  }
-};
-__name(BibTeXSyntaxError, "BibTeXSyntaxError");
-// src/latexParser.ts
-var BlockNode2 = class BlockNode21 {
-  constructor(kind, parent, ref) {
-    var children = ref === void 0 ? [] : ref;
-    this.kind = kind;
-    this.parent = parent;
-    this.children = children;
-    this.type = "block";
-    if (parent instanceof BlockNode2) {
-      parent.children.push(this);
-    } else if (parent instanceof CommandNode) {
-      parent.args.push(this);
+var BibTeXSyntaxError =
+  ((_class12 = class _class extends Error {
+    constructor(input, node, pos, line, column, hint) {
+      super("Line ".concat(line, ":").concat(column, ": Syntax Error in ").concat(node.type, " (").concat(hint, ")\n") + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
+      this.node = node;
+      this.line = line;
+      this.column = column;
+      this.hint = hint;
+      this.name = "Syntax Error";
+      this.char = input[pos];
     }
-  }
-};
-__name(BlockNode2, "BlockNode");
-var TextNode2 = class TextNode2 {
-  constructor(parent, ref) {
-    var text = ref === void 0 ? "" : ref;
-    this.parent = parent;
-    this.text = text;
-    this.type = "text";
-    parent.children.push(this);
-  }
-};
-__name(TextNode2, "TextNode");
-var CommandNode = class CommandNode {
-  constructor(parent, ref, ref1) {
-    var command = ref === void 0 ? "" : ref,
-      args = ref1 === void 0 ? [] : ref1;
-    this.parent = parent;
-    this.command = command;
-    this.args = args;
-    this.type = "command";
-    parent.children.push(this);
-  }
-};
-__name(CommandNode, "CommandNode");
+  }),
+  (() => {
+    __name(_class12, "BibTeXSyntaxError");
+  })(),
+  _class12);
+// src/latexParser.ts
+var BlockNode2 =
+  ((__BlockNode = class _BlockNode {
+    constructor(kind, parent, ref) {
+      var children = ref === void 0 ? [] : ref;
+      this.kind = kind;
+      this.parent = parent;
+      this.children = children;
+      this.type = "block";
+      if (parent instanceof _BlockNode) {
+        parent.children.push(this);
+      } else if (parent instanceof CommandNode) {
+        parent.args.push(this);
+      }
+    }
+  }),
+  (() => {
+    __name(__BlockNode, "BlockNode");
+  })(),
+  __BlockNode);
+var TextNode2 =
+  ((_class13 = class _class {
+    constructor(parent, ref) {
+      var text = ref === void 0 ? "" : ref;
+      this.parent = parent;
+      this.text = text;
+      this.type = "text";
+      parent.children.push(this);
+    }
+  }),
+  (() => {
+    __name(_class13, "TextNode");
+  })(),
+  _class13);
+var CommandNode =
+  ((_class14 = class _class {
+    constructor(parent, ref, ref1) {
+      var command = ref === void 0 ? "" : ref,
+        args = ref1 === void 0 ? [] : ref1;
+      this.parent = parent;
+      this.command = command;
+      this.args = args;
+      this.type = "command";
+      parent.children.push(this);
+    }
+  }),
+  (() => {
+    __name(_class14, "CommandNode");
+  })(),
+  _class14);
 function parseLaTeX(input) {
   var rootNode = new BlockNode2("root");
   var node = rootNode;
@@ -592,7 +676,7 @@ function stringifyCommand(node) {
 }
 __name(stringifyCommand, "stringifyCommand");
 function flattenLaTeX(block) {
-  var newBlock = __spreadProps(__spreadValues({}, block), {
+  var newBlock = _object_spread_props(_object_spread({}, block), {
     children: [],
   });
   var _iteratorNormalCompletion = true,
@@ -2956,7 +3040,6 @@ var specialCharacters = /* @__PURE__ */ new Map([
 ]);
 // src/utils.ts
 function escapeSpecialCharacters(str) {
-  var _a;
   var mathExpressions = [];
   str = str.replace(/\$[^$]+\$/, (match) => {
     mathExpressions.push(match);
@@ -2976,12 +3059,11 @@ function escapeSpecialCharacters(str) {
       continue;
     }
     var c = str.charCodeAt(i).toString(16).padStart(4, "0");
-    newstr += (_a = specialCharacters.get(c)) != null ? _a : str[i];
+    var _specialCharacters_get;
+    newstr += (_specialCharacters_get = specialCharacters.get(c)) !== null && _specialCharacters_get !== void 0 ? _specialCharacters_get : str[i];
   }
-  return newstr.replace(/MATH\.EXP\.(\d+)/, (_, i) => {
-    var _a2;
-    return (_a2 = mathExpressions[Number(i)]) != null ? _a2 : "";
-  });
+  var _mathExpressions_Number;
+  return newstr.replace(/MATH\.EXP\.(\d+)/, (_, i) => ((_mathExpressions_Number = mathExpressions[Number(i)]) !== null && _mathExpressions_Number !== void 0 ? _mathExpressions_Number : ""));
 }
 __name(escapeSpecialCharacters, "escapeSpecialCharacters");
 function titleCase(str) {
@@ -3013,7 +3095,7 @@ function wrapText(line, lineWidth) {
     _iteratorError = undefined;
   try {
     for (var _iterator = words2.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var _step_value = _slicedToArray(_step.value, 2),
+      var _step_value = _sliced_to_array(_step.value, 2),
         i = _step_value[0],
         word = _step_value[1];
       if (currLine.length + word.length + 1 > lineWidth && i > 0) {
@@ -3077,13 +3159,12 @@ function formatPageRange(str) {
 }
 __name(formatPageRange, "formatPageRange");
 function isEntryNode(node) {
-  var _a;
-  return node.type !== "text" && ((_a = node.block) == null ? void 0 : _a.type) === "entry";
+  var _node_block;
+  return node.type !== "text" && ((_node_block = node.block) === null || _node_block === void 0 ? void 0 : _node_block.type) === "entry";
 }
 __name(isEntryNode, "isEntryNode");
 // src/duplicates.ts
 function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
-  var _a, _b;
   var rules = /* @__PURE__ */ new Map();
   if (duplicateRules) {
     var _iteratorNormalCompletion = true,
@@ -3130,7 +3211,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
         _iteratorError2 = undefined;
       try {
         for (var _iterator2 = rules[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var _step_value = _slicedToArray(_step2.value, 2),
+          var _step_value = _sliced_to_array(_step2.value, 2),
             rule1 = _step_value[0],
             doMerge = _step_value[1];
           var duplicateOf = void 0;
@@ -3148,7 +3229,8 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
               break;
             }
             case "doi": {
-              var doi = alphaNum((_a = entryValues.get("doi")) != null ? _a : "");
+              var _entryValues_get;
+              var doi = alphaNum((_entryValues_get = entryValues.get("doi")) !== null && _entryValues_get !== void 0 ? _entryValues_get : "");
               if (!doi) continue;
               duplicateOf = dois.get(doi);
               if (!duplicateOf) {
@@ -3163,7 +3245,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
               var aut = entryValues.get("author");
               var num = entryValues.get("number");
               if (!ttl || !aut) continue;
-              var cit = [alphaNum(aut.split(/,| and/)[0]), alphaNum(ttl), alphaNum(num != null ? num : "0")].join(":");
+              var cit = [alphaNum(aut.split(/,| and/)[0]), alphaNum(ttl), alphaNum(num !== null && num !== void 0 ? num : "0")].join(":");
               duplicateOf = citations.get(cit);
               if (!duplicateOf) {
                 citations.set(cit, entry);
@@ -3173,7 +3255,8 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
               break;
             }
             case "abstract": {
-              var abstract = alphaNum((_b = entryValues.get("abstract")) != null ? _b : "");
+              var _entryValues_get1;
+              var abstract = alphaNum((_entryValues_get1 = entryValues.get("abstract")) !== null && _entryValues_get1 !== void 0 ? _entryValues_get1 : "");
               var abs = abstract.slice(0, 100);
               if (!abs) continue;
               duplicateOf = abstracts.get(abs);
@@ -3342,7 +3425,8 @@ function formatNode(child, options, indent, omitFields, replacementKeys) {
     case "comment":
       return formatComment(child.block.raw, options);
     case "entry":
-      return formatEntry(child.command, child.block, options, indent, omitFields, replacementKeys == null ? void 0 : replacementKeys.get(child.block)) + (options.blankLines ? "\n" : "");
+      var _replacementKeys_get, _this;
+      return formatEntry(child.command, child.block, options, indent, omitFields, (_this = replacementKeys) === null || _this === void 0 ? void 0 : (_replacementKeys_get = _this.get) === null || _replacementKeys_get === void 0 ? void 0 : _replacementKeys_get.call(_this, child.block)) + (options.blankLines ? "\n" : "");
   }
 }
 __name(formatNode, "formatNode");
@@ -3355,7 +3439,7 @@ function formatEntry(entryType, entry, options, indent, omitFields, replacementK
   var bibtex = "";
   var itemType = lowercase ? entryType.toLocaleLowerCase() : entryType;
   bibtex += "@".concat(itemType, "{");
-  var key = replacementKey != null ? replacementKey : entry.key;
+  var key = replacementKey !== null && replacementKey !== void 0 ? replacementKey : entry.key;
   if (key) bibtex += "".concat(key, ",");
   var fieldSeen = /* @__PURE__ */ new Set();
   var _iteratorNormalCompletion = true,
@@ -3363,7 +3447,7 @@ function formatEntry(entryType, entry, options, indent, omitFields, replacementK
     _iteratorError = undefined;
   try {
     for (var _iterator = entry.fields.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var _step_value = _slicedToArray(_step.value, 2),
+      var _step_value = _sliced_to_array(_step.value, 2),
         i = _step_value[0],
         field = _step_value[1];
       var nameLowerCase = field.name.toLocaleLowerCase();
@@ -3433,8 +3517,8 @@ function formatValue(field, options) {
     abbreviateMonths = options.months;
   var nameLowerCase = field.name.toLocaleLowerCase();
   var indent = tab ? "	" : " ".repeat(space);
-  var enclosingBracesFields = new Set((enclosingBraces != null ? enclosingBraces : []).map((field2) => field2.toLocaleLowerCase()));
-  var removeBracesFields = new Set((removeBraces != null ? removeBraces : []).map((field2) => field2.toLocaleLowerCase()));
+  var enclosingBracesFields = new Set((enclosingBraces !== null && enclosingBraces !== void 0 ? enclosingBraces : []).map((field2) => field2.toLocaleLowerCase()));
+  var removeBracesFields = new Set((removeBraces !== null && removeBraces !== void 0 ? removeBraces : []).map((field2) => field2.toLocaleLowerCase()));
   return field.value.concat
     .map((param) => {
       var type = param.type,
@@ -3536,12 +3620,16 @@ var SPECIAL_MARKERS = {
   auth: {
     description: "Last name of first authors",
     callback: (v) => {
-      var _a, _b;
-      var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+      var _authors__lastName_replace, _this, _authors_;
+      var _v_get;
+      var authors = parseAuthors((_v_get = v.get("author")) !== null && _v_get !== void 0 ? _v_get : "", true);
       var author =
-        (_b = authors[0]) == null
+        (_authors_ = authors[0]) === null || _authors_ === void 0
           ? void 0
-          : _b.lastName.replace(
+          : (_authors__lastName_replace = (_this = _authors_.lastName).replace) === null || _authors__lastName_replace === void 0
+          ? void 0
+          : _authors__lastName_replace.call(
+              _this,
               /(?:[\0-@\[-`\{-\xA9\xAB-\xB4\xB6-\xB9\xBB-\xBF\xD7\xF7\u02C2-\u02C5\u02D2-\u02DF\u02E5-\u02EB\u02ED\u02EF-\u036F\u0375\u0378\u0379\u037E\u0380-\u0385\u0387\u038B\u038D\u03A2\u03F6\u0482-\u0489\u0530\u0557\u0558\u055A-\u055F\u0589-\u05CF\u05EB-\u05EE\u05F3-\u061F\u064B-\u066D\u0670\u06D4\u06D6-\u06E4\u06E7-\u06ED\u06F0-\u06F9\u06FD\u06FE\u0700-\u070F\u0711\u0730-\u074C\u07A6-\u07B0\u07B2-\u07C9\u07EB-\u07F3\u07F6-\u07F9\u07FB-\u07FF\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u083F\u0859-\u085F\u086B-\u086F\u0888\u088F-\u089F\u08CA-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962-\u0970\u0981-\u0984\u098D\u098E\u0991\u0992\u09A9\u09B1\u09B3-\u09B5\u09BA-\u09BC\u09BE-\u09CD\u09CF-\u09DB\u09DE\u09E2-\u09EF\u09F2-\u09FB\u09FD-\u0A04\u0A0B-\u0A0E\u0A11\u0A12\u0A29\u0A31\u0A34\u0A37\u0A3A-\u0A58\u0A5D\u0A5F-\u0A71\u0A75-\u0A84\u0A8E\u0A92\u0AA9\u0AB1\u0AB4\u0ABA-\u0ABC\u0ABE-\u0ACF\u0AD1-\u0ADF\u0AE2-\u0AF8\u0AFA-\u0B04\u0B0D\u0B0E\u0B11\u0B12\u0B29\u0B31\u0B34\u0B3A-\u0B3C\u0B3E-\u0B5B\u0B5E\u0B62-\u0B70\u0B72-\u0B82\u0B84\u0B8B-\u0B8D\u0B91\u0B96-\u0B98\u0B9B\u0B9D\u0BA0-\u0BA2\u0BA5-\u0BA7\u0BAB-\u0BAD\u0BBA-\u0BCF\u0BD1-\u0C04\u0C0D\u0C11\u0C29\u0C3A-\u0C3C\u0C3E-\u0C57\u0C5B\u0C5C\u0C5E\u0C5F\u0C62-\u0C7F\u0C81-\u0C84\u0C8D\u0C91\u0CA9\u0CB4\u0CBA-\u0CBC\u0CBE-\u0CDC\u0CDF\u0CE2-\u0CF0\u0CF3-\u0D03\u0D0D\u0D11\u0D3B\u0D3C\u0D3E-\u0D4D\u0D4F-\u0D53\u0D57-\u0D5E\u0D62-\u0D79\u0D80-\u0D84\u0D97-\u0D99\u0DB2\u0DBC\u0DBE\u0DBF\u0DC7-\u0E00\u0E31\u0E34-\u0E3F\u0E47-\u0E80\u0E83\u0E85\u0E8B\u0EA4\u0EA6\u0EB1\u0EB4-\u0EBC\u0EBE\u0EBF\u0EC5\u0EC7-\u0EDB\u0EE0-\u0EFF\u0F01-\u0F3F\u0F48\u0F6D-\u0F87\u0F8D-\u0FFF\u102B-\u103E\u1040-\u104F\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F-\u109F\u10C6\u10C8-\u10CC\u10CE\u10CF\u10FB\u1249\u124E\u124F\u1257\u1259\u125E\u125F\u1289\u128E\u128F\u12B1\u12B6\u12B7\u12BF\u12C1\u12C6\u12C7\u12D7\u1311\u1316\u1317\u135B-\u137F\u1390-\u139F\u13F6\u13F7\u13FE-\u1400\u166D\u166E\u1680\u169B-\u169F\u16EB-\u16F0\u16F9-\u16FF\u1712-\u171E\u1732-\u173F\u1752-\u175F\u176D\u1771-\u177F\u17B4-\u17D6\u17D8-\u17DB\u17DD-\u181F\u1879-\u187F\u1885\u1886\u18A9\u18AB-\u18AF\u18F6-\u18FF\u191F-\u194F\u196E\u196F\u1975-\u197F\u19AC-\u19AF\u19CA-\u19FF\u1A17-\u1A1F\u1A55-\u1AA6\u1AA8-\u1B04\u1B34-\u1B44\u1B4D-\u1B82\u1BA1-\u1BAD\u1BB0-\u1BB9\u1BE6-\u1BFF\u1C24-\u1C4C\u1C50-\u1C59\u1C7E\u1C7F\u1C89-\u1C8F\u1CBB\u1CBC\u1CC0-\u1CE8\u1CED\u1CF4\u1CF7-\u1CF9\u1CFB-\u1CFF\u1DC0-\u1DFF\u1F16\u1F17\u1F1E\u1F1F\u1F46\u1F47\u1F4E\u1F4F\u1F58\u1F5A\u1F5C\u1F5E\u1F7E\u1F7F\u1FB5\u1FBD\u1FBF-\u1FC1\u1FC5\u1FCD-\u1FCF\u1FD4\u1FD5\u1FDC-\u1FDF\u1FED-\u1FF1\u1FF5\u1FFD-\u2070\u2072-\u207E\u2080-\u208F\u209D-\u2101\u2103-\u2106\u2108\u2109\u2114\u2116-\u2118\u211E-\u2123\u2125\u2127\u2129\u212E\u213A\u213B\u2140-\u2144\u214A-\u214D\u214F-\u2182\u2185-\u2BFF\u2CE5-\u2CEA\u2CEF-\u2CF1\u2CF4-\u2CFF\u2D26\u2D28-\u2D2C\u2D2E\u2D2F\u2D68-\u2D6E\u2D70-\u2D7F\u2D97-\u2D9F\u2DA7\u2DAF\u2DB7\u2DBF\u2DC7\u2DCF\u2DD7\u2DDF-\u2E2E\u2E30-\u3004\u3007-\u3030\u3036-\u303A\u303D-\u3040\u3097-\u309C\u30A0\u30FB\u3100-\u3104\u3130\u318F-\u319F\u31C0-\u31EF\u3200-\u33FF\u4DC0-\u4DFF\uA48D-\uA4CF\uA4FE\uA4FF\uA60D-\uA60F\uA620-\uA629\uA62C-\uA63F\uA66F-\uA67E\uA69E\uA69F\uA6E6-\uA716\uA720\uA721\uA789\uA78A\uA7CB-\uA7CF\uA7D2\uA7D4\uA7DA-\uA7F1\uA802\uA806\uA80B\uA823-\uA83F\uA874-\uA881\uA8B4-\uA8F1\uA8F8-\uA8FA\uA8FC\uA8FF-\uA909\uA926-\uA92F\uA947-\uA95F\uA97D-\uA983\uA9B3-\uA9CE\uA9D0-\uA9DF\uA9E5\uA9F0-\uA9F9\uA9FF\uAA29-\uAA3F\uAA43\uAA4C-\uAA5F\uAA77-\uAA79\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAC3-\uAADA\uAADE\uAADF\uAAEB-\uAAF1\uAAF5-\uAB00\uAB07\uAB08\uAB0F\uAB10\uAB17-\uAB1F\uAB27\uAB2F\uAB5B\uAB6A-\uAB6F\uABE3-\uABFF\uD7A4-\uD7AF\uD7C7-\uD7CA\uD7FC-\uD7FF\uE000-\uF8FF\uFA6E\uFA6F\uFADA-\uFAFF\uFB07-\uFB12\uFB18-\uFB1C\uFB1E\uFB29\uFB37\uFB3D\uFB3F\uFB42\uFB45\uFBB2-\uFBD2\uFD3E-\uFD4F\uFD90\uFD91\uFDC8-\uFDEF\uFDFC-\uFE6F\uFE75\uFEFD-\uFF20\uFF3B-\uFF40\uFF5B-\uFF65\uFFBF-\uFFC1\uFFC8\uFFC9\uFFD0\uFFD1\uFFD8\uFFD9\uFFDD-\uFFFF]|\uD800[\uDC0C\uDC27\uDC3B\uDC3E\uDC4E\uDC4F\uDC5E-\uDC7F\uDCFB-\uDE7F\uDE9D-\uDE9F\uDED1-\uDEFF\uDF20-\uDF2C\uDF41\uDF4A-\uDF4F\uDF76-\uDF7F\uDF9E\uDF9F\uDFC4-\uDFC7\uDFD0-\uDFFF]|\uD801[\uDC9E-\uDCAF\uDCD4-\uDCD7\uDCFC-\uDCFF\uDD28-\uDD2F\uDD64-\uDD6F\uDD7B\uDD8B\uDD93\uDD96\uDDA2\uDDB2\uDDBA\uDDBD-\uDDFF\uDF37-\uDF3F\uDF56-\uDF5F\uDF68-\uDF7F\uDF86\uDFB1\uDFBB-\uDFFF]|\uD802[\uDC06\uDC07\uDC09\uDC36\uDC39-\uDC3B\uDC3D\uDC3E\uDC56-\uDC5F\uDC77-\uDC7F\uDC9F-\uDCDF\uDCF3\uDCF6-\uDCFF\uDD16-\uDD1F\uDD3A-\uDD7F\uDDB8-\uDDBD\uDDC0-\uDDFF\uDE01-\uDE0F\uDE14\uDE18\uDE36-\uDE5F\uDE7D-\uDE7F\uDE9D-\uDEBF\uDEC8\uDEE5-\uDEFF\uDF36-\uDF3F\uDF56-\uDF5F\uDF73-\uDF7F\uDF92-\uDFFF]|\uD803[\uDC49-\uDC7F\uDCB3-\uDCBF\uDCF3-\uDCFF\uDD24-\uDE7F\uDEAA-\uDEAF\uDEB2-\uDEFF\uDF1D-\uDF26\uDF28-\uDF2F\uDF46-\uDF6F\uDF82-\uDFAF\uDFC5-\uDFDF\uDFF7-\uDFFF]|\uD804[\uDC00-\uDC02\uDC38-\uDC70\uDC73\uDC74\uDC76-\uDC82\uDCB0-\uDCCF\uDCE9-\uDD02\uDD27-\uDD43\uDD45\uDD46\uDD48-\uDD4F\uDD73-\uDD75\uDD77-\uDD82\uDDB3-\uDDC0\uDDC5-\uDDD9\uDDDB\uDDDD-\uDDFF\uDE12\uDE2C-\uDE3E\uDE41-\uDE7F\uDE87\uDE89\uDE8E\uDE9E\uDEA9-\uDEAF\uDEDF-\uDF04\uDF0D\uDF0E\uDF11\uDF12\uDF29\uDF31\uDF34\uDF3A-\uDF3C\uDF3E-\uDF4F\uDF51-\uDF5C\uDF62-\uDFFF]|\uD805[\uDC35-\uDC46\uDC4B-\uDC5E\uDC62-\uDC7F\uDCB0-\uDCC3\uDCC6\uDCC8-\uDD7F\uDDAF-\uDDD7\uDDDC-\uDDFF\uDE30-\uDE43\uDE45-\uDE7F\uDEAB-\uDEB7\uDEB9-\uDEFF\uDF1B-\uDF3F\uDF47-\uDFFF]|\uD806[\uDC2C-\uDC9F\uDCE0-\uDCFE\uDD07\uDD08\uDD0A\uDD0B\uDD14\uDD17\uDD30-\uDD3E\uDD40\uDD42-\uDD9F\uDDA8\uDDA9\uDDD1-\uDDE0\uDDE2\uDDE4-\uDDFF\uDE01-\uDE0A\uDE33-\uDE39\uDE3B-\uDE4F\uDE51-\uDE5B\uDE8A-\uDE9C\uDE9E-\uDEAF\uDEF9-\uDFFF]|\uD807[\uDC09\uDC2F-\uDC3F\uDC41-\uDC71\uDC90-\uDCFF\uDD07\uDD0A\uDD31-\uDD45\uDD47-\uDD5F\uDD66\uDD69\uDD8A-\uDD97\uDD99-\uDEDF\uDEF3-\uDF01\uDF03\uDF11\uDF34-\uDFAF\uDFB1-\uDFFF]|\uD808[\uDF9A-\uDFFF]|\uD809[\uDC00-\uDC7F\uDD44-\uDFFF]|[\uD80A\uD80E-\uD810\uD812-\uD819\uD824-\uD82A\uD82D\uD82E\uD830-\uD834\uD836\uD83C-\uD83F\uD87B-\uD87D\uD87F\uD889-\uDBFF][\uDC00-\uDFFF]|\uD80B[\uDC00-\uDF8F\uDFF1-\uDFFF]|\uD80D[\uDC30-\uDC40\uDC47-\uDFFF]|\uD811[\uDE47-\uDFFF]|\uD81A[\uDE39-\uDE3F\uDE5F-\uDE6F\uDEBF-\uDECF\uDEEE-\uDEFF\uDF30-\uDF3F\uDF44-\uDF62\uDF78-\uDF7C\uDF90-\uDFFF]|\uD81B[\uDC00-\uDE3F\uDE80-\uDEFF\uDF4B-\uDF4F\uDF51-\uDF92\uDFA0-\uDFDF\uDFE2\uDFE4-\uDFFF]|\uD821[\uDFF8-\uDFFF]|\uD823[\uDCD6-\uDCFF\uDD09-\uDFFF]|\uD82B[\uDC00-\uDFEF\uDFF4\uDFFC\uDFFF]|\uD82C[\uDD23-\uDD31\uDD33-\uDD4F\uDD53\uDD54\uDD56-\uDD63\uDD68-\uDD6F\uDEFC-\uDFFF]|\uD82F[\uDC6B-\uDC6F\uDC7D-\uDC7F\uDC89-\uDC8F\uDC9A-\uDFFF]|\uD835[\uDC55\uDC9D\uDCA0\uDCA1\uDCA3\uDCA4\uDCA7\uDCA8\uDCAD\uDCBA\uDCBC\uDCC4\uDD06\uDD0B\uDD0C\uDD15\uDD1D\uDD3A\uDD3F\uDD45\uDD47-\uDD49\uDD51\uDEA6\uDEA7\uDEC1\uDEDB\uDEFB\uDF15\uDF35\uDF4F\uDF6F\uDF89\uDFA9\uDFC3\uDFCC-\uDFFF]|\uD837[\uDC00-\uDEFF\uDF1F-\uDF24\uDF2B-\uDFFF]|\uD838[\uDC00-\uDC2F\uDC6E-\uDCFF\uDD2D-\uDD36\uDD3E-\uDD4D\uDD4F-\uDE8F\uDEAE-\uDEBF\uDEEC-\uDFFF]|\uD839[\uDC00-\uDCCF\uDCEC-\uDFDF\uDFE7\uDFEC\uDFEF\uDFFF]|\uD83A[\uDCC5-\uDCFF\uDD44-\uDD4A\uDD4C-\uDFFF]|\uD83B[\uDC00-\uDDFF\uDE04\uDE20\uDE23\uDE25\uDE26\uDE28\uDE33\uDE38\uDE3A\uDE3C-\uDE41\uDE43-\uDE46\uDE48\uDE4A\uDE4C\uDE50\uDE53\uDE55\uDE56\uDE58\uDE5A\uDE5C\uDE5E\uDE60\uDE63\uDE65\uDE66\uDE6B\uDE73\uDE78\uDE7D\uDE7F\uDE8A\uDE9C-\uDEA0\uDEA4\uDEAA\uDEBC-\uDFFF]|\uD869[\uDEE0-\uDEFF]|\uD86D[\uDF3A-\uDF3F]|\uD86E[\uDC1E\uDC1F]|\uD873[\uDEA2-\uDEAF]|\uD87A[\uDFE1-\uDFFF]|\uD87E[\uDE1E-\uDFFF]|\uD884[\uDF4B-\uDF4F]|\uD888[\uDFB0-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+/g,
               "_"
             );
@@ -3551,8 +3639,8 @@ var SPECIAL_MARKERS = {
   authEtAl: {
     description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
     callback: (v) => {
-      var _a;
-      var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+      var _v_get;
+      var authors = parseAuthors((_v_get = v.get("author")) !== null && _v_get !== void 0 ? _v_get : "", true);
       return [
         ...authors
           .slice(0, 2)
@@ -3569,8 +3657,8 @@ var SPECIAL_MARKERS = {
   authors: {
     description: "Last name all authors",
     callback: (v) => {
-      var _a;
-      var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+      var _v_get;
+      var authors = parseAuthors((_v_get = v.get("author")) !== null && _v_get !== void 0 ? _v_get : "", true);
       return authors.map((author) =>
         author.lastName.replace(
           /(?:[\0-@\[-`\{-\xA9\xAB-\xB4\xB6-\xB9\xBB-\xBF\xD7\xF7\u02C2-\u02C5\u02D2-\u02DF\u02E5-\u02EB\u02ED\u02EF-\u036F\u0375\u0378\u0379\u037E\u0380-\u0385\u0387\u038B\u038D\u03A2\u03F6\u0482-\u0489\u0530\u0557\u0558\u055A-\u055F\u0589-\u05CF\u05EB-\u05EE\u05F3-\u061F\u064B-\u066D\u0670\u06D4\u06D6-\u06E4\u06E7-\u06ED\u06F0-\u06F9\u06FD\u06FE\u0700-\u070F\u0711\u0730-\u074C\u07A6-\u07B0\u07B2-\u07C9\u07EB-\u07F3\u07F6-\u07F9\u07FB-\u07FF\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u083F\u0859-\u085F\u086B-\u086F\u0888\u088F-\u089F\u08CA-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962-\u0970\u0981-\u0984\u098D\u098E\u0991\u0992\u09A9\u09B1\u09B3-\u09B5\u09BA-\u09BC\u09BE-\u09CD\u09CF-\u09DB\u09DE\u09E2-\u09EF\u09F2-\u09FB\u09FD-\u0A04\u0A0B-\u0A0E\u0A11\u0A12\u0A29\u0A31\u0A34\u0A37\u0A3A-\u0A58\u0A5D\u0A5F-\u0A71\u0A75-\u0A84\u0A8E\u0A92\u0AA9\u0AB1\u0AB4\u0ABA-\u0ABC\u0ABE-\u0ACF\u0AD1-\u0ADF\u0AE2-\u0AF8\u0AFA-\u0B04\u0B0D\u0B0E\u0B11\u0B12\u0B29\u0B31\u0B34\u0B3A-\u0B3C\u0B3E-\u0B5B\u0B5E\u0B62-\u0B70\u0B72-\u0B82\u0B84\u0B8B-\u0B8D\u0B91\u0B96-\u0B98\u0B9B\u0B9D\u0BA0-\u0BA2\u0BA5-\u0BA7\u0BAB-\u0BAD\u0BBA-\u0BCF\u0BD1-\u0C04\u0C0D\u0C11\u0C29\u0C3A-\u0C3C\u0C3E-\u0C57\u0C5B\u0C5C\u0C5E\u0C5F\u0C62-\u0C7F\u0C81-\u0C84\u0C8D\u0C91\u0CA9\u0CB4\u0CBA-\u0CBC\u0CBE-\u0CDC\u0CDF\u0CE2-\u0CF0\u0CF3-\u0D03\u0D0D\u0D11\u0D3B\u0D3C\u0D3E-\u0D4D\u0D4F-\u0D53\u0D57-\u0D5E\u0D62-\u0D79\u0D80-\u0D84\u0D97-\u0D99\u0DB2\u0DBC\u0DBE\u0DBF\u0DC7-\u0E00\u0E31\u0E34-\u0E3F\u0E47-\u0E80\u0E83\u0E85\u0E8B\u0EA4\u0EA6\u0EB1\u0EB4-\u0EBC\u0EBE\u0EBF\u0EC5\u0EC7-\u0EDB\u0EE0-\u0EFF\u0F01-\u0F3F\u0F48\u0F6D-\u0F87\u0F8D-\u0FFF\u102B-\u103E\u1040-\u104F\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F-\u109F\u10C6\u10C8-\u10CC\u10CE\u10CF\u10FB\u1249\u124E\u124F\u1257\u1259\u125E\u125F\u1289\u128E\u128F\u12B1\u12B6\u12B7\u12BF\u12C1\u12C6\u12C7\u12D7\u1311\u1316\u1317\u135B-\u137F\u1390-\u139F\u13F6\u13F7\u13FE-\u1400\u166D\u166E\u1680\u169B-\u169F\u16EB-\u16F0\u16F9-\u16FF\u1712-\u171E\u1732-\u173F\u1752-\u175F\u176D\u1771-\u177F\u17B4-\u17D6\u17D8-\u17DB\u17DD-\u181F\u1879-\u187F\u1885\u1886\u18A9\u18AB-\u18AF\u18F6-\u18FF\u191F-\u194F\u196E\u196F\u1975-\u197F\u19AC-\u19AF\u19CA-\u19FF\u1A17-\u1A1F\u1A55-\u1AA6\u1AA8-\u1B04\u1B34-\u1B44\u1B4D-\u1B82\u1BA1-\u1BAD\u1BB0-\u1BB9\u1BE6-\u1BFF\u1C24-\u1C4C\u1C50-\u1C59\u1C7E\u1C7F\u1C89-\u1C8F\u1CBB\u1CBC\u1CC0-\u1CE8\u1CED\u1CF4\u1CF7-\u1CF9\u1CFB-\u1CFF\u1DC0-\u1DFF\u1F16\u1F17\u1F1E\u1F1F\u1F46\u1F47\u1F4E\u1F4F\u1F58\u1F5A\u1F5C\u1F5E\u1F7E\u1F7F\u1FB5\u1FBD\u1FBF-\u1FC1\u1FC5\u1FCD-\u1FCF\u1FD4\u1FD5\u1FDC-\u1FDF\u1FED-\u1FF1\u1FF5\u1FFD-\u2070\u2072-\u207E\u2080-\u208F\u209D-\u2101\u2103-\u2106\u2108\u2109\u2114\u2116-\u2118\u211E-\u2123\u2125\u2127\u2129\u212E\u213A\u213B\u2140-\u2144\u214A-\u214D\u214F-\u2182\u2185-\u2BFF\u2CE5-\u2CEA\u2CEF-\u2CF1\u2CF4-\u2CFF\u2D26\u2D28-\u2D2C\u2D2E\u2D2F\u2D68-\u2D6E\u2D70-\u2D7F\u2D97-\u2D9F\u2DA7\u2DAF\u2DB7\u2DBF\u2DC7\u2DCF\u2DD7\u2DDF-\u2E2E\u2E30-\u3004\u3007-\u3030\u3036-\u303A\u303D-\u3040\u3097-\u309C\u30A0\u30FB\u3100-\u3104\u3130\u318F-\u319F\u31C0-\u31EF\u3200-\u33FF\u4DC0-\u4DFF\uA48D-\uA4CF\uA4FE\uA4FF\uA60D-\uA60F\uA620-\uA629\uA62C-\uA63F\uA66F-\uA67E\uA69E\uA69F\uA6E6-\uA716\uA720\uA721\uA789\uA78A\uA7CB-\uA7CF\uA7D2\uA7D4\uA7DA-\uA7F1\uA802\uA806\uA80B\uA823-\uA83F\uA874-\uA881\uA8B4-\uA8F1\uA8F8-\uA8FA\uA8FC\uA8FF-\uA909\uA926-\uA92F\uA947-\uA95F\uA97D-\uA983\uA9B3-\uA9CE\uA9D0-\uA9DF\uA9E5\uA9F0-\uA9F9\uA9FF\uAA29-\uAA3F\uAA43\uAA4C-\uAA5F\uAA77-\uAA79\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAC3-\uAADA\uAADE\uAADF\uAAEB-\uAAF1\uAAF5-\uAB00\uAB07\uAB08\uAB0F\uAB10\uAB17-\uAB1F\uAB27\uAB2F\uAB5B\uAB6A-\uAB6F\uABE3-\uABFF\uD7A4-\uD7AF\uD7C7-\uD7CA\uD7FC-\uD7FF\uE000-\uF8FF\uFA6E\uFA6F\uFADA-\uFAFF\uFB07-\uFB12\uFB18-\uFB1C\uFB1E\uFB29\uFB37\uFB3D\uFB3F\uFB42\uFB45\uFBB2-\uFBD2\uFD3E-\uFD4F\uFD90\uFD91\uFDC8-\uFDEF\uFDFC-\uFE6F\uFE75\uFEFD-\uFF20\uFF3B-\uFF40\uFF5B-\uFF65\uFFBF-\uFFC1\uFFC8\uFFC9\uFFD0\uFFD1\uFFD8\uFFD9\uFFDD-\uFFFF]|\uD800[\uDC0C\uDC27\uDC3B\uDC3E\uDC4E\uDC4F\uDC5E-\uDC7F\uDCFB-\uDE7F\uDE9D-\uDE9F\uDED1-\uDEFF\uDF20-\uDF2C\uDF41\uDF4A-\uDF4F\uDF76-\uDF7F\uDF9E\uDF9F\uDFC4-\uDFC7\uDFD0-\uDFFF]|\uD801[\uDC9E-\uDCAF\uDCD4-\uDCD7\uDCFC-\uDCFF\uDD28-\uDD2F\uDD64-\uDD6F\uDD7B\uDD8B\uDD93\uDD96\uDDA2\uDDB2\uDDBA\uDDBD-\uDDFF\uDF37-\uDF3F\uDF56-\uDF5F\uDF68-\uDF7F\uDF86\uDFB1\uDFBB-\uDFFF]|\uD802[\uDC06\uDC07\uDC09\uDC36\uDC39-\uDC3B\uDC3D\uDC3E\uDC56-\uDC5F\uDC77-\uDC7F\uDC9F-\uDCDF\uDCF3\uDCF6-\uDCFF\uDD16-\uDD1F\uDD3A-\uDD7F\uDDB8-\uDDBD\uDDC0-\uDDFF\uDE01-\uDE0F\uDE14\uDE18\uDE36-\uDE5F\uDE7D-\uDE7F\uDE9D-\uDEBF\uDEC8\uDEE5-\uDEFF\uDF36-\uDF3F\uDF56-\uDF5F\uDF73-\uDF7F\uDF92-\uDFFF]|\uD803[\uDC49-\uDC7F\uDCB3-\uDCBF\uDCF3-\uDCFF\uDD24-\uDE7F\uDEAA-\uDEAF\uDEB2-\uDEFF\uDF1D-\uDF26\uDF28-\uDF2F\uDF46-\uDF6F\uDF82-\uDFAF\uDFC5-\uDFDF\uDFF7-\uDFFF]|\uD804[\uDC00-\uDC02\uDC38-\uDC70\uDC73\uDC74\uDC76-\uDC82\uDCB0-\uDCCF\uDCE9-\uDD02\uDD27-\uDD43\uDD45\uDD46\uDD48-\uDD4F\uDD73-\uDD75\uDD77-\uDD82\uDDB3-\uDDC0\uDDC5-\uDDD9\uDDDB\uDDDD-\uDDFF\uDE12\uDE2C-\uDE3E\uDE41-\uDE7F\uDE87\uDE89\uDE8E\uDE9E\uDEA9-\uDEAF\uDEDF-\uDF04\uDF0D\uDF0E\uDF11\uDF12\uDF29\uDF31\uDF34\uDF3A-\uDF3C\uDF3E-\uDF4F\uDF51-\uDF5C\uDF62-\uDFFF]|\uD805[\uDC35-\uDC46\uDC4B-\uDC5E\uDC62-\uDC7F\uDCB0-\uDCC3\uDCC6\uDCC8-\uDD7F\uDDAF-\uDDD7\uDDDC-\uDDFF\uDE30-\uDE43\uDE45-\uDE7F\uDEAB-\uDEB7\uDEB9-\uDEFF\uDF1B-\uDF3F\uDF47-\uDFFF]|\uD806[\uDC2C-\uDC9F\uDCE0-\uDCFE\uDD07\uDD08\uDD0A\uDD0B\uDD14\uDD17\uDD30-\uDD3E\uDD40\uDD42-\uDD9F\uDDA8\uDDA9\uDDD1-\uDDE0\uDDE2\uDDE4-\uDDFF\uDE01-\uDE0A\uDE33-\uDE39\uDE3B-\uDE4F\uDE51-\uDE5B\uDE8A-\uDE9C\uDE9E-\uDEAF\uDEF9-\uDFFF]|\uD807[\uDC09\uDC2F-\uDC3F\uDC41-\uDC71\uDC90-\uDCFF\uDD07\uDD0A\uDD31-\uDD45\uDD47-\uDD5F\uDD66\uDD69\uDD8A-\uDD97\uDD99-\uDEDF\uDEF3-\uDF01\uDF03\uDF11\uDF34-\uDFAF\uDFB1-\uDFFF]|\uD808[\uDF9A-\uDFFF]|\uD809[\uDC00-\uDC7F\uDD44-\uDFFF]|[\uD80A\uD80E-\uD810\uD812-\uD819\uD824-\uD82A\uD82D\uD82E\uD830-\uD834\uD836\uD83C-\uD83F\uD87B-\uD87D\uD87F\uD889-\uDBFF][\uDC00-\uDFFF]|\uD80B[\uDC00-\uDF8F\uDFF1-\uDFFF]|\uD80D[\uDC30-\uDC40\uDC47-\uDFFF]|\uD811[\uDE47-\uDFFF]|\uD81A[\uDE39-\uDE3F\uDE5F-\uDE6F\uDEBF-\uDECF\uDEEE-\uDEFF\uDF30-\uDF3F\uDF44-\uDF62\uDF78-\uDF7C\uDF90-\uDFFF]|\uD81B[\uDC00-\uDE3F\uDE80-\uDEFF\uDF4B-\uDF4F\uDF51-\uDF92\uDFA0-\uDFDF\uDFE2\uDFE4-\uDFFF]|\uD821[\uDFF8-\uDFFF]|\uD823[\uDCD6-\uDCFF\uDD09-\uDFFF]|\uD82B[\uDC00-\uDFEF\uDFF4\uDFFC\uDFFF]|\uD82C[\uDD23-\uDD31\uDD33-\uDD4F\uDD53\uDD54\uDD56-\uDD63\uDD68-\uDD6F\uDEFC-\uDFFF]|\uD82F[\uDC6B-\uDC6F\uDC7D-\uDC7F\uDC89-\uDC8F\uDC9A-\uDFFF]|\uD835[\uDC55\uDC9D\uDCA0\uDCA1\uDCA3\uDCA4\uDCA7\uDCA8\uDCAD\uDCBA\uDCBC\uDCC4\uDD06\uDD0B\uDD0C\uDD15\uDD1D\uDD3A\uDD3F\uDD45\uDD47-\uDD49\uDD51\uDEA6\uDEA7\uDEC1\uDEDB\uDEFB\uDF15\uDF35\uDF4F\uDF6F\uDF89\uDFA9\uDFC3\uDFCC-\uDFFF]|\uD837[\uDC00-\uDEFF\uDF1F-\uDF24\uDF2B-\uDFFF]|\uD838[\uDC00-\uDC2F\uDC6E-\uDCFF\uDD2D-\uDD36\uDD3E-\uDD4D\uDD4F-\uDE8F\uDEAE-\uDEBF\uDEEC-\uDFFF]|\uD839[\uDC00-\uDCCF\uDCEC-\uDFDF\uDFE7\uDFEC\uDFEF\uDFFF]|\uD83A[\uDCC5-\uDCFF\uDD44-\uDD4A\uDD4C-\uDFFF]|\uD83B[\uDC00-\uDDFF\uDE04\uDE20\uDE23\uDE25\uDE26\uDE28\uDE33\uDE38\uDE3A\uDE3C-\uDE41\uDE43-\uDE46\uDE48\uDE4A\uDE4C\uDE50\uDE53\uDE55\uDE56\uDE58\uDE5A\uDE5C\uDE5E\uDE60\uDE63\uDE65\uDE66\uDE6B\uDE73\uDE78\uDE7D\uDE7F\uDE8A\uDE9C-\uDEA0\uDEA4\uDEAA\uDEBC-\uDFFF]|\uD869[\uDEE0-\uDEFF]|\uD86D[\uDF3A-\uDF3F]|\uD86E[\uDC1E\uDC1F]|\uD873[\uDEA2-\uDEAF]|\uD87A[\uDFE1-\uDFFF]|\uD87E[\uDE1E-\uDFFF]|\uD884[\uDF4B-\uDF4F]|\uD888[\uDFB0-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+/g,
@@ -3582,8 +3670,8 @@ var SPECIAL_MARKERS = {
   authorsN: {
     description: "Last name N authors, with EtAl if more",
     callback: (v, n) => {
-      var _a;
-      var authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+      var _v_get;
+      var authors = parseAuthors((_v_get = v.get("author")) !== null && _v_get !== void 0 ? _v_get : "", true);
       return [
         ...authors
           .slice(0, n)
@@ -3616,8 +3704,8 @@ var SPECIAL_MARKERS = {
   year: {
     description: "Year",
     callback: (v) => {
-      var _a;
-      var year = (_a = v.get("year")) == null ? void 0 : _a.replace(/[^0-9]/g, "");
+      var _v_get_replace, _this;
+      var year = (_this = v.get("year")) === null || _this === void 0 ? void 0 : (_v_get_replace = _this.replace) === null || _v_get_replace === void 0 ? void 0 : _v_get_replace.call(_this, /[^0-9]/g, "");
       return year ? [year] : [];
     },
   },
@@ -3651,10 +3739,13 @@ var MODIFIERS = {
     callback: capitalize,
   },
 };
-var MissingRequiredData = class MissingRequiredData extends Error {};
-__name(MissingRequiredData, "MissingRequiredData");
+var MissingRequiredData =
+  ((_class15 = class _class extends Error {}),
+  (() => {
+    __name(_class15, "MissingRequiredData");
+  })(),
+  _class15);
 function generateKeys(ast, valueLookup, template) {
-  var _a;
   var template2 = template;
   if (!template.includes("[duplicateLetter]") && !template.includes("[duplicateNumber]")) {
     template2 = template + "[duplicateLetter]";
@@ -3671,7 +3762,8 @@ function generateKeys(ast, valueLookup, template) {
         if (!entryValues) continue;
         var newKey = generateKey(entryValues, template2);
         if (!newKey) continue;
-        var keyEntries = (_a = entriesByKey.get(newKey)) != null ? _a : [];
+        var _entriesByKey_get;
+        var keyEntries = (_entriesByKey_get = entriesByKey.get(newKey)) !== null && _entriesByKey_get !== void 0 ? _entriesByKey_get : [];
         entriesByKey.set(newKey, [...keyEntries, node.block]);
       }
     }
@@ -3695,7 +3787,7 @@ function generateKeys(ast, valueLookup, template) {
     _iteratorError1 = undefined;
   try {
     for (var _iterator1 = entriesByKey[Symbol.iterator](), _step1; !(_iteratorNormalCompletion1 = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion1 = true) {
-      var _step_value = _slicedToArray(_step1.value, 2),
+      var _step_value = _sliced_to_array(_step1.value, 2),
         key = _step_value[0],
         entries = _step_value[1];
       var _iteratorNormalCompletion2 = true,
@@ -3703,7 +3795,7 @@ function generateKeys(ast, valueLookup, template) {
         _iteratorError2 = undefined;
       try {
         for (var _iterator2 = entries.entries()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var _step_value1 = _slicedToArray(_step2.value, 2),
+          var _step_value1 = _sliced_to_array(_step2.value, 2),
             i = _step_value1[0],
             entry = _step_value1[1];
           var duplicateLetter = entries.length > 1 ? String.fromCharCode(97 + i) : "";
@@ -3745,7 +3837,7 @@ __name(generateKeys, "generateKeys");
 function generateKey(valueLookup, template) {
   try {
     var newKey = template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (m) => {
-      var _m_slice_split = _toArray(m.slice(1, -1).split(":")),
+      var _m_slice_split = _to_array(m.slice(1, -1).split(":")),
         tokenKeyN = _m_slice_split[0],
         modifierKeys = _m_slice_split.slice(1);
       if (!tokenKeyN) {
@@ -3823,8 +3915,8 @@ function capitalize(words2) {
 }
 __name(capitalize, "capitalize");
 function title(entryValues) {
-  var _a, _b;
-  return (_b = (_a = entryValues.get("title")) != null ? _a : entryValues.get("booktitle")) != null ? _b : "";
+  var _entryValues_get, _ref;
+  return (_ref = (_entryValues_get = entryValues.get("title")) !== null && _entryValues_get !== void 0 ? _entryValues_get : entryValues.get("booktitle")) !== null && _ref !== void 0 ? _ref : "";
 }
 __name(title, "title");
 // src/optionDefinitions.ts
@@ -4381,7 +4473,6 @@ function normalizeOptions(options) {
 __name(normalizeOptions, "normalizeOptions");
 // src/sort.ts
 function sortEntries(ast, fieldMaps, sort) {
-  var _a, _b, _c, _d, _e, _f, _g, _h;
   var sortIndexes = /* @__PURE__ */ new Map();
   var precedingMeta = [];
   var _iteratorNormalCompletion = true,
@@ -4390,7 +4481,8 @@ function sortEntries(ast, fieldMaps, sort) {
   try {
     for (var _iterator = ast.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var item = _step.value;
-      if (item.type === "text" || (((_a = item.block) == null ? void 0 : _a.type) !== "entry" && !sort.includes("special"))) {
+      var _item_block;
+      if (item.type === "text" || (((_item_block = item.block) === null || _item_block === void 0 ? void 0 : _item_block.type) !== "entry" && !sort.includes("special"))) {
         precedingMeta.push(item);
         continue;
       }
@@ -4405,15 +4497,18 @@ function sortEntries(ast, fieldMaps, sort) {
           var val = void 0;
           switch (key) {
             case "key":
-              if (((_b = item.block) == null ? void 0 : _b.type) !== "entry") continue;
-              val = (_c = item.block.key) != null ? _c : "";
+              var _item_block1;
+              if (((_item_block1 = item.block) === null || _item_block1 === void 0 ? void 0 : _item_block1.type) !== "entry") continue;
+              var _item_block_key;
+              val = (_item_block_key = item.block.key) !== null && _item_block_key !== void 0 ? _item_block_key : "";
               break;
             case "type":
               val = item.command;
               break;
             case "month": {
-              if (((_d = item.block) == null ? void 0 : _d.type) !== "entry") continue;
-              var v = (_e = fieldMaps.get(item.block)) == null ? void 0 : _e.get(key);
+              var _item_block2, _fieldMaps_get_get, _this;
+              if (((_item_block2 = item.block) === null || _item_block2 === void 0 ? void 0 : _item_block2.type) !== "entry") continue;
+              var v = (_this = fieldMaps.get(item.block)) === null || _this === void 0 ? void 0 : (_fieldMaps_get_get = _this.get) === null || _fieldMaps_get_get === void 0 ? void 0 : _fieldMaps_get_get.call(_this, key);
               var i = v ? MONTH_MACROS.indexOf(v) : -1;
               val = i > -1 ? i : "";
               break;
@@ -4422,8 +4517,10 @@ function sortEntries(ast, fieldMaps, sort) {
               val = isBibLaTeXSpecialEntry(item) ? 0 : 1;
               break;
             default:
-              if (((_f = item.block) == null ? void 0 : _f.type) !== "entry") continue;
-              val = (_h = (_g = fieldMaps.get(item.block)) == null ? void 0 : _g.get(key)) != null ? _h : "";
+              var _item_block3, _fieldMaps_get_get1, _this1;
+              if (((_item_block3 = item.block) === null || _item_block3 === void 0 ? void 0 : _item_block3.type) !== "entry") continue;
+              var _fieldMaps_get_get2;
+              val = (_fieldMaps_get_get2 = (_this1 = fieldMaps.get(item.block)) === null || _this1 === void 0 ? void 0 : (_fieldMaps_get_get1 = _this1.get) === null || _fieldMaps_get_get1 === void 0 ? void 0 : _fieldMaps_get_get1.call(_this1, key)) !== null && _fieldMaps_get_get2 !== void 0 ? _fieldMaps_get_get2 : "";
           }
           sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
         }
@@ -4469,9 +4566,11 @@ function sortEntries(ast, fieldMaps, sort) {
       var desc = prefixedKey.startsWith("-");
       var key = desc ? prefixedKey.slice(1) : prefixedKey;
       ast.children.sort((a, b) => {
-        var _a2, _b2, _c2, _d2;
-        var ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "￰";
-        var ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "￰";
+        var _sortIndexes_get_get, _this, _sortIndexes_get_get1, _this1;
+        var _sortIndexes_get_get2;
+        var ia = (_sortIndexes_get_get2 = (_this = sortIndexes.get(a)) === null || _this === void 0 ? void 0 : (_sortIndexes_get_get = _this.get) === null || _sortIndexes_get_get === void 0 ? void 0 : _sortIndexes_get_get.call(_this, key)) !== null && _sortIndexes_get_get2 !== void 0 ? _sortIndexes_get_get2 : "￰";
+        var _sortIndexes_get_get3;
+        var ib = (_sortIndexes_get_get3 = (_this1 = sortIndexes.get(b)) === null || _this1 === void 0 ? void 0 : (_sortIndexes_get_get1 = _this1.get) === null || _sortIndexes_get_get1 === void 0 ? void 0 : _sortIndexes_get_get1.call(_this1, key)) !== null && _sortIndexes_get_get3 !== void 0 ? _sortIndexes_get_get3 : "￰";
         if (typeof ia === "number") ia = String(ia).padStart(50, "0");
         if (typeof ib === "number") ib = String(ib).padStart(50, "0");
         return (desc ? ib : ia).localeCompare(desc ? ia : ib);
@@ -4571,17 +4670,8 @@ function getEntries(ast) {
 }
 __name(getEntries, "getEntries");
 function generateValueLookup(ast, options) {
-  return new Map(
-    getEntries(ast).map((entry) => [
-      entry,
-      new Map(
-        entry.fields.map((field) => {
-          var _a;
-          return [field.name.toLocaleLowerCase(), (_a = formatValue(field, options)) != null ? _a : ""];
-        })
-      ),
-    ])
-  );
+  var _formatValue;
+  return new Map(getEntries(ast).map((entry) => [entry, new Map(entry.fields.map((field) => [field.name.toLocaleLowerCase(), (_formatValue = formatValue(field, options)) !== null && _formatValue !== void 0 ? _formatValue : ""]))]));
 }
 __name(generateValueLookup, "generateValueLookup");
 var src_default = {

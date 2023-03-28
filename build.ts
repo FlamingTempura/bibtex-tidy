@@ -77,6 +77,7 @@ async function generateOptionTypes() {
 		entryPoints: [join(SRC_PATH, 'optionDefinitions.ts')],
 		write: false,
 		format: 'esm',
+		target: ['esnext'],
 	});
 	const outputFile = outputFiles[0];
 	if (!outputFile) throw new Error('Error building options definitions');
@@ -250,6 +251,7 @@ async function buildJSBundle() {
 		keepNames: true,
 		banner: { js: jsBanner.join('\n') },
 		plugins: [regexpuPlugin],
+		target: ['esnext'],
 	});
 	const bundle = outputFiles[0];
 	if (!bundle) throw new Error('Failed to build JS bundle');
@@ -285,7 +287,7 @@ async function buildCLI() {
 		banner: {
 			js: '#!/usr/bin/env node\n' + jsBanner.join('\n'),
 		},
-		target: NODE_TARGET,
+		target: ['esnext', ...NODE_TARGET],
 		entryPoints: [join(SRC_PATH, 'cli', 'cli.ts')],
 		sourcemap: env.NODE_ENV === 'coverage' ? 'inline' : false,
 		sourceRoot: './',
@@ -307,6 +309,7 @@ async function buildWebBundle() {
 		write: false,
 		keepNames: true,
 		minify: true,
+		target: ['esnext'],
 		plugins: [
 			sveltePlugin({ preprocess: autoPreprocess() }),
 			googleFontPlugin,
