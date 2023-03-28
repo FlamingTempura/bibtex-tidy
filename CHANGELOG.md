@@ -148,3 +148,11 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 ### v1.10.1
 
 - Fix options parsing when reading stdin
+
+### v1.11.0
+
+- Fix latex parser not escaping command mode on whitespace (#406)
+- Allow sorting by 'special' entry type (#405)
+- Added option to convert all months to three letter abbreviations (#351)
+- Update node version in docker container ot prevent build error
+- Fix --sort-fields CLI command in web UI (#404)
