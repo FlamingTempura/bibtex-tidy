@@ -536,9 +536,6 @@ function parseLaTeX(input) {
           node = node.parent;
           i--;
         } else {
-          if (char === "}") {
-            console.log(node.parent);
-          }
           node.text += char;
         }
         break;
@@ -548,6 +545,9 @@ function parseLaTeX(input) {
           node = new BlockNode2("curly", node);
         } else if (char === "[") {
           node = new BlockNode2("square", node);
+        } else if (/\s/.test(char)) {
+          node = node.parent;
+          i--;
         } else if (node.args.length === 0) {
           node.command += char;
         } else {

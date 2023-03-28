@@ -35,7 +35,7 @@ export function parseLaTeX(input: string): BlockNode {
 	const rootNode = new BlockNode('root');
 	let node: Node = rootNode;
 	for (let i = 0; i < input.length; i++) {
-		const char = input[i];
+		const char = input[i]!;
 
 		switch (node.type) {
 			case 'block': {
@@ -66,9 +66,6 @@ export function parseLaTeX(input: string): BlockNode {
 					node = node.parent;
 					i--;
 				} else {
-					if (char === '}') {
-						console.log(node.parent);
-					}
 					node.text += char;
 				}
 				break;
@@ -79,6 +76,9 @@ export function parseLaTeX(input: string): BlockNode {
 					node = new BlockNode('curly', node);
 				} else if (char === '[') {
 					node = new BlockNode('square', node);
+				} else if (/\s/.test(char)) {
+					node = node.parent;
+					i--;
 				} else if (node.args.length === 0) {
 					node.command += char;
 				} else {

@@ -2701,11 +2701,11 @@ var __generator =
           break;
         }
         case "text": {
-          n === "\\" || n === "{" || (n === "}" && t.parent.kind === "curly") || (n === "]" && t.parent.kind === "square") ? ((t = t.parent), i--) : (n === "}" && console.log(t.parent), (t.text += n));
+          n === "\\" || n === "{" || (n === "}" && t.parent.kind === "curly") || (n === "]" && t.parent.kind === "square") ? ((t = t.parent), i--) : (t.text += n);
           break;
         }
         case "command":
-          n === "{" ? (t = new ui("curly", t)) : n === "[" ? (t = new ui("square", t)) : t.args.length === 0 ? (t.command += n) : ((t = t.parent), i--);
+          n === "{" ? (t = new ui("curly", t)) : n === "[" ? (t = new ui("square", t)) : /\s/.test(n) ? ((t = t.parent), i--) : t.args.length === 0 ? (t.command += n) : ((t = t.parent), i--);
       }
     }
     return e;

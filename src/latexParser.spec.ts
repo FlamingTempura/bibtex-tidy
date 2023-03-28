@@ -25,6 +25,10 @@ const testStrings = [
 		flattened:
 			'\\command{in\\commands{should}[work] even with {nested {blocks}}}{too}',
 	},
+	{
+		input: '{a \\& b}',
+		flattened: 'a \\& b',
+	},
 ];
 
 test('latex parser', () => {
