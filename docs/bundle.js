@@ -24433,7 +24433,7 @@ function _ts_generator(thisArg, body) {
       (r = o[t] = s[t](i)),
       {
         c() {
-          (e = R("div")), r.c(), A(e, "data-test-feedback", ""), A(e, "class", "svelte-1pqmac");
+          (e = R("div")), r.c(), A(e, "role", "alert"), A(e, "class", "svelte-1pqmac");
         },
         m(l, h) {
           C(l, e, h), o[t].m(e, null), (n = !0);

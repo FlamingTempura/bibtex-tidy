@@ -10,7 +10,7 @@
 		| { status: 'error'; error: unknown };
 </script>
 
-<div data-test-feedback>
+<div role="alert">
 	{#if status.status === 'success'}
 		<FeedbackSuccess {options} result={status.result} />
 	{:else}

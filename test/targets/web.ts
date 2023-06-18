@@ -177,14 +177,14 @@ export async function testWeb(
 
 	await new Promise((r) => setTimeout(r, 50));
 
-	await page.waitForSelector('[data-test-feedback]', { timeout: 3000 });
+	await page.waitForSelector('[role=alert]', { timeout: 3000 });
 
 	const bibtex = await page.evaluate(() =>
 		window.cmEditor.state.doc.toString()
 	);
 
 	const warnings = (await page.evaluate(() =>
-		[...document.querySelectorAll('[data-test-feedback] li')].map((li) => ({
+		[...document.querySelectorAll('[role=alert] li')].map((li) => ({
 			code: li.textContent?.includes('duplicate') ? 'DUPLICATE_ENTRY' : '',
 		}))
 	)) as Warning[];
