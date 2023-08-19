@@ -1,5 +1,5 @@
 import { join } from 'path';
-import puppeteer, { Page } from 'puppeteer';
+import puppeteer, { ElementHandle, Page } from 'puppeteer';
 import type { Warning } from '../../src/index';
 import { normalizeOptions, type Options } from '../../src/optionUtils';
 
@@ -20,7 +20,7 @@ export type WebResult = {
 let page: Page | undefined;
 async function getPage(): Promise<Page> {
 	if (page) return page;
-	const browser = await puppeteer.launch();
+	const browser = await puppeteer.launch({ headless: 'new' });
 	page = await browser.newPage();
 	await page.goto(`file://${WEB_ROOT}`);
 	return page;
@@ -32,35 +32,33 @@ export async function teardown() {
 
 export async function testWeb(
 	input: string,
-	options_: Options = {}
+	options_: Options = {},
 ): Promise<WebResult> {
 	const options = normalizeOptions(options_);
 	const page = await getPage();
 
+	async function select(
+		selector: string,
+		timeout = 100,
+	): Promise<ElementHandle<Element>> {
+		const element = await page.waitForSelector(selector, { timeout });
+		if (!element) throw new Error(`Could not find element ${selector}`);
+		return element;
+	}
+
 	async function setCheckbox(name: string, checked: boolean): Promise<void> {
-		(await page.waitForSelector(`input[name=${name}]`, {
-			timeout: 100,
-		}))!.evaluate((el_, checked) => {
+		(await select(`input[name=${name}]`)).evaluate((el_, checked) => {
 			const el = el_ as HTMLInputElement;
 			if (el.checked !== checked) el.click();
 		}, checked);
 	}
 
 	async function setRadio(value: string): Promise<void> {
-		(await page.waitForSelector(`input[value=${value}]`, {
-			timeout: 100,
-		}))!.evaluate((el) => (el as HTMLInputElement).click());
+		await page.locator(`input[value=${value}]`).click();
 	}
 
 	async function setValue(name: string, value: string): Promise<void> {
-		await (await page.waitForSelector(`[name=${name}]`, {
-			timeout: 100,
-		}))!.focus();
-
-		await page.keyboard.down('ControlLeft');
-		await page.keyboard.press('KeyA');
-		await page.keyboard.up('ControlLeft');
-		await page.keyboard.type(value);
+		await page.locator(`[name=${name}]`).fill(value);
 	}
 
 	await page.evaluate(
@@ -72,7 +70,7 @@ export async function testWeb(
 					insert: value,
 				},
 			}),
-		input
+		input,
 	);
 
 	await setCheckbox('curly', !!options.curly);
@@ -171,22 +169,18 @@ export async function testWeb(
 		await setValue('wrapnum', String(options.wrap));
 	}
 
-	((await page.waitForXPath(
-		'//button[contains(text(),"Tidy")]'
-	)) as any as HTMLElement)!.click();
+	await page.locator('button::-p-text(Tidy)').click();
 
-	await new Promise((r) => setTimeout(r, 50));
-
-	await page.waitForSelector('[role=alert]', { timeout: 3000 });
+	await select('[role=alert]', 3000);
 
 	const bibtex = await page.evaluate(() =>
-		window.cmEditor.state.doc.toString()
+		window.cmEditor.state.doc.toString(),
 	);
 
 	const warnings = (await page.evaluate(() =>
 		[...document.querySelectorAll('[role=alert] li')].map((li) => ({
 			code: li.textContent?.includes('duplicate') ? 'DUPLICATE_ENTRY' : '',
-		}))
+		})),
 	)) as Warning[];
 
 	return { bibtex, warnings };

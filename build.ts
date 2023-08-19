@@ -258,7 +258,7 @@ async function buildJSBundle() {
 	const result = await transpileForOldBrowsers(bundle, {
 		module: { type: 'commonjs' },
 	});
-	const text = prettier.format(result.code, {
+	const text = await prettier.format(result.code, {
 		parser: 'babel',
 		printWidth: 1000,
 	});
@@ -322,7 +322,7 @@ async function buildWebBundle() {
 		if (file.path.endsWith('.js')) {
 			text = (await transpileForOldBrowsers(file, { minify: true })).code;
 			text = jsBanner.join('\n') + text;
-			text = prettier.format(text, { parser: 'babel', printWidth: 400 });
+			text = await prettier.format(text, { parser: 'babel', printWidth: 400 });
 		}
 		await writeFile(file.path, text);
 	}
