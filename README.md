@@ -17,7 +17,7 @@ Before:
 ```bibtex
 @ARTICLE {feinberg1983technique,
   title={A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
-author={Feinberg, Andrew P and Vogelstein, Bert},
+author={Feinberg, Andrew P. and Vogelstein, Bert},
   journal    = {Analytical biochemistry},
   volume = 132,
   number=1,
@@ -26,7 +26,7 @@ author={Feinberg, Andrew P and Vogelstein, Bert},
   publisher={Elsevier},}
 @article{miles1984qualitative,
     title={Qualitative data analysis: A sourcebook},
-    author={Miles, Matthew B and Huberman, A Michael and Saldana, J},
+    author={Miles, Matthew B. and Huberman, A. Michael and Saldana, J.},
     journal={Beverly Hills},
     year=1984
 }
@@ -37,7 +37,7 @@ After `bibtex-tidy references.bib`:
 ```bibtex
 @article{feinberg1983technique,
   title         = {A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
-  author        = {Feinberg, Andrew P and Vogelstein, Bert},
+  author        = {Feinberg, Andrew P. and Vogelstein, Bert},
   year          = 1983,
   journal       = {Analytical biochemistry},
   publisher     = {Elsevier},
@@ -47,7 +47,7 @@ After `bibtex-tidy references.bib`:
 }
 @article{miles1984qualitative,
   title         = {Qualitative data analysis: A sourcebook},
-  author        = {Miles, Matthew B and Huberman, A Michael and Saldana, J},
+  author        = {Miles, Matthew B. and Huberman, A. Michael and Saldana, J.},
   year          = 1984,
   journal       = {Beverly Hills}
 }
