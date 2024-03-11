@@ -675,13 +675,7 @@ function parseLaTeX(input) {
           node = new BlockNode2("curly", node);
         } else if (char === "[") {
           node = new BlockNode2("square", node);
-        } else if (char === "}") {
-          node = node.parent;
-          if (node.type === "block" && node.kind === "curly") {
-            node.keepBraces = true;
-          }
-          i--;
-        } else if (char === "]" && node.parent.kind === "square" || /\s/.test(char) || node.args.length > 0) {
+        } else if (char === "}" && node.parent.kind === "curly" || char === "]" && node.parent.kind === "square" || /\s/.test(char) || node.args.length > 0) {
           node = node.parent;
           i--;
         } else {
@@ -721,7 +715,7 @@ function stringifyCommand(node) {
 function flattenLaTeX(block) {
   const newBlock = { ...block, children: [] };
   for (const child of block.children) {
-    if (child.type === "block" && child.kind === "curly") {
+    if (child.type === "block" && child.kind === "curly" && child.children.every((child2) => child2.type !== "command")) {
       const newChild = flattenLaTeX(child);
       newBlock.children.push(...newChild.children);
     } else {
@@ -3126,12 +3120,12 @@ function wrapText(line, lineWidth) {
 function unwrapText(str) {
   return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
 }
-function addEnclosingBraces(str, removeInsideBraces) {
-  let result = str;
-  if (removeInsideBraces) {
-    result = stringifyLaTeX(flattenLaTeX(parseLaTeX(result)));
-  }
-  return `{${result}}`;
+function doubleEnclose(str) {
+  var _a, _b, _c, _d;
+  const latex = parseLaTeX(str);
+  const alreadyDoubleEnclosed = latex.children.length === 1 && ((_a = latex.children[0]) == null ? void 0 : _a.type) === "block" && ((_b = latex.children[0]) == null ? void 0 : _b.kind) === "curly" && latex.children[0].children.length === 1 && ((_c = latex.children[0].children[0]) == null ? void 0 : _c.type) === "block" && ((_d = latex.children[0].children[0]) == null ? void 0 : _d.kind) === "curly";
+  const result = stringifyLaTeX(latex);
+  return alreadyDoubleEnclosed ? result : `{${result}}`;
 }
 function removeEnclosingBraces(str) {
   return str.replace(/^\{([^{}]*)\}$/g, "$1");
@@ -3478,7 +3472,7 @@ function formatValue(field, options) {
       value = stringifyLaTeX(flattenLaTeX(parseLaTeX(value)));
     }
     if (enclosingBracesFields.has(nameLowerCase) && (type === "braced" || curly)) {
-      value = addEnclosingBraces(value, true);
+      value = doubleEnclose(value);
     }
     if (type === "braced" && field.value.concat.length === 1) {
       value = value.trim();
@@ -3504,7 +3498,7 @@ ${valIndent}${paragraphs.join(`
 ${valIndent}`)}
 ${indent}`;
       }
-      return addEnclosingBraces(value);
+      return doubleEnclose(value);
     }
     return `"${value}"`;
   }).join(" # ");

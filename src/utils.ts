@@ -1,5 +1,5 @@
 import type { BlockNode, EntryNode, TextNode } from "./bibtexParser";
-import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from "./latexParser";
+import { parseLaTeX, stringifyLaTeX } from "./latexParser";
 import { specialCharacters } from "./unicode";
 
 export function escapeSpecialCharacters(str: string): string {
@@ -89,15 +89,19 @@ export function unwrapText(str: string): string {
  * Remove all braces (unless part of a command) and enclose entire value in
  * braces
  */
-export function addEnclosingBraces(
-	str: string,
-	removeInsideBraces?: boolean,
-): string {
-	let result = str;
-	if (removeInsideBraces) {
-		result = stringifyLaTeX(flattenLaTeX(parseLaTeX(result)));
-	}
-	return `{${result}}`;
+export function doubleEnclose(str: string): string {
+	const latex = parseLaTeX(str);
+
+	const alreadyDoubleEnclosed =
+		latex.children.length === 1 &&
+		latex.children[0]?.type === "block" &&
+		latex.children[0]?.kind === "curly" &&
+		latex.children[0].children.length === 1 &&
+		latex.children[0].children[0]?.type === "block" &&
+		latex.children[0].children[0]?.kind === "curly";
+
+	const result = stringifyLaTeX(latex);
+	return alreadyDoubleEnclosed ? result : `{${result}}`;
 }
 
 export function removeEnclosingBraces(str: string): string {

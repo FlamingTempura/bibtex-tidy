@@ -10,7 +10,7 @@ import { MONTH_CONVERSIONS, MONTH_SET } from "./months";
 import type { OptionsNormalized } from "./optionUtils";
 
 import {
-	addEnclosingBraces,
+	doubleEnclose,
 	escapeSpecialCharacters,
 	escapeURL,
 	formatPageRange,
@@ -227,7 +227,7 @@ export function formatValue(
 				enclosingBracesFields.has(nameLowerCase) &&
 				(type === "braced" || curly)
 			) {
-				value = addEnclosingBraces(value, true);
+				value = doubleEnclose(value);
 			}
 
 			// Braced values should be trimmed, unless part of a concatenation
@@ -259,7 +259,9 @@ export function formatValue(
 
 					value = `\n${valIndent}${paragraphs.join(`\n\n${valIndent}`)}\n${indent}`;
 				}
-				return addEnclosingBraces(value);
+				// FIXME: looks like this is happening even when --enclosing-braces isn't
+				// specified?
+				return doubleEnclose(value);
 			}
 			return `"${value}"`;
 		})

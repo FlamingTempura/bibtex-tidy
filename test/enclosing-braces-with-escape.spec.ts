@@ -6,7 +6,7 @@ const input = bibtex`
   title         = {{bar \& baz}}
 }`;
 
-const output = bibtex`
+const expected = bibtex`
 @article{foo,
   title         = {{bar \& baz}}
 }
@@ -14,6 +14,6 @@ const output = bibtex`
 
 // https://github.com/FlamingTempura/bibtex-tidy/issues/406
 test("enclosing braces should work with escapes", async () => {
-	const tidied1 = await bibtexTidy(input, { enclosingBraces: true });
-	strictEqual(output, tidied1.bibtex);
+	const output = await bibtexTidy(input, { enclosingBraces: true });
+	strictEqual(output.bibtex, expected);
 });

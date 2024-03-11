@@ -17,7 +17,7 @@ const testStrings = [
 	},
 	{
 		input: "nesting {blocks {and \\commands{like} this}}.",
-		flattened: "nesting blocks and \\commands{like} this.",
+		flattened: "nesting blocks {and \\commands{like} this}.",
 	},
 	{
 		input:
@@ -27,7 +27,19 @@ const testStrings = [
 	},
 	{
 		input: "{a \\& b}",
-		flattened: "a \\& b",
+		flattened: "{a \\& b}",
+	},
+	{
+		input: "{\\alpha }keep the brace",
+		flattened: "{\\alpha }keep the brace",
+	},
+	{
+		input: "{\\alpha}keep the brace",
+		flattened: "{\\alpha}keep the brace",
+	},
+	{
+		input: "{{\\alpha}delete the outer brace}",
+		flattened: "{\\alpha}delete the outer brace",
 	},
 ];
 

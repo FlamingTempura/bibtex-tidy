@@ -36,7 +36,7 @@ import "./duplicate-merge-overwrite.spec";
 import "./empty-entry.spec";
 import "./empty-key.spec";
 import "./enclosing-braces-with-escape.spec";
-import "/enclosing-braces-around-command.spec";
+import "./enclosing-braces-around-command.spec";
 import "./enclosing-braces.spec";
 import "./encode-urls.spec";
 import "./escape.spec";

@@ -129,12 +129,19 @@ function stringifyCommand(node: CommandNode): string {
 }
 
 /**
- * Removes any curly braces, unless part of a command.
+ * Removes any curly braces, unless:
+ * 1. it's part of a command, or
+ * 2. it includes a command. This is important for scoped commands that should only affect
+ *    text in the block (like \bf)
  */
 export function flattenLaTeX(block: BlockNode): BlockNode {
 	const newBlock: BlockNode = { ...block, children: [] };
 	for (const child of block.children) {
-		if (child.type === "block" && child.kind === "curly") {
+		if (
+			child.type === "block" &&
+			child.kind === "curly" &&
+			child.children.every((child) => child.type !== "command")
+		) {
 			const newChild = flattenLaTeX(child);
 			newBlock.children.push(...newChild.children);
 		} else {
