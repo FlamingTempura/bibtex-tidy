@@ -1,5 +1,6 @@
 export class BlockNode {
 	type = 'block' as const;
+	keepBraces = false;
 	constructor(
 		public kind: 'root' | 'square' | 'curly',
 		public parent?: BlockNode | CommandNode,
@@ -76,6 +77,12 @@ export function parseLaTeX(input: string): BlockNode {
 					node = new BlockNode('curly', node);
 				} else if (char === '[') {
 					node = new BlockNode('square', node);
+				} else if (char === '}') {
+					node = node.parent;
+					if (node.type === 'block' && node.kind === 'curly') {
+						node.keepBraces = true;
+					}
+					i--;
 				} else if (/\s/.test(char)) {
 					node = node.parent;
 					i--;
@@ -123,12 +130,12 @@ function stringifyCommand(node: CommandNode): string {
 }
 
 /**
- * Removes any curly braces, unless part of a command.
+ * Removes any curly braces, unless part of (or directly around) a command.
  */
 export function flattenLaTeX(block: BlockNode): BlockNode {
 	const newBlock: BlockNode = { ...block, children: [] };
 	for (const child of block.children) {
-		if (child.type === 'block' && child.kind === 'curly') {
+		if (child.type === 'block' && child.kind === 'curly' && !child.keepBraces) {
 			const newChild = flattenLaTeX(child);
 			newBlock.children.push(...newChild.children);
 		} else {

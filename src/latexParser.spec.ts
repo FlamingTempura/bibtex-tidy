@@ -29,6 +29,18 @@ const testStrings = [
 		input: '{a \\& b}',
 		flattened: 'a \\& b',
 	},
+	{
+		input: '{\\alpha }delete the brace',
+		flattened: '\\alpha delete the brace',
+	},
+	{
+		input: '{\\alpha}keep the brace',
+		flattened: '{\\alpha}keep the brace',
+	},
+	{
+		input: '{{\\alpha}delete the outer brace}',
+		flattened: '{\\alpha}delete the outer brace',
+	},
 ];
 
 test('latex parser', () => {
