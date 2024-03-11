@@ -553,6 +553,7 @@ var BlockNode2 =
       this.parent = parent;
       this.children = children;
       this.type = "block";
+      this.keepBraces = false;
       if (parent instanceof _BlockNode) {
         parent.children.push(this);
       } else if (parent instanceof CommandNode) {
@@ -629,6 +630,12 @@ function parseLaTeX(input) {
           node = new BlockNode2("curly", node);
         } else if (char === "[") {
           node = new BlockNode2("square", node);
+        } else if (char === "}") {
+          node = node.parent;
+          if (node.type === "block" && node.kind === "curly") {
+            node.keepBraces = true;
+          }
+          i--;
         } else if (/\s/.test(char)) {
           node = node.parent;
           i--;
@@ -685,7 +692,7 @@ function flattenLaTeX(block) {
   try {
     for (var _iterator = block.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var child = _step.value;
-      if (child.type === "block" && child.kind === "curly") {
+      if (child.type === "block" && child.kind === "curly" && !child.keepBraces) {
         var newChild = flattenLaTeX(child);
         newBlock.children.push(...newChild.children);
       } else {

@@ -2933,6 +2933,7 @@ function _ts_generator(thisArg, body) {
           this.parent = t;
           this.children = r;
           this.type = "block";
+          this.keepBraces = !1;
           t instanceof i ? t.children.push(this) : t instanceof ps && t.args.push(this);
         }
       }),
@@ -2985,7 +2986,7 @@ function _ts_generator(thisArg, body) {
           break;
         }
         case "command":
-          n === "{" ? (t = new Ki("curly", t)) : n === "[" ? (t = new Ki("square", t)) : /\s/.test(n) ? ((t = t.parent), r--) : t.args.length === 0 ? (t.command += n) : ((t = t.parent), r--);
+          n === "{" ? (t = new Ki("curly", t)) : n === "[" ? (t = new Ki("square", t)) : n === "}" ? ((t = t.parent), t.type === "block" && t.kind === "curly" && (t.keepBraces = !0), r--) : /\s/.test(n) ? ((t = t.parent), r--) : t.args.length === 0 ? (t.command += n) : ((t = t.parent), r--);
       }
     }
     return e;
@@ -3030,7 +3031,7 @@ function _ts_generator(thisArg, body) {
     try {
       for (var _iterator = i.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
         var t = _step.value;
-        if (t.type === "block" && t.kind === "curly") {
+        if (t.type === "block" && t.kind === "curly" && !t.keepBraces) {
           var r = Nr(t);
           e.children.push(...r.children);
         } else e.children.push(t);
