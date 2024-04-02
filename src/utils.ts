@@ -5,7 +5,7 @@ import { specialCharacters } from './unicode';
 export function escapeSpecialCharacters(str: string): string {
 	const mathExpressions: string[] = [];
 
-	str = str.replace(/\$[^$]+\$/, (match) => {
+	str = str.replace(/\$[^\$]+\$/g, (match) => {
 		mathExpressions.push(match);
 		return `MATH.EXP.${mathExpressions.length - 1}`;
 	});
@@ -29,7 +29,7 @@ export function escapeSpecialCharacters(str: string): string {
 		newstr += specialCharacters.get(c) ?? str[i];
 	}
 	return newstr.replace(
-		/MATH\.EXP\.(\d+)/,
+		/MATH\.EXP\.(\d+)/g,
 		(_, i) => mathExpressions[Number(i)] ?? '',
 	);
 }
