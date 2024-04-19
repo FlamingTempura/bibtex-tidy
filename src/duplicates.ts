@@ -1,5 +1,6 @@
 import type { EntryNode, RootNode } from './bibtexParser';
 import type { DuplicateRule, MergeStrategy } from './optionUtils';
+import { parseAuthors } from './parseAuthors';
 import { alphaNum } from './utils';
 import { getEntries } from '.';
 import type { Warning } from '.';
@@ -75,7 +76,7 @@ export function checkForDuplicates(
 					const num = entryValues.get('number');
 					if (!ttl || !aut) continue;
 					const cit: string = [
-						alphaNum(aut.split(/,| and/)[0] ?? aut),
+						alphaNum(parseAuthors(aut)[0]?.lastName ?? aut),
 						alphaNum(ttl),
 						alphaNum(num ?? '0'),
 					].join(':');

@@ -44,6 +44,14 @@ test('duplicate citation warnings', async () => {
 				author={Smith, JA},
 				title={Something blah blah}
 		}
+		@article{c,
+				author={J. A. Smith},
+				title={Something blah blah}
+		}
+		@article{d,
+				author={James Smith},
+				title={Something blah blah}
+		}
 		Issue #11 - these should not be flagged as duplicates
 		@Article{Raku2,
 			title = {Focusing of a vortex carrying beam with Gaussian background by a lens in the presence of spherical aberration and defocusing},
@@ -78,7 +86,7 @@ test('duplicate citation warnings', async () => {
 			number={2}
 		}`;
 	const tidied = await bibtexTidy(input, { duplicates: ['citation'] }, ['api']);
-	strictEqual(tidied.api?.warnings.length, 1);
+	strictEqual(tidied.api?.warnings.length, 3);
 });
 
 test('duplicate abstract warnings', async () => {

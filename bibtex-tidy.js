@@ -520,6 +520,32 @@ var BibTeXSyntaxError =
   }),
   __name(_class12, "BibTeXSyntaxError"),
   _class12);
+// src/parseAuthors.ts
+function parseAuthors(authors, sanitize) {
+  return authors
+    .replace(/\s+/g, " ")
+    .split(/ and /i)
+    .map((nameRaw) => {
+      var name = nameRaw.trim();
+      if (sanitize) {
+        name = name.replace(/["{}]/g, "");
+      }
+      var commaPos = name.indexOf(",");
+      if (commaPos > -1) {
+        return {
+          firstNames: name.slice(commaPos + 1).trim(),
+          lastName: name.slice(0, commaPos).trim(),
+        };
+      } else {
+        var lastSpacePos = name.lastIndexOf(" ");
+        return {
+          firstNames: name.slice(0, lastSpacePos).trim(),
+          lastName: name.slice(lastSpacePos).trim(),
+        };
+      }
+    });
+}
+__name(parseAuthors, "parseAuthors");
 // src/latexParser.ts
 var BlockNode2 =
   ((__BlockNode = class _BlockNode {
@@ -3212,12 +3238,13 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
               break;
             }
             case "citation": {
+              var _parseAuthors_;
               var ttl = entryValues.get("title");
               var aut = entryValues.get("author");
               var num = entryValues.get("number");
               if (!ttl || !aut) continue;
-              var _aut_split_;
-              var cit = [alphaNum((_aut_split_ = aut.split(/,| and/)[0]) !== null && _aut_split_ !== void 0 ? _aut_split_ : aut), alphaNum(ttl), alphaNum(num !== null && num !== void 0 ? num : "0")].join(":");
+              var _parseAuthors__lastName;
+              var cit = [alphaNum((_parseAuthors__lastName = (_parseAuthors_ = parseAuthors(aut)[0]) === null || _parseAuthors_ === void 0 ? void 0 : _parseAuthors_.lastName) !== null && _parseAuthors__lastName !== void 0 ? _parseAuthors__lastName : aut), alphaNum(ttl), alphaNum(num !== null && num !== void 0 ? num : "0")].join(":");
               duplicateOf = citations.get(cit);
               if (!duplicateOf) {
                 citations.set(cit, entry);
@@ -3560,32 +3587,6 @@ function formatValue(field, options) {
     .join(" # ");
 }
 __name(formatValue, "formatValue");
-// src/parseAuthors.ts
-function parseAuthors(authors, sanitize) {
-  return authors
-    .replace(/\s+/g, " ")
-    .split(/ and /i)
-    .map((nameRaw) => {
-      var name = nameRaw.trim();
-      if (sanitize) {
-        name = name.replace(/["{}]/g, "");
-      }
-      var commaPos = name.indexOf(",");
-      if (commaPos > -1) {
-        return {
-          firstNames: name.slice(commaPos + 1).trim(),
-          lastName: name.slice(0, commaPos).trim(),
-        };
-      } else {
-        var lastSpacePos = name.lastIndexOf(" ");
-        return {
-          firstNames: name.slice(0, lastSpacePos).trim(),
-          lastName: name.slice(lastSpacePos).trim(),
-        };
-      }
-    });
-}
-__name(parseAuthors, "parseAuthors");
 // src/generateKeys.ts
 var SPECIAL_MARKERS = {
   auth: {

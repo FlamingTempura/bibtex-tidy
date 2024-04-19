@@ -578,6 +578,29 @@ var BibTeXSyntaxError = class extends Error {
   }
 };
 
+// src/parseAuthors.ts
+function parseAuthors(authors, sanitize) {
+  return authors.replace(/\s+/g, " ").split(/ and /i).map((nameRaw) => {
+    let name = nameRaw.trim();
+    if (sanitize) {
+      name = name.replace(/["{}]/g, "");
+    }
+    const commaPos = name.indexOf(",");
+    if (commaPos > -1) {
+      return {
+        firstNames: name.slice(commaPos + 1).trim(),
+        lastName: name.slice(0, commaPos).trim()
+      };
+    } else {
+      const lastSpacePos = name.lastIndexOf(" ");
+      return {
+        firstNames: name.slice(0, lastSpacePos).trim(),
+        lastName: name.slice(lastSpacePos).trim()
+      };
+    }
+  });
+}
+
 // src/latexParser.ts
 var BlockNode2 = class _BlockNode {
   constructor(kind, parent, children = []) {
@@ -3123,7 +3146,7 @@ function isEntryNode(node) {
 
 // src/duplicates.ts
 function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
-  var _a, _b, _c;
+  var _a, _b, _c, _d;
   const rules = /* @__PURE__ */ new Map();
   if (duplicateRules) {
     for (const rule of duplicateRules) {
@@ -3178,7 +3201,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
           if (!ttl || !aut)
             continue;
           const cit = [
-            alphaNum((_b = aut.split(/,| and/)[0]) != null ? _b : aut),
+            alphaNum((_c = (_b = parseAuthors(aut)[0]) == null ? void 0 : _b.lastName) != null ? _c : aut),
             alphaNum(ttl),
             alphaNum(num != null ? num : "0")
           ].join(":");
@@ -3191,7 +3214,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
           break;
         }
         case "abstract": {
-          const abstract = alphaNum((_c = entryValues.get("abstract")) != null ? _c : "");
+          const abstract = alphaNum((_d = entryValues.get("abstract")) != null ? _d : "");
           const abs = abstract.slice(0, 100);
           if (!abs)
             continue;
@@ -3487,29 +3510,6 @@ ${valIndent}`) + "\n" + indent;
       return `"${value}"`;
     }
   }).join(" # ");
-}
-
-// src/parseAuthors.ts
-function parseAuthors(authors, sanitize) {
-  return authors.replace(/\s+/g, " ").split(/ and /i).map((nameRaw) => {
-    let name = nameRaw.trim();
-    if (sanitize) {
-      name = name.replace(/["{}]/g, "");
-    }
-    const commaPos = name.indexOf(",");
-    if (commaPos > -1) {
-      return {
-        firstNames: name.slice(commaPos + 1).trim(),
-        lastName: name.slice(0, commaPos).trim()
-      };
-    } else {
-      const lastSpacePos = name.lastIndexOf(" ");
-      return {
-        firstNames: name.slice(0, lastSpacePos).trim(),
-        lastName: name.slice(lastSpacePos).trim()
-      };
-    }
-  });
 }
 
 // src/generateKeys.ts

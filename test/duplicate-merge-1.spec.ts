@@ -40,6 +40,15 @@ author="Feinberg, Andrew P and Vogelstein, Bert",
   booktitle={blah}
 }
 
+@inproceedings{Smith2009b,
+  author="Smith, Caroline",
+  year=2009,
+  month=dec,
+  title={{Quantum somethings}},
+  journal={Journal of {B}lah},
+  booktitle={blah}
+}
+
 @book{IP:1990,
 author = "Prince, Ian",
 year = {1990},
@@ -126,13 +135,13 @@ const output = bibtex`
 test('merge duplicates', async () => {
 	const tidied = await bibtexTidy(input, { duplicates: true, merge: true });
 	const warnings = tidied.api?.warnings.filter(
-		(w) => w.code === 'DUPLICATE_ENTRY'
+		(w) => w.code === 'DUPLICATE_ENTRY',
 	);
 	strictEqual(tidied.bibtex, output);
 	strictEqual(
 		warnings?.filter(
-			(warning) => warning.code === 'DUPLICATE_ENTRY' && warning.rule !== 'key'
+			(warning) => warning.code === 'DUPLICATE_ENTRY' && warning.rule !== 'key',
 		).length,
-		3
+		4,
 	);
 });
