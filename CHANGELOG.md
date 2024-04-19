@@ -156,3 +156,9 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 - Added option to convert all months to three letter abbreviations (#351)
 - Update node version in docker container ot prevent build error
 - Fix --sort-fields CLI command in web UI (#404)
+
+### v1.12.0
+
+- Fix double braces adding closing braces (#410)
+- Upgrade dependencies
+- Accessibility tweaks
