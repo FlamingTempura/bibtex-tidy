@@ -34,7 +34,8 @@ export function checkForDuplicates(
 	const abstracts = new Map<string, EntryNode>();
 
 	for (const entry of getEntries(ast)) {
-		const entryValues = valueLookup.get(entry)!;
+		const entryValues = valueLookup.get(entry);
+		if (!entryValues) continue;
 
 		for (const [rule, doMerge] of rules) {
 			let duplicateOf: EntryNode | undefined;
@@ -74,7 +75,7 @@ export function checkForDuplicates(
 					const num = entryValues.get('number');
 					if (!ttl || !aut) continue;
 					const cit: string = [
-						alphaNum(aut.split(/,| and/)[0]!),
+						alphaNum(aut.split(/,| and/)[0] ?? aut),
 						alphaNum(ttl),
 						alphaNum(num ?? '0'),
 					].join(':');

@@ -1,3 +1,4 @@
+import assert from 'assert';
 import { promises as fsp } from 'fs'; // fs/promises not supported in node v12
 import { copyFile } from 'fs/promises';
 import { argv, versions, exit } from 'process';
@@ -127,7 +128,8 @@ async function tidyInputFiles(
 		}
 
 		console.log('Tidying...');
-		const result = tidy(await readFile(inputFiles[0]!, 'utf8'), options);
+		assert(inputFiles[0]);
+		const result = tidy(await readFile(inputFiles[0], 'utf8'), options);
 
 		if (options.outputPath) {
 			await tidyToOutputFile(result, options.outputPath, options);

@@ -61,7 +61,9 @@ export function sortEntries(
 		sortIndexes.set(item, sortIndex);
 		// update comments above to this index
 		while (precedingMeta.length > 0) {
-			sortIndexes.set(precedingMeta.pop()!, sortIndex);
+			const index = precedingMeta.pop();
+			if (!index) break;
+			sortIndexes.set(index, sortIndex);
 		}
 	}
 

@@ -27,7 +27,7 @@ test('CLI should output to specified file', async () => {
 
 test('CLI should output to specified file (from stdin)', async () => {
 	const outfile = await tmpfile('');
-	const proc = spawnSync(BIN_PATH, ['--output', outfile], {
+	spawnSync(BIN_PATH, ['--output', outfile], {
 		input,
 		encoding: 'utf8',
 	});

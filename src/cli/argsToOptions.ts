@@ -56,10 +56,11 @@ export function argsToOptions(
 		}
 
 		if (typeof cliOption.value === 'function') {
-			options[cliOption.option] = cliOption.value(values) as any;
+			options[cliOption.option] = cliOption.value(values);
 		} else {
+			//@ts-expect-error tricky typing
 			options[cliOption.option] =
-				cliOption.value as CLIOptions[typeof cliOption.option] as any;
+				cliOption.value as CLIOptions[typeof cliOption.option];
 		}
 	}
 

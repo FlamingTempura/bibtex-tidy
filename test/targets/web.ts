@@ -1,4 +1,5 @@
 import { join } from 'path';
+import { EditorView } from '@codemirror/view';
 import puppeteer, { ElementHandle, Page } from 'puppeteer';
 import type { Warning } from '../../src/index';
 import { normalizeOptions, type Options } from '../../src/optionUtils';
@@ -8,7 +9,7 @@ const WEB_ROOT = join(__dirname, '..', '..', 'docs', 'index.html');
 declare global {
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Window {
-		cmEditor: any;
+		cmEditor: EditorView;
 	}
 }
 
@@ -20,7 +21,7 @@ export type WebResult = {
 let page: Page | undefined;
 async function getPage(): Promise<Page> {
 	if (page) return page;
-	const browser = await puppeteer.launch({ headless: 'new' });
+	const browser = await puppeteer.launch({ headless: true });
 	page = await browser.newPage();
 	await page.goto(`file://${WEB_ROOT}`);
 	return page;

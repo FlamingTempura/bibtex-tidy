@@ -134,8 +134,8 @@ export function generateAST(input: string): RootNode {
 	let column = 0;
 
 	for (let i = 0; i < input.length; i++) {
-		const char = input[i]!;
-		const prev = input[i - 1]!;
+		const char = input[i] ?? '';
+		const prev = input[i - 1] ?? '';
 
 		if (char === '\n') {
 			line++;
@@ -419,6 +419,6 @@ export class BibTeXSyntaxError extends Error {
 				input.slice(pos + 1, pos + 20),
 		);
 		this.name = 'Syntax Error';
-		this.char = input[pos]!;
+		this.char = input[pos] ?? '';
 	}
 }

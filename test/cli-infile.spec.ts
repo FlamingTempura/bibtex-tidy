@@ -1,6 +1,5 @@
 import { match, strictEqual } from 'assert';
 import { spawnSync } from 'child_process';
-import { readFile } from 'fs/promises';
 import { BIN_PATH } from './targets/cli';
 import { bibtex, test, tmpfile } from './utils';
 
@@ -32,6 +31,6 @@ test('CLI should not allow multiple input files without --modify (v2 flag)', asy
 	strictEqual(proc1.status, 1);
 	match(
 		proc1.stderr,
-		/Only one input file permitted unless using --modify\/-m/
+		/Only one input file permitted unless using --modify\/-m/,
 	);
 });

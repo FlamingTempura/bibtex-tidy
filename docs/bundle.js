@@ -3000,8 +3000,9 @@ function _ts_generator(thisArg, body) {
       i = 1,
       n = 0;
     for (var s = 0; s < r.length; s++) {
-      var o = r[s],
-        l = r[s - 1];
+      var _r_s, _r_;
+      var o = (_r_s = r[s]) !== null && _r_s !== void 0 ? _r_s : "",
+        l = (_r_ = r[s - 1]) !== null && _r_ !== void 0 ? _r_ : "";
       switch ((o === "\n" && (i++, (n = 0)), n++, t.type)) {
         case "root": {
           t = o === "@" ? new xs(t) : new tr(t, o);
@@ -3125,7 +3126,8 @@ function _ts_generator(thisArg, body) {
         this.line = s;
         this.column = o;
         this.hint = l;
-        (this.name = "Syntax Error"), (this.char = t[n]);
+        var _t_n;
+        (this.name = "Syntax Error"), (this.char = (_t_n = t[n]) !== null && _t_n !== void 0 ? _t_n : "");
       }
     }),
     h(_class14, "BibTeXSyntaxError"),
@@ -3174,6 +3176,7 @@ function _ts_generator(thisArg, body) {
       t = e;
     for (var i = 0; i < r.length; i++) {
       var n = r[i];
+      if (!n) break;
       switch (t.type) {
         case "block": {
           n === "\\" ? (t = new As(t)) : n === "{" ? (t = new ir("curly", t)) : ((n === "}" && t.kind === "curly") || (n === "]" && t.kind === "square")) && t.parent ? (t = t.parent) : (t = new xu(t, n));
@@ -5729,60 +5732,62 @@ function _ts_generator(thisArg, body) {
         var _iteratorNormalCompletion2 = true,
           _didIteratorError2 = false,
           _iteratorError2 = undefined;
-        try {
-          for (var _iterator2 = n[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var _step_value = _sliced_to_array(_step2.value, 2),
-              p = _step_value[0],
-              m = _step_value[1];
-            var F = void 0,
-              g = void 0;
-            switch (p) {
-              case "key": {
-                if (!f1.key) continue;
-                var D = f1.key.toLocaleLowerCase();
-                (F = l.get(D)), F ? (g = "The citation key ".concat(f1.key, " has already been used.")) : l.set(D, f1);
-                break;
-              }
-              case "doi": {
-                var _d_get;
-                var D1 = rr((_d_get = d.get("doi")) !== null && _d_get !== void 0 ? _d_get : "");
-                if (!D1) continue;
-                (F = u.get(D1)), F ? (g = "Entry ".concat(f1.key, " has an identical DOI to entry ").concat(F.key, ".")) : u.set(D1, f1);
-                break;
-              }
-              case "citation": {
-                var D2 = d.get("title"),
-                  b = d.get("author"),
-                  B = d.get("number");
-                if (!D2 || !b) continue;
-                var k = [rr(b.split(/,| and/)[0]), rr(D2), rr(B !== null && B !== void 0 ? B : "0")].join(":");
-                (F = a.get(k)), F ? (g = "Entry ".concat(f1.key, " has similar content to entry ").concat(F.key, ".")) : a.set(k, f1);
-                break;
-              }
-              case "abstract": {
-                var _d_get1;
-                var b1 = rr((_d_get1 = d.get("abstract")) !== null && _d_get1 !== void 0 ? _d_get1 : "").slice(0, 100);
-                if (!b1) continue;
-                (F = c.get(b1)), F ? (g = "Entry ".concat(f1.key, " has a similar abstract to entry ").concat(F.key, ".")) : c.set(b1, f1);
-                break;
-              }
-            }
-            F && m && (s.add(f1), Av(i, F, f1)), g && o.push({ code: "DUPLICATE_ENTRY", rule: p, message: "Duplicate ".concat(m ? "removed" : "detected", ". ").concat(g) });
-          }
-        } catch (err) {
-          _didIteratorError2 = true;
-          _iteratorError2 = err;
-        } finally {
+        if (d)
           try {
-            if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-              _iterator2.return();
+            for (var _iterator2 = n[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var _step_value = _sliced_to_array(_step2.value, 2),
+                p = _step_value[0],
+                m = _step_value[1];
+              var F = void 0,
+                g = void 0;
+              switch (p) {
+                case "key": {
+                  if (!f1.key) continue;
+                  var D = f1.key.toLocaleLowerCase();
+                  (F = l.get(D)), F ? (g = "The citation key ".concat(f1.key, " has already been used.")) : l.set(D, f1);
+                  break;
+                }
+                case "doi": {
+                  var _d_get;
+                  var D1 = rr((_d_get = d.get("doi")) !== null && _d_get !== void 0 ? _d_get : "");
+                  if (!D1) continue;
+                  (F = u.get(D1)), F ? (g = "Entry ".concat(f1.key, " has an identical DOI to entry ").concat(F.key, ".")) : u.set(D1, f1);
+                  break;
+                }
+                case "citation": {
+                  var D2 = d.get("title"),
+                    b = d.get("author"),
+                    B = d.get("number");
+                  if (!D2 || !b) continue;
+                  var _b_split_;
+                  var k = [rr((_b_split_ = b.split(/,| and/)[0]) !== null && _b_split_ !== void 0 ? _b_split_ : b), rr(D2), rr(B !== null && B !== void 0 ? B : "0")].join(":");
+                  (F = a.get(k)), F ? (g = "Entry ".concat(f1.key, " has similar content to entry ").concat(F.key, ".")) : a.set(k, f1);
+                  break;
+                }
+                case "abstract": {
+                  var _d_get1;
+                  var b1 = rr((_d_get1 = d.get("abstract")) !== null && _d_get1 !== void 0 ? _d_get1 : "").slice(0, 100);
+                  if (!b1) continue;
+                  (F = c.get(b1)), F ? (g = "Entry ".concat(f1.key, " has a similar abstract to entry ").concat(F.key, ".")) : c.set(b1, f1);
+                  break;
+                }
+              }
+              F && m && (s.add(f1), Av(i, F, f1)), g && o.push({ code: "DUPLICATE_ENTRY", rule: p, message: "Duplicate ".concat(m ? "removed" : "detected", ". ").concat(g) });
             }
+          } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
           } finally {
-            if (_didIteratorError2) {
-              throw _iteratorError2;
+            try {
+              if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                _iterator2.return();
+              }
+            } finally {
+              if (_didIteratorError2) {
+                throw _iteratorError2;
+              }
             }
           }
-        }
       }
     } catch (err) {
       _didIteratorError1 = true;
@@ -6083,7 +6088,8 @@ function _ts_generator(thisArg, body) {
       },
       authorsN: {
         description: "Last name N authors, with EtAl if more",
-        callback: (r, e) => {
+        callback: function (r) {
+          var e = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 0;
           var _r_get;
           var t = Yr((_r_get = r.get("author")) !== null && _r_get !== void 0 ? _r_get : "", !0);
           return [
@@ -6605,7 +6611,11 @@ function _ts_generator(thisArg, body) {
             }
           }
         }
-        for (i.set(s, o); n.length > 0; ) i.set(n.pop(), o);
+        for (i.set(s, o); n.length > 0; ) {
+          var l1 = n.pop();
+          if (!l1) break;
+          i.set(l1, o);
+        }
       }
     } catch (err) {
       _didIteratorError = true;

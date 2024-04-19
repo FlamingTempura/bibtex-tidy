@@ -6,7 +6,7 @@ import { generateDtsBundle } from 'dts-bundle-generator';
 import { build, context, type OutputFile, type Plugin } from 'esbuild';
 import sveltePlugin from 'esbuild-svelte';
 import prettier from 'prettier';
-//@ts-expect-error
+//@ts-expect-error missing types
 import rewritePattern from 'regexpu-core';
 import autoPreprocess from 'svelte-preprocess';
 import { version, author, homepage } from './package.json';

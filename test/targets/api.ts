@@ -6,7 +6,8 @@ import type { Options } from '../../src/optionUtils';
 const tidy =
 	process.env.NODE_ENV === 'coverage'
 		? tidyImport
-		: require('../../bibtex-tidy.js').tidy;
+		: // eslint-disable-next-line @typescript-eslint/no-var-requires
+			require('../../bibtex-tidy.js').tidy;
 
 export type APIResult = BibTeXTidyResult;
 

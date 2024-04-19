@@ -38,7 +38,8 @@ export function parseLaTeX(input: string): BlockNode {
 	const rootNode = new BlockNode('root');
 	let node: Node = rootNode;
 	for (let i = 0; i < input.length; i++) {
-		const char = input[i]!;
+		const char = input[i];
+		if (!char) break;
 
 		switch (node.type) {
 			case 'block': {

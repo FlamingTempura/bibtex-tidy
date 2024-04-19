@@ -51,11 +51,11 @@ test('syntax-error', async () => {
 	strictEqual((await getError(input6))?.name, 'Syntax Error');
 });
 
-async function getError(input: string): Promise<any> {
+async function getError(input: string): Promise<Error | undefined> {
 	try {
 		await bibtexTidy(input, undefined, ['api']);
 	} catch (e) {
-		return e;
+		return e instanceof Error ? e : new Error('Expected an error');
 	}
 	return;
 }

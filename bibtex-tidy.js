@@ -287,8 +287,10 @@ function generateAST(input) {
   var line = 1;
   var column = 0;
   for (var i = 0; i < input.length; i++) {
-    var char = input[i];
-    var prev = input[i - 1];
+    var _input_i;
+    var char = (_input_i = input[i]) !== null && _input_i !== void 0 ? _input_i : "";
+    var _input_;
+    var prev = (_input_ = input[i - 1]) !== null && _input_ !== void 0 ? _input_ : "";
     if (char === "\n") {
       line++;
       column = 0;
@@ -512,7 +514,8 @@ var BibTeXSyntaxError =
       this.column = column;
       this.hint = hint;
       this.name = "Syntax Error";
-      this.char = input[pos];
+      var _input_pos;
+      this.char = (_input_pos = input[pos]) !== null && _input_pos !== void 0 ? _input_pos : "";
     }
   }),
   __name(_class12, "BibTeXSyntaxError"),
@@ -566,6 +569,7 @@ function parseLaTeX(input) {
   var node = rootNode;
   for (var i = 0; i < input.length; i++) {
     var char = input[i];
+    if (!char) break;
     switch (node.type) {
       case "block": {
         if (char === "\\") {
@@ -3172,6 +3176,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
     for (var _iterator1 = getEntries(ast)[Symbol.iterator](), _step1; !(_iteratorNormalCompletion1 = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion1 = true) {
       var entry = _step1.value;
       var entryValues = valueLookup.get(entry);
+      if (!entryValues) continue;
       var _iteratorNormalCompletion2 = true,
         _didIteratorError2 = false,
         _iteratorError2 = undefined;
@@ -3211,7 +3216,8 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
               var aut = entryValues.get("author");
               var num = entryValues.get("number");
               if (!ttl || !aut) continue;
-              var cit = [alphaNum(aut.split(/,| and/)[0]), alphaNum(ttl), alphaNum(num !== null && num !== void 0 ? num : "0")].join(":");
+              var _aut_split_;
+              var cit = [alphaNum((_aut_split_ = aut.split(/,| and/)[0]) !== null && _aut_split_ !== void 0 ? _aut_split_ : aut), alphaNum(ttl), alphaNum(num !== null && num !== void 0 ? num : "0")].join(":");
               duplicateOf = citations.get(cit);
               if (!duplicateOf) {
                 citations.set(cit, entry);
@@ -3631,7 +3637,8 @@ var SPECIAL_MARKERS = {
   },
   authorsN: {
     description: "Last name N authors, with EtAl if more",
-    callback: (v, n) => {
+    callback: function (v) {
+      var n = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 0;
       var _v_get;
       var authors = parseAuthors((_v_get = v.get("author")) !== null && _v_get !== void 0 ? _v_get : "", true);
       return [
@@ -4497,7 +4504,9 @@ function sortEntries(ast, fieldMaps, sort) {
       }
       sortIndexes.set(item, sortIndex);
       while (precedingMeta.length > 0) {
-        sortIndexes.set(precedingMeta.pop(), sortIndex);
+        var index = precedingMeta.pop();
+        if (!index) break;
+        sortIndexes.set(index, sortIndex);
       }
     }
   } catch (err) {

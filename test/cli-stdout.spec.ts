@@ -1,4 +1,4 @@
-import { match, strictEqual } from 'assert';
+import { strictEqual } from 'assert';
 import { spawnSync } from 'child_process';
 import { BIN_PATH } from './targets/cli';
 import { bibtex, test } from './utils';

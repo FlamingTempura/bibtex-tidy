@@ -44,13 +44,13 @@ export const SPECIAL_MARKERS: Record<
 	},
 	authorsN: {
 		description: 'Last name N authors, with EtAl if more',
-		callback: (v, n) => {
+		callback: (v, n = 0) => {
 			const authors = parseAuthors(v.get('author') ?? '', true);
 			return [
 				...authors
 					.slice(0, n)
 					.map((author) => author.lastName.replace(/[^\p{Letter}]+/gu, '_')),
-				...(authors.length > n! ? ['Et', 'Al'] : []),
+				...(authors.length > n ? ['Et', 'Al'] : []),
 			];
 		},
 	},

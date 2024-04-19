@@ -8,8 +8,31 @@
  **/
 
 "use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 
 // src/cli/cli.ts
+var import_assert = __toESM(require("assert"));
 var import_fs = require("fs");
 var import_promises = require("fs/promises");
 var import_process = require("process");
@@ -310,14 +333,14 @@ var QuotedNode = class {
   }
 };
 function generateAST(input) {
-  var _a;
+  var _a, _b, _c;
   const rootNode = new RootNode();
   let node = rootNode;
   let line = 1;
   let column = 0;
   for (let i = 0; i < input.length; i++) {
-    const char = input[i];
-    const prev = input[i - 1];
+    const char = (_a = input[i]) != null ? _a : "";
+    const prev = (_b = input[i - 1]) != null ? _b : "";
     if (char === "\n") {
       line++;
       column = 0;
@@ -431,7 +454,7 @@ function generateAST(input) {
             `The entry key cannot contain the character (${char})`
           );
         } else {
-          node.key = ((_a = node.key) != null ? _a : "") + char;
+          node.key = ((_c = node.key) != null ? _c : "") + char;
         }
         break;
       }
@@ -541,6 +564,7 @@ function isValidFieldName(char) {
 }
 var BibTeXSyntaxError = class extends Error {
   constructor(input, node, pos, line, column, hint) {
+    var _a;
     super(
       `Line ${line}:${column}: Syntax Error in ${node.type} (${hint})
 ` + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20)
@@ -550,7 +574,7 @@ var BibTeXSyntaxError = class extends Error {
     this.column = column;
     this.hint = hint;
     this.name = "Syntax Error";
-    this.char = input[pos];
+    this.char = (_a = input[pos]) != null ? _a : "";
   }
 };
 
@@ -590,6 +614,8 @@ function parseLaTeX(input) {
   let node = rootNode;
   for (let i = 0; i < input.length; i++) {
     const char = input[i];
+    if (!char)
+      break;
     switch (node.type) {
       case "block": {
         if (char === "\\") {
@@ -3097,7 +3123,7 @@ function isEntryNode(node) {
 
 // src/duplicates.ts
 function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
-  var _a, _b;
+  var _a, _b, _c;
   const rules = /* @__PURE__ */ new Map();
   if (duplicateRules) {
     for (const rule of duplicateRules) {
@@ -3115,6 +3141,8 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
   const abstracts = /* @__PURE__ */ new Map();
   for (const entry of getEntries(ast)) {
     const entryValues = valueLookup.get(entry);
+    if (!entryValues)
+      continue;
     for (const [rule, doMerge] of rules) {
       let duplicateOf;
       let warning;
@@ -3150,7 +3178,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
           if (!ttl || !aut)
             continue;
           const cit = [
-            alphaNum(aut.split(/,| and/)[0]),
+            alphaNum((_b = aut.split(/,| and/)[0]) != null ? _b : aut),
             alphaNum(ttl),
             alphaNum(num != null ? num : "0")
           ].join(":");
@@ -3163,7 +3191,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
           break;
         }
         case "abstract": {
-          const abstract = alphaNum((_b = entryValues.get("abstract")) != null ? _b : "");
+          const abstract = alphaNum((_c = entryValues.get("abstract")) != null ? _c : "");
           const abs = abstract.slice(0, 100);
           if (!abs)
             continue;
@@ -3518,7 +3546,7 @@ var SPECIAL_MARKERS = {
   },
   authorsN: {
     description: "Last name N authors, with EtAl if more",
-    callback: (v, n) => {
+    callback: (v, n = 0) => {
       var _a;
       const authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
       return [
@@ -4329,7 +4357,10 @@ function sortEntries(ast, fieldMaps, sort) {
     }
     sortIndexes.set(item, sortIndex);
     while (precedingMeta.length > 0) {
-      sortIndexes.set(precedingMeta.pop(), sortIndex);
+      const index = precedingMeta.pop();
+      if (!index)
+        break;
+      sortIndexes.set(index, sortIndex);
     }
   }
   for (const prefixedKey of [...sort].reverse()) {
@@ -4672,6 +4703,7 @@ async function tidyInputFiles(inputFiles, options) {
       process.exit(1);
     }
     console.log("Tidying...");
+    (0, import_assert.default)(inputFiles[0]);
     const result = tidy(await readFile(inputFiles[0], "utf8"), options);
     if (options.outputPath) {
       await tidyToOutputFile(result, options.outputPath, options);

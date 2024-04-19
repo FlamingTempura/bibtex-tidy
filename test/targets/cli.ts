@@ -62,7 +62,7 @@ export function testCLI(
 	const warnings = proc.stderr
 		.split('\n')
 		.filter((line) => line.includes(': '))
-		.map((line) => line.split(':')[0]!);
+		.map((line) => line.split(':')[0] ?? line);
 
 	files.forEach((tmpFile) => unlinkSync(tmpFile));
 
