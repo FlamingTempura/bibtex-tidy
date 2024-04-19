@@ -6912,7 +6912,7 @@ function _ts_generator(thisArg, body) {
               if (e >= s && t <= u) {
                 var l = o.replace(e - s, t - s, i),
                   a = this.lines - o.lines + l.lines;
-                if (l.lines < a >> (5 - 1) && l.lines > a >> (5 + 1)) {
+                if (l.lines < a >> 4 && l.lines > a >> 6) {
                   var c = this.children.slice();
                   return (c[n] = l), new r(c, this.length - (t - e) + i.length);
                 }
@@ -9180,7 +9180,7 @@ function _ts_generator(thisArg, body) {
         static eq(e, t) {
           var i = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 0,
             n = arguments.length > 3 ? arguments[3] : void 0;
-          n == null && (n = 1e9 - 1);
+          n == null && (n = 999999999);
           var s = e.filter((c) => !c.isEmpty && t.indexOf(c) < 0),
             o = t.filter((c) => !c.isEmpty && e.indexOf(c) < 0);
           if (s.length != o.length) return !1;
@@ -20184,7 +20184,7 @@ function _ts_generator(thisArg, body) {
     (VD = h((r) => {
       var e = -1,
         t = setTimeout(() => {
-          e = requestIdleCallback(r, { timeout: 500 - 100 });
+          e = requestIdleCallback(r, { timeout: 400 });
         }, 100);
       return () => (e < 0 ? clearTimeout(t) : cancelIdleCallback(e));
     }, "requestIdle"));
