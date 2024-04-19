@@ -7,7 +7,7 @@ type SortIndex = Map<string, string | number>;
 export function sortEntries(
 	ast: RootNode,
 	fieldMaps: Map<EntryNode, Map<string, string | undefined>>,
-	sort: string[]
+	sort: string[],
 ): void {
 	// Map of items to sort values e.g. { year: 2009, author: 'West', ... }
 	const sortIndexes = new Map<TextNode | BlockNode, SortIndex>();

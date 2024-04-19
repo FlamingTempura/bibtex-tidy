@@ -41,7 +41,7 @@ test('flattening latex', () => {
 	for (const str of testStrings) {
 		assert.strictEqual(
 			stringifyLaTeX(flattenLaTeX(parseLaTeX(str.input))),
-			str.flattened
+			str.flattened,
 		);
 	}
 });

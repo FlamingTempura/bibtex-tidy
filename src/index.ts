@@ -41,13 +41,13 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 		ast,
 		valueLookup,
 		options.duplicates,
-		options.merge
+		options.merge,
 	);
 
 	warnings.push(...duplicates.warnings);
 
 	ast.children = ast.children.filter(
-		(child) => !isEntryNode(child) || !duplicates.entries.has(child.block)
+		(child) => !isEntryNode(child) || !duplicates.entries.has(child.block),
 	);
 
 	// sort needs to happen after merging all entries is complete
@@ -70,7 +70,7 @@ export function getEntries(ast: RootNode): EntryNode[] {
 
 function generateValueLookup(
 	ast: RootNode,
-	options: OptionsNormalized
+	options: OptionsNormalized,
 ): Map<EntryNode, Map<string, string>> {
 	return new Map(
 		getEntries(ast).map((entry) => [
@@ -79,9 +79,9 @@ function generateValueLookup(
 				entry.fields.map((field) => [
 					field.name.toLocaleLowerCase(),
 					formatValue(field, options) ?? '',
-				])
+				]),
 			),
-		])
+		]),
 	);
 }
 

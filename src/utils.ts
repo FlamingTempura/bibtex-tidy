@@ -30,7 +30,7 @@ export function escapeSpecialCharacters(str: string): string {
 	}
 	return newstr.replace(
 		/MATH\.EXP\.(\d+)/,
-		(_, i) => mathExpressions[Number(i)] ?? ''
+		(_, i) => mathExpressions[Number(i)] ?? '',
 	);
 }
 
@@ -90,7 +90,7 @@ export function unwrapText(str: string): string {
  */
 export function addEnclosingBraces(
 	str: string,
-	removeInsideBraces?: boolean
+	removeInsideBraces?: boolean,
 ): string {
 	if (removeInsideBraces) {
 		str = stringifyLaTeX(flattenLaTeX(parseLaTeX(str)));
@@ -124,7 +124,7 @@ export function formatPageRange(str: string): string {
 }
 
 export function isEntryNode(
-	node: TextNode | BlockNode
+	node: TextNode | BlockNode,
 ): node is BlockNode & { block: EntryNode } {
 	return node.type !== 'text' && node.block?.type === 'entry';
 }

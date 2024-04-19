@@ -23,7 +23,7 @@ async function start(): Promise<void> {
 
 	const { inputFiles, options, unknownArgs } = argsToOptions(
 		argv.slice(2).join(' '),
-		hasStdin
+		hasStdin,
 	);
 
 	if (unknownArgs.length > 0) {
@@ -55,7 +55,7 @@ async function start(): Promise<void> {
 		await tidyStdIn(options);
 	} else if (deprecatedStdInFlag) {
 		console.error(
-			'Interpreting "-" as stdin. NOTICE: as of v1.10.0 "-" can be omitted and will be invalid in v2. Stdin is read when no input file is specified.'
+			'Interpreting "-" as stdin. NOTICE: as of v1.10.0 "-" can be omitted and will be invalid in v2. Stdin is read when no input file is specified.',
 		);
 
 		if (inputFiles.length > 1) {
@@ -92,14 +92,14 @@ async function tidyStdIn(options: BibTeXTidyOptions) {
 
 async function tidyInputFiles(
 	inputFiles: string[],
-	options: BibTeXTidyOptions
+	options: BibTeXTidyOptions,
 ) {
 	const usingDeprecatedStdio =
 		!options.v2 && !options.outputPath && !options.modify;
 
 	if (usingDeprecatedStdio) {
 		console.warn(
-			'NOTICE: In v2 you will need to specify --modify/-m to modify the input file.'
+			'NOTICE: In v2 you will need to specify --modify/-m to modify the input file.',
 		);
 		options.modify = true;
 		options.backup = options.backup ?? true;
@@ -144,7 +144,7 @@ function tidyToStdout(result: BibTeXTidyResult) {
 async function tidyToOutputFile(
 	result: BibTeXTidyResult,
 	path: string,
-	options: BibTeXTidyOptions
+	options: BibTeXTidyOptions,
 ) {
 	if (options.backup) {
 		await copyFile(path, `${path}.original`);

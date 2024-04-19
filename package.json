@@ -27,7 +27,7 @@
 		"serve": "node -r esbuild-register build.ts --serve",
 		"test": "node -r esbuild-register build.ts  --no-defs && node -r esbuild-register test/index.ts",
 		"typecheck": "tsc --noEmit",
-		"prettier": "prettier --write build.ts {test,docs}/**/*.ts src/*.ts",
+		"prettier": "prettier --write build.ts {test,src,docs}/**/*.{ts,html}",
 		"cover": "./scripts/cover.sh",
 		"preversion": "git pull --rebase",
 		"version": "./scripts/prepare-release.sh",

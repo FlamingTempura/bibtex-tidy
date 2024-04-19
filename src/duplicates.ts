@@ -8,7 +8,7 @@ export function checkForDuplicates(
 	ast: RootNode,
 	valueLookup: Map<EntryNode, Map<string, string | undefined>>,
 	duplicateRules?: DuplicateRule[],
-	merge?: MergeStrategy
+	merge?: MergeStrategy,
 ): { entries: Set<EntryNode>; warnings: Warning[] } {
 	const rules = new Map<DuplicateRule, boolean>();
 
@@ -121,7 +121,7 @@ export function checkForDuplicates(
 function mergeEntries(
 	merge: MergeStrategy | undefined,
 	duplicateOf: EntryNode,
-	entry: EntryNode
+	entry: EntryNode,
 ): void {
 	if (!merge) return;
 	switch (merge) {
@@ -134,7 +134,7 @@ function mergeEntries(
 		case 'overwrite':
 			for (const field of entry.fields) {
 				const existing = duplicateOf.fields.find(
-					(f) => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase()
+					(f) => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase(),
 				);
 				if (!existing) {
 					duplicateOf.fields.push(field);

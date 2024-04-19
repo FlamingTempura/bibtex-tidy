@@ -62,6 +62,6 @@ export function normalizeOptions(options: Options): OptionsNormalized {
 				return [key, def.defaultValue];
 			}
 			return [key, value];
-		})
+		}),
 	) as OptionsNormalized;
 }

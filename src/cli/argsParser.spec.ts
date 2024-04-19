@@ -15,7 +15,7 @@ test('parseArguments', async () => {
 
 	deepStrictEqual(
 		parseArguments(
-			'--no-tidy-comments --space 3 --trailing-commas --foo --sort-fields=author,title foo.bib something.txt'
+			'--no-tidy-comments --space 3 --trailing-commas --foo --sort-fields=author,title foo.bib something.txt',
 		),
 		[
 			{ key: '--no-tidy-comments', values: [] },
@@ -24,12 +24,12 @@ test('parseArguments', async () => {
 			{ key: '--foo', values: [] },
 			{ key: '--sort-fields', values: ['author', 'title'] },
 			{ key: '', values: ['foo.bib', 'something.txt'] },
-		]
+		],
 	);
 
 	deepStrictEqual(
 		parseArguments(
-			'--no-tidy-comments --space 3 --trailing-commas --foo -vol --sort-fields=-author,title foo.bib something.txt'
+			'--no-tidy-comments --space 3 --trailing-commas --foo -vol --sort-fields=-author,title foo.bib something.txt',
 		),
 		[
 			{ key: '--no-tidy-comments', values: [] },
@@ -42,17 +42,17 @@ test('parseArguments', async () => {
 			{ key: '-l', values: [] },
 			{ key: '--sort-fields', values: ['-author', 'title'] },
 			{ key: '', values: ['foo.bib', 'something.txt'] },
-		]
+		],
 	);
 
 	deepStrictEqual(
 		parseArguments(
-			'--space "3" --sort-fields="-author boo","title" "foo.bib" "something.txt"'
+			'--space "3" --sort-fields="-author boo","title" "foo.bib" "something.txt"',
 		),
 		[
 			{ key: '--space', values: ['3'] },
 			{ key: '--sort-fields', values: ['-author boo', 'title'] },
 			{ key: '', values: ['foo.bib', 'something.txt'] },
-		]
+		],
 	);
 });

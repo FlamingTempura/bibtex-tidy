@@ -26,7 +26,7 @@ test('parseAuthors', () => {
 			{ firstNames: 'Sabine K.', lastName: 'Schneider' },
 			{ firstNames: 'Eberhardt', lastName: 'Herdtweck' },
 			{ firstNames: 'Stephan D.', lastName: 'Hoffmann' },
-		]
+		],
 	);
 
 	deepStrictEqual(
@@ -51,18 +51,18 @@ test('parseAuthors', () => {
 			{ firstNames: 'Marc D.', lastName: 'Porter' },
 			{ firstNames: 'Neal D.', lastName: 'Evans' },
 			{ firstNames: 'Royce W.', lastName: 'Murray' },
-		]
+		],
 	);
 
 	deepStrictEqual(
 		parseAuthors(
-			'Arnold Chau AND John Dawson AND Paul Mitchell AND Tian Hong Loh'
+			'Arnold Chau AND John Dawson AND Paul Mitchell AND Tian Hong Loh',
 		),
 		[
 			{ firstNames: 'Arnold', lastName: 'Chau' },
 			{ firstNames: 'John', lastName: 'Dawson' },
 			{ firstNames: 'Paul', lastName: 'Mitchell' },
 			{ firstNames: 'Tian Hong', lastName: 'Loh' },
-		]
+		],
 	);
 });

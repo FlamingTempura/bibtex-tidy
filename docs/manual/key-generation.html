@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 	<head>
 		<title>BibTex Tidy: Key Generation</title>
@@ -66,23 +66,43 @@
 		<h2>Special markers</h2>
 
 		<ul>
-			<!--MARKERS--><li><code>[auth]</code>: Last name of first authors</li>
-<li><code>[authEtAl]</code>: If 1 or 2 authors, both authors, otherwise first author and EtAl</li>
-<li><code>[authors]</code>: Last name all authors</li>
-<li><code>[authorsN]</code>: Last name N authors, with EtAl if more</li>
-<li><code>[veryshorttitle]</code>: First non-function word of the title</li>
-<li><code>[shorttitle]</code>: First three non-function words of the title</li>
-<li><code>[title]</code>: Full title, capitalized</li>
-<li><code>[fulltitle]</code>: Full title, verbatim</li>
-<li><code>[year]</code>: Year</li>
-<li><code>[duplicateLetter]</code>: If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.</li>
-<li><code>[duplicateNumber]</code>: If the multiple entries end up with the same key, then insert a number.</li><!--END-->
+			<!--MARKERS-->
+			<li><code>[auth]</code>: Last name of first authors</li>
+			<li>
+				<code>[authEtAl]</code>: If 1 or 2 authors, both authors, otherwise
+				first author and EtAl
+			</li>
+			<li><code>[authors]</code>: Last name all authors</li>
+			<li><code>[authorsN]</code>: Last name N authors, with EtAl if more</li>
+			<li>
+				<code>[veryshorttitle]</code>: First non-function word of the title
+			</li>
+			<li>
+				<code>[shorttitle]</code>: First three non-function words of the title
+			</li>
+			<li><code>[title]</code>: Full title, capitalized</li>
+			<li><code>[fulltitle]</code>: Full title, verbatim</li>
+			<li><code>[year]</code>: Year</li>
+			<li>
+				<code>[duplicateLetter]</code>: If the multiple entries end up with the
+				same key, then insert a letter a-z. By default this will be inserted at
+				the end.
+			</li>
+			<li>
+				<code>[duplicateNumber]</code>: If the multiple entries end up with the
+				same key, then insert a number.
+			</li>
+			<!--END-->
 		</ul>
 
 		<p>
 			Function words:
 			<span
-				><!--WORDS-->a, about, above, across, against, along, among, an, and, around, at, before, behind, below, beneath, beside, between, beyond, but, by, down, during, except, for, from, in, inside, into, like, near, nor, of, off, on, onto, or, since, so, the, through, to, toward, under, until, up, upon, with, within, without, yet<!--END--></span
+				><!--WORDS-->a, about, above, across, against, along, among, an, and,
+				around, at, before, behind, below, beneath, beside, between, beyond,
+				but, by, down, during, except, for, from, in, inside, into, like, near,
+				nor, of, off, on, onto, or, since, so, the, through, to, toward, under,
+				until, up, upon, with, within, without, yet<!--END--></span
 			>
 		</p>
 
@@ -95,10 +115,14 @@
 		</p>
 
 		<ul>
-			<!--MODIFIERS--><li><code>:required</code>: If data is missing, revert to existing key</li>
-<li><code>:lower</code>: Convert to lowercase</li>
-<li><code>:upper</code>: Convert to uppercase</li>
-<li><code>:capitalize</code>: Capitalize first letter of each word</li><!--END-->
+			<!--MODIFIERS-->
+			<li>
+				<code>:required</code>: If data is missing, revert to existing key
+			</li>
+			<li><code>:lower</code>: Convert to lowercase</li>
+			<li><code>:upper</code>: Convert to uppercase</li>
+			<li><code>:capitalize</code>: Capitalize first letter of each word</li>
+			<!--END-->
 		</ul>
 	</body>
 </html>

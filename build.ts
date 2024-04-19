@@ -111,7 +111,7 @@ async function generateOptionTypes() {
 async function generateVersionFile() {
 	await writeFile(
 		join(BUILD_PATH, 'version.ts'),
-		`export const version = "${version}";`
+		`export const version = "${version}";`,
 	);
 }
 
@@ -139,7 +139,7 @@ async function generateCLIHelp() {
 	await writeFile(
 		join(BUILD_PATH, 'manPage.ts'),
 		jsBanner.join('\n') +
-			`export const manPage = ${JSON.stringify(help, null, '\t')};`
+			`export const manPage = ${JSON.stringify(help, null, '\t')};`,
 	);
 }
 
@@ -157,7 +157,7 @@ async function generateManPage() {
 			...DESCRIPTION.map((d) =>
 				wrapText(d, 61)
 					.map((line) => `    ${line}`)
-					.join('\n')
+					.join('\n'),
 			),
 			'',
 			'OPTIONS',
@@ -167,7 +167,7 @@ async function generateManPage() {
 			'',
 			'AUTHOR',
 			`    ${author}`,
-		].join('\n')
+		].join('\n'),
 	);
 }
 
@@ -177,39 +177,39 @@ async function generateReadme() {
 		join(__dirname, 'README.md'),
 		readme.replace(
 			/```manpage.*?```/s,
-			'```manpage\n' + formatOptions(2, 84).join('\n') + '\n```'
-		)
+			'```manpage\n' + formatOptions(2, 84).join('\n') + '\n```',
+		),
 	);
 }
 
 async function generateKeyTemplatePage() {
 	let doc = await readFile(
 		join(__dirname, 'docs/manual/key-generation.html'),
-		'utf8'
+		'utf8',
 	);
 	const markers = Object.entries(SPECIAL_MARKERS).map(
-		([k, { description }]) => `<li><code>[${k}]</code>: ${description}</li>`
+		([k, { description }]) => `<li><code>[${k}]</code>: ${description}</li>`,
 	);
 	const modifiers = Object.entries(MODIFIERS).map(
-		([k, { description }]) => `<li><code>:${k}</code>: ${description}</li>`
+		([k, { description }]) => `<li><code>:${k}</code>: ${description}</li>`,
 	);
 
 	doc = doc
 		.replace(
 			/<!--DEFAULT_KEY-->.*?<!--END-->/s,
-			`<!--DEFAULT_KEY-->${DEFAULT_KEY_TEMPLATE}<!--END-->`
+			`<!--DEFAULT_KEY-->${DEFAULT_KEY_TEMPLATE}<!--END-->`,
 		)
 		.replace(
 			/<!--MARKERS-->.*?<!--END-->/s,
-			`<!--MARKERS-->${markers.join('\n')}<!--END-->`
+			`<!--MARKERS-->${markers.join('\n')}<!--END-->`,
 		)
 		.replace(
 			/<!--MODIFIERS-->.*?<!--END-->/s,
-			`<!--MODIFIERS-->${modifiers.join('\n')}<!--END-->`
+			`<!--MODIFIERS-->${modifiers.join('\n')}<!--END-->`,
 		)
 		.replace(
 			/<!--WORDS-->.*?<!--END-->/s,
-			`<!--WORDS-->${[...functionWords].join(', ')}<!--END-->`
+			`<!--WORDS-->${[...functionWords].join(', ')}<!--END-->`,
 		);
 	await writeFile(join(__dirname, 'docs/manual/key-generation.html'), doc);
 }
@@ -228,14 +228,14 @@ function formatOptions(indent: number, lineWidth: number): string[] {
 			description.push(
 				'Examples:',
 				opt.examples.filter((example) => example).join(', '),
-				''
+				'',
 			);
 		}
 
 		return [
 			Object.keys(opt.cli).join(', '),
 			...description.flatMap((line) =>
-				wrapText(line, lineWidth - indent - 4).map((line) => `    ${line}`)
+				wrapText(line, lineWidth - indent - 4).map((line) => `    ${line}`),
 			),
 		].map((line) => `${' '.repeat(indent)}${line}`);
 	});
@@ -264,7 +264,7 @@ async function buildJSBundle() {
 	});
 	await writeFile(
 		'bibtex-tidy.js',
-		text + `\nmodule.exports = exports.default;`
+		text + `\nmodule.exports = exports.default;`,
 	);
 	console.timeEnd('JS bundle built');
 }
@@ -368,7 +368,7 @@ const regexpuPlugin: Plugin = {
 						unicodePropertyEscapes: 'transform',
 					});
 					return `(/${newPattern}/${flags.replace('u', '')}`;
-				}
+				},
 			);
 			return { contents: newContents, loader: 'ts' };
 		});
@@ -395,7 +395,7 @@ const googleFontPlugin: Plugin = {
 				const contents = Buffer.from(await res.arrayBuffer());
 				const loader = args.path.endsWith('.woff2') ? 'dataurl' : 'css';
 				return { contents, loader };
-			}
+			},
 		);
 	},
 };
@@ -408,7 +408,7 @@ const googleFontPlugin: Plugin = {
  */
 async function transpileForOldBrowsers(
 	bundle: OutputFile,
-	options?: Options
+	options?: Options,
 ): Promise<Output> {
 	return await swc(bundle.text, {
 		filename: bundle.path,
@@ -429,7 +429,7 @@ if (process.argv.includes('--serve')) {
 				generateKeyTemplatePage(),
 				generateCLIHelp(),
 				generateReadme(),
-			])
+			]),
 		)
 		.then(() =>
 			Promise.all([
@@ -439,6 +439,6 @@ if (process.argv.includes('--serve')) {
 				buildJSBundle(),
 				buildCLI(),
 				buildWebBundle(),
-			])
+			]),
 		);
 }

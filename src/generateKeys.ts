@@ -8,7 +8,7 @@ export const SPECIAL_MARKERS: Record<
 		description: string;
 		callback: (
 			valueLookup: Map<string, string>,
-			n: number | undefined
+			n: number | undefined,
 		) => string[];
 	}
 > = {
@@ -38,7 +38,7 @@ export const SPECIAL_MARKERS: Record<
 		callback: (v) => {
 			const authors = parseAuthors(v.get('author') ?? '', true);
 			return authors.map((author) =>
-				author.lastName.replace(/[^\p{Letter}]+/gu, '_')
+				author.lastName.replace(/[^\p{Letter}]+/gu, '_'),
 			);
 		},
 	},
@@ -128,7 +128,7 @@ class MissingRequiredData extends Error {}
 export function generateKeys(
 	ast: RootNode,
 	valueLookup: Map<EntryNode, Map<string, string>>,
-	template: string
+	template: string,
 ): Map<EntryNode, string> {
 	let template2 = template;
 	if (
@@ -169,7 +169,7 @@ export function generateKeys(
 
 export function generateKey(
 	valueLookup: Map<string, string>,
-	template: string
+	template: string,
 ): string | undefined {
 	try {
 		const newKey = template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (m) => {
@@ -227,7 +227,7 @@ export const functionWords = new Set([
 
 function nonFunctionWords(value: string): string[] {
 	return words(value).filter(
-		(word) => !functionWords.has(word.toLocaleLowerCase())
+		(word) => !functionWords.has(word.toLocaleLowerCase()),
 	);
 }
 
@@ -238,7 +238,7 @@ function words(value: string): string[] {
 function capitalize(words: string[]): string[] {
 	return words.map(
 		(word) =>
-			word.slice(0, 1).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase()
+			word.slice(0, 1).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase(),
 	);
 }
 

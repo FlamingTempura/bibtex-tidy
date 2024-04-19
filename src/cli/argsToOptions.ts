@@ -20,7 +20,7 @@ for (const opt of optionDefinitions) {
  */
 export function argsToOptions(
 	argv: string,
-	skipInputArgs?: boolean
+	skipInputArgs?: boolean,
 ): {
 	inputFiles: string[];
 	options: CLIOptions;

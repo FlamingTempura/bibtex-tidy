@@ -24,7 +24,7 @@ import {
 export function formatBibtex(
 	ast: RootNode,
 	options: OptionsNormalized,
-	replacementKeys?: Map<EntryNode, string>
+	replacementKeys?: Map<EntryNode, string>,
 ): string {
 	const { omit, tab, space } = options;
 
@@ -32,7 +32,7 @@ export function formatBibtex(
 	const omitFields = new Set<string>(omit);
 	let bibtex: string = ast.children
 		.map((child) =>
-			formatNode(child, options, indent, omitFields, replacementKeys)
+			formatNode(child, options, indent, omitFields, replacementKeys),
 		)
 		.join('')
 		.trimEnd();
@@ -47,7 +47,7 @@ function formatNode(
 	options: OptionsNormalized,
 	indent: string,
 	omitFields: Set<string>,
-	replacementKeys?: Map<EntryNode, string>
+	replacementKeys?: Map<EntryNode, string>,
 ): string {
 	if (child.type === 'text') {
 		return formatComment(child.text, options);
@@ -70,7 +70,7 @@ function formatNode(
 					options,
 					indent,
 					omitFields,
-					replacementKeys?.get(child.block)
+					replacementKeys?.get(child.block),
 				) + (options.blankLines ? '\n' : '')
 			);
 	}
@@ -82,7 +82,7 @@ function formatEntry(
 	options: OptionsNormalized,
 	indent: string,
 	omitFields: Set<string>,
-	replacementKey?: string
+	replacementKey?: string,
 ) {
 	const {
 		align,
@@ -125,7 +125,7 @@ function formatEntry(
 
 function formatComment(
 	comment: string,
-	{ stripComments, tidyComments }: OptionsNormalized
+	{ stripComments, tidyComments }: OptionsNormalized,
 ): string {
 	if (stripComments) return '';
 	if (tidyComments) {
@@ -141,7 +141,7 @@ function formatComment(
 
 export function formatValue(
 	field: FieldNode,
-	options: OptionsNormalized
+	options: OptionsNormalized,
 ): string | undefined {
 	const {
 		curly,
@@ -164,10 +164,10 @@ export function formatValue(
 
 	const indent: string = tab ? '\t' : ' '.repeat(space);
 	const enclosingBracesFields = new Set<string>(
-		(enclosingBraces ?? []).map((field) => field.toLocaleLowerCase())
+		(enclosingBraces ?? []).map((field) => field.toLocaleLowerCase()),
 	);
 	const removeBracesFields = new Set<string>(
-		(removeBraces ?? []).map((field) => field.toLocaleLowerCase())
+		(removeBraces ?? []).map((field) => field.toLocaleLowerCase()),
 	);
 
 	return field.value.concat
@@ -253,8 +253,8 @@ export function formatValue(
 						const wrapCol = wrap;
 						paragraphs = paragraphs.map((paragraph) =>
 							wrapText(paragraph, wrapCol - valIndent.length).join(
-								'\n' + valIndent
-							)
+								'\n' + valIndent,
+							),
 						);
 					}
 

@@ -28,7 +28,7 @@ export type CLIResult = {
  */
 export function testCLI(
 	bibtexs: string[] | { stdin: string },
-	options: CLIOptions = {}
+	options: CLIOptions = {},
 ): CLIResult {
 	const args: string[] = [];
 	const files: string[] = [];
