@@ -80,7 +80,33 @@
 <Sidebar on:tidy={handleTidy} {status} {running} bind:options />
 
 <style>
-	@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;500&family=Inconsolata:wght@400;600&display=swap');
+	@font-face {
+		font-family: 'IBM Plex Sans';
+		font-style: normal;
+		font-weight: 300;
+		src:
+			local('IBM Plex Sans Light'),
+			local('IBMPlexSans-Light'),
+			url('./fonts/Plex/IBMPlexSans-Light.woff2') format('woff2');
+	}
+	@font-face {
+		font-family: 'IBM Plex Sans';
+		font-style: normal;
+		font-weight: 500;
+		src:
+			local('IBM Plex Sans Regular'),
+			local('IBMPlexSans-Regular'),
+			url('./fonts/Plex/IBMPlexSans-Medium.woff2') format('woff2');
+	}
+	@font-face {
+		font-family: 'Inconsolata';
+		font-style: normal;
+		font-weight: 400;
+		src:
+			local('Inconsolata Regular'),
+			local('Inconsolata-Regular'),
+			url('./fonts/Inconsolata/Inconsolata-Regular.woff2') format('woff2');
+	}
 
 	:global(:root) {
 		/* https://coolors.co/gradient-palette/1c222a-505f69?number=10 */
@@ -119,7 +145,6 @@
 		--dark-gray: var(--light6);
 
 		--mono-normal: 400 14px 'Inconsolata', monospace;
-		--mono-bold: 600 14px 'Inconsolata', monospace;
 		--sans-normal: 300 14px 'IBM Plex Sans', sans-serif;
 		--sans-h1: 500 16px 'IBM Plex Sans', sans-serif;
 		--sans-h2: 500 14px 'IBM Plex Sans', sans-serif;

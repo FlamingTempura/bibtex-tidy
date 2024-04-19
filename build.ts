@@ -3,13 +3,7 @@ import { join } from 'path';
 import { env } from 'process';
 import { transform as swc, type Options, type Output } from '@swc/core';
 import { generateDtsBundle } from 'dts-bundle-generator';
-import {
-	build,
-	context,
-	type OnLoadResult,
-	type OutputFile,
-	type Plugin,
-} from 'esbuild';
+import { build, context, type OutputFile, type Plugin } from 'esbuild';
 import sveltePlugin from 'esbuild-svelte';
 import prettier from 'prettier';
 //@ts-expect-error
@@ -307,14 +301,11 @@ async function buildWebBundle() {
 		outfile: join(WEB_PATH, 'bundle.js'),
 		bundle: true,
 		write: false,
+		loader: { '.woff2': 'file' },
 		keepNames: true,
 		minify: true,
 		target: ['esnext'],
-		plugins: [
-			sveltePlugin({ preprocess: autoPreprocess() }),
-			googleFontPlugin,
-			regexpuPlugin,
-		],
+		plugins: [sveltePlugin({ preprocess: autoPreprocess() }), regexpuPlugin],
 	});
 
 	for (const file of outputFiles) {
@@ -339,12 +330,12 @@ async function serveWeb() {
 		bundle: true,
 		sourcemap: true,
 		write: false,
+		loader: { '.woff2': 'file' },
 		plugins: [
 			sveltePlugin({
 				preprocess: autoPreprocess(),
 				compilerOptions: { enableSourcemap: true },
 			}),
-			googleFontPlugin,
 		],
 	});
 	const server = await ctx.serve({ servedir: WEB_PATH });
@@ -372,31 +363,6 @@ const regexpuPlugin: Plugin = {
 			);
 			return { contents: newContents, loader: 'ts' };
 		});
-	},
-};
-
-// Downloads google fonts and injects them as base64 urls into bundle css
-const googleFontPlugin: Plugin = {
-	name: 'google-font-loader',
-	setup(build) {
-		build.onResolve({ filter: /^https?:\/\/fonts\./ }, (args) => ({
-			path: args.path,
-			namespace: 'http-url',
-		}));
-		build.onLoad(
-			{ filter: /.*/, namespace: 'http-url' },
-			async (args): Promise<OnLoadResult> => {
-				const res = await fetch(args.path, {
-					headers: {
-						// ensures google responds with woff2 fonts
-						'User-Agent': 'Mozilla/5.0 Firefox/90.0',
-					},
-				});
-				const contents = Buffer.from(await res.arrayBuffer());
-				const loader = args.path.endsWith('.woff2') ? 'dataurl' : 'css';
-				return { contents, loader };
-			},
-		);
 	},
 };
 
