@@ -162,3 +162,18 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 - Fix double braces adding closing braces (#410)
 - Upgrade dependencies
 - Accessibility tweaks
+
+### v1.13.0
+
+- Parse authors when checking entry similarity (#424)
+- Fix font encoding
+- Release v1.12.0
+- Linting
+- Add fonts to repo instead of downloading on each build
+- Prettier
+- Fix double braces adding closing braces (#410)
+- Upgrade dependencies
+- upgrade ts & build
+- Upgrade deps
+- Accessibility tweak
+- Upgrade dependencies
