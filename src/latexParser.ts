@@ -3,7 +3,7 @@ export class BlockNode {
 	constructor(
 		public kind: 'root' | 'square' | 'curly',
 		public parent?: BlockNode | CommandNode,
-		public children: (TextNode | CommandNode | BlockNode)[] = []
+		public children: (TextNode | CommandNode | BlockNode)[] = [],
 	) {
 		if (parent instanceof BlockNode) {
 			parent.children.push(this);
@@ -14,7 +14,10 @@ export class BlockNode {
 }
 export class TextNode {
 	type = 'text' as const;
-	constructor(public parent: BlockNode, public text: string = '') {
+	constructor(
+		public parent: BlockNode,
+		public text: string = '',
+	) {
 		parent.children.push(this);
 	}
 }
@@ -23,7 +26,7 @@ export class CommandNode {
 	constructor(
 		public parent: BlockNode,
 		public command: string = '',
-		public args: BlockNode[] = []
+		public args: BlockNode[] = [],
 	) {
 		parent.children.push(this);
 	}
@@ -76,14 +79,16 @@ export function parseLaTeX(input: string): BlockNode {
 					node = new BlockNode('curly', node);
 				} else if (char === '[') {
 					node = new BlockNode('square', node);
-				} else if (/\s/.test(char)) {
+				} else if (
+					(char === '}' && node.parent.kind === 'curly') ||
+					(char === ']' && node.parent.kind === 'square') ||
+					/\s/.test(char) ||
+					node.args.length > 0
+				) {
 					node = node.parent;
 					i--;
-				} else if (node.args.length === 0) {
-					node.command += char;
 				} else {
-					node = node.parent;
-					i--;
+					node.command += char;
 				}
 			}
 		}

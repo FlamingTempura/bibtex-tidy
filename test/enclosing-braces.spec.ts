@@ -44,6 +44,21 @@ const output2 = bibtex`
 }
 `;
 
+// https://github.com/FlamingTempura/bibtex-tidy/issues/410
+const input3 = bibtex`
+@article{Foo,
+  author = "Foo",
+	title = {Bar \textit{foo\textasteriskcentered}}
+}
+`;
+
+const output3 = bibtex`
+@article{Foo,
+  author        = "Foo",
+  title         = {{Bar \textit{foo\textasteriskcentered}}}
+}
+`;
+
 test('enclosing braces', async () => {
 	const tidied1 = await bibtexTidy(input, {
 		enclosingBraces: ['title', 'shorttitle', 'journal'],
@@ -53,4 +68,7 @@ test('enclosing braces', async () => {
 
 	const tidied2 = await bibtexTidy(input, { enclosingBraces: true });
 	strictEqual(output2, tidied2.bibtex);
+
+	const tidied3 = await bibtexTidy(input3, { enclosingBraces: true });
+	strictEqual(output3, tidied3.bibtex);
 });

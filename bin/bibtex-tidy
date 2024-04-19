@@ -620,14 +620,11 @@ function parseLaTeX(input) {
           node = new BlockNode2("curly", node);
         } else if (char === "[") {
           node = new BlockNode2("square", node);
-        } else if (/\s/.test(char)) {
+        } else if (char === "}" && node.parent.kind === "curly" || char === "]" && node.parent.kind === "square" || /\s/.test(char) || node.args.length > 0) {
           node = node.parent;
           i--;
-        } else if (node.args.length === 0) {
-          node.command += char;
         } else {
-          node = node.parent;
-          i--;
+          node.command += char;
         }
       }
     }

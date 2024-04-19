@@ -3184,7 +3184,7 @@ function _ts_generator(thisArg, body) {
           break;
         }
         case "command":
-          n === "{" ? (t = new ir("curly", t)) : n === "[" ? (t = new ir("square", t)) : /\s/.test(n) ? ((t = t.parent), i--) : t.args.length === 0 ? (t.command += n) : ((t = t.parent), i--);
+          n === "{" ? (t = new ir("curly", t)) : n === "[" ? (t = new ir("square", t)) : (n === "}" && t.parent.kind === "curly") || (n === "]" && t.parent.kind === "square") || /\s/.test(n) || t.args.length > 0 ? ((t = t.parent), i--) : (t.command += n);
       }
     }
     return e;
