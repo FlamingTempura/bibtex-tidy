@@ -309,13 +309,15 @@ async function buildWebBundle() {
 	});
 
 	for (const file of outputFiles) {
-		let text = file.text;
 		if (file.path.endsWith('.js')) {
+			let text = file.text;
 			text = (await transpileForOldBrowsers(file, { minify: true })).code;
 			text = jsBanner.join('\n') + text;
 			text = await prettier.format(text, { parser: 'babel', printWidth: 400 });
+			await writeFile(file.path, text);
+		} else {
+			await writeFile(file.path, file.contents);
 		}
-		await writeFile(file.path, text);
 	}
 
 	console.timeEnd('Web bundle built');
