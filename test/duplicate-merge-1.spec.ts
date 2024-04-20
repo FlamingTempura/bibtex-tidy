@@ -135,13 +135,13 @@ const output = bibtex`
 test('merge duplicates', async () => {
 	const tidied = await bibtexTidy(input, { duplicates: true, merge: true });
 	const warnings = tidied.api?.warnings.filter(
-		(w) => w.code === 'DUPLICATE_ENTRY',
+		(w) => w.code === 'DUPLICATE_ENTRY'
 	);
 	strictEqual(tidied.bibtex, output);
 	strictEqual(
 		warnings?.filter(
-			(warning) => warning.code === 'DUPLICATE_ENTRY' && warning.rule !== 'key',
+			(warning) => warning.code === 'DUPLICATE_ENTRY' && warning.rule !== 'key'
 		).length,
-		4,
+		4
 	);
 });

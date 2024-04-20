@@ -21,7 +21,7 @@ async function run() {
 
 export async function test(
 	name: string,
-	callback: () => unknown,
+	callback: () => unknown
 ): Promise<void> {
 	queue.push(async () => {
 		try {
@@ -67,7 +67,7 @@ type BibTeXTidyRunResult = {
 export async function bibtexTidy(
 	inputs: string | string[] | { stdin: string },
 	options?: CLIOptions,
-	targets: ('api' | 'cli' | 'web')[] = ['api', 'cli', 'web'],
+	targets: ('api' | 'cli' | 'web')[] = ['api', 'cli', 'web']
 ): Promise<BibTeXTidyRunResult> {
 	if (typeof inputs === 'string') inputs = [inputs];
 
@@ -102,14 +102,14 @@ export async function bibtexTidy(
 		strictEqual(
 			api.bibtex,
 			cli.bibtexs[0],
-			'API (+) and CLI (-) outputs differ',
+			'API (+) and CLI (-) outputs differ'
 		);
 	}
 	if (cli && web) {
 		strictEqual(
 			cli.bibtexs[0],
 			web.bibtex,
-			'CLI (+) and Web (-) outputs differ',
+			'CLI (+) and Web (-) outputs differ'
 		);
 	}
 	if (web && api) {

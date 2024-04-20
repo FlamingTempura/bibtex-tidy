@@ -31,6 +31,6 @@ test('CLI should not allow multiple input files without --modify (v2 flag)', asy
 	strictEqual(proc1.status, 1);
 	match(
 		proc1.stderr,
-		/Only one input file permitted unless using --modify\/-m/,
+		/Only one input file permitted unless using --modify\/-m/
 	);
 });

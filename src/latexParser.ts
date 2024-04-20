@@ -3,7 +3,7 @@ export class BlockNode {
 	constructor(
 		public kind: 'root' | 'square' | 'curly',
 		public parent?: BlockNode | CommandNode,
-		public children: (TextNode | CommandNode | BlockNode)[] = [],
+		public children: (TextNode | CommandNode | BlockNode)[] = []
 	) {
 		if (parent instanceof BlockNode) {
 			parent.children.push(this);
@@ -14,10 +14,7 @@ export class BlockNode {
 }
 export class TextNode {
 	type = 'text' as const;
-	constructor(
-		public parent: BlockNode,
-		public text: string = '',
-	) {
+	constructor(public parent: BlockNode, public text: string = '') {
 		parent.children.push(this);
 	}
 }
@@ -26,7 +23,7 @@ export class CommandNode {
 	constructor(
 		public parent: BlockNode,
 		public command: string = '',
-		public args: BlockNode[] = [],
+		public args: BlockNode[] = []
 	) {
 		parent.children.push(this);
 	}
