@@ -3053,7 +3053,7 @@ var specialCharacters = /* @__PURE__ */ new Map([
 function escapeSpecialCharacters(str) {
   var _a;
   const mathExpressions = [];
-  str = str.replace(/\$[^$]+\$/, (match) => {
+  str = str.replace(/\$[^\$]+\$/g, (match) => {
     mathExpressions.push(match);
     return `MATH.EXP.${mathExpressions.length - 1}`;
   });
@@ -3074,7 +3074,7 @@ function escapeSpecialCharacters(str) {
     newstr += (_a = specialCharacters.get(c)) != null ? _a : str[i];
   }
   return newstr.replace(
-    /MATH\.EXP\.(\d+)/,
+    /MATH\.EXP\.(\d+)/g,
     (_, i) => {
       var _a2;
       return (_a2 = mathExpressions[Number(i)]) != null ? _a2 : "";

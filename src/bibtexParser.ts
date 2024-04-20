@@ -5,10 +5,7 @@ export class RootNode {
 
 export class TextNode {
 	type = 'text' as const;
-	constructor(
-		public parent: RootNode,
-		public text: string,
-	) {
+	constructor(public parent: RootNode, public text: string) {
 		parent.children.push(this);
 	}
 }
@@ -26,7 +23,7 @@ export class CommentNode {
 		public parent: BlockNode,
 		public raw: string,
 		public braces: number,
-		public parens: number,
+		public parens: number
 	) {
 		parent.block = this;
 	}
@@ -37,7 +34,7 @@ class PreambleNode {
 		public parent: BlockNode,
 		public raw: string,
 		public braces: number,
-		public parens: number,
+		public parens: number
 	) {
 		parent.block = this;
 	}
@@ -48,7 +45,7 @@ class StringNode {
 		public parent: BlockNode,
 		public raw: string,
 		public braces: number,
-		public parens: number,
+		public parens: number
 	) {
 		parent.block = this;
 	}
@@ -58,10 +55,7 @@ export class EntryNode {
 	key?: string;
 	keyEnded?: boolean;
 	fields: FieldNode[];
-	constructor(
-		public parent: BlockNode,
-		public wrapType: '{' | '(',
-	) {
+	constructor(public parent: BlockNode, public wrapType: '{' | '(') {
 		parent.block = this;
 		this.fields = [];
 	}
@@ -70,10 +64,7 @@ export class FieldNode {
 	type = 'field' as const;
 	/** Each value is concatenated */
 	value: ConcatNode;
-	constructor(
-		public parent: EntryNode,
-		public name: string = '',
-	) {
+	constructor(public parent: EntryNode, public name: string = '') {
 		this.value = new ConcatNode(this);
 	}
 }
@@ -87,10 +78,7 @@ class ConcatNode {
 }
 class LiteralNode {
 	type = 'literal' as const;
-	constructor(
-		public parent: ConcatNode,
-		public value: string,
-	) {
+	constructor(public parent: ConcatNode, public value: string) {
 		parent.concat.push(this);
 	}
 }
@@ -258,7 +246,7 @@ export function generateAST(input: string): RootNode {
 						i,
 						line,
 						column,
-						`The entry key cannot contain whitespace`,
+						`The entry key cannot contain whitespace`
 					);
 				} else if (!isValidKeyCharacter(char)) {
 					throw new BibTeXSyntaxError(
@@ -267,7 +255,7 @@ export function generateAST(input: string): RootNode {
 						i,
 						line,
 						column,
-						`The entry key cannot contain the character (${char})`,
+						`The entry key cannot contain the character (${char})`
 					);
 				} else {
 					node.key = (node.key ?? '') + char;
@@ -408,7 +396,7 @@ export class BibTeXSyntaxError extends Error {
 		pos: number,
 		public line: number,
 		public column: number,
-		public hint?: string,
+		public hint?: string
 	) {
 		super(
 			`Line ${line}:${column}: Syntax Error in ${node.type} (${hint})\n` +
@@ -416,7 +404,7 @@ export class BibTeXSyntaxError extends Error {
 				'>>' +
 				input[pos] +
 				'<<' +
-				input.slice(pos + 1, pos + 20),
+				input.slice(pos + 1, pos + 20)
 		);
 		this.name = 'Syntax Error';
 		this.char = input[pos] ?? '';

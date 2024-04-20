@@ -5,7 +5,7 @@ import { specialCharacters } from './unicode';
 export function escapeSpecialCharacters(str: string): string {
 	const mathExpressions: string[] = [];
 
-	str = str.replace(/\$[^$]+\$/, (match) => {
+	str = str.replace(/\$[^\$]+\$/g, (match) => {
 		mathExpressions.push(match);
 		return `MATH.EXP.${mathExpressions.length - 1}`;
 	});
@@ -29,8 +29,8 @@ export function escapeSpecialCharacters(str: string): string {
 		newstr += specialCharacters.get(c) ?? str[i];
 	}
 	return newstr.replace(
-		/MATH\.EXP\.(\d+)/,
-		(_, i) => mathExpressions[Number(i)] ?? '',
+		/MATH\.EXP\.(\d+)/g,
+		(_, i) => mathExpressions[Number(i)] ?? ''
 	);
 }
 
@@ -90,7 +90,7 @@ export function unwrapText(str: string): string {
  */
 export function addEnclosingBraces(
 	str: string,
-	removeInsideBraces?: boolean,
+	removeInsideBraces?: boolean
 ): string {
 	if (removeInsideBraces) {
 		str = stringifyLaTeX(flattenLaTeX(parseLaTeX(str)));
@@ -124,7 +124,7 @@ export function formatPageRange(str: string): string {
 }
 
 export function isEntryNode(
-	node: TextNode | BlockNode,
+	node: TextNode | BlockNode
 ): node is BlockNode & { block: EntryNode } {
 	return node.type !== 'text' && node.block?.type === 'entry';
 }

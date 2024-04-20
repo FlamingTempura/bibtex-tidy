@@ -33,14 +33,14 @@ export async function teardown() {
 
 export async function testWeb(
 	input: string,
-	options_: Options = {},
+	options_: Options = {}
 ): Promise<WebResult> {
 	const options = normalizeOptions(options_);
 	const page = await getPage();
 
 	async function select(
 		selector: string,
-		timeout = 100,
+		timeout = 100
 	): Promise<ElementHandle<Element>> {
 		const element = await page.waitForSelector(selector, { timeout });
 		if (!element) throw new Error(`Could not find element ${selector}`);
@@ -71,7 +71,7 @@ export async function testWeb(
 					insert: value,
 				},
 			}),
-		input,
+		input
 	);
 
 	await setCheckbox('curly', !!options.curly);
@@ -175,13 +175,13 @@ export async function testWeb(
 	await select('[role=alert]', 3000);
 
 	const bibtex = await page.evaluate(() =>
-		window.cmEditor.state.doc.toString(),
+		window.cmEditor.state.doc.toString()
 	);
 
 	const warnings = (await page.evaluate(() =>
 		[...document.querySelectorAll('[role=alert] li')].map((li) => ({
 			code: li.textContent?.includes('duplicate') ? 'DUPLICATE_ENTRY' : '',
-		})),
+		}))
 	)) as Warning[];
 
 	return { bibtex, warnings };
