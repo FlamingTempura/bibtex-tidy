@@ -3,12 +3,14 @@ import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @article{foo,
-  title         = {{bar \& baz}}
+  title         = {{bar \& baz}},
+  author={Garc{\'\i}a-Patr{\'o}n, Ra{\'u}l and Renema, Jelmer J and Shchesnovich, Valery}
 }`;
 
 const expected = bibtex`
 @article{foo,
-  title         = {{bar \& baz}}
+  title         = {{bar \& baz}},
+  author        = {Garc{\'\i}a-Patr{\'o}n, Ra{\'u}l and Renema, Jelmer J and Shchesnovich, Valery}
 }
 `;
 

@@ -18,8 +18,9 @@ if (nodeVer < 12) {
 }
 
 async function start(): Promise<void> {
-	// process.stdin.isTTY seems to be true only if no input is piped to stdin
-	const hasStdin = !process.stdin.isTTY;
+	// process.stdin.isTTY seems to be true only if no input is piped to stdin. HACK - false
+	// positive with pre-commit script.
+	const hasStdin = !process.stdin.isTTY && process.env.PRE_COMMIT !== "1";
 
 	const { inputFiles, options, unknownArgs } = argsToOptions(
 		argv.slice(2),

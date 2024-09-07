@@ -8,8 +8,7 @@ const input = bibtex`
     year=2009,
     month=dec,
     title={{Quantum somethings}},journal={Journal of {B}lah},
-    booktitle={JOURNAL OF SOMETHINGS},
-  url={http://example.com/something_with/unusual?characters=faoo#bar}
+    booktitle={JOURNAL OF SOMETHINGS}
   }`;
 
 const output = bibtex`
@@ -19,8 +18,7 @@ const output = bibtex`
   month         = dec,
   title         = {Quantum somethings},
   journal       = {Journal of {B}lah},
-  booktitle     = {JOURNAL OF SOMETHINGS},
-  url           = {http://example.com/something\_with/unusual?characters=faoo\#bar}
+  booktitle     = {JOURNAL OF SOMETHINGS}
 }
 `;
 

@@ -1,6 +1,5 @@
 - id: bibtex-tidy
   name: bibtex-tidy
-  entry: bibtex-tidy
-  language: node
+  entry: ./bin/bibtex-tidy --modify
+  language: script
   types: ['bib']
-  files: ''
