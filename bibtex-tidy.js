@@ -4535,9 +4535,9 @@ function sortEntries(ast, fieldMaps, sort) {
       ast.children.sort((a, b) => {
         var _sortIndexes_get, _sortIndexes_get1;
         var _sortIndexes_get_get;
-        var ia = (_sortIndexes_get_get = (_sortIndexes_get = sortIndexes.get(a)) === null || _sortIndexes_get === void 0 ? void 0 : _sortIndexes_get.get(key)) !== null && _sortIndexes_get_get !== void 0 ? _sortIndexes_get_get : "￰";
+        var ia = (_sortIndexes_get_get = (_sortIndexes_get = sortIndexes.get(a)) === null || _sortIndexes_get === void 0 ? void 0 : _sortIndexes_get.get(key)) !== null && _sortIndexes_get_get !== void 0 ? _sortIndexes_get_get : "\uFFF0";
         var _sortIndexes_get_get1;
-        var ib = (_sortIndexes_get_get1 = (_sortIndexes_get1 = sortIndexes.get(b)) === null || _sortIndexes_get1 === void 0 ? void 0 : _sortIndexes_get1.get(key)) !== null && _sortIndexes_get_get1 !== void 0 ? _sortIndexes_get_get1 : "￰";
+        var ib = (_sortIndexes_get_get1 = (_sortIndexes_get1 = sortIndexes.get(b)) === null || _sortIndexes_get1 === void 0 ? void 0 : _sortIndexes_get1.get(key)) !== null && _sortIndexes_get_get1 !== void 0 ? _sortIndexes_get_get1 : "\uFFF0";
         if (typeof ia === "number") ia = String(ia).padStart(50, "0");
         if (typeof ib === "number") ib = String(ib).padStart(50, "0");
         return (desc ? ib : ia).localeCompare(desc ? ia : ib);
