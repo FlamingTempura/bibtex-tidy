@@ -4264,7 +4264,6 @@ var optionDefinitions = [
     deprecated: true
   }
 ];
-var optionDefinitionByKey = Object.fromEntries(optionDefinitions.map((opt) => [opt.key, opt]));
 
 // src/optionUtils.ts
 function normalizeOptions(options) {
@@ -4372,7 +4371,7 @@ function sortEntryFields(ast, fieldOrder) {
   }
 }
 
-// src/index.ts
+// src/tidy.ts
 function tidy(input, options_ = {}) {
   const options = normalizeOptions(options_);
   const inputFixed = convertCRLF(input);
@@ -4398,9 +4397,6 @@ function tidy(input, options_ = {}) {
   const bibtex = formatBibtex(ast, options, newKeys);
   return { bibtex, warnings, count: getEntries(ast).length };
 }
-function getEntries(ast) {
-  return ast.children.filter(isEntryNode).map((node) => node.block);
-}
 function generateValueLookup(ast, options) {
   return new Map(
     getEntries(ast).map((entry) => [
@@ -4416,6 +4412,9 @@ function generateValueLookup(ast, options) {
       )
     ])
   );
+}
+function getEntries(ast) {
+  return ast.children.filter(isEntryNode).map((node) => node.block);
 }
 
 // src/cli/argsParser.ts

@@ -3,17 +3,19 @@ let resetCopyBtnTimeout: ReturnType<typeof setTimeout>;
 let showAsCopied = false;
 export let bibtex: string;
 
-const handleCopy = async () => {
-	try {
-		await navigator.clipboard.writeText(bibtex);
-		showAsCopied = true;
-		clearInterval(resetCopyBtnTimeout);
-		resetCopyBtnTimeout = setTimeout(() => {
-			showAsCopied = false;
-		}, 3000);
-	} catch {
-		alert("Failed to copy");
-	}
+const handleCopy = () => {
+	navigator.clipboard
+		.writeText(bibtex)
+		.then(() => {
+			showAsCopied = true;
+			clearInterval(resetCopyBtnTimeout);
+			resetCopyBtnTimeout = setTimeout(() => {
+				showAsCopied = false;
+			}, 3000);
+		})
+		.catch(() => {
+			alert("Failed to copy");
+		});
 };
 </script>
 

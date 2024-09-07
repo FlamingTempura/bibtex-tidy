@@ -1,11 +1,9 @@
 import { chmod, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { env } from "node:process";
-import { type Options, type Output, transform as swc } from "@swc/core";
 import { generateDtsBundle } from "dts-bundle-generator";
-import { type OutputFile, type Plugin, build, context } from "esbuild";
+import { type BuildOptions, type Plugin, build, context } from "esbuild";
 import sveltePlugin from "esbuild-svelte";
-import prettier from "prettier";
 //@ts-expect-error missing types
 import rewritePattern from "regexpu-core";
 import autoPreprocess from "svelte-preprocess";
@@ -33,23 +31,31 @@ const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join(__dirname, "bin", "bibtex-tidy");
  * Flexbox                      21     12     6.1   28   11
  * WOFF2                        35     14     10    39  None
  * HTML main                    26     12      7    21  None
- * CSS appearance: none          4     12     3.1   2   None   (not essential)
- * regexp u flag                50     12     10    46  None   (polyfilled)
- * regexp \p{} char classes     64     79     11.1  78  None   (polyfilled)
+ * CSS appearance: none          4     12     3.1   2   None
+ * regexp u flag                50*    12     10    46  None   *downlevel by regexpu
+ * regexp \p{} char classes     64*    79     11.1* 78* None   *downlevel by regexpu
+ * Optional chaining            80*    80*    13.1* 74* None   *downlevel by esbuild
+ * Template literals            41     13     9.1   34  None
+ * let/const                    41     12     10    44   11
+ * Nullish coalescing           80*    80*    13.1* 72* None   *downlevel by esbuild
+ * for of                       38     12     7     13  None
+ * Spread operator              46     12     8     16  None
+ * Default arguments            49     14     10    15  None
+ * Destructuring                49     14     8     41  None
  * -----------------------------------------------------------
  * Min supported                49     79     10    49  None
  * -----------------------------------------------------------
  */
 // TODO: test on browserstack
 
-const BROWSER_TARGETS = {
-	chrome: "49",
-	edge: "79",
-	safari: "10",
-	firefox: "49",
-};
+const BROWSER_TARGETS: string[] = [
+	"chrome49",
+	"edge79",
+	"safari10",
+	"firefox49",
+];
 
-const NODE_TARGET: string[] = ["node12"];
+const NODE_TARGET = "node12";
 
 const banner: string[] = [
 	`bibtex-tidy v${version}`,
@@ -65,6 +71,73 @@ const jsBanner: string[] = [
 	" **/",
 	"",
 ];
+
+// Transforms unicode regexps for older browsers. This needs to be an esbuild
+// plugin so it can transform regexp literals before esbuild transforms them
+// into RegExp constructors. May be supported by swc in future
+// https://github.com/swc-project/swc/issues/1649
+const regexpuPlugin: Plugin = {
+	name: "regexpu",
+	setup(build) {
+		build.onLoad({ filter: /\.m?[jt]s$/, namespace: "" }, async (args) => {
+			const contents = await readFile(args.path, "utf8");
+			const newContents = contents.replace(
+				/\(\/(.*)\/([a-z]*u[a-z]*)/g,
+				(_, pattern, flags) => {
+					const newPattern = rewritePattern(pattern, flags, {
+						unicodeFlag: "transform",
+						unicodePropertyEscapes: "transform",
+					});
+					return `(/${newPattern}/${flags.replace("u", "")}`;
+				},
+			);
+			return { contents: newContents, loader: "ts" };
+		});
+	},
+};
+
+const webBuildOptions: BuildOptions = {
+	banner: { js: jsBanner.join("\n") },
+	bundle: true,
+	entryPoints: ["./src/ui/index.ts"],
+	keepNames: true,
+	loader: { ".woff2": "file" },
+	minify: true,
+	// esbuild replaces the extension, e.g. js for css
+	outfile: join(WEB_PATH, "bundle.js"),
+	platform: "browser",
+	plugins: [sveltePlugin({ preprocess: autoPreprocess() }), regexpuPlugin],
+	supported: {
+		// esbuild falsely identifies these as not supported for the target browsers
+		"for-of": true,
+		destructuring: true,
+		"const-and-let": true,
+		"default-argument": true,
+	},
+	target: BROWSER_TARGETS,
+};
+
+const jsLibBuildOptions: BuildOptions = {
+	banner: { js: jsBanner.join("\n") },
+	bundle: true,
+	entryPoints: ["./src/index.ts"],
+	keepNames: true,
+	outfile: join(__dirname, "bibtex-tidy.js"),
+	platform: "node",
+	plugins: [regexpuPlugin],
+	write: true,
+};
+
+const cliBuildOptions: BuildOptions = {
+	banner: { js: `#!/usr/bin/env node\n${jsBanner.join("\n")}` },
+	bundle: true,
+	entryPoints: [join(SRC_PATH, "cli", "cli.ts")],
+	outfile: CLI_BIN,
+	platform: "node",
+	sourcemap: env.NODE_ENV === "coverage" ? "inline" : false,
+	sourceRoot: "./",
+	target: [NODE_TARGET],
+};
 
 async function generateOptionTypes() {
 	const { outputFiles } = await build({
@@ -235,29 +308,7 @@ function formatOptions(indent: number, lineWidth: number): string[] {
 
 async function buildJSBundle() {
 	console.time("JS bundle built");
-	const { outputFiles } = await build({
-		entryPoints: ["./src/index.ts"],
-		bundle: true,
-		write: false,
-		format: "esm",
-		keepNames: true,
-		banner: { js: jsBanner.join("\n") },
-		plugins: [regexpuPlugin],
-		target: ["esnext"],
-	});
-	const bundle = outputFiles[0];
-	if (!bundle) throw new Error("Failed to build JS bundle");
-	const result = await transpileForOldBrowsers(bundle, {
-		module: { type: "commonjs" },
-	});
-	const text = await prettier.format(result.code, {
-		parser: "babel",
-		printWidth: 1000,
-	});
-	await writeFile(
-		"bibtex-tidy.js",
-		`${text}\nmodule.exports = exports.default;`,
-	);
+	await build(jsLibBuildOptions);
 	console.timeEnd("JS bundle built");
 }
 
@@ -273,64 +324,22 @@ async function buildTypeDeclarations() {
 
 async function buildCLI() {
 	console.time("CLI built");
-	await build({
-		bundle: true,
-		platform: "node",
-		banner: {
-			js: `#!/usr/bin/env node\n${jsBanner.join("\n")}`,
-		},
-		target: ["esnext", ...NODE_TARGET],
-		entryPoints: [join(SRC_PATH, "cli", "cli.ts")],
-		sourcemap: env.NODE_ENV === "coverage" ? "inline" : false,
-		sourceRoot: "./",
-		outfile: CLI_BIN,
-	});
+	await build(cliBuildOptions);
 	await chmod(CLI_BIN, 0o755); // rwxr-xr-x
 	console.timeEnd("CLI built");
 }
 
 async function buildWebBundle() {
 	console.time("Web bundle built");
-
-	const { outputFiles } = await build({
-		platform: "browser",
-		entryPoints: ["./src/ui/index.ts"],
-		// esbuild replaces the extension, e.g. js for css
-		outfile: join(WEB_PATH, "bundle.js"),
-		bundle: true,
-		write: false,
-		loader: { ".woff2": "file" },
-		keepNames: true,
-		minify: true,
-		target: ["esnext"],
-		plugins: [sveltePlugin({ preprocess: autoPreprocess() }), regexpuPlugin],
-	});
-
-	for (const file of outputFiles) {
-		if (file.path.endsWith(".js")) {
-			let text = file.text;
-			text = (await transpileForOldBrowsers(file, { minify: true })).code;
-			text = jsBanner.join("\n") + text;
-			text = await prettier.format(text, { parser: "babel", printWidth: 400 });
-			await writeFile(file.path, text);
-		} else {
-			await writeFile(file.path, file.contents);
-		}
-	}
-
+	await build(webBuildOptions);
 	console.timeEnd("Web bundle built");
 }
 
 async function serveWeb() {
 	const ctx = await context({
-		platform: "browser",
-		entryPoints: ["./src/ui/index.ts"],
-		// esbuild replaces the extension, e.g. js for css
-		outfile: join(WEB_PATH, "bundle.js"),
-		bundle: true,
+		...webBuildOptions,
 		sourcemap: true,
 		write: false,
-		loader: { ".woff2": "file" },
 		plugins: [
 			sveltePlugin({
 				preprocess: autoPreprocess(),
@@ -340,47 +349,6 @@ async function serveWeb() {
 	});
 	const server = await ctx.serve({ servedir: WEB_PATH });
 	console.log(`Access on http://localhost:${server.port}`);
-}
-
-// Transforms unicode regexps for older browsers. This needs to be an esbuild
-// plugin so it can transform regexp literals before esbuild transforms them
-// into RegExp constructors. May be supported by swc in future
-// https://github.com/swc-project/swc/issues/1649
-const regexpuPlugin: Plugin = {
-	name: "regexpu",
-	setup(build) {
-		build.onLoad({ filter: /\.m?[jt]s$/, namespace: "" }, async (args) => {
-			const contents = await readFile(args.path, "utf8");
-			const newContents = contents.replace(
-				/\(\/(.*)\/([a-z]*u[a-z]*)/g,
-				(_, pattern, flags) => {
-					const newPattern = rewritePattern(pattern, flags, {
-						unicodeFlag: "transform",
-						unicodePropertyEscapes: "transform",
-					});
-					return `(/${newPattern}/${flags.replace("u", "")}`;
-				},
-			);
-			return { contents: newContents, loader: "ts" };
-		});
-	},
-};
-
-/**
- * swc converts js syntax to support older browsers. ESBuild can kinda do this
- * but only for more recent browsers. swc is also far easier to configure than
- * babel. This has to happen after esbuild has finished because esbuild adds
- * syntax that needs to be transformed.
- */
-async function transpileForOldBrowsers(
-	bundle: OutputFile,
-	options?: Options,
-): Promise<Output> {
-	return await swc(bundle.text, {
-		filename: bundle.path,
-		env: { targets: BROWSER_TARGETS },
-		...options,
-	});
 }
 
 if (process.argv.includes("--serve")) {

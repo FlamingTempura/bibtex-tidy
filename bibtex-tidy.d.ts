@@ -329,12 +329,5 @@ export type BibTeXTidyResult = {
 };
 export declare function tidy(input: string, options_?: Options): BibTeXTidyResult;
 export declare function getEntries(ast: RootNode): EntryNode[];
-declare const _default: {
-	tidy: typeof tidy;
-};
-
-export {
-	_default as default,
-};
 
 export {};

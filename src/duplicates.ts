@@ -1,8 +1,7 @@
-import { getEntries } from ".";
-import type { Warning } from ".";
 import type { EntryNode, RootNode } from "./bibtexParser";
 import type { DuplicateRule, MergeStrategy } from "./optionUtils";
 import { parseAuthors } from "./parseAuthors";
+import { type Warning, getEntries } from "./tidy";
 import { alphaNum } from "./utils";
 
 export function checkForDuplicates(

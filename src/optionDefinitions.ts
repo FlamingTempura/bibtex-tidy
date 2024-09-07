@@ -558,9 +558,3 @@ export const optionDefinitions: OptionDefinition[] = [
 		deprecated: true,
 	},
 ];
-
-export const optionDefinitionByKey: Record<keyof Options, OptionDefinition> =
-	Object.fromEntries(optionDefinitions.map((opt) => [opt.key, opt])) as Record<
-		keyof Options,
-		OptionDefinition
-	>;
