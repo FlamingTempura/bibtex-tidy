@@ -4577,7 +4577,7 @@ if (nodeVer < 12) {
   (0, import_node_process.exit)(1);
 }
 async function start() {
-  const hasStdin = !process.stdin.isTTY;
+  const hasStdin = !process.stdin.isTTY && process.env.PRE_COMMIT !== "1";
   const { inputFiles, options, unknownArgs } = argsToOptions(
     import_node_process.argv.slice(2),
     hasStdin
