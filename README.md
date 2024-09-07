@@ -277,8 +277,5 @@ repos:
 
 The web application can be deployed locally using the provided Docker configuration:
 
-1. Build the Docker container: `docker build -t bibtex-tidy . -f docker/Dockerfile`
-2. Start the docker container as a service: `cd docker && docker-compose up -d`
-3. Visit the web application at http://localhost:8080 and do your BibTeX work
-4. Stop the docker service, when you don't need it anymore: `cd docker && docker-compose down`
-
+1. Build and start the container: `docker compose -f docker/docker-compose.yml up`
+2. Visit the web application at http://localhost:8080 and do your BibTeX work

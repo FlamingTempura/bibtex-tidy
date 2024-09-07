@@ -1,9 +1,7 @@
-version: '3.7'
-
 services:
   bibtex-tidy:
-    image: bibtex-tidy
-    restart: unless-stopped
+    image: nginx:1.27.1-alpine-slim
+    volumes:
+      - ../docs:/usr/share/nginx/html
     ports:
-      - "127.0.0.1:8080:8080"
-
+      - 8080:80
