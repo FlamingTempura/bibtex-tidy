@@ -2924,7 +2924,7 @@ var specialCharacters = /* @__PURE__ */ new Map([
 function escapeSpecialCharacters(str) {
   let result = str;
   const mathExpressions = [];
-  result = result.replace(/\$[^$]+\$/, (match) => {
+  result = result.replace(/\$[^$]+\$/g, (match) => {
     mathExpressions.push(match);
     return `MATH.EXP.${mathExpressions.length - 1}`;
   });
@@ -2945,7 +2945,7 @@ function escapeSpecialCharacters(str) {
     newstr += specialCharacters.get(c) ?? result[i];
   }
   return newstr.replace(
-    /MATH\.EXP\.(\d+)/,
+    /MATH\.EXP\.(\d+)/g,
     (_, i) => mathExpressions[Number(i)] ?? ""
   );
 }

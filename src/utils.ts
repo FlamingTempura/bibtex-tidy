@@ -6,7 +6,7 @@ export function escapeSpecialCharacters(str: string): string {
 	let result = str;
 	const mathExpressions: string[] = [];
 
-	result = result.replace(/\$[^$]+\$/, (match) => {
+	result = result.replace(/\$[^$]+\$/g, (match) => {
 		mathExpressions.push(match);
 		return `MATH.EXP.${mathExpressions.length - 1}`;
 	});
@@ -30,7 +30,7 @@ export function escapeSpecialCharacters(str: string): string {
 		newstr += specialCharacters.get(c) ?? result[i];
 	}
 	return newstr.replace(
-		/MATH\.EXP\.(\d+)/,
+		/MATH\.EXP\.(\d+)/g,
 		(_, i) => mathExpressions[Number(i)] ?? "",
 	);
 }
