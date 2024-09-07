@@ -183,5 +183,6 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 - Support filenames with spaces (#416, #428)
 - Do not flatten braces which contain commands (#407, #423)
 - Do not encode special characters in verbatim fields like url (#415)
-- Upgrade dependencies
 - Pre-commit hook changed to script so that dev dependencies are not required (#427)
+- Fix math escaping (#430)
+- Upgrade dependencies
