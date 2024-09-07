@@ -1,3 +1,5 @@
+type KeyValues = { key: string; values: string[] };
+
 /**
  * Options where we must assume that values following it that begin with - are not
  * options, but descending order values.
@@ -8,145 +10,138 @@ const OPTIONS_WITH_SORTED_VALUES = [
 	"--sort-properties",
 ];
 
-type Mode =
-	| "key"
-	| "single-letter-keys"
-	| "value"
-	| "csv-value"
-	| "double-quoted"
-	| "single-quoted";
-
 /**
  * Parses shell arguments of the form <input files> <options> (in any order). Options with
  * values can be specified as --thing=a,b,c or --thing a b c. However, some values can
  * being with "-", e.g when setting a field to sort in descending order.
  */
-export function parseArguments(argv: string): KeyValues[] {
-	const kvs: KeyValues[] = [];
-
-	let mode: Mode = "value";
-	let prevMode: Mode = "key";
-
-	let currValue = "";
-	let currKey = "";
+export function parseCLIArguments(
+	argv: string[],
+	noTrailingInputPaths?: boolean,
+): Record<string, string[]> {
+	let inputPaths: string[] = [];
+	const keyValues: Record<string, string[]> = {};
+	let currKey: string | undefined;
 	let currValues: string[] = [];
+	let mode: "root" | "values" = "root";
 
-	function flushKV() {
-		if (currKey || currValues.length > 0) {
-			kvs.push({ key: currKey, values: currValues });
-		}
+	function flushKey() {
+		if (!currKey) return;
+		keyValues[currKey] = currValues;
+		currKey = undefined;
 		currValues = [];
-		currValue = "";
-		currKey = "";
 	}
 
-	function flushValue() {
-		if (currValue) {
-			currValues.push(currValue);
-		}
-		currValue = "";
-	}
+	for (const arg of argv) {
+		const matchesStdinMarker = arg === "-";
+		const matchesLongArg = arg.startsWith("--");
+		const matchesShortArg = arg.startsWith("-");
+		const isNegatedValue =
+			matchesShortArg &&
+			currKey &&
+			OPTIONS_WITH_SORTED_VALUES.includes(currKey);
 
-	for (let i = 0; i < argv.length; i++) {
-		const c = argv[i];
-		const next = argv[i + 1];
-		switch (mode) {
-			case "value": {
-				if (c === '"') {
-					prevMode = mode;
-					mode = "double-quoted";
-				} else if (c === "'") {
-					prevMode = mode;
-					mode = "single-quoted";
-				} else if (currValue === "-" && c === "-") {
-					flushKV();
-					currKey = "--";
-					mode = "key";
-				} else if (
-					currValue === "" &&
-					c === "-" &&
-					next?.match(/[a-zA-Z]/) &&
-					!OPTIONS_WITH_SORTED_VALUES.includes(currKey)
-				) {
-					currValue = "";
-					flushKV();
-					mode = "single-letter-keys";
-				} else if (c === " ") {
-					flushValue();
-				} else {
-					currValue += c;
-				}
-				break;
+		if (matchesLongArg) {
+			flushKey();
+			const parsed = parseLongCLIOption(arg);
+			if (parsed.values.length > 0) {
+				keyValues[parsed.key] = parsed.values;
+			} else {
+				currKey = parsed.key;
+				mode = "values";
 			}
-
-			case "csv-value": {
-				if (c === '"') {
-					prevMode = mode;
-					mode = "double-quoted";
-				} else if (c === "'") {
-					prevMode = mode;
-					mode = "single-quoted";
-				} else if (currValue === "-" && c === "-") {
-					flushKV();
-					currKey = "--";
-					mode = "key";
-				} else if (c === ",") {
-					flushValue();
-				} else if (c === " ") {
-					flushValue();
-					flushKV();
-					mode = "value";
-				} else {
-					currValue += c;
-				}
-				break;
+		} else if (matchesShortArg && !matchesStdinMarker && !isNegatedValue) {
+			flushKey();
+			for (const c of arg.slice(1)) {
+				const key = `-${c}`;
+				keyValues[key] = [];
+				currKey = key;
+				mode = "values";
 			}
-
-			case "double-quoted": {
-				if (c === '"') {
-					mode = prevMode;
-				} else {
-					currValue += c;
-				}
-				break;
-			}
-
-			case "single-quoted": {
-				if (c === "'") {
-					mode = prevMode;
-				} else {
-					currValue += c;
-				}
-				break;
-			}
-
-			case "key": {
-				if (c === " ") {
-					mode = "value";
-				} else if (c === "=") {
-					mode = "csv-value";
-				} else {
-					currKey += c;
-				}
-				break;
-			}
-
-			case "single-letter-keys": {
-				if (c === " ") {
-					mode = "value";
-				} else {
-					flushKV();
-					currKey = `-${c}`;
-				}
-				break;
-			}
+		} else if (mode === "root") {
+			inputPaths.push(arg);
+		} else if (mode === "values") {
+			currValues.push(arg);
 		}
 	}
 
-	flushValue();
-	flushKV();
+	if (inputPaths.length === 0 && !noTrailingInputPaths) {
+		inputPaths = currValues;
+		currValues = [];
+	}
 
-	return kvs;
+	flushKey();
+
+	return { ...keyValues, "": inputPaths };
 }
 
-type KeyValues = { key: string; values: string[] };
+export function parseLongCLIOption(arg: string): KeyValues {
+	let mode: "key" | "values" | "double-quoted" | "single-quoted" = "key";
+	let currToken = "";
+	let key: string | undefined;
+	const values: string[] = [];
+
+	if (!arg.startsWith("-")) {
+		throw new Error(`Error parsing arg ${arg}`);
+	}
+
+	function flushToken() {
+		if (!currToken) return;
+		if (mode === "key") {
+			key = currToken;
+		} else if (mode === "values") {
+			values.push(currToken);
+		}
+		currToken = "";
+	}
+
+	for (const c of arg) {
+		switch (mode) {
+			case "key":
+				if (c === "=") {
+					key = currToken;
+					currToken = "";
+					mode = "values";
+				} else {
+					currToken += c;
+				}
+				break;
+
+			case "values":
+				if (c === '"') {
+					mode = "double-quoted";
+				} else if (c === "'") {
+					mode = "single-quoted";
+				} else if (c === ",") {
+					flushToken();
+				} else {
+					currToken += c;
+				}
+				break;
+
+			case "double-quoted":
+				if (c === '"') {
+					mode = "values";
+				} else {
+					currToken += c;
+				}
+				break;
+
+			case "single-quoted":
+				if (c === "'") {
+					mode = "values";
+				} else {
+					currToken += c;
+				}
+				break;
+		}
+	}
+
+	flushToken();
+
+	if (!key) {
+		throw new Error(`Failed to parse argument ${arg}`);
+	}
+
+	return { key, values };
+}

@@ -22,7 +22,7 @@ async function start(): Promise<void> {
 	const hasStdin = !process.stdin.isTTY;
 
 	const { inputFiles, options, unknownArgs } = argsToOptions(
-		argv.slice(2).join(" "),
+		argv.slice(2),
 		hasStdin,
 	);
 

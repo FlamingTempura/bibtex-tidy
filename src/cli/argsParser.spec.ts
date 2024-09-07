@@ -1,58 +1,129 @@
 import { deepStrictEqual } from "node:assert";
-import { test } from "../../test/utils";
-import { parseArguments } from "./argsParser";
 
-test("parseArguments", async () => {
-	deepStrictEqual(parseArguments(""), []);
+import { describe, it } from "node:test";
+import { parseCLIArguments, parseLongCLIOption } from "./argsParser";
 
-	deepStrictEqual(parseArguments("foo.bib something.txt"), [
-		{ key: "", values: ["foo.bib", "something.txt"] },
-	]);
+describe("parseCLIArguments", () => {
+	it("parses 0 arguments", () => {
+		deepStrictEqual(parseCLIArguments([]), { "": [] });
+	});
 
-	deepStrictEqual(parseArguments("--arg"), [{ key: "--arg", values: [] }]);
+	it("parses input paths", () => {
+		deepStrictEqual(parseCLIArguments(["foo.bib", "something.txt"]), {
+			"": ["foo.bib", "something.txt"],
+		});
+	});
 
-	deepStrictEqual(parseArguments("-a"), [{ key: "-a", values: [] }]);
+	it("parses options", () => {
+		deepStrictEqual(parseCLIArguments(["--arg", "-a"]), {
+			"": [],
+			"--arg": [],
+			"-a": [],
+		});
+	});
 
-	deepStrictEqual(
-		parseArguments(
-			"--no-tidy-comments --space 3 --trailing-commas --foo --sort-fields=author,title foo.bib something.txt",
-		),
-		[
-			{ key: "--no-tidy-comments", values: [] },
-			{ key: "--space", values: ["3"] },
-			{ key: "--trailing-commas", values: [] },
-			{ key: "--foo", values: [] },
-			{ key: "--sort-fields", values: ["author", "title"] },
-			{ key: "", values: ["foo.bib", "something.txt"] },
-		],
-	);
+	it("parses options with values", () => {
+		deepStrictEqual(parseCLIArguments(["--arg", "foo", "bar", "-a"]), {
+			"": [],
+			"--arg": ["foo", "bar"],
+			"-a": [],
+		});
+	});
 
-	deepStrictEqual(
-		parseArguments(
-			"--no-tidy-comments --space 3 --trailing-commas --foo -vol --sort-fields=-author,title foo.bib something.txt",
-		),
-		[
-			{ key: "--no-tidy-comments", values: [] },
-			{ key: "--space", values: ["3"] },
-			{ key: "--trailing-commas", values: [] },
-			{ key: "--foo", values: [] },
-			// -vol gets interpreted as options because it does not follow a 'sortable' option
-			{ key: "-v", values: [] },
-			{ key: "-o", values: [] },
-			{ key: "-l", values: [] },
-			{ key: "--sort-fields", values: ["-author", "title"] },
-			{ key: "", values: ["foo.bib", "something.txt"] },
-		],
-	);
+	it("parses inputs paths and options", () => {
+		deepStrictEqual(
+			parseCLIArguments(["moo.bib", "--arg", "foo", "bar", "-a"]),
+			{
+				"": ["moo.bib"],
+				"--arg": ["foo", "bar"],
+				"-a": [],
+			},
+		);
+	});
 
-	deepStrictEqual(
-		parseArguments(
-			'--space "3" --sort-fields="-author boo","title" "foo.bib" "something.txt"',
-		),
-		[
-			{ key: "--space", values: ["3"] },
-			{ key: "--sort-fields", values: ["-author boo", "title"] },
-			{ key: "", values: ["foo.bib", "something.txt"] },
-		],
-	);
+	it("parses trailing inputs paths", () => {
+		deepStrictEqual(
+			parseCLIArguments(["--arg", "foo", "bar", "-a", "moo.bib"]),
+			{
+				"": ["moo.bib"],
+				"--arg": ["foo", "bar"],
+				"-a": [],
+			},
+		);
+	});
+
+	it("does not parse trailing inputs paths if disabled", () => {
+		deepStrictEqual(
+			parseCLIArguments(["--arg", "foo", "bar", "-a", "moo.bib"], true),
+			{
+				"": [],
+				"--arg": ["foo", "bar"],
+				"-a": ["moo.bib"],
+			},
+		);
+	});
+
+	it("does not parse negated value as option", () => {
+		deepStrictEqual(parseCLIArguments(["moo.bib", "--sort", "-foo"]), {
+			"": ["moo.bib"],
+			"--sort": ["-foo"],
+		});
+	});
+
+	it("parses short args", () => {
+		deepStrictEqual(parseCLIArguments(["moo.bib", "-mo"]), {
+			"": ["moo.bib"],
+			"-m": [],
+			"-o": [],
+		});
+	});
+
+	it("parses short args with values", () => {
+		deepStrictEqual(parseCLIArguments(["moo.bib", "-mo", "foo"]), {
+			"": ["moo.bib"],
+			"-m": [],
+			"-o": ["foo"],
+		});
+	});
+});
+
+describe("parseCLIOption", () => {
+	it("parses option without value", () => {
+		deepStrictEqual(parseLongCLIOption("-f"), {
+			key: "-f",
+			values: [],
+		});
+		deepStrictEqual(parseLongCLIOption("--foo"), {
+			key: "--foo",
+			values: [],
+		});
+	});
+
+	it("parses option with a value", () => {
+		deepStrictEqual(parseLongCLIOption("--foo=bar"), {
+			key: "--foo",
+			values: ["bar"],
+		});
+	});
+
+	it("parses option with multiple values", () => {
+		deepStrictEqual(parseLongCLIOption("--foo=bar,moo"), {
+			key: "--foo",
+			values: ["bar", "moo"],
+		});
+	});
+
+	it("parses option with quoted values", () => {
+		deepStrictEqual(parseLongCLIOption("--foo=\"bar\",'moo'"), {
+			key: "--foo",
+			values: ["bar", "moo"],
+		});
+	});
+
+	it("parses option with values including spaces", () => {
+		deepStrictEqual(parseLongCLIOption('--foo="bar moo"'), {
+			key: "--foo",
+			values: ["bar moo"],
+		});
+	});
 });

@@ -1,6 +1,6 @@
 import { optionDefinitions } from "../optionDefinitions";
 import type { CLIOptions } from "../optionUtils";
-import { parseArguments } from "./argsParser";
+import { parseCLIArguments } from "./argsParser";
 
 const cliOptions: Record<string, { option: keyof CLIOptions; value: unknown }> =
 	{};
@@ -19,36 +19,20 @@ for (const opt of optionDefinitions) {
  * would be assumed to be the input file)
  */
 export function argsToOptions(
-	argv: string,
+	argv: string[],
 	skipInputArgs?: boolean,
 ): {
 	inputFiles: string[];
 	options: CLIOptions;
 	unknownArgs: string[];
 } {
-	const kvs = parseArguments(argv);
+	const { "": inputPaths, ...kvs } = parseCLIArguments(argv, skipInputArgs);
 
 	const options: CLIOptions = {};
-	const inputFiles: string[] = [];
+	const inputFiles = inputPaths ?? [];
 	const unknownArgs: string[] = [];
 
-	const last = kvs.at(-1);
-	if (
-		!kvs.some((kv) => kv.key === "") &&
-		!skipInputArgs &&
-		last &&
-		last.values.length > 0
-	) {
-		kvs.push({ key: "", values: last.values });
-		last.values = [];
-	}
-
-	for (const { key, values } of kvs) {
-		if (key === "") {
-			inputFiles.push(...values);
-			continue;
-		}
-
+	for (const [key, values] of Object.entries(kvs)) {
 		const cliOption = cliOptions[key];
 		if (!cliOption) {
 			unknownArgs.push(key);

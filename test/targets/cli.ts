@@ -12,8 +12,9 @@ export const BIN_PATH =
 
 mkdirSync(TMP_DIR, { recursive: true });
 
-function getTmpPath(i = 0): string {
-	return join(TMP_DIR, `tmp${i}.bib`);
+let num = 0;
+function getTmpPath(path?: string): string {
+	return join(TMP_DIR, path ?? `tmp${num++}.bib`);
 }
 
 export type CLIResult = {
@@ -29,12 +30,13 @@ export type CLIResult = {
 export function testCLI(
 	bibtexs: string[] | { stdin: string },
 	options: CLIOptions = {},
+	testOptions?: { inputPaths: string[] },
 ): CLIResult {
 	const args: string[] = [];
 	const files: string[] = [];
 	if (Array.isArray(bibtexs)) {
 		for (const [i, bibtex] of bibtexs.entries()) {
-			const tmpFile = getTmpPath(i);
+			const tmpFile = getTmpPath(testOptions?.inputPaths[i]);
 			writeFileSync(tmpFile, bibtex, "utf8");
 			args.push(tmpFile);
 			files.push(tmpFile);

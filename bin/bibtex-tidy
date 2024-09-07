@@ -675,7 +675,13 @@ function parseLaTeX(input) {
           node = new BlockNode2("curly", node);
         } else if (char === "[") {
           node = new BlockNode2("square", node);
-        } else if (char === "}" && node.parent.kind === "curly" || char === "]" && node.parent.kind === "square" || /\s/.test(char) || node.args.length > 0) {
+        } else if (char === "}") {
+          node = node.parent;
+          if (node.type === "block" && node.kind === "curly") {
+            node.keepBraces = true;
+          }
+          i--;
+        } else if (char === "]" && node.parent.kind === "square" || /\s/.test(char) || node.args.length > 0) {
           node = node.parent;
           i--;
         } else {
@@ -4423,115 +4429,113 @@ var OPTIONS_WITH_SORTED_VALUES = [
   "--sort-fields",
   "--sort-properties"
 ];
-function parseArguments(argv2) {
-  const kvs = [];
-  let mode = "value";
-  let prevMode = "key";
-  let currValue = "";
-  let currKey = "";
+function parseCLIArguments(argv2, noTrailingInputPaths) {
+  let inputPaths = [];
+  const keyValues = {};
+  let currKey;
   let currValues = [];
-  function flushKV() {
-    if (currKey || currValues.length > 0) {
-      kvs.push({ key: currKey, values: currValues });
-    }
+  let mode = "root";
+  function flushKey() {
+    if (!currKey) return;
+    keyValues[currKey] = currValues;
+    currKey = void 0;
     currValues = [];
-    currValue = "";
-    currKey = "";
   }
-  function flushValue() {
-    if (currValue) {
-      currValues.push(currValue);
+  for (const arg of argv2) {
+    const matchesStdinMarker = arg === "-";
+    const matchesLongArg = arg.startsWith("--");
+    const matchesShortArg = arg.startsWith("-");
+    const isNegatedValue = matchesShortArg && currKey && OPTIONS_WITH_SORTED_VALUES.includes(currKey);
+    if (matchesLongArg) {
+      flushKey();
+      const parsed = parseLongCLIOption(arg);
+      if (parsed.values.length > 0) {
+        keyValues[parsed.key] = parsed.values;
+      } else {
+        currKey = parsed.key;
+        mode = "values";
+      }
+    } else if (matchesShortArg && !matchesStdinMarker && !isNegatedValue) {
+      flushKey();
+      for (const c of arg.slice(1)) {
+        const key = `-${c}`;
+        keyValues[key] = [];
+        currKey = key;
+        mode = "values";
+      }
+    } else if (mode === "root") {
+      inputPaths.push(arg);
+    } else if (mode === "values") {
+      currValues.push(arg);
     }
-    currValue = "";
   }
-  for (let i = 0; i < argv2.length; i++) {
-    const c = argv2[i];
-    const next = argv2[i + 1];
+  if (inputPaths.length === 0 && !noTrailingInputPaths) {
+    inputPaths = currValues;
+    currValues = [];
+  }
+  flushKey();
+  return { ...keyValues, "": inputPaths };
+}
+function parseLongCLIOption(arg) {
+  let mode = "key";
+  let currToken = "";
+  let key;
+  const values = [];
+  if (!arg.startsWith("-")) {
+    throw new Error(`Error parsing arg ${arg}`);
+  }
+  function flushToken() {
+    if (!currToken) return;
+    if (mode === "key") {
+      key = currToken;
+    } else if (mode === "values") {
+      values.push(currToken);
+    }
+    currToken = "";
+  }
+  for (const c of arg) {
     switch (mode) {
-      case "value": {
-        if (c === '"') {
-          prevMode = mode;
-          mode = "double-quoted";
-        } else if (c === "'") {
-          prevMode = mode;
-          mode = "single-quoted";
-        } else if (currValue === "-" && c === "-") {
-          flushKV();
-          currKey = "--";
-          mode = "key";
-        } else if (currValue === "" && c === "-" && (next == null ? void 0 : next.match(/[a-zA-Z]/)) && !OPTIONS_WITH_SORTED_VALUES.includes(currKey)) {
-          currValue = "";
-          flushKV();
-          mode = "single-letter-keys";
-        } else if (c === " ") {
-          flushValue();
+      case "key":
+        if (c === "=") {
+          key = currToken;
+          currToken = "";
+          mode = "values";
         } else {
-          currValue += c;
+          currToken += c;
         }
         break;
-      }
-      case "csv-value": {
+      case "values":
         if (c === '"') {
-          prevMode = mode;
           mode = "double-quoted";
         } else if (c === "'") {
-          prevMode = mode;
           mode = "single-quoted";
-        } else if (currValue === "-" && c === "-") {
-          flushKV();
-          currKey = "--";
-          mode = "key";
         } else if (c === ",") {
-          flushValue();
-        } else if (c === " ") {
-          flushValue();
-          flushKV();
-          mode = "value";
+          flushToken();
         } else {
-          currValue += c;
+          currToken += c;
         }
         break;
-      }
-      case "double-quoted": {
+      case "double-quoted":
         if (c === '"') {
-          mode = prevMode;
+          mode = "values";
         } else {
-          currValue += c;
+          currToken += c;
         }
         break;
-      }
-      case "single-quoted": {
+      case "single-quoted":
         if (c === "'") {
-          mode = prevMode;
+          mode = "values";
         } else {
-          currValue += c;
+          currToken += c;
         }
         break;
-      }
-      case "key": {
-        if (c === " ") {
-          mode = "value";
-        } else if (c === "=") {
-          mode = "csv-value";
-        } else {
-          currKey += c;
-        }
-        break;
-      }
-      case "single-letter-keys": {
-        if (c === " ") {
-          mode = "value";
-        } else {
-          flushKV();
-          currKey = `-${c}`;
-        }
-        break;
-      }
     }
   }
-  flushValue();
-  flushKV();
-  return kvs;
+  flushToken();
+  if (!key) {
+    throw new Error(`Failed to parse argument ${arg}`);
+  }
+  return { key, values };
 }
 
 // src/cli/argsToOptions.ts
@@ -4542,20 +4546,11 @@ for (const opt of optionDefinitions) {
   }
 }
 function argsToOptions(argv2, skipInputArgs) {
-  const kvs = parseArguments(argv2);
+  const { "": inputPaths, ...kvs } = parseCLIArguments(argv2, skipInputArgs);
   const options = {};
-  const inputFiles = [];
+  const inputFiles = inputPaths != null ? inputPaths : [];
   const unknownArgs = [];
-  const last = kvs.at(-1);
-  if (!kvs.some((kv) => kv.key === "") && !skipInputArgs && last && last.values.length > 0) {
-    kvs.push({ key: "", values: last.values });
-    last.values = [];
-  }
-  for (const { key, values } of kvs) {
-    if (key === "") {
-      inputFiles.push(...values);
-      continue;
-    }
+  for (const [key, values] of Object.entries(kvs)) {
     const cliOption = cliOptions[key];
     if (!cliOption) {
       unknownArgs.push(key);
@@ -4580,7 +4575,7 @@ if (nodeVer < 12) {
 async function start() {
   const hasStdin = !process.stdin.isTTY;
   const { inputFiles, options, unknownArgs } = argsToOptions(
-    import_node_process.argv.slice(2).join(" "),
+    import_node_process.argv.slice(2),
     hasStdin
   );
   if (unknownArgs.length > 0) {
