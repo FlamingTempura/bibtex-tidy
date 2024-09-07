@@ -418,7 +418,7 @@ function _ts_generator(thisArg, body) {
   var z1 = Object.getOwnPropertyNames;
   var H1 = Object.getPrototypeOf,
     j1 = Object.prototype.hasOwnProperty;
-  var h = (r, e) => Ko(r, "name", { value: e, configurable: !0 });
+  var a = (r, e) => Ko(r, "name", { value: e, configurable: !0 });
   var v = (r, e) => () => (e || r((e = { exports: {} }).exports, e), e.exports);
   var Y1 = (r, e, t, i) => {
     var _iteratorNormalCompletion = true,
@@ -450,7 +450,7 @@ function _ts_generator(thisArg, body) {
   var $n = (r, e, t) => ((t = r != null ? V1(H1(r)) : {}), Y1(e || !r || !r.__esModule ? Ko(t, "default", { value: r, enumerable: !0 }) : t, r));
   var Je = v((Zo, bc) => {
     "use strict";
-    var Lr = h(function (r) {
+    var Lr = a(function (r) {
       return r && r.Math === Math && r;
     }, "check");
     bc.exports =
@@ -480,14 +480,14 @@ function _ts_generator(thisArg, body) {
     Ec.exports = !J1(function () {
       return (
         Object.defineProperty({}, 1, {
-          get: function get() {
+          get: a(function () {
             return 7;
-          },
+          }, "get"),
         })[1] !== 7
       );
     });
   });
-  var qn = v((qw, Cc) => {
+  var qn = v((Vw, Cc) => {
     "use strict";
     var G1 = Ge();
     Cc.exports = !G1(function () {
@@ -495,7 +495,7 @@ function _ts_generator(thisArg, body) {
       return typeof r != "function" || r.hasOwnProperty("prototype");
     });
   });
-  var Wt = v((Vw, Bc) => {
+  var Wt = v((Ww, Bc) => {
     "use strict";
     var X1 = qn(),
       Vn = Function.prototype.call;
@@ -511,19 +511,19 @@ function _ts_generator(thisArg, body) {
       vc = Object.getOwnPropertyDescriptor,
       K1 = vc && !xc.call({ 1: 2 }, 1);
     Ac.f = K1
-      ? h(function (e) {
+      ? a(function (e) {
           var t = vc(this, e);
           return !!t && t.enumerable;
         }, "propertyIsEnumerable")
       : xc;
   });
-  var Wi = v((Hw, Sc) => {
+  var Wi = v((jw, Sc) => {
     "use strict";
     Sc.exports = function (r, e) {
       return { enumerable: !(r & 1), configurable: !(r & 2), writable: !(r & 4), value: e };
     };
   });
-  var Te = v((jw, _c) => {
+  var Te = v((Yw, _c) => {
     "use strict";
     var wc = qn(),
       Qc = Function.prototype,
@@ -537,7 +537,7 @@ function _ts_generator(thisArg, body) {
           };
         };
   });
-  var Or = v((Yw, Lc) => {
+  var Or = v((Jw, Lc) => {
     "use strict";
     var Uc = Te(),
       eb = Uc({}.toString),
@@ -546,7 +546,7 @@ function _ts_generator(thisArg, body) {
       return tb(eb(r), 8, -1);
     };
   });
-  var Tc = v((Jw, Oc) => {
+  var Tc = v((Gw, Oc) => {
     "use strict";
     var ib = Te(),
       rb = Ge(),
@@ -561,13 +561,13 @@ function _ts_generator(thisArg, body) {
         }
       : tl;
   });
-  var Wn = v((Gw, Rc) => {
+  var Wn = v((Xw, Rc) => {
     "use strict";
     Rc.exports = function (r) {
       return r == null;
     };
   });
-  var Tr = v((Xw, Nc) => {
+  var Tr = v((Kw, Nc) => {
     "use strict";
     var ob = Wn(),
       lb = TypeError;
@@ -576,7 +576,7 @@ function _ts_generator(thisArg, body) {
       return r;
     };
   });
-  var zi = v((Kw, Mc) => {
+  var zi = v((Zw, Mc) => {
     "use strict";
     var ub = Tc(),
       ab = Tr();
@@ -584,7 +584,7 @@ function _ts_generator(thisArg, body) {
       return ub(ab(r));
     };
   });
-  var Re = v((Zw, Pc) => {
+  var Re = v((e4, Pc) => {
     "use strict";
     var il = typeof document == "object" && document.all;
     Pc.exports =
@@ -596,37 +596,37 @@ function _ts_generator(thisArg, body) {
             return typeof r == "function";
           };
   });
-  var bt = v((e4, Ic) => {
+  var bt = v((t4, Ic) => {
     "use strict";
     var hb = Re();
     Ic.exports = function (r) {
       return typeof r == "object" ? r !== null : hb(r);
     };
   });
-  var Hi = v((t4, $c) => {
+  var Hi = v((i4, $c) => {
     "use strict";
     var rl = Je(),
       cb = Re(),
-      fb = h(function (r) {
+      fb = a(function (r) {
         return cb(r) ? r : void 0;
       }, "aFunction");
     $c.exports = function (r, e) {
       return arguments.length < 2 ? fb(rl[r]) : rl[r] && rl[r][e];
     };
   });
-  var zn = v((r4, qc) => {
+  var zn = v((n4, qc) => {
     "use strict";
     var db = Te();
     qc.exports = db({}.isPrototypeOf);
   });
-  var Hc = v((n4, zc) => {
+  var Hc = v((s4, zc) => {
     "use strict";
     var pb = Je(),
       Vc = pb.navigator,
       Wc = Vc && Vc.userAgent;
     zc.exports = Wc ? String(Wc) : "";
   });
-  var Zc = v((s4, Kc) => {
+  var Zc = v((o4, Kc) => {
     "use strict";
     var Xc = Je(),
       nl = Hc(),
@@ -640,7 +640,7 @@ function _ts_generator(thisArg, body) {
     !Hn && nl && ((yt = nl.match(/Edge\/(\d+)/)), (!yt || yt[1] >= 74) && ((yt = nl.match(/Chrome\/(\d+)/)), yt && (Hn = +yt[1])));
     Kc.exports = Hn;
   });
-  var sl = v((o4, tf) => {
+  var sl = v((l4, tf) => {
     "use strict";
     var ef = Zc(),
       mb = Ge(),
@@ -653,12 +653,12 @@ function _ts_generator(thisArg, body) {
         return !Db(r) || !(Object(r) instanceof Symbol) || (!Symbol.sham && ef && ef < 41);
       });
   });
-  var ol = v((l4, rf) => {
+  var ol = v((u4, rf) => {
     "use strict";
     var Fb = sl();
     rf.exports = Fb && !Symbol.sham && typeof Symbol.iterator == "symbol";
   });
-  var ll = v((u4, nf) => {
+  var ll = v((a4, nf) => {
     "use strict";
     var bb = Hi(),
       yb = Re(),
@@ -674,7 +674,7 @@ function _ts_generator(thisArg, body) {
           return yb(e) && Eb(e.prototype, Bb(r));
         };
   });
-  var jn = v((a4, sf) => {
+  var jn = v((h4, sf) => {
     "use strict";
     var xb = String;
     sf.exports = function (r) {
@@ -685,7 +685,7 @@ function _ts_generator(thisArg, body) {
       }
     };
   });
-  var ji = v((h4, of) => {
+  var ji = v((c4, of) => {
     "use strict";
     var vb = Re(),
       Ab = jn(),
@@ -695,7 +695,7 @@ function _ts_generator(thisArg, body) {
       throw new kb(Ab(r) + " is not a function");
     };
   });
-  var Yn = v((c4, lf) => {
+  var Yn = v((f4, lf) => {
     "use strict";
     var Sb = ji(),
       wb = Wn();
@@ -704,7 +704,7 @@ function _ts_generator(thisArg, body) {
       return wb(t) ? void 0 : Sb(t);
     };
   });
-  var af = v((f4, uf) => {
+  var af = v((d4, uf) => {
     "use strict";
     var ul = Wt(),
       al = Re(),
@@ -716,11 +716,11 @@ function _ts_generator(thisArg, body) {
       throw new Qb("Can't convert object to primitive value");
     };
   });
-  var Yi = v((d4, hf) => {
+  var Yi = v((p4, hf) => {
     "use strict";
     hf.exports = !1;
   });
-  var Jn = v((p4, ff) => {
+  var Jn = v((m4, ff) => {
     "use strict";
     var cf = Je(),
       _b = Object.defineProperty;
@@ -733,7 +733,7 @@ function _ts_generator(thisArg, body) {
       return e;
     };
   });
-  var Gn = v((m4, mf) => {
+  var Gn = v((g4, mf) => {
     "use strict";
     var Ub = Yi(),
       Lb = Je(),
@@ -742,14 +742,14 @@ function _ts_generator(thisArg, body) {
       pf = (mf.exports = Lb[df] || Ob(df, {}));
     (pf.versions || (pf.versions = [])).push({ version: "3.38.1", mode: Ub ? "pure" : "global", copyright: "\xa9 2014-2024 Denis Pushkarev (zloirock.ru)", license: "https://github.com/zloirock/core-js/blob/v3.38.1/LICENSE", source: "https://github.com/zloirock/core-js" });
   });
-  var cl = v((g4, Df) => {
+  var cl = v((D4, Df) => {
     "use strict";
     var gf = Gn();
     Df.exports = function (r, e) {
       return gf[r] || (gf[r] = e || {});
     };
   });
-  var Xn = v((D4, Ff) => {
+  var Xn = v((F4, Ff) => {
     "use strict";
     var Tb = Tr(),
       Rb = Object;
@@ -757,18 +757,18 @@ function _ts_generator(thisArg, body) {
       return Rb(Tb(r));
     };
   });
-  var Et = v((F4, bf) => {
+  var Et = v((b4, bf) => {
     "use strict";
     var Nb = Te(),
       Mb = Xn(),
       Pb = Nb({}.hasOwnProperty);
     bf.exports =
       Object.hasOwn ||
-      h(function (e, t) {
+      a(function (e, t) {
         return Pb(Mb(e), t);
       }, "hasOwn");
   });
-  var fl = v((y4, yf) => {
+  var fl = v((E4, yf) => {
     "use strict";
     var Ib = Te(),
       $b = 0,
@@ -778,7 +778,7 @@ function _ts_generator(thisArg, body) {
       return "Symbol(" + (r === void 0 ? "" : r) + ")_" + Vb(++$b + qb, 36);
     };
   });
-  var rt = v((E4, Cf) => {
+  var rt = v((C4, Cf) => {
     "use strict";
     var Wb = Je(),
       zb = cl(),
@@ -793,7 +793,7 @@ function _ts_generator(thisArg, body) {
       return Ef(dl, r) || (dl[r] = jb && Ef(Ji, r) ? Ji[r] : Jb("Symbol." + r)), dl[r];
     };
   });
-  var Af = v((C4, vf) => {
+  var Af = v((B4, vf) => {
     "use strict";
     var Gb = Wt(),
       Bf = bt(),
@@ -814,7 +814,7 @@ function _ts_generator(thisArg, body) {
       return e === void 0 && (e = "number"), Kb(r, e);
     };
   });
-  var pl = v((B4, kf) => {
+  var pl = v((x4, kf) => {
     "use strict";
     var i2 = Af(),
       r2 = ll();
@@ -823,7 +823,7 @@ function _ts_generator(thisArg, body) {
       return r2(e) ? e : e + "";
     };
   });
-  var gl = v((x4, wf) => {
+  var gl = v((v4, wf) => {
     "use strict";
     var n2 = Je(),
       Sf = bt(),
@@ -833,7 +833,7 @@ function _ts_generator(thisArg, body) {
       return s2 ? ml.createElement(r) : {};
     };
   });
-  var Dl = v((v4, Qf) => {
+  var Dl = v((A4, Qf) => {
     "use strict";
     var o2 = Xe(),
       l2 = Ge(),
@@ -843,9 +843,9 @@ function _ts_generator(thisArg, body) {
       !l2(function () {
         return (
           Object.defineProperty(u2("div"), "a", {
-            get: function get() {
+            get: a(function () {
               return 7;
-            },
+            }, "get"),
           }).a !== 7
         );
       });
@@ -863,7 +863,7 @@ function _ts_generator(thisArg, body) {
       _f = Object.getOwnPropertyDescriptor;
     Uf.f = a2
       ? _f
-      : h(function (e, t) {
+      : a(function (e, t) {
           if (((e = d2(e)), (t = p2(t)), g2))
             try {
               return _f(e, t);
@@ -871,7 +871,7 @@ function _ts_generator(thisArg, body) {
           if (m2(e, t)) return f2(!h2(c2.f, e, t), e[t]);
         }, "getOwnPropertyDescriptor");
   });
-  var bl = v((S4, Lf) => {
+  var bl = v((Q4, Lf) => {
     "use strict";
     var D2 = Xe(),
       F2 = Ge();
@@ -881,7 +881,7 @@ function _ts_generator(thisArg, body) {
         return Object.defineProperty(function () {}, "prototype", { value: 42, writable: !1 }).prototype !== 42;
       });
   });
-  var zt = v((w4, Of) => {
+  var zt = v((_4, Of) => {
     "use strict";
     var b2 = bt(),
       y2 = String,
@@ -906,7 +906,7 @@ function _ts_generator(thisArg, body) {
       Bl = "writable";
     Rf.f = C2
       ? x2
-        ? h(function (e, t, i) {
+        ? a(function (e, t, i) {
             if ((Kn(e), (t = Tf(t)), Kn(i), typeof e == "function" && t === "prototype" && "value" in i && Bl in i && !i[Bl])) {
               var n = A2(e, t);
               n && n[Bl] && ((e[t] = i.value), (i = { configurable: Cl in i ? i[Cl] : n[Cl], enumerable: El in i ? i[El] : n[El], writable: !1 }));
@@ -914,7 +914,7 @@ function _ts_generator(thisArg, body) {
             return yl(e, t, i);
           }, "defineProperty")
         : yl
-      : h(function (e, t, i) {
+      : a(function (e, t, i) {
           if ((Kn(e), (t = Tf(t)), Kn(i), B2))
             try {
               return yl(e, t, i);
@@ -923,7 +923,7 @@ function _ts_generator(thisArg, body) {
           return "value" in i && (e[t] = i.value), e;
         }, "defineProperty");
   });
-  var Zn = v((U4, Nf) => {
+  var Zn = v((O4, Nf) => {
     "use strict";
     var k2 = Xe(),
       S2 = Qt(),
@@ -936,18 +936,18 @@ function _ts_generator(thisArg, body) {
           return (r[e] = t), r;
         };
   });
-  var es = v((L4, Pf) => {
+  var es = v((T4, Pf) => {
     "use strict";
     var xl = Xe(),
       Q2 = Et(),
       Mf = Function.prototype,
       _2 = xl && Object.getOwnPropertyDescriptor,
       vl = Q2(Mf, "name"),
-      U2 = vl && h(function () {}, "something").name === "something",
+      U2 = vl && a(function () {}, "something").name === "something",
       L2 = vl && (!xl || (xl && _2(Mf, "name").configurable));
     Pf.exports = { EXISTS: vl, PROPER: U2, CONFIGURABLE: L2 };
   });
-  var kl = v((T4, If) => {
+  var kl = v((N4, If) => {
     "use strict";
     var O2 = Te(),
       T2 = Re(),
@@ -959,14 +959,14 @@ function _ts_generator(thisArg, body) {
       });
     If.exports = Al.inspectSource;
   });
-  var Vf = v((R4, qf) => {
+  var Vf = v((M4, qf) => {
     "use strict";
     var N2 = Je(),
       M2 = Re(),
       $f = N2.WeakMap;
     qf.exports = M2($f) && /native code/.test(String($f));
   });
-  var ts = v((N4, zf) => {
+  var ts = v((P4, zf) => {
     "use strict";
     var P2 = cl(),
       I2 = fl(),
@@ -975,11 +975,11 @@ function _ts_generator(thisArg, body) {
       return Wf[r] || (Wf[r] = I2(r));
     };
   });
-  var is = v((M4, Hf) => {
+  var is = v((I4, Hf) => {
     "use strict";
     Hf.exports = {};
   });
-  var ss = v((P4, Jf) => {
+  var ss = v(($4, Jf) => {
     "use strict";
     var $2 = Vf(),
       Yf = Je(),
@@ -995,10 +995,10 @@ function _ts_generator(thisArg, body) {
       rs,
       Rr,
       ns,
-      j2 = h(function (r) {
+      j2 = a(function (r) {
         return ns(r) ? Rr(r) : rs(r, {});
       }, "enforce"),
-      Y2 = h(function (r) {
+      Y2 = a(function (r) {
         return function (e) {
           var t;
           if (!q2(e) || (t = Rr(e)).type !== r) throw new Ql("Incompatible receiver, " + r + " required");
@@ -1010,32 +1010,32 @@ function _ts_generator(thisArg, body) {
         (Ct.get = Ct.get),
         (Ct.has = Ct.has),
         (Ct.set = Ct.set),
-        (rs = h(function (r, e) {
+        (rs = a(function (r, e) {
           if (Ct.has(r)) throw new Ql(jf);
           return (e.facade = r), Ct.set(r, e), e;
         }, "set")),
-        (Rr = h(function (r) {
+        (Rr = a(function (r) {
           return Ct.get(r) || {};
         }, "get")),
-        (ns = h(function (r) {
+        (ns = a(function (r) {
           return Ct.has(r);
         }, "has")))
       : ((Ei = W2("state")),
         (z2[Ei] = !0),
-        (rs = h(function (r, e) {
+        (rs = a(function (r, e) {
           if (Sl(r, Ei)) throw new Ql(jf);
           return (e.facade = r), V2(r, Ei, e), e;
         }, "set")),
-        (Rr = h(function (r) {
+        (Rr = a(function (r) {
           return Sl(r, Ei) ? r[Ei] : {};
         }, "get")),
-        (ns = h(function (r) {
+        (ns = a(function (r) {
           return Sl(r, Ei);
         }, "has")));
     var Ct, Ei;
     Jf.exports = { set: rs, get: Rr, has: ns, enforce: j2, getterFor: Y2 };
   });
-  var Ll = v(($4, Kf) => {
+  var Ll = v((V4, Kf) => {
     "use strict";
     var Ul = Te(),
       J2 = Ge(),
@@ -1067,13 +1067,13 @@ function _ts_generator(thisArg, body) {
         return os(i, "source") || (i.source = ry(sy, typeof e == "string" ? e : "")), r;
       });
     Function.prototype.toString = oy(
-      h(function () {
+      a(function () {
         return (G2(this) && ey(this).source) || K2(this);
       }, "toString"),
       "toString",
     );
   });
-  var Gi = v((V4, Zf) => {
+  var Gi = v((z4, Zf) => {
     "use strict";
     var ly = Re(),
       uy = Qt(),
@@ -1093,18 +1093,18 @@ function _ts_generator(thisArg, body) {
       return r;
     };
   });
-  var td = v((W4, ed) => {
+  var td = v((H4, ed) => {
     "use strict";
     var cy = Math.ceil,
       fy = Math.floor;
     ed.exports =
       Math.trunc ||
-      h(function (e) {
+      a(function (e) {
         var t = +e;
         return (t > 0 ? fy : cy)(t);
       }, "trunc");
   });
-  var Ol = v((H4, id) => {
+  var Ol = v((Y4, id) => {
     "use strict";
     var dy = td();
     id.exports = function (r) {
@@ -1112,7 +1112,7 @@ function _ts_generator(thisArg, body) {
       return e !== e || e === 0 ? 0 : dy(e);
     };
   });
-  var Tl = v((j4, rd) => {
+  var Tl = v((J4, rd) => {
     "use strict";
     var py = Ol(),
       my = Math.max,
@@ -1122,7 +1122,7 @@ function _ts_generator(thisArg, body) {
       return t < 0 ? my(t + e, 0) : gy(t, e);
     };
   });
-  var sd = v((Y4, nd) => {
+  var sd = v((G4, nd) => {
     "use strict";
     var Dy = Ol(),
       Fy = Math.min;
@@ -1131,19 +1131,19 @@ function _ts_generator(thisArg, body) {
       return e > 0 ? Fy(e, 9007199254740991) : 0;
     };
   });
-  var Nr = v((J4, od) => {
+  var Nr = v((X4, od) => {
     "use strict";
     var by = sd();
     od.exports = function (r) {
       return by(r.length);
     };
   });
-  var ad = v((G4, ud) => {
+  var ad = v((K4, ud) => {
     "use strict";
     var yy = zi(),
       Ey = Tl(),
       Cy = Nr(),
-      ld = h(function (r) {
+      ld = a(function (r) {
         return function (e, t, i) {
           var n = yy(e),
             s = Cy(n);
@@ -1158,7 +1158,7 @@ function _ts_generator(thisArg, body) {
       }, "createMethod");
     ud.exports = { includes: ld(!0), indexOf: ld(!1) };
   });
-  var Nl = v((K4, cd) => {
+  var Nl = v((e3, cd) => {
     "use strict";
     var By = Te(),
       Rl = Et(),
@@ -1176,7 +1176,7 @@ function _ts_generator(thisArg, body) {
       return n;
     };
   });
-  var us = v((Z4, fd) => {
+  var us = v((t3, fd) => {
     "use strict";
     fd.exports = ["constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "toLocaleString", "toString", "valueOf"];
   });
@@ -1187,7 +1187,7 @@ function _ts_generator(thisArg, body) {
       wy = Sy.concat("length", "prototype");
     dd.f =
       Object.getOwnPropertyNames ||
-      h(function (e) {
+      a(function (e) {
         return ky(e, wy);
       }, "getOwnPropertyNames");
   });
@@ -1195,7 +1195,7 @@ function _ts_generator(thisArg, body) {
     "use strict";
     md.f = Object.getOwnPropertySymbols;
   });
-  var Fd = v((r3, Dd) => {
+  var Fd = v((s3, Dd) => {
     "use strict";
     var Qy = Hi(),
       _y = Te(),
@@ -1205,13 +1205,13 @@ function _ts_generator(thisArg, body) {
       Ty = _y([].concat);
     Dd.exports =
       Qy("Reflect", "ownKeys") ||
-      h(function (e) {
+      a(function (e) {
         var t = Uy.f(Oy(e)),
           i = Ly.f;
         return i ? Ty(t, i(e)) : t;
       }, "ownKeys");
   });
-  var Ed = v((s3, yd) => {
+  var Ed = v((l3, yd) => {
     "use strict";
     var bd = Et(),
       Ry = Fd(),
@@ -1224,12 +1224,12 @@ function _ts_generator(thisArg, body) {
       }
     };
   });
-  var Bd = v((o3, Cd) => {
+  var Bd = v((u3, Cd) => {
     "use strict";
     var Py = Ge(),
       Iy = Re(),
       $y = /#|\.prototype\./,
-      Mr = h(function (r, e) {
+      Mr = a(function (r, e) {
         var t = Vy[qy(r)];
         return t === zy ? !0 : t === Wy ? !1 : Iy(e) ? Py(e) : !!e;
       }, "isForced"),
@@ -1241,7 +1241,7 @@ function _ts_generator(thisArg, body) {
       zy = (Mr.POLYFILL = "P");
     Cd.exports = Mr;
   });
-  var ii = v((u3, xd) => {
+  var ii = v((h3, xd) => {
     "use strict";
     var as = Je(),
       Hy = Fl().f,
@@ -1258,28 +1258,28 @@ function _ts_generator(thisArg, body) {
         o,
         l,
         u,
-        a,
+        h,
         c;
       if ((i ? (o = as) : n ? (o = as[t] || Jy(t, {})) : (o = as[t] && as[t].prototype), o))
         for (l in e) {
-          if (((a = e[l]), r.dontCallGetSet ? ((c = Hy(o, l)), (u = c && c.value)) : (u = o[l]), (s = Xy(i ? l : t + (n ? "." : "#") + l, r.forced)), !s && u !== void 0)) {
-            if (typeof a == typeof u) continue;
-            Gy(a, u);
+          if (((h = e[l]), r.dontCallGetSet ? ((c = Hy(o, l)), (u = c && c.value)) : (u = o[l]), (s = Xy(i ? l : t + (n ? "." : "#") + l, r.forced)), !s && u !== void 0)) {
+            if (typeof h == typeof u) continue;
+            Gy(h, u);
           }
-          (r.sham || (u && u.sham)) && jy(a, "sham", !0), Yy(o, l, a, r);
+          (r.sham || (u && u.sham)) && jy(h, "sham", !0), Yy(o, l, h, r);
         }
     };
   });
-  var Ml = v((a3, vd) => {
+  var Ml = v((c3, vd) => {
     "use strict";
     var Ky = Or();
     vd.exports =
       Array.isArray ||
-      h(function (e) {
+      a(function (e) {
         return Ky(e) === "Array";
       }, "isArray");
   });
-  var kd = v((c3, Ad) => {
+  var kd = v((d3, Ad) => {
     "use strict";
     var Zy = TypeError,
       eE = 9007199254740991;
@@ -1288,7 +1288,7 @@ function _ts_generator(thisArg, body) {
       return r;
     };
   });
-  var wd = v((f3, Sd) => {
+  var wd = v((p3, Sd) => {
     "use strict";
     var tE = Or(),
       iE = Te();
@@ -1296,7 +1296,7 @@ function _ts_generator(thisArg, body) {
       if (tE(r) === "Function") return iE(r);
     };
   });
-  var hs = v((d3, _d) => {
+  var hs = v((m3, _d) => {
     "use strict";
     var Qd = wd(),
       rE = ji(),
@@ -1315,19 +1315,19 @@ function _ts_generator(thisArg, body) {
       );
     };
   });
-  var Od = v((p3, Ld) => {
+  var Od = v((g3, Ld) => {
     "use strict";
     var oE = Ml(),
       lE = Nr(),
       uE = kd(),
       aE = hs(),
-      Ud = h(function (r, e, t, i, n, s, o, l) {
-        for (var u = n, a = 0, c = o ? aE(o, l) : !1, f, d; a < i; ) a in t && ((f = c ? c(t[a], a, e) : t[a]), s > 0 && oE(f) ? ((d = lE(f)), (u = Ud(r, e, f, d, u, s - 1) - 1)) : (uE(u + 1), (r[u] = f)), u++), a++;
+      Ud = a(function (r, e, t, i, n, s, o, l) {
+        for (var u = n, h = 0, c = o ? aE(o, l) : !1, f, d; h < i; ) h in t && ((f = c ? c(t[h], h, e) : t[h]), s > 0 && oE(f) ? ((d = lE(f)), (u = Ud(r, e, f, d, u, s - 1) - 1)) : (uE(u + 1), (r[u] = f)), u++), h++;
         return u;
       }, "flattenIntoArray");
     Ld.exports = Ud;
   });
-  var Nd = v((g3, Rd) => {
+  var Nd = v((F3, Rd) => {
     "use strict";
     var hE = rt(),
       cE = hE("toStringTag"),
@@ -1335,7 +1335,7 @@ function _ts_generator(thisArg, body) {
     Td[cE] = "z";
     Rd.exports = String(Td) === "[object z]";
   });
-  var Pr = v((D3, Md) => {
+  var Pr = v((b3, Md) => {
     "use strict";
     var fE = Nd(),
       dE = Re(),
@@ -1349,7 +1349,7 @@ function _ts_generator(thisArg, body) {
             return arguments;
           })(),
         ) === "Arguments",
-      FE = h(function (r, e) {
+      FE = a(function (r, e) {
         try {
           return r[e];
         } catch (e) {}
@@ -1361,7 +1361,7 @@ function _ts_generator(thisArg, body) {
           return r === void 0 ? "Undefined" : r === null ? "Null" : typeof (t = FE((e = gE(r)), mE)) == "string" ? t : DE ? cs(e) : (i = cs(e)) === "Object" && dE(e.callee) ? "Arguments" : i;
         };
   });
-  var Wd = v((b3, Vd) => {
+  var Wd = v((E3, Vd) => {
     "use strict";
     var bE = Te(),
       yE = Ge(),
@@ -1369,12 +1369,12 @@ function _ts_generator(thisArg, body) {
       EE = Pr(),
       CE = Hi(),
       BE = kl(),
-      Id = h(function () {}, "noop"),
+      Id = a(function () {}, "noop"),
       $d = CE("Reflect", "construct"),
       Pl = /^\s*(?:class|function)\b/,
       xE = bE(Pl.exec),
       vE = !Pl.test(Id),
-      Ir = h(function (e) {
+      Ir = a(function (e) {
         if (!Pd(e)) return !1;
         try {
           return $d(Id, [], e), !0;
@@ -1382,7 +1382,7 @@ function _ts_generator(thisArg, body) {
           return !1;
         }
       }, "isConstructor"),
-      qd = h(function (e) {
+      qd = a(function (e) {
         if (!Pd(e)) return !1;
         switch (EE(e)) {
           case "AsyncFunction":
@@ -1413,7 +1413,7 @@ function _ts_generator(thisArg, body) {
         ? qd
         : Ir;
   });
-  var Yd = v((E3, jd) => {
+  var Yd = v((B3, jd) => {
     "use strict";
     var zd = Ml(),
       AE = Wd(),
@@ -1426,7 +1426,7 @@ function _ts_generator(thisArg, body) {
       return zd(r) && ((e = r.constructor), AE(e) && (e === Hd || zd(e.prototype)) ? (e = void 0) : kE(e) && ((e = e[wE]), e === null && (e = void 0))), e === void 0 ? Hd : e;
     };
   });
-  var Gd = v((C3, Jd) => {
+  var Gd = v((x3, Jd) => {
     "use strict";
     var QE = Yd();
     Jd.exports = function (r, e) {
@@ -1444,7 +1444,7 @@ function _ts_generator(thisArg, body) {
     _E(
       { target: "Array", proto: !0 },
       {
-        flatMap: h(function (e) {
+        flatMap: a(function (e) {
           var t = OE(this),
             i = TE(t),
             n;
@@ -1453,11 +1453,11 @@ function _ts_generator(thisArg, body) {
       },
     );
   });
-  var Xi = v((A3, Kd) => {
+  var Xi = v((S3, Kd) => {
     "use strict";
     Kd.exports = {};
   });
-  var ep = v((k3, Zd) => {
+  var ep = v((w3, Zd) => {
     "use strict";
     var NE = rt(),
       ME = Xi(),
@@ -1467,7 +1467,7 @@ function _ts_generator(thisArg, body) {
       return r !== void 0 && (ME.Array === r || IE[PE] === r);
     };
   });
-  var fs = v((S3, ip) => {
+  var fs = v((Q3, ip) => {
     "use strict";
     var $E = Pr(),
       tp = Yn(),
@@ -1479,7 +1479,7 @@ function _ts_generator(thisArg, body) {
       if (!qE(r)) return tp(r, zE) || tp(r, "@@iterator") || VE[$E(r)];
     };
   });
-  var Il = v((w3, rp) => {
+  var Il = v((_3, rp) => {
     "use strict";
     var HE = Wt(),
       jE = ji(),
@@ -1493,7 +1493,7 @@ function _ts_generator(thisArg, body) {
       throw new XE(JE(r) + " is not iterable");
     };
   });
-  var op = v((Q3, sp) => {
+  var op = v((U3, sp) => {
     "use strict";
     var KE = Wt(),
       np = zt(),
@@ -1515,7 +1515,7 @@ function _ts_generator(thisArg, body) {
       return np(i), t;
     };
   });
-  var cp = v((_3, hp) => {
+  var cp = v((L3, hp) => {
     "use strict";
     var eC = hs(),
       tC = Wt(),
@@ -1528,7 +1528,7 @@ function _ts_generator(thisArg, body) {
       lC = fs(),
       up = op(),
       uC = TypeError,
-      ds = h(function (r, e) {
+      ds = a(function (r, e) {
         (this.stopped = r), (this.result = e);
       }, "Result"),
       ap = ds.prototype;
@@ -1539,41 +1539,41 @@ function _ts_generator(thisArg, body) {
         o = !!(t && t.IS_ITERATOR),
         l = !!(t && t.INTERRUPTED),
         u = eC(e, i),
-        a,
+        h,
         c,
         f,
         d,
         p,
         m,
         F,
-        D = h(function (b) {
-          return a && up(a, "normal", b), new ds(!0, b);
+        D = a(function (b) {
+          return h && up(h, "normal", b), new ds(!0, b);
         }, "stop"),
-        g = h(function (b) {
+        g = a(function (b) {
           return n ? (iC(b), l ? u(b[0], b[1], D) : u(b[0], b[1])) : l ? u(b, D) : u(b);
         }, "callFn");
-      if (s) a = r.iterator;
-      else if (o) a = r;
+      if (s) h = r.iterator;
+      else if (o) h = r;
       else {
         if (((c = lC(r)), !c)) throw new uC(rC(r) + " is not iterable");
         if (nC(c)) {
           for (f = 0, d = sC(r); d > f; f++) if (((p = g(r[f])), p && lp(ap, p))) return p;
           return new ds(!1);
         }
-        a = oC(r, c);
+        h = oC(r, c);
       }
-      for (m = s ? r.next : a.next; !(F = tC(m, a)).done; ) {
+      for (m = s ? r.next : h.next; !(F = tC(m, h)).done; ) {
         try {
           p = g(F.value);
         } catch (b) {
-          up(a, "throw", b);
+          up(h, "throw", b);
         }
         if (typeof p == "object" && p && lp(ap, p)) return p;
       }
       return new ds(!1);
     };
   });
-  var dp = v((L3, fp) => {
+  var dp = v((T3, fp) => {
     "use strict";
     var aC = Xe(),
       hC = Qt(),
@@ -1590,7 +1590,7 @@ function _ts_generator(thisArg, body) {
     fC(
       { target: "Object", stat: !0 },
       {
-        fromEntries: h(function (e) {
+        fromEntries: a(function (e) {
           var t = {};
           return (
             dC(
@@ -1606,7 +1606,7 @@ function _ts_generator(thisArg, body) {
       },
     );
   });
-  var $l = v((N3, mp) => {
+  var $l = v((P3, mp) => {
     "use strict";
     var mC = Pr(),
       gC = String;
@@ -1615,11 +1615,11 @@ function _ts_generator(thisArg, body) {
       return gC(r);
     };
   });
-  var ql = v((M3, gp) => {
+  var ql = v((I3, gp) => {
     "use strict";
     gp.exports = "	\n\v\f\r \xa0              　\u2028\u2029\uFEFF";
   });
-  var bp = v((P3, Fp) => {
+  var bp = v(($3, Fp) => {
     "use strict";
     var DC = Te(),
       FC = Tr(),
@@ -1628,7 +1628,7 @@ function _ts_generator(thisArg, body) {
       Dp = DC("".replace),
       yC = RegExp("^[" + Wl + "]+"),
       EC = RegExp("(^|[^" + Wl + "])[" + Wl + "]+$"),
-      Vl = h(function (r) {
+      Vl = a(function (r) {
         return function (e) {
           var t = bC(FC(e));
           return r & 1 && (t = Dp(t, yC, "")), r & 2 && (t = Dp(t, EC, "$1")), t;
@@ -1636,7 +1636,7 @@ function _ts_generator(thisArg, body) {
       }, "createMethod");
     Fp.exports = { start: Vl(1), end: Vl(2), trim: Vl(3) };
   });
-  var Bp = v(($3, Cp) => {
+  var Bp = v((V3, Cp) => {
     "use strict";
     var CC = es().PROPER,
       BC = Ge(),
@@ -1648,12 +1648,12 @@ function _ts_generator(thisArg, body) {
       });
     };
   });
-  var zl = v((q3, xp) => {
+  var zl = v((W3, xp) => {
     "use strict";
     var xC = bp().end,
       vC = Bp();
     xp.exports = vC("trimEnd")
-      ? h(function () {
+      ? a(function () {
           return xC(this);
         }, "trimEnd")
       : "".trimEnd;
@@ -1671,13 +1671,13 @@ function _ts_generator(thisArg, body) {
       kp = zl();
     kC({ target: "String", proto: !0, name: "trimEnd", forced: "".trimEnd !== kp }, { trimEnd: kp });
   });
-  var Qp = v((Y3, wp) => {
+  var Qp = v((G3, wp) => {
     "use strict";
     var SC = Nl(),
       wC = us();
     wp.exports =
       Object.keys ||
-      h(function (e) {
+      a(function (e) {
         return SC(e, wC);
       }, "keys");
   });
@@ -1692,18 +1692,18 @@ function _ts_generator(thisArg, body) {
     _p.f =
       QC && !_C
         ? Object.defineProperties
-        : h(function (e, t) {
+        : a(function (e, t) {
             LC(e);
             for (var i = OC(t), n = TC(t), s = n.length, o = 0, l; s > o; ) UC.f(e, (l = n[o++]), i[l]);
             return e;
           }, "defineProperties");
   });
-  var Op = v((K3, Lp) => {
+  var Op = v((e7, Lp) => {
     "use strict";
     var RC = Hi();
     Lp.exports = RC("document", "documentElement");
   });
-  var $r = v((Z3, $p) => {
+  var $r = v((t7, $p) => {
     "use strict";
     var NC = zt(),
       MC = Up(),
@@ -1717,23 +1717,23 @@ function _ts_generator(thisArg, body) {
       jl = "prototype",
       Yl = "script",
       Pp = qC("IE_PROTO"),
-      Hl = h(function () {}, "EmptyConstructor"),
-      Ip = h(function (r) {
+      Hl = a(function () {}, "EmptyConstructor"),
+      Ip = a(function (r) {
         return Np + Yl + Rp + r + Np + "/" + Yl + Rp;
       }, "scriptTag"),
-      Mp = h(function (r) {
+      Mp = a(function (r) {
         r.write(Ip("")), r.close();
         var e = r.parentWindow.Object;
         return (r = null), e;
       }, "NullProtoObjectViaActiveX"),
-      VC = h(function () {
+      VC = a(function () {
         var r = $C("iframe"),
           e = "java" + Yl + ":",
           t;
         return (r.style.display = "none"), IC.appendChild(r), (r.src = String(e)), (t = r.contentWindow.document), t.open(), t.write(Ip("document.F=Object")), t.close(), t.F;
       }, "NullProtoObjectViaIFrame"),
       ps,
-      ms = h(function () {
+      ms = a(function () {
         try {
           ps = new ActiveXObject("htmlfile");
         } catch (e) {}
@@ -1744,12 +1744,12 @@ function _ts_generator(thisArg, body) {
     PC[Pp] = !0;
     $p.exports =
       Object.create ||
-      h(function (e, t) {
+      a(function (e, t) {
         var i;
         return e !== null ? ((Hl[jl] = NC(e)), (i = new Hl()), (Hl[jl] = null), (i[Pp] = e)) : (i = ms()), t === void 0 ? i : MC.f(i, t);
       }, "create");
   });
-  var Vp = v((t7, qp) => {
+  var Vp = v((r7, qp) => {
     "use strict";
     var WC = rt(),
       zC = $r(),
@@ -1761,15 +1761,15 @@ function _ts_generator(thisArg, body) {
       Gl[Jl][r] = !0;
     };
   });
-  var zp = v((i7, Wp) => {
+  var zp = v((n7, Wp) => {
     "use strict";
     var jC = Ge();
     Wp.exports = !jC(function () {
       function r() {}
-      return h(r, "F"), (r.prototype.constructor = null), Object.getPrototypeOf(new r()) !== r.prototype;
+      return a(r, "F"), (r.prototype.constructor = null), Object.getPrototypeOf(new r()) !== r.prototype;
     });
   });
-  var Kl = v((n7, jp) => {
+  var Kl = v((o7, jp) => {
     "use strict";
     var YC = Et(),
       JC = Re(),
@@ -1788,7 +1788,7 @@ function _ts_generator(thisArg, body) {
           return JC(t) && e instanceof t ? t.prototype : e instanceof Xl ? ZC : null;
         };
   });
-  var iu = v((s7, Gp) => {
+  var iu = v((l7, Gp) => {
     "use strict";
     var eB = Ge(),
       tB = Re(),
@@ -1817,7 +1817,7 @@ function _ts_generator(thisArg, body) {
       });
     Gp.exports = { IteratorPrototype: Ht, BUGGY_SAFARI_ITERATORS: Jp };
   });
-  var gs = v((o7, Kp) => {
+  var gs = v((u7, Kp) => {
     "use strict";
     var uB = Qt().f,
       aB = Et(),
@@ -1827,14 +1827,14 @@ function _ts_generator(thisArg, body) {
       r && !t && (r = r.prototype), r && !aB(r, Xp) && uB(r, Xp, { configurable: !0, value: e });
     };
   });
-  var ru = v((l7, Zp) => {
+  var ru = v((a7, Zp) => {
     "use strict";
     var cB = iu().IteratorPrototype,
       fB = $r(),
       dB = Wi(),
       pB = gs(),
       mB = Xi(),
-      gB = h(function () {
+      gB = a(function () {
         return this;
       }, "returnThis");
     Zp.exports = function (r, e, t, i) {
@@ -1842,7 +1842,7 @@ function _ts_generator(thisArg, body) {
       return (r.prototype = fB(cB, { next: dB(+!i, t) })), pB(r, n, !1, !0), (mB[n] = gB), r;
     };
   });
-  var tm = v((a7, em) => {
+  var tm = v((c7, em) => {
     "use strict";
     var DB = Te(),
       FB = ji();
@@ -1852,14 +1852,14 @@ function _ts_generator(thisArg, body) {
       } catch (e) {}
     };
   });
-  var rm = v((h7, im) => {
+  var rm = v((f7, im) => {
     "use strict";
     var bB = bt();
     im.exports = function (r) {
       return bB(r) || r === null;
     };
   });
-  var sm = v((c7, nm) => {
+  var sm = v((d7, nm) => {
     "use strict";
     var yB = rm(),
       EB = String,
@@ -1869,7 +1869,7 @@ function _ts_generator(thisArg, body) {
       throw new CB("Can't set " + EB(r) + " as a prototype");
     };
   });
-  var lm = v((f7, om) => {
+  var lm = v((p7, om) => {
     "use strict";
     var BB = tm(),
       xB = bt(),
@@ -1885,13 +1885,13 @@ function _ts_generator(thisArg, body) {
             try {
               (t = BB(Object.prototype, "__proto__", "set")), t(e, []), (r = e instanceof Array);
             } catch (e) {}
-            return h(function (n, s) {
+            return a(function (n, s) {
               return vB(n), AB(s), xB(n) && (r ? t(n, s) : (n.__proto__ = s)), n;
             }, "setPrototypeOf");
           })()
         : void 0);
   });
-  var Fm = v((p7, Dm) => {
+  var Fm = v((g7, Dm) => {
     "use strict";
     var kB = ii(),
       SB = Wt(),
@@ -1915,25 +1915,25 @@ function _ts_generator(thisArg, body) {
       fm = "keys",
       Vr = "values",
       dm = "entries",
-      pm = h(function () {
+      pm = a(function () {
         return this;
       }, "returnThis");
     Dm.exports = function (r, e, t, i, n, s, o) {
       QB(t, e, i);
-      var l = h(function (g) {
+      var l = a(function (g) {
           if (g === n && d) return d;
           if (!Fs && g && g in c) return c[g];
           switch (g) {
             case fm:
-              return h(function () {
+              return a(function () {
                 return new t(this, g);
               }, "keys");
             case Vr:
-              return h(function () {
+              return a(function () {
                 return new t(this, g);
               }, "values");
             case dm:
-              return h(function () {
+              return a(function () {
                 return new t(this, g);
               }, "entries");
           }
@@ -1942,7 +1942,7 @@ function _ts_generator(thisArg, body) {
           };
         }, "getIterationMethod"),
         u = e + " Iterator",
-        a = !1,
+        h = !1,
         c = r.prototype,
         f = c[qr] || c["@@iterator"] || (n && c[n]),
         d = (!Fs && f) || l(n),
@@ -1958,24 +1958,24 @@ function _ts_generator(thisArg, body) {
           f.name !== Vr &&
           (!Ds && TB
             ? UB(c, "name", Vr)
-            : ((a = !0),
-              (d = h(function () {
+            : ((h = !0),
+              (d = a(function () {
                 return SB(f, this);
               }, "values")))),
         n)
       )
-        if (((F = { values: l(Vr), keys: s ? d : l(fm), entries: l(dm) }), o)) for (D in F) (Fs || a || !(D in c)) && nu(c, D, F[D]);
-        else kB({ target: e, proto: !0, forced: Fs || a }, F);
+        if (((F = { values: l(Vr), keys: s ? d : l(fm), entries: l(dm) }), o)) for (D in F) (Fs || h || !(D in c)) && nu(c, D, F[D]);
+        else kB({ target: e, proto: !0, forced: Fs || h }, F);
       return (!Ds || o) && c[qr] !== d && nu(c, qr, d, { name: n }), (hm[e] = d), F;
     };
   });
-  var su = v((g7, bm) => {
+  var su = v((F7, bm) => {
     "use strict";
     bm.exports = function (r, e) {
       return { value: r, done: e };
     };
   });
-  var vm = v((D7, xm) => {
+  var vm = v((b7, xm) => {
     "use strict";
     var RB = zi(),
       ou = Vp(),
@@ -2032,7 +2032,7 @@ function _ts_generator(thisArg, body) {
     VB(
       { target: "String", stat: !0, arity: 1, forced: YB },
       {
-        fromCodePoint: h(function (e) {
+        fromCodePoint: a(function (e) {
           for (var t = [], i = arguments.length, n = 0, s; i > n; ) {
             if (((s = +arguments[n++]), zB(s, 1114111) !== s)) throw new HB(s + " is not a valid code point");
             t[n] = s < 65536 ? Am(s) : Am(((s -= 65536) >> 10) + 55296, (s % 1024) + 56320);
@@ -2042,7 +2042,7 @@ function _ts_generator(thisArg, body) {
       },
     );
   });
-  var _m = v((E7, Qm) => {
+  var _m = v((B7, Qm) => {
     "use strict";
     var wm = Je(),
       JB = Xe(),
@@ -2053,7 +2053,7 @@ function _ts_generator(thisArg, body) {
       return e && e.value;
     };
   });
-  var Om = v((C7, Lm) => {
+  var Om = v((x7, Lm) => {
     "use strict";
     var XB = Ge(),
       KB = rt(),
@@ -2088,7 +2088,7 @@ function _ts_generator(thisArg, body) {
       );
     });
   });
-  var Nm = v((B7, Rm) => {
+  var Nm = v((v7, Rm) => {
     "use strict";
     var Tm = Ll(),
       tx = Qt();
@@ -2096,7 +2096,7 @@ function _ts_generator(thisArg, body) {
       return t.get && Tm(t.get, e, { getter: !0 }), t.set && Tm(t.set, e, { setter: !0 }), tx.f(r, e, t);
     };
   });
-  var Pm = v((x7, Mm) => {
+  var Pm = v((A7, Mm) => {
     "use strict";
     var ix = Gi();
     Mm.exports = function (r, e, t) {
@@ -2104,7 +2104,7 @@ function _ts_generator(thisArg, body) {
       return r;
     };
   });
-  var $m = v((v7, Im) => {
+  var $m = v((k7, Im) => {
     "use strict";
     var rx = zn(),
       nx = TypeError;
@@ -2113,7 +2113,7 @@ function _ts_generator(thisArg, body) {
       throw new nx("Incorrect invocation");
     };
   });
-  var Vm = v((A7, qm) => {
+  var Vm = v((S7, qm) => {
     "use strict";
     var sx = TypeError;
     qm.exports = function (r, e) {
@@ -2121,28 +2121,28 @@ function _ts_generator(thisArg, body) {
       return r;
     };
   });
-  var zm = v((k7, Wm) => {
+  var zm = v((w7, Wm) => {
     "use strict";
     var ox = Te();
     Wm.exports = ox([].slice);
   });
-  var Ym = v((S7, jm) => {
+  var Ym = v((Q7, jm) => {
     "use strict";
     var Hm = zm(),
       lx = Math.floor,
-      lu = h(function (r, e) {
+      lu = a(function (r, e) {
         var t = r.length;
         if (t < 8)
           for (var i = 1, n, s; i < t; ) {
             for (s = i, n = r[i]; s && e(r[s - 1], n) > 0; ) r[s] = r[--s];
             s !== i++ && (r[s] = n);
           }
-        else for (var o = lx(t / 2), l = lu(Hm(r, 0, o), e), u = lu(Hm(r, o), e), a = l.length, c = u.length, f = 0, d = 0; f < a || d < c; ) r[f + d] = f < a && d < c ? (e(l[f], u[d]) <= 0 ? l[f++] : u[d++]) : f < a ? l[f++] : u[d++];
+        else for (var o = lx(t / 2), l = lu(Hm(r, 0, o), e), u = lu(Hm(r, o), e), h = l.length, c = u.length, f = 0, d = 0; f < h || d < c; ) r[f + d] = f < h && d < c ? (e(l[f], u[d]) <= 0 ? l[f++] : u[d++]) : f < h ? l[f++] : u[d++];
         return r;
       }, "sort");
     jm.exports = lu;
   });
-  var F0 = v((Q7, D0) => {
+  var F0 = v((U7, D0) => {
     "use strict";
     vm();
     Sm();
@@ -2204,15 +2204,15 @@ function _ts_generator(thisArg, body) {
       Qx = /\+/g,
       hu = "�",
       _x = /^[0-9a-f]+$/i,
-      i0 = h(function (r, e) {
+      i0 = a(function (r, e) {
         var t = m0(r, e, e + 2);
         return wx(_x, t) ? kx(t, 16) : NaN;
       }, "parseHexOctet"),
-      Ux = h(function (r) {
+      Ux = a(function (r) {
         for (var e = 0, t = 128; t > 0 && r & t; t >>= 1) e++;
         return e;
       }, "getLeadingOnes"),
-      Lx = h(function (r) {
+      Lx = a(function (r) {
         var e = null;
         switch (r.length) {
           case 1:
@@ -2230,7 +2230,7 @@ function _ts_generator(thisArg, body) {
         }
         return e > 1114111 ? null : e;
       }, "utf8Decode"),
-      r0 = h(function (r) {
+      r0 = a(function (r) {
         r = p0(r, Qx, " ");
         for (var e = r.length, t = "", i = 0; i < e; ) {
           var n = Bs(r, i);
@@ -2253,13 +2253,13 @@ function _ts_generator(thisArg, body) {
                 continue;
               }
               for (var l = [s], u = 1; u < o && (i++, !(i + 3 > e || Bs(r, i) !== "%")); ) {
-                var a = i0(r, i + 1);
-                if (a !== a) {
+                var h = i0(r, i + 1);
+                if (h !== h) {
                   i += 3;
                   break;
                 }
-                if (a > 191 || a < 128) break;
-                ri(l, a), (i += 2), u++;
+                if (h > 191 || h < 128) break;
+                ri(l, h), (i += 2), u++;
               }
               if (l.length !== o) {
                 t += hu;
@@ -2275,18 +2275,18 @@ function _ts_generator(thisArg, body) {
       }, "decode"),
       Ox = /[!'()~]|%20/g,
       Tx = { "!": "%21", "'": "%27", "(": "%28", ")": "%29", "~": "%7E", "%20": "+" },
-      Rx = h(function (r) {
+      Rx = a(function (r) {
         return Tx[r];
       }, "replacer"),
-      n0 = h(function (r) {
+      n0 = a(function (r) {
         return p0(xx(r), Ox, Rx);
       }, "serialize"),
       cu = fx(
-        h(function (e, t) {
+        a(function (e, t) {
           d0(this, { type: f0, target: ut(e).entries, index: 0, kind: t });
         }, "Iterator"),
         er,
-        h(function () {
+        a(function () {
           var e = Cx(this),
             t = e.target,
             i = e.index++;
@@ -2302,15 +2302,15 @@ function _ts_generator(thisArg, body) {
         }, "next"),
         !0,
       ),
-      g0 = h(function (r) {
+      g0 = a(function (r) {
         (this.entries = []), (this.url = null), r !== void 0 && (c0(r) ? this.parseObject(r) : this.parseQuery(typeof r == "string" ? (Bs(r, 0) === "?" ? m0(r, 1) : r) : $e(r)));
       }, "URLSearchParamsState");
     g0.prototype = {
       type: er,
-      bindURL: function bindURL(r) {
+      bindURL: a(function (r) {
         (this.url = r), this.update();
-      },
-      parseObject: function parseObject(r) {
+      }, "bindURL"),
+      parseObject: a(function (r) {
         var e = this.entries,
           t = Fx(r),
           i,
@@ -2319,29 +2319,29 @@ function _ts_generator(thisArg, body) {
           o,
           l,
           u,
-          a;
+          h;
         if (t)
           for (i = Gm(r, t), n = i.next; !(s = ys(n, i)).done; ) {
-            if (((o = Gm(gx(s.value))), (l = o.next), (u = ys(l, o)).done || (a = ys(l, o)).done || !ys(l, o).done)) throw new Bx("Expected sequence with length 2");
-            ri(e, { key: $e(u.value), value: $e(a.value) });
+            if (((o = Gm(gx(s.value))), (l = o.next), (u = ys(l, o)).done || (h = ys(l, o)).done || !ys(l, o).done)) throw new Bx("Expected sequence with length 2");
+            ri(e, { key: $e(u.value), value: $e(h.value) });
           }
         else for (var c in r) dx(r, c) && ri(e, { key: c, value: $e(r[c]) });
-      },
-      parseQuery: function parseQuery(r) {
+      }, "parseObject"),
+      parseQuery: a(function (r) {
         if (r) for (var e = this.entries, t = t0(r, "&"), i = 0, n, s; i < t.length; ) (n = t[i++]), n.length && ((s = t0(n, "=")), ri(e, { key: r0(Sx(s)), value: r0(Zm(s, "=")) }));
-      },
-      serialize: function serialize() {
+      }, "parseQuery"),
+      serialize: a(function () {
         for (var r = this.entries, e = [], t = 0, i; t < r.length; ) (i = r[t++]), ri(e, n0(i.key) + "=" + n0(i.value));
         return Zm(e, "&");
-      },
-      update: function update() {
+      }, "serialize"),
+      update: a(function () {
         (this.entries.length = 0), this.parseQuery(this.url.query);
-      },
-      updateURL: function updateURL() {
+      }, "update"),
+      updateURL: a(function () {
         this.url && this.url.update();
-      },
+      }, "updateURL"),
     };
-    var vs = h(function () {
+    var vs = a(function () {
         h0(this, Zi);
         var e = arguments.length > 0 ? arguments[0] : void 0,
           t = d0(this, new g0(e));
@@ -2351,11 +2351,11 @@ function _ts_generator(thisArg, body) {
     hx(
       Zi,
       {
-        append: h(function (e, t) {
+        append: a(function (e, t) {
           var i = ut(this);
           Ki(arguments.length, 2), ri(i.entries, { key: $e(e), value: $e(t) }), Wr || this.length++, i.updateURL();
         }, "append"),
-        delete: function _delete(r) {
+        delete: a(function (r) {
           for (var e = ut(this), t = Ki(arguments.length, 1), i = e.entries, n = $e(r), s = t < 2 ? void 0 : arguments[1], o = s === void 0 ? s : $e(s), l = 0; l < i.length; ) {
             var u = i[l];
             if (u.key === n && (o === void 0 || u.value === o)) {
@@ -2363,49 +2363,49 @@ function _ts_generator(thisArg, body) {
             } else l++;
           }
           Wr || (this.size = i.length), e.updateURL();
-        },
-        get: h(function (e) {
+        }, "delete"),
+        get: a(function (e) {
           var t = ut(this).entries;
           Ki(arguments.length, 1);
           for (var i = $e(e), n = 0; n < t.length; n++) if (t[n].key === i) return t[n].value;
           return null;
         }, "get"),
-        getAll: h(function (e) {
+        getAll: a(function (e) {
           var t = ut(this).entries;
           Ki(arguments.length, 1);
           for (var i = $e(e), n = [], s = 0; s < t.length; s++) t[s].key === i && ri(n, t[s].value);
           return n;
         }, "getAll"),
-        has: h(function (e) {
+        has: a(function (e) {
           for (var t = ut(this).entries, i = Ki(arguments.length, 1), n = $e(e), s = i < 2 ? void 0 : arguments[1], o = s === void 0 ? s : $e(s), l = 0; l < t.length; ) {
             var u = t[l++];
             if (u.key === n && (o === void 0 || u.value === o)) return !0;
           }
           return !1;
         }, "has"),
-        set: h(function (e, t) {
+        set: a(function (e, t) {
           var i = ut(this);
           Ki(arguments.length, 1);
-          for (var n = i.entries, s = !1, o = $e(e), l = $e(t), u = 0, a; u < n.length; u++) (a = n[u]), a.key === o && (s ? e0(n, u--, 1) : ((s = !0), (a.value = l)));
+          for (var n = i.entries, s = !1, o = $e(e), l = $e(t), u = 0, h; u < n.length; u++) (h = n[u]), h.key === o && (s ? e0(n, u--, 1) : ((s = !0), (h.value = l)));
           s || ri(n, { key: o, value: l }), Wr || (this.size = n.length), i.updateURL();
         }, "set"),
-        sort: h(function () {
+        sort: a(function () {
           var e = ut(this);
           yx(e.entries, function (t, i) {
             return t.key > i.key ? 1 : -1;
           }),
             e.updateURL();
         }, "sort"),
-        forEach: h(function (e) {
+        forEach: a(function (e) {
           for (var t = ut(this).entries, i = px(e, arguments.length > 1 ? arguments[1] : void 0), n = 0, s; n < t.length; ) (s = t[n++]), i(s.value, s.key, this);
         }, "forEach"),
-        keys: h(function () {
+        keys: a(function () {
           return new cu(this, "keys");
         }, "keys"),
-        values: h(function () {
+        values: a(function () {
           return new cu(this, "values");
         }, "values"),
-        entries: h(function () {
+        entries: a(function () {
           return new cu(this, "entries");
         }, "entries"),
       },
@@ -2415,14 +2415,14 @@ function _ts_generator(thisArg, body) {
     a0(
       Zi,
       "toString",
-      h(function () {
+      a(function () {
         return ut(this).serialize();
       }, "toString"),
       { enumerable: !0 },
     );
     Wr &&
       ax(Zi, "size", {
-        get: h(function () {
+        get: a(function () {
           return ut(this).entries.length;
         }, "size"),
         configurable: !0,
@@ -2434,7 +2434,7 @@ function _ts_generator(thisArg, body) {
       uu(zr) &&
       ((s0 = Bt(Km.has)),
       (o0 = Bt(Km.set)),
-      (fu = h(function (r) {
+      (fu = a(function (r) {
         if (c0(r)) {
           var e = r.body,
             t;
@@ -2446,13 +2446,13 @@ function _ts_generator(thisArg, body) {
         du(
           { global: !0, enumerable: !0, dontCallGetSet: !0, forced: !0 },
           {
-            fetch: h(function (e) {
+            fetch: a(function (e) {
               return Xm(e, arguments.length > 1 ? fu(arguments[1]) : {});
             }, "fetch"),
           },
         ),
       uu(xs) &&
-        ((Cs = h(function (e) {
+        ((Cs = a(function (e) {
           return h0(this, au), new xs(e, arguments.length > 1 ? fu(arguments[1]) : {});
         }, "Request")),
         (au.constructor = Cs),
@@ -2465,52 +2465,52 @@ function _ts_generator(thisArg, body) {
     "use strict";
     F0();
   });
-  var J9 = $n(Xd()),
-    G9 = $n(pp()),
-    X9 = $n(Sp()),
-    K9 = $n(b0());
+  var K9 = $n(Xd()),
+    Z9 = $n(pp()),
+    e_ = $n(Sp()),
+    t_ = $n(b0());
   function Se() {}
-  h(Se, "noop");
+  a(Se, "noop");
   function Nx(r, e) {
     for (var t in e) r[t] = e[t];
     return r;
   }
-  h(Nx, "assign");
+  a(Nx, "assign");
   function Eu(r) {
     return r();
   }
-  h(Eu, "run");
+  a(Eu, "run");
   function y0() {
     return Object.create(null);
   }
-  h(y0, "blank_object");
+  a(y0, "blank_object");
   function _t(r) {
     r.forEach(Eu);
   }
-  h(_t, "run_all");
+  a(_t, "run_all");
   function ks(r) {
     return typeof r == "function";
   }
-  h(ks, "is_function");
+  a(ks, "is_function");
   function oe(r, e) {
     return r != r ? e == e : r !== e || (r && typeof r == "object") || typeof r == "function";
   }
-  h(oe, "safe_not_equal");
+  a(oe, "safe_not_equal");
   function E0(r) {
     return Object.keys(r).length === 0;
   }
-  h(E0, "is_empty");
+  a(E0, "is_empty");
   function ni(r, e, t, i) {
     if (r) {
       var n = C0(r, e, t, i);
       return r[0](n);
     }
   }
-  h(ni, "create_slot");
+  a(ni, "create_slot");
   function C0(r, e, t, i) {
     return r[1] && i ? Nx(t.ctx.slice(), r[1](i(e))) : t.ctx;
   }
-  h(C0, "get_slot_context");
+  a(C0, "get_slot_context");
   function si(r, e, t, i) {
     if (r[2] && i) {
       var n = r[2](i(t));
@@ -2525,14 +2525,14 @@ function _ts_generator(thisArg, body) {
     }
     return e.dirty;
   }
-  h(si, "get_slot_changes");
+  a(si, "get_slot_changes");
   function oi(r, e, t, i, n, s) {
     if (n) {
       var o = C0(e, t, i, s);
       r.p(o, n);
     }
   }
-  h(oi, "update_slot_base");
+  a(oi, "update_slot_base");
   function li(r) {
     if (r.ctx.length > 32) {
       var e = [],
@@ -2542,13 +2542,13 @@ function _ts_generator(thisArg, body) {
     }
     return -1;
   }
-  h(li, "get_all_dirty_from_scope");
+  a(li, "get_all_dirty_from_scope");
   function B0(r) {
     var e = {};
     for (var t in r) e[t] = !0;
     return e;
   }
-  h(B0, "compute_slots");
+  a(B0, "compute_slots");
   var x0 = typeof window < "u" ? window : typeof globalThis < "u" ? globalThis : global,
     Du =
       ((_r = class r {
@@ -2595,62 +2595,62 @@ function _ts_generator(thisArg, body) {
           (this.options = e), (this._listeners = "WeakMap" in x0 ? new WeakMap() : void 0);
         }
       }),
-      h(_r, "ResizeObserverSingleton"),
+      a(_r, "ResizeObserverSingleton"),
       _r);
   Du.entries = "WeakMap" in x0 ? new WeakMap() : void 0;
   var v0 = !1;
   function Mx() {
     v0 = !0;
   }
-  h(Mx, "start_hydrating");
+  a(Mx, "start_hydrating");
   function Px() {
     v0 = !1;
   }
-  h(Px, "end_hydrating");
+  a(Px, "end_hydrating");
   function q(r, e) {
     r.appendChild(e);
   }
-  h(q, "append");
+  a(q, "append");
   function E(r, e, t) {
     r.insertBefore(e, t || null);
   }
-  h(E, "insert");
+  a(E, "insert");
   function y(r) {
     r.parentNode && r.parentNode.removeChild(r);
   }
-  h(y, "detach");
+  a(y, "detach");
   function Yr(r, e) {
     for (var t = 0; t < r.length; t += 1) r[t] && r[t].d(e);
   }
-  h(Yr, "destroy_each");
+  a(Yr, "destroy_each");
   function O(r) {
     return document.createElement(r);
   }
-  h(O, "element");
+  a(O, "element");
   function Ut(r) {
     return document.createElementNS("http://www.w3.org/2000/svg", r);
   }
-  h(Ut, "svg_element");
+  a(Ut, "svg_element");
   function Y(r) {
     return document.createTextNode(r);
   }
-  h(Y, "text");
+  a(Y, "text");
   function $() {
     return Y(" ");
   }
-  h($, "space");
+  a($, "space");
   function jt() {
     return Y("");
   }
-  h(jt, "empty");
+  a(jt, "empty");
   function ye(r, e, t, i) {
     return r.addEventListener(e, t, i), () => r.removeEventListener(e, t, i);
   }
-  h(ye, "listen");
+  a(ye, "listen");
   function x(r, e, t) {
     t == null ? r.removeAttribute(e) : r.getAttribute(e) !== t && r.setAttribute(e, t);
   }
-  h(x, "attr");
+  a(x, "attr");
   function A0(r) {
     var e;
     return {
@@ -2665,27 +2665,27 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(A0, "init_binding_group");
+  a(A0, "init_binding_group");
   function xt(r) {
     return r === "" ? null : +r;
   }
-  h(xt, "to_number");
+  a(xt, "to_number");
   function Ix(r) {
     return Array.from(r.childNodes);
   }
-  h(Ix, "children");
+  a(Ix, "children");
   function qe(r, e) {
     (e = "" + e), r.data !== e && (r.data = e);
   }
-  h(qe, "set_data");
+  a(qe, "set_data");
   function Ee(r, e) {
     r.value = e !== null && e !== void 0 ? e : "";
   }
-  h(Ee, "set_input_value");
+  a(Ee, "set_input_value");
   function nr(r, e, t) {
     r.classList[t ? "add" : "remove"](e);
   }
-  h(nr, "toggle_class");
+  a(nr, "toggle_class");
   function $x(r, e) {
     var _ref = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : {},
       tmp = _ref.bubbles,
@@ -2695,21 +2695,21 @@ function _ts_generator(thisArg, body) {
     var n = document.createEvent("CustomEvent");
     return n.initCustomEvent(r, t, i, e), n;
   }
-  h($x, "custom_event");
+  a($x, "custom_event");
   var jr;
   function Hr(r) {
     jr = r;
   }
-  h(Hr, "set_current_component");
+  a(Hr, "set_current_component");
   function k0() {
     if (!jr) throw new Error("Function called outside component initialization");
     return jr;
   }
-  h(k0, "get_current_component");
+  a(k0, "get_current_component");
   function Cu(r) {
     k0().$$.on_mount.push(r);
   }
-  h(Cu, "onMount");
+  a(Cu, "onMount");
   function Bi() {
     var r = k0();
     return function (e, t) {
@@ -2729,7 +2729,7 @@ function _ts_generator(thisArg, body) {
       return !0;
     };
   }
-  h(Bi, "createEventDispatcher");
+  a(Bi, "createEventDispatcher");
   var ir = [];
   var J = [],
     rr = [],
@@ -2739,15 +2739,15 @@ function _ts_generator(thisArg, body) {
   function Vx() {
     bu || ((bu = !0), qx.then(S0));
   }
-  h(Vx, "schedule_update");
+  a(Vx, "schedule_update");
   function yu(r) {
     rr.push(r);
   }
-  h(yu, "add_render_callback");
+  a(yu, "add_render_callback");
   function X(r) {
     Fu.push(r);
   }
-  h(X, "add_flush_callback");
+  a(X, "add_flush_callback");
   var gu = new Set(),
     tr = 0;
   function S0() {
@@ -2772,7 +2772,7 @@ function _ts_generator(thisArg, body) {
     for (; Fu.length; ) Fu.pop()();
     (bu = !1), gu.clear(), Hr(r);
   }
-  h(S0, "flush");
+  a(S0, "flush");
   function Wx(r) {
     if (r.fragment !== null) {
       r.update(), _t(r.before_update);
@@ -2780,27 +2780,27 @@ function _ts_generator(thisArg, body) {
       (r.dirty = [-1]), r.fragment && r.fragment.p(r.ctx, e), r.after_update.forEach(yu);
     }
   }
-  h(Wx, "update");
+  a(Wx, "update");
   function zx(r) {
     var e = [],
       t = [];
     rr.forEach((i) => (r.indexOf(i) === -1 ? e.push(i) : t.push(i))), t.forEach((i) => i()), (rr = e);
   }
-  h(zx, "flush_render_callbacks");
+  a(zx, "flush_render_callbacks");
   var As = new Set(),
     Ci;
   function Yt() {
     Ci = { r: 0, c: [], p: Ci };
   }
-  h(Yt, "group_outros");
+  a(Yt, "group_outros");
   function Jt() {
     Ci.r || _t(Ci.c), (Ci = Ci.p);
   }
-  h(Jt, "check_outros");
+  a(Jt, "check_outros");
   function S(r, e) {
     r && r.i && (As.delete(r), r.i(e));
   }
-  h(S, "transition_in");
+  a(S, "transition_in");
   function w(r, e, t, i) {
     if (r && r.o) {
       if (As.has(r)) return;
@@ -2811,18 +2811,18 @@ function _ts_generator(thisArg, body) {
         r.o(e);
     } else i && i();
   }
-  h(w, "transition_out");
+  a(w, "transition_out");
   var Hx = ["allowfullscreen", "allowpaymentrequest", "async", "autofocus", "autoplay", "checked", "controls", "default", "defer", "disabled", "formnovalidate", "hidden", "inert", "ismap", "loop", "multiple", "muted", "nomodule", "novalidate", "open", "playsinline", "readonly", "required", "reversed", "selected"],
-    O7 = new Set([...Hx]);
+    R7 = new Set([...Hx]);
   function K(r, e, t) {
     var i = r.$$.props[e];
     i !== void 0 && ((r.$$.bound[i] = t), t(r.$$.ctx[i]));
   }
-  h(K, "bind");
+  a(K, "bind");
   function M(r) {
     r && r.c();
   }
-  h(M, "create_component");
+  a(M, "create_component");
   function N(r, e, t, i) {
     var _r_$$ = r.$$,
       n = _r_$$.fragment,
@@ -2835,49 +2835,49 @@ function _ts_generator(thisArg, body) {
         }),
       s.forEach(yu);
   }
-  h(N, "mount_component");
+  a(N, "mount_component");
   function R(r, e) {
     var t = r.$$;
     t.fragment !== null && (zx(t.after_update), _t(t.on_destroy), t.fragment && t.fragment.d(e), (t.on_destroy = t.fragment = null), (t.ctx = []));
   }
-  h(R, "destroy_component");
+  a(R, "destroy_component");
   function jx(r, e) {
     r.$$.dirty[0] === -1 && (ir.push(r), Vx(), r.$$.dirty.fill(0)), (r.$$.dirty[(e / 31) | 0] |= 1 << e % 31);
   }
-  h(jx, "make_dirty");
+  a(jx, "make_dirty");
   function le(r, e, t, i, n, s, o) {
     var l = arguments.length > 7 && arguments[7] !== void 0 ? arguments[7] : [-1];
     var u = jr;
     Hr(r);
-    var a = (r.$$ = { fragment: null, ctx: [], props: s, update: Se, not_equal: n, bound: y0(), on_mount: [], on_destroy: [], on_disconnect: [], before_update: [], after_update: [], context: new Map(e.context || (u ? u.$$.context : [])), callbacks: y0(), dirty: l, skip_bound: !1, root: e.target || u.$$.root });
-    o && o(a.root);
+    var h = (r.$$ = { fragment: null, ctx: [], props: s, update: Se, not_equal: n, bound: y0(), on_mount: [], on_destroy: [], on_disconnect: [], before_update: [], after_update: [], context: new Map(e.context || (u ? u.$$.context : [])), callbacks: y0(), dirty: l, skip_bound: !1, root: e.target || u.$$.root });
+    o && o(h.root);
     var c = !1;
     if (
-      ((a.ctx = t
+      ((h.ctx = t
         ? t(r, e.props || {}, function (f, d) {
             for (var _len = arguments.length, p = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
               p[_key - 2] = arguments[_key];
             }
             var m = p.length ? p[0] : d;
-            return a.ctx && n(a.ctx[f], (a.ctx[f] = m)) && (!a.skip_bound && a.bound[f] && a.bound[f](m), c && jx(r, f)), d;
+            return h.ctx && n(h.ctx[f], (h.ctx[f] = m)) && (!h.skip_bound && h.bound[f] && h.bound[f](m), c && jx(r, f)), d;
           })
         : []),
-      a.update(),
+      h.update(),
       (c = !0),
-      _t(a.before_update),
-      (a.fragment = i ? i(a.ctx) : !1),
+      _t(h.before_update),
+      (h.fragment = i ? i(h.ctx) : !1),
       e.target)
     ) {
       if (e.hydrate) {
         Mx();
         var f = Ix(e.target);
-        a.fragment && a.fragment.l(f), f.forEach(y);
-      } else a.fragment && a.fragment.c();
+        h.fragment && h.fragment.l(f), f.forEach(y);
+      } else h.fragment && h.fragment.c();
       e.intro && S(r.$$.fragment), N(r, e.target, e.anchor, e.customElement), Px(), S0();
     }
     Hr(u);
   }
-  h(le, "init");
+  a(le, "init");
   var Yx;
   typeof HTMLElement == "function" &&
     (Yx =
@@ -2915,7 +2915,7 @@ function _ts_generator(thisArg, body) {
           super(), this.attachShadow({ mode: "open" });
         }
       }),
-      h(_class, "SvelteElement"),
+      a(_class, "SvelteElement"),
       _class));
   var se =
     ((_class1 = class _class {
@@ -2937,7 +2937,7 @@ function _ts_generator(thisArg, body) {
         this.$$set && !E0(e) && ((this.$$.skip_bound = !0), this.$$set(e), (this.$$.skip_bound = !1));
       }
     }),
-    h(_class1, "SvelteComponent"),
+    a(_class1, "SvelteComponent"),
     _class1);
   var Bu =
       ((_class2 = class _class {
@@ -2947,7 +2947,7 @@ function _ts_generator(thisArg, body) {
           this.type = "root";
         }
       }),
-      h(_class2, "RootNode"),
+      a(_class2, "RootNode"),
       _class2),
     sr =
       ((_class3 = class _class {
@@ -2958,7 +2958,7 @@ function _ts_generator(thisArg, body) {
           e.children.push(this);
         }
       }),
-      h(_class3, "TextNode"),
+      a(_class3, "TextNode"),
       _class3),
     ws =
       ((_class4 = class _class {
@@ -2969,7 +2969,7 @@ function _ts_generator(thisArg, body) {
           e.children.push(this);
         }
       }),
-      h(_class4, "BlockNode"),
+      a(_class4, "BlockNode"),
       _class4),
     xu =
       ((_class5 = class _class {
@@ -2982,7 +2982,7 @@ function _ts_generator(thisArg, body) {
           e.block = this;
         }
       }),
-      h(_class5, "CommentNode"),
+      a(_class5, "CommentNode"),
       _class5),
     vu =
       ((_class6 = class _class {
@@ -2995,7 +2995,7 @@ function _ts_generator(thisArg, body) {
           e.block = this;
         }
       }),
-      h(_class6, "PreambleNode"),
+      a(_class6, "PreambleNode"),
       _class6),
     Au =
       ((_class7 = class _class {
@@ -3008,7 +3008,7 @@ function _ts_generator(thisArg, body) {
           e.block = this;
         }
       }),
-      h(_class7, "StringNode"),
+      a(_class7, "StringNode"),
       _class7),
     ku =
       ((_class8 = class _class {
@@ -3019,7 +3019,7 @@ function _ts_generator(thisArg, body) {
           (e.block = this), (this.fields = []);
         }
       }),
-      h(_class8, "EntryNode"),
+      a(_class8, "EntryNode"),
       _class8),
     xi =
       ((_class9 = class _class {
@@ -3031,7 +3031,7 @@ function _ts_generator(thisArg, body) {
           this.value = new Su(this);
         }
       }),
-      h(_class9, "FieldNode"),
+      a(_class9, "FieldNode"),
       _class9),
     Su =
       ((_class10 = class _class {
@@ -3042,7 +3042,7 @@ function _ts_generator(thisArg, body) {
           this.concat = [];
         }
       }),
-      h(_class10, "ConcatNode"),
+      a(_class10, "ConcatNode"),
       _class10),
     wu =
       ((_class11 = class _class {
@@ -3053,7 +3053,7 @@ function _ts_generator(thisArg, body) {
           e.concat.push(this);
         }
       }),
-      h(_class11, "LiteralNode"),
+      a(_class11, "LiteralNode"),
       _class11),
     Qu =
       ((_class12 = class _class {
@@ -3065,7 +3065,7 @@ function _ts_generator(thisArg, body) {
           e.concat.push(this);
         }
       }),
-      h(_class12, "BracedNode"),
+      a(_class12, "BracedNode"),
       _class12),
     _u =
       ((_class13 = class _class {
@@ -3077,7 +3077,7 @@ function _ts_generator(thisArg, body) {
           e.concat.push(this);
         }
       }),
-      h(_class13, "QuotedNode"),
+      a(_class13, "QuotedNode"),
       _class13);
   function Q0(r) {
     var e = new Bu(),
@@ -3106,12 +3106,12 @@ function _ts_generator(thisArg, body) {
             if (u1 === "" || /\s/.test(u1)) t.parent.children.pop(), (t = new sr(t.parent, "@" + t.command + o));
             else {
               t.command = u1;
-              var a = t.command.toLowerCase(),
+              var h = t.command.toLowerCase(),
                 _ref = _sliced_to_array(o === "{" ? [1, 0] : [0, 1], 2),
                 c = _ref[0],
                 f = _ref[1],
-                d = "@" + a + o;
-              switch (a) {
+                d = "@" + h + o;
+              switch (h) {
                 case "string":
                   t = new Au(t, d, c, f);
                   break;
@@ -3190,19 +3190,19 @@ function _ts_generator(thisArg, body) {
     }
     return e;
   }
-  h(Q0, "generateAST");
+  a(Q0, "generateAST");
   function Ss(r) {
     return /^[ \t\n\r]*$/.test(r);
   }
-  h(Ss, "isWhitespace");
+  a(Ss, "isWhitespace");
   function Jx(r) {
     return !/[#%{}~$,]/.test(r);
   }
-  h(Jx, "isValidKeyCharacter");
+  a(Jx, "isValidKeyCharacter");
   function w0(r) {
     return !/[=,{}()[\]]/.test(r);
   }
-  h(w0, "isValidFieldName");
+  a(w0, "isValidFieldName");
   var at =
     ((_class14 = class _class extends Error {
       constructor(t, i, n, s, o, l) {
@@ -3215,7 +3215,7 @@ function _ts_generator(thisArg, body) {
         (this.name = "Syntax Error"), (this.char = (_t_n = t[n]) !== null && _t_n !== void 0 ? _t_n : "");
       }
     }),
-    h(_class14, "BibTeXSyntaxError"),
+    a(_class14, "BibTeXSyntaxError"),
     _class14);
   function vi(r, e) {
     return r
@@ -3232,7 +3232,7 @@ function _ts_generator(thisArg, body) {
         }
       });
   }
-  h(vi, "parseAuthors");
+  a(vi, "parseAuthors");
   var or =
       ((_r1 = class r {
         constructor(e, t, ref) {
@@ -3244,7 +3244,7 @@ function _ts_generator(thisArg, body) {
           t instanceof r ? t.children.push(this) : t instanceof Qs && t.args.push(this);
         }
       }),
-      h(_r1, "BlockNode"),
+      a(_r1, "BlockNode"),
       _r1),
     Uu =
       ((_class15 = class _class {
@@ -3256,7 +3256,7 @@ function _ts_generator(thisArg, body) {
           e.children.push(this);
         }
       }),
-      h(_class15, "TextNode"),
+      a(_class15, "TextNode"),
       _class15),
     Qs =
       ((_class16 = class _class {
@@ -3270,7 +3270,7 @@ function _ts_generator(thisArg, body) {
           e.children.push(this);
         }
       }),
-      h(_class16, "CommandNode"),
+      a(_class16, "CommandNode"),
       _class16);
   function _s(r) {
     var e = new or("root"),
@@ -3293,11 +3293,11 @@ function _ts_generator(thisArg, body) {
     }
     return e;
   }
-  h(_s, "parseLaTeX");
+  a(_s, "parseLaTeX");
   function Us(r) {
     return Lu(r);
   }
-  h(Us, "stringifyLaTeX");
+  a(Us, "stringifyLaTeX");
   function Lu(r) {
     var e = r.children
       .map((t) => {
@@ -3320,11 +3320,11 @@ function _ts_generator(thisArg, body) {
         return "[" + e + "]";
     }
   }
-  h(Lu, "stringifyBlock");
+  a(Lu, "stringifyBlock");
   function Gx(r) {
     return "\\" + r.command + r.args.map(Lu).join("");
   }
-  h(Gx, "stringifyCommand");
+  a(Gx, "stringifyCommand");
   function Jr(r) {
     var e = _object_spread_props(_object_spread({}, r), { children: [] });
     var _iteratorNormalCompletion = true,
@@ -3354,7 +3354,7 @@ function _ts_generator(thisArg, body) {
     }
     return e;
   }
-  h(Jr, "flattenLaTeX");
+  a(Jr, "flattenLaTeX");
   var _0 = new Map([
     ["0023", "\\#"],
     ["0024", "\\$"],
@@ -5706,26 +5706,26 @@ function _ts_generator(thisArg, body) {
       return (_e_Number = e[Number(s)]) !== null && _e_Number !== void 0 ? _e_Number : "";
     });
   }
-  h(U0, "escapeSpecialCharacters");
+  a(U0, "escapeSpecialCharacters");
   function L0(r) {
     return r.replace(/(\w)(\S*)/g, (e, t, i) => {
       var n = t + i;
       return Xx(n) ? n : t.toLocaleUpperCase() + i.toLocaleLowerCase();
     });
   }
-  h(L0, "titleCase");
+  a(L0, "titleCase");
   function Xx(r) {
     return /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/.test(r);
   }
-  h(Xx, "isRomanNumeral");
+  a(Xx, "isRomanNumeral");
   function lr(r) {
     return r.replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
   }
-  h(lr, "alphaNum");
+  a(lr, "alphaNum");
   function O0(r) {
     return r.replace(/\r\n?/g, "\n");
   }
-  h(O0, "convertCRLF");
+  a(O0, "convertCRLF");
   function T0(r, e) {
     var t = r.split(" "),
       i = [],
@@ -5756,41 +5756,41 @@ function _ts_generator(thisArg, body) {
     }
     return [...i, n.trim()];
   }
-  h(T0, "wrapText");
+  a(T0, "wrapText");
   function R0(r) {
     return r
       .replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>")
       .replace(/\s*\n\s*/g, " ")
       .replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
   }
-  h(R0, "unwrapText");
+  a(R0, "unwrapText");
   function Ou(r, e) {
     return e && (r = Us(Jr(_s(r)))), "{".concat(r, "}");
   }
-  h(Ou, "addEnclosingBraces");
+  a(Ou, "addEnclosingBraces");
   function N0(r) {
     return r.replace(/^\{([^{}]*)\}$/g, "$1");
   }
-  h(N0, "removeEnclosingBraces");
+  a(N0, "removeEnclosingBraces");
   function M0(r) {
     return r.replace(/\\?_/g, "\\%5F");
   }
-  h(M0, "escapeURL");
+  a(M0, "escapeURL");
   function P0(r, e) {
     var t = r.split(" and ");
     return t.length > e ? [...t.slice(0, e), "others"].join(" and ") : r;
   }
-  h(P0, "limitAuthors");
+  a(P0, "limitAuthors");
   function I0(r) {
     for (var e = 0; e < 4; e++) r = r.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
     return r;
   }
-  h(I0, "formatPageRange");
+  a(I0, "formatPageRange");
   function Gr(r) {
     var _r_block;
     return r.type !== "text" && ((_r_block = r.block) === null || _r_block === void 0 ? void 0 : _r_block.type) === "entry";
   }
-  h(Gr, "isEntryNode");
+  a(Gr, "isEntryNode");
   function $0(r, e, t, i) {
     var n = new Map();
     var _iteratorNormalCompletion = true,
@@ -5821,7 +5821,7 @@ function _ts_generator(thisArg, body) {
       o = [],
       l = new Map(),
       u = new Map(),
-      a = new Map(),
+      h = new Map(),
       c = new Map();
     var _iteratorNormalCompletion1 = true,
       _didIteratorError1 = false,
@@ -5863,7 +5863,7 @@ function _ts_generator(thisArg, body) {
                   if (!g2 || !b) continue;
                   var _vi__lastName;
                   var k = [lr((_vi__lastName = (_vi_ = vi(b)[0]) === null || _vi_ === void 0 ? void 0 : _vi_.lastName) !== null && _vi__lastName !== void 0 ? _vi__lastName : b), lr(g2), lr(B !== null && B !== void 0 ? B : "0")].join(":");
-                  (F = a.get(k)), F ? (D = "Entry ".concat(f1.key, " has similar content to entry ").concat(F.key, ".")) : a.set(k, f1);
+                  (F = h.get(k)), F ? (D = "Entry ".concat(f1.key, " has similar content to entry ").concat(F.key, ".")) : h.set(k, f1);
                   break;
                 }
                 case "abstract": {
@@ -5907,7 +5907,7 @@ function _ts_generator(thisArg, body) {
     }
     return { entries: s, warnings: o };
   }
-  h($0, "checkForDuplicates");
+  a($0, "checkForDuplicates");
   function Kx(r, e, t) {
     if (r)
       switch (r) {
@@ -5945,7 +5945,7 @@ function _ts_generator(thisArg, body) {
           return;
       }
   }
-  h(Kx, "mergeEntries");
+  a(Kx, "mergeEntries");
   var Tu = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"],
     q0 = new Set(Tu),
     V0 = {
@@ -5992,12 +5992,12 @@ function _ts_generator(thisArg, body) {
       o = n ? "	" : " ".repeat(s),
       l = new Set(i),
       u = r.children
-        .map((a) => Zx(a, e, o, l, t))
+        .map((h) => Zx(h, e, o, l, t))
         .join("")
         .trimEnd();
     return u.endsWith("\n") || (u += "\n"), u;
   }
-  h(z0, "formatBibtex");
+  a(z0, "formatBibtex");
   function Zx(r, e, t, i, n) {
     if (r.type === "text") return W0(r.text, e);
     if (!r.block) throw new Error("FATAL!");
@@ -6011,12 +6011,12 @@ function _ts_generator(thisArg, body) {
         return ev(r.command, r.block, e, t, i, n === null || n === void 0 ? void 0 : n.get(r.block)) + (e.blankLines ? "\n" : "");
     }
   }
-  h(Zx, "formatNode");
+  a(Zx, "formatNode");
   function ev(r, e, t, i, n, s) {
     var o = t.align,
       l = t.trailingCommas,
       u = t.removeDuplicateFields,
-      a = t.removeEmptyFields,
+      h = t.removeEmptyFields,
       c = t.lowercase,
       f = "",
       d = c ? r.toLocaleLowerCase() : r;
@@ -6036,11 +6036,11 @@ function _ts_generator(thisArg, body) {
           b = c ? g : D.name;
         if (D.name !== "" && !n.has(g) && !(u && m.has(g))) {
           if ((m.add(g), D.value.concat.length === 0)) {
-            if (a) continue;
+            if (h) continue;
             f += "\n".concat(i).concat(b);
           } else {
             var B = Ru(D, t);
-            if (a && (B === "{}" || B === '""')) continue;
+            if (h && (B === "{}" || B === '""')) continue;
             f += "\n"
               .concat(i)
               .concat(b.trim().padEnd(o - 1), " = ")
@@ -6065,7 +6065,7 @@ function _ts_generator(thisArg, body) {
     }
     return (f += "\n}\n"), f;
   }
-  h(ev, "formatEntry");
+  a(ev, "formatEntry");
   function W0(r, param) {
     var e = param.stripComments,
       t = param.tidyComments;
@@ -6075,7 +6075,7 @@ function _ts_generator(thisArg, body) {
       return i === "" ? "" : i + "\n";
     } else return r.replace(/^[ \t]*\n|[ \t]*$/g, "");
   }
-  h(W0, "formatComment");
+  a(W0, "formatComment");
   function Ru(r, e) {
     var t = e.curly,
       i = e.numeric,
@@ -6084,7 +6084,7 @@ function _ts_generator(thisArg, body) {
       o = e.dropAllCaps,
       l = e.escape,
       u = e.encodeUrls,
-      a = e.wrap,
+      h = e.wrap,
       c = e.maxAuthors,
       f = e.tab,
       d = e.space,
@@ -6111,11 +6111,11 @@ function _ts_generator(thisArg, body) {
         if (((C = R0(C)), s && (C = N0(C)), o && !C.match(/[a-z]/) && (C = L0(C)), D === "url" && u && (C = M0(C)), l && (C = U0(C)), D === "pages" && (C = I0(C)), D === "author" && c && (C = P0(C, c)), B.has(D) && (C = Us(Jr(_s(C)))), b.has(D) && (k === "braced" || t) && (C = Ou(C, !0)), k === "braced" && r.value.concat.length === 1 && (C = C.trim()), k === "braced" || t)) {
           var H1 = "".concat(g).concat(n, "{").concat(C, "}").length,
             G = C.includes("\n\n");
-          if ((a && H1 > a) || G) {
+          if ((h && H1 > h) || G) {
             var T = C.split("\n\n"),
               j = g.repeat(2);
-            if (a) {
-              var te = a;
+            if (h) {
+              var te = h;
               T = T.map((P) => T0(P, te - j.length).join("\n" + j));
             }
             C = "\n" + j + T.join("\n\n".concat(j)) + "\n" + g;
@@ -6125,11 +6125,11 @@ function _ts_generator(thisArg, body) {
       })
       .join(" # ");
   }
-  h(Ru, "formatValue");
+  a(Ru, "formatValue");
   var tv = {
       auth: {
         description: "Last name of first authors",
-        callback: (r) => {
+        callback: a((r) => {
           var _vi_;
           var _r_get;
           var t =
@@ -6140,11 +6140,11 @@ function _ts_generator(thisArg, body) {
                   "_",
                 );
           return t ? [t] : [];
-        },
+        }, "callback"),
       },
       authEtAl: {
         description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
-        callback: (r) => {
+        callback: a((r) => {
           var _r_get;
           var e = vi((_r_get = r.get("author")) !== null && _r_get !== void 0 ? _r_get : "", !0);
           return [
@@ -6158,11 +6158,11 @@ function _ts_generator(thisArg, body) {
               ),
             ...(e.length > 2 ? ["Et", "Al"] : []),
           ];
-        },
+        }, "callback"),
       },
       authors: {
         description: "Last name all authors",
-        callback: (r) => {
+        callback: a((r) => {
           var _r_get;
           return vi((_r_get = r.get("author")) !== null && _r_get !== void 0 ? _r_get : "", !0).map((t) =>
             t.lastName.replace(
@@ -6170,11 +6170,11 @@ function _ts_generator(thisArg, body) {
               "_",
             ),
           );
-        },
+        }, "callback"),
       },
       authorsN: {
         description: "Last name N authors, with EtAl if more",
-        callback: function (r) {
+        callback: a(function (r) {
           var e = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 0;
           var _r_get;
           var t = vi((_r_get = r.get("author")) !== null && _r_get !== void 0 ? _r_get : "", !0);
@@ -6189,36 +6189,36 @@ function _ts_generator(thisArg, body) {
               ),
             ...(t.length > e ? ["Et", "Al"] : []),
           ];
-        },
+        }, "callback"),
       },
-      veryshorttitle: { description: "First non-function word of the title", callback: (r) => H0(Ls(r)).slice(0, 1) },
-      shorttitle: { description: "First three non-function words of the title", callback: (r) => H0(Ls(r)).slice(0, 3) },
-      title: { description: "Full title, capitalized", callback: (r) => Y0(Ts(Ls(r))) },
-      fulltitle: { description: "Full title, verbatim", callback: (r) => Ts(Ls(r)) },
+      veryshorttitle: { description: "First non-function word of the title", callback: a((r) => H0(Ls(r)).slice(0, 1), "callback") },
+      shorttitle: { description: "First three non-function words of the title", callback: a((r) => H0(Ls(r)).slice(0, 3), "callback") },
+      title: { description: "Full title, capitalized", callback: a((r) => Y0(Ts(Ls(r))), "callback") },
+      fulltitle: { description: "Full title, verbatim", callback: a((r) => Ts(Ls(r)), "callback") },
       year: {
         description: "Year",
-        callback: (r) => {
+        callback: a((r) => {
           var _r_get;
           var e = (_r_get = r.get("year")) === null || _r_get === void 0 ? void 0 : _r_get.replace(/[^0-9]/g, "");
           return e ? [e] : [];
-        },
+        }, "callback"),
       },
-      duplicateLetter: { description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.", callback: () => ["[duplicateLetter]"] },
-      duplicateNumber: { description: "If the multiple entries end up with the same key, then insert a number.", callback: () => ["[duplicateNumber]"] },
+      duplicateLetter: { description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.", callback: a(() => ["[duplicateLetter]"], "callback") },
+      duplicateNumber: { description: "If the multiple entries end up with the same key, then insert a number.", callback: a(() => ["[duplicateNumber]"], "callback") },
     },
     iv = {
       required: {
         description: "If data is missing, revert to existing key",
-        callback: (r) => {
+        callback: a((r) => {
           if (r.length === 0) throw new Os();
           return r;
-        },
+        }, "callback"),
       },
-      lower: { description: "Convert to lowercase", callback: (r) => r.map((e) => e.toLocaleLowerCase()) },
-      upper: { description: "Convert to uppercase", callback: (r) => r.map((e) => e.toLocaleUpperCase()) },
+      lower: { description: "Convert to lowercase", callback: a((r) => r.map((e) => e.toLocaleLowerCase()), "callback") },
+      upper: { description: "Convert to uppercase", callback: a((r) => r.map((e) => e.toLocaleUpperCase()), "callback") },
       capitalize: { description: "Capitalize first letter of each word", callback: Y0 },
     },
-    Os = ((_class17 = class _class extends Error {}), h(_class17, "MissingRequiredData"), _class17);
+    Os = ((_class17 = class _class extends Error {}), a(_class17, "MissingRequiredData"), _class17);
   function j0(r, e, t) {
     var i = t;
     !t.includes("[duplicateLetter]") && !t.includes("[duplicateNumber]") && (i = t + "[duplicateLetter]");
@@ -6235,8 +6235,8 @@ function _ts_generator(thisArg, body) {
           var u = rv(l, i);
           if (!u) continue;
           var _n_get;
-          var a = (_n_get = n.get(u)) !== null && _n_get !== void 0 ? _n_get : [];
-          n.set(u, [...a, o.block]);
+          var h = (_n_get = n.get(u)) !== null && _n_get !== void 0 ? _n_get : [];
+          n.set(u, [...h, o.block]);
         }
       }
     } catch (err) {
@@ -6269,10 +6269,10 @@ function _ts_generator(thisArg, body) {
           for (var _iterator2 = l1.entries()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion1 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion1 = true) {
             var _step_value1 = _sliced_to_array(_step2.value, 2),
               u1 = _step_value1[0],
-              a1 = _step_value1[1];
+              h1 = _step_value1[1];
             var c = l1.length > 1 ? String.fromCharCode(97 + u1) : "",
               f = l1.length > 1 ? String(u1 + 1) : "";
-            a1.key = o1.replace(/\[duplicateLetter\]/g, c).replace(/\[duplicateNumber\]/g, f);
+            h1.key = o1.replace(/\[duplicateLetter\]/g, c).replace(/\[duplicateNumber\]/g, f);
           }
         } catch (err) {
           _didIteratorError1 = true;
@@ -6305,7 +6305,7 @@ function _ts_generator(thisArg, body) {
     }
     return s;
   }
-  h(j0, "generateKeys");
+  a(j0, "generateKeys");
   function rv(r, e) {
     try {
       var _$t = e.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (i) => {
@@ -6316,11 +6316,11 @@ function _ts_generator(thisArg, body) {
         var o,
           l = n.replace(/[0-9]+/g, (c) => ((o = Number(c)), "N")),
           u = tv[l],
-          a;
-        if (u) a = u.callback(r, o);
+          h;
+        if (u) h = u.callback(r, o);
         else if (l === l.toLocaleUpperCase()) {
           var c = r.get(l.toLocaleLowerCase());
-          a = c ? Ts(c) : [];
+          h = c ? Ts(c) : [];
         } else throw new Error("Invalid citation key token ".concat(l));
         var _iteratorNormalCompletion = true,
           _didIteratorError = false,
@@ -6329,7 +6329,7 @@ function _ts_generator(thisArg, body) {
           for (var _iterator = s[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var c1 = _step.value;
             var f = iv[c1];
-            if (f) a = f.callback(a);
+            if (f) h = f.callback(h);
             else throw new Error("Invalid modifier ".concat(c1));
           }
         } catch (err) {
@@ -6346,7 +6346,7 @@ function _ts_generator(thisArg, body) {
             }
           }
         }
-        return a.join("");
+        return h.join("");
       });
       return _$t === "" ? void 0 : _$t;
     } catch (t) {
@@ -6354,7 +6354,7 @@ function _ts_generator(thisArg, body) {
       throw t;
     }
   }
-  h(rv, "generateKey");
+  a(rv, "generateKey");
   var nv = new Set([
     "a",
     "about",
@@ -6411,7 +6411,7 @@ function _ts_generator(thisArg, body) {
   function H0(r) {
     return Ts(r).filter((e) => !nv.has(e.toLocaleLowerCase()));
   }
-  h(H0, "nonFunctionWords");
+  a(H0, "nonFunctionWords");
   function Ts(r) {
     return r
       .split(
@@ -6419,16 +6419,16 @@ function _ts_generator(thisArg, body) {
       )
       .filter((e) => e.length > 0);
   }
-  h(Ts, "words");
+  a(Ts, "words");
   function Y0(r) {
     return r.map((e) => e.slice(0, 1).toLocaleUpperCase() + e.slice(1).toLocaleLowerCase());
   }
-  h(Y0, "capitalize");
+  a(Y0, "capitalize");
   function Ls(r) {
     var _r_get, _ref;
     return (_ref = (_r_get = r.get("title")) !== null && _r_get !== void 0 ? _r_get : r.get("booktitle")) !== null && _ref !== void 0 ? _ref : "";
   }
-  h(Ls, "title");
+  a(Ls, "title");
   var J0 = ["doi", "citation", "abstract"];
   var Rs = ["title", "shorttitle", "author", "year", "month", "day", "journal", "booktitle", "location", "on", "publisher", "address", "series", "volume", "number", "pages", "doi", "isbn", "issn", "url", "urldate", "copyright", "category", "note", "metadata"],
     Nu = ["key"],
@@ -6436,21 +6436,30 @@ function _ts_generator(thisArg, body) {
     Xr = [
       { key: "help", cli: { "--help": !0, "-h": !0 }, title: "Help", description: ["Show help"], type: "boolean" },
       { key: "v2", cli: { "--v2": !0 }, title: "Enable planned v2 CLI changes", description: ["Input files will no longer be modified by default. Instead, you will need to specify `--modify`/`-m` option to overwrite the file, or `--output`/`-o` to output to a different file."], type: "string", defaultValue: void 0 },
-      { key: "outputPath", cli: { "--output": (r) => r[0], "-o": (r) => r[0] }, title: "Output path", description: ["Write output to specified path. When omitted (and -m/--modify is not used), the result will be printed to stdout."], type: "string", defaultValue: void 0 },
+      { key: "outputPath", cli: { "--output": a((r) => r[0], "--output"), "-o": a((r) => r[0], "-o") }, title: "Output path", description: ["Write output to specified path. When omitted (and -m/--modify is not used), the result will be printed to stdout."], type: "string", defaultValue: void 0 },
       { key: "modify", cli: { "--modify": !0, "-m": !0, "--no-modify": !1 }, title: "Modify input files", description: ["Overwrite the original input files with the tidied result. This is enabled by default but will be disabled by default in v2. For v1, use --no-modify to output to stdout instead of overwriting the input files."], type: "boolean", defaultValue: !0 },
-      { key: "omit", cli: { "--omit": (r) => (r.length === 0 && (console.error("Expected a omit list"), process.exit(1)), r) }, toCLI: (r) => (Array.isArray(r) && r.length > 0 ? "--omit=".concat(r.join(",")) : void 0), title: "Remove fields", description: ["Remove specified fields from bibliography entries."], examples: ["--omit=id,name"], type: "string[]", defaultValue: [] },
-      { key: "curly", cli: { "--curly": !0, "--no-curly": !1 }, toCLI: (r) => (r ? "--curly" : void 0), title: "Enclose values in braces", description: ['Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'], type: "boolean", defaultValue: !1 },
-      { key: "numeric", cli: { "--numeric": !0, "--no-numeric": !1 }, toCLI: (r) => (r ? "--numeric" : void 0), title: "Use numeric values where possible", description: ["Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."], type: "boolean", defaultValue: !1 },
-      { key: "months", cli: { "--months": !0 }, toCLI: (r) => (r ? "--months" : void 0), title: "Abbreviate months", description: ["Convert all months to three letter abbreviations (jan, feb, etc)."], type: "boolean", defaultValue: !1 },
+      {
+        key: "omit",
+        cli: { "--omit": a((r) => (r.length === 0 && (console.error("Expected a omit list"), process.exit(1)), r), "--omit") },
+        toCLI: a((r) => (Array.isArray(r) && r.length > 0 ? "--omit=".concat(r.join(",")) : void 0), "toCLI"),
+        title: "Remove fields",
+        description: ["Remove specified fields from bibliography entries."],
+        examples: ["--omit=id,name"],
+        type: "string[]",
+        defaultValue: [],
+      },
+      { key: "curly", cli: { "--curly": !0, "--no-curly": !1 }, toCLI: a((r) => (r ? "--curly" : void 0), "toCLI"), title: "Enclose values in braces", description: ['Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'], type: "boolean", defaultValue: !1 },
+      { key: "numeric", cli: { "--numeric": !0, "--no-numeric": !1 }, toCLI: a((r) => (r ? "--numeric" : void 0), "toCLI"), title: "Use numeric values where possible", description: ["Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."], type: "boolean", defaultValue: !1 },
+      { key: "months", cli: { "--months": !0 }, toCLI: a((r) => (r ? "--months" : void 0), "toCLI"), title: "Abbreviate months", description: ["Convert all months to three letter abbreviations (jan, feb, etc)."], type: "boolean", defaultValue: !1 },
       {
         key: "space",
-        cli: { "--space": (r) => (r.length > 0 ? Number(r[0]) : !0) },
-        toCLI: (r, e) => {
+        cli: { "--space": a((r) => (r.length > 0 ? Number(r[0]) : !0), "--space") },
+        toCLI: a((r, e) => {
           if (!e.tab) {
             if (typeof r == "number" && r !== 2) return "--space=".concat(r);
             if (r && r !== 2) return "--space";
           }
-        },
+        }, "toCLI"),
         title: "Indent with spaces",
         description: ["Indent all fields with the specified number of spaces. Ignored if tab is set."],
         examples: ["--space=2 (default)", "--space=4"],
@@ -6458,14 +6467,14 @@ function _ts_generator(thisArg, body) {
         convertBoolean: { true: 2, false: void 0 },
         defaultValue: 2,
       },
-      { key: "tab", cli: { "--tab": !0, "--no-tab": !1 }, toCLI: (r) => (r ? "--tab" : void 0), title: "Indent with tabs", description: ["Indent all fields with a tab."], type: "boolean", defaultValue: !1 },
+      { key: "tab", cli: { "--tab": !0, "--no-tab": !1 }, toCLI: a((r) => (r ? "--tab" : void 0), "toCLI"), title: "Indent with tabs", description: ["Indent all fields with a tab."], type: "boolean", defaultValue: !1 },
       {
         key: "align",
-        cli: { "--align": (r) => Number(r[0]), "--no-align": !1 },
-        toCLI: (r) => {
+        cli: { "--align": a((r) => Number(r[0]), "--align"), "--no-align": !1 },
+        toCLI: a((r) => {
           if (r === !1 || r === 1 || r === 0) return "--no-align";
           if (typeof r == "number" && r !== 14) return "--align=".concat(r);
-        },
+        }, "toCLI"),
         title: "Align values",
         description: ["Insert whitespace between fields and values so that values are visually aligned."],
         examples: ["--align=14 (default)"],
@@ -6473,14 +6482,14 @@ function _ts_generator(thisArg, body) {
         convertBoolean: { true: 14, false: 1 },
         defaultValue: 14,
       },
-      { key: "blankLines", cli: { "--blank-lines": !0, "--no-blank-lines": !1 }, toCLI: (r) => (r ? "--blank-lines" : void 0), title: "Insert blank lines", description: ["Insert an empty line between each entry."], type: "boolean" },
+      { key: "blankLines", cli: { "--blank-lines": !0, "--no-blank-lines": !1 }, toCLI: a((r) => (r ? "--blank-lines" : void 0), "toCLI"), title: "Insert blank lines", description: ["Insert an empty line between each entry."], type: "boolean" },
       {
         key: "sort",
-        cli: { "--sort": (r) => (r.length > 0 ? r : !0), "--no-sort": !1 },
-        toCLI: (r) => {
+        cli: { "--sort": a((r) => (r.length > 0 ? r : !0), "--sort"), "--no-sort": !1 },
+        toCLI: a((r) => {
           if (Array.isArray(r) && r.length > 0) return "--sort=".concat(r.join(","));
           if (r === !0) return "--sort";
-        },
+        }, "toCLI"),
         title: "Sort bibliography entries",
         description: [
           "Sort entries by the specified field names (citation key is used if no fields are specified). For descending order, prefix the field with a dash (-).",
@@ -6494,7 +6503,7 @@ function _ts_generator(thisArg, body) {
       {
         key: "duplicates",
         cli: {
-          "--duplicates": (r) => {
+          "--duplicates": a((r) => {
             if (r.length === 0) return !0;
             var _iteratorNormalCompletion = true,
               _didIteratorError = false,
@@ -6519,26 +6528,26 @@ function _ts_generator(thisArg, body) {
               }
             }
             return r;
-          },
+          }, "--duplicates"),
         },
-        toCLI: (r) => {
+        toCLI: a((r) => {
           if (Array.isArray(r) && r.length > 0) return "--duplicates=".concat(r.join(","));
           if (r === !0) return "--duplicates";
-        },
+        }, "toCLI"),
         title: "Check for duplicates",
         description: ["Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."],
         examples: ["--duplicates doi (same DOIs)", "--duplicates key (same IDs)", "--duplicates abstract (similar abstracts)", "--duplicates citation (similar author and titles)", "--duplicates doi, key (identical DOI or keys)", "--duplicates (same DOI, key, abstract, or citation)"],
         type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
         convertBoolean: { true: J0, false: void 0 },
-        defaultValue: (r) => (r.merge ? J0 : void 0),
+        defaultValue: a((r) => (r.merge ? J0 : void 0), "defaultValue"),
       },
       {
         key: "merge",
-        cli: { "--merge": (r) => (r.length === 0 ? !0 : (r[0] !== "first" && r[0] !== "last" && r[0] !== "combine" && r[0] !== "overwrite" && (console.error('Invalid merge strategy: "'.concat(r[0], '"')), process.exit(1)), r[0])), "--no-merge": !1 },
-        toCLI: (r) => {
+        cli: { "--merge": a((r) => (r.length === 0 ? !0 : (r[0] !== "first" && r[0] !== "last" && r[0] !== "combine" && r[0] !== "overwrite" && (console.error('Invalid merge strategy: "'.concat(r[0], '"')), process.exit(1)), r[0])), "--merge"), "--no-merge": !1 },
+        toCLI: a((r) => {
           if (typeof r == "string") return "--merge=".concat(r);
           if (r) return "--merge";
-        },
+        }, "toCLI"),
         title: "Merge duplicate entries",
         description: [
           "Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:",
@@ -6550,16 +6559,16 @@ function _ts_generator(thisArg, body) {
         type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
         convertBoolean: { true: "combine", false: void 0 },
       },
-      { key: "stripEnclosingBraces", cli: { "--strip-enclosing-braces": !0 }, toCLI: (r) => (r ? "--strip-enclosing-braces" : void 0), title: "Strip double-braced values", description: ["Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}."], type: "boolean", defaultValue: !1 },
-      { key: "dropAllCaps", cli: { "--drop-all-caps": !0 }, toCLI: (r) => (r ? "--drop-all-caps" : void 0), title: "Drop all caps", description: ["Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}. Roman numerals will be left unchanged."], type: "boolean", defaultValue: !1 },
-      { key: "escape", cli: { "--escape": !0, "--no-escape": !1 }, toCLI: (r) => (r === !1 ? "--no-escape" : void 0), title: "Escape special characters", description: ["Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default."], type: "boolean", defaultValue: !0 },
+      { key: "stripEnclosingBraces", cli: { "--strip-enclosing-braces": !0 }, toCLI: a((r) => (r ? "--strip-enclosing-braces" : void 0), "toCLI"), title: "Strip double-braced values", description: ["Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}."], type: "boolean", defaultValue: !1 },
+      { key: "dropAllCaps", cli: { "--drop-all-caps": !0 }, toCLI: a((r) => (r ? "--drop-all-caps" : void 0), "toCLI"), title: "Drop all caps", description: ["Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}. Roman numerals will be left unchanged."], type: "boolean", defaultValue: !1 },
+      { key: "escape", cli: { "--escape": !0, "--no-escape": !1 }, toCLI: a((r) => (r === !1 ? "--no-escape" : void 0), "toCLI"), title: "Escape special characters", description: ["Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default."], type: "boolean", defaultValue: !0 },
       {
         key: "sortFields",
-        cli: { "--sort-fields": (r) => (r.length > 0 ? r : !0) },
-        toCLI: (r) => {
+        cli: { "--sort-fields": a((r) => (r.length > 0 ? r : !0), "--sort-fields") },
+        toCLI: a((r) => {
           if (Array.isArray(r) && r.length > 0) return JSON.stringify(r) === JSON.stringify(Rs) ? "--sort-fields" : "--sort-fields=".concat(r.join(","));
           if (r === !0) return "--sort-fields";
-        },
+        }, "toCLI"),
         title: "Sort fields",
         description: ["Sort the fields within entries.", "If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata"],
         examples: ["--sort-fields=name,author"],
@@ -6567,35 +6576,35 @@ function _ts_generator(thisArg, body) {
         convertBoolean: { true: Rs, false: void 0 },
         defaultValue: void 0,
       },
-      { key: "sortProperties", cli: { "--sort-properties": (r) => (r.length > 0 ? r : !0) }, title: "Sort properties", description: ["Alias of sort fields (legacy)"], type: "boolean | string[]", deprecated: !0 },
-      { key: "stripComments", cli: { "--strip-comments": !0, "--no-strip-comments": !1 }, toCLI: (r) => (r ? "--strip-comments" : void 0), title: "Remove comments", description: ["Remove all comments from the bibtex source."], type: "boolean", defaultValue: !1 },
-      { key: "trailingCommas", cli: { "--trailing-commas": !0, "--no-trailing-commas": !0 }, toCLI: (r) => (r ? "--trailing-commas" : void 0), title: "Trailing commas", description: ["End the last key value pair in each entry with a comma."], type: "boolean", defaultValue: !1 },
-      { key: "encodeUrls", cli: { "--encode-urls": !0, "--no-encode-urls": !0 }, toCLI: (r) => (r ? "--encode-urls" : void 0), title: "Encode URLs", description: ["Replace invalid URL characters with percent encoded values."], type: "boolean", defaultValue: !1 },
-      { key: "tidyComments", cli: { "--tidy-comments": !0, "--no-tidy-comments": !1 }, toCLI: (r) => (r === !1 ? "--no-tidy-comments" : void 0), title: "Tidy comments", description: ["Remove whitespace surrounding comments."], type: "boolean", defaultValue: !0 },
-      { key: "removeEmptyFields", cli: { "--remove-empty-fields": !0, "--no-remove-empty-fields": !1 }, toCLI: (r) => (r ? "--remove-empty-fields" : void 0), title: "Remove empty fields", description: ["Remove any fields that have empty values."], type: "boolean", defaultValue: !1 },
-      { key: "removeDuplicateFields", cli: { "--remove-dupe-fields": !0, "--no-remove-dupe-fields": !1 }, toCLI: (r) => (r === !1 ? "--no-remove-dupe-fields" : void 0), title: "Remove duplicate fields", description: ["Only allow one of each field in each entry. Enabled by default."], type: "boolean", defaultValue: !0 },
+      { key: "sortProperties", cli: { "--sort-properties": a((r) => (r.length > 0 ? r : !0), "--sort-properties") }, title: "Sort properties", description: ["Alias of sort fields (legacy)"], type: "boolean | string[]", deprecated: !0 },
+      { key: "stripComments", cli: { "--strip-comments": !0, "--no-strip-comments": !1 }, toCLI: a((r) => (r ? "--strip-comments" : void 0), "toCLI"), title: "Remove comments", description: ["Remove all comments from the bibtex source."], type: "boolean", defaultValue: !1 },
+      { key: "trailingCommas", cli: { "--trailing-commas": !0, "--no-trailing-commas": !0 }, toCLI: a((r) => (r ? "--trailing-commas" : void 0), "toCLI"), title: "Trailing commas", description: ["End the last key value pair in each entry with a comma."], type: "boolean", defaultValue: !1 },
+      { key: "encodeUrls", cli: { "--encode-urls": !0, "--no-encode-urls": !0 }, toCLI: a((r) => (r ? "--encode-urls" : void 0), "toCLI"), title: "Encode URLs", description: ["Replace invalid URL characters with percent encoded values."], type: "boolean", defaultValue: !1 },
+      { key: "tidyComments", cli: { "--tidy-comments": !0, "--no-tidy-comments": !1 }, toCLI: a((r) => (r === !1 ? "--no-tidy-comments" : void 0), "toCLI"), title: "Tidy comments", description: ["Remove whitespace surrounding comments."], type: "boolean", defaultValue: !0 },
+      { key: "removeEmptyFields", cli: { "--remove-empty-fields": !0, "--no-remove-empty-fields": !1 }, toCLI: a((r) => (r ? "--remove-empty-fields" : void 0), "toCLI"), title: "Remove empty fields", description: ["Remove any fields that have empty values."], type: "boolean", defaultValue: !1 },
+      { key: "removeDuplicateFields", cli: { "--remove-dupe-fields": !0, "--no-remove-dupe-fields": !1 }, toCLI: a((r) => (r === !1 ? "--no-remove-dupe-fields" : void 0), "toCLI"), title: "Remove duplicate fields", description: ["Only allow one of each field in each entry. Enabled by default."], type: "boolean", defaultValue: !0 },
       {
         key: "generateKeys",
-        cli: { "--generate-keys": (r) => (r.length > 0 ? r : !0) },
-        toCLI: (r) => {
+        cli: { "--generate-keys": a((r) => (r.length > 0 ? r : !0), "--generate-keys") },
+        toCLI: a((r) => {
           if (r === !0 || r === G0) return "--generate-keys";
           if (typeof r == "string") return '--generate-keys="'.concat(r.replace(/"/g, '\\"'), '"');
-        },
+        }, "toCLI"),
         title: "Generate citation keys [Experimental]",
         description: ["For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning."],
         type: "boolean | string",
         convertBoolean: { true: G0, false: void 0 },
         defaultValue: void 0,
       },
-      { key: "maxAuthors", cli: { "--max-authors": (r) => Number(r[0]) }, toCLI: (r) => (r ? "--max-authors=".concat(r) : void 0), title: "Maximum authors", description: ['Truncate authors if above a given number into "and others".'], type: "number" },
-      { key: "lowercase", cli: { "--no-lowercase": !1 }, toCLI: (r) => (r === !1 ? "--no-lowercase" : void 0), title: "Lowercase fields", description: ["Lowercase field names and entry type. Enabled by default."], type: "boolean", defaultValue: !0 },
+      { key: "maxAuthors", cli: { "--max-authors": a((r) => Number(r[0]), "--max-authors") }, toCLI: a((r) => (r ? "--max-authors=".concat(r) : void 0), "toCLI"), title: "Maximum authors", description: ['Truncate authors if above a given number into "and others".'], type: "number" },
+      { key: "lowercase", cli: { "--no-lowercase": !1 }, toCLI: a((r) => (r === !1 ? "--no-lowercase" : void 0), "toCLI"), title: "Lowercase fields", description: ["Lowercase field names and entry type. Enabled by default."], type: "boolean", defaultValue: !0 },
       {
         key: "enclosingBraces",
-        cli: { "--enclosing-braces": (r) => (r.length > 0 ? r : !0) },
-        toCLI: (r) => {
+        cli: { "--enclosing-braces": a((r) => (r.length > 0 ? r : !0), "--enclosing-braces") },
+        toCLI: a((r) => {
           if (Array.isArray(r) && r.length > 0) return "--enclosing-braces=".concat(r.join(","));
           if (r === !0) return "--enclosing-braces";
-        },
+        }, "toCLI"),
         title: "Enclose values in double braces",
         description: ["Enclose the given fields in double braces, such that case is preserved during BibTeX compilation."],
         examples: ["--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})", "--enclosing-braces (equivalent to ---enclosing-braces=title)"],
@@ -6604,18 +6613,18 @@ function _ts_generator(thisArg, body) {
       },
       {
         key: "removeBraces",
-        cli: { "--remove-braces": (r) => (r.length > 0 ? r : !0) },
-        toCLI: (r) => {
+        cli: { "--remove-braces": a((r) => (r.length > 0 ? r : !0), "--remove-braces") },
+        toCLI: a((r) => {
           if (Array.isArray(r) && r.length > 0) return "--remove-braces=".concat(r.join(","));
           if (r === !0) return "--remove-braces";
-        },
+        }, "toCLI"),
         title: "Remove braces",
         description: ["Remove any curly braces within the value, unless they are part of a command."],
         examples: ["--remove-braces=title,journal", "--remove-braces (equivalent to ---remove-braces=title)"],
         type: "boolean | string[]",
         convertBoolean: { true: ["title"], false: void 0 },
       },
-      { key: "wrap", cli: { "--wrap": (r) => (r.length > 0 ? Number(r[0]) : !0), "--no-wrap": !1 }, toCLI: (r) => (r ? "--wrap=".concat(r) : void 0), title: "Wrap values", description: ["Wrap long values at the given column"], examples: ["--wrap (80 by default)", "--wrap=82"], type: "boolean | number", convertBoolean: { true: 80, false: void 0 } },
+      { key: "wrap", cli: { "--wrap": a((r) => (r.length > 0 ? Number(r[0]) : !0), "--wrap"), "--no-wrap": !1 }, toCLI: a((r) => (r ? "--wrap=".concat(r) : void 0), "toCLI"), title: "Wrap values", description: ["Wrap long values at the given column"], examples: ["--wrap (80 by default)", "--wrap=82"], type: "boolean | number", convertBoolean: { true: 80, false: void 0 } },
       { key: "version", cli: { "--version": !0, "-v": !0 }, title: "Version", description: ["Show bibtex-tidy version."], type: "boolean" },
       { key: "quiet", cli: { "--quiet": !0 }, title: "Quiet", description: ["Suppress logs on stdout."], type: "boolean" },
       { key: "backup", cli: { "--backup": !0, "--no-backup": !1 }, title: "Backup", description: ["Make a backup <filename>.original. Enabled by default (unless --modify is explicitly provided or outputting to a different file/stdio). Deprecated but provided for backward compatibility."], type: "boolean", defaultValue: !0, deprecated: !0 },
@@ -6630,7 +6639,7 @@ function _ts_generator(thisArg, body) {
       }),
     );
   }
-  h(Kr, "normalizeOptions");
+  a(Kr, "normalizeOptions");
   function K0(r, e, t) {
     var i = new Map(),
       n = [];
@@ -6667,8 +6676,8 @@ function _ts_generator(thisArg, body) {
               case "month": {
                 var _s_block2, _e_get;
                 if (((_s_block2 = s.block) === null || _s_block2 === void 0 ? void 0 : _s_block2.type) !== "entry") continue;
-                var a = (_e_get = e.get(s.block)) === null || _e_get === void 0 ? void 0 : _e_get.get(l),
-                  c = a ? Tu.indexOf(a) : -1;
+                var h = (_e_get = e.get(s.block)) === null || _e_get === void 0 ? void 0 : _e_get.get(l),
+                  c = h ? Tu.indexOf(h) : -1;
                 u = c > -1 ? c : "";
                 break;
               }
@@ -6725,11 +6734,11 @@ function _ts_generator(thisArg, body) {
         var s = _step2.value;
         var o = s.startsWith("-"),
           l = o ? s.slice(1) : s;
-        r.children.sort((u, a) => {
+        r.children.sort((u, h) => {
           var _i_get, _i_get1;
           var _i_get_get, _i_get_get1;
           var c = (_i_get_get = (_i_get = i.get(u)) === null || _i_get === void 0 ? void 0 : _i_get.get(l)) !== null && _i_get_get !== void 0 ? _i_get_get : "￰",
-            f = (_i_get_get1 = (_i_get1 = i.get(a)) === null || _i_get1 === void 0 ? void 0 : _i_get1.get(l)) !== null && _i_get_get1 !== void 0 ? _i_get_get1 : "￰";
+            f = (_i_get_get1 = (_i_get1 = i.get(h)) === null || _i_get1 === void 0 ? void 0 : _i_get1.get(l)) !== null && _i_get_get1 !== void 0 ? _i_get_get1 : "￰";
           return typeof c == "number" && (c = String(c).padStart(50, "0")), typeof f == "number" && (f = String(f).padStart(50, "0")), (o ? f : c).localeCompare(o ? c : f);
         });
       };
@@ -6749,12 +6758,12 @@ function _ts_generator(thisArg, body) {
       }
     }
   }
-  h(K0, "sortEntries");
+  a(K0, "sortEntries");
   var sv = new Set(["string", "preamble", "set", "xdata"]);
   function ov(r) {
     return sv.has(r.command.toLowerCase());
   }
-  h(ov, "isBibLaTeXSpecialEntry");
+  a(ov, "isBibLaTeXSpecialEntry");
   function Z0(r, e) {
     var _iteratorNormalCompletion = true,
       _didIteratorError = false,
@@ -6783,26 +6792,26 @@ function _ts_generator(thisArg, body) {
       }
     }
   }
-  h(Z0, "sortEntryFields");
+  a(Z0, "sortEntryFields");
   function eg(r) {
     var e = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
     var t = Kr(e);
     r = O0(r);
     var i = Q0(r),
       n = Ai(i)
-        .filter((a) => !a.key)
-        .map((a) => ({ code: "MISSING_KEY", message: "".concat(a.parent.command, " entry does not have a citation key.") })),
+        .filter((h) => !h.key)
+        .map((h) => ({ code: "MISSING_KEY", message: "".concat(h.parent.command, " entry does not have a citation key.") })),
       s = lv(i, t),
       o = $0(i, s, t.duplicates, t.merge);
-    n.push(...o.warnings), (i.children = i.children.filter((a) => !Gr(a) || !o.entries.has(a.block))), t.sort && K0(i, s, t.sort), t.sortFields && Z0(i, t.sortFields);
+    n.push(...o.warnings), (i.children = i.children.filter((h) => !Gr(h) || !o.entries.has(h.block))), t.sort && K0(i, s, t.sort), t.sortFields && Z0(i, t.sortFields);
     var l = t.generateKeys ? j0(i, s, t.generateKeys) : void 0;
     return { bibtex: z0(i, t, l), warnings: n, count: Ai(i).length };
   }
-  h(eg, "tidy");
+  a(eg, "tidy");
   function Ai(r) {
     return r.children.filter(Gr).map((e) => e.block);
   }
-  h(Ai, "getEntries");
+  a(Ai, "getEntries");
   function lv(r, e) {
     return new Map(
       Ai(r).map((t) => [
@@ -6816,7 +6825,7 @@ function _ts_generator(thisArg, body) {
       ]),
     );
   }
-  h(lv, "generateValueLookup");
+  a(lv, "generateValueLookup");
   var de =
       ((_r2 = class r {
         lineAt(e) {
@@ -6886,7 +6895,7 @@ function _ts_generator(thisArg, body) {
         }
         constructor() {}
       }),
-      h(_r2, "Text"),
+      a(_r2, "Text"),
       _r2),
     nt =
       ((_r3 = class r extends de {
@@ -6996,7 +7005,7 @@ function _ts_generator(thisArg, body) {
           super(), (this.text = e), (this.length = t);
         }
       }),
-      h(_r3, "TextLeaf"),
+      a(_r3, "TextLeaf"),
       _r3),
     ar =
       ((_r4 = class r extends de {
@@ -7014,8 +7023,8 @@ function _ts_generator(thisArg, body) {
             var l = this.children[s],
               u = o + l.length;
             if (e <= u && t >= o) {
-              var a = n & ((o <= e ? 1 : 0) | (u >= t ? 2 : 0));
-              o >= e && u <= t && !a ? i.push(l) : l.decompose(e - o, t - o, i, a);
+              var h = n & ((o <= e ? 1 : 0) | (u >= t ? 2 : 0));
+              o >= e && u <= t && !h ? i.push(l) : l.decompose(e - o, t - o, i, h);
             }
             o = u + 1;
           }
@@ -7028,8 +7037,8 @@ function _ts_generator(thisArg, body) {
                 l = s + o.length;
               if (e >= s && t <= l) {
                 var u = o.replace(e - s, t - s, i),
-                  a = this.lines - o.lines + u.lines;
-                if (u.lines < a >> 4 && u.lines > a >> 6) {
+                  h = this.lines - o.lines + u.lines;
+                if (u.lines < h >> 4 && u.lines > h >> 6) {
                   var c = this.children.slice();
                   return (c[n] = u), new r(c, this.length - (t - e) + i.length);
                 }
@@ -7087,8 +7096,8 @@ function _ts_generator(thisArg, body) {
           for (; ; n += t, s += t) {
             if (n == o || s == l) return i;
             var u = this.children[n],
-              a = e.children[s];
-            if (u != a) return i + u.scanIdentical(a, t);
+              h = e.children[s];
+            if (u != h) return i + u.scanIdentical(h, t);
             i += u.length + 1;
           }
         }
@@ -7148,7 +7157,7 @@ function _ts_generator(thisArg, body) {
             o = n >> 1,
             l = [],
             u = 0,
-            a = -1,
+            h = -1,
             c = [];
           function f(p) {
             var m;
@@ -7175,13 +7184,13 @@ function _ts_generator(thisArg, body) {
                   }
                 }
               }
-            else p.lines > o && (u > o || !u) ? (d(), l.push(p)) : p instanceof nt && u && (m = c[c.length - 1]) instanceof nt && p.lines + m.lines <= 32 ? ((u += p.lines), (a += p.length + 1), (c[c.length - 1] = new nt(m.text.concat(p.text), m.length + 1 + p.length))) : (u + p.lines > n && d(), (u += p.lines), (a += p.length + 1), c.push(p));
+            else p.lines > o && (u > o || !u) ? (d(), l.push(p)) : p instanceof nt && u && (m = c[c.length - 1]) instanceof nt && p.lines + m.lines <= 32 ? ((u += p.lines), (h += p.length + 1), (c[c.length - 1] = new nt(m.text.concat(p.text), m.length + 1 + p.length))) : (u + p.lines > n && d(), (u += p.lines), (h += p.length + 1), c.push(p));
           }
-          h(f, "add");
+          a(f, "add");
           function d() {
-            u != 0 && (l.push(c.length == 1 ? c[0] : r.from(c, a)), (a = -1), (u = c.length = 0));
+            u != 0 && (l.push(c.length == 1 ? c[0] : r.from(c, h)), (h = -1), (u = c.length = 0));
           }
-          h(d, "flush");
+          a(d, "flush");
           var _iteratorNormalCompletion2 = true,
             _didIteratorError2 = false,
             _iteratorError2 = undefined;
@@ -7232,7 +7241,7 @@ function _ts_generator(thisArg, body) {
           }
         }
       }),
-      h(_r4, "TextNode"),
+      a(_r4, "TextNode"),
       _r4);
   de.empty = new nt([""], 0);
   function uv(r) {
@@ -7261,7 +7270,7 @@ function _ts_generator(thisArg, body) {
     }
     return e;
   }
-  h(uv, "textLength");
+  a(uv, "textLength");
   function Ps(r, e) {
     var t = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 0,
       i = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : 1e9;
@@ -7272,11 +7281,11 @@ function _ts_generator(thisArg, body) {
     }
     return e;
   }
-  h(Ps, "appendText");
+  a(Ps, "appendText");
   function tg(r, e, t) {
     return Ps(r, [""], e, t);
   }
-  h(tg, "sliceText");
+  a(tg, "sliceText");
   var wi =
       ((_class18 = class _class {
         nextInner(e, t) {
@@ -7311,7 +7320,7 @@ function _ts_generator(thisArg, body) {
           (this.dir = t), (this.done = !1), (this.lineBreak = !1), (this.value = ""), (this.nodes = [e]), (this.offsets = [t > 0 ? 1 : (e instanceof nt ? e.text.length : e.children.length) << 1]);
         }
       }),
-      h(_class18, "RawTextCursor"),
+      a(_class18, "RawTextCursor"),
       _class18),
     Is =
       ((_class19 = class _class {
@@ -7335,7 +7344,7 @@ function _ts_generator(thisArg, body) {
           (this.value = ""), (this.done = !1), (this.cursor = new wi(e, t > i ? -1 : 1)), (this.pos = t > i ? e.length : 0), (this.from = Math.min(t, i)), (this.to = Math.max(t, i));
         }
       }),
-      h(_class19, "PartialTextCursor"),
+      a(_class19, "PartialTextCursor"),
       _class19),
     $s =
       ((_class20 = class _class {
@@ -7354,7 +7363,7 @@ function _ts_generator(thisArg, body) {
           (this.inner = e), (this.afterBreak = !0), (this.value = ""), (this.done = !1);
         }
       }),
-      h(_class20, "LineCursor"),
+      a(_class20, "LineCursor"),
       _class20);
   typeof Symbol < "u" &&
     ((de.prototype[Symbol.iterator] = function () {
@@ -7375,12 +7384,12 @@ function _ts_generator(thisArg, body) {
         (this.from = e), (this.to = t), (this.number = i), (this.text = n);
       }
     }),
-    h(_class21, "Line"),
+    a(_class21, "Line"),
     _class21);
   function dr(r, e, t) {
     return (e = Math.max(0, Math.min(r.length, e))), [e, Math.max(e, Math.min(r.length, t))];
   }
-  h(dr, "clip");
+  a(dr, "clip");
   var hr =
     "lc,34,7n,7,7b,19,,,,2,,2,,,20,b,1c,l,g,,2t,7,2,6,2,2,,4,z,,u,r,2j,b,1m,9,9,,o,4,,9,,3,,5,17,3,3b,f,,w,1j,,,,4,8,4,,3,7,a,2,t,,1m,,,,2,4,8,,9,,a,2,q,,2,2,1l,,4,2,4,2,2,3,3,,u,2,3,,b,2,1l,,4,5,,2,4,,k,2,m,6,,,1m,,,2,,4,8,,7,3,a,2,u,,1n,,,,c,,9,,14,,3,,1l,3,5,3,,4,7,2,b,2,t,,1m,,2,,2,,3,,5,2,7,2,b,2,s,2,1l,2,,,2,4,8,,9,,a,2,t,,20,,4,,2,3,,,8,,29,,2,7,c,8,2q,,2,9,b,6,22,2,r,,,,,,1j,e,,5,,2,5,b,,10,9,,2u,4,,6,,2,2,2,p,2,4,3,g,4,d,,2,2,6,,f,,jj,3,qa,3,t,3,t,2,u,2,1s,2,,7,8,,2,b,9,,19,3,3b,2,y,,3a,3,4,2,9,,6,3,63,2,2,,1m,,,7,,,,,2,8,6,a,2,,1c,h,1r,4,1c,7,,,5,,14,9,c,2,w,4,2,2,,3,1k,,,2,3,,,3,1m,8,2,2,48,3,,d,,7,4,,6,,3,2,5i,1m,,5,ek,,5f,x,2da,3,3x,,2o,w,fe,6,2x,2,n9w,4,,a,w,2,28,2,7k,,3,,4,,p,2,5,,47,2,q,i,d,,12,8,p,b,1a,3,1c,,2,4,2,2,13,,1v,6,2,2,2,2,c,,8,,1b,,1f,,,3,2,2,5,2,,,16,2,8,,6m,,2,,4,,fn4,,kh,g,g,g,a6,2,gt,,6a,,45,5,1ae,3,,2,5,4,14,3,4,,4l,2,fx,4,ar,2,49,b,4w,,1i,f,1k,3,1d,4,2,2,1x,3,10,5,,8,1q,,c,2,1g,9,a,4,2,,2n,3,2,,,2,6,,4g,,3,8,l,2,1l,2,,,,,m,,e,7,3,5,5f,8,2,3,,,n,,29,,2,6,,,2,,,2,,2,6j,,2,4,6,2,,2,r,2,2d,8,2,,,2,2y,,,,2,6,,,2t,3,2,4,,5,77,9,,2,6t,,a,2,,,4,,40,4,2,2,4,,w,a,14,6,2,4,8,,9,6,2,3,1a,d,,2,ba,7,,6,,,2a,m,2,7,,2,,2,3e,6,3,,,2,,7,,,20,2,3,,,,9n,2,f0b,5,1n,7,t4,,1r,4,29,,f5k,2,43q,,,3,4,5,8,8,2,7,u,4,44,3,1iz,1j,4,1e,8,,e,,m,5,,f,11s,7,,h,2,7,,2,,5,79,7,c5,4,15s,7,31,7,240,5,gx7k,2o,3k,6o"
       .split(",")
@@ -7390,18 +7399,18 @@ function _ts_generator(thisArg, body) {
     for (var e = 1; e < hr.length; e += 2) if (hr[e] > r) return hr[e - 1] <= r;
     return !1;
   }
-  h(av, "isExtendingChar");
+  a(av, "isExtendingChar");
   function ig(r) {
     return r >= 127462 && r <= 127487;
   }
-  h(ig, "isRegionalIndicator");
+  a(ig, "isRegionalIndicator");
   var rg = 8205;
   function ht(r, e) {
     var t = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : !0,
       i = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : !0;
     return (t ? ag : hv)(r, e, i);
   }
-  h(ht, "findClusterBreak");
+  a(ht, "findClusterBreak");
   function ag(r, e, t) {
     if (e == r.length) return e;
     e && hg(r.charCodeAt(e)) && cg(r.charCodeAt(e - 1)) && e--;
@@ -7419,7 +7428,7 @@ function _ts_generator(thisArg, body) {
     }
     return e;
   }
-  h(ag, "nextClusterBreak");
+  a(ag, "nextClusterBreak");
   function hv(r, e, t) {
     for (; e > 0; ) {
       var i = ag(r, e - 2, t);
@@ -7428,26 +7437,26 @@ function _ts_generator(thisArg, body) {
     }
     return 0;
   }
-  h(hv, "prevClusterBreak");
+  a(hv, "prevClusterBreak");
   function hg(r) {
     return r >= 56320 && r < 57344;
   }
-  h(hg, "surrogateLow");
+  a(hg, "surrogateLow");
   function cg(r) {
     return r >= 55296 && r < 56320;
   }
-  h(cg, "surrogateHigh");
+  a(cg, "surrogateHigh");
   function en(r, e) {
     var t = r.charCodeAt(e);
     if (!cg(t) || e + 1 == r.length) return t;
     var i = r.charCodeAt(e + 1);
     return hg(i) ? ((t - 55296) << 10) + (i - 56320) + 65536 : t;
   }
-  h(en, "codePointAt");
+  a(en, "codePointAt");
   function qs(r) {
     return r < 65536 ? 1 : 2;
   }
-  h(qs, "codePointSize");
+  a(qs, "codePointSize");
   var Iu = /\r\n?|\n/,
     Ve = (function (r) {
       return (r[(r.Simple = 0)] = "Simple"), (r[(r.TrackDel = 1)] = "TrackDel"), (r[(r.TrackBefore = 2)] = "TrackBefore"), (r[(r.TrackAfter = 3)] = "TrackAfter"), r;
@@ -7505,16 +7514,16 @@ function _ts_generator(thisArg, body) {
           for (var o = 0; o < this.sections.length; ) {
             var l = this.sections[o++],
               u = this.sections[o++],
-              a = n + l;
+              h = n + l;
             if (u < 0) {
-              if (a > e) return s + (e - n);
+              if (h > e) return s + (e - n);
               s += l;
             } else {
-              if (i != Ve.Simple && a >= e && ((i == Ve.TrackDel && n < e && a > e) || (i == Ve.TrackBefore && n < e) || (i == Ve.TrackAfter && a > e))) return null;
-              if (a > e || (a == e && t < 0 && !l)) return e == n || t < 0 ? s : s + u;
+              if (i != Ve.Simple && h >= e && ((i == Ve.TrackDel && n < e && h > e) || (i == Ve.TrackBefore && n < e) || (i == Ve.TrackAfter && h > e))) return null;
+              if (h > e || (h == e && t < 0 && !l)) return e == n || t < 0 ? s : s + u;
               s += u;
             }
-            n = a;
+            n = h;
           }
           if (e > n) throw new RangeError("Position ".concat(e, " is out of range for changeset of length ").concat(n));
           return s;
@@ -7553,7 +7562,7 @@ function _ts_generator(thisArg, body) {
           this.sections = e;
         }
       }),
-      h(_r5, "ChangeDesc"),
+      a(_r5, "ChangeDesc"),
       _r5),
     We =
       ((_r6 = class r extends Gt {
@@ -7609,10 +7618,10 @@ function _ts_generator(thisArg, body) {
               var f = s.ins == -1 ? -1 : s.off == 0 ? s.ins : 0;
               Me(t, c, f), f > 0 && ui(i, t, s.text), s.forward(c), (l += c);
             }
-            var a = e[o++];
-            for (; l < a; ) {
+            var h = e[o++];
+            for (; l < h; ) {
               if (s.done) break e;
-              var c1 = Math.min(s.len, a - l);
+              var c1 = Math.min(s.len, h - l);
               Me(t, c1, -1), Me(n, c1, s.ins == -1 ? -1 : s.off == 0 ? s.ins : 0), s.forward(c1), (l += c1);
             }
           }
@@ -7639,8 +7648,8 @@ function _ts_generator(thisArg, body) {
             var f = new r(n, s);
             (l = l ? l.compose(f.map(l)) : f), (n = []), (s = []), (o = 0);
           }
-          h(u, "flush");
-          function a(c) {
+          a(u, "flush");
+          function h(c) {
             var _iteratorNormalCompletion = true,
               _didIteratorError = false,
               _iteratorError = undefined;
@@ -7648,7 +7657,7 @@ function _ts_generator(thisArg, body) {
               try {
                 for (var _iterator = c[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                   var f = _step.value;
-                  a(f);
+                  h(f);
                 }
               } catch (err) {
                 _didIteratorError = true;
@@ -7679,7 +7688,7 @@ function _ts_generator(thisArg, body) {
               f1 < o && u(), f1 > o && Me(n, f1 - o, -1), Me(n, d - f1, F), ui(s, n, m), (o = d);
             }
           }
-          return h(a, "process"), a(e), u(!l), l;
+          return a(h, "process"), h(e), u(!l), l;
         }
         static empty(e) {
           return new r(e ? [e, -1] : [], []);
@@ -7709,7 +7718,7 @@ function _ts_generator(thisArg, body) {
           super(e), (this.inserted = t);
         }
       }),
-      h(_r6, "ChangeSet"),
+      a(_r6, "ChangeSet"),
       _r6);
   function Me(r, e, t) {
     var i = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : !1;
@@ -7717,7 +7726,7 @@ function _ts_generator(thisArg, body) {
     var n = r.length - 2;
     n >= 0 && t <= 0 && t == r[n + 1] ? (r[n] += e) : e == 0 && r[n] == 0 ? (r[n + 1] += t) : i ? ((r[n] += e), (r[n + 1] += t)) : r.push(e, t);
   }
-  h(Me, "addSection");
+  a(Me, "addSection");
   function ui(r, e, t) {
     if (t.length == 0) return;
     var i = (e.length - 2) >> 1;
@@ -7727,7 +7736,7 @@ function _ts_generator(thisArg, body) {
       r.push(t);
     }
   }
-  h(ui, "addInsert");
+  a(ui, "addInsert");
   function $u(r, e, t) {
     var i = r.inserted;
     for (var n = 0, s = 0, o = 0; o < r.sections.length; ) {
@@ -7735,15 +7744,15 @@ function _ts_generator(thisArg, body) {
         u = r.sections[o++];
       if (u < 0) (n += l), (s += l);
       else {
-        var a = n,
+        var h = n,
           c = s,
           f = de.empty;
-        for (; (a += l), (c += u), u && i && (f = f.append(i[(o - 2) >> 1])), !(t || o == r.sections.length || r.sections[o + 1] < 0); ) (l = r.sections[o++]), (u = r.sections[o++]);
-        e(n, a, s, c, f), (n = a), (s = c);
+        for (; (h += l), (c += u), u && i && (f = f.append(i[(o - 2) >> 1])), !(t || o == r.sections.length || r.sections[o + 1] < 0); ) (l = r.sections[o++]), (u = r.sections[o++]);
+        e(n, h, s, c, f), (n = h), (s = c);
       }
     }
   }
-  h($u, "iterChanges");
+  a($u, "iterChanges");
   function qu(r, e, t) {
     var i = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : !1;
     var n = [],
@@ -7752,31 +7761,31 @@ function _ts_generator(thisArg, body) {
       l = new Qi(e);
     for (var u = -1; ; )
       if (o.ins == -1 && l.ins == -1) {
-        var a = Math.min(o.len, l.len);
-        Me(n, a, -1), o.forward(a), l.forward(a);
+        var h = Math.min(o.len, l.len);
+        Me(n, h, -1), o.forward(h), l.forward(h);
       } else if (l.ins >= 0 && (o.ins < 0 || u == o.i || (o.off == 0 && (l.len < o.len || (l.len == o.len && !t))))) {
-        var a1 = l.len;
-        for (Me(n, l.ins, -1); a1; ) {
-          var c = Math.min(o.len, a1);
-          o.ins >= 0 && u < o.i && o.len <= c && (Me(n, 0, o.ins), s && ui(s, n, o.text), (u = o.i)), o.forward(c), (a1 -= c);
+        var h1 = l.len;
+        for (Me(n, l.ins, -1); h1; ) {
+          var c = Math.min(o.len, h1);
+          o.ins >= 0 && u < o.i && o.len <= c && (Me(n, 0, o.ins), s && ui(s, n, o.text), (u = o.i)), o.forward(c), (h1 -= c);
         }
         l.next();
       } else if (o.ins >= 0) {
-        var a2 = 0,
+        var h2 = 0,
           c1 = o.len;
         for (; c1; )
           if (l.ins == -1) {
             var f = Math.min(c1, l.len);
-            (a2 += f), (c1 -= f), l.forward(f);
+            (h2 += f), (c1 -= f), l.forward(f);
           } else if (l.ins == 0 && l.len < c1) (c1 -= l.len), l.next();
           else break;
-        Me(n, a2, u < o.i ? o.ins : 0), s && u < o.i && ui(s, n, o.text), (u = o.i), o.forward(o.len - c1);
+        Me(n, h2, u < o.i ? o.ins : 0), s && u < o.i && ui(s, n, o.text), (u = o.i), o.forward(o.len - c1);
       } else {
         if (o.done && l.done) return s ? We.createSet(n, s) : Gt.create(n);
         throw new Error("Mismatched change set lengths");
       }
   }
-  h(qu, "mapSet");
+  a(qu, "mapSet");
   function fg(r, e) {
     var t = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : !1;
     var i = [],
@@ -7791,17 +7800,17 @@ function _ts_generator(thisArg, body) {
         if (s.done || o.done) throw new Error("Mismatched change set lengths");
         {
           var u = Math.min(s.len2, o.len),
-            a = i.length;
+            h = i.length;
           if (s.ins == -1) {
             var c = o.ins == -1 ? -1 : o.off ? 0 : o.ins;
             Me(i, u, c, l), n && c && ui(n, i, o.text);
           } else o.ins == -1 ? (Me(i, s.off ? 0 : s.len, u, l), n && ui(n, i, s.textBit(u))) : (Me(i, s.off ? 0 : s.len, o.off ? 0 : o.ins, l), n && !o.off && ui(n, i, o.text));
-          (l = (s.ins > u || (o.ins >= 0 && o.len > u)) && (l || i.length > a)), s.forward2(u), o.forward(u);
+          (l = (s.ins > u || (o.ins >= 0 && o.len > u)) && (l || i.length > h)), s.forward2(u), o.forward(u);
         }
       }
     }
   }
-  h(fg, "composeSets");
+  a(fg, "composeSets");
   var Qi =
       ((_class22 = class _class {
         next() {
@@ -7837,7 +7846,7 @@ function _ts_generator(thisArg, body) {
           (this.set = e), (this.i = 0), this.next();
         }
       }),
-      h(_class22, "SectionIter"),
+      a(_class22, "SectionIter"),
       _class22),
     ur =
       ((_r7 = class r {
@@ -7890,7 +7899,7 @@ function _ts_generator(thisArg, body) {
           (this.from = e), (this.to = t), (this.flags = i);
         }
       }),
-      h(_r7, "SelectionRange"),
+      a(_r7, "SelectionRange"),
       _r7),
     Z =
       ((_r8 = class r {
@@ -7977,7 +7986,7 @@ function _ts_generator(thisArg, body) {
           (this.ranges = e), (this.mainIndex = t);
         }
       }),
-      h(_r8, "EditorSelection"),
+      a(_r8, "EditorSelection"),
       _r8);
   function dg(r, e) {
     var _iteratorNormalCompletion = true,
@@ -8003,7 +8012,7 @@ function _ts_generator(thisArg, body) {
       }
     }
   }
-  h(dg, "checkSelection");
+  a(dg, "checkSelection");
   var Ku = 0,
     z =
       ((_r9 = class r {
@@ -8026,18 +8035,18 @@ function _ts_generator(thisArg, body) {
           return new cr(e, this, 2, t);
         }
         from(e, t) {
-          return t || (t = h((i) => i, "get")), this.compute([e], (i) => t(i.field(e)));
+          return t || (t = a((i) => i, "get")), this.compute([e], (i) => t(i.field(e)));
         }
         constructor(e, t, i, n, s) {
           (this.combine = e), (this.compareInput = t), (this.compare = i), (this.isStatic = n), (this.id = Ku++), (this.default = e([])), (this.extensions = typeof s == "function" ? s(this) : s);
         }
       }),
-      h(_r9, "Facet"),
+      a(_r9, "Facet"),
       _r9);
   function Zu(r, e) {
     return r == e || (r.length == e.length && r.every((t, i) => t === e[i]));
   }
-  h(Zu, "sameArray");
+  a(Zu, "sameArray");
   var cr =
     ((_class23 = class _class {
       dynamicSlot(e) {
@@ -8048,7 +8057,7 @@ function _ts_generator(thisArg, body) {
           o = e[s] >> 1,
           l = this.type == 2,
           u = !1,
-          a = !1,
+          h = !1,
           c = [];
         var _iteratorNormalCompletion = true,
           _didIteratorError = false,
@@ -8056,7 +8065,7 @@ function _ts_generator(thisArg, body) {
         try {
           for (var _iterator = this.dependencies[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var f = _step.value;
-            f == "doc" ? (u = !0) : f == "selection" ? (a = !0) : ((t = e[f.id]) !== null && t !== void 0 ? t : 1) & 1 || c.push(e[f.id]);
+            f == "doc" ? (u = !0) : f == "selection" ? (h = !0) : ((t = e[f.id]) !== null && t !== void 0 ? t : 1) & 1 || c.push(e[f.id]);
           }
         } catch (err) {
           _didIteratorError = true;
@@ -8077,13 +8086,13 @@ function _ts_generator(thisArg, body) {
             return (f.values[o] = i(f)), 1;
           },
           update(f, d) {
-            if ((u && d.docChanged) || (a && (d.docChanged || d.selection)) || Vu(f, c)) {
+            if ((u && d.docChanged) || (h && (d.docChanged || d.selection)) || Vu(f, c)) {
               var p = i(f);
               if (l ? !ng(p, f.values[o], n) : !n(p, f.values[o])) return (f.values[o] = p), 1;
             }
             return 0;
           },
-          reconfigure: (f, d) => {
+          reconfigure: a((f, d) => {
             var p,
               m = d.config.address[s];
             if (m != null) {
@@ -8091,21 +8100,21 @@ function _ts_generator(thisArg, body) {
               if (this.dependencies.every((D) => (D instanceof z ? d.facet(D) === f.facet(D) : D instanceof Pe ? d.field(D, !1) == f.field(D, !1) : !0)) || (l ? ng((p = i(f)), F, n) : n((p = i(f)), F))) return (f.values[o] = F), 0;
             } else p = i(f);
             return (f.values[o] = p), 1;
-          },
+          }, "reconfigure"),
         };
       }
       constructor(e, t, i, n) {
         (this.dependencies = e), (this.facet = t), (this.type = i), (this.value = n), (this.id = Ku++);
       }
     }),
-    h(_class23, "FacetProvider"),
+    a(_class23, "FacetProvider"),
     _class23);
   function ng(r, e, t) {
     if (r.length != e.length) return !1;
     for (var i = 0; i < r.length; i++) if (!t(r[i], e[i])) return !1;
     return !0;
   }
-  h(ng, "compareArray");
+  a(ng, "compareArray");
   function Vu(r, e) {
     var t = !1;
     var _iteratorNormalCompletion = true,
@@ -8132,14 +8141,14 @@ function _ts_generator(thisArg, body) {
     }
     return t;
   }
-  h(Vu, "ensureAll");
+  a(Vu, "ensureAll");
   function cv(r, e, t) {
     var i = t.map((u) => r[u.id]),
       n = t.map((u) => u.type),
       s = i.filter((u) => !(u & 1)),
       o = r[e.id] >> 1;
     function l(u) {
-      var a = [];
+      var h = [];
       for (var c = 0; c < i.length; c++) {
         var f = zs(u, i[c]);
         var _iteratorNormalCompletion = true,
@@ -8149,7 +8158,7 @@ function _ts_generator(thisArg, body) {
           try {
             for (var _iterator = f[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               var d = _step.value;
-              a.push(d);
+              h.push(d);
             }
           } catch (err) {
             _didIteratorError = true;
@@ -8165,12 +8174,12 @@ function _ts_generator(thisArg, body) {
               }
             }
           }
-        else a.push(f);
+        else h.push(f);
       }
-      return e.combine(a);
+      return e.combine(h);
     }
     return (
-      h(l, "get"),
+      a(l, "get"),
       {
         create(u) {
           var _iteratorNormalCompletion = true,
@@ -8178,8 +8187,8 @@ function _ts_generator(thisArg, body) {
             _iteratorError = undefined;
           try {
             for (var _iterator = i[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var a = _step.value;
-              tn(u, a);
+              var h = _step.value;
+              tn(u, h);
             }
           } catch (err) {
             _didIteratorError = true;
@@ -8197,15 +8206,15 @@ function _ts_generator(thisArg, body) {
           }
           return (u.values[o] = l(u)), 1;
         },
-        update(u, a) {
+        update(u, h) {
           if (!Vu(u, s)) return 0;
           var c = l(u);
           return e.compare(c, u.values[o]) ? 0 : ((u.values[o] = c), 1);
         },
-        reconfigure(u, a) {
+        reconfigure(u, h) {
           var c = Vu(u, i),
-            f = a.config.facets[e.id],
-            d = a.facet(e);
+            f = h.config.facets[e.id],
+            d = h.facet(e);
           if (f && !c && Zu(t, f)) return (u.values[o] = d), 0;
           var p = l(u);
           return e.compare(p, d) ? ((u.values[o] = d), 0) : ((u.values[o] = p), 1);
@@ -8213,7 +8222,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(cv, "dynamicFacetSlot");
+  a(cv, "dynamicFacetSlot");
   var sg = z.define({ static: !0 }),
     Pe =
       ((_r10 = class r {
@@ -8228,13 +8237,13 @@ function _ts_generator(thisArg, body) {
         slot(e) {
           var t = e[this.id] >> 1;
           return {
-            create: (i) => ((i.values[t] = this.create(i)), 1),
-            update: (i, n) => {
+            create: a((i) => ((i.values[t] = this.create(i)), 1), "create"),
+            update: a((i, n) => {
               var s = i.values[t],
                 o = this.updateF(s, n);
               return this.compareF(s, o) ? 0 : ((i.values[t] = o), 1);
-            },
-            reconfigure: (i, n) => (n.config.address[this.id] != null ? ((i.values[t] = n.field(this)), 0) : ((i.values[t] = this.create(i)), 1)),
+            }, "update"),
+            reconfigure: a((i, n) => (n.config.address[this.id] != null ? ((i.values[t] = n.field(this)), 0) : ((i.values[t] = this.create(i)), 1)), "reconfigure"),
           };
         }
         init(e) {
@@ -8247,13 +8256,13 @@ function _ts_generator(thisArg, body) {
           (this.id = e), (this.createF = t), (this.updateF = i), (this.compareF = n), (this.spec = s), (this.provides = void 0);
         }
       }),
-      h(_r10, "StateField"),
+      a(_r10, "StateField"),
       _r10),
     ki = { lowest: 4, low: 3, default: 2, high: 1, highest: 0 };
   function Zr(r) {
     return (e) => new Vs(e, r);
   }
-  h(Zr, "prec");
+  a(Zr, "prec");
   var mr = { highest: Zr(ki.highest), high: Zr(ki.high), default: Zr(ki.default), low: Zr(ki.low), lowest: Zr(ki.lowest) },
     Vs =
       ((_class24 = class _class {
@@ -8261,7 +8270,7 @@ function _ts_generator(thisArg, body) {
           (this.inner = e), (this.prec = t);
         }
       }),
-      h(_class24, "PrecExtension"),
+      a(_class24, "PrecExtension"),
       _class24),
     pr =
       ((_r11 = class r {
@@ -8275,7 +8284,7 @@ function _ts_generator(thisArg, body) {
           return e.config.compartments.get(this);
         }
       }),
-      h(_r11, "Compartment"),
+      a(_r11, "Compartment"),
       _r11),
     rn =
       ((_class25 = class _class {
@@ -8283,7 +8292,7 @@ function _ts_generator(thisArg, body) {
           (this.compartment = e), (this.inner = t);
         }
       }),
-      h(_class25, "CompartmentInstance"),
+      a(_class25, "CompartmentInstance"),
       _class25),
     Ws =
       ((_r12 = class r {
@@ -8309,7 +8318,7 @@ function _ts_generator(thisArg, body) {
               try {
                 var _loop = function () {
                   var D = _step.value;
-                  D.type == 0 ? ((l[D.id] = (u.length << 1) | 1), u.push(D.value)) : ((l[D.id] = a.length << 1), a.push((g) => D.dynamicSlot(g)));
+                  D.type == 0 ? ((l[D.id] = (u.length << 1) | 1), u.push(D.value)) : ((l[D.id] = h.length << 1), h.push((g) => D.dynamicSlot(g)));
                 };
                 for (var _iterator = p[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) _loop();
               } catch (err) {
@@ -8326,7 +8335,7 @@ function _ts_generator(thisArg, body) {
                   }
                 }
               }
-              (l[m.id] = a.length << 1), a.push((D) => cv(D, m, p));
+              (l[m.id] = h.length << 1), h.push((D) => cv(D, m, p));
             }
           };
           var n = [],
@@ -8356,14 +8365,14 @@ function _ts_generator(thisArg, body) {
           }
           var l = Object.create(null),
             u = [],
-            a = [];
+            h = [];
           var _iteratorNormalCompletion1 = true,
             _didIteratorError1 = false,
             _iteratorError1 = undefined;
           try {
             var _loop1 = function () {
               var d = _step1.value;
-              (l[d.id] = a.length << 1), a.push((p) => d.slot(p));
+              (l[d.id] = h.length << 1), h.push((p) => d.slot(p));
             };
             for (var _iterator1 = n[Symbol.iterator](), _step1; !(_iteratorNormalCompletion1 = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion1 = true) _loop1();
           } catch (err) {
@@ -8382,14 +8391,14 @@ function _ts_generator(thisArg, body) {
           }
           var c = i === null || i === void 0 ? void 0 : i.config.facets;
           for (var d1 in s) _loop(d1);
-          var f = a.map((d) => d(l));
+          var f = h.map((d) => d(l));
           return new r(e, o, f, l, u, s);
         }
         constructor(e, t, i, n, s, o) {
           for (this.base = e, this.compartments = t, this.dynamicSlots = i, this.address = n, this.staticValues = s, this.facets = o, this.statusTemplate = []; this.statusTemplate.length < i.length; ) this.statusTemplate.push(0);
         }
       }),
-      h(_r12, "Configuration"),
+      a(_r12, "Configuration"),
       _r12);
   function fv(r, e, t) {
     var i = [[], [], [], [], []],
@@ -8398,8 +8407,8 @@ function _ts_generator(thisArg, body) {
       var u = n.get(o);
       if (u != null) {
         if (u <= l) return;
-        var a = i[u].indexOf(o);
-        a > -1 && i[u].splice(a, 1), o instanceof rn && t.delete(o.compartment);
+        var h = i[u].indexOf(o);
+        h > -1 && i[u].splice(h, 1), o instanceof rn && t.delete(o.compartment);
       }
       var _iteratorNormalCompletion = true,
         _didIteratorError = false,
@@ -8407,8 +8416,8 @@ function _ts_generator(thisArg, body) {
       if ((n.set(o, l), Array.isArray(o)))
         try {
           for (var _iterator = o[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var a1 = _step.value;
-            s(a1, l);
+            var h1 = _step.value;
+            s(h1, l);
           }
         } catch (err) {
           _didIteratorError = true;
@@ -8426,20 +8435,20 @@ function _ts_generator(thisArg, body) {
         }
       else if (o instanceof rn) {
         if (t.has(o.compartment)) throw new RangeError("Duplicate use of compartment in extensions");
-        var a2 = e.get(o.compartment) || o.inner;
-        t.set(o.compartment, a2), s(a2, l);
+        var h2 = e.get(o.compartment) || o.inner;
+        t.set(o.compartment, h2), s(h2, l);
       } else if (o instanceof Vs) s(o.inner, o.prec);
       else if (o instanceof Pe) i[l].push(o), o.provides && s(o.provides, l);
       else if (o instanceof cr) i[l].push(o), o.facet.extensions && s(o.facet.extensions, ki.default);
       else {
-        var a3 = o.extension;
-        if (!a3) throw new Error("Unrecognized extension value in extension set (".concat(o, "). This sometimes happens because multiple instances of @codemirror/state are loaded, breaking instanceof checks."));
-        s(a3, l);
+        var h3 = o.extension;
+        if (!h3) throw new Error("Unrecognized extension value in extension set (".concat(o, "). This sometimes happens because multiple instances of @codemirror/state are loaded, breaking instanceof checks."));
+        s(h3, l);
       }
     }
-    return h(s, "inner"), s(r, ki.default), i.reduce((o, l) => o.concat(l));
+    return a(s, "inner"), s(r, ki.default), i.reduce((o, l) => o.concat(l));
   }
-  h(fv, "flatten");
+  a(fv, "flatten");
   function tn(r, e) {
     if (e & 1) return 2;
     var t = e >> 1,
@@ -8450,18 +8459,18 @@ function _ts_generator(thisArg, body) {
     var n = r.computeSlot(r, r.config.dynamicSlots[t]);
     return (r.status[t] = 2 | n);
   }
-  h(tn, "ensureAddr");
+  a(tn, "ensureAddr");
   function zs(r, e) {
     return e & 1 ? r.config.staticValues[e >> 1] : r.values[e >> 1];
   }
-  h(zs, "getAddr");
+  a(zs, "getAddr");
   var pg = z.define(),
-    Wu = z.define({ combine: (r) => r.some((e) => e), static: !0 }),
-    mg = z.define({ combine: (r) => (r.length ? r[0] : void 0), static: !0 }),
+    Wu = z.define({ combine: a((r) => r.some((e) => e), "combine"), static: !0 }),
+    mg = z.define({ combine: a((r) => (r.length ? r[0] : void 0), "combine"), static: !0 }),
     gg = z.define(),
     Dg = z.define(),
     Fg = z.define(),
-    bg = z.define({ combine: (r) => (r.length ? r[0] : !1) }),
+    bg = z.define({ combine: a((r) => (r.length ? r[0] : !1), "combine") }),
     ct =
       ((_class26 = class _class {
         static define() {
@@ -8471,7 +8480,7 @@ function _ts_generator(thisArg, body) {
           (this.type = e), (this.value = t);
         }
       }),
-      h(_class26, "Annotation"),
+      a(_class26, "Annotation"),
       _class26),
     zu =
       ((_class27 = class _class {
@@ -8479,7 +8488,7 @@ function _ts_generator(thisArg, body) {
           return new ct(this, e);
         }
       }),
-      h(_class27, "AnnotationType"),
+      a(_class27, "AnnotationType"),
       _class27),
     Hu =
       ((_class28 = class _class {
@@ -8490,7 +8499,7 @@ function _ts_generator(thisArg, body) {
           this.map = e;
         }
       }),
-      h(_class28, "StateEffectType"),
+      a(_class28, "StateEffectType"),
       _class28),
     pe =
       ((_r13 = class r {
@@ -8537,7 +8546,7 @@ function _ts_generator(thisArg, body) {
           (this.type = e), (this.value = t);
         }
       }),
-      h(_r13, "StateEffect"),
+      a(_r13, "StateEffect"),
       _r13);
   pe.reconfigure = pe.define();
   pe.appendConfig = pe.define();
@@ -8593,7 +8602,7 @@ function _ts_generator(thisArg, body) {
         (this.startState = e), (this.changes = t), (this.selection = i), (this.effects = n), (this.annotations = s), (this.scrollIntoView = o), (this._doc = null), (this._state = null), i && dg(i, t.newLength), s.some((l) => l.type == r.time) || (this.annotations = s.concat(r.time.of(Date.now())));
       }
     }),
-    h(_r14, "Transaction"),
+    a(_r14, "Transaction"),
     _r14);
   Le.time = ct.define();
   Le.userEvent = ct.define();
@@ -8610,7 +8619,7 @@ function _ts_generator(thisArg, body) {
       !t.length || t[t.length - 1] < s ? t.push(s, o) : t[t.length - 1] < o && (t[t.length - 1] = o);
     }
   }
-  h(dv, "joinRanges");
+  a(dv, "joinRanges");
   function yg(r, e, t) {
     var i;
     var n, s, o;
@@ -8619,13 +8628,13 @@ function _ts_generator(thisArg, body) {
       { changes: o, selection: e.selection ? e.selection.map(s) : (i = r.selection) === null || i === void 0 ? void 0 : i.map(n), effects: pe.mapEffects(r.effects, n).concat(pe.mapEffects(e.effects, s)), annotations: r.annotations.length ? r.annotations.concat(e.annotations) : e.annotations, scrollIntoView: r.scrollIntoView || e.scrollIntoView }
     );
   }
-  h(yg, "mergeTransaction");
+  a(yg, "mergeTransaction");
   function ju(r, e, t) {
     var i = e.selection,
       n = fr(e.annotations);
     return e.userEvent && (n = n.concat(Le.userEvent.of(e.userEvent))), { changes: e.changes instanceof We ? e.changes : We.of(e.changes || [], t, r.facet(mg)), selection: i && (i instanceof Z ? i : Z.single(i.anchor, i.head)), effects: fr(e.effects), annotations: n, scrollIntoView: !!e.scrollIntoView };
   }
-  h(ju, "resolveTransactionInner");
+  a(ju, "resolveTransactionInner");
   function Eg(r, e, t) {
     var i = ju(r, e.length ? e[0] : {}, r.doc.length);
     e.length && e[0].filter === !1 && (t = !1);
@@ -8637,7 +8646,7 @@ function _ts_generator(thisArg, body) {
     var n = Le.create(r, i.changes, i.selection, i.effects, i.annotations, i.scrollIntoView);
     return mv(t ? pv(n) : n);
   }
-  h(Eg, "resolveTransaction");
+  a(Eg, "resolveTransaction");
   function pv(r) {
     var e = r.startState,
       t = !0;
@@ -8684,7 +8693,7 @@ function _ts_generator(thisArg, body) {
     }
     return r;
   }
-  h(pv, "filterTransaction");
+  a(pv, "filterTransaction");
   function mv(r) {
     var e = r.startState,
       t = e.facet(Fg),
@@ -8695,12 +8704,12 @@ function _ts_generator(thisArg, body) {
     }
     return i == r ? r : Le.create(e, r.changes, r.selection, i.effects, i.annotations, i.scrollIntoView);
   }
-  h(mv, "extendTransaction");
+  a(mv, "extendTransaction");
   var gv = [];
   function fr(r) {
     return r == null ? gv : Array.isArray(r) ? r : [r];
   }
-  h(fr, "asArray");
+  a(fr, "asArray");
   var vt = (function (r) {
       return (r[(r.Word = 0)] = "Word"), (r[(r.Space = 1)] = "Space"), (r[(r.Other = 2)] = "Other"), r;
     })(vt || (vt = {})),
@@ -8717,7 +8726,7 @@ function _ts_generator(thisArg, body) {
     }
     return !1;
   }
-  h(Fv, "hasWordChar");
+  a(Fv, "hasWordChar");
   function bv(r) {
     return (e) => {
       if (!/\S/.test(e)) return vt.Space;
@@ -8726,7 +8735,7 @@ function _ts_generator(thisArg, body) {
       return vt.Other;
     };
   }
-  h(bv, "makeCategorizer");
+  a(bv, "makeCategorizer");
   var Ae =
     ((_r15 = class r {
       field(e) {
@@ -8754,7 +8763,7 @@ function _ts_generator(thisArg, body) {
         try {
           for (var _iterator = e.effects[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var l = _step.value;
-            l.is(pr.reconfigure) ? (t && ((n = new Map()), t.compartments.forEach((u, a) => n.set(a, u)), (t = null)), n.set(l.value.compartment, l.value.extension)) : l.is(pe.reconfigure) ? ((t = null), (i = l.value)) : l.is(pe.appendConfig) && ((t = null), (i = fr(i).concat(l.value)));
+            l.is(pr.reconfigure) ? (t && ((n = new Map()), t.compartments.forEach((u, h) => n.set(h, u)), (t = null)), n.set(l.value.compartment, l.value.extension)) : l.is(pe.reconfigure) ? ((t = null), (i = l.value)) : l.is(pe.appendConfig) && ((t = null), (i = fr(i).concat(l.value)));
           }
         } catch (err) {
           _didIteratorError = true;
@@ -8779,7 +8788,7 @@ function _ts_generator(thisArg, body) {
               this.doc,
               this.selection,
               t.dynamicSlots.map(() => null),
-              (u, a) => a.reconfigure(u, this),
+              (u, h) => h.reconfigure(u, this),
               null,
             ).values));
         var o = e.startState.facet(Wu) ? e.newSelection : e.newSelection.asSingle();
@@ -8796,10 +8805,10 @@ function _ts_generator(thisArg, body) {
           o = fr(i.effects);
         for (var l = 1; l < t.ranges.length; l++) {
           var u = e(t.ranges[l]),
-            a = this.changes(u.changes),
-            c = a.map(n);
+            h = this.changes(u.changes),
+            c = h.map(n);
           for (var d = 0; d < l; d++) s[d] = s[d].map(c);
-          var f = n.mapDesc(a, !0);
+          var f = n.mapDesc(h, !0);
           s.push(u.range.map(f)), (n = n.compose(c)), (o = pe.mapEffects(o, c).concat(pe.mapEffects(fr(u.effects), f)));
         }
         return { changes: n, selection: Z.create(s, t.mainIndex), effects: o };
@@ -8989,10 +8998,10 @@ function _ts_generator(thisArg, body) {
         this.computeSlot = null;
       }
     }),
-    h(_r15, "EditorState"),
+    a(_r15, "EditorState"),
     _r15);
   Ae.allowMultipleSelections = Wu;
-  Ae.tabSize = z.define({ combine: (r) => (r.length ? r[0] : 4) });
+  Ae.tabSize = z.define({ combine: a((r) => (r.length ? r[0] : 4), "combine") });
   Ae.lineSeparator = mg;
   Ae.readOnly = bg;
   Ae.phrases = z.define({
@@ -9061,7 +9070,7 @@ function _ts_generator(thisArg, body) {
     for (var n1 in e) i[n1] === void 0 && (i[n1] = e[n1]);
     return i;
   }
-  h(Kt, "combineConfig");
+  a(Kt, "combineConfig");
   var Xt =
     ((_class29 = class _class {
       eq(e) {
@@ -9072,7 +9081,7 @@ function _ts_generator(thisArg, body) {
         return nn.create(e, t, this);
       }
     }),
-    h(_class29, "RangeValue"),
+    a(_class29, "RangeValue"),
     _class29);
   Xt.prototype.startSide = Xt.prototype.endSide = 0;
   Xt.prototype.point = !1;
@@ -9086,12 +9095,12 @@ function _ts_generator(thisArg, body) {
         (this.from = e), (this.to = t), (this.value = i);
       }
     }),
-    h(_r16, "Range"),
+    a(_r16, "Range"),
     _r16);
   function Ju(r, e) {
     return r.from - e.from || r.value.startSide - e.value.startSide;
   }
-  h(Ju, "cmpRange");
+  a(Ju, "cmpRange");
   var Gu =
       ((_r17 = class r {
         get length() {
@@ -9103,9 +9112,9 @@ function _ts_generator(thisArg, body) {
           for (var o = n, l = s.length; ; ) {
             if (o == l) return o;
             var u = (o + l) >> 1,
-              a = s[u] - e || (i ? this.value[u].endSide : this.value[u].startSide) - t;
-            if (u == o) return a >= 0 ? o : l;
-            a >= 0 ? (l = u) : (o = u + 1);
+              h = s[u] - e || (i ? this.value[u].endSide : this.value[u].startSide) - t;
+            if (u == o) return h >= 0 ? o : l;
+            h >= 0 ? (l = u) : (o = u + 1);
           }
         }
         between(e, t, i, n) {
@@ -9118,16 +9127,16 @@ function _ts_generator(thisArg, body) {
             o = -1,
             l = -1;
           for (var u = 0; u < this.value.length; u++) {
-            var a = this.value[u],
+            var h = this.value[u],
               c = this.from[u] + e,
               f = this.to[u] + e,
               d = void 0,
               p = void 0;
             if (c == f) {
-              var m = t.mapPos(c, a.startSide, a.mapMode);
-              if (m == null || ((d = p = m), a.startSide != a.endSide && ((p = t.mapPos(c, a.endSide)), p < d))) continue;
-            } else if (((d = t.mapPos(c, a.startSide)), (p = t.mapPos(f, a.endSide)), d > p || (d == p && a.startSide > 0 && a.endSide <= 0))) continue;
-            (p - d || a.endSide - a.startSide) < 0 || (o < 0 && (o = d), a.point && (l = Math.max(l, p - d)), i.push(a), n.push(d - o), s.push(p - o));
+              var m = t.mapPos(c, h.startSide, h.mapMode);
+              if (m == null || ((d = p = m), h.startSide != h.endSide && ((p = t.mapPos(c, h.endSide)), p < d))) continue;
+            } else if (((d = t.mapPos(c, h.startSide)), (p = t.mapPos(f, h.endSide)), d > p || (d == p && h.startSide > 0 && h.endSide <= 0))) continue;
+            (p - d || h.endSide - h.startSide) < 0 || (o < 0 && (o = d), h.point && (l = Math.max(l, p - d)), i.push(h), n.push(d - o), s.push(p - o));
           }
           return { mapped: i.length ? new r(n, s, i, l) : null, pos: o };
         }
@@ -9135,7 +9144,7 @@ function _ts_generator(thisArg, body) {
           (this.from = e), (this.to = t), (this.value = i), (this.maxPoint = n);
         }
       }),
-      h(_r17, "Chunk"),
+      a(_r17, "Chunk"),
       _r17),
     De =
       ((_r18 = class r {
@@ -9190,17 +9199,17 @@ function _ts_generator(thisArg, body) {
           if ((i && (t = t.slice().sort(Ju)), this.isEmpty)) return t.length ? r.of(t) : this;
           var l = new Hs(this, null, -1).goto(0),
             u = 0,
-            a = [],
+            h = [],
             c = new _i();
           for (; l.value || u < t.length; )
             if (u < t.length && (l.from - t[u].from || l.startSide - t[u].value.startSide) >= 0) {
               var f = t[u++];
-              c.addInner(f.from, f.to, f.value) || a.push(f);
+              c.addInner(f.from, f.to, f.value) || h.push(f);
             } else
               l.rangeIndex == 1 && l.chunkIndex < this.chunk.length && (u == t.length || this.chunkEnd(l.chunkIndex) < t[u].from) && (!o || n > this.chunkEnd(l.chunkIndex) || s < this.chunkPos[l.chunkIndex]) && c.addChunk(this.chunkPos[l.chunkIndex], this.chunk[l.chunkIndex])
                 ? l.nextChunk()
-                : ((!o || n > l.to || s < l.from || o(l.from, l.to, l.value)) && (c.addInner(l.from, l.to, l.value) || a.push(nn.create(l.from, l.to, l.value))), l.next());
-          return c.finishInner(this.nextLayer.isEmpty && !a.length ? r.empty : this.nextLayer.update({ add: a, filter: o, filterFrom: n, filterTo: s }));
+                : ((!o || n > l.to || s < l.from || o(l.from, l.to, l.value)) && (c.addInner(l.from, l.to, l.value) || h.push(nn.create(l.from, l.to, l.value))), l.next());
+          return c.finishInner(this.nextLayer.isEmpty && !h.length ? r.empty : this.nextLayer.update({ add: h, filter: o, filterFrom: n, filterTo: s }));
         }
         map(e) {
           if (e.empty || this.isEmpty) return this;
@@ -9210,9 +9219,9 @@ function _ts_generator(thisArg, body) {
           for (var o = 0; o < this.chunk.length; o++) {
             var l = this.chunkPos[o],
               u = this.chunk[o],
-              a = e.touchesRange(l, l + u.length);
-            if (a === !1) (n = Math.max(n, u.maxPoint)), t.push(u), i.push(e.mapPos(l));
-            else if (a === !0) {
+              h = e.touchesRange(l, l + u.length);
+            if (h === !1) (n = Math.max(n, u.maxPoint)), t.push(u), i.push(e.mapPos(l));
+            else if (h === !0) {
               var _u_map = u.map(l, e),
                 c = _u_map.mapped,
                 f = _u_map.pos;
@@ -9248,9 +9257,9 @@ function _ts_generator(thisArg, body) {
           var o = e.filter((f) => f.maxPoint > 0 || (!f.isEmpty && f.maxPoint >= s)),
             l = t.filter((f) => f.maxPoint > 0 || (!f.isEmpty && f.maxPoint >= s)),
             u = og(o, l, i),
-            a = new Si(o, u, s),
+            h = new Si(o, u, s),
             c = new Si(l, u, s);
-          i.iterGaps((f, d, p) => lg(a, f, c, d, p, n)), i.empty && i.length == 0 && lg(a, 0, c, 0, 0, n);
+          i.iterGaps((f, d, p) => lg(h, f, c, d, p, n)), i.empty && i.length == 0 && lg(h, 0, c, 0, 0, n);
         }
         static eq(e, t) {
           var i = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 0,
@@ -9262,11 +9271,11 @@ function _ts_generator(thisArg, body) {
           if (!s.length) return !0;
           var l = og(s, o),
             u = new Si(s, l, 0).goto(i),
-            a = new Si(o, l, 0).goto(i);
+            h = new Si(o, l, 0).goto(i);
           for (;;) {
-            if (u.to != a.to || !Xu(u.active, a.active) || (u.point && (!a.point || !u.point.eq(a.point)))) return !1;
+            if (u.to != h.to || !Xu(u.active, h.active) || (u.point && (!h.point || !u.point.eq(h.point)))) return !1;
             if (u.to > n) return !0;
-            u.next(), a.next();
+            u.next(), h.next();
           }
         }
         static spans(e, t, i, n) {
@@ -9275,12 +9284,12 @@ function _ts_generator(thisArg, body) {
             l = t,
             u = o.openStart;
           for (;;) {
-            var a = Math.min(o.to, i);
+            var h = Math.min(o.to, i);
             if (o.point) {
               var c = o.activeForPoint(o.to),
                 f = o.pointFrom < t ? c.length + 1 : o.point.startSide < 0 ? c.length : Math.min(c.length, u);
-              n.point(l, a, o.point, c, f, o.pointRank), (u = Math.min(o.openEnd(a), c.length));
-            } else a > l && (n.span(l, a, o.active, u), (u = o.openEnd(a)));
+              n.point(l, h, o.point, c, f, o.pointRank), (u = Math.min(o.openEnd(h), c.length));
+            } else h > l && (n.span(l, h, o.active, u), (u = o.openEnd(h)));
             if (o.to > i) return u + (o.point && o.to > i ? 1 : 0);
             (l = o.to), o.next();
           }
@@ -9322,7 +9331,7 @@ function _ts_generator(thisArg, body) {
           (this.chunkPos = e), (this.chunk = t), (this.nextLayer = i), (this.maxPoint = n);
         }
       }),
-      h(_r18, "RangeSet"),
+      a(_r18, "RangeSet"),
       _r18);
   De.empty = new De([], [], null, -1);
   function yv(r) {
@@ -9334,7 +9343,7 @@ function _ts_generator(thisArg, body) {
       }
     return r;
   }
-  h(yv, "lazySort");
+  a(yv, "lazySort");
   De.empty.nextLayer = De.empty;
   var _i =
     ((_r19 = class r {
@@ -9367,7 +9376,7 @@ function _ts_generator(thisArg, body) {
         (this.chunks = []), (this.chunkPos = []), (this.chunkStart = -1), (this.last = null), (this.lastFrom = -1e9), (this.lastTo = -1e9), (this.from = []), (this.to = []), (this.value = []), (this.maxPoint = -1), (this.setMaxPoint = -1), (this.nextLayer = null);
       }
     }),
-    h(_r19, "RangeSetBuilder"),
+    a(_r19, "RangeSetBuilder"),
     _r19);
   function og(r, e, t) {
     var i = new Map();
@@ -9421,7 +9430,7 @@ function _ts_generator(thisArg, body) {
     }
     return n;
   }
-  h(og, "findSharedChunks");
+  a(og, "findSharedChunks");
   var Hs =
       ((_class30 = class _class {
         get startSide() {
@@ -9478,7 +9487,7 @@ function _ts_generator(thisArg, body) {
           (this.layer = e), (this.skip = t), (this.minPoint = i), (this.rank = n);
         }
       }),
-      h(_class30, "LayerCursor"),
+      a(_class30, "LayerCursor"),
       _class30),
     sn =
       ((_r20 = class r {
@@ -9556,7 +9565,7 @@ function _ts_generator(thisArg, body) {
           this.heap = e;
         }
       }),
-      h(_r20, "HeapCursor"),
+      a(_r20, "HeapCursor"),
       _r20);
   function Mu(r, e) {
     for (var t = r[e]; ; ) {
@@ -9567,7 +9576,7 @@ function _ts_generator(thisArg, body) {
       (r[i] = t), (r[e] = n), (e = i);
     }
   }
-  h(Mu, "heapBubble");
+  a(Mu, "heapBubble");
   var Si =
     ((_class31 = class _class {
       goto(e) {
@@ -9641,7 +9650,7 @@ function _ts_generator(thisArg, body) {
         (this.minPoint = i), (this.active = []), (this.activeTo = []), (this.activeRank = []), (this.minActive = -1), (this.point = null), (this.pointFrom = 0), (this.pointRank = 0), (this.to = -1e9), (this.endSide = 0), (this.openStart = -1), (this.cursor = sn.from(e, t, i));
       }
     }),
-    h(_class31, "SpanCursor"),
+    a(_class31, "SpanCursor"),
     _class31);
   function lg(r, e, t, i, n, s) {
     r.goto(e), t.goto(i);
@@ -9649,44 +9658,44 @@ function _ts_generator(thisArg, body) {
       l = i,
       u = i - e;
     for (;;) {
-      var a = r.to + u - t.to || r.endSide - t.endSide,
-        c = a < 0 ? r.to + u : t.to,
+      var h = r.to + u - t.to || r.endSide - t.endSide,
+        c = h < 0 ? r.to + u : t.to,
         f = Math.min(c, o);
       if ((r.point || t.point ? (r.point && t.point && (r.point == t.point || r.point.eq(t.point)) && Xu(r.activeForPoint(r.to), t.activeForPoint(t.to))) || s.comparePoint(l, f, r.point, t.point) : f > l && !Xu(r.active, t.active) && s.compareRange(l, f, r.active, t.active), c > o)) break;
-      (l = c), a <= 0 && r.next(), a >= 0 && t.next();
+      (l = c), h <= 0 && r.next(), h >= 0 && t.next();
     }
   }
-  h(lg, "compare");
+  a(lg, "compare");
   function Xu(r, e) {
     if (r.length != e.length) return !1;
     for (var t = 0; t < r.length; t++) if (r[t] != e[t] && !r[t].eq(e[t])) return !1;
     return !0;
   }
-  h(Xu, "sameValues");
+  a(Xu, "sameValues");
   function Ns(r, e) {
     for (var t = e, i = r.length - 1; t < i; t++) r[t] = r[t + 1];
     r.pop();
   }
-  h(Ns, "remove");
+  a(Ns, "remove");
   function Ms(r, e, t) {
     for (var i = r.length - 1; i >= e; i--) r[i + 1] = r[i];
     r[e] = t;
   }
-  h(Ms, "insert");
+  a(Ms, "insert");
   function ug(r, e) {
     var t = -1,
       i = 1e9;
     for (var n = 0; n < e.length; n++) (e[n] - i || r[n].endSide - r[t].endSide) < 0 && ((t = n), (i = e[n]));
     return t;
   }
-  h(ug, "findMinIndex");
+  a(ug, "findMinIndex");
   function js(r, e) {
     var t = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : r.length;
     var i = 0;
     for (var n = 0; n < t; ) r.charCodeAt(n) == 9 ? ((i += e - (i % e)), n++) : (i++, (n = ht(r, n)));
     return i;
   }
-  h(js, "countColumn");
+  a(js, "countColumn");
   function Cg(r, e, t, i) {
     for (var n = 0, s = 0; ; ) {
       if (s >= e) return n;
@@ -9695,7 +9704,7 @@ function _ts_generator(thisArg, body) {
     }
     return i === !0 ? -1 : r.length;
   }
-  h(Cg, "findColumn");
+  a(Cg, "findColumn");
   var ea = "ͼ",
     Bg = typeof Symbol > "u" ? "__" + ea : Symbol.for(ea),
     ta = typeof Symbol > "u" ? "__styleSet" + Math.floor(Math.random() * 1e8) : Symbol("styleSet"),
@@ -9721,8 +9730,8 @@ function _ts_generator(thisArg, body) {
           function n(o) {
             return /^@/.test(o) ? [o] : o.split(/,\s*/);
           }
-          h(n, "splitSelector");
-          function s(o, l, u, a) {
+          a(n, "splitSelector");
+          function s(o, l, u, h) {
             var c = [],
               f = /^@(\w+)\b/.exec(o[0]),
               d = f && f[1] == "keyframes";
@@ -9743,13 +9752,13 @@ function _ts_generator(thisArg, body) {
                 s(n(p), m, c, d);
               } else m != null && c.push(p.replace(/_.*/, "").replace(/[A-Z]/g, (F) => "-" + F.toLowerCase()) + ": " + m + ";");
             }
-            (c.length || d) && u.push((i && !f && !a ? o.map(i) : o).join(", ") + " {" + c.join(" ") + "}");
+            (c.length || d) && u.push((i && !f && !h ? o.map(i) : o).join(", ") + " {" + c.join(" ") + "}");
           }
-          h(s, "render");
+          a(s, "render");
           for (var o in e) s(n(o), e[o], this.rules);
         }
       }),
-      h(_class32, "StyleModule"),
+      a(_class32, "StyleModule"),
       _class32),
     vg = new Map(),
     ia =
@@ -9762,7 +9771,7 @@ function _ts_generator(thisArg, body) {
             var l = e[o],
               u = this.modules.indexOf(l);
             if ((u < s && u > -1 && (this.modules.splice(u, 1), s--, (u = -1)), u == -1)) {
-              if ((this.modules.splice(s++, 0, l), i)) for (var a = 0; a < l.rules.length; a++) i.insertRule(l.rules[a], n++);
+              if ((this.modules.splice(s++, 0, l), i)) for (var h = 0; h < l.rules.length; h++) i.insertRule(l.rules[h], n++);
             } else {
               for (; s < u; ) n += this.modules[s++].rules.length;
               (n += l.rules.length), s++;
@@ -9791,7 +9800,7 @@ function _ts_generator(thisArg, body) {
           (this.modules = []), (e[ta] = this);
         }
       }),
-      h(_class33, "StyleSet"),
+      a(_class33, "StyleSet"),
       _class33);
   var Zt = {
       8: "Backspace",
@@ -9863,22 +9872,22 @@ function _ts_generator(thisArg, body) {
       t = (!e && r.key) || (r.shiftKey ? gr : Zt)[r.keyCode] || r.key || "Unidentified";
     return t == "Esc" && (t = "Escape"), t == "Del" && (t = "Delete"), t == "Left" && (t = "ArrowLeft"), t == "Up" && (t = "ArrowUp"), t == "Right" && (t = "ArrowRight"), t == "Down" && (t = "ArrowDown"), t;
   }
-  h(Ag, "keyName");
+  a(Ag, "keyName");
   function Fn(r) {
     var e;
     return r.nodeType == 11 ? (e = r.getSelection ? r : r.ownerDocument) : (e = r), e.getSelection();
   }
-  h(Fn, "getSelection");
+  a(Fn, "getSelection");
   function aa(r, e) {
     return e ? r == e || r.contains(e.nodeType != 1 ? e.parentNode : e) : !1;
   }
-  h(aa, "contains");
+  a(aa, "contains");
   function Bv(r) {
     var e = r.activeElement;
     for (; e && e.shadowRoot; ) e = e.shadowRoot.activeElement;
     return e;
   }
-  h(Bv, "deepActiveElement");
+  a(Bv, "deepActiveElement");
   function no(r, e) {
     if (!e.anchorNode) return !1;
     try {
@@ -9887,23 +9896,23 @@ function _ts_generator(thisArg, body) {
       return !1;
     }
   }
-  h(no, "hasSelection");
+  a(no, "hasSelection");
   function bn(r) {
     return r.nodeType == 3 ? Oi(r, 0, r.nodeValue.length).getClientRects() : r.nodeType == 1 ? r.getClientRects() : [];
   }
-  h(bn, "clientRectsFor");
+  a(bn, "clientRectsFor");
   function fn(r, e, t, i) {
     return t ? kg(r, e, t, i, -1) || kg(r, e, t, i, 1) : !1;
   }
-  h(fn, "isEquivalentPosition");
+  a(fn, "isEquivalentPosition");
   function Li(r) {
     for (var e = 0; ; e++) if (((r = r.previousSibling), !r)) return e;
   }
-  h(Li, "domIndex");
+  a(Li, "domIndex");
   function ho(r) {
     return r.nodeType == 1 && /^(DIV|P|LI|UL|OL|BLOCKQUOTE|DD|DT|H\d|SECTION|PRE)$/.test(r.nodeName);
   }
-  h(ho, "isBlockElement");
+  a(ho, "isBlockElement");
   function kg(r, e, t, i, n) {
     for (;;) {
       if (r == t && e == i) return !0;
@@ -9918,37 +9927,37 @@ function _ts_generator(thisArg, body) {
       } else return !1;
     }
   }
-  h(kg, "scanFor");
+  a(kg, "scanFor");
   function ei(r) {
     return r.nodeType == 3 ? r.nodeValue.length : r.childNodes.length;
   }
-  h(ei, "maxOffset");
+  a(ei, "maxOffset");
   function ko(r, e) {
     var t = e ? r.left : r.right;
     return { left: t, right: t, top: r.top, bottom: r.bottom };
   }
-  h(ko, "flattenRect");
+  a(ko, "flattenRect");
   function xv(r) {
     var e = r.visualViewport;
     return e ? { left: 0, right: e.width, top: 0, bottom: e.height } : { left: 0, right: r.innerWidth, top: 0, bottom: r.innerHeight };
   }
-  h(xv, "windowRect");
+  a(xv, "windowRect");
   function cD(r, e) {
     var t = e.width / r.offsetWidth,
       i = e.height / r.offsetHeight;
     return ((t > 0.995 && t < 1.005) || !isFinite(t) || Math.abs(e.width - r.offsetWidth) < 1) && (t = 1), ((i > 0.995 && i < 1.005) || !isFinite(i) || Math.abs(e.height - r.offsetHeight) < 1) && (i = 1), { scaleX: t, scaleY: i };
   }
-  h(cD, "getScale");
+  a(cD, "getScale");
   function vv(r, e, t, i, n, s, o, l) {
     var u = r.ownerDocument,
-      a = u.defaultView || window;
+      h = u.defaultView || window;
     for (var c = r, f = !1; c && !f; )
       if (c.nodeType == 1) {
         var d = void 0,
           p = c == u.body,
           m = 1,
           F = 1;
-        if (p) d = xv(a);
+        if (p) d = xv(h);
         else {
           if ((/^(fixed|sticky)$/.test(getComputedStyle(c).position) && (f = !0), c.scrollHeight <= c.clientHeight && c.scrollWidth <= c.clientWidth)) {
             c = c.assignedSlot || c.parentNode;
@@ -9974,7 +9983,7 @@ function _ts_generator(thisArg, body) {
             : (D = (i == "center" ? e.left + (e.right - e.left) / 2 - (d.right - d.left) / 2 : (i == "start") == l ? e.left - s : e.right - (d.right - d.left) + s) - d.left),
           D || g)
         )
-          if (p) a.scrollBy(D, g);
+          if (p) h.scrollBy(D, g);
           else {
             var b2 = 0,
               B1 = 0;
@@ -9993,7 +10002,7 @@ function _ts_generator(thisArg, body) {
       } else if (c.nodeType == 11) c = c.host;
       else break;
   }
-  h(vv, "scrollRectIntoView");
+  a(vv, "scrollRectIntoView");
   function Av(r) {
     var e = r.ownerDocument,
       t,
@@ -10004,7 +10013,7 @@ function _ts_generator(thisArg, body) {
       else break;
     return { x: t, y: i };
   }
-  h(Av, "scrollableParents");
+  a(Av, "scrollableParents");
   var ha =
       ((_class34 = class _class {
         eq(e) {
@@ -10022,7 +10031,7 @@ function _ts_generator(thisArg, body) {
           (this.anchorNode = null), (this.anchorOffset = 0), (this.focusNode = null), (this.focusOffset = 0);
         }
       }),
-      h(_class34, "DOMSelectionState"),
+      a(_class34, "DOMSelectionState"),
       _class34),
     Dr = null;
   function fD(r) {
@@ -10051,14 +10060,14 @@ function _ts_generator(thisArg, body) {
       }
     }
   }
-  h(fD, "focusPreventScroll");
+  a(fD, "focusPreventScroll");
   var Sg;
   function Oi(r, e) {
     var t = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : e;
     var i = Sg || (Sg = document.createRange());
     return i.setEnd(r, t), i.setStart(r, e), i;
   }
-  h(Oi, "textRange");
+  a(Oi, "textRange");
   function Er(r, e, t, i) {
     var n = { key: e, code: e, keyCode: t, which: t, cancelable: !0 };
     var ref;
@@ -10068,7 +10077,7 @@ function _ts_generator(thisArg, body) {
     var o = new KeyboardEvent("keyup", n);
     return (o.synthetic = !0), r.dispatchEvent(o), s.defaultPrevented || o.defaultPrevented;
   }
-  h(Er, "dispatchKey");
+  a(Er, "dispatchKey");
   function kv(r) {
     for (; r; ) {
       if (r && (r.nodeType == 9 || (r.nodeType == 11 && r.host))) return r;
@@ -10076,11 +10085,11 @@ function _ts_generator(thisArg, body) {
     }
     return null;
   }
-  h(kv, "getRoot");
+  a(kv, "getRoot");
   function dD(r) {
     for (; r.attributes.length; ) r.removeAttributeNode(r.attributes[0]);
   }
-  h(dD, "clearAttributes");
+  a(dD, "clearAttributes");
   function Sv(r, e) {
     var t = e.focusNode,
       i = e.focusOffset;
@@ -10095,11 +10104,11 @@ function _ts_generator(thisArg, body) {
         (i = Li(t)), (t = t.parentNode);
       }
   }
-  h(Sv, "atElementStart");
+  a(Sv, "atElementStart");
   function pD(r) {
     return r.scrollTop > Math.max(1, r.scrollHeight - r.clientHeight - 4);
   }
-  h(pD, "isScrolledToBottom");
+  a(pD, "isScrolledToBottom");
   function mD(r, e) {
     for (var t = r, i = e; ; ) {
       if (t.nodeType == 3 && i > 0) return { node: t, offset: i };
@@ -10110,7 +10119,7 @@ function _ts_generator(thisArg, body) {
       else return null;
     }
   }
-  h(mD, "textNodeBefore");
+  a(mD, "textNodeBefore");
   function gD(r, e) {
     for (var t = r, i = e; ; ) {
       if (t.nodeType == 3 && i < t.nodeValue.length) return { node: t, offset: i };
@@ -10121,7 +10130,7 @@ function _ts_generator(thisArg, body) {
       else return null;
     }
   }
-  h(gD, "textNodeAfter");
+  a(gD, "textNodeAfter");
   var ze =
       ((_r21 = class r {
         static before(e, t) {
@@ -10135,7 +10144,7 @@ function _ts_generator(thisArg, body) {
           (this.node = e), (this.offset = t), (this.precise = i);
         }
       }),
-      h(_r21, "DOMPos"),
+      a(_r21, "DOMPos"),
       _r21),
     ja = [],
     Fe =
@@ -10268,15 +10277,15 @@ function _ts_generator(thisArg, body) {
             s = -1,
             o = -1,
             l = -1;
-          for (var u = 0, a = i, c = i; u < this.children.length; u++) {
+          for (var u = 0, h = i, c = i; u < this.children.length; u++) {
             var f = this.children[u],
-              d = a + f.length;
-            if (a < e && d > t) return f.domBoundsAround(e, t, a);
-            if ((d >= e && n == -1 && ((n = u), (s = a)), a > t && f.dom.parentNode == this.dom)) {
+              d = h + f.length;
+            if (h < e && d > t) return f.domBoundsAround(e, t, h);
+            if ((d >= e && n == -1 && ((n = u), (s = h)), h > t && f.dom.parentNode == this.dom)) {
               (o = u), (l = c);
               break;
             }
-            (c = d), (a = d + f.breakAfter);
+            (c = d), (h = d + f.breakAfter);
           }
           return { from: s, to: l < 0 ? i + this.length : l, startDOM: (n ? this.children[n - 1].dom.nextSibling : null) || this.dom.firstChild, endDOM: o < this.children.length && o >= 0 ? this.children[o].dom : null };
         }
@@ -10384,14 +10393,14 @@ function _ts_generator(thisArg, body) {
           (this.parent = null), (this.dom = null), (this.flags = 2);
         }
       }),
-      h(_r22, "ContentView"),
+      a(_r22, "ContentView"),
       _r22);
   Fe.prototype.breakAfter = 0;
   function wg(r) {
     var e = r.nextSibling;
     return r.parentNode.removeChild(r), e;
   }
-  h(wg, "rm$1");
+  a(wg, "rm$1");
   var co =
     ((_class35 = class _class {
       findPos(e) {
@@ -10406,34 +10415,34 @@ function _ts_generator(thisArg, body) {
         (this.children = e), (this.pos = t), (this.i = i), (this.off = 0);
       }
     }),
-    h(_class35, "ChildCursor"),
+    a(_class35, "ChildCursor"),
     _class35);
   function DD(r, e, t, i, n, s, o, l, u) {
-    var a = r.children,
-      c = a.length ? a[e] : null,
+    var h = r.children,
+      c = h.length ? h[e] : null,
       f = s.length ? s[s.length - 1] : null,
       d = f ? f.breakAfter : o;
     if (!(e == i && c && !o && !d && s.length < 2 && c.merge(t, n, s.length ? f : null, t == 0, l, u))) {
-      if (i < a.length) {
-        var p = a[i];
+      if (i < h.length) {
+        var p = h[i];
         p && (n < p.length || (p.breakAfter && (f === null || f === void 0 ? void 0 : f.breakAfter))) ? (e == i && ((p = p.split(n)), (n = 0)), !d && f && p.merge(0, n, f, !0, 0, u) ? (s[s.length - 1] = p) : ((n || (p.children.length && !p.children[0].length)) && p.merge(0, n, null, !1, 0, u), s.push(p))) : (p === null || p === void 0 ? void 0 : p.breakAfter) && (f ? (f.breakAfter = 1) : (o = 1)),
           i++;
       }
       for (c && ((c.breakAfter = o), t > 0 && (!o && s.length && c.merge(t, c.length, s[0], !1, l, 0) ? (c.breakAfter = s.shift().breakAfter) : (t < c.length || (c.children.length && c.children[c.children.length - 1].length == 0)) && c.merge(t, c.length, null, !1, l, 0), e++)); e < i && s.length; )
-        if (a[i - 1].become(s[s.length - 1])) i--, s.pop(), (u = s.length ? 0 : l);
-        else if (a[e].become(s[0])) e++, s.shift(), (l = s.length ? 0 : u);
+        if (h[i - 1].become(s[s.length - 1])) i--, s.pop(), (u = s.length ? 0 : l);
+        else if (h[e].become(s[0])) e++, s.shift(), (l = s.length ? 0 : u);
         else break;
-      !s.length && e && i < a.length && !a[e - 1].breakAfter && a[i].merge(0, 0, a[e - 1], !1, l, u) && e--, (e < i || s.length) && r.replaceChildren(e, i, s);
+      !s.length && e && i < h.length && !h[e - 1].breakAfter && h[i].merge(0, 0, h[e - 1], !1, l, u) && e--, (e < i || s.length) && r.replaceChildren(e, i, s);
     }
   }
-  h(DD, "replaceRange");
+  a(DD, "replaceRange");
   function FD(r, e, t, i, n, s) {
     var o = r.childCursor(),
       _o_findPos = o.findPos(t, 1),
       l = _o_findPos.i,
       u = _o_findPos.off,
       _o_findPos1 = o.findPos(e, -1),
-      a = _o_findPos1.i,
+      h = _o_findPos1.i,
       c = _o_findPos1.off,
       f = e - t;
     var _iteratorNormalCompletion = true,
@@ -10458,9 +10467,9 @@ function _ts_generator(thisArg, body) {
         }
       }
     }
-    (r.length += f), DD(r, a, c, l, u, i, 0, n, s);
+    (r.length += f), DD(r, h, c, l, u, i, 0, n, s);
   }
-  h(FD, "mergeChildrenInto");
+  a(FD, "mergeChildrenInto");
   var Ke = typeof navigator < "u" ? navigator : { userAgent: "", vendor: "", platform: "" },
     ca = typeof document < "u" ? document : { documentElement: { style: {} } },
     fa = /Edge\/(\d+)/.exec(Ke.userAgent),
@@ -10527,7 +10536,7 @@ function _ts_generator(thisArg, body) {
           super(), (this.text = e);
         }
       }),
-      h(_r23, "TextView"),
+      a(_r23, "TextView"),
       _r23),
     fi =
       ((_r24 = class r extends Fe {
@@ -10612,7 +10621,7 @@ function _ts_generator(thisArg, body) {
           }
         }
       }),
-      h(_r24, "MarkView"),
+      a(_r24, "MarkView"),
       _r24);
   function Qv(r, e, t) {
     var i = r.nodeValue.length;
@@ -10624,9 +10633,9 @@ function _ts_generator(thisArg, body) {
     var l = Oi(r, n, s).getClientRects();
     if (!l.length) return null;
     var u = l[(o ? o < 0 : t >= 0) ? 0 : l.length - 1];
-    return V.safari && !o && u.width == 0 && (u = Array.prototype.find.call(l, (a) => a.width) || u), o ? ko(u, o < 0) : u || null;
+    return V.safari && !o && u.width == 0 && (u = Array.prototype.find.call(l, (h) => h.width) || u), o ? ko(u, o < 0) : u || null;
   }
-  h(Qv, "textCoords");
+  a(Qv, "textCoords");
   var yn =
       ((_r25 = class r extends Fe {
         static create(e, t, i) {
@@ -10695,7 +10704,7 @@ function _ts_generator(thisArg, body) {
           super(), (this.widget = e), (this.length = t), (this.side = i), (this.prevWidget = null);
         }
       }),
-      h(_r25, "WidgetView"),
+      a(_r25, "WidgetView"),
       _r25),
     En =
       ((_r26 = class r extends Fe {
@@ -10742,7 +10751,7 @@ function _ts_generator(thisArg, body) {
           super(), (this.side = e);
         }
       }),
-      h(_r26, "WidgetBufferView"),
+      a(_r26, "WidgetBufferView"),
       _r26);
   Nt.prototype.children = yn.prototype.children = En.prototype.children = ja;
   function ED(r, e) {
@@ -10768,42 +10777,42 @@ function _ts_generator(thisArg, body) {
     }
     return new ze(t, 0);
   }
-  h(ED, "inlineDOMAtPos");
+  a(ED, "inlineDOMAtPos");
   function CD(r, e, t) {
     var i,
       n = r.children;
     t > 0 && e instanceof fi && n.length && (i = n[n.length - 1]) instanceof fi && i.mark.eq(e.mark) ? CD(i, e.children[0], t - 1) : (n.push(e), e.setParent(r)), (r.length += e.length);
   }
-  h(CD, "joinInlineInto");
+  a(CD, "joinInlineInto");
   function BD(r, e, t) {
     var i = null,
       n = -1,
       s = null,
       o = -1;
-    function l(a, c) {
-      for (var f = 0, d = 0; f < a.children.length && d <= c; f++) {
-        var p = a.children[f],
+    function l(h, c) {
+      for (var f = 0, d = 0; f < h.children.length && d <= c; f++) {
+        var p = h.children[f],
           m = d + p.length;
         m >= c && (p.children.length ? l(p, c - d) : (!s || (s.isHidden && t > 0)) && (m > c || (d == m && p.getSide() > 0)) ? ((s = p), (o = c - d)) : (d < c || (d == m && p.getSide() < 0 && !p.isHidden)) && ((i = p), (n = c - d))), (d = m);
       }
     }
-    h(l, "scan"), l(r, e);
+    a(l, "scan"), l(r, e);
     var u = (t < 0 ? i : s) || i || s;
     return u ? u.coordsAt(Math.max(0, u == i ? n : o), t) : _v(r);
   }
-  h(BD, "coordsInChildren");
+  a(BD, "coordsInChildren");
   function _v(r) {
     var e = r.dom.lastChild;
     if (!e) return r.dom.getBoundingClientRect();
     var t = bn(e);
     return t[t.length - 1] || null;
   }
-  h(_v, "fallbackRect");
+  a(_v, "fallbackRect");
   function pa(r, e) {
     for (var t in r) t == "class" && e.class ? (e.class += " " + r.class) : t == "style" && e.style ? (e.style += ";" + r.style) : (e[t] = r[t]);
     return e;
   }
-  h(pa, "combineAttrs");
+  a(pa, "combineAttrs");
   var Lg = Object.create(null);
   function fo(r, e, t) {
     if (r == e) return !0;
@@ -10835,14 +10844,14 @@ function _ts_generator(thisArg, body) {
     }
     return !0;
   }
-  h(fo, "attrsEq");
+  a(fo, "attrsEq");
   function ma(r, e, t) {
     var i = !1;
     if (e) for (var n in e) (t && n in t) || ((i = !0), n == "style" ? (r.style.cssText = "") : r.removeAttribute(n));
     if (t) for (var n1 in t) (e && e[n1] == t[n1]) || ((i = !0), n1 == "style" ? (r.style.cssText = t[n1]) : r.setAttribute(n1, t[n1]));
     return i;
   }
-  h(ma, "updateAttrs");
+  a(ma, "updateAttrs");
   function Uv(r) {
     var e = Object.create(null);
     for (var t = 0; t < r.attributes.length; t++) {
@@ -10851,7 +10860,7 @@ function _ts_generator(thisArg, body) {
     }
     return e;
   }
-  h(Uv, "getAttrs");
+  a(Uv, "getAttrs");
   var di =
       ((_class36 = class _class {
         eq(e) {
@@ -10883,7 +10892,7 @@ function _ts_generator(thisArg, body) {
         }
         destroy(e) {}
       }),
-      h(_class36, "WidgetType"),
+      a(_class36, "WidgetType"),
       _class36),
     He = (function (r) {
       return (r[(r.Text = 0)] = "Text"), (r[(r.WidgetBefore = 1)] = "WidgetBefore"), (r[(r.WidgetAfter = 2)] = "WidgetAfter"), (r[(r.WidgetRange = 3)] = "WidgetRange"), r;
@@ -10928,7 +10937,7 @@ function _ts_generator(thisArg, body) {
           super(), (this.startSide = e), (this.endSide = t), (this.widget = i), (this.spec = n);
         }
       }),
-      h(_class37, "Decoration"),
+      a(_class37, "Decoration"),
       _class37);
   he.none = De.empty;
   var Cn =
@@ -10949,7 +10958,7 @@ function _ts_generator(thisArg, body) {
         super(t ? -1 : 5e8, i ? 1 : -6e8, null, e), (this.tagName = e.tagName || "span"), (this.class = e.class || ""), (this.attrs = e.attributes || null);
       }
     }),
-    h(_r27, "MarkDecoration"),
+    a(_r27, "MarkDecoration"),
     _r27);
   Cn.prototype.point = !1;
   var Bn =
@@ -10966,7 +10975,7 @@ function _ts_generator(thisArg, body) {
         super(-2e8, -2e8, null, e);
       }
     }),
-    h(_r28, "LineDecoration"),
+    a(_r28, "LineDecoration"),
     _r28);
   Bn.prototype.mapMode = Ve.TrackBefore;
   Bn.prototype.point = !0;
@@ -10991,7 +11000,7 @@ function _ts_generator(thisArg, body) {
         super(t, i, s, e), (this.block = n), (this.isReplace = o), (this.mapMode = n ? (t <= 0 ? Ve.TrackBefore : Ve.TrackAfter) : Ve.TrackDel);
       }
     }),
-    h(_r29, "PointDecoration"),
+    a(_r29, "PointDecoration"),
     _r29);
   pi.prototype.point = !0;
   function xD(r) {
@@ -11000,17 +11009,17 @@ function _ts_generator(thisArg, body) {
       i = r.inclusiveEnd;
     return t == null && (t = r.inclusive), i == null && (i = r.inclusive), { start: t !== null && t !== void 0 ? t : e, end: i !== null && i !== void 0 ? i : e };
   }
-  h(xD, "getInclusive");
+  a(xD, "getInclusive");
   function Lv(r, e) {
     return r == e || !!(r && e && r.compare(e));
   }
-  h(Lv, "widgetsEq");
+  a(Lv, "widgetsEq");
   function ga(r, e, t) {
     var i = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : 0;
     var n = t.length - 1;
     n >= 0 && t[n] + i >= r ? (t[n] = Math.max(t[n], e)) : t.push(r, e);
   }
-  h(ga, "addRange");
+  a(ga, "addRange");
   var Ne =
       ((_r30 = class r extends Fe {
         merge(e, t, i, n, s, o) {
@@ -11129,7 +11138,7 @@ function _ts_generator(thisArg, body) {
           super(...arguments), (this.children = []), (this.length = 0), (this.prevAttrs = void 0), (this.attrs = null), (this.breakAfter = 0);
         }
       }),
-      h(_r30, "LineView"),
+      a(_r30, "LineView"),
       _r30),
     Ui =
       ((_r31 = class r extends Fe {
@@ -11189,7 +11198,7 @@ function _ts_generator(thisArg, body) {
           super(), (this.widget = e), (this.length = t), (this.deco = i), (this.breakAfter = 0), (this.prevWidget = null);
         }
       }),
-      h(_r31, "BlockWidgetView"),
+      a(_r31, "BlockWidgetView"),
       _r31),
     xn =
       ((_class38 = class _class extends di {
@@ -11216,7 +11225,7 @@ function _ts_generator(thisArg, body) {
           super(), (this.height = e);
         }
       }),
-      h(_class38, "BlockGapWidget"),
+      a(_class38, "BlockGapWidget"),
       _class38),
     dn =
       ((_r32 = class r {
@@ -11268,10 +11277,10 @@ function _ts_generator(thisArg, body) {
             if (i.block) i.startSide > 0 && !this.posCovered() && this.getLine(), this.addBlockWidget(new Ui(i.widget || mi.block, l, i));
             else {
               var u = yn.create(i.widget || mi.inline, l, l ? 0 : i.startSide),
-                a = this.atCursorPos && !u.isEditable && s <= n.length && (e < t || i.startSide > 0),
+                h = this.atCursorPos && !u.isEditable && s <= n.length && (e < t || i.startSide > 0),
                 c = !u.isEditable && (e < t || s > n.length || i.startSide <= 0),
                 f = this.getLine();
-              this.pendingBuffer == 2 && !a && !u.isEditable && (this.pendingBuffer = 0), this.flushBuffer(n), a && (f.append(Js(new En(1), n), s), (s = n.length + Math.max(0, s - n.length))), f.append(Js(u, n), s), (this.atCursorPos = c), (this.pendingBuffer = c ? (e < t || s > n.length ? 1 : 2) : 0), this.pendingBuffer && (this.bufferMarks = n.slice());
+              this.pendingBuffer == 2 && !h && !u.isEditable && (this.pendingBuffer = 0), this.flushBuffer(n), h && (f.append(Js(new En(1), n), s), (s = n.length + Math.max(0, s - n.length))), f.append(Js(u, n), s), (this.atCursorPos = c), (this.pendingBuffer = c ? (e < t || s > n.length ? 1 : 2) : 0), this.pendingBuffer && (this.bufferMarks = n.slice());
             }
           else this.doc.lineAt(this.pos).from == this.pos && this.getLine().addLineDeco(i);
           l && (this.textOff + l <= this.text.length ? (this.textOff += l) : ((this.skip += l - (this.text.length - this.textOff)), (this.text = ""), (this.textOff = 0)), (this.pos = t)), this.openStart < 0 && (this.openStart = s);
@@ -11284,7 +11293,7 @@ function _ts_generator(thisArg, body) {
           (this.doc = e), (this.pos = t), (this.end = i), (this.disallowBlockEffectsFor = n), (this.content = []), (this.curLine = null), (this.breakAtStart = 0), (this.pendingBuffer = 0), (this.bufferMarks = []), (this.atCursorPos = !0), (this.openStart = -1), (this.openEnd = -1), (this.text = ""), (this.textOff = 0), (this.cursor = e.iter()), (this.skip = t);
         }
       }),
-      h(_r32, "ContentBuilder"),
+      a(_r32, "ContentBuilder"),
       _r32);
   function Js(r, e) {
     var _iteratorNormalCompletion = true,
@@ -11311,7 +11320,7 @@ function _ts_generator(thisArg, body) {
     }
     return r;
   }
-  h(Js, "wrapMarks");
+  a(Js, "wrapMarks");
   var mi =
     ((_class39 = class _class extends di {
       eq(e) {
@@ -11330,7 +11339,7 @@ function _ts_generator(thisArg, body) {
         super(), (this.tag = e);
       }
     }),
-    h(_class39, "NullWidget"),
+    a(_class39, "NullWidget"),
     _class39);
   mi.inline = new mi("span");
   mi.block = new mi("div");
@@ -11344,7 +11353,7 @@ function _ts_generator(thisArg, body) {
     for (var t = 0; t < r.length; t++) e.push(1 << +r[t]);
     return e;
   }
-  h(vD, "dec");
+  a(vD, "dec");
   var Ov = vD("88888888888888888888888888888888888666888888787833333333337888888000000000000000000000000008888880000000000000000000000000088888888888888888888888888888888888887866668888088888663380888308888800000000000000000000000800000000000000000000000000000008"),
     Tv = vD("4444448826627288999999999992222222222222222222222222222222222222222222222229999999999999999999994444444444644222822222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222999999949999999229989999223333333333"),
     Da = Object.create(null),
@@ -11358,7 +11367,7 @@ function _ts_generator(thisArg, body) {
   function AD(r) {
     return r <= 247 ? Ov[r] : 1424 <= r && r <= 1524 ? 2 : 1536 <= r && r <= 1785 ? Tv[r - 1536] : 1774 <= r && r <= 2220 ? 4 : 8192 <= r && r <= 8204 ? 256 : 64336 <= r && r <= 65023 ? 4 : 1;
   }
-  h(AD, "charType");
+  a(AD, "charType");
   var Rv = /[\u0590-\u05f4\u0600-\u06ff\u0700-\u08ac\ufb50-\ufdff]/,
     Tt =
       ((_class40 = class _class {
@@ -11387,7 +11396,7 @@ function _ts_generator(thisArg, body) {
           (this.from = e), (this.to = t), (this.level = i);
         }
       }),
-      h(_class40, "BidiSpan"),
+      a(_class40, "BidiSpan"),
       _class40);
   function kD(r, e) {
     if (r.length != e.length) return !1;
@@ -11398,38 +11407,38 @@ function _ts_generator(thisArg, body) {
     }
     return !0;
   }
-  h(kD, "isolatesEq");
+  a(kD, "isolatesEq");
   var ge = [];
   function Nv(r, e, t, i, n) {
     for (var s = 0; s <= i.length; s++) {
       var o = s ? i[s - 1].to : e,
         l = s < i.length ? i[s].from : t,
         u = s ? 256 : n;
-      for (var a = o, c = u, f = u; a < l; a++) {
-        var d = AD(r.charCodeAt(a));
-        d == 512 ? (d = c) : d == 8 && f == 4 && (d = 16), (ge[a] = d == 4 ? 2 : d), d & 7 && (f = d), (c = d);
+      for (var h = o, c = u, f = u; h < l; h++) {
+        var d = AD(r.charCodeAt(h));
+        d == 512 ? (d = c) : d == 8 && f == 4 && (d = 16), (ge[h] = d == 4 ? 2 : d), d & 7 && (f = d), (c = d);
       }
-      for (var a1 = o, c1 = u, f1 = u; a1 < l; a1++) {
-        var d1 = ge[a1];
-        if (d1 == 128) a1 < l - 1 && c1 == ge[a1 + 1] && c1 & 24 ? (d1 = ge[a1] = c1) : (ge[a1] = 256);
+      for (var h1 = o, c1 = u, f1 = u; h1 < l; h1++) {
+        var d1 = ge[h1];
+        if (d1 == 128) h1 < l - 1 && c1 == ge[h1 + 1] && c1 & 24 ? (d1 = ge[h1] = c1) : (ge[h1] = 256);
         else if (d1 == 64) {
-          var p = a1 + 1;
+          var p = h1 + 1;
           for (; p < l && ge[p] == 64; ) p++;
-          var m = (a1 && c1 == 8) || (p < t && ge[p] == 8) ? (f1 == 1 ? 1 : 8) : 256;
-          for (var F = a1; F < p; F++) ge[F] = m;
-          a1 = p - 1;
-        } else d1 == 8 && f1 == 1 && (ge[a1] = 1);
+          var m = (h1 && c1 == 8) || (p < t && ge[p] == 8) ? (f1 == 1 ? 1 : 8) : 256;
+          for (var F = h1; F < p; F++) ge[F] = m;
+          h1 = p - 1;
+        } else d1 == 8 && f1 == 1 && (ge[h1] = 1);
         (c1 = d1), d1 & 7 && (f1 = d1);
       }
     }
   }
-  h(Nv, "computeCharTypes");
+  a(Nv, "computeCharTypes");
   function Mv(r, e, t, i, n) {
     var s = n == 1 ? 2 : 1;
     for (var o = 0, l = 0, u = 0; o <= i.length; o++) {
-      var a = o ? i[o - 1].to : e,
+      var h = o ? i[o - 1].to : e,
         c = o < i.length ? i[o].from : t;
-      for (var f = a, d = void 0, p = void 0, m = void 0; f < c; f++)
+      for (var f = h, d = void 0, p = void 0, m = void 0; f < c; f++)
         if ((p = Da[(d = r.charCodeAt(f))]))
           if (p < 0) {
             for (var F = l - 3; F >= 0; F -= 3)
@@ -11458,14 +11467,14 @@ function _ts_generator(thisArg, body) {
         }
     }
   }
-  h(Mv, "processBracketPairs");
+  a(Mv, "processBracketPairs");
   function Pv(r, e, t, i) {
     for (var n = 0, s = i; n <= t.length; n++) {
       var o = n ? t[n - 1].to : r,
         l = n < t.length ? t[n].from : e;
       for (var u = o; u < l; ) {
-        var a = ge[u];
-        if (a == 256) {
+        var h = ge[u];
+        if (h == 256) {
           var c = u + 1;
           for (;;)
             if (c == l) {
@@ -11478,18 +11487,18 @@ function _ts_generator(thisArg, body) {
             p = f == d ? (f ? 1 : 2) : i;
           for (var m = c, F = n, D = F ? t[F - 1].to : r; m > u; ) m == D && ((m = t[--F].from), (D = F ? t[F - 1].to : r)), (ge[--m] = p);
           u = c;
-        } else (s = a), u++;
+        } else (s = h), u++;
       }
     }
   }
-  h(Pv, "processNeutrals");
+  a(Pv, "processNeutrals");
   function Fa(r, e, t, i, n, s, o) {
     var l = i % 2 ? 2 : 1;
     if (i % 2 == n % 2)
-      for (var u = e, a = 0; u < t; ) {
+      for (var u = e, h = 0; u < t; ) {
         var c = !0,
           f = !1;
-        if (a == s.length || u < s[a].from) {
+        if (h == s.length || u < s[h].from) {
           var F = ge[u];
           F != l && ((c = !1), (f = F == 16));
         }
@@ -11497,11 +11506,11 @@ function _ts_generator(thisArg, body) {
           p = c ? i : i + 1,
           m = u;
         e: for (;;)
-          if (a < s.length && m == s[a].from) {
+          if (h < s.length && m == s[h].from) {
             if (f) break e;
-            var F1 = s[a];
+            var F1 = s[h];
             if (!c)
-              for (var D = F1.to, g = a + 1; ; ) {
+              for (var D = F1.to, g = h + 1; ; ) {
                 if (D == t) break e;
                 if (g < s.length && s[g].from == D) D = s[g++].to;
                 else {
@@ -11509,7 +11518,7 @@ function _ts_generator(thisArg, body) {
                   break;
                 }
               }
-            if ((a++, d)) d.push(F1);
+            if ((h++, d)) d.push(F1);
             else {
               F1.from > u && o.push(new Tt(u, F1.from, p));
               var D1 = (F1.direction == Ti) != !(p % 2);
@@ -11523,10 +11532,10 @@ function _ts_generator(thisArg, body) {
         d ? Fa(r, u, m, i + 1, n, d, o) : u < m && o.push(new Tt(u, m, p)), (u = m);
       }
     else
-      for (var u1 = t, a1 = s.length; u1 > e; ) {
+      for (var u1 = t, h1 = s.length; u1 > e; ) {
         var c1 = !0,
           f1 = !1;
-        if (!a1 || u1 > s[a1 - 1].to) {
+        if (!h1 || u1 > s[h1 - 1].to) {
           var F2 = ge[u1 - 1];
           F2 != l && ((c1 = !1), (f1 = F2 == 16));
         }
@@ -11534,11 +11543,11 @@ function _ts_generator(thisArg, body) {
           p1 = c1 ? i : i + 1,
           m1 = u1;
         e: for (;;)
-          if (a1 && m1 == s[a1 - 1].to) {
+          if (h1 && m1 == s[h1 - 1].to) {
             if (f1) break e;
-            var F3 = s[--a1];
+            var F3 = s[--h1];
             if (!c1)
-              for (var D2 = F3.from, g1 = a1; ; ) {
+              for (var D2 = F3.from, g1 = h1; ; ) {
                 if (D2 == e) break e;
                 if (g1 && s[g1 - 1].to == D2) D2 = s[--g1].from;
                 else {
@@ -11560,12 +11569,12 @@ function _ts_generator(thisArg, body) {
         d1 ? Fa(r, m1, u1, i + 1, n, d1, o) : m1 < u1 && o.push(new Tt(m1, u1, p1)), (u1 = m1);
       }
   }
-  h(Fa, "emitSpans");
+  a(Fa, "emitSpans");
   function ba(r, e, t, i, n, s, o) {
     var l = e % 2 ? 2 : 1;
     Nv(r, n, s, i, l), Mv(r, n, s, i, l), Pv(n, s, i, l), Fa(r, n, s, e, t, i, o);
   }
-  h(ba, "computeSectionOrder");
+  a(ba, "computeSectionOrder");
   function Iv(r, e, t) {
     if (!r) return [new Tt(0, 0, e == Ya ? 1 : 0)];
     if (e == Ti && !t.length && !Rv.test(r)) return SD(r.length);
@@ -11574,29 +11583,29 @@ function _ts_generator(thisArg, body) {
       n = e == Ti ? 0 : 1;
     return ba(r, n, n, t, 0, r.length, i), i;
   }
-  h(Iv, "computeOrder");
+  a(Iv, "computeOrder");
   function SD(r) {
     return [new Tt(0, r, 0)];
   }
-  h(SD, "trivialOrder");
+  a(SD, "trivialOrder");
   var wD = "";
   function $v(r, e, t, i, n) {
     var s;
     var o = i.head - r.from,
       l = Tt.find(e, o, (s = i.bidiLevel) !== null && s !== void 0 ? s : -1, i.assoc),
       u = e[l],
-      a = u.side(n, t);
-    if (o == a) {
+      h = u.side(n, t);
+    if (o == h) {
       var d = (l += n ? 1 : -1);
       if (d < 0 || d >= e.length) return null;
-      (u = e[(l = d)]), (o = u.side(!n, t)), (a = u.side(n, t));
+      (u = e[(l = d)]), (o = u.side(!n, t)), (h = u.side(n, t));
     }
     var c = ht(r.text, o, u.forward(n, t));
-    (c < u.from || c > u.to) && (c = a), (wD = r.text.slice(Math.min(o, c), Math.max(o, c)));
+    (c < u.from || c > u.to) && (c = h), (wD = r.text.slice(Math.min(o, c), Math.max(o, c)));
     var f = l == (n ? e.length - 1 : 0) ? null : e[l + (n ? 1 : -1)];
-    return f && c == a && f.level + (n ? 0 : 1) < u.level ? Z.cursor(f.side(!n, t) + r.from, f.forward(n, t) ? 1 : -1, f.level) : Z.cursor(c + r.from, u.forward(n, t) ? -1 : 1, u.level);
+    return f && c == h && f.level + (n ? 0 : 1) < u.level ? Z.cursor(f.side(!n, t) + r.from, f.forward(n, t) ? 1 : -1, f.level) : Z.cursor(c + r.from, u.forward(n, t) ? -1 : 1, u.level);
   }
-  h($v, "moveVisually");
+  a($v, "moveVisually");
   function qv(r, e, t) {
     for (var i = e; i < t; i++) {
       var n = AD(r.charCodeAt(i));
@@ -11605,7 +11614,7 @@ function _ts_generator(thisArg, body) {
     }
     return Ti;
   }
-  h(qv, "autoDirection");
+  a(qv, "autoDirection");
   var QD = z.define(),
     _D = z.define(),
     UD = z.define(),
@@ -11615,8 +11624,8 @@ function _ts_generator(thisArg, body) {
     TD = z.define(),
     Ja = z.define(),
     Ga = z.define(),
-    RD = z.define({ combine: (r) => r.some((e) => e) }),
-    ND = z.define({ combine: (r) => r.some((e) => e) }),
+    RD = z.define({ combine: a((r) => r.some((e) => e), "combine") }),
+    ND = z.define({ combine: a((r) => r.some((e) => e), "combine") }),
     MD = z.define(),
     pn =
       ((_r33 = class r {
@@ -11635,16 +11644,16 @@ function _ts_generator(thisArg, body) {
           (this.range = e), (this.y = t), (this.x = i), (this.yMargin = n), (this.xMargin = s), (this.isSnapshot = o);
         }
       }),
-      h(_r33, "ScrollTarget"),
+      a(_r33, "ScrollTarget"),
       _r33),
-    Gs = pe.define({ map: (r, e) => r.map(e) }),
+    Gs = pe.define({ map: a((r, e) => r.map(e), "map") }),
     PD = pe.define();
   function Ze(r, e, t) {
     var i = r.facet(LD);
     i.length ? i[0](e) : window.onerror ? window.onerror(String(e), t, void 0, void 0, e) : t ? console.error(t + ":", e) : console.error(e);
   }
-  h(Ze, "logException");
-  var ai = z.define({ combine: (r) => (r.length ? r[0] : !0) }),
+  a(Ze, "logException");
+  var ai = z.define({ combine: a((r) => (r.length ? r[0] : !0), "combine") }),
     Vv = 0,
     ln = z.define(),
     je =
@@ -11660,8 +11669,8 @@ function _ts_generator(thisArg, body) {
             return (
               o &&
                 u.push(
-                  vn.of((a) => {
-                    var c = a.plugin(l);
+                  vn.of((h) => {
+                    var c = h.plugin(l);
                     return c ? o(c) : he.none;
                   }),
                 ),
@@ -11677,7 +11686,7 @@ function _ts_generator(thisArg, body) {
           (this.id = e), (this.create = t), (this.domEventHandlers = i), (this.domEventObservers = n), (this.extension = s(this));
         }
       }),
-      h(_r34, "ViewPlugin"),
+      a(_r34, "ViewPlugin"),
       _r34),
     mn =
       ((_class41 = class _class {
@@ -11720,7 +11729,7 @@ function _ts_generator(thisArg, body) {
           (this.spec = e), (this.mustUpdate = null), (this.value = null);
         }
       }),
-      h(_class41, "PluginInstance"),
+      a(_class41, "PluginInstance"),
       _class41),
     ID = z.define(),
     Xa = z.define(),
@@ -11737,15 +11746,15 @@ function _ts_generator(thisArg, body) {
       De.spans(i, e.from, e.to, {
         point() {},
         span(s, o, l, u) {
-          var a = s - e.from,
+          var h = s - e.from,
             c = o - e.from,
             f = n;
           for (var d = l.length - 1; d >= 0; d--, u--) {
             var p = l[d].spec.bidiIsolate,
               m = void 0;
-            if ((p == null && (p = qv(e.text, a, c)), u > 0 && f.length && (m = f[f.length - 1]).to == a && m.direction == p)) (m.to = c), (f = m.inner);
+            if ((p == null && (p = qv(e.text, h, c)), u > 0 && f.length && (m = f[f.length - 1]).to == h && m.direction == p)) (m.to = c), (f = m.inner);
             else {
-              var F = { from: a, to: c, direction: p, inner: [] };
+              var F = { from: h, to: c, direction: p, inner: [] };
               f.push(F), (f = F.inner);
             }
           }
@@ -11754,7 +11763,7 @@ function _ts_generator(thisArg, body) {
       n
     );
   }
-  h(Og, "getIsolatedRanges");
+  a(Og, "getIsolatedRanges");
   var VD = z.define();
   function WD(r) {
     var e = 0,
@@ -11786,7 +11795,7 @@ function _ts_generator(thisArg, body) {
     }
     return { left: e, right: t, top: i, bottom: n };
   }
-  h(WD, "getScrollMargins");
+  a(WD, "getScrollMargins");
   var un = z.define(),
     Rt =
       ((_r35 = class r {
@@ -11810,14 +11819,14 @@ function _ts_generator(thisArg, body) {
           var i = [];
           for (var n = 0, s = 0, o = 0, l = 0; ; n++) {
             var u = n == e.length ? null : e[n],
-              a = o - l,
+              h = o - l,
               c = u ? u.fromB : 1e9;
             for (; s < t.length && t[s] < c; ) {
               var f = t[s],
                 d = t[s + 1],
                 p = Math.max(l, f),
                 m = Math.min(c, d);
-              if ((p <= m && new r(p + a, m + a, p, m).addToSet(i), d > c)) break;
+              if ((p <= m && new r(p + h, m + h, p, m).addToSet(i), d > c)) break;
               s += 2;
             }
             if (!u) return i;
@@ -11828,7 +11837,7 @@ function _ts_generator(thisArg, body) {
           (this.fromA = e), (this.toA = t), (this.fromB = i), (this.toB = n);
         }
       }),
-      h(_r35, "ChangedRange"),
+      a(_r35, "ChangedRange"),
       _r35),
     po =
       ((_r36 = class r {
@@ -11884,7 +11893,7 @@ function _ts_generator(thisArg, body) {
           this.changes.iterChangedRanges((s, o, l, u) => n.push(new Rt(s, o, l, u))), (this.changedRanges = n);
         }
       }),
-      h(_r36, "ViewUpdate"),
+      a(_r36, "ViewUpdate"),
       _r36),
     mo =
       ((_class42 = class _class extends Fe {
@@ -11897,9 +11906,9 @@ function _ts_generator(thisArg, body) {
           this.minWidth > 0 &&
             i.length &&
             (i.every((param) => {
-              var a = param.fromA,
+              var h = param.fromA,
                 c = param.toA;
-              return c < this.minWidthFrom || a > this.minWidthTo;
+              return c < this.minWidthFrom || h > this.minWidthTo;
             })
               ? ((this.minWidthFrom = e.changes.mapPos(this.minWidthFrom, 1)), (this.minWidthTo = e.changes.mapPos(this.minWidthTo, 1)))
               : (this.minWidth = this.minWidthFrom = this.minWidthTo = 0)),
@@ -11910,9 +11919,9 @@ function _ts_generator(thisArg, body) {
           if (((this.domChanged = null), this.hasComposition)) {
             this.markedForComposition.clear();
             var _this_hasComposition = this.hasComposition,
-              a = _this_hasComposition.from,
+              h = _this_hasComposition.from,
               c = _this_hasComposition.to;
-            i = new Rt(a, c, e.changes.mapPos(a, -1), e.changes.mapPos(c, 1)).addToSet(i.slice());
+            i = new Rt(h, c, e.changes.mapPos(h, -1), e.changes.mapPos(c, 1)).addToSet(i.slice());
           }
           (this.hasComposition = s ? { from: s.range.fromB, to: s.range.toB } : null), (V.ie || V.chrome) && !s && e && e.state.doc.lines != e.startState.doc.lines && (this.forceSelection = !0);
           var o = this.decorations,
@@ -11963,7 +11972,7 @@ function _ts_generator(thisArg, body) {
             var l = o >= 0 ? n[o] : null;
             if (!l) break;
             var u = l.fromA,
-              a = l.toA,
+              h = l.toA,
               c = l.fromB,
               f = l.toB,
               d = void 0,
@@ -11978,7 +11987,7 @@ function _ts_generator(thisArg, body) {
               var L = this.compositionView(i);
               C.breakAtStart ? (L.breakAfter = 1) : C.content.length && L.merge(L.length, L.length, C.content[0], !1, C.openStart, 0) && ((L.breakAfter = C.content[0].breakAfter), C.content.shift()), k.content.length && L.merge(0, 0, k.content[k.content.length - 1], !0, 0, k.openEnd) && k.content.pop(), (d = k.content.concat(L).concat(C.content));
             } else (ref = dn.build(this.view.state.doc, c, f, this.decorations, this.dynamicDecorationMap)), (d = ref.content), (p = ref.breakAtStart), (m = ref.openStart), (F = ref.openEnd), ref;
-            var _s_findPos = s.findPos(a, 1),
+            var _s_findPos = s.findPos(h, 1),
               D = _s_findPos.i,
               g = _s_findPos.off,
               _s_findPos1 = s.findPos(u, -1),
@@ -12064,7 +12073,7 @@ function _ts_generator(thisArg, body) {
           return i.append(t, 0), i;
         }
         fixCompositionDOM(e) {
-          var t = h((s, o) => {
+          var t = a((s, o) => {
               (o.flags |= 8 | (o.children.some((u) => u.flags & 7) ? 1 : 0)), this.markedForComposition.add(o);
               var l = Fe.get(s);
               l && l != o && (l.dom = null), o.setDOM(s);
@@ -12086,13 +12095,13 @@ function _ts_generator(thisArg, body) {
           this.forceSelection = !1;
           var l = this.view.state.selection.main,
             u = this.moveToLine(this.domAtPos(l.anchor)),
-            a = l.empty ? u : this.moveToLine(this.domAtPos(l.head));
+            h = l.empty ? u : this.moveToLine(this.domAtPos(l.head));
           if (V.gecko && l.empty && !this.hasComposition && Wv(u)) {
             var f = document.createTextNode("");
-            this.view.observer.ignore(() => u.node.insertBefore(f, u.node.childNodes[u.offset] || null)), (u = a = new ze(f, 0)), (o = !0);
+            this.view.observer.ignore(() => u.node.insertBefore(f, u.node.childNodes[u.offset] || null)), (u = h = new ze(f, 0)), (o = !0);
           }
           var c = this.view.observer.selectionRange;
-          (o || !c.focusNode || ((!fn(u.node, u.offset, c.anchorNode, c.anchorOffset) || !fn(a.node, a.offset, c.focusNode, c.focusOffset)) && !this.suppressWidgetCursorChange(c, l))) &&
+          (o || !c.focusNode || ((!fn(u.node, u.offset, c.anchorNode, c.anchorOffset) || !fn(h.node, h.offset, c.focusNode, c.focusOffset)) && !this.suppressWidgetCursorChange(c, l))) &&
             (this.view.observer.ignore(() => {
               V.android && V.chrome && this.dom.contains(c.focusNode) && Jv(c.focusNode, this.dom) && (this.dom.blur(), this.dom.focus({ preventScroll: !0 }));
               var f = Fn(this.view.root);
@@ -12109,18 +12118,18 @@ function _ts_generator(thisArg, body) {
                 } else if (f.extend) {
                   f.collapse(u.node, u.offset);
                   try {
-                    f.extend(a.node, a.offset);
+                    f.extend(h.node, h.offset);
                   } catch (e) {}
                 } else {
                   var d1 = document.createRange();
                   var ref;
-                  l.anchor > l.head && ((ref = [a, u]), (u = ref[0]), (a = ref[1]), ref), d1.setEnd(a.node, a.offset), d1.setStart(u.node, u.offset), f.removeAllRanges(), f.addRange(d1);
+                  l.anchor > l.head && ((ref = [h, u]), (u = ref[0]), (h = ref[1]), ref), d1.setEnd(h.node, h.offset), d1.setStart(u.node, u.offset), f.removeAllRanges(), f.addRange(d1);
                 }
               s && this.view.root.activeElement == this.dom && (this.dom.blur(), i && i.focus());
             }),
-            this.view.observer.setSelectionRange(u, a)),
+            this.view.observer.setSelectionRange(u, h)),
             (this.impreciseAnchor = u.precise ? null : new ze(c.anchorNode, c.anchorOffset)),
-            (this.impreciseHead = a.precise ? null : new ze(c.focusNode, c.focusOffset));
+            (this.impreciseHead = h.precise ? null : new ze(c.focusNode, c.focusOffset));
         }
         suppressWidgetCursorChange(e, t) {
           return this.hasComposition && t.empty && fn(e.focusNode, e.focusOffset, e.anchorNode, e.anchorOffset) && this.posFromDOM(e.focusNode, e.focusOffset) == t.head;
@@ -12140,8 +12149,8 @@ function _ts_generator(thisArg, body) {
           var l = o.posAtStart;
           if (t.head == l || t.head == l + o.length) return;
           var u = this.coordsAt(t.head, -1),
-            a = this.coordsAt(t.head, 1);
-          if (!u || !a || u.bottom > a.top) return;
+            h = this.coordsAt(t.head, 1);
+          if (!u || !h || u.bottom > h.top) return;
           var c = this.domAtPos(t.head + t.assoc);
           i.collapse(c.node, c.offset), i.modify("move", t.assoc < 0 ? "forward" : "backward", "lineboundary"), e.observer.readSelectionRange();
           var f = e.observer.selectionRange;
@@ -12191,14 +12200,14 @@ function _ts_generator(thisArg, body) {
           for (var s = this.length, o = this.children.length - 1; o >= 0; o--) {
             var l = this.children[o],
               u = s - l.breakAfter,
-              a = u - l.length;
+              h = u - l.length;
             if (u < e) break;
-            if (a <= e && (a < e || l.covers(-1)) && (u > e || l.covers(1)) && (!i || (l instanceof Ne && !(i instanceof Ne && t >= 0)))) (i = l), (n = a);
-            else if (i && a == e && u == e && l instanceof Ui && Math.abs(t) < 2) {
+            if (h <= e && (h < e || l.covers(-1)) && (u > e || l.covers(1)) && (!i || (l instanceof Ne && !(i instanceof Ne && t >= 0)))) (i = l), (n = h);
+            else if (i && h == e && u == e && l instanceof Ui && Math.abs(t) < 2) {
               if (l.deco.startSide < 0) break;
               o && (i = null);
             }
-            s = a;
+            s = h;
           }
           return i ? i.coordsAt(e - n, t) : null;
         }
@@ -12236,11 +12245,11 @@ function _ts_generator(thisArg, body) {
             o = s > Math.max(this.view.scrollDOM.clientWidth, this.minWidth) + 1,
             l = -1,
             u = this.view.textDirection == Be.LTR;
-          for (var a = 0, c = 0; c < this.children.length; c++) {
+          for (var h = 0, c = 0; c < this.children.length; c++) {
             var f = this.children[c],
-              d = a + f.length;
+              d = h + f.length;
             if (d > n) break;
-            if (a >= i) {
+            if (h >= i) {
               var p = f.dom.getBoundingClientRect();
               if ((t.push(p.height), o)) {
                 var m = f.dom.lastChild,
@@ -12248,11 +12257,11 @@ function _ts_generator(thisArg, body) {
                 if (F.length) {
                   var D = F[F.length - 1],
                     g = u ? D.right - p.left : p.right - D.left;
-                  g > l && ((l = g), (this.minWidth = s), (this.minWidthFrom = a), (this.minWidthTo = d));
+                  g > l && ((l = g), (this.minWidth = s), (this.minWidthFrom = h), (this.minWidthTo = d));
                 }
               }
             }
-            a = d + f.breakAfter;
+            h = d + f.breakAfter;
           }
           return t;
         }
@@ -12337,8 +12346,8 @@ function _ts_generator(thisArg, body) {
         }
         scrollIntoView(e) {
           if (e.isSnapshot) {
-            var a = this.view.viewState.lineBlockAt(e.range.head);
-            (this.view.scrollDOM.scrollTop = a.top - e.yMargin), (this.view.scrollDOM.scrollLeft = e.xMargin);
+            var h = this.view.viewState.lineBlockAt(e.range.head);
+            (this.view.scrollDOM.scrollTop = h.top - e.yMargin), (this.view.scrollDOM.scrollLeft = e.xMargin);
             return;
           }
           var _iteratorNormalCompletion = true,
@@ -12346,9 +12355,9 @@ function _ts_generator(thisArg, body) {
             _iteratorError = undefined;
           try {
             for (var _iterator = this.view.state.facet(MD)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var a1 = _step.value;
+              var h1 = _step.value;
               try {
-                if (a1(this.view, e.range, e)) return !0;
+                if (h1(this.view, e.range, e)) return !0;
               } catch (c) {
                 Ze(this.view.state, c, "scroll handler");
               }
@@ -12403,12 +12412,12 @@ function _ts_generator(thisArg, body) {
             this.updateInner([new Rt(0, 0, 0, e.state.doc.length)], 0, null);
         }
       }),
-      h(_class42, "DocView"),
+      a(_class42, "DocView"),
       _class42);
   function Wv(r) {
     return r.node.nodeType == 1 && r.node.firstChild && (r.offset == 0 || r.node.childNodes[r.offset - 1].contentEditable == "false") && (r.offset == r.node.childNodes.length || r.node.childNodes[r.offset].contentEditable == "false");
   }
-  h(Wv, "betweenUneditable");
+  a(Wv, "betweenUneditable");
   function zD(r, e) {
     var t = r.observer.selectionRange;
     if (!t.focusNode) return null;
@@ -12427,7 +12436,7 @@ function _ts_generator(thisArg, body) {
     var o = e - s.offset;
     return { from: o, to: o + s.node.nodeValue.length, node: s.node };
   }
-  h(zD, "findCompositionNode");
+  a(zD, "findCompositionNode");
   function zv(r, e, t) {
     var i = zD(r, t);
     if (!i) return null;
@@ -12437,23 +12446,23 @@ function _ts_generator(thisArg, body) {
       l = n.nodeValue;
     if (/[\n\r]/.test(l) || r.state.doc.sliceString(i.from, i.to) != l) return null;
     var u = e.invertedDesc,
-      a = new Rt(u.mapPos(s), u.mapPos(o), s, o),
+      h = new Rt(u.mapPos(s), u.mapPos(o), s, o),
       c = [];
     for (var f = n.parentNode; ; f = f.parentNode) {
       var d = Fe.get(f);
       if (d instanceof fi) c.push({ node: f, deco: d.mark });
       else {
-        if (d instanceof Ne || (f.nodeName == "DIV" && f.parentNode == r.contentDOM)) return { range: a, text: n, marks: c, line: f };
+        if (d instanceof Ne || (f.nodeName == "DIV" && f.parentNode == r.contentDOM)) return { range: h, text: n, marks: c, line: f };
         if (f != r.contentDOM) c.push({ node: f, deco: new Cn({ inclusive: !0, attributes: Uv(f), tagName: f.tagName.toLowerCase() }) });
         else return null;
       }
     }
   }
-  h(zv, "findCompositionRange");
+  a(zv, "findCompositionRange");
   function Hv(r, e) {
     return r.nodeType != 1 ? 0 : (e && r.childNodes[e - 1].contentEditable == "false" ? 1 : 0) | (e < r.childNodes.length && r.childNodes[e].contentEditable == "false" ? 2 : 0);
   }
-  h(Hv, "nextToUneditable");
+  a(Hv, "nextToUneditable");
   var jv =
     ((_class43 = class _class {
       compareRange(e, t) {
@@ -12466,18 +12475,18 @@ function _ts_generator(thisArg, body) {
         this.changes = [];
       }
     }),
-    h(_class43, "DecorationComparator"),
+    a(_class43, "DecorationComparator"),
     _class43);
   function Yv(r, e, t) {
     var i = new jv();
     return De.compare(r, e, t, i), i.changes;
   }
-  h(Yv, "findChangedDeco");
+  a(Yv, "findChangedDeco");
   function Jv(r, e) {
     for (var t = r; t && t != e; t = t.assignedSlot || t.parentNode) if (t.nodeType == 1 && t.contentEditable == "false") return !0;
     return !1;
   }
-  h(Jv, "inUneditable");
+  a(Jv, "inUneditable");
   function Gv(r, e) {
     var t = !1;
     return (
@@ -12488,7 +12497,7 @@ function _ts_generator(thisArg, body) {
       t
     );
   }
-  h(Gv, "touchesComposition");
+  a(Gv, "touchesComposition");
   function Xv(r, e) {
     var t = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 1;
     var i = r.charCategorizer(e),
@@ -12501,38 +12510,38 @@ function _ts_generator(thisArg, body) {
     t < 0 ? (o = ht(n.text, s, !1)) : (l = ht(n.text, s));
     var u = i(n.text.slice(o, l));
     for (; o > 0; ) {
-      var a = ht(n.text, o, !1);
-      if (i(n.text.slice(a, o)) != u) break;
-      o = a;
+      var h = ht(n.text, o, !1);
+      if (i(n.text.slice(h, o)) != u) break;
+      o = h;
     }
     for (; l < n.length; ) {
-      var a1 = ht(n.text, l);
-      if (i(n.text.slice(l, a1)) != u) break;
-      l = a1;
+      var h1 = ht(n.text, l);
+      if (i(n.text.slice(l, h1)) != u) break;
+      l = h1;
     }
     return Z.range(o + n.from, l + n.from);
   }
-  h(Xv, "groupAt");
+  a(Xv, "groupAt");
   function Kv(r, e) {
     return e.left > r ? e.left - r : Math.max(0, r - e.right);
   }
-  h(Kv, "getdx");
+  a(Kv, "getdx");
   function Zv(r, e) {
     return e.top > r ? e.top - r : Math.max(0, r - e.bottom);
   }
-  h(Zv, "getdy");
+  a(Zv, "getdy");
   function na(r, e) {
     return r.top < e.bottom - 1 && r.bottom > e.top + 1;
   }
-  h(na, "yOverlap");
+  a(na, "yOverlap");
   function Tg(r, e) {
     return e < r.top ? { top: e, left: r.left, right: r.right, bottom: r.bottom } : r;
   }
-  h(Tg, "upTop");
+  a(Tg, "upTop");
   function Rg(r, e) {
     return e > r.bottom ? { top: r.top, left: r.left, right: r.right, bottom: e } : r;
   }
-  h(Rg, "upBot");
+  a(Rg, "upBot");
   function Ea(r, e, t) {
     var i,
       n,
@@ -12540,7 +12549,7 @@ function _ts_generator(thisArg, body) {
       o,
       l = !1,
       u,
-      a,
+      h,
       c,
       f;
     for (var m = r.firstChild; m; m = m.nextSibling) {
@@ -12556,17 +12565,17 @@ function _ts_generator(thisArg, body) {
           var k = B ? (t < g.top ? -1 : 1) : b ? (e < g.left ? -1 : 1) : 0;
           l = !k || (k > 0 ? D < F.length - 1 : D > 0);
         }
-        b == 0 ? (t > g.bottom && (!c || c.bottom < g.bottom) ? ((u = m), (c = g)) : t < g.top && (!f || f.top > g.top) && ((a = m), (f = g))) : c && na(c, g) ? (c = Rg(c, g.bottom)) : f && na(f, g) && (f = Tg(f, g.top));
+        b == 0 ? (t > g.bottom && (!c || c.bottom < g.bottom) ? ((u = m), (c = g)) : t < g.top && (!f || f.top > g.top) && ((h = m), (f = g))) : c && na(c, g) ? (c = Rg(c, g.bottom)) : f && na(f, g) && (f = Tg(f, g.top));
       }
     }
-    if ((c && c.bottom >= t ? ((i = u), (n = c)) : f && f.top <= t && ((i = a), (n = f)), !i)) return { node: r, offset: 0 };
+    if ((c && c.bottom >= t ? ((i = u), (n = c)) : f && f.top <= t && ((i = h), (n = f)), !i)) return { node: r, offset: 0 };
     var d = Math.max(n.left, Math.min(n.right, e));
     if (i.nodeType == 3) return Ng(i, d, t);
     if (l && i.contentEditable != "false") return Ea(i, d, t);
     var p = Array.prototype.indexOf.call(r.childNodes, i) + (e >= (n.left + n.right) / 2 ? 1 : 0);
     return { node: r, offset: p };
   }
-  h(Ea, "domPosAtCoords");
+  a(Ea, "domPosAtCoords");
   function Ng(r, e, t) {
     var i = r.nodeValue.length,
       n = -1,
@@ -12574,8 +12583,8 @@ function _ts_generator(thisArg, body) {
       o = 0;
     for (var l = 0; l < i; l++) {
       var u = Oi(r, l, l + 1).getClientRects();
-      for (var a = 0; a < u.length; a++) {
-        var c = u[a];
+      for (var h = 0; h < u.length; h++) {
+        var c = u[h];
         if (c.top == c.bottom) continue;
         o || (o = e - c.left);
         var f = (c.top > t ? c.top - t : t - c.bottom) - 1;
@@ -12589,7 +12598,7 @@ function _ts_generator(thisArg, body) {
     }
     return { node: r, offset: n > -1 ? n : o > 0 ? r.nodeValue.length : 0 };
   }
-  h(Ng, "domPosInText");
+  a(Ng, "domPosInText");
   function HD(r, e, t) {
     var i = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : -1;
     var n, s;
@@ -12597,14 +12606,14 @@ function _ts_generator(thisArg, body) {
       l = o.top + r.viewState.paddingTop,
       u,
       _r_viewState = r.viewState,
-      a = _r_viewState.docHeight,
+      h = _r_viewState.docHeight,
       c = e.x,
       f = e.y,
       d = f - l;
     if (d < 0) return 0;
-    if (d > a) return r.state.doc.length;
+    if (d > h) return r.state.doc.length;
     for (var k = r.viewState.heightOracle.textHeight / 2, C = !1; (u = r.elementAtHeight(d)), u.type != He.Text; )
-      for (; (d = i > 0 ? u.bottom + k : u.top - k), !(d >= 0 && d <= a); ) {
+      for (; (d = i > 0 ? u.bottom + k : u.top - k), !(d >= 0 && d <= h); ) {
         if (C) return t ? null : 0;
         (C = !0), (i = -i);
       }
@@ -12642,7 +12651,7 @@ function _ts_generator(thisArg, body) {
       return e.y < k4.top || (e.y <= k4.bottom && e.x <= (k4.left + k4.right) / 2) ? B.posAtStart : B.posAtEnd;
     } else return B.localPosFromDOM(g, b) + B.posAtStart;
   }
-  h(HD, "posAtCoords");
+  a(HD, "posAtCoords");
   function Mg(r, e, t, i, n) {
     var s = Math.round((i - e.left) * r.defaultCharacterWidth);
     if (r.lineWrapping && t.height > r.defaultLineHeight * 1.5) {
@@ -12653,14 +12662,14 @@ function _ts_generator(thisArg, body) {
     var o = r.state.sliceDoc(t.from, t.to);
     return t.from + Cg(o, s, r.state.tabSize);
   }
-  h(Mg, "posAtCoordsImprecise");
+  a(Mg, "posAtCoordsImprecise");
   function eA(r, e, t) {
     var i;
     if (r.nodeType != 3 || e != (i = r.nodeValue.length)) return !1;
     for (var n = r.nextSibling; n; n = n.nextSibling) if (n.nodeType != 1 || n.nodeName != "BR") return !1;
     return Oi(r, i - 1, i).getBoundingClientRect().left > t;
   }
-  h(eA, "isSuspiciousSafariCaretResult");
+  a(eA, "isSuspiciousSafariCaretResult");
   function tA(r, e, t) {
     if (e != 0) return !1;
     for (var n = r; ; ) {
@@ -12672,7 +12681,7 @@ function _ts_generator(thisArg, body) {
     var i = r.nodeType == 1 ? r.getBoundingClientRect() : Oi(r, 0, Math.max(r.nodeValue.length, 1)).getBoundingClientRect();
     return t - i.left > 5;
   }
-  h(tA, "isSuspiciousChromeCaretResult");
+  a(tA, "isSuspiciousChromeCaretResult");
   function Ca(r, e) {
     var t = r.lineBlockAt(e);
     if (Array.isArray(t.type)) {
@@ -12701,7 +12710,7 @@ function _ts_generator(thisArg, body) {
     }
     return t;
   }
-  h(Ca, "blockAt");
+  a(Ca, "blockAt");
   function iA(r, e, t, i) {
     var n = Ca(r, e.head),
       s = !i || n.type != He.Text || !(r.lineWrapping || n.widgetLineBreaks) ? null : r.coordsAtPos(e.assoc < 0 && e.head > n.from ? e.head - 1 : e.head);
@@ -12713,28 +12722,28 @@ function _ts_generator(thisArg, body) {
     }
     return Z.cursor(t ? n.to : n.from, t ? -1 : 1);
   }
-  h(iA, "moveToLineBoundary");
+  a(iA, "moveToLineBoundary");
   function Pg(r, e, t, i) {
     var n = r.state.doc.lineAt(e.head),
       s = r.bidiSpans(n),
       o = r.textDirectionAt(n.from);
     for (var l = e, u = null; ; ) {
-      var a = $v(n, s, o, l, t),
+      var h = $v(n, s, o, l, t),
         c = wD;
-      if (!a) {
+      if (!h) {
         if (n.number == (t ? r.state.doc.lines : 1)) return l;
-        (c = "\n"), (n = r.state.doc.line(n.number + (t ? 1 : -1))), (s = r.bidiSpans(n)), (a = r.visualLineSide(n, !t));
+        (c = "\n"), (n = r.state.doc.line(n.number + (t ? 1 : -1))), (s = r.bidiSpans(n)), (h = r.visualLineSide(n, !t));
       }
       if (u) {
         if (!u(c)) return l;
       } else {
-        if (!i) return a;
+        if (!i) return h;
         u = i(c);
       }
-      l = a;
+      l = h;
     }
   }
-  h(Pg, "moveByChar");
+  a(Pg, "moveByChar");
   function rA(r, e, t) {
     var i = r.state.charCategorizer(e),
       n = i(t);
@@ -12743,7 +12752,7 @@ function _ts_generator(thisArg, body) {
       return n == vt.Space && (n = o), n == o;
     };
   }
-  h(rA, "byGroup");
+  a(rA, "byGroup");
   function nA(r, e, t, i) {
     var n = e.head,
       s = t ? 1 : -1;
@@ -12751,9 +12760,9 @@ function _ts_generator(thisArg, body) {
     var o = e.goalColumn,
       l,
       u = r.contentDOM.getBoundingClientRect(),
-      a = r.coordsAtPos(n, e.assoc || -1),
+      h = r.coordsAtPos(n, e.assoc || -1),
       c = r.documentTop;
-    if (a) o == null && (o = a.left - u.left), (l = s < 0 ? a.top : a.bottom);
+    if (h) o == null && (o = h.left - u.left), (l = s < 0 ? h.top : h.bottom);
     else {
       var p = r.viewState.lineBlockAt(n);
       o == null && (o = Math.min(u.right - u.left, r.defaultCharacterWidth * (n - p.from))), (l = (s < 0 ? p.top : p.bottom) + c);
@@ -12770,7 +12779,7 @@ function _ts_generator(thisArg, body) {
       }
     }
   }
-  h(nA, "moveVertically");
+  a(nA, "moveVertically");
   function so(r, e, t) {
     var _loop = function () {
       var i = 0;
@@ -12808,7 +12817,7 @@ function _ts_generator(thisArg, body) {
       if (_type_of(_ret) === "object") return _ret.v;
     }
   }
-  h(so, "skipAtomicRanges");
+  a(so, "skipAtomicRanges");
   function sa(r, e, t) {
     var i = so(
       r.state.facet(Ka).map((n) => n(r)),
@@ -12817,7 +12826,7 @@ function _ts_generator(thisArg, body) {
     );
     return i == t.from ? t : Z.cursor(i, i < t.from ? 1 : -1);
   }
-  h(sa, "skipAtoms");
+  a(sa, "skipAtoms");
   var an = "￿",
     Ba =
       ((_class44 = class _class {
@@ -12958,7 +12967,7 @@ function _ts_generator(thisArg, body) {
           (this.points = e), (this.text = ""), (this.lineSeparator = t.facet(Ae.lineSeparator));
         }
       }),
-      h(_class44, "DOMReader"),
+      a(_class44, "DOMReader"),
       _class44);
   function sA(r, e, t) {
     for (;;) {
@@ -12967,14 +12976,14 @@ function _ts_generator(thisArg, body) {
       (t = Li(e) + 1), (e = e.parentNode);
     }
   }
-  h(sA, "isAtEnd");
+  a(sA, "isAtEnd");
   var go =
       ((_class45 = class _class {
         constructor(e, t) {
           (this.node = e), (this.offset = t), (this.pos = -1);
         }
       }),
-      h(_class45, "DOMPoint"),
+      a(_class45, "DOMPoint"),
       _class45),
     xa =
       ((_class46 = class _class {
@@ -12991,20 +13000,20 @@ function _ts_generator(thisArg, body) {
           } else {
             var l1 = e.observer.selectionRange,
               u1 = (s && s.node == l1.focusNode && s.offset == l1.focusOffset) || !aa(e.contentDOM, l1.focusNode) ? e.state.selection.main.head : e.docView.posFromDOM(l1.focusNode, l1.focusOffset),
-              a = (o && o.node == l1.anchorNode && o.offset == l1.anchorOffset) || !aa(e.contentDOM, l1.anchorNode) ? e.state.selection.main.anchor : e.docView.posFromDOM(l1.anchorNode, l1.anchorOffset),
+              h = (o && o.node == l1.anchorNode && o.offset == l1.anchorOffset) || !aa(e.contentDOM, l1.anchorNode) ? e.state.selection.main.anchor : e.docView.posFromDOM(l1.anchorNode, l1.anchorOffset),
               c = e.viewport;
-            if ((V.ios || V.chrome) && e.state.selection.main.empty && u1 != a && (c.from > 0 || c.to < e.state.doc.length)) {
-              var f = Math.min(u1, a),
-                d = Math.max(u1, a),
+            if ((V.ios || V.chrome) && e.state.selection.main.empty && u1 != h && (c.from > 0 || c.to < e.state.doc.length)) {
+              var f = Math.min(u1, h),
+                d = Math.max(u1, h),
                 p = c.from - f,
                 m = c.to - d;
-              (p == 0 || p == 1 || f == 0) && (m == 0 || m == -1 || d == e.state.doc.length) && ((u1 = 0), (a = e.state.doc.length));
+              (p == 0 || p == 1 || f == 0) && (m == 0 || m == -1 || d == e.state.doc.length) && ((u1 = 0), (h = e.state.doc.length));
             }
-            this.newSel = Z.single(a, u1);
+            this.newSel = Z.single(h, u1);
           }
         }
       }),
-      h(_class46, "DOMChange"),
+      a(_class46, "DOMChange"),
       _class46);
   function jD(r, e) {
     var t,
@@ -13016,9 +13025,9 @@ function _ts_generator(thisArg, body) {
         o = _e_bounds.from,
         l = _e_bounds.to,
         u = n.from,
-        a = null;
-      (s === 8 || (V.android && e.text.length < l - o)) && ((u = n.to), (a = "end"));
-      var c = lA(r.state.doc.sliceString(o, l, an), e.text, u - o, a);
+        h = null;
+      (s === 8 || (V.android && e.text.length < l - o)) && ((u = n.to), (h = "end"));
+      var c = lA(r.state.doc.sliceString(o, l, an), e.text, u - o, h);
       c && (V.chrome && s == 13 && c.toB == c.from + 2 && e.text.slice(c.from, c.toB) == an + an && c.toB--, (t = { from: o + c.from, to: o + c.toA, insert: de.of(e.text.slice(c.from, c.toB).split(an)) }));
     } else i && ((!r.hasFocus && r.state.facet(ai)) || i.main.eq(n)) && (i = null);
     if (!t && !i) return !1;
@@ -13039,7 +13048,7 @@ function _ts_generator(thisArg, body) {
       return r.inputState.lastSelectionTime > Date.now() - 50 && (r.inputState.lastSelectionOrigin == "select" && (o1 = !0), (l1 = r.inputState.lastSelectionOrigin)), r.dispatch({ selection: i, scrollIntoView: o1, userEvent: l1 }), !0;
     } else return !1;
   }
-  h(jD, "applyDOMChange");
+  a(jD, "applyDOMChange");
   function Za(r, e, t) {
     var i = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : -1;
     if (V.ios && r.inputState.flushIOSKey(e)) return !0;
@@ -13054,10 +13063,10 @@ function _ts_generator(thisArg, body) {
     var s = e.insert.toString();
     r.inputState.composing >= 0 && r.inputState.composing++;
     var o,
-      l = h(() => o || (o = oA(r, e, t)), "defaultInsert");
+      l = a(() => o || (o = oA(r, e, t)), "defaultInsert");
     return r.state.facet(OD).some((u) => u(r, e.from, e.to, s, l)) || r.dispatch(l()), !0;
   }
-  h(Za, "applyDOMChangeInner");
+  a(Za, "applyDOMChangeInner");
   function oA(r, e, t) {
     var i,
       n = r.state,
@@ -13070,7 +13079,7 @@ function _ts_generator(thisArg, body) {
       var l1 = n.changes(e),
         u1 = t && t.main.to <= l1.newLength ? t.main : void 0;
       if (n.selection.ranges.length > 1 && r.inputState.composing >= 0 && e.to <= s.to && e.to >= s.to - 10) {
-        var a = r.state.sliceDoc(e.from, e.to),
+        var h = r.state.sliceDoc(e.from, e.to),
           c,
           f = t && zD(r, t.main.head);
         if (f) {
@@ -13082,8 +13091,8 @@ function _ts_generator(thisArg, body) {
         i = n.changeByRange((m) => {
           if (m.from == s.from && m.to == s.to) return { changes: l1, range: u1 || m.map(l1) };
           var F = m.to - d,
-            D = F - a.length;
-          if (m.to - m.from != p || r.state.sliceDoc(D, F) != a || (m.to >= c.from && m.from <= c.to)) return { range: m };
+            D = F - h.length;
+          if (m.to - m.from != p || r.state.sliceDoc(D, F) != h || (m.to >= c.from && m.from <= c.to)) return { range: m };
           var g = n.changes({ from: D, to: F, insert: e.insert }),
             b = m.to - s.to;
           return { changes: g, range: u1 ? Z.range(Math.max(0, u1.anchor + b), Math.max(0, u1.head + b)) : m.map(g) };
@@ -13093,7 +13102,7 @@ function _ts_generator(thisArg, body) {
     var o = "input.type";
     return (r.composing || (r.inputState.compositionPendingChange && r.inputState.compositionEndedAt > Date.now() - 50)) && ((r.inputState.compositionPendingChange = !1), (o += ".compose"), r.inputState.compositionFirstChange && ((o += ".start"), (r.inputState.compositionFirstChange = !1))), n.update(i, { userEvent: o, scrollIntoView: !0 });
   }
-  h(oA, "applyDefaultInsert");
+  a(oA, "applyDefaultInsert");
   function lA(r, e, t, i) {
     var n = Math.min(r.length, e.length),
       s = 0;
@@ -13115,7 +13124,7 @@ function _ts_generator(thisArg, body) {
     }
     return { from: s, toA: o, toB: l };
   }
-  h(lA, "findDiff");
+  a(lA, "findDiff");
   function uA(r) {
     var e = [];
     if (r.root.activeElement != r.contentDOM) return e;
@@ -13126,14 +13135,14 @@ function _ts_generator(thisArg, body) {
       s = _r_observer_selectionRange.focusOffset;
     return t && (e.push(new go(t, i)), (n != t || s != i) && e.push(new go(n, s))), e;
   }
-  h(uA, "selectionPoints");
+  a(uA, "selectionPoints");
   function aA(r, e) {
     if (r.length == 0) return null;
     var t = r[0].pos,
       i = r.length == 2 ? r[1].pos : t;
     return t > -1 && i > -1 ? Z.single(t + e, i + e) : null;
   }
-  h(aA, "selectionFromPoints");
+  a(aA, "selectionFromPoints");
   var va =
     ((_class47 = class _class {
       setSelectionOrigin(e) {
@@ -13258,7 +13267,7 @@ function _ts_generator(thisArg, body) {
           V.gecko && xA(e.contentDOM.ownerDocument);
       }
     }),
-    h(_class47, "InputState"),
+    a(_class47, "InputState"),
     _class47);
   function Ig(r, e) {
     return (t, i) => {
@@ -13269,13 +13278,13 @@ function _ts_generator(thisArg, body) {
       }
     };
   }
-  h(Ig, "bindHandler");
+  a(Ig, "bindHandler");
   function hA(r) {
     var e = Object.create(null);
     function t(i) {
       return e[i] || (e[i] = { observers: [], handlers: [] });
     }
-    h(t, "record");
+    a(t, "record");
     var _iteratorNormalCompletion = true,
       _didIteratorError = false,
       _iteratorError = undefined;
@@ -13312,7 +13321,7 @@ function _ts_generator(thisArg, body) {
     for (var i2 in pt) t(i2).observers.push(pt[i2]);
     return e;
   }
-  h(hA, "computeHandlers");
+  a(hA, "computeHandlers");
   var YD = [
       { key: "Backspace", keyCode: 8, inputType: "deleteContentBackward" },
       { key: "Enter", keyCode: 13, inputType: "insertParagraph" },
@@ -13325,11 +13334,11 @@ function _ts_generator(thisArg, body) {
   function Ks(r) {
     return Math.max(0, r) * 0.7 + 8;
   }
-  h(Ks, "dragScrollSpeed");
+  a(Ks, "dragScrollSpeed");
   function fA(r, e) {
     return Math.max(Math.abs(r.clientX - e.clientX), Math.abs(r.clientY - e.clientY));
   }
-  h(fA, "dist");
+  a(fA, "dist");
   var Aa =
     ((_class48 = class _class {
       start(e) {
@@ -13399,18 +13408,18 @@ function _ts_generator(thisArg, body) {
         s.addEventListener("mousemove", (this.move = this.move.bind(this))), s.addEventListener("mouseup", (this.up = this.up.bind(this))), (this.extend = t.shiftKey), (this.multiple = e.state.facet(Ae.allowMultipleSelections) && dA(e, t)), (this.dragging = mA(e, t) && KD(t) == 1 ? null : !1);
       }
     }),
-    h(_class48, "MouseSelection"),
+    a(_class48, "MouseSelection"),
     _class48);
   function dA(r, e) {
     var t = r.state.facet(QD);
     return t.length ? t[0](e) : V.mac ? e.metaKey : e.ctrlKey;
   }
-  h(dA, "addsSelectionRange");
+  a(dA, "addsSelectionRange");
   function pA(r, e) {
     var t = r.state.facet(_D);
     return t.length ? t[0](e) : V.mac ? !e.altKey : !e.ctrlKey;
   }
-  h(pA, "dragMovesSelection");
+  a(pA, "dragMovesSelection");
   function mA(r, e) {
     var _r_state_selection = r.state.selection,
       t = _r_state_selection.main;
@@ -13424,14 +13433,14 @@ function _ts_generator(thisArg, body) {
     }
     return !1;
   }
-  h(mA, "isInPrimarySelection");
+  a(mA, "isInPrimarySelection");
   function gA(r, e) {
     if (!e.bubbles) return !0;
     if (e.defaultPrevented) return !1;
     for (var t = e.target, i; t != r.contentDOM; t = t.parentNode) if (!t || t.nodeType == 11 || ((i = Fe.get(t)) && i.ignoreEvent(e))) return !1;
     return !0;
   }
-  h(gA, "eventBelongsToEditor");
+  a(gA, "eventBelongsToEditor");
   var At = Object.create(null),
     pt = Object.create(null),
     GD = (V.ie && V.ie_version < 15) || (V.ios && V.webkit_version < 604);
@@ -13445,7 +13454,7 @@ function _ts_generator(thisArg, body) {
         r.focus(), t.remove(), XD(r, t.value);
       }, 50);
   }
-  h(DA, "capturePaste");
+  a(DA, "capturePaste");
   function wo(r, e, t) {
     var _iteratorNormalCompletion = true,
       _didIteratorError = false,
@@ -13471,7 +13480,7 @@ function _ts_generator(thisArg, body) {
     }
     return t;
   }
-  h(wo, "textFilter");
+  a(wo, "textFilter");
   function XD(r, e) {
     e = wo(r.state, Ja, e);
     var t = r.state,
@@ -13481,23 +13490,23 @@ function _ts_generator(thisArg, body) {
       o = s.lines == t.selection.ranges.length;
     if (ka != null && t.selection.ranges.every((u) => u.empty) && ka == s.toString()) {
       var u = -1;
-      i = t.changeByRange((a) => {
-        var c = t.doc.lineAt(a.from);
-        if (c.from == u) return { range: a };
+      i = t.changeByRange((h) => {
+        var c = t.doc.lineAt(h.from);
+        if (c.from == u) return { range: h };
         u = c.from;
         var f = t.toText((o ? s.line(n++).text : e) + t.lineBreak);
-        return { changes: { from: c.from, insert: f }, range: Z.cursor(a.from + f.length) };
+        return { changes: { from: c.from, insert: f }, range: Z.cursor(h.from + f.length) };
       });
     } else
       o
         ? (i = t.changeByRange((u) => {
-            var a = s.line(n++);
-            return { changes: { from: u.from, to: u.to, insert: a.text }, range: Z.cursor(u.from + a.length) };
+            var h = s.line(n++);
+            return { changes: { from: u.from, to: u.to, insert: h.text }, range: Z.cursor(u.from + h.length) };
           }))
         : (i = t.replaceSelection(s));
     r.dispatch(i, { userEvent: "input.paste", scrollIntoView: !0 });
   }
-  h(XD, "doPaste");
+  a(XD, "doPaste");
   pt.scroll = (r) => {
     (r.inputState.lastScrollTop = r.scrollDOM.scrollTop), (r.inputState.lastScrollLeft = r.scrollDOM.scrollLeft);
   };
@@ -13558,8 +13567,8 @@ function _ts_generator(thisArg, body) {
       return l < r.state.doc.length && l == s.to && l++, Z.range(o, l);
     }
   }
-  h($g, "rangeForClick");
-  var qg = h((r, e, t) => e >= t.top && e <= t.bottom && r >= t.left && r <= t.right, "inside");
+  a($g, "rangeForClick");
+  var qg = a((r, e, t) => e >= t.top && e <= t.bottom && r >= t.left && r <= t.right, "inside");
   function FA(r, e, t, i) {
     var n = Ne.find(r.docView, e);
     if (!n) return 1;
@@ -13571,12 +13580,12 @@ function _ts_generator(thisArg, body) {
     var l = n.coordsAt(s, 1);
     return l && qg(t, i, l) ? 1 : o && o.bottom >= i ? -1 : 1;
   }
-  h(FA, "findPositionSide");
+  a(FA, "findPositionSide");
   function Vg(r, e) {
     var t = r.posAtCoords({ x: e.clientX, y: e.clientY }, !1);
     return { pos: t, bias: FA(r, t, e.clientX, e.clientY) };
   }
-  h(Vg, "queryPos");
+  a(Vg, "queryPos");
   var bA = V.ie && V.ie_version <= 11,
     Wg = null,
     zg = 0,
@@ -13587,7 +13596,7 @@ function _ts_generator(thisArg, body) {
       t = Hg;
     return (Wg = r), (Hg = Date.now()), (zg = !e || (t > Date.now() - 400 && Math.abs(e.clientX - r.clientX) < 2 && Math.abs(e.clientY - r.clientY) < 2) ? (zg + 1) % 3 : 1);
   }
-  h(KD, "getClickType");
+  a(KD, "getClickType");
   function yA(r, e) {
     var t = Vg(r, e),
       i = KD(e),
@@ -13598,7 +13607,7 @@ function _ts_generator(thisArg, body) {
       },
       get(s, o, l) {
         var u = Vg(r, s),
-          a,
+          h,
           c = $g(r, u.pos, u.bias, i);
         if (t.pos != u.pos && !o) {
           var f = $g(r, t.pos, t.bias, i),
@@ -13606,11 +13615,11 @@ function _ts_generator(thisArg, body) {
             p = Math.max(f.to, c.to);
           c = d < c.from ? Z.range(d, p) : Z.range(p, d);
         }
-        return o ? n.replaceRange(n.main.extend(c.from, c.to)) : l && i == 1 && n.ranges.length > 1 && (a = EA(n, u.pos)) ? a : l ? n.addRange(c) : Z.create([c]);
+        return o ? n.replaceRange(n.main.extend(c.from, c.to)) : l && i == 1 && n.ranges.length > 1 && (h = EA(n, u.pos)) ? h : l ? n.addRange(c) : Z.create([c]);
       },
     };
   }
-  h(yA, "basicMouseSelection");
+  a(yA, "basicMouseSelection");
   function EA(r, e) {
     for (var t = 0; t < r.ranges.length; t++) {
       var _r_ranges_t = r.ranges[t],
@@ -13620,7 +13629,7 @@ function _ts_generator(thisArg, body) {
     }
     return null;
   }
-  h(EA, "removeRangeAround");
+  a(EA, "removeRangeAround");
   At.dragstart = (r, e) => {
     var _r_state = r.state,
       _r_state_selection = _r_state.selection,
@@ -13647,7 +13656,7 @@ function _ts_generator(thisArg, body) {
       u = r.state.changes(o ? [o, l] : l);
     r.focus(), r.dispatch({ changes: u, selection: { anchor: u.mapPos(n, -1), head: u.mapPos(n, 1) }, userEvent: o ? "move.drop" : "input.drop" }), (r.inputState.draggedContent = null);
   }
-  h(jg, "dropText");
+  a(jg, "dropText");
   At.drop = (r, e) => {
     if (!e.dataTransfer) return !1;
     if (r.state.readOnly) return !0;
@@ -13663,7 +13672,7 @@ function _ts_generator(thisArg, body) {
       };
       var i = Array(t.length),
         n = 0,
-        s = h(() => {
+        s = a(() => {
           ++n == t.length && jg(r, e, i.filter((o) => o != null).join(r.state.lineBreak), !1);
         }, "finishFile");
       for (var o = 0; o < t.length; o++) _loop(o);
@@ -13693,7 +13702,7 @@ function _ts_generator(thisArg, body) {
         i.remove(), r.focus();
       }, 50);
   }
-  h(CA, "captureCopy");
+  a(CA, "captureCopy");
   function BA(r) {
     var e = [],
       t = [],
@@ -13750,7 +13759,7 @@ function _ts_generator(thisArg, body) {
     }
     return { text: wo(r, Ga, e.join(r.lineBreak)), ranges: t, linewise: i };
   }
-  h(BA, "copiedRange");
+  a(BA, "copiedRange");
   var ka = null;
   At.copy = At.cut = (r, e) => {
     var _BA = BA(r.state),
@@ -13790,7 +13799,7 @@ function _ts_generator(thisArg, body) {
     }
     return t ? r.update({ effects: t, annotations: ZD.of(!0) }) : null;
   }
-  h(eF, "focusChangeTransaction");
+  a(eF, "focusChangeTransaction");
   function tF(r) {
     setTimeout(() => {
       var e = r.hasFocus;
@@ -13800,7 +13809,7 @@ function _ts_generator(thisArg, body) {
       }
     }, 10);
   }
-  h(tF, "updateForFocusChange");
+  a(tF, "updateForFocusChange");
   pt.focus = (r) => {
     (r.inputState.lastFocusTime = Date.now()), !r.scrollDOM.scrollTop && (r.inputState.lastScrollTop || r.inputState.lastScrollLeft) && ((r.scrollDOM.scrollTop = r.inputState.lastScrollTop), (r.scrollDOM.scrollLeft = r.inputState.lastScrollLeft)), tF(r);
   };
@@ -13836,8 +13845,8 @@ function _ts_generator(thisArg, body) {
       if (s && o.length) {
         var l = o[0],
           u = r.posAtDOM(l.startContainer, l.startOffset),
-          a = r.posAtDOM(l.endContainer, l.endOffset);
-        return Za(r, { from: u, to: a, insert: r.state.toText(s) }, null), !0;
+          h = r.posAtDOM(l.endContainer, l.endOffset);
+        return Za(r, { from: u, to: h, insert: r.state.toText(s) }, null), !0;
       }
     }
     var n;
@@ -13854,13 +13863,13 @@ function _ts_generator(thisArg, body) {
   function xA(r) {
     Yg.has(r) || (Yg.add(r), r.addEventListener("copy", () => {}), r.addEventListener("cut", () => {}));
   }
-  h(xA, "firefoxCopyCutHack");
+  a(xA, "firefoxCopyCutHack");
   var Jg = ["pre-wrap", "normal", "pre-line", "break-spaces"],
     Cr = !1;
   function Gg() {
     Cr = !1;
   }
-  h(Gg, "clearHeightChangeFlag");
+  a(Gg, "clearHeightChangeFlag");
   var Sa =
       ((_class49 = class _class {
         heightForGap(e, t) {
@@ -13889,9 +13898,9 @@ function _ts_generator(thisArg, body) {
             u = Math.round(t) != Math.round(this.lineHeight) || this.lineWrapping != l;
           if (((this.lineWrapping = l), (this.lineHeight = t), (this.charWidth = i), (this.textHeight = n), (this.lineLength = s), u)) {
             this.heightSamples = {};
-            for (var a = 0; a < o.length; a++) {
-              var c = o[a];
-              c < 0 ? a++ : (this.heightSamples[Math.floor(c * 10)] = !0);
+            for (var h = 0; h < o.length; h++) {
+              var c = o[h];
+              c < 0 ? h++ : (this.heightSamples[Math.floor(c * 10)] = !0);
             }
           }
           return u;
@@ -13900,7 +13909,7 @@ function _ts_generator(thisArg, body) {
           (this.lineWrapping = e), (this.doc = de.empty), (this.heightSamples = {}), (this.lineHeight = 14), (this.charWidth = 7), (this.textHeight = 14), (this.lineLength = 30);
         }
       }),
-      h(_class49, "HeightOracle"),
+      a(_class49, "HeightOracle"),
       _class49),
     wa =
       ((_class50 = class _class {
@@ -13911,7 +13920,7 @@ function _ts_generator(thisArg, body) {
           (this.from = e), (this.heights = t), (this.index = 0);
         }
       }),
-      h(_class50, "MeasuredHeights"),
+      a(_class50, "MeasuredHeights"),
       _class50),
     Ot =
       ((_r37 = class r {
@@ -13938,7 +13947,7 @@ function _ts_generator(thisArg, body) {
           (this.from = e), (this.length = t), (this.top = i), (this.height = n), (this._content = s);
         }
       }),
-      h(_r37, "BlockInfo"),
+      a(_r37, "BlockInfo"),
       _r37),
     Ce = (function (r) {
       return (r[(r.ByPos = 0)] = "ByPos"), (r[(r.ByHeight = 1)] = "ByHeight"), (r[(r.ByPosNoHeight = 2)] = "ByPosNoHeight"), r;
@@ -13970,15 +13979,15 @@ function _ts_generator(thisArg, body) {
           for (var l = n.length - 1; l >= 0; l--) {
             var _n_l = n[l],
               u = _n_l.fromA,
-              a = _n_l.toA,
+              h = _n_l.toA,
               c = _n_l.fromB,
               f = _n_l.toB,
               d = s.lineAt(u, Ce.ByPosNoHeight, i.setDoc(t), 0, 0),
-              p = d.to >= a ? d : s.lineAt(a, Ce.ByPosNoHeight, i, 0, 0);
-            for (f += p.to - a, a = p.to; l > 0 && d.from <= n[l - 1].toA; ) (u = n[l - 1].fromA), (c = n[l - 1].fromB), l--, u < d.from && (d = s.lineAt(u, Ce.ByPosNoHeight, i, 0, 0));
+              p = d.to >= h ? d : s.lineAt(h, Ce.ByPosNoHeight, i, 0, 0);
+            for (f += p.to - h, h = p.to; l > 0 && d.from <= n[l - 1].toA; ) (u = n[l - 1].fromA), (c = n[l - 1].fromB), l--, u < d.from && (d = s.lineAt(u, Ce.ByPosNoHeight, i, 0, 0));
             (c += d.from - u), (u = d.from);
             var m = _a.build(i.setDoc(o), e, c, f);
-            s = Do(s, s.replace(u, a, m));
+            s = Do(s, s.replace(u, h, m));
           }
           return s.updateHeight(i, 0);
         }
@@ -14015,12 +14024,12 @@ function _ts_generator(thisArg, body) {
           (this.length = e), (this.height = t), (this.flags = i);
         }
       }),
-      h(_r38, "HeightMap"),
+      a(_r38, "HeightMap"),
       _r38);
   function Do(r, e) {
     return r == e ? r : (r.constructor != e.constructor && (Cr = !0), e);
   }
-  h(Do, "replace");
+  a(Do, "replace");
   st.prototype.size = 1;
   var Fo =
       ((_class51 = class _class extends st {
@@ -14046,7 +14055,7 @@ function _ts_generator(thisArg, body) {
           super(e, t), (this.deco = i);
         }
       }),
-      h(_class51, "HeightMapBlock"),
+      a(_class51, "HeightMapBlock"),
       _class51),
     dt =
       ((_r39 = class r extends Fo {
@@ -14073,7 +14082,7 @@ function _ts_generator(thisArg, body) {
           super(e, t, null), (this.collapsed = 0), (this.widgetHeight = 0), (this.breaks = 0);
         }
       }),
-      h(_r39, "HeightMapText"),
+      a(_r39, "HeightMapText"),
       _r39),
     ci =
       ((_r40 = class r extends st {
@@ -14096,17 +14105,17 @@ function _ts_generator(thisArg, body) {
             l = _this_heightMetrics.perLine,
             u = _this_heightMetrics.perChar;
           if (t.lineWrapping) {
-            var a = n + (e < t.lineHeight ? 0 : Math.round(Math.max(0, Math.min(1, (e - i) / this.height)) * this.length)),
-              c = t.doc.lineAt(a),
+            var h = n + (e < t.lineHeight ? 0 : Math.round(Math.max(0, Math.min(1, (e - i) / this.height)) * this.length)),
+              c = t.doc.lineAt(h),
               f = l + c.length * u,
               d = Math.max(i, e - f / 2);
             return new Ot(c.from, c.length, d, f, 0);
           } else {
-            var a1 = Math.max(0, Math.min(o - s, Math.floor((e - i) / l))),
-              _t_doc_line = t.doc.line(s + a1),
+            var h1 = Math.max(0, Math.min(o - s, Math.floor((e - i) / l))),
+              _t_doc_line = t.doc.line(s + h1),
               c1 = _t_doc_line.from,
               f1 = _t_doc_line.length;
-            return new Ot(c1, f1, i + l * a1, l, 0);
+            return new Ot(c1, f1, i + l * h1, l, 0);
           }
         }
         lineAt(e, t, i, n, s) {
@@ -14121,25 +14130,25 @@ function _ts_generator(thisArg, body) {
             o = _this_heightMetrics.firstLine,
             l = _this_heightMetrics.perLine,
             u = _this_heightMetrics.perChar,
-            a = i.doc.lineAt(e),
-            c = l + a.length * u,
-            f = a.number - o,
-            d = n + l * f + u * (a.from - s - f);
-          return new Ot(a.from, a.length, Math.max(n, Math.min(d, n + this.height - c)), c, 0);
+            h = i.doc.lineAt(e),
+            c = l + h.length * u,
+            f = h.number - o,
+            d = n + l * f + u * (h.from - s - f);
+          return new Ot(h.from, h.length, Math.max(n, Math.min(d, n + this.height - c)), c, 0);
         }
         forEachLine(e, t, i, n, s, o) {
           (e = Math.max(e, s)), (t = Math.min(t, s + this.length));
           var _this_heightMetrics = this.heightMetrics(i, s),
             l = _this_heightMetrics.firstLine,
             u = _this_heightMetrics.perLine,
-            a = _this_heightMetrics.perChar;
+            h = _this_heightMetrics.perChar;
           for (var c = e, f = n; c <= t; ) {
             var d = i.doc.lineAt(c);
             if (c == e) {
               var m = d.number - l;
-              f += u * m + a * (e - s - m);
+              f += u * m + h * (e - s - m);
             }
-            var p = u + a * d.length;
+            var p = u + h * d.length;
             o(new Ot(d.from, d.length, f, p, 0)), (f += p), (c = d.to + 1);
           }
         }
@@ -14179,8 +14188,8 @@ function _ts_generator(thisArg, body) {
               (d.outdated = !1), o.push(d), (l += c + 1);
             }
             l <= s && o.push(null, new r(s - l).updateHeight(e, l));
-            var a = st.of(o);
-            return (u < 0 || Math.abs(a.height - this.height) >= oo || Math.abs(u - this.heightMetrics(e, t).perLine) >= oo) && (Cr = !0), Do(this, a);
+            var h = st.of(o);
+            return (u < 0 || Math.abs(h.height - this.height) >= oo || Math.abs(u - this.heightMetrics(e, t).perLine) >= oo) && (Cr = !0), Do(this, h);
           } else (i || this.outdated) && (this.setHeight(e.heightForGap(t, t + this.length)), (this.outdated = !1));
           return this;
         }
@@ -14191,7 +14200,7 @@ function _ts_generator(thisArg, body) {
           super(e, 0);
         }
       }),
-      h(_r40, "HeightMapGap"),
+      a(_r40, "HeightMapGap"),
       _r40),
     Qa =
       ((_class52 = class _class extends st {
@@ -14206,18 +14215,18 @@ function _ts_generator(thisArg, body) {
           var o = n + this.left.height,
             l = s + this.left.length + this.break,
             u = t == Ce.ByHeight ? e < o : e < l,
-            a = u ? this.left.lineAt(e, t, i, n, s) : this.right.lineAt(e, t, i, o, l);
-          if (this.break || (u ? a.to < l : a.from > l)) return a;
+            h = u ? this.left.lineAt(e, t, i, n, s) : this.right.lineAt(e, t, i, o, l);
+          if (this.break || (u ? h.to < l : h.from > l)) return h;
           var c = t == Ce.ByPosNoHeight ? Ce.ByPosNoHeight : Ce.ByPos;
-          return u ? a.join(this.right.lineAt(l, c, i, o, l)) : this.left.lineAt(l, c, i, n, s).join(a);
+          return u ? h.join(this.right.lineAt(l, c, i, o, l)) : this.left.lineAt(l, c, i, n, s).join(h);
         }
         forEachLine(e, t, i, n, s, o) {
           var l = n + this.left.height,
             u = s + this.left.length + this.break;
           if (this.break) e < u && this.left.forEachLine(e, t, i, n, s, o), t >= u && this.right.forEachLine(e, t, i, l, u, o);
           else {
-            var a = this.lineAt(u, Ce.ByPos, i, n, s);
-            e < a.from && this.left.forEachLine(e, a.from - 1, i, n, s, o), a.to >= e && a.from <= t && o(a), t > a.to && this.right.forEachLine(a.to + 1, t, i, l, u, o);
+            var h = this.lineAt(u, Ce.ByPos, i, n, s);
+            e < h.from && this.left.forEachLine(e, h.from - 1, i, n, s, o), h.to >= e && h.from <= t && o(h), t > h.to && this.right.forEachLine(h.to + 1, t, i, l, u, o);
           }
         }
         replace(e, t, i) {
@@ -14287,13 +14296,13 @@ function _ts_generator(thisArg, body) {
           super(e.length + t + i.length, e.height + i.height, t | (e.outdated || i.outdated ? 2 : 0)), (this.left = e), (this.right = i), (this.size = e.size + i.size);
         }
       }),
-      h(_class52, "HeightMapBranch"),
+      a(_class52, "HeightMapBranch"),
       _class52);
   function Xg(r, e) {
     var t, i;
     r[e] == null && (t = r[e - 1]) instanceof ci && (i = r[e + 1]) instanceof ci && r.splice(e - 1, 3, new ci(t.length + 1 + i.length));
   }
-  h(Xg, "mergeGaps");
+  a(Xg, "mergeGaps");
   var vA = 5,
     _a =
       ((_r41 = class r {
@@ -14381,13 +14390,13 @@ function _ts_generator(thisArg, body) {
           (this.pos = e), (this.oracle = t), (this.nodes = []), (this.lineStart = -1), (this.lineEnd = -1), (this.covering = null), (this.writtenTo = e);
         }
       }),
-      h(_r41, "NodeBuilder"),
+      a(_r41, "NodeBuilder"),
       _r41);
   function AA(r, e, t) {
     var i = new Ua();
     return De.compare(r, e, t, i, 0), i.changes;
   }
-  h(AA, "heightRelevantDecoChanges");
+  a(AA, "heightRelevantDecoChanges");
   var Ua =
     ((_class53 = class _class {
       compareRange() {}
@@ -14398,7 +14407,7 @@ function _ts_generator(thisArg, body) {
         this.changes = [];
       }
     }),
-    h(_class53, "DecorationComparator"),
+    a(_class53, "DecorationComparator"),
     _class53);
   function kA(r, e) {
     var t = r.getBoundingClientRect(),
@@ -14408,25 +14417,25 @@ function _ts_generator(thisArg, body) {
       o = Math.min(n.innerWidth, t.right),
       l = Math.max(0, t.top),
       u = Math.min(n.innerHeight, t.bottom);
-    for (var a = r.parentNode; a && a != i.body; )
-      if (a.nodeType == 1) {
-        var c = a,
+    for (var h = r.parentNode; h && h != i.body; )
+      if (h.nodeType == 1) {
+        var c = h,
           f = window.getComputedStyle(c);
         if ((c.scrollHeight > c.clientHeight || c.scrollWidth > c.clientWidth) && f.overflow != "visible") {
           var d = c.getBoundingClientRect();
-          (s = Math.max(s, d.left)), (o = Math.min(o, d.right)), (l = Math.max(l, d.top)), (u = Math.min(a == r.parentNode ? n.innerHeight : u, d.bottom));
+          (s = Math.max(s, d.left)), (o = Math.min(o, d.right)), (l = Math.max(l, d.top)), (u = Math.min(h == r.parentNode ? n.innerHeight : u, d.bottom));
         }
-        a = f.position == "absolute" || f.position == "fixed" ? c.offsetParent : c.parentNode;
-      } else if (a.nodeType == 11) a = a.host;
+        h = f.position == "absolute" || f.position == "fixed" ? c.offsetParent : c.parentNode;
+      } else if (h.nodeType == 11) h = h.host;
       else break;
     return { left: s - t.left, right: Math.max(s, o) - t.left, top: l - (t.top + e), bottom: Math.max(l, u) - (t.top + e) };
   }
-  h(kA, "visiblePixelRange");
+  a(kA, "visiblePixelRange");
   function SA(r, e) {
     var t = r.getBoundingClientRect();
     return { left: 0, right: t.right - t.left, top: e, bottom: t.bottom - (t.top + e) };
   }
-  h(SA, "fullPixelRange");
+  a(SA, "fullPixelRange");
   var gn =
       ((_class54 = class _class {
         static same(e, t) {
@@ -14445,7 +14454,7 @@ function _ts_generator(thisArg, body) {
           (this.from = e), (this.to = t), (this.size = i);
         }
       }),
-      h(_class54, "LineGap"),
+      a(_class54, "LineGap"),
       _class54),
     La =
       ((_class55 = class _class extends di {
@@ -14463,7 +14472,7 @@ function _ts_generator(thisArg, body) {
           super(), (this.size = e), (this.vertical = t);
         }
       }),
-      h(_class55, "LineGapWidget"),
+      a(_class55, "LineGapWidget"),
       _class55),
     bo =
       ((_class56 = class _class {
@@ -14512,10 +14521,10 @@ function _ts_generator(thisArg, body) {
           Gg(), (this.heightMap = this.heightMap.applyChanges(this.stateDeco, e.startState.doc, this.heightOracle.setDoc(this.state.doc), s)), (this.heightMap.height != o || Cr) && (e.flags |= 2), l ? ((this.scrollAnchorPos = e.changes.mapPos(l.from, -1)), (this.scrollAnchorHeight = l.top)) : ((this.scrollAnchorPos = -1), (this.scrollAnchorHeight = this.heightMap.height));
           var u = s.length ? this.mapViewport(this.viewport, e.changes) : this.viewport;
           ((t && (t.range.head < u.from || t.range.head > u.to)) || !this.viewportIsAppropriate(u)) && (u = this.getViewport(0, t));
-          var a = u.from != this.viewport.from || u.to != this.viewport.to;
+          var h = u.from != this.viewport.from || u.to != this.viewport.to;
           (this.viewport = u),
             (e.flags |= this.updateForViewport()),
-            (a || !e.changes.empty || e.flags & 2) && this.updateViewportLines(),
+            (h || !e.changes.empty || e.flags & 2) && this.updateViewportLines(),
             (this.lineGaps.length || this.viewport.to - this.viewport.from > 4e3) && this.updateLineGaps(this.ensureLineGaps(this.mapLineGaps(this.lineGaps, e.changes))),
             (e.flags |= this.computeVisibleRanges()),
             t && (this.scrollTarget = t),
@@ -14531,17 +14540,17 @@ function _ts_generator(thisArg, body) {
             l = t.getBoundingClientRect(),
             u = o || this.mustMeasureContent || this.contentDOMHeight != l.height;
           (this.contentDOMHeight = l.height), (this.mustMeasureContent = !1);
-          var a = 0,
+          var h = 0,
             c = 0;
           if (l.width && l.height) {
             var _cD = cD(t, l),
               k = _cD.scaleX,
               C = _cD.scaleY;
-            ((k > 0.005 && Math.abs(this.scaleX - k) > 0.005) || (C > 0.005 && Math.abs(this.scaleY - C) > 0.005)) && ((this.scaleX = k), (this.scaleY = C), (a |= 8), (o = u = !0));
+            ((k > 0.005 && Math.abs(this.scaleX - k) > 0.005) || (C > 0.005 && Math.abs(this.scaleY - C) > 0.005)) && ((this.scaleX = k), (this.scaleY = C), (h |= 8), (o = u = !0));
           }
           var f = (parseInt(i.paddingTop) || 0) * this.scaleY,
             d = (parseInt(i.paddingBottom) || 0) * this.scaleY;
-          (this.paddingTop != f || this.paddingBottom != d) && ((this.paddingTop = f), (this.paddingBottom = d), (a |= 10)), this.editorWidth != e.scrollDOM.clientWidth && (n.lineWrapping && (u = !0), (this.editorWidth = e.scrollDOM.clientWidth), (a |= 8));
+          (this.paddingTop != f || this.paddingBottom != d) && ((this.paddingTop = f), (this.paddingBottom = d), (h |= 10)), this.editorWidth != e.scrollDOM.clientWidth && (n.lineWrapping && (u = !0), (this.editorWidth = e.scrollDOM.clientWidth), (h |= 8));
           var p = e.scrollDOM.scrollTop * this.scaleY;
           this.scrollTop != p && ((this.scrollAnchorHeight = -1), (this.scrollTop = p)), (this.scrolledToBottom = pD(e.scrollDOM));
           var m = (this.printing ? SA : kA)(t, this.paddingTop),
@@ -14551,14 +14560,14 @@ function _ts_generator(thisArg, body) {
           var g = this.pixelViewport.bottom > this.pixelViewport.top && this.pixelViewport.right > this.pixelViewport.left;
           if ((g != this.inView && ((this.inView = g), g && (u = !0)), !this.inView && !this.scrollTarget)) return 0;
           var b = l.width;
-          if (((this.contentDOMWidth != b || this.editorHeight != e.scrollDOM.clientHeight) && ((this.contentDOMWidth = l.width), (this.editorHeight = e.scrollDOM.clientHeight), (a |= 8)), u)) {
+          if (((this.contentDOMWidth != b || this.editorHeight != e.scrollDOM.clientHeight) && ((this.contentDOMWidth = l.width), (this.editorHeight = e.scrollDOM.clientHeight), (h |= 8)), u)) {
             var k1 = e.docView.measureVisibleLineHeights(this.viewport);
             if ((n.mustRefreshForHeights(k1) && (o = !0), o || (n.lineWrapping && Math.abs(b - this.contentDOMWidth) > n.charWidth))) {
               var _e_docView_measureTextSize = e.docView.measureTextSize(),
                 C1 = _e_docView_measureTextSize.lineHeight,
                 L = _e_docView_measureTextSize.charWidth,
                 Q = _e_docView_measureTextSize.textHeight;
-              (o = C1 > 0 && n.refresh(s, C1, L, Q, b / L, k1)), o && ((e.docView.minWidth = 0), (a |= 8));
+              (o = C1 > 0 && n.refresh(s, C1, L, Q, b / L, k1)), o && ((e.docView.minWidth = 0), (h |= 8));
             }
             F > 0 && D > 0 ? (c = Math.max(F, D)) : F < 0 && D < 0 && (c = Math.min(F, D)), Gg();
             var _iteratorNormalCompletion = true,
@@ -14584,16 +14593,16 @@ function _ts_generator(thisArg, body) {
                 }
               }
             }
-            Cr && (a |= 2);
+            Cr && (h |= 2);
           }
           var B = !this.viewportIsAppropriate(this.viewport, c) || (this.scrollTarget && (this.scrollTarget.range.head < this.viewport.from || this.scrollTarget.range.head > this.viewport.to));
           return (
-            B && (a & 2 && (a |= this.updateScaler()), (this.viewport = this.getViewport(c, this.scrollTarget)), (a |= this.updateForViewport())),
-            (a & 2 || B) && this.updateViewportLines(),
+            B && (h & 2 && (h |= this.updateScaler()), (this.viewport = this.getViewport(c, this.scrollTarget)), (h |= this.updateForViewport())),
+            (h & 2 || B) && this.updateViewportLines(),
             (this.lineGaps.length || this.viewport.to - this.viewport.from > 4e3) && this.updateLineGaps(this.ensureLineGaps(o ? [] : this.lineGaps, e)),
-            (a |= this.computeVisibleRanges()),
+            (h |= this.computeVisibleRanges()),
             this.mustEnforceCursorAssoc && ((this.mustEnforceCursorAssoc = !1), e.docView.enforceCursorAssoc()),
-            a
+            h
           );
         }
         get visibleTop() {
@@ -14612,12 +14621,12 @@ function _ts_generator(thisArg, body) {
             u = new Fr(n.lineAt(o - i * 1e3, Ce.ByHeight, s, 0, 0).from, n.lineAt(l + (1 - i) * 1e3, Ce.ByHeight, s, 0, 0).to);
           if (t) {
             var _t_range = t.range,
-              a = _t_range.head;
-            if (a < u.from || a > u.to) {
+              h = _t_range.head;
+            if (h < u.from || h > u.to) {
               var c = Math.min(this.editorHeight, this.pixelViewport.bottom - this.pixelViewport.top),
-                f = n.lineAt(a, Ce.ByPos, s, 0, 0),
+                f = n.lineAt(h, Ce.ByPos, s, 0, 0),
                 d;
-              t.y == "center" ? (d = (f.top + f.bottom) / 2 - c / 2) : t.y == "start" || (t.y == "nearest" && a < u.from) ? (d = f.top) : (d = f.bottom - c), (u = new Fr(n.lineAt(d - 1e3 / 2, Ce.ByHeight, s, 0, 0).from, n.lineAt(d + c + 1e3 / 2, Ce.ByHeight, s, 0, 0).to));
+              t.y == "center" ? (d = (f.top + f.bottom) / 2 - c / 2) : t.y == "start" || (t.y == "nearest" && h < u.from) ? (d = f.top) : (d = f.bottom - c), (u = new Fr(n.lineAt(d - 1e3 / 2, Ce.ByHeight, s, 0, 0).from, n.lineAt(d + c + 1e3 / 2, Ce.ByHeight, s, 0, 0).to));
             }
           }
           return u;
@@ -14675,7 +14684,7 @@ function _ts_generator(thisArg, body) {
             o = n << 1;
           if (this.defaultTextDirection != Be.LTR && !i) return [];
           var l = [],
-            u = h((c, f, d, p) => {
+            u = a((c, f, d, p) => {
               if (f - c < s) return;
               var m = this.state.selection.main,
                 F = [m.from];
@@ -14715,7 +14724,7 @@ function _ts_generator(thisArg, body) {
               }
               l.push(D);
             }, "addGap"),
-            a = h((c) => {
+            h = a((c) => {
               if (c.length < o || c.type != He.Text) return;
               var f = wA(c.from, c.to, this.stateDeco);
               if (f.total < o) return;
@@ -14752,7 +14761,7 @@ function _ts_generator(thisArg, body) {
           try {
             for (var _iterator = this.viewportLines[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               var c = _step.value;
-              Array.isArray(c.type) ? c.type.forEach(a) : a(c);
+              Array.isArray(c.type) ? c.type.forEach(h) : h(c);
             }
           } catch (err) {
             _didIteratorError = true;
@@ -14844,7 +14853,7 @@ function _ts_generator(thisArg, body) {
           this.updateViewportLines(), (this.lineGaps = this.ensureLineGaps([])), (this.lineGapDeco = he.set(this.lineGaps.map((i) => i.draw(this, !1)))), this.computeVisibleRanges();
         }
       }),
-      h(_class56, "ViewState"),
+      a(_class56, "ViewState"),
       _class56),
     Fr =
       ((_class57 = class _class {
@@ -14852,7 +14861,7 @@ function _ts_generator(thisArg, body) {
           (this.from = e), (this.to = t);
         }
       }),
-      h(_class57, "Viewport"),
+      a(_class57, "Viewport"),
       _class57);
   function wA(r, e, t) {
     var i = [],
@@ -14875,7 +14884,7 @@ function _ts_generator(thisArg, body) {
       { total: s, ranges: i }
     );
   }
-  h(wA, "lineStructure");
+  a(wA, "lineStructure");
   function Zs(param, t) {
     var r = param.total,
       e = param.ranges;
@@ -14891,7 +14900,7 @@ function _ts_generator(thisArg, body) {
       i -= l;
     }
   }
-  h(Zs, "findPosition");
+  a(Zs, "findPosition");
   function eo(r, e) {
     var t = 0;
     var _iteratorNormalCompletion = true,
@@ -14924,7 +14933,7 @@ function _ts_generator(thisArg, body) {
     }
     return t / r.total;
   }
-  h(eo, "findFraction");
+  a(eo, "findFraction");
   function QA(r, e) {
     var _iteratorNormalCompletion = true,
       _didIteratorError = false,
@@ -14949,7 +14958,7 @@ function _ts_generator(thisArg, body) {
       }
     }
   }
-  h(QA, "find");
+  a(QA, "find");
   var Kg = {
       toDOM(r) {
         return r;
@@ -14990,9 +14999,9 @@ function _ts_generator(thisArg, body) {
           (this.viewports = i.map((param) => {
             var l = param.from,
               u = param.to;
-            var a = t.lineAt(l, Ce.ByPos, e, 0, 0).top,
+            var h = t.lineAt(l, Ce.ByPos, e, 0, 0).top,
               c = t.lineAt(u, Ce.ByPos, e, 0, 0).bottom;
-            return (n += c - a), { from: l, to: u, top: a, bottom: c, domTop: 0, domBottom: 0 };
+            return (n += c - h), { from: l, to: u, top: h, bottom: c, domTop: 0, domBottom: 0 };
           })),
             (this.scale = (7e6 - n) / (t.height - n));
           var _iteratorNormalCompletion = true,
@@ -15019,7 +15028,7 @@ function _ts_generator(thisArg, body) {
           }
         }
       }),
-      h(_r42, "BigScaler"),
+      a(_r42, "BigScaler"),
       _r42);
   function hn(r, e) {
     if (e.scale == 1) return r;
@@ -15027,9 +15036,9 @@ function _ts_generator(thisArg, body) {
       i = e.toDOM(r.bottom);
     return new Ot(r.from, r.length, t, i - t, Array.isArray(r._content) ? r._content.map((n) => hn(n, e)) : r._content);
   }
-  h(hn, "scaleBlock");
-  var to = z.define({ combine: (r) => r.join(" ") }),
-    Ta = z.define({ combine: (r) => r.indexOf(!0) > -1 }),
+  a(hn, "scaleBlock");
+  var to = z.define({ combine: a((r) => r.join(" "), "combine") }),
+    Ta = z.define({ combine: a((r) => r.indexOf(!0) > -1, "combine") }),
     Ra = ft.newName(),
     iF = ft.newName(),
     rF = ft.newName(),
@@ -15047,7 +15056,7 @@ function _ts_generator(thisArg, body) {
       },
     });
   }
-  h(Na, "buildTheme");
+  a(Na, "buildTheme");
   var _A = Na(
       "." + Ra,
       {
@@ -15264,7 +15273,7 @@ function _ts_generator(thisArg, body) {
         delayAndroidKey(e, t) {
           var i;
           if (!this.delayedAndroidKey) {
-            var n = h(() => {
+            var n = a(() => {
               var s = this.delayedAndroidKey;
               s && (this.clearDelayedAndroidKey(), (this.view.inputState.lastKeyCode = s.keyCode), (this.view.inputState.lastKeyTime = Date.now()), !this.flush() && s.force && Er(this.dom, s.key, s.keyCode));
             }, "flush");
@@ -15489,7 +15498,7 @@ function _ts_generator(thisArg, body) {
             this.readSelectionRange();
         }
       }),
-      h(_class58, "DOMObserver"),
+      a(_class58, "DOMObserver"),
       _class58);
   function Zg(r, e, t) {
     for (; e; ) {
@@ -15500,7 +15509,7 @@ function _ts_generator(thisArg, body) {
     }
     return null;
   }
-  h(Zg, "findChild");
+  a(Zg, "findChild");
   function eD(r, e) {
     var t = e.startContainer,
       i = e.startOffset,
@@ -15510,7 +15519,7 @@ function _ts_generator(thisArg, body) {
     var ref;
     return fn(o.node, o.offset, n, s) && ((ref = [n, s, t, i]), (t = ref[0]), (i = ref[1]), (n = ref[2]), (s = ref[3]), ref), { anchorNode: t, anchorOffset: i, focusNode: n, focusOffset: s };
   }
-  h(eD, "buildSelectionRangeFromRange");
+  a(eD, "buildSelectionRangeFromRange");
   function LA(r, e) {
     if (e.getComposedRanges) {
       var n = e.getComposedRanges(r.root)[0];
@@ -15520,9 +15529,9 @@ function _ts_generator(thisArg, body) {
     function i(n) {
       n.preventDefault(), n.stopImmediatePropagation(), (t = n.getTargetRanges()[0]);
     }
-    return h(i, "read"), r.contentDOM.addEventListener("beforeinput", i, !0), r.dom.ownerDocument.execCommand("indent"), r.contentDOM.removeEventListener("beforeinput", i, !0), t ? eD(r, t) : null;
+    return a(i, "read"), r.contentDOM.addEventListener("beforeinput", i, !0), r.dom.ownerDocument.execCommand("indent"), r.contentDOM.removeEventListener("beforeinput", i, !0), t ? eD(r, t) : null;
   }
-  h(LA, "safariSelectionRangeHack");
+  a(LA, "safariSelectionRangeHack");
   var Pa =
       ((_class59 = class _class {
         applyEdits(e) {
@@ -15530,21 +15539,21 @@ function _ts_generator(thisArg, body) {
             i = !1,
             n = this.pendingContextChange;
           return (
-            e.changes.iterChanges((s, o, l, u, a) => {
+            e.changes.iterChanges((s, o, l, u, h) => {
               if (i) return;
-              var c = a.length - (o - s);
+              var c = h.length - (o - s);
               if (n && o >= n.to)
-                if (n.from == s && n.to == o && n.insert.eq(a)) {
+                if (n.from == s && n.to == o && n.insert.eq(h)) {
                   (n = this.pendingContextChange = null), (t += c), (this.to += c);
                   return;
                 } else (n = null), this.revertPending(e.state);
               if (((s += t), (o += t), o <= this.from)) (this.from += c), (this.to += c);
               else if (s < this.to) {
-                if (s < this.from || o > this.to || this.to - this.from + a.length > 3e4) {
+                if (s < this.from || o > this.to || this.to - this.from + h.length > 3e4) {
                   i = !0;
                   return;
                 }
-                this.editContext.updateText(this.toContextPos(s), this.toContextPos(o), a.toString()), (this.to += c);
+                this.editContext.updateText(this.toContextPos(s), this.toContextPos(o), h.toString()), (this.to += c);
               }
               t += c;
             }),
@@ -15644,15 +15653,15 @@ function _ts_generator(thisArg, body) {
             });
           for (var i in this.handlers) t.addEventListener(i, this.handlers[i]);
           this.measureReq = {
-            read: (i) => {
+            read: a((i) => {
               this.editContext.updateControlBounds(i.contentDOM.getBoundingClientRect());
               var n = Fn(i.root);
               n && n.rangeCount && this.editContext.updateSelectionBounds(n.getRangeAt(0).getBoundingClientRect());
-            },
+            }, "read"),
           };
         }
       }),
-      h(_class59, "EditContextManager"),
+      a(_class59, "EditContextManager"),
       _class59),
     ie =
       ((_r43 = class r {
@@ -15724,9 +15733,9 @@ function _ts_generator(thisArg, body) {
             l = 0,
             u = null;
           e.some((d) => d.annotation(ZD)) ? ((this.inputState.notifiedFocused = o), (l = 1)) : o != this.inputState.notifiedFocused && ((this.inputState.notifiedFocused = o), (u = eF(s, o)), u || (l = 1));
-          var a = this.observer.delayedAndroidKey,
+          var h = this.observer.delayedAndroidKey,
             c = null;
-          if ((a ? (this.observer.clearDelayedAndroidKey(), (c = this.observer.readChange()), ((c && !this.state.doc.eq(s.doc)) || !this.state.selection.eq(s.selection)) && (c = null)) : this.observer.clear(), s.facet(Ae.phrases) != this.state.facet(Ae.phrases))) return this.setState(s);
+          if ((h ? (this.observer.clearDelayedAndroidKey(), (c = this.observer.readChange()), ((c && !this.state.doc.eq(s.doc)) || !this.state.selection.eq(s.selection)) && (c = null)) : this.observer.clear(), s.facet(Ae.phrases) != this.state.facet(Ae.phrases))) return this.setState(s);
           (n = po.create(this, s, e)), (n.flags |= l);
           var f = this.viewState.scrollTarget;
           try {
@@ -15822,7 +15831,7 @@ function _ts_generator(thisArg, body) {
             }
           (u || c) &&
             Promise.resolve().then(() => {
-              u && this.state == u.startState && this.dispatch(u), c && !jD(this, c) && a.force && Er(this.contentDOM, a.key, a.keyCode);
+              u && this.state == u.startState && this.dispatch(u), c && !jD(this, c) && h.force && Er(this.contentDOM, h.key, h.keyCode);
             });
         }
         setState(e) {
@@ -16026,10 +16035,10 @@ function _ts_generator(thisArg, body) {
                 console.warn(this.measureRequests.length ? "Measure loop restarted more than 5 times" : "Viewport failed to stabilize");
                 break;
               }
-              var a = [];
+              var h = [];
               var ref;
-              u & 4 || ((ref = [a, this.measureRequests]), (this.measureRequests = ref[0]), (a = ref[1]), ref);
-              var c = a.map((p) => {
+              u & 4 || ((ref = [h, this.measureRequests]), (this.measureRequests = ref[0]), (h = ref[1]), ref);
+              var c = h.map((p) => {
                   try {
                     return p.read(this);
                   } catch (m) {
@@ -16039,10 +16048,10 @@ function _ts_generator(thisArg, body) {
                 f = po.create(this, this.state, []),
                 d = !1;
               (f.flags |= u), t ? (t.flags |= u) : (t = f), (this.updateState = 2), f.empty || (this.updatePlugins(f), this.inputState.update(f), this.updateAttrs(), (d = this.docView.update(f)), d && this.docViewUpdate());
-              for (var p1 = 0; p1 < a.length; p1++)
+              for (var p1 = 0; p1 < h.length; p1++)
                 if (c[p1] != tD)
                   try {
-                    var _$m = a[p1];
+                    var _$m = h[p1];
                     _$m.write && _$m.write(c[p1], this);
                   } catch (m) {
                     Ze(this.state, m);
@@ -16426,7 +16435,7 @@ function _ts_generator(thisArg, body) {
           (this.observer = new Ma(this)), (this.inputState = new va(this)), this.inputState.ensureHandlers(this.plugins), (this.docView = new mo(this)), this.mountStyles(), this.updateAttrs(), (this.updateState = 0), this.requestMeasure(), !((t = document.fonts) === null || t === void 0) && t.ready && document.fonts.ready.then(() => this.requestMeasure());
         }
       }),
-      h(_r43, "EditorView"),
+      a(_r43, "EditorView"),
       _r43);
   ie.styleModule = un;
   ie.inputHandler = OD;
@@ -16447,7 +16456,7 @@ function _ts_generator(thisArg, body) {
   ie.bidiIsolatedRanges = qD;
   ie.scrollMargins = VD;
   ie.darkTheme = Ta;
-  ie.cspNonce = z.define({ combine: (r) => (r.length ? r[0] : "") });
+  ie.cspNonce = z.define({ combine: a((r) => (r.length ? r[0] : ""), "combine") });
   ie.contentAttributes = Xa;
   ie.editorAttributes = ID;
   ie.lineWrapping = ie.contentAttributes.of({ class: "cm-lineWrapping" });
@@ -16470,7 +16479,7 @@ function _ts_generator(thisArg, body) {
           (this.from = e), (this.to = t), (this.dir = i), (this.isolates = n), (this.fresh = s), (this.order = o);
         }
       }),
-      h(_r44, "CachedOrder"),
+      a(_r44, "CachedOrder"),
       _r44);
   function iD(r, e, t) {
     for (var i = r.state.facet(e), n = i.length - 1; n >= 0; n--) {
@@ -16480,7 +16489,7 @@ function _ts_generator(thisArg, body) {
     }
     return t;
   }
-  h(iD, "attrsFromFacet");
+  a(iD, "attrsFromFacet");
   var TA = V.mac ? "mac" : V.windows ? "win" : V.linux ? "linux" : "key";
   function RA(r, e) {
     var t = r.split(/-(?!$)/),
@@ -16488,21 +16497,21 @@ function _ts_generator(thisArg, body) {
     i == "Space" && (i = " ");
     var n, s, o, l;
     for (var u = 0; u < t.length - 1; ++u) {
-      var a = t[u];
-      if (/^(cmd|meta|m)$/i.test(a)) l = !0;
-      else if (/^a(lt)?$/i.test(a)) n = !0;
-      else if (/^(c|ctrl|control)$/i.test(a)) s = !0;
-      else if (/^s(hift)?$/i.test(a)) o = !0;
-      else if (/^mod$/i.test(a)) e == "mac" ? (l = !0) : (s = !0);
-      else throw new Error("Unrecognized modifier name: " + a);
+      var h = t[u];
+      if (/^(cmd|meta|m)$/i.test(h)) l = !0;
+      else if (/^a(lt)?$/i.test(h)) n = !0;
+      else if (/^(c|ctrl|control)$/i.test(h)) s = !0;
+      else if (/^s(hift)?$/i.test(h)) o = !0;
+      else if (/^mod$/i.test(h)) e == "mac" ? (l = !0) : (s = !0);
+      else throw new Error("Unrecognized modifier name: " + h);
     }
     return n && (i = "Alt-" + i), s && (i = "Ctrl-" + i), l && (i = "Meta-" + i), o && (i = "Shift-" + i), i;
   }
-  h(RA, "normalizeKeyName");
+  a(RA, "normalizeKeyName");
   function io(r, e, t) {
     return e.altKey && (r = "Alt-" + r), e.ctrlKey && (r = "Ctrl-" + r), e.metaKey && (r = "Meta-" + r), t !== !1 && e.shiftKey && (r = "Shift-" + r), r;
   }
-  h(io, "modifiers");
+  a(io, "modifiers");
   var NA = mr.default(
       ie.domEventHandlers({
         keydown(r, e) {
@@ -16517,19 +16526,19 @@ function _ts_generator(thisArg, body) {
       t = rD.get(e);
     return t || rD.set(e, (t = IA(e.reduce((i, n) => i.concat(n), [])))), t;
   }
-  h(MA, "getKeymap");
+  a(MA, "getKeymap");
   var hi = null,
     PA = 4e3;
   function IA(r) {
     var e = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : TA;
     var t = Object.create(null),
       i = Object.create(null),
-      n = h((o, l) => {
+      n = a((o, l) => {
         var u = i[o];
         if (u == null) i[o] = l;
         else if (u != l) throw new Error("Key binding " + o + " is used both as a regular binding and as a multi-stroke prefix");
       }, "checkPrefix"),
-      s = h((o, l, u, a, c) => {
+      s = a((o, l, u, h, c) => {
         var _loop = function (g) {
           var b = m.slice(0, g).join(" ");
           n(b, !0),
@@ -16557,7 +16566,7 @@ function _ts_generator(thisArg, body) {
         var F = m.join(" ");
         n(F, !1);
         var D = p[F] || (p[F] = { preventDefault: !1, stopPropagation: !1, run: ((d = (f = p._any) === null || f === void 0 ? void 0 : f.run) === null || d === void 0 ? void 0 : d.slice()) || [] });
-        u && D.run.push(u), a && (D.preventDefault = !0), c && (D.stopPropagation = !0);
+        u && D.run.push(u), h && (D.preventDefault = !0), c && (D.stopPropagation = !0);
       }, "add");
     var _iteratorNormalCompletion = true,
       _didIteratorError = false,
@@ -16572,8 +16581,8 @@ function _ts_generator(thisArg, body) {
         if (o.any)
           try {
             var _loop = function () {
-              var a = _step1.value;
-              var c = t[a] || (t[a] = Object.create(null));
+              var h = _step1.value;
+              var c = t[h] || (t[h] = Object.create(null));
               c._any || (c._any = { preventDefault: !1, stopPropagation: !1, run: [] });
               var f = o.any;
               for (var d in c) c[d].run.push((p) => f(p, Ia));
@@ -16600,8 +16609,8 @@ function _ts_generator(thisArg, body) {
         if (u)
           try {
             for (var _iterator2 = l[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var a = _step2.value;
-              s(a, u, o.run, o.preventDefault, o.stopPropagation), o.shift && s(a, "Shift-" + u, o.shift, o.preventDefault, o.stopPropagation);
+              var h = _step2.value;
+              s(h, u, o.run, o.preventDefault, o.stopPropagation), o.shift && s(h, "Shift-" + u, o.shift, o.preventDefault, o.stopPropagation);
             }
           } catch (err) {
             _didIteratorError2 = true;
@@ -16634,7 +16643,7 @@ function _ts_generator(thisArg, body) {
     }
     return t;
   }
-  h(IA, "buildKeymap");
+  a(IA, "buildKeymap");
   var Ia = null;
   function $A(r, e, t, i) {
     Ia = e;
@@ -16643,11 +16652,11 @@ function _ts_generator(thisArg, body) {
       o = qs(s) == n.length && n != " ",
       l = "",
       u = !1,
-      a = !1,
+      h = !1,
       c = !1;
-    hi && hi.view == t && hi.scope == i && ((l = hi.prefix + " "), JD.indexOf(e.keyCode) < 0 && ((a = !0), (hi = null)));
+    hi && hi.view == t && hi.scope == i && ((l = hi.prefix + " "), JD.indexOf(e.keyCode) < 0 && ((h = !0), (hi = null)));
     var f = new Set(),
-      d = h((D) => {
+      d = a((D) => {
         if (D) {
           var _iteratorNormalCompletion = true,
             _didIteratorError = false,
@@ -16671,7 +16680,7 @@ function _ts_generator(thisArg, body) {
               }
             }
           }
-          D.preventDefault && (D.stopPropagation && (c = !0), (a = !0));
+          D.preventDefault && (D.stopPropagation && (c = !0), (h = !0));
         }
         return !1;
       }, "runFor"),
@@ -16680,13 +16689,13 @@ function _ts_generator(thisArg, body) {
       F;
     return (
       p && (d(p[l + io(n, e, !o)]) ? (u = !0) : o && (e.altKey || e.metaKey || e.ctrlKey) && !(V.windows && e.ctrlKey && e.altKey) && (m = Zt[e.keyCode]) && m != n ? (d(p[l + io(m, e, !0)]) || (e.shiftKey && (F = gr[e.keyCode]) != n && F != m && d(p[l + io(F, e, !1)]))) && (u = !0) : o && e.shiftKey && d(p[l + io(n, e, !0)]) && (u = !0), !u && d(p._any) && (u = !0)),
-      a && (u = !0),
+      h && (u = !0),
       u && c && e.stopPropagation(),
       (Ia = null),
       u
     );
   }
-  h($A, "runHandlers");
+  a($A, "runHandlers");
   var An =
     ((_r45 = class r {
       draw() {
@@ -16714,13 +16723,13 @@ function _ts_generator(thisArg, body) {
         (this.className = e), (this.left = t), (this.top = i), (this.width = n), (this.height = s);
       }
     }),
-    h(_r45, "RectangleMarker"),
+    a(_r45, "RectangleMarker"),
     _r45);
   function sF(r) {
     var e = r.scrollDOM.getBoundingClientRect();
     return { left: (r.textDirection == Be.LTR ? e.left : e.right - r.scrollDOM.clientWidth * r.scaleX) - r.scrollDOM.scrollLeft * r.scaleX, top: e.top - r.scrollDOM.scrollTop * r.scaleY };
   }
-  h(sF, "getBase");
+  a(sF, "getBase");
   function nD(r, e, t, i) {
     var n = r.coordsAtPos(e, t * 2);
     if (!n) return i;
@@ -16730,7 +16739,7 @@ function _ts_generator(thisArg, body) {
       u = r.posAtCoords({ x: s.right - 1, y: o });
     return l == null || u == null ? i : { from: Math.max(i.from, Math.min(l, u)), to: Math.min(i.to, Math.max(l, u)) };
   }
-  h(nD, "wrappedLine");
+  a(nD, "wrappedLine");
   function qA(r, e, t) {
     if (t.to <= r.viewport.from || t.from >= r.viewport.to) return [];
     var i = Math.max(t.from, r.viewport.from),
@@ -16739,8 +16748,8 @@ function _ts_generator(thisArg, body) {
       o = r.contentDOM,
       l = o.getBoundingClientRect(),
       u = sF(r),
-      a = o.querySelector(".cm-line"),
-      c = a && window.getComputedStyle(a),
+      h = o.querySelector(".cm-line"),
+      c = h && window.getComputedStyle(h),
       f = l.left + (c ? parseInt(c.paddingLeft) + Math.min(0, parseInt(c.textIndent)) : 0),
       d = l.right - (c ? parseInt(c.paddingRight) : 0),
       p = Ca(r, i),
@@ -16757,7 +16766,7 @@ function _ts_generator(thisArg, body) {
     function g(C, L, Q, W) {
       return new An(e, C - u.left, L - u.top - 0.01, Q - C, W - L + 0.01);
     }
-    h(g, "piece");
+    a(g, "piece");
     function b(param) {
       var C = param.top,
         L = param.bottom,
@@ -16766,7 +16775,7 @@ function _ts_generator(thisArg, body) {
       for (var H = 0; H < Q.length; H += 2) W.push(g(Q[H], C, Q[H + 1], L));
       return W;
     }
-    h(b, "pieces");
+    a(b, "pieces");
     function B(C, L, Q) {
       var W = 1e9,
         H = -1e9,
@@ -16776,7 +16785,7 @@ function _ts_generator(thisArg, body) {
           ae = r.coordsAtPos(ee, ee == Q.from ? 2 : -2);
         !ve || !ae || ((W = Math.min(ve.top, ae.top, W)), (H = Math.max(ve.bottom, ae.bottom, H)), xe == Be.LTR ? G.push(s && _ ? f : ve.left, s && ce ? d : ae.right) : G.push(!s && ce ? f : ae.left, !s && _ ? d : ve.right));
       }
-      h(T, "addSpan");
+      a(T, "addSpan");
       var j = C !== null && C !== void 0 ? C : Q.from,
         te = L !== null && L !== void 0 ? L : Q.to;
       var _iteratorNormalCompletion = true,
@@ -16832,18 +16841,18 @@ function _ts_generator(thisArg, body) {
       }
       return G.length == 0 && T(j, C == null, te, L == null, r.textDirection), { top: W, bottom: H, horizontal: G };
     }
-    h(B, "drawForLine");
+    a(B, "drawForLine");
     function k(C, L) {
       var Q = l.top + (L ? C.top : C.bottom);
       return { top: Q, bottom: Q, horizontal: [] };
     }
-    h(k, "drawForWidget");
+    a(k, "drawForWidget");
   }
-  h(qA, "rectanglesForRange");
+  a(qA, "rectanglesForRange");
   function VA(r, e) {
     return r.constructor == e.constructor && r.eq(e);
   }
-  h(VA, "sameMarker");
+  a(VA, "sameMarker");
   var $a =
       ((_class60 = class _class {
         update(e) {
@@ -16921,28 +16930,28 @@ function _ts_generator(thisArg, body) {
             t.mount && t.mount(this.dom, e);
         }
       }),
-      h(_class60, "LayerView"),
+      a(_class60, "LayerView"),
       _class60),
     lo = z.define();
   function oF(r) {
     return [je.define((e) => new $a(e, r)), lo.of(r)];
   }
-  h(oF, "layer");
+  a(oF, "layer");
   var lF = !V.ios,
     kn = z.define({
       combine(r) {
-        return Kt(r, { cursorBlinkRate: 1200, drawRangeCursor: !0 }, { cursorBlinkRate: (e, t) => Math.min(e, t), drawRangeCursor: (e, t) => e || t });
+        return Kt(r, { cursorBlinkRate: 1200, drawRangeCursor: !0 }, { cursorBlinkRate: a((e, t) => Math.min(e, t), "cursorBlinkRate"), drawRangeCursor: a((e, t) => e || t, "drawRangeCursor") });
       },
     });
   function uF() {
     var r = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
     return [kn.of(r), WA, zA, HA, ND.of(!0)];
   }
-  h(uF, "drawSelection");
+  a(uF, "drawSelection");
   function aF(r) {
     return r.startState.facet(kn) != r.state.facet(kn);
   }
-  h(aF, "configChanged");
+  a(aF, "configChanged");
   var WA = oF({
     above: !0,
     markers(r) {
@@ -17012,7 +17021,7 @@ function _ts_generator(thisArg, body) {
   function sD(r, e) {
     e.style.animationDuration = r.facet(kn).cursorBlinkRate + "ms";
   }
-  h(sD, "setBlinkRate");
+  a(sD, "setBlinkRate");
   var zA = oF({
       above: !1,
       markers(r) {
@@ -17093,8 +17102,8 @@ function _ts_generator(thisArg, body) {
   function cF() {
     return [cn, jA];
   }
-  h(cF, "dropCursor");
-  var P8 = /x/.unicode != null ? "gu" : "g";
+  a(cF, "dropCursor");
+  var q8 = /x/.unicode != null ? "gu" : "g";
   var on = "-10000px",
     Eo =
       ((_class61 = class _class {
@@ -17130,14 +17139,14 @@ function _ts_generator(thisArg, body) {
           var o = [],
             l = t ? [] : null;
           for (var u1 = 0; u1 < s.length; u1++) {
-            var a = s[u1],
+            var h = s[u1],
               c = -1;
-            if (a) {
+            if (h) {
               for (var f = 0; f < this.tooltips.length; f++) {
                 var d = this.tooltips[f];
-                d && d.create == a.create && (c = f);
+                d && d.create == h.create && (c = f);
               }
-              if (c < 0) (o[u1] = this.createTooltipView(a, u1 ? o[u1 - 1] : null)), l && (l[u1] = !!a.above);
+              if (c < 0) (o[u1] = this.createTooltipView(h, u1 ? o[u1 - 1] : null)), l && (l[u1] = !!h.above);
               else {
                 var f1 = (o[u1] = this.tooltipViews[c]);
                 l && (l[u1] = t[c]), f1.update && f1.update(e);
@@ -17166,7 +17175,7 @@ function _ts_generator(thisArg, body) {
               }
             }
           }
-          return t && (l.forEach((u, a) => (t[a] = u)), (t.length = l.length)), (this.input = n), (this.tooltips = s), (this.tooltipViews = o), !0;
+          return t && (l.forEach((u, h) => (t[h] = u)), (t.length = l.length)), (this.input = n), (this.tooltips = s), (this.tooltipViews = o), !0;
         }
         constructor(e, t, i, n) {
           (this.facet = t), (this.createTooltipView = i), (this.removeTooltipView = n), (this.input = e.state.facet(t)), (this.tooltips = this.input.filter((o) => o));
@@ -17174,18 +17183,18 @@ function _ts_generator(thisArg, body) {
           this.tooltipViews = this.tooltips.map((o) => (s = i(o, s)));
         }
       }),
-      h(_class61, "TooltipViewManager"),
+      a(_class61, "TooltipViewManager"),
       _class61);
   function YA(r) {
     var e = r.win;
     return { top: 0, left: 0, bottom: e.innerHeight, right: e.innerWidth };
   }
-  h(YA, "windowSpace");
+  a(YA, "windowSpace");
   var la = z.define({
-      combine: (r) => {
+      combine: a((r) => {
         var e, t, i;
         return { position: V.ios ? "absolute" : ((e = r.find((n) => n.position)) === null || e === void 0 ? void 0 : e.position) || "fixed", parent: ((t = r.find((n) => n.parent)) === null || t === void 0 ? void 0 : t.parent) || null, tooltipSpace: ((i = r.find((n) => n.tooltipSpace)) === null || i === void 0 ? void 0 : i.tooltipSpace) || YA };
-      },
+      }, "combine"),
     }),
     oD = new WeakMap(),
     fF = je.fromClass(
@@ -17393,37 +17402,37 @@ function _ts_generator(thisArg, body) {
             o = [];
           for (var l1 = 0; l1 < this.manager.tooltips.length; l1++) {
             var u = this.manager.tooltips[l1],
-              a = this.manager.tooltipViews[l1],
-              c = a.dom,
+              h = this.manager.tooltipViews[l1],
+              c = h.dom,
               f = r.pos[l1],
               d = r.size[l1];
             if (!f || f.bottom <= Math.max(t.top, i.top) || f.top >= Math.min(t.bottom, i.bottom) || f.right < Math.max(t.left, i.left) - 0.1 || f.left > Math.min(t.right, i.right) + 0.1) {
               c.style.top = on;
               continue;
             }
-            var p = u.arrow ? a.dom.querySelector(".cm-tooltip-arrow") : null,
+            var p = u.arrow ? h.dom.querySelector(".cm-tooltip-arrow") : null,
               m = p ? 7 : 0,
               F = d.right - d.left,
-              D = (e = oD.get(a)) !== null && e !== void 0 ? e : d.bottom - d.top,
-              g = a.offset || GA,
+              D = (e = oD.get(h)) !== null && e !== void 0 ? e : d.bottom - d.top,
+              g = h.offset || GA,
               b = this.view.textDirection == Be.LTR,
               B = d.width > i.right - i.left ? (b ? i.left : i.right - d.width) : b ? Math.max(i.left, Math.min(f.left - (p ? 14 : 0) + g.x, i.right - F)) : Math.min(Math.max(i.left, f.left - F + (p ? 14 : 0) - g.x), i.right - F),
               k = this.above[l1];
             !u.strictSide && (k ? f.top - (d.bottom - d.top) - g.y < i.top : f.bottom + (d.bottom - d.top) + g.y > i.bottom) && k == i.bottom - f.bottom > f.top - i.top && (k = this.above[l1] = !k);
             var C = (k ? f.top - i.top : i.bottom - f.bottom) - m;
-            if (C < D && a.resize !== !1) {
+            if (C < D && h.resize !== !1) {
               if (C < this.view.defaultLineHeight) {
                 c.style.top = on;
                 continue;
               }
-              oD.set(a, D), (c.style.height = (D = C) / s + "px");
+              oD.set(h, D), (c.style.height = (D = C) / s + "px");
             } else c.style.height && (c.style.height = "");
             var L = k ? f.top - D - m - g.y : f.bottom + m + g.y,
               Q = B + F;
             var _iteratorNormalCompletion1 = true,
               _didIteratorError1 = false,
               _iteratorError1 = undefined;
-            if (a.overlap !== !0)
+            if (h.overlap !== !0)
               try {
                 for (var _iterator1 = o[Symbol.iterator](), _step1; !(_iteratorNormalCompletion1 = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion1 = true) {
                   var W = _step1.value;
@@ -17447,7 +17456,7 @@ function _ts_generator(thisArg, body) {
               var W1 = f.left + (b ? g.x : -g.x) - (B + 14 - 7);
               p.style.left = W1 / n + "px";
             }
-            a.overlap !== !0 && o.push({ left: B, top: L, right: Q, bottom: L + D }), c.classList.toggle("cm-tooltip-above", k), c.classList.toggle("cm-tooltip-below", !k), a.positioned && a.positioned(r.space);
+            h.overlap !== !0 && o.push({ left: B, top: L, right: Q, bottom: L + D }), c.classList.toggle("cm-tooltip-above", k), c.classList.toggle("cm-tooltip-below", !k), h.positioned && h.positioned(r.space);
           }
         }
         maybeMeasure() {
@@ -17534,7 +17543,7 @@ function _ts_generator(thisArg, body) {
     }),
     GA = { x: 0, y: 0 },
     th = z.define({ enables: [fF, JA] }),
-    Co = z.define({ combine: (r) => r.reduce((e, t) => e.concat(t), []) }),
+    Co = z.define({ combine: a((r) => r.reduce((e, t) => e.concat(t), []), "combine") }),
     Bo =
       ((_r46 = class r {
         static create(e) {
@@ -17676,7 +17685,7 @@ function _ts_generator(thisArg, body) {
             ));
         }
       }),
-      h(_r46, "HoverTooltipHost"),
+      a(_r46, "HoverTooltipHost"),
       _r46),
     XA = th.compute([Co], (r) => {
       var e = r.facet(Co);
@@ -17723,8 +17732,8 @@ function _ts_generator(thisArg, body) {
             var l = e.coordsAtPos(n);
             if (!l || t.y < l.top || t.y > l.bottom || t.x < l.left - e.defaultCharacterWidth || t.x > l.right + e.defaultCharacterWidth) return;
             var u = e.bidiSpans(e.state.doc.lineAt(n)).find((c) => c.from <= n && c.to >= n),
-              a = u && u.dir == Be.RTL ? -1 : 1;
-            s = t.x < l.left ? -a : a;
+              h = u && u.dir == Be.RTL ? -1 : 1;
+            s = t.x < l.left ? -h : h;
           }
           var o = this.source(e, n, s);
           if (o === null || o === void 0 ? void 0 : o.then) {
@@ -17766,7 +17775,7 @@ function _ts_generator(thisArg, body) {
           }
         }
         watchTooltipLeave(e) {
-          var t = h((i) => {
+          var t = a((i) => {
             e.removeEventListener("mouseleave", t), this.active.length && !this.view.dom.contains(i.relatedTarget) && this.view.dispatch({ effects: this.setHover.of([]) });
           }, "watch");
           e.addEventListener("mouseleave", t);
@@ -17789,7 +17798,7 @@ function _ts_generator(thisArg, body) {
             e.dom.addEventListener("mousemove", (this.mousemove = this.mousemove.bind(this)));
         }
       }),
-      h(_class62, "HoverPlugin"),
+      a(_class62, "HoverPlugin"),
       _class62),
     ro = 4;
   function KA(r, e) {
@@ -17805,7 +17814,7 @@ function _ts_generator(thisArg, body) {
     }
     return e.clientX >= t - ro && e.clientX <= i + ro && e.clientY >= n - ro && e.clientY <= s + ro;
   }
-  h(KA, "isInTooltip");
+  a(KA, "isInTooltip");
   function ZA(r, e, t, i, n, s) {
     var o = r.scrollDOM.getBoundingClientRect(),
       l = r.documentTop + r.documentPadding.top + r.contentHeight;
@@ -17813,7 +17822,7 @@ function _ts_generator(thisArg, body) {
     var u = r.posAtCoords({ x: i, y: n }, !1);
     return u >= e && u <= t;
   }
-  h(ZA, "isOverRange");
+  a(ZA, "isOverRange");
   function dF(r) {
     var e = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
     var t = pe.define(),
@@ -17832,8 +17841,8 @@ function _ts_generator(thisArg, body) {
                 var l = _step.value;
                 var u = s.changes.mapPos(l.pos, -1, Ve.TrackDel);
                 if (u != null) {
-                  var a = Object.assign(Object.create(null), l);
-                  (a.pos = u), a.end != null && (a.end = s.changes.mapPos(a.end)), o.push(a);
+                  var h = Object.assign(Object.create(null), l);
+                  (h.pos = u), h.end != null && (h.end = s.changes.mapPos(h.end)), o.push(h);
                 }
               }
             } catch (err) {
@@ -17876,11 +17885,11 @@ function _ts_generator(thisArg, body) {
           }
           return n;
         },
-        provide: (n) => Co.from(n),
+        provide: a((n) => Co.from(n), "provide"),
       });
     return { active: i, extension: [i, je.define((n) => new Va(n, r, i, t, e.hoverTime || 300)), XA] };
   }
-  h(dF, "hoverTooltip");
+  a(dF, "hoverTooltip");
   var ek = pe.define();
   var lD = z.define({
     combine(r) {
@@ -17931,9 +17940,9 @@ function _ts_generator(thisArg, body) {
             try {
               for (var _iterator = i[Symbol.iterator](), _step; !(_iteratorNormalCompletion1 = (_step = _iterator.next()).done); _iteratorNormalCompletion1 = true) {
                 var u = _step.value;
-                var a = this.specs.indexOf(u),
+                var h = this.specs.indexOf(u),
                   c = void 0;
-                a < 0 ? ((c = u(r.view)), l.push(c)) : ((c = this.panels[a]), c.update && c.update(r)), n.push(c), (c.top ? s : o).push(c);
+                h < 0 ? ((c = u(r.view)), l.push(c)) : ((c = this.panels[h]), c.update && c.update(r)), n.push(c), (c.top ? s : o).push(c);
               }
             } catch (err) {
               _didIteratorError1 = true;
@@ -18025,11 +18034,14 @@ function _ts_generator(thisArg, body) {
         }
       },
       {
-        provide: (r) =>
-          ie.scrollMargins.of((e) => {
-            var t = e.plugin(r);
-            return t && { top: t.top.scrollMargin(), bottom: t.bottom.scrollMargin() };
-          }),
+        provide: a(
+          (r) =>
+            ie.scrollMargins.of((e) => {
+              var t = e.plugin(r);
+              return t && { top: t.top.scrollMargin(), bottom: t.bottom.scrollMargin() };
+            }),
+          "provide",
+        ),
       },
     ),
     br =
@@ -18152,13 +18164,13 @@ function _ts_generator(thisArg, body) {
           (this.view = e), (this.top = t), (this.container = i), (this.dom = void 0), (this.classes = ""), (this.panels = []), this.syncClasses();
         }
       }),
-      h(_class63, "PanelGroup"),
+      a(_class63, "PanelGroup"),
       _class63);
   function uD(r) {
     var e = r.nextSibling;
     return r.remove(), e;
   }
-  h(uD, "rm");
+  a(uD, "rm");
   var xo = z.define({ enables: tk }),
     mt =
       ((_class64 = class _class extends Xt {
@@ -18170,7 +18182,7 @@ function _ts_generator(thisArg, body) {
         }
         destroy(e) {}
       }),
-      h(_class64, "GutterMarker"),
+      a(_class64, "GutterMarker"),
       _class64);
   mt.prototype.elementClass = "";
   mt.prototype.toDOM = void 0;
@@ -18180,12 +18192,12 @@ function _ts_generator(thisArg, body) {
   var uo = z.define(),
     ik = z.define();
   var ao = z.define();
-  var Wa = z.define({ combine: (r) => r.some((e) => e) });
+  var Wa = z.define({ combine: a((r) => r.some((e) => e), "combine") });
   function rk(r) {
     var e = [nk];
     return r && r.fixed === !1 && e.push(Wa.of(!0)), e;
   }
-  h(rk, "gutters");
+  a(rk, "gutters");
   var nk = je.fromClass(
     class {
       update(r) {
@@ -18520,21 +18532,24 @@ function _ts_generator(thisArg, body) {
       }
     },
     {
-      provide: (r) =>
-        ie.scrollMargins.of((e) => {
-          var t = e.plugin(r);
-          return !t || t.gutters.length == 0 || !t.fixed ? null : e.textDirection == Be.LTR ? { left: t.dom.offsetWidth * e.scaleX } : { right: t.dom.offsetWidth * e.scaleX };
-        }),
+      provide: a(
+        (r) =>
+          ie.scrollMargins.of((e) => {
+            var t = e.plugin(r);
+            return !t || t.gutters.length == 0 || !t.fixed ? null : e.textDirection == Be.LTR ? { left: t.dom.offsetWidth * e.scaleX } : { right: t.dom.offsetWidth * e.scaleX };
+          }),
+        "provide",
+      ),
     },
   );
   function aD(r) {
     return Array.isArray(r) ? r : [r];
   }
-  h(aD, "asArray");
+  a(aD, "asArray");
   function za(r, e, t) {
     for (; r.value && r.from <= t; ) r.from == t && e.push(r.value), r.next();
   }
-  h(za, "advanceCursor");
+  a(za, "advanceCursor");
   var Ha =
       ((_class65 = class _class {
         addElement(e, t, i) {
@@ -18595,7 +18610,7 @@ function _ts_generator(thisArg, body) {
           (this.gutter = e), (this.height = i), (this.i = 0), (this.cursor = De.iter(e.markers, t.from));
         }
       }),
-      h(_class65, "UpdateContext"),
+      a(_class65, "UpdateContext"),
       _class65),
     vo =
       ((_class66 = class _class {
@@ -18652,7 +18667,7 @@ function _ts_generator(thisArg, body) {
           (this.markers = aD(t.markers(e))), t.initialSpacer && ((this.spacer = new Ao(e, 0, 0, [t.initialSpacer(e)])), this.dom.appendChild(this.spacer.dom), (this.spacer.dom.style.cssText += "visibility: hidden; pointer-events: none"));
         }
       }),
-      h(_class66, "SingleGutterView"),
+      a(_class66, "SingleGutterView"),
       _class66),
     Ao =
       ((_class67 = class _class {
@@ -18665,13 +18680,13 @@ function _ts_generator(thisArg, body) {
           for (var s = 0, o = 0; ; ) {
             var l = o,
               u = s < t.length ? t[s++] : null,
-              a = !1;
+              h = !1;
             if (u) {
               var c = u.elementClass;
               c && (i += " " + c);
               for (var f = o; f < this.markers.length; f++)
                 if (this.markers[f].compare(u)) {
-                  (l = f), (a = !0);
+                  (l = f), (h = !0);
                   break;
                 }
             } else l = this.markers.length;
@@ -18684,7 +18699,7 @@ function _ts_generator(thisArg, body) {
               }
             }
             if (!u) break;
-            u.toDOM && (a ? (n = n.nextSibling) : this.dom.insertBefore(u.toDOM(e), n)), a && o++;
+            u.toDOM && (h ? (n = n.nextSibling) : this.dom.insertBefore(u.toDOM(e), n)), h && o++;
           }
           (this.dom.className = i), (this.markers = t);
         }
@@ -18695,14 +18710,14 @@ function _ts_generator(thisArg, body) {
           (this.height = -1), (this.above = 0), (this.markers = []), (this.dom = document.createElement("div")), (this.dom.className = "cm-gutterElement"), this.update(e, t, i, n);
         }
       }),
-      h(_class67, "GutterElement"),
+      a(_class67, "GutterElement"),
       _class67);
   function sk(r, e) {
     if (r.length != e.length) return !1;
     for (var t = 0; t < r.length; t++) if (!r[t].compare(e[t])) return !1;
     return !0;
   }
-  h(sk, "sameMarkers");
+  a(sk, "sameMarkers");
   var ok = z.define(),
     lk = z.define(),
     yr = z.define({
@@ -18715,7 +18730,7 @@ function _ts_generator(thisArg, body) {
               var _loop = function (n) {
                 var s = i[n],
                   o = t[n];
-                i[n] = s ? (l, u, a) => s(l, u, a) || o(l, u, a) : o;
+                i[n] = s ? (l, u, h) => s(l, u, h) || o(l, u, h) : o;
               };
               var i = Object.assign({}, e);
               for (var n in t) _loop(n);
@@ -18737,12 +18752,12 @@ function _ts_generator(thisArg, body) {
           super(), (this.number = e);
         }
       }),
-      h(_class68, "NumberMarker"),
+      a(_class68, "NumberMarker"),
       _class68);
   function ua(r, e) {
     return r.state.facet(yr).formatNumber(e, r.state);
   }
-  h(ua, "formatNumber");
+  a(ua, "formatNumber");
   var uk = ao.compute([yr], (r) => ({
     class: "cm-lineNumbers",
     renderEmptyElements: !1,
@@ -18752,7 +18767,7 @@ function _ts_generator(thisArg, body) {
     lineMarker(e, t, i) {
       return i.some((n) => n.toDOM) ? null : new Dn(ua(e, e.state.doc.lineAt(t.from).number));
     },
-    widgetMarker: (e, t, i) => {
+    widgetMarker: a((e, t, i) => {
       var _iteratorNormalCompletion = true,
         _didIteratorError = false,
         _iteratorError = undefined;
@@ -18777,8 +18792,8 @@ function _ts_generator(thisArg, body) {
         }
       }
       return null;
-    },
-    lineMarkerChange: (e) => e.startState.facet(yr) != e.state.facet(yr),
+    }, "widgetMarker"),
+    lineMarkerChange: a((e) => e.startState.facet(yr) != e.state.facet(yr), "lineMarkerChange"),
     initialSpacer(e) {
       return new Dn(ua(e, hD(e.state.doc.lines)));
     },
@@ -18792,13 +18807,13 @@ function _ts_generator(thisArg, body) {
     var r = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
     return [yr.of(r), rk(), uk];
   }
-  h(pF, "lineNumbers");
+  a(pF, "lineNumbers");
   function hD(r) {
     var e = 9;
     for (; e < r; ) e = e * 10 + 9;
     return e;
   }
-  h(hD, "maxLineNumber");
+  a(hD, "maxLineNumber");
   var ak = new (class extends mt {
       constructor() {
         super(...arguments), (this.elementClass = "cm-activeLineGutter");
@@ -18835,7 +18850,7 @@ function _ts_generator(thisArg, body) {
   function mF() {
     return hk;
   }
-  h(mF, "highlightActiveLineGutter");
+  a(mF, "highlightActiveLineGutter");
   var ck = 0,
     Sn =
       ((_class69 = class _class {
@@ -18843,7 +18858,7 @@ function _ts_generator(thisArg, body) {
           (this.from = e), (this.to = t);
         }
       }),
-      h(_class69, "Range"),
+      a(_class69, "Range"),
       _class69),
     ue =
       ((_class70 = class _class {
@@ -18868,16 +18883,16 @@ function _ts_generator(thisArg, body) {
               }));
         }
       }),
-      h(_class70, "NodeProp"),
+      a(_class70, "NodeProp"),
       _class70);
-  ue.closedBy = new ue({ deserialize: (r) => r.split(" ") });
-  ue.openedBy = new ue({ deserialize: (r) => r.split(" ") });
-  ue.group = new ue({ deserialize: (r) => r.split(" ") });
+  ue.closedBy = new ue({ deserialize: a((r) => r.split(" "), "deserialize") });
+  ue.openedBy = new ue({ deserialize: a((r) => r.split(" "), "deserialize") });
+  ue.group = new ue({ deserialize: a((r) => r.split(" "), "deserialize") });
   ue.isolate = new ue({
-    deserialize: (r) => {
+    deserialize: a((r) => {
       if (r && r != "rtl" && r != "ltr" && r != "auto") throw new RangeError("Invalid value for isolate: " + r);
       return r || "auto";
-    },
+    }, "deserialize"),
   });
   ue.contextHash = new ue({ perNode: !0 });
   ue.lookAhead = new ue({ perNode: !0 });
@@ -18891,7 +18906,7 @@ function _ts_generator(thisArg, body) {
           (this.tree = e), (this.overlay = t), (this.parser = i);
         }
       }),
-      h(_class71, "MountedTree"),
+      a(_class71, "MountedTree"),
       _class71),
     fk = Object.create(null),
     Ie =
@@ -18989,7 +19004,7 @@ function _ts_generator(thisArg, body) {
           (this.name = e), (this.props = t), (this.id = i), (this.flags = n);
         }
       }),
-      h(_r47, "NodeType"),
+      a(_r47, "NodeType"),
       _r47);
   Ie.none = new Ie("", Object.create(null), 0, 8);
   var wn =
@@ -19052,7 +19067,7 @@ function _ts_generator(thisArg, body) {
           for (var t = 0; t < e.length; t++) if (e[t].id != t) throw new RangeError("Node type ids should correspond to array positions when creating a node set");
         }
       }),
-      h(_r48, "NodeSet"),
+      a(_r48, "NodeSet"),
       _r48),
     Qo = new WeakMap(),
     gF = new WeakMap(),
@@ -19129,14 +19144,14 @@ function _ts_generator(thisArg, body) {
           o = e.mode || 0,
           l = (o & Ue.IncludeAnonymous) > 0;
         for (var u = this.cursor(o | Ue.IncludeAnonymous); ; ) {
-          var a = !1;
+          var h = !1;
           if (u.from <= s && u.to >= n && ((!l && u.type.isAnonymous) || t(u) !== !1)) {
             if (u.firstChild()) continue;
-            a = !0;
+            h = !0;
           }
-          for (; a && i && (l || !u.type.isAnonymous) && i(u), !u.nextSibling(); ) {
+          for (; h && i && (l || !u.type.isAnonymous) && i(u), !u.nextSibling(); ) {
             if (!u.parent()) return;
-            a = !0;
+            h = !0;
           }
         }
       }
@@ -19185,7 +19200,7 @@ function _ts_generator(thisArg, body) {
         }
       }
     }),
-    h(_r49, "Tree"),
+    a(_r49, "Tree"),
     _r49);
   Qe.empty = new Qe(Ie.none, [], [], 0);
   var ih =
@@ -19215,7 +19230,7 @@ function _ts_generator(thisArg, body) {
           (this.buffer = e), (this.index = t);
         }
       }),
-      h(_r50, "FlatBufferCursor"),
+      a(_r50, "FlatBufferCursor"),
       _r50),
     gi =
       ((_r51 = class r {
@@ -19250,8 +19265,8 @@ function _ts_generator(thisArg, body) {
             o = 0;
           for (var l = e, u = 0; l < t; ) {
             (s[u++] = n[l++]), (s[u++] = n[l++] - i);
-            var a = (s[u++] = n[l++] - i);
-            (s[u++] = n[l++] - e), (o = Math.max(o, a));
+            var h = (s[u++] = n[l++] - i);
+            (s[u++] = n[l++] - e), (o = Math.max(o, h));
           }
           return new r(s, o, this.set);
         }
@@ -19259,7 +19274,7 @@ function _ts_generator(thisArg, body) {
           (this.buffer = e), (this.length = t), (this.set = i);
         }
       }),
-      h(_r51, "TreeBuffer"),
+      a(_r51, "TreeBuffer"),
       _r51);
   function bF(r, e, t, i) {
     switch (r) {
@@ -19277,7 +19292,7 @@ function _ts_generator(thisArg, body) {
         return !0;
     }
   }
-  h(bF, "checkSide");
+  a(bF, "checkSide");
   function Qn(r, e, t, i) {
     for (var n; r.from == r.to || (t < 1 ? r.from >= e : r.from > e) || (t > -1 ? r.to <= e : r.to < e); ) {
       var o = !i && r instanceof Mt && r.index < 0 ? null : r.parent;
@@ -19292,7 +19307,7 @@ function _ts_generator(thisArg, body) {
       r = o2;
     }
   }
-  h(Qn, "resolveNode");
+  a(Qn, "resolveNode");
   var Uo =
       ((_class72 = class _class {
         cursor() {
@@ -19338,7 +19353,7 @@ function _ts_generator(thisArg, body) {
           return this.parent;
         }
       }),
-      h(_class72, "BaseNode"),
+      a(_class72, "BaseNode"),
       _class72),
     Mt =
       ((_r52 = class r extends Uo {
@@ -19354,7 +19369,7 @@ function _ts_generator(thisArg, body) {
         nextChild(e, t, i, n) {
           var s = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : 0;
           for (var o = this; ; ) {
-            for (var _o__tree = o._tree, l = _o__tree.children, u = _o__tree.positions, a = t > 0 ? l.length : -1; e != a; e += t) {
+            for (var _o__tree = o._tree, l = _o__tree.children, u = _o__tree.positions, h = t > 0 ? l.length : -1; e != h; e += t) {
               var c = l[e],
                 f = u[e] + o.from;
               if (bF(n, i, f, f + c.length)) {
@@ -19444,7 +19459,7 @@ function _ts_generator(thisArg, body) {
           super(), (this._tree = e), (this.from = t), (this.index = i), (this._parent = n);
         }
       }),
-      h(_r52, "TreeNode"),
+      a(_r52, "TreeNode"),
       _r52);
   function DF(r, e, t, i) {
     var n = r.cursor(),
@@ -19458,7 +19473,7 @@ function _ts_generator(thisArg, body) {
       if ((n.type.is(e) && s.push(n.node), !n.nextSibling())) return i == null ? s : [];
     }
   }
-  h(DF, "getChildren");
+  a(DF, "getChildren");
   function rh(r, e) {
     var t = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : e.length - 1;
     for (var i = r.parent; t >= 0; i = i.parent) {
@@ -19470,14 +19485,14 @@ function _ts_generator(thisArg, body) {
     }
     return !0;
   }
-  h(rh, "matchNodeContext");
+  a(rh, "matchNodeContext");
   var nh =
       ((_class73 = class _class {
         constructor(e, t, i, n) {
           (this.parent = e), (this.buffer = t), (this.index = i), (this.start = n);
         }
       }),
-      h(_class73, "BufferContext"),
+      a(_class73, "BufferContext"),
       _class73),
     _n =
       ((_r53 = class r extends Uo {
@@ -19557,7 +19572,7 @@ function _ts_generator(thisArg, body) {
           super(), (this.context = e), (this._parent = t), (this.index = i), (this.type = e.buffer.set.types[e.buffer.buffer[i]]);
         }
       }),
-      h(_r53, "BufferNode"),
+      a(_r53, "BufferNode"),
       _r53);
   function yF(r) {
     if (!r.length) return null;
@@ -19571,7 +19586,7 @@ function _ts_generator(thisArg, body) {
       n = r.slice();
     return i ? (n[e] = i) : n.splice(e, 1), new sh(n, t);
   }
-  h(yF, "iterStack");
+  a(yF, "iterStack");
   var sh =
     ((_class74 = class _class {
       get next() {
@@ -19581,7 +19596,7 @@ function _ts_generator(thisArg, body) {
         (this.heads = e), (this.node = t);
       }
     }),
-    h(_class74, "StackIterator"),
+    a(_class74, "StackIterator"),
     _class74);
   function dk(r, e, t) {
     var i = r.resolveInner(e, t),
@@ -19599,7 +19614,7 @@ function _ts_generator(thisArg, body) {
       }
     return n ? yF(n) : i;
   }
-  h(dk, "stackIterator");
+  a(dk, "stackIterator");
   var Un =
     ((_class75 = class _class {
       get name() {
@@ -19776,12 +19791,12 @@ function _ts_generator(thisArg, body) {
         }
       }
     }),
-    h(_class75, "TreeCursor"),
+    a(_class75, "TreeCursor"),
     _class75);
   function lh(r) {
     return r.children.some((e) => e instanceof gi || !e.type.isAnonymous || lh(e));
   }
-  h(lh, "hasChild");
+  a(lh, "hasChild");
   function pk(r) {
     var e;
     var t = r.buffer,
@@ -19794,7 +19809,7 @@ function _ts_generator(thisArg, body) {
       o = tmp2 === void 0 ? i.types.length : tmp2,
       l = Array.isArray(t) ? new ih(t, t.length) : t,
       u = i.types,
-      a = 0,
+      h = 0,
       c = 0;
     function f(C, L, Q, W, H, G) {
       var T = l.id,
@@ -19808,7 +19823,7 @@ function _ts_generator(thisArg, body) {
           Q.push(ae), W.push(j - C);
           return;
         } else if (P == -3) {
-          a = T;
+          h = T;
           return;
         } else if (P == -4) {
           c = T;
@@ -19840,7 +19855,7 @@ function _ts_generator(thisArg, body) {
       }
       Q.push(ce), W.push(ve);
     }
-    h(f, "takeNode");
+    a(f, "takeNode");
     function d(C, L, Q, W) {
       var H = [],
         G = 0,
@@ -19863,7 +19878,7 @@ function _ts_generator(thisArg, body) {
         Q.push(new gi(j1, H[2] - te1, i)), W.push(te1 - C);
       }
     }
-    h(d, "takeFlatNode");
+    a(d, "takeFlatNode");
     function p(C) {
       return (L, Q, W) => {
         var H = 0,
@@ -19877,19 +19892,19 @@ function _ts_generator(thisArg, body) {
         return F(C, L, Q, W, H);
       };
     }
-    h(p, "makeBalanced");
+    a(p, "makeBalanced");
     function m(C, L, Q, W, H, G, T, j) {
       var te = [],
         P = [];
       for (; C.length > W; ) te.push(C.pop()), P.push(L.pop() + Q - H);
       C.push(F(i.types[T], te, P, G - H, j - G)), L.push(H - Q);
     }
-    h(m, "makeRepeatLeaf");
+    a(m, "makeRepeatLeaf");
     function F(C, L, Q, W) {
       var H = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : 0,
         G = arguments.length > 5 ? arguments[5] : void 0;
-      if (a) {
-        var T = [ue.contextHash, a];
+      if (h) {
+        var T = [ue.contextHash, h];
         G = G ? [T].concat(G) : [T];
       }
       if (H > 25) {
@@ -19898,7 +19913,7 @@ function _ts_generator(thisArg, body) {
       }
       return new Qe(C, L, Q, W, G);
     }
-    h(F, "makeTree");
+    a(F, "makeTree");
     function D(C, L) {
       var Q = l.fork(),
         W = 0,
@@ -19927,7 +19942,7 @@ function _ts_generator(thisArg, body) {
       }
       return (L < 0 || W == C) && ((j.size = W), (j.start = H), (j.skip = G)), j.size > 4 ? j : void 0;
     }
-    h(D, "findBufferSize");
+    a(D, "findBufferSize");
     function g(C, L, Q) {
       var W = l.id,
         H = l.start,
@@ -19940,17 +19955,17 @@ function _ts_generator(thisArg, body) {
           for (; l.pos > te; ) Q = g(C, L, Q);
         }
         (L[--Q] = j), (L[--Q] = G - C), (L[--Q] = H - C), (L[--Q] = W);
-      } else T == -3 ? (a = W) : T == -4 && (c = W);
+      } else T == -3 ? (h = W) : T == -4 && (c = W);
       return Q;
     }
-    h(g, "copyToBuffer");
+    a(g, "copyToBuffer");
     var b = [],
       B = [];
     for (; l.pos > 0; ) f(r.start || 0, r.bufferStart || 0, b, B, -1, 0);
     var k = (e = r.length) !== null && e !== void 0 ? e : b.length ? B[0] + b[0].length : 0;
     return new Qe(u[r.topID], b.reverse(), B.reverse(), k);
   }
-  h(pk, "buildTree");
+  a(pk, "buildTree");
   var FF = new WeakMap();
   function _o(r, e) {
     if (!r.isAnonymous || e instanceof gi || e.type != r) return 1;
@@ -19987,11 +20002,11 @@ function _ts_generator(thisArg, body) {
     }
     return t;
   }
-  h(_o, "nodeSize");
+  a(_o, "nodeSize");
   function uh(r, e, t, i, n, s, o, l, u) {
-    var a = 0;
-    for (var m = i; m < n; m++) a += _o(r, e[m]);
-    var c = Math.ceil((a * 1.5) / 8),
+    var h = 0;
+    for (var m = i; m < n; m++) h += _o(r, e[m]);
+    var c = Math.ceil((h * 1.5) / 8),
       f = [],
       d = [];
     function p(m, F, D, g, b) {
@@ -20018,9 +20033,9 @@ function _ts_generator(thisArg, body) {
         d.push(C + b - s);
       }
     }
-    return h(p, "divide"), p(e, t, i, n, 0), (l || u)(f, d, o);
+    return a(p, "divide"), p(e, t, i, n, 0), (l || u)(f, d, o);
   }
-  h(uh, "balanceRange");
+  a(uh, "balanceRange");
   var Ri =
       ((_r54 = class r {
         get openStart() {
@@ -20063,22 +20078,22 @@ function _ts_generator(thisArg, body) {
           var n = [],
             s = 1,
             o = e.length ? e[0] : null;
-          for (var l = 0, u = 0, a = 0; ; l++) {
+          for (var l = 0, u = 0, h = 0; ; l++) {
             var c = l < t.length ? t[l] : null,
               f = c ? c.fromA : 1e9;
             if (f - u >= i)
               for (; o && o.from < f; ) {
                 var d = o;
-                if (u >= d.from || f <= d.to || a) {
-                  var p = Math.max(d.from, u) - a,
-                    m = Math.min(d.to, f) - a;
-                  d = p >= m ? null : new r(p, m, d.tree, d.offset + a, l > 0, !!c);
+                if (u >= d.from || f <= d.to || h) {
+                  var p = Math.max(d.from, u) - h,
+                    m = Math.min(d.to, f) - h;
+                  d = p >= m ? null : new r(p, m, d.tree, d.offset + h, l > 0, !!c);
                 }
                 if ((d && n.push(d), o.to > f)) break;
                 o = s < e.length ? e[s++] : null;
               }
             if (!c) break;
-            (u = c.toA), (a = c.toA - c.toB);
+            (u = c.toA), (h = c.toA - c.toB);
           }
           return n;
         }
@@ -20088,7 +20103,7 @@ function _ts_generator(thisArg, body) {
           (this.from = e), (this.to = t), (this.tree = i), (this.offset = n), (this.open = (s ? 1 : 0) | (o ? 2 : 0));
         }
       }),
-      h(_r54, "TreeFragment"),
+      a(_r54, "TreeFragment"),
       _r54),
     xr =
       ((_class76 = class _class {
@@ -20103,7 +20118,7 @@ function _ts_generator(thisArg, body) {
           }
         }
       }),
-      h(_class76, "Parser"),
+      a(_class76, "Parser"),
       _class76),
     oh =
       ((_class77 = class _class {
@@ -20123,9 +20138,9 @@ function _ts_generator(thisArg, body) {
           this.string = e;
         }
       }),
-      h(_class77, "StringInput"),
+      a(_class77, "StringInput"),
       _class77);
-  var j8 = new ue({ perNode: !0 });
+  var G8 = new ue({ perNode: !0 });
   var mk = 0,
     kt =
       ((_r55 = class r {
@@ -20199,7 +20214,7 @@ function _ts_generator(thisArg, body) {
           (this.name = e), (this.set = t), (this.base = i), (this.modified = n), (this.id = mk++);
         }
       }),
-      h(_r55, "Tag"),
+      a(_r55, "Tag"),
       _r55),
     gk = 0,
     Ro =
@@ -20283,18 +20298,18 @@ function _ts_generator(thisArg, body) {
           (this.name = e), (this.instances = []), (this.id = gk++);
         }
       }),
-      h(_r56, "Modifier"),
+      a(_r56, "Modifier"),
       _r56);
   function Dk(r, e) {
     return r.length == e.length && r.every((t, i) => t == e[i]);
   }
-  h(Dk, "sameArray");
+  a(Dk, "sameArray");
   function Fk(r) {
     var e = [[]];
     for (var t = 0; t < r.length; t++) for (var i = 0, n = e.length; i < n; i++) e.push(e[i].concat(r[t]));
     return e.sort((t, i) => i.length - t.length);
   }
-  h(Fk, "powerSet");
+  a(Fk, "powerSet");
   function No(r) {
     var e = Object.create(null);
     for (var t in r) {
@@ -20327,10 +20342,10 @@ function _ts_generator(thisArg, body) {
               l = n.slice(f);
             }
             var u = s.length - 1,
-              a = s[u];
-            if (!a) throw new RangeError("Invalid path: " + n);
+              h = s[u];
+            if (!h) throw new RangeError("Invalid path: " + n);
             var c = new vr(i, o, u > 0 ? s.slice(0, u) : null);
-            e[a] = c.sort(e[a]);
+            e[h] = c.sort(e[h]);
           }
         }
       } catch (err) {
@@ -20350,7 +20365,7 @@ function _ts_generator(thisArg, body) {
     }
     return BF.add(e);
   }
-  h(No, "styleTags");
+  a(No, "styleTags");
   var BF = new ue(),
     vr =
       ((_class78 = class _class {
@@ -20370,7 +20385,7 @@ function _ts_generator(thisArg, body) {
           (this.tags = e), (this.mode = t), (this.context = i), (this.next = n);
         }
       }),
-      h(_class78, "Rule"),
+      a(_class78, "Rule"),
       _class78);
   vr.empty = new vr([], 2, null);
   function fh(r, e) {
@@ -20425,7 +20440,7 @@ function _ts_generator(thisArg, body) {
       tmp = _ref.all,
       n = tmp === void 0 ? null : tmp;
     return {
-      style: (s) => {
+      style: a((s) => {
         var o = n;
         var _iteratorNormalCompletion = true,
           _didIteratorError = false,
@@ -20439,9 +20454,9 @@ function _ts_generator(thisArg, body) {
             try {
               for (var _iterator1 = l.set[Symbol.iterator](), _step1; !(_iteratorNormalCompletion = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion = true) {
                 var u = _step1.value;
-                var a = t[u.id];
-                if (a) {
-                  o = o ? o + " " + a : a;
+                var h = t[u.id];
+                if (h) {
+                  o = o ? o + " " + h : h;
                   break;
                 }
               }
@@ -20475,11 +20490,11 @@ function _ts_generator(thisArg, body) {
           }
         }
         return o;
-      },
+      }, "style"),
       scope: i,
     };
   }
-  h(fh, "tagHighlighter");
+  a(fh, "tagHighlighter");
   function bk(r, e) {
     var t = null;
     var _iteratorNormalCompletion = true,
@@ -20507,14 +20522,14 @@ function _ts_generator(thisArg, body) {
     }
     return t;
   }
-  h(bk, "highlightTags");
+  a(bk, "highlightTags");
   function xF(r, e, t) {
     var i = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : 0,
       n = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : r.length;
     var s = new hh(i, Array.isArray(e) ? e : [e], t);
     s.highlightRange(r.cursor(), i, n, "", s.highlighters), s.flush(n);
   }
-  h(xF, "highlightTree");
+  a(xF, "highlightTree");
   var hh =
     ((_class79 = class _class {
       startSpan(e, t) {
@@ -20529,10 +20544,10 @@ function _ts_generator(thisArg, body) {
           u = e.to;
         if (l >= i || u <= t) return;
         o.isTop && (s = this.highlighters.filter((p) => !p.scope || p.scope(o)));
-        var a = n,
+        var h = n,
           c = yk(e) || vr.empty,
           f = bk(s, c.tags);
-        if ((f && (a && (a += " "), (a += f), c.mode == 1 && (n += (n ? " " : "") + f)), this.startSpan(Math.max(t, l), a), c.opaque)) return;
+        if ((f && (h && (h += " "), (h += f), c.mode == 1 && (n += (n ? " " : "") + f)), this.startSpan(Math.max(t, l), h), c.opaque)) return;
         var d = e.tree && e.tree.prop(ue.mounted);
         if (d && d.overlay) {
           var p = e.node.enter(d.overlay[0].from + l, 1),
@@ -20543,9 +20558,9 @@ function _ts_generator(thisArg, body) {
               B = b ? b.from + l : u,
               k = Math.max(t, g),
               C = Math.min(i, B);
-            if (k < C && F) for (; e.from < C && (this.highlightRange(e, k, C, n, s), this.startSpan(Math.min(C, e.to), a), !(e.to >= B || !e.nextSibling())); );
+            if (k < C && F) for (; e.from < C && (this.highlightRange(e, k, C, n, s), this.startSpan(Math.min(C, e.to), h), !(e.to >= B || !e.nextSibling())); );
             if (!b || B > i) break;
-            (g = b.to + l), g > t && (this.highlightRange(p.cursor(), Math.max(t, b.from + l), Math.min(i, g), "", m), this.startSpan(Math.min(i, g), a));
+            (g = b.to + l), g > t && (this.highlightRange(p.cursor(), Math.max(t, b.from + l), Math.min(i, g), "", m), this.startSpan(Math.min(i, g), h));
           }
           F && e.parent();
         } else if (e.firstChild()) {
@@ -20553,7 +20568,7 @@ function _ts_generator(thisArg, body) {
           do
             if (!(e.to <= t)) {
               if (e.from >= i) break;
-              this.highlightRange(e, t, i, n, s), this.startSpan(Math.min(i, e.to), a);
+              this.highlightRange(e, t, i, n, s), this.startSpan(Math.min(i, e.to), h);
             }
           while (e.nextSibling());
           e.parent();
@@ -20563,14 +20578,14 @@ function _ts_generator(thisArg, body) {
         (this.at = e), (this.highlighters = t), (this.span = i), (this.class = "");
       }
     }),
-    h(_class79, "HighlightBuilder"),
+    a(_class79, "HighlightBuilder"),
     _class79);
   function yk(r) {
     var e = r.type.prop(BF);
     for (; e && e.context && !r.matchContext(e.context); ) e = e.next;
     return e || null;
   }
-  h(yk, "getStyleTags");
+  a(yk, "getStyleTags");
   var I = kt.define,
     Lo = I(),
     Di = I(),
@@ -20676,7 +20691,7 @@ function _ts_generator(thisArg, body) {
     var e1 = U[r2];
     e1 instanceof kt && (e1.name = r2);
   }
-  var X8 = fh([
+  var eQ = fh([
     { tag: U.link, class: "tok-link" },
     { tag: U.heading, class: "tok-heading" },
     { tag: U.emphasis, class: "tok-emphasis" },
@@ -20713,7 +20728,7 @@ function _ts_generator(thisArg, body) {
   function Ck(r) {
     return z.define({ combine: r ? (e) => e.concat(r) : void 0 });
   }
-  h(Ck, "defineLanguageFacet");
+  a(Ck, "defineLanguageFacet");
   var Bk = new ue(),
     ot =
       ((_class80 = class _class {
@@ -20726,7 +20741,7 @@ function _ts_generator(thisArg, body) {
           if ((t === null || t === void 0 ? void 0 : t.data) == this.data) return [{ from: 0, to: e.doc.length }];
           if (!t || !t.allowsNesting) return [];
           var i = [],
-            n = h((s, o) => {
+            n = a((s, o) => {
               if (s.prop(Ar) == this.data) {
                 i.push({ from: o, to: o + s.length });
                 return;
@@ -20765,8 +20780,8 @@ function _ts_generator(thisArg, body) {
                 }
               }
               for (var u2 = 0; u2 < s.children.length; u2++) {
-                var a = s.children[u2];
-                a instanceof Qe && n(a, s.positions[u2] + o);
+                var h = s.children[u2];
+                h instanceof Qe && n(h, s.positions[u2] + o);
               }
             }, "explore");
           return n(Mi(e), 0), i;
@@ -20790,9 +20805,9 @@ function _ts_generator(thisArg, body) {
               kr.of(this),
               Ae.languageData.of((s, o, l) => {
                 var u = vF(s, o, l),
-                  a = u.type.prop(Ar);
-                if (!a) return [];
-                var c = s.facet(a),
+                  h = u.type.prop(Ar);
+                if (!h) return [];
+                var c = s.facet(h),
                   f = u.type.prop(Bk);
                 if (f) {
                   var d = u.resolve(o - u.from, l);
@@ -20827,7 +20842,7 @@ function _ts_generator(thisArg, body) {
             ].concat(i));
         }
       }),
-      h(_class80, "Language"),
+      a(_class80, "Language"),
       _class80);
   ot.setState = pe.define();
   function vF(r, e, t) {
@@ -20836,7 +20851,7 @@ function _ts_generator(thisArg, body) {
     if (!i || i.allowsNesting) for (var s = n; s; s = s.enter(e, t, Ue.ExcludeBuffers)) s.type.isTop && (n = s);
     return n;
   }
-  h(vF, "topNodeAt");
+  a(vF, "topNodeAt");
   var Mo =
     ((_r57 = class r extends ot {
       static define(e) {
@@ -20853,13 +20868,13 @@ function _ts_generator(thisArg, body) {
         super(e, t, [], i), (this.parser = t);
       }
     }),
-    h(_r57, "LRLanguage"),
+    a(_r57, "LRLanguage"),
     _r57);
   function Mi(r) {
     var e = r.field(ot.state, !1);
     return e ? e.tree : Qe.empty;
   }
-  h(Mi, "syntaxTree");
+  a(Mi, "syntaxTree");
   var Dh =
       ((_class81 = class _class {
         get length() {
@@ -20882,7 +20897,7 @@ function _ts_generator(thisArg, body) {
           (this.doc = e), (this.cursorPos = 0), (this.string = ""), (this.cursor = e.iter());
         }
       }),
-      h(_class81, "DocInput"),
+      a(_class81, "DocInput"),
       _class81),
     On = null,
     Fh =
@@ -20902,7 +20917,7 @@ function _ts_generator(thisArg, body) {
                   var i;
                   if (typeof e == "number") {
                     var n = Date.now() + e;
-                    e = h(() => Date.now() > n, "until");
+                    e = a(() => Date.now() > n, "until");
                   }
                   for (this.parse || (this.parse = this.startParse()), t != null && (this.parse.stoppedAt == null || this.parse.stoppedAt > t) && t < this.state.doc.length && this.parse.stopAt(t); ; ) {
                     var n1 = this.parse.advance();
@@ -20949,16 +20964,16 @@ function _ts_generator(thisArg, body) {
             l = _this.skipped;
           if ((this.takeTree(), !e.empty)) {
             var u = [];
-            if ((e.iterChangedRanges((a, c, f, d) => u.push({ fromA: a, toA: c, fromB: f, toB: d })), (i = Ri.applyChanges(i, u)), (n = Qe.empty), (s = 0), (o = { from: e.mapPos(o.from, -1), to: e.mapPos(o.to, 1) }), this.skipped.length)) {
+            if ((e.iterChangedRanges((h, c, f, d) => u.push({ fromA: h, toA: c, fromB: f, toB: d })), (i = Ri.applyChanges(i, u)), (n = Qe.empty), (s = 0), (o = { from: e.mapPos(o.from, -1), to: e.mapPos(o.to, 1) }), this.skipped.length)) {
               l = [];
               var _iteratorNormalCompletion = true,
                 _didIteratorError = false,
                 _iteratorError = undefined;
               try {
                 for (var _iterator = this.skipped[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                  var a = _step.value;
-                  var c = e.mapPos(a.from, 1),
-                    f = e.mapPos(a.to, -1);
+                  var h = _step.value;
+                  var c = e.mapPos(h.from, 1),
+                    f = e.mapPos(h.to, -1);
                   c < f && l.push({ from: c, to: f });
                 }
               } catch (err) {
@@ -21012,8 +21027,8 @@ function _ts_generator(thisArg, body) {
                       _iteratorError = undefined;
                     try {
                       for (var _iterator = n[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var a = _step.value;
-                        u.tempSkipped.push(a);
+                        var h = _step.value;
+                        u.tempSkipped.push(h);
                       }
                     } catch (err) {
                       _didIteratorError = true;
@@ -21052,12 +21067,12 @@ function _ts_generator(thisArg, body) {
           (this.parser = e), (this.state = t), (this.fragments = i), (this.tree = n), (this.treeLen = s), (this.viewport = o), (this.skipped = l), (this.scheduleOn = u), (this.parse = null), (this.tempSkipped = []);
         }
       }),
-      h(_r58, "ParseContext"),
+      a(_r58, "ParseContext"),
       _r58);
   function AF(r, e, t) {
     return Ri.applyChanges(r, [{ fromA: e, toA: t, fromB: e, toB: t }]);
   }
-  h(AF, "cutFragments");
+  a(AF, "cutFragments");
   var Rn =
     ((_r59 = class r {
       apply(e) {
@@ -21075,7 +21090,7 @@ function _ts_generator(thisArg, body) {
         (this.context = e), (this.tree = e.tree);
       }
     }),
-    h(_r59, "LanguageState"),
+    a(_r59, "LanguageState"),
     _r59);
   ot.state = Pe.define({
     create: Rn.init,
@@ -21105,12 +21120,12 @@ function _ts_generator(thisArg, body) {
       return e.startState.facet(kr) != e.state.facet(kr) ? Rn.init(e.state) : r.apply(e);
     },
   });
-  var QF = h((r) => {
+  var QF = a((r) => {
     var e = setTimeout(() => r(), 500);
     return () => clearTimeout(e);
   }, "requestIdle");
   typeof requestIdleCallback < "u" &&
-    (QF = h((r) => {
+    (QF = a((r) => {
       var e = -1,
         t = setTimeout(() => {
           e = requestIdleCallback(r, { timeout: 400 });
@@ -21165,7 +21180,7 @@ function _ts_generator(thisArg, body) {
           (this.view = e), (this.working = null), (this.workScheduled = 0), (this.chunkEnd = -1), (this.chunkBudget = -1), (this.work = this.work.bind(this)), this.scheduleWork();
         }
       }),
-      h(_class82, "ParseWorker"),
+      a(_class82, "ParseWorker"),
       _class82),
       {
         eventHandlers: {
@@ -21179,14 +21194,17 @@ function _ts_generator(thisArg, body) {
       combine(r) {
         return r.length ? r[0] : null;
       },
-      enables: (r) => [
-        ot.state,
-        xk,
-        ie.contentAttributes.compute([r], (e) => {
-          var t = e.facet(r);
-          return t && t.name ? { "data-language": t.name } : {};
-        }),
-      ],
+      enables: a(
+        (r) => [
+          ot.state,
+          xk,
+          ie.contentAttributes.compute([r], (e) => {
+            var t = e.facet(r);
+            return t && t.name ? { "data-language": t.name } : {};
+          }),
+        ],
+        "enables",
+      ),
     }),
     Po =
       ((_class83 = class _class {
@@ -21195,21 +21213,21 @@ function _ts_generator(thisArg, body) {
           (this.language = e), (this.support = t), (this.extension = [e, t]);
         }
       }),
-      h(_class83, "LanguageSupport"),
+      a(_class83, "LanguageSupport"),
       _class83);
   var Io = z.define({
-    combine: (r) => {
+    combine: a((r) => {
       if (!r.length) return "  ";
       var e = r[0];
       if (!e || /\S/.test(e) || Array.from(e).some((t) => t != e[0])) throw new Error("Invalid indent unit: " + JSON.stringify(r[0]));
       return e;
-    },
+    }, "combine"),
   });
   function _F(r) {
     var e = r.facet(Io);
     return e.charCodeAt(0) == 9 ? r.tabSize * e.length : e.length;
   }
-  h(_F, "getIndentUnit");
+  a(_F, "getIndentUnit");
   function UF(r, e) {
     var t = "",
       i = r.tabSize,
@@ -21221,7 +21239,7 @@ function _ts_generator(thisArg, body) {
     for (var s = 0; s < e; s++) t += n;
     return t;
   }
-  h(UF, "indentString");
+  a(UF, "indentString");
   var Sr =
       ((_r60 = class r {
         static define(e, t) {
@@ -21234,7 +21252,7 @@ function _ts_generator(thisArg, body) {
             var u = ft.newName();
             return ((i || (i = Object.create(null)))["." + u] = l), u;
           }
-          h(n, "def");
+          a(n, "def");
           var s = typeof t.all == "string" ? t.all : t.all ? n(t.all) : void 0,
             o = t.scope;
           (this.scope = o instanceof ot ? (l) => l.prop(Ar) == o.data : o ? (l) => l == o : void 0),
@@ -21246,7 +21264,7 @@ function _ts_generator(thisArg, body) {
             (this.themeType = t.themeType);
         }
       }),
-      h(_r60, "HighlightStyle"),
+      a(_r60, "HighlightStyle"),
       _r60),
     bh = z.define(),
     LF = z.define({
@@ -21258,13 +21276,13 @@ function _ts_generator(thisArg, body) {
     var e = r.facet(bh);
     return e.length ? e : r.facet(LF);
   }
-  h(mh, "getHighlighters");
+  a(mh, "getHighlighters");
   function OF(r, e) {
     var t = [vk],
       i;
     return r instanceof Sr && (r.module && t.push(ie.styleModule.of(r.module)), (i = r.themeType)), (e === null || e === void 0 ? void 0 : e.fallback) ? t.push(LF.of(r)) : i ? t.push(bh.computeN([ie.darkTheme], (n) => (n.facet(ie.darkTheme) == (i == "dark") ? [r] : []))) : t.push(bh.of(r)), t;
   }
-  h(OF, "syntaxHighlighting");
+  a(OF, "syntaxHighlighting");
   var yh =
       ((_class84 = class _class {
         update(e) {
@@ -21317,10 +21335,10 @@ function _ts_generator(thisArg, body) {
           (this.markCache = Object.create(null)), (this.tree = Mi(e.state)), (this.decorations = this.buildDeco(e, mh(e.state))), (this.decoratedTo = e.viewport.to);
         }
       }),
-      h(_class84, "TreeHighlighter"),
+      a(_class84, "TreeHighlighter"),
       _class84),
-    vk = mr.high(je.fromClass(yh, { decorations: (r) => r.decorations })),
-    oQ = Sr.define([
+    vk = mr.high(je.fromClass(yh, { decorations: a((r) => r.decorations, "decorations") })),
+    aQ = Sr.define([
       { tag: U.meta, color: "#404740" },
       { tag: U.link, textDecoration: "underline" },
       { tag: U.heading, textDecoration: "underline", fontWeight: "bold" },
@@ -21356,7 +21374,7 @@ function _ts_generator(thisArg, body) {
       t = r.matched ? kk : Sk;
     return e.push(t.range(r.start.from, r.start.to)), r.end && e.push(t.range(r.end.from, r.end.to)), e;
   }
-  h(wk, "defaultRenderMatch");
+  a(wk, "defaultRenderMatch");
   var Qk = Pe.define({
       create() {
         return he.none;
@@ -21391,14 +21409,14 @@ function _ts_generator(thisArg, body) {
         }
         return he.set(t, !0);
       },
-      provide: (r) => ie.decorations.from(r),
+      provide: a((r) => ie.decorations.from(r), "provide"),
     }),
     _k = [Qk, Ak];
   function MF() {
     var r = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
     return [NF.of(r), _k];
   }
-  h(MF, "bracketMatching");
+  a(MF, "bracketMatching");
   var Uk = new ue();
   function Eh(r, e, t) {
     var i = r.prop(e < 0 ? ue.openedBy : ue.closedBy);
@@ -21409,12 +21427,12 @@ function _ts_generator(thisArg, body) {
     }
     return null;
   }
-  h(Eh, "matchingNodes");
+  a(Eh, "matchingNodes");
   function Ch(r) {
     var e = r.type.prop(Uk);
     return e ? e(r.node) : r;
   }
-  h(Ch, "findHandle");
+  a(Ch, "findHandle");
   function Tn(r, e, t) {
     var i = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : {};
     var n = i.maxScanDistance || TF,
@@ -21422,44 +21440,44 @@ function _ts_generator(thisArg, body) {
       o = Mi(r),
       l = o.resolveInner(e, t);
     for (var u = l; u; u = u.parent) {
-      var a = Eh(u.type, t, s);
-      if (a && u.from < u.to) {
+      var h = Eh(u.type, t, s);
+      if (h && u.from < u.to) {
         var c = Ch(u);
-        if (c && (t > 0 ? e >= c.from && e < c.to : e > c.from && e <= c.to)) return Lk(r, e, t, u, c, a, s);
+        if (c && (t > 0 ? e >= c.from && e < c.to : e > c.from && e <= c.to)) return Lk(r, e, t, u, c, h, s);
       }
     }
     return Ok(r, e, t, o, l.type, n, s);
   }
-  h(Tn, "matchBrackets");
+  a(Tn, "matchBrackets");
   function Lk(r, e, t, i, n, s, o) {
     var l = i.parent,
       u = { from: n.from, to: n.to },
-      a = 0,
+      h = 0,
       c = l === null || l === void 0 ? void 0 : l.cursor();
     if (c && (t < 0 ? c.childBefore(i.from) : c.childAfter(i.to)))
       do
         if (t < 0 ? c.to <= i.from : c.from >= i.to) {
-          if (a == 0 && s.indexOf(c.type.name) > -1 && c.from < c.to) {
+          if (h == 0 && s.indexOf(c.type.name) > -1 && c.from < c.to) {
             var f = Ch(c);
             return { start: u, end: f ? { from: f.from, to: f.to } : void 0, matched: !0 };
-          } else if (Eh(c.type, t, o)) a++;
+          } else if (Eh(c.type, t, o)) h++;
           else if (Eh(c.type, -t, o)) {
-            if (a == 0) {
+            if (h == 0) {
               var f1 = Ch(c);
               return { start: u, end: f1 && f1.from < f1.to ? { from: f1.from, to: f1.to } : void 0, matched: !1 };
             }
-            a--;
+            h--;
           }
         }
       while (t < 0 ? c.prevSibling() : c.nextSibling());
     return { start: u, matched: !1 };
   }
-  h(Lk, "matchMarkedBrackets");
+  a(Lk, "matchMarkedBrackets");
   function Ok(r, e, t, i, n, s, o) {
     var l = t < 0 ? r.sliceDoc(e - 1, e) : r.sliceDoc(e, e + 1),
       u = o.indexOf(l);
     if (u < 0 || (u % 2 == 0) != t > 0) return null;
-    var a = { from: t < 0 ? e - 1 : e, to: t > 0 ? e + 1 : e },
+    var h = { from: t < 0 ? e - 1 : e, to: t > 0 ? e + 1 : e },
       c = r.doc.iterRange(e, t > 0 ? r.doc.length : 0),
       f = 0;
     for (var d = 0; !c.next().done && d <= s; ) {
@@ -21471,15 +21489,15 @@ function _ts_generator(thisArg, body) {
         if (!(g < 0 || i.resolveInner(m + F, 1).type != n))
           if ((g % 2 == 0) == t > 0) f++;
           else {
-            if (f == 1) return { start: a, end: { from: m + F, to: m + F + 1 }, matched: g >> 1 == u >> 1 };
+            if (f == 1) return { start: h, end: { from: m + F, to: m + F + 1 }, matched: g >> 1 == u >> 1 };
             f--;
           }
       }
       t > 0 && (d += p.length);
     }
-    return c.done ? { start: a, matched: !1 } : null;
+    return c.done ? { start: h, matched: !1 } : null;
   }
-  h(Ok, "matchPlainBrackets");
+  a(Ok, "matchPlainBrackets");
   var Tk = Object.create(null),
     kF = [Ie.none];
   var SF = [],
@@ -21512,7 +21530,7 @@ function _ts_generator(thisArg, body) {
   function gh(r, e) {
     SF.indexOf(r) > -1 || (SF.push(r), console.warn(e));
   }
-  h(gh, "warnForPart");
+  a(gh, "warnForPart");
   function Nk(r, e) {
     var t = [];
     var _iteratorNormalCompletion = true,
@@ -21527,9 +21545,9 @@ function _ts_generator(thisArg, body) {
           _iteratorError1 = undefined;
         try {
           for (var _iterator1 = l.split(".")[Symbol.iterator](), _step1; !(_iteratorNormalCompletion1 = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion1 = true) {
-            var a = _step1.value;
-            var c = r[a] || U[a];
-            c ? (typeof c == "function" ? (u.length ? (u = u.map(c)) : gh(a, "Modifier ".concat(a, " used at start of tag"))) : u.length ? gh(a, "Tag ".concat(a, " used as modifier")) : (u = Array.isArray(c) ? c : [c])) : gh(a, "Unknown highlighting tag ".concat(a));
+            var h = _step1.value;
+            var c = r[h] || U[h];
+            c ? (typeof c == "function" ? (u.length ? (u = u.map(c)) : gh(h, "Modifier ".concat(h, " used at start of tag"))) : u.length ? gh(h, "Tag ".concat(h, " used as modifier")) : (u = Array.isArray(c) ? c : [c])) : gh(h, "Unknown highlighting tag ".concat(h));
           }
         } catch (err) {
           _didIteratorError1 = true;
@@ -21550,8 +21568,8 @@ function _ts_generator(thisArg, body) {
           _iteratorError2 = undefined;
         try {
           for (var _iterator2 = u[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var a1 = _step2.value;
-            t.push(a1);
+            var h1 = _step2.value;
+            t.push(h1);
           }
         } catch (err) {
           _didIteratorError2 = true;
@@ -21590,14 +21608,14 @@ function _ts_generator(thisArg, body) {
     var o = (wF[n] = Ie.define({ id: kF.length, name: i, props: [No({ [i]: t })] }));
     return kF.push(o), o.id;
   }
-  h(Nk, "createTokenType");
-  var lQ = { rtl: he.mark({ class: "cm-iso", inclusive: !0, attributes: { dir: "rtl" }, bidiIsolate: Be.RTL }), ltr: he.mark({ class: "cm-iso", inclusive: !0, attributes: { dir: "ltr" }, bidiIsolate: Be.LTR }), auto: he.mark({ class: "cm-iso", inclusive: !0, attributes: { dir: "auto" }, bidiIsolate: null }) };
+  a(Nk, "createTokenType");
+  var hQ = { rtl: he.mark({ class: "cm-iso", inclusive: !0, attributes: { dir: "rtl" }, bidiIsolate: Be.RTL }), ltr: he.mark({ class: "cm-iso", inclusive: !0, attributes: { dir: "ltr" }, bidiIsolate: Be.LTR }), auto: he.mark({ class: "cm-iso", inclusive: !0, attributes: { dir: "auto" }, bidiIsolate: null }) };
   var xh = ct.define(),
     Mk = ct.define(),
     Pk = z.define(),
     PF = z.define({
       combine(r) {
-        return Kt(r, { minDepth: 100, newGroupDelay: 500, joinToEvent: (e, t) => t }, { minDepth: Math.max, newGroupDelay: Math.min, joinToEvent: (e, t) => (i, n) => e(i, n) || t(i, n) });
+        return Kt(r, { minDepth: 100, newGroupDelay: 500, joinToEvent: a((e, t) => t, "joinToEvent") }, { minDepth: Math.max, newGroupDelay: Math.min, joinToEvent: a((e, t) => (i, n) => e(i, n) || t(i, n), "joinToEvent") });
       },
     }),
     IF = Pe.define({
@@ -21609,9 +21627,9 @@ function _ts_generator(thisArg, body) {
           i = e.annotation(xh);
         if (i) {
           var u = St.fromTransaction(e, i.selection),
-            a = i.side,
-            c = a == 0 ? r.undone : r.done;
-          return u ? (c = $o(c, c.length, t.minDepth, u)) : (c = WF(c, e.startState.selection)), new Pi(a == 0 ? i.rest : c, a == 0 ? c : i.rest);
+            h = i.side,
+            c = h == 0 ? r.undone : r.done;
+          return u ? (c = $o(c, c.length, t.minDepth, u)) : (c = WF(c, e.startState.selection)), new Pi(h == 0 ? i.rest : c, h == 0 ? c : i.rest);
         }
         var n = e.annotation(Mk);
         if (((n == "full" || n == "before") && (r = r.isolate()), e.annotation(Le.addToHistory) === !1)) return e.changes.empty ? r : r.addMapping(e.changes.desc);
@@ -21640,7 +21658,7 @@ function _ts_generator(thisArg, body) {
       }),
     ];
   }
-  h($F, "history");
+  a($F, "history");
   function qo(r, e) {
     return function (param) {
       var t = param.state,
@@ -21652,7 +21670,7 @@ function _ts_generator(thisArg, body) {
       return s ? (i(s), !0) : !1;
     };
   }
-  h(qo, "cmd");
+  a(qo, "cmd");
   var qF = qo(0, !1),
     vh = qo(1, !1),
     Ik = qo(0, !0),
@@ -21703,14 +21721,14 @@ function _ts_generator(thisArg, body) {
         (this.changes = e), (this.effects = t), (this.mapped = i), (this.startSelection = n), (this.selectionsAfter = s);
       }
     }),
-    h(_r61, "HistEvent"),
+    a(_r61, "HistEvent"),
     _r61);
   function $o(r, e, t, i) {
     var n = e + 1 > t + 20 ? e - t - 1 : 0,
       s = r.slice(n, e);
     return s.push(i), s;
   }
-  h($o, "updateBranch");
+  a($o, "updateBranch");
   function qk(r, e) {
     var t = [],
       i = !1;
@@ -21718,23 +21736,23 @@ function _ts_generator(thisArg, body) {
       r.iterChangedRanges((n, s) => t.push(n, s)),
       e.iterChangedRanges((n, s, o, l) => {
         for (var u = 0; u < t.length; ) {
-          var a = t[u++],
+          var h = t[u++],
             c = t[u++];
-          l >= a && o <= c && (i = !0);
+          l >= h && o <= c && (i = !0);
         }
       }),
       i
     );
   }
-  h(qk, "isAdjacent");
+  a(qk, "isAdjacent");
   function Vk(r, e) {
     return r.ranges.length == e.ranges.length && r.ranges.filter((t, i) => t.empty != e.ranges[i].empty).length === 0;
   }
-  h(Vk, "eqSelectionShape");
+  a(Vk, "eqSelectionShape");
   function VF(r, e) {
     return r.length ? (e.length ? r.concat(e) : r) : e;
   }
-  h(VF, "conc");
+  a(VF, "conc");
   var gt = [],
     Wk = 200;
   function WF(r, e) {
@@ -21744,13 +21762,13 @@ function _ts_generator(thisArg, body) {
       return i.length && i[i.length - 1].eq(e) ? r : (i.push(e), $o(r, r.length - 1, 1e9, t.setSelAfter(i)));
     } else return [St.selection([e])];
   }
-  h(WF, "addSelection");
+  a(WF, "addSelection");
   function zk(r) {
     var e = r[r.length - 1],
       t = r.slice();
     return (t[r.length - 1] = e.setSelAfter(e.selectionsAfter.slice(0, e.selectionsAfter.length - 1))), t;
   }
-  h(zk, "popSelection");
+  a(zk, "popSelection");
   function Bh(r, e) {
     if (!r.length) return r;
     var t = r.length,
@@ -21764,7 +21782,7 @@ function _ts_generator(thisArg, body) {
     }
     return i.length ? [St.selection(i)] : gt;
   }
-  h(Bh, "addMappingToBranch");
+  a(Bh, "addMappingToBranch");
   function Hk(r, e, t) {
     var i = VF(r.selectionsAfter.length ? r.selectionsAfter.map((l) => l.map(e)) : gt, t);
     if (!r.changes) return St.selection(i);
@@ -21773,7 +21791,7 @@ function _ts_generator(thisArg, body) {
       o = r.mapped ? r.mapped.composeDesc(s) : s;
     return new St(n, pe.mapEffects(r.effects, e), o, r.startSelection.map(s), i);
   }
-  h(Hk, "mapEvent");
+  a(Hk, "mapEvent");
   var jk = /^(input\.type|delete)($|\.)/,
     Pi =
       ((_r62 = class r {
@@ -21814,7 +21832,7 @@ function _ts_generator(thisArg, body) {
           (this.done = e), (this.undone = t), (this.prevTime = i), (this.prevUserEvent = n);
         }
       }),
-      h(_r62, "HistoryState"),
+      a(_r62, "HistoryState"),
       _r62);
   Pi.empty = new Pi(gt, gt);
   var zF = [
@@ -21824,7 +21842,7 @@ function _ts_generator(thisArg, body) {
     { key: "Mod-u", run: Ik, preventDefault: !0 },
     { key: "Alt-u", mac: "Mod-Shift-u", run: $k, preventDefault: !0 },
   ];
-  var DQ = typeof Intl < "u" && Intl.Segmenter ? new Intl.Segmenter(void 0, { granularity: "word" }) : null;
+  var yQ = typeof Intl < "u" && Intl.Segmenter ? new Intl.Segmenter(void 0, { granularity: "word" }) : null;
   function HF(r, e) {
     var t = -1;
     return r.changeByRange((i) => {
@@ -21837,8 +21855,8 @@ function _ts_generator(thisArg, body) {
       return { changes: n, range: Z.range(s.mapPos(i.anchor, 1), s.mapPos(i.head, 1)) };
     });
   }
-  h(HF, "changeBySelectedLine");
-  var Yk = h((param) => {
+  a(HF, "changeBySelectedLine");
+  var Yk = a((param) => {
       var r = param.state,
         e = param.dispatch;
       return r.readOnly
@@ -21853,7 +21871,7 @@ function _ts_generator(thisArg, body) {
           ),
           !0);
     }, "indentMore"),
-    Jk = h((param) => {
+    Jk = a((param) => {
       var r = param.state,
         e = param.dispatch;
       return r.readOnly
@@ -21891,7 +21909,7 @@ function _ts_generator(thisArg, body) {
     for (; e < arguments.length; e++) YF(r, arguments[e]);
     return r;
   }
-  h(Dt, "crelt");
+  a(Dt, "crelt");
   function YF(r, e) {
     if (typeof e == "string") r.appendChild(document.createTextNode(e));
     else if (e != null)
@@ -21899,14 +21917,14 @@ function _ts_generator(thisArg, body) {
       else if (Array.isArray(e)) for (var t = 0; t < e.length; t++) YF(r, e[t]);
       else throw new RangeError("Unsupported child node: " + e);
   }
-  h(YF, "add");
+  a(YF, "add");
   var Ah =
       ((_class85 = class _class {
         constructor(e, t, i) {
           (this.from = e), (this.to = t), (this.diagnostic = i);
         }
       }),
-      h(_class85, "SelectedDiagnostic"),
+      a(_class85, "SelectedDiagnostic"),
       _class85),
     Ii =
       ((_r63 = class r {
@@ -21924,7 +21942,7 @@ function _ts_generator(thisArg, body) {
           (this.diagnostics = e), (this.panel = t), (this.selected = i);
         }
       }),
-      h(_r63, "LintState"),
+      a(_r63, "LintState"),
       _r63);
   function wr(r) {
     var e = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : null,
@@ -21938,7 +21956,7 @@ function _ts_generator(thisArg, body) {
       i
     );
   }
-  h(wr, "findDiagnostic");
+  a(wr, "findDiagnostic");
   function Gk(r, e) {
     var t = e.pos,
       i = e.end || t,
@@ -21947,15 +21965,15 @@ function _ts_generator(thisArg, body) {
     var s = r.startState.doc.lineAt(e.pos);
     return !!(r.effects.some((o) => o.is(Sh)) || r.changes.touchesRange(s.from, Math.max(s.to, i)));
   }
-  h(Gk, "hideTooltip");
+  a(Gk, "hideTooltip");
   function Xk(r, e) {
     return r.field(wt, !1) ? e : e.concat(pe.appendConfig.of(t1));
   }
-  h(Xk, "maybeEnableLint");
+  a(Xk, "maybeEnableLint");
   function Kk(r, e) {
     return { effects: Xk(r, [Sh.of(e)]) };
   }
-  h(Kk, "setDiagnostics");
+  a(Kk, "setDiagnostics");
   var Sh = pe.define(),
     GF = pe.define(),
     XF = pe.define(),
@@ -22001,7 +22019,7 @@ function _ts_generator(thisArg, body) {
         }
         return r;
       },
-      provide: (r) => [xo.from(r, (e) => e.panel), ie.decorations.from(r, (e) => e.diagnostics)],
+      provide: a((r) => [xo.from(r, (e) => e.panel), ie.decorations.from(r, (e) => e.diagnostics)], "provide"),
     });
   var Zk = he.mark({ class: "cm-lintRange cm-lintRange-active" });
   function eS(r, e, t) {
@@ -22010,9 +22028,9 @@ function _ts_generator(thisArg, body) {
       n = [],
       s = 2e8,
       o = 0;
-    i.between(e - (t < 0 ? 1 : 0), e + (t > 0 ? 1 : 0), (u, a, param) => {
+    i.between(e - (t < 0 ? 1 : 0), e + (t > 0 ? 1 : 0), (u, h, param) => {
       var c = param.spec;
-      e >= u && e <= a && (u == a || ((e > u || t > 0) && (e < a || t < 0))) && (n.push(c.diagnostic), (s = Math.min(u, s)), (o = Math.max(a, o)));
+      e >= u && e <= h && (u == h || ((e > u || t > 0) && (e < h || t < 0))) && (n.push(c.diagnostic), (s = Math.min(u, s)), (o = Math.max(h, o)));
     });
     var l = r.state.facet(qt).tooltipFilter;
     return (
@@ -22029,7 +22047,7 @@ function _ts_generator(thisArg, body) {
         : null
     );
   }
-  h(eS, "lintTooltip");
+  a(eS, "lintTooltip");
   function tS(r, e) {
     return Dt(
       "ul",
@@ -22037,8 +22055,8 @@ function _ts_generator(thisArg, body) {
       e.map((t) => e11(r, t, !1)),
     );
   }
-  h(tS, "diagnosticsTooltip");
-  var JF = h((r) => {
+  a(tS, "diagnosticsTooltip");
+  var JF = a((r) => {
     var e = r.state.field(wt, !1);
     return !e || !e.panel ? !1 : (r.dispatch({ effects: GF.of(!1) }), !0);
   }, "closeLintPanel");
@@ -22090,8 +22108,8 @@ function _ts_generator(thisArg, body) {
           { sources: r.map((e) => e.source).filter((e) => e != null) },
           Kt(
             r.map((e) => e.config),
-            { delay: 750, markerFilter: null, tooltipFilter: null, needsRefresh: null, hideOn: () => null },
-            { needsRefresh: (e, t) => (e ? (t ? (i) => e(i) || t(i) : e) : t) },
+            { delay: 750, markerFilter: null, tooltipFilter: null, needsRefresh: null, hideOn: a(() => null, "hideOn") },
+            { needsRefresh: a((e, t) => (e ? (t ? (i) => e(i) || t(i) : e) : t), "needsRefresh") },
           ),
         );
       },
@@ -22100,7 +22118,7 @@ function _ts_generator(thisArg, body) {
     var e = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
     return [qt.of({ source: r, config: e }), iS, t1];
   }
-  h(KF, "linter");
+  a(KF, "linter");
   function ZF(r) {
     var e = [];
     var _iteratorNormalCompletion = true,
@@ -22143,7 +22161,7 @@ function _ts_generator(thisArg, body) {
       }
     return e;
   }
-  h(ZF, "assignKeys");
+  a(ZF, "assignKeys");
   function e11(r, e, t) {
     var i;
     var n = t ? ZF(e.actions) : [];
@@ -22155,21 +22173,21 @@ function _ts_generator(thisArg, body) {
         ? void 0
         : i.map((s, o) => {
             var l = !1,
-              u = h((d) => {
+              u = a((d) => {
                 if ((d.preventDefault(), l)) return;
                 l = !0;
                 var p = wr(r.state.field(wt).diagnostics, e);
                 p && s.apply(r, p.from, p.to);
               }, "click"),
-              a = s.name,
-              c = n[o] ? a.indexOf(n[o]) : -1,
-              f = c < 0 ? a : [a.slice(0, c), Dt("u", a.slice(c, c + 1)), a.slice(c + 1)];
-            return Dt("button", { type: "button", class: "cm-diagnosticAction", onclick: u, onmousedown: u, "aria-label": " Action: ".concat(a).concat(c < 0 ? "" : ' (access key "'.concat(n[o], ')"'), ".") }, f);
+              h = s.name,
+              c = n[o] ? h.indexOf(n[o]) : -1,
+              f = c < 0 ? h : [h.slice(0, c), Dt("u", h.slice(c, c + 1)), h.slice(c + 1)];
+            return Dt("button", { type: "button", class: "cm-diagnosticAction", onclick: u, onmousedown: u, "aria-label": " Action: ".concat(h).concat(c < 0 ? "" : ' (access key "'.concat(n[o], ')"'), ".") }, f);
           }),
       e.source && Dt("div", { class: "cm-diagnosticSource" }, e.source),
     );
   }
-  h(e11, "renderDiagnostic");
+  a(e11, "renderDiagnostic");
   var kh =
       ((_class86 = class _class extends di {
         eq(e) {
@@ -22182,7 +22200,7 @@ function _ts_generator(thisArg, body) {
           super(), (this.diagnostic = e);
         }
       }),
-      h(_class86, "DiagnosticWidget"),
+      a(_class86, "DiagnosticWidget"),
       _class86),
     Wo =
       ((_class87 = class _class {
@@ -22190,7 +22208,7 @@ function _ts_generator(thisArg, body) {
           (this.diagnostic = t), (this.id = "item_" + Math.floor(Math.random() * 4294967295).toString(16)), (this.dom = e11(e, t, !0)), (this.dom.id = this.id), this.dom.setAttribute("role", "option");
         }
       }),
-      h(_class87, "PanelItem"),
+      a(_class87, "PanelItem"),
       _class87),
     zo =
       ((_r64 = class r {
@@ -22210,14 +22228,14 @@ function _ts_generator(thisArg, body) {
           for (
             e.between(0, this.view.state.doc.length, (o, l, param) => {
               var u = param.spec;
-              var a = -1,
+              var h = -1,
                 c;
               for (var f = i; f < this.items.length; f++)
                 if (this.items[f].diagnostic == u.diagnostic) {
-                  a = f;
+                  h = f;
                   break;
                 }
-              a < 0 ? ((c = new Wo(this.view, u.diagnostic)), this.items.splice(i, 0, c), (n = !0)) : ((c = this.items[a]), a > i && (this.items.splice(i, a - i), (n = !0))), t && c.diagnostic == t.diagnostic ? c.dom.hasAttribute("aria-selected") || (c.dom.setAttribute("aria-selected", "true"), (s = c)) : c.dom.hasAttribute("aria-selected") && c.dom.removeAttribute("aria-selected"), i++;
+              h < 0 ? ((c = new Wo(this.view, u.diagnostic)), this.items.splice(i, 0, c), (n = !0)) : ((c = this.items[h]), h > i && (this.items.splice(i, h - i), (n = !0))), t && c.diagnostic == t.diagnostic ? c.dom.hasAttribute("aria-selected") || (c.dom.setAttribute("aria-selected", "true"), (s = c)) : c.dom.hasAttribute("aria-selected") && c.dom.removeAttribute("aria-selected"), i++;
             });
             i < this.items.length && !(this.items.length == 1 && this.items[0].diagnostic.from < 0);
 
@@ -22228,13 +22246,13 @@ function _ts_generator(thisArg, body) {
               ? (this.list.setAttribute("aria-activedescendant", s.id),
                 this.view.requestMeasure({
                   key: this,
-                  read: () => ({ sel: s.dom.getBoundingClientRect(), panel: this.list.getBoundingClientRect() }),
-                  write: (param) => {
+                  read: a(() => ({ sel: s.dom.getBoundingClientRect(), panel: this.list.getBoundingClientRect() }), "read"),
+                  write: a((param) => {
                     var o = param.sel,
                       l = param.panel;
                     var u = l.height / this.list.offsetHeight;
                     o.top < l.top ? (this.list.scrollTop -= (l.top - o.top) / u) : o.bottom > l.bottom && (this.list.scrollTop += (o.bottom - l.bottom) / u);
-                  },
+                  }, "write"),
                 }))
               : this.selectedIndex < 0 && this.list.removeAttribute("aria-activedescendant"),
             n && this.sync();
@@ -22245,7 +22263,7 @@ function _ts_generator(thisArg, body) {
             var i = e;
             (e = i.nextSibling), i.remove();
           }
-          h(t, "rm");
+          a(t, "rm");
           var _iteratorNormalCompletion = true,
             _didIteratorError = false,
             _iteratorError = undefined;
@@ -22284,7 +22302,7 @@ function _ts_generator(thisArg, body) {
         }
         constructor(e) {
           (this.view = e), (this.items = []);
-          var t = h((n) => {
+          var t = a((n) => {
               if (n.keyCode == 27) JF(this.view), this.view.focus();
               else if (n.keyCode == 38 || n.keyCode == 33) this.moveSelection((this.selectedIndex - 1 + this.items.length) % this.items.length);
               else if (n.keyCode == 40 || n.keyCode == 34) this.moveSelection((this.selectedIndex + 1) % this.items.length);
@@ -22303,23 +22321,23 @@ function _ts_generator(thisArg, body) {
               } else return;
               n.preventDefault();
             }, "onkeydown"),
-            i = h((n) => {
+            i = a((n) => {
               for (var s = 0; s < this.items.length; s++) this.items[s].dom.contains(n.target) && this.moveSelection(s);
             }, "onclick");
-          (this.list = Dt("ul", { tabIndex: 0, role: "listbox", "aria-label": this.view.state.phrase("Diagnostics"), onkeydown: t, onclick: i })), (this.dom = Dt("div", { class: "cm-panel-lint" }, this.list, Dt("button", { type: "button", name: "close", "aria-label": this.view.state.phrase("close"), onclick: () => JF(this.view) }, "\xd7"))), this.update();
+          (this.list = Dt("ul", { tabIndex: 0, role: "listbox", "aria-label": this.view.state.phrase("Diagnostics"), onkeydown: t, onclick: i })), (this.dom = Dt("div", { class: "cm-panel-lint" }, this.list, Dt("button", { type: "button", name: "close", "aria-label": this.view.state.phrase("close"), onclick: a(() => JF(this.view), "onclick") }, "\xd7"))), this.update();
         }
       }),
-      h(_r64, "LintPanel"),
+      a(_r64, "LintPanel"),
       _r64);
   function rS(r) {
     var e = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 'viewBox="0 0 40 40"';
     return 'url(\'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" '.concat(e, ">").concat(encodeURIComponent(r), "</svg>')");
   }
-  h(rS, "svg");
+  a(rS, "svg");
   function Vo(r) {
     return rS('<path d="m0 2.5 l2 -1.5 l1 0 l2 1.5 l1 0" stroke="'.concat(r, '" fill="none" stroke-width=".7"/>'), 'width="6" height="3"');
   }
-  h(Vo, "underline");
+  a(Vo, "underline");
   var nS = ie.baseTheme({
     ".cm-diagnostic": { padding: "3px 6px 3px 8px", marginLeft: "-1px", display: "block", whiteSpace: "pre-wrap" },
     ".cm-diagnostic-error": { borderLeft: "5px solid #d11" },
@@ -22383,12 +22401,12 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(sS, "create_fragment");
+  a(sS, "create_fragment");
   function oS(r, e, t) {
     var i,
       n = !1,
       s = e.bibtex,
-      o = h(
+      o = a(
         /*#__PURE__*/ _async_to_generator(function () {
           var e;
           return _ts_generator(this, function (_state) {
@@ -22417,14 +22435,14 @@ function _ts_generator(thisArg, body) {
       [n, o, s]
     );
   }
-  h(oS, "instance");
+  a(oS, "instance");
   var wh =
       ((_class88 = class _class extends se {
         constructor(e) {
           super(), le(this, e, oS, sS, oe, { bibtex: 2 });
         }
       }),
-      h(_class88, "CopyButton"),
+      a(_class88, "CopyButton"),
       _class88),
     i1 = wh;
   var _h =
@@ -22459,8 +22477,8 @@ function _ts_generator(thisArg, body) {
           }
           var l = this.stack.length - (i - 1) * 3 - (e & 262144 ? 6 : 0),
             u = l ? this.stack[l - 2] : this.p.ranges[0].from,
-            a = this.reducePos - u;
-          a >= 2e3 && !(!((t = this.p.parser.nodeSet.types[n]) === null || t === void 0) && t.isAnonymous) && (u == this.p.lastBigReductionStart ? (this.p.bigReductionCount++, (this.p.lastBigReductionSize = a)) : this.p.lastBigReductionSize < a && ((this.p.bigReductionCount = 1), (this.p.lastBigReductionStart = u), (this.p.lastBigReductionSize = a)));
+            h = this.reducePos - u;
+          h >= 2e3 && !(!((t = this.p.parser.nodeSet.types[n]) === null || t === void 0) && t.isAnonymous) && (u == this.p.lastBigReductionStart ? (this.p.bigReductionCount++, (this.p.lastBigReductionSize = h)) : this.p.lastBigReductionSize < h && ((this.p.bigReductionCount = 1), (this.p.lastBigReductionStart = u), (this.p.lastBigReductionSize = h)));
           var c = l ? this.stack[l - 1] : 0,
             f = this.bufferBase + this.buffer.length - c;
           if (n < s.minRepeatTerm || e & 131072) {
@@ -22581,7 +22599,7 @@ function _ts_generator(thisArg, body) {
           var _this_p = this.p,
             e = _this_p.parser,
             t = [],
-            i = h((n, s) => {
+            i = a((n, s) => {
               if (!t.includes(n))
                 return (
                   t.push(n),
@@ -22591,8 +22609,8 @@ function _ts_generator(thisArg, body) {
                         var l = (o >> 19) - s;
                         if (l > 1) {
                           var u = o & 65535,
-                            a = this.stack.length - l * 3;
-                          if (a >= 0 && e.getGoto(this.stack[a], u, !1) >= 0) return (l << 19) | 65536 | u;
+                            h = this.stack.length - l * 3;
+                          if (h >= 0 && e.getGoto(this.stack[h], u, !1) >= 0) return (l << 19) | 65536 | u;
                         }
                       } else {
                         var l1 = i(o, s + 1);
@@ -22657,12 +22675,12 @@ function _ts_generator(thisArg, body) {
         close() {
           this.curContext && this.curContext.tracker.strict && this.emitContext(), this.lookAhead > 0 && this.emitLookAhead();
         }
-        constructor(e, t, i, n, s, o, l, u, a, ref, f) {
+        constructor(e, t, i, n, s, o, l, u, h, ref, f) {
           var c = ref === void 0 ? 0 : ref;
-          (this.p = e), (this.stack = t), (this.state = i), (this.reducePos = n), (this.pos = s), (this.score = o), (this.buffer = l), (this.bufferBase = u), (this.curContext = a), (this.lookAhead = c), (this.parent = f);
+          (this.p = e), (this.stack = t), (this.state = i), (this.reducePos = n), (this.pos = s), (this.score = o), (this.buffer = l), (this.bufferBase = u), (this.curContext = h), (this.lookAhead = c), (this.parent = f);
         }
       }),
-      h(_r65, "Stack"),
+      a(_r65, "Stack"),
       _r65),
     Ho =
       ((_class89 = class _class {
@@ -22670,7 +22688,7 @@ function _ts_generator(thisArg, body) {
           (this.tracker = e), (this.context = t), (this.hash = e.strict ? e.hash(t) : 0);
         }
       }),
-      h(_class89, "StackContext"),
+      a(_class89, "StackContext"),
       _class89),
     Uh =
       ((_class90 = class _class {
@@ -22685,7 +22703,7 @@ function _ts_generator(thisArg, body) {
           (this.start = e), (this.state = e.state), (this.stack = e.stack), (this.base = this.stack.length);
         }
       }),
-      h(_class90, "SimulatedStack"),
+      a(_class90, "SimulatedStack"),
       _class90),
     Lh =
       ((_r66 = class r {
@@ -22719,7 +22737,7 @@ function _ts_generator(thisArg, body) {
           (this.stack = e), (this.pos = t), (this.index = i), (this.buffer = e.buffer), this.index == 0 && this.maybeNext();
         }
       }),
-      h(_r66, "StackBufferCursor"),
+      a(_r66, "StackBufferCursor"),
       _r66);
   function Nn(r) {
     var e = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : Uint16Array;
@@ -22743,14 +22761,14 @@ function _ts_generator(thisArg, body) {
     }
     return t;
   }
-  h(Nn, "decodeArray");
+  a(Nn, "decodeArray");
   var Qr =
       ((_class91 = class _class {
         constructor() {
           (this.start = -1), (this.value = -1), (this.end = -1), (this.extended = -1), (this.lookAhead = 0), (this.mask = 0), (this.context = 0);
         }
       }),
-      h(_class91, "CachedToken"),
+      a(_class91, "CachedToken"),
       _class91),
     r11 = new Qr(),
     Oh =
@@ -22891,7 +22909,7 @@ function _ts_generator(thisArg, body) {
           (this.input = e), (this.ranges = t), (this.chunk = ""), (this.chunkOff = 0), (this.chunk2 = ""), (this.chunk2Pos = 0), (this.next = -1), (this.token = r11), (this.rangeIndex = 0), (this.pos = this.chunkPos = t[0].from), (this.range = t[0]), (this.end = t[t.length - 1].to), this.readNext();
         }
       }),
-      h(_class92, "InputStream"),
+      a(_class92, "InputStream"),
       _class92),
     bi =
       ((_class93 = class _class {
@@ -22904,7 +22922,7 @@ function _ts_generator(thisArg, body) {
           (this.data = e), (this.id = t);
         }
       }),
-      h(_class93, "TokenGroup"),
+      a(_class93, "TokenGroup"),
       _class93);
   bi.prototype.contextual = bi.prototype.fallback = bi.prototype.extend = !1;
   var Th =
@@ -22926,7 +22944,7 @@ function _ts_generator(thisArg, body) {
         (this.precTable = t), (this.elseToken = i), (this.data = typeof e == "string" ? Nn(e) : e);
       }
     }),
-    h(_class94, "LocalTokenGroup"),
+    a(_class94, "LocalTokenGroup"),
     _class94);
   Th.prototype.contextual = bi.prototype.fallback = bi.prototype.extend = !1;
   function u1(r, e, t, i, n, s) {
@@ -22935,8 +22953,8 @@ function _ts_generator(thisArg, body) {
       _t_p_parser = t.p.parser,
       u = _t_p_parser.dialect;
     e: for (; l & r[o]; ) {
-      var a = r[o + 1];
-      for (var p = o + 3; p < a; p += 2)
+      var h = r[o + 1];
+      for (var p = o + 3; p < h; p += 2)
         if ((r[p + 1] & l) > 0) {
           var m = r[p];
           if (u.allows(m) && (e.token.value == -1 || e.token.value == m || uS(m, e.token.value, n, s))) {
@@ -22947,13 +22965,13 @@ function _ts_generator(thisArg, body) {
       var c = e.next,
         f = 0,
         d = r[o + 2];
-      if (e.next < 0 && d > f && r[a + d * 3 - 3] == 65535 && r[a + d * 3 - 3] == 65535) {
-        o = r[a + d * 3 - 1];
+      if (e.next < 0 && d > f && r[h + d * 3 - 3] == 65535 && r[h + d * 3 - 3] == 65535) {
+        o = r[h + d * 3 - 1];
         continue e;
       }
       for (; f < d; ) {
         var p1 = (f + d) >> 1,
-          m1 = a + p1 + (p1 << 1),
+          m1 = h + p1 + (p1 << 1),
           F = r[m1],
           D = r[m1 + 1] || 65536;
         if (c < F) d = p1;
@@ -22966,17 +22984,17 @@ function _ts_generator(thisArg, body) {
       break;
     }
   }
-  h(u1, "readToken");
+  a(u1, "readToken");
   function n1(r, e, t) {
     for (var i = e, n; (n = r[i]) != 65535; i++) if (n == t) return i - e;
     return -1;
   }
-  h(n1, "findOffset");
+  a(n1, "findOffset");
   function uS(r, e, t, i) {
     var n = n1(t, i, e);
     return n < 0 || n1(t, i, r) < n;
   }
-  h(uS, "overrides");
+  a(uS, "overrides");
   var lt = typeof process < "u" && process.env && /\bparse\b/.test(process.env.LOG),
     Qh = null;
   function s1(r, e, t) {
@@ -22989,7 +23007,7 @@ function _ts_generator(thisArg, body) {
           if (!i.parent()) return t < 0 ? 0 : r.length;
         }
   }
-  h(s1, "cutAt");
+  a(s1, "cutAt");
   var Rh =
       ((_class95 = class _class {
         nextFragment() {
@@ -23032,7 +23050,7 @@ function _ts_generator(thisArg, body) {
           (this.fragments = e), (this.nodeSet = t), (this.i = 0), (this.fragment = null), (this.safeFrom = -1), (this.safeTo = -1), (this.trees = []), (this.start = []), (this.index = []), this.nextFragment();
         }
       }),
-      h(_class95, "FragmentCursor"),
+      a(_class95, "FragmentCursor"),
       _class95),
     Nh =
       ((_class96 = class _class {
@@ -23045,10 +23063,10 @@ function _ts_generator(thisArg, body) {
             o = n.stateSlot(e.state, 3),
             l = e.curContext ? e.curContext.hash : 0,
             u = 0;
-          for (var a = 0; a < s.length; a++) {
-            if (!((1 << a) & o)) continue;
-            var c = s[a],
-              f = this.tokens[a];
+          for (var h = 0; h < s.length; h++) {
+            if (!((1 << h) & o)) continue;
+            var c = s[h],
+              f = this.tokens[h];
             if (!(i && !c.fallback) && ((c.contextual || f.start != e.pos || f.mask != o || f.context != l) && (this.updateCachedToken(f, c, e), (f.mask = o), (f.context = l)), f.lookAhead > f.end + 25 && (u = Math.max(f.lookAhead, u)), f.value != 0)) {
               var d = t;
               if ((f.extended > -1 && (t = this.addActions(e, f.extended, f.end, t)), (t = this.addActions(e, f.value, f.end, t)), !c.extend && ((i = f), t > d))) break;
@@ -23089,14 +23107,14 @@ function _ts_generator(thisArg, body) {
             o = _e_p.parser,
             l = o.data;
           for (var u = 0; u < 2; u++)
-            for (var a = o.stateSlot(s, u ? 2 : 1); ; a += 3) {
-              if (l[a] == 65535)
-                if (l[a + 1] == 1) a = ti(l, a + 2);
+            for (var h = o.stateSlot(s, u ? 2 : 1); ; h += 3) {
+              if (l[h] == 65535)
+                if (l[h + 1] == 1) h = ti(l, h + 2);
                 else {
-                  n == 0 && l[a + 1] == 2 && (n = this.putAction(ti(l, a + 2), t, i, n));
+                  n == 0 && l[h + 1] == 2 && (n = this.putAction(ti(l, h + 2), t, i, n));
                   break;
                 }
-              l[a] == t && (n = this.putAction(ti(l, a + 1), t, i, n));
+              l[h] == t && (n = this.putAction(ti(l, h + 1), t, i, n));
             }
           return n;
         }
@@ -23104,7 +23122,7 @@ function _ts_generator(thisArg, body) {
           (this.stream = t), (this.tokens = []), (this.mainToken = null), (this.actions = []), (this.tokens = e.tokenizers.map((i) => new Qr()));
         }
       }),
-      h(_class96, "TokenCache"),
+      a(_class96, "TokenCache"),
       _class96),
     Mh =
       ((_class97 = class _class {
@@ -23156,9 +23174,9 @@ function _ts_generator(thisArg, body) {
             e: for (var o5 = 0; o5 < i.length - 1; o5++) {
               var l1 = i[o5];
               for (var u1 = o5 + 1; u1 < i.length; u1++) {
-                var a = i[u1];
-                if (l1.sameState(a) || (l1.buffer.length > 500 && a.buffer.length > 500))
-                  if ((l1.score - a.score || l1.buffer.length - a.buffer.length) > 0) i.splice(u1--, 1);
+                var h = i[u1];
+                if (l1.sameState(h) || (l1.buffer.length > 500 && h.buffer.length > 500))
+                  if ((l1.score - h.score || l1.buffer.length - h.buffer.length) > 0) i.splice(u1--, 1);
                   else {
                     i.splice(o5--, 1);
                     continue e;
@@ -23182,11 +23200,11 @@ function _ts_generator(thisArg, body) {
             o = lt ? this.stackID(e) + " -> " : "";
           if (this.stoppedAt != null && n > this.stoppedAt) return e.forceReduce() ? e : null;
           if (this.fragments) {
-            var a = e.curContext && e.curContext.tracker.strict,
-              c = a ? e.curContext.hash : 0;
+            var h = e.curContext && e.curContext.tracker.strict,
+              c = h ? e.curContext.hash : 0;
             for (var f = this.fragments.nodeAt(n); f; ) {
               var d = this.parser.nodeSet.types[f.type.id] == f.type ? s.getGoto(e.state, f.type.id) : -1;
-              if (d > -1 && f.length && (!a || (f.prop(ue.contextHash) || 0) == c)) return e.useNode(f, d), lt && console.log(o + this.stackID(e) + " (via reuse of ".concat(s.getName(f.type.id), ")")), !0;
+              if (d > -1 && f.length && (!h || (f.prop(ue.contextHash) || 0) == c)) return e.useNode(f, d), lt && console.log(o + this.stackID(e) + " (via reuse of ".concat(s.getName(f.type.id), ")")), !0;
               if (!(f instanceof Qe) || f.children.length == 0 || f.positions[0] > 0) break;
               var p = f.children[0];
               if (p instanceof Qe && f.positions[0] == 0) f = p;
@@ -23197,11 +23215,11 @@ function _ts_generator(thisArg, body) {
           if (l > 0) return e.reduce(l), lt && console.log(o + this.stackID(e) + " (via always-reduce ".concat(s.getName(l & 65535), ")")), !0;
           if (e.stack.length >= 15e3) for (; e.stack.length > 9e3 && e.forceReduce(); );
           var u = this.tokens.getActions(e);
-          for (var a1 = 0; a1 < u.length; ) {
-            var c1 = u[a1++],
-              f1 = u[a1++],
-              d1 = u[a1++],
-              p1 = a1 == u.length || !i,
+          for (var h1 = 0; h1 < u.length; ) {
+            var c1 = u[h1++],
+              f1 = u[h1++],
+              d1 = u[h1++],
+              p1 = h1 == u.length || !i,
               m = p1 ? e : e.split();
             if (
               (m.apply(c1, f1, d1),
@@ -23235,7 +23253,7 @@ function _ts_generator(thisArg, body) {
           for (var o = 0; o < e.length; o++) {
             var l = e[o],
               u = t[o << 1],
-              a = t[(o << 1) + 1],
+              h = t[(o << 1) + 1],
               c = lt ? this.stackID(l) + " -> " : "";
             if (l.deadEnd && (s || ((s = !0), l.restart(), lt && console.log(c + this.stackID(l) + " (restarted)"), this.advanceFully(l, i)))) continue;
             var f = l.split(),
@@ -23263,7 +23281,7 @@ function _ts_generator(thisArg, body) {
                 }
               }
             }
-            this.stream.end > l.pos ? (a == l.pos && (a++, (u = 0)), l.recoverByDelete(u, a), lt && console.log(c + this.stackID(l) + " (via recover-delete ".concat(this.parser.getName(u), ")")), o1(l, i)) : (!n || n.score < l.score) && (n = l);
+            this.stream.end > l.pos ? (h == l.pos && (h++, (u = 0)), l.recoverByDelete(u, h), lt && console.log(c + this.stackID(l) + " (via recover-delete ".concat(this.parser.getName(u), ")")), o1(l, i)) : (!n || n.score < l.score) && (n = l);
           }
           return n;
         }
@@ -23281,7 +23299,7 @@ function _ts_generator(thisArg, body) {
           (this.stacks = [_h.start(this, e.top[0], s)]), (this.fragments = i.length && this.stream.end - s > e.bufferLength * 4 ? new Rh(i, e.nodeSet) : null);
         }
       }),
-      h(_class97, "Parse"),
+      a(_class97, "Parse"),
       _class97);
   function o1(r, e) {
     for (var t = 0; t < e.length; t++) {
@@ -23293,7 +23311,7 @@ function _ts_generator(thisArg, body) {
     }
     e.push(r);
   }
-  h(o1, "pushStackDedup");
+  a(o1, "pushStackDedup");
   var Ph =
     ((_class98 = class _class {
       allows(e) {
@@ -23303,7 +23321,7 @@ function _ts_generator(thisArg, body) {
         (this.source = e), (this.flags = t), (this.disabled = i);
       }
     }),
-    h(_class98, "Dialect"),
+    a(_class98, "Dialect"),
     _class98);
   var jo =
     ((_r67 = class r extends xr {
@@ -23342,7 +23360,7 @@ function _ts_generator(thisArg, body) {
             l = o & 1,
             u = n[s++];
           if (l && i) return u;
-          for (var a = s + (o >> 1); s < a; s++) if (n[s] == e) return u;
+          for (var h = s + (o >> 1); s < h; s++) if (n[s] == e) return u;
           if (l) return -1;
         }
       }
@@ -23486,25 +23504,25 @@ function _ts_generator(thisArg, body) {
         var i = Object.keys(e.topRules).map((l) => e.topRules[l][1]),
           n = [];
         for (var l2 = 0; l2 < t.length; l2++) n.push([]);
-        function s(l, u, a) {
-          n[l].push([u, u.deserialize(String(a))]);
+        function s(l, u, h) {
+          n[l].push([u, u.deserialize(String(h))]);
         }
         var _iteratorNormalCompletion = true,
           _didIteratorError = false,
           _iteratorError = undefined;
-        if ((h(s, "setProp"), e.nodeProps))
+        if ((a(s, "setProp"), e.nodeProps))
           try {
             for (var _iterator = e.nodeProps[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               var l3 = _step.value;
               var u = l3[0];
               typeof u == "string" && (u = ue[u]);
-              for (var a = 1; a < l3.length; ) {
-                var c = l3[a++];
-                if (c >= 0) s(c, u, l3[a++]);
+              for (var h = 1; h < l3.length; ) {
+                var c = l3[h++];
+                if (c >= 0) s(c, u, l3[h++]);
                 else {
-                  var f = l3[a + -c];
-                  for (var d = -c; d > 0; d--) s(l3[a++], u, f);
-                  a++;
+                  var f = l3[h + -c];
+                  for (var d = -c; d > 0; d--) s(l3[h++], u, f);
+                  h++;
                 }
               }
             }
@@ -23542,12 +23560,12 @@ function _ts_generator(thisArg, body) {
           (this.top = this.topRules[Object.keys(this.topRules)[0]]);
       }
     }),
-    h(_r67, "LRParser"),
+    a(_r67, "LRParser"),
     _r67);
   function ti(r, e) {
     return r[e] | (r[e + 1] << 16);
   }
-  h(ti, "pair");
+  a(ti, "pair");
   function aS(r) {
     var e = null;
     var _iteratorNormalCompletion = true,
@@ -23575,7 +23593,7 @@ function _ts_generator(thisArg, body) {
     }
     return e;
   }
-  h(aS, "findFinished");
+  a(aS, "findFinished");
   function l1(r) {
     if (r.external) {
       var e = r.extend ? 1 : 0;
@@ -23583,7 +23601,7 @@ function _ts_generator(thisArg, body) {
     }
     return r.get;
   }
-  h(l1, "getSpecializer");
+  a(l1, "getSpecializer");
   var a1 = jo.deserialize({
     version: 14,
     states:
@@ -23612,11 +23630,11 @@ function _ts_generator(thisArg, body) {
   function h1() {
     return new Po(hS);
   }
-  h(h1, "bibtexLanguage");
+  a(h1, "bibtexLanguage");
   function c1() {
     return OF(cS);
   }
-  h(c1, "bibtexSyntaxHighlighting");
+  a(c1, "bibtexSyntaxHighlighting");
   function fS(r) {
     var e, t, i;
     return (
@@ -23646,7 +23664,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(fS, "create_fragment");
+  a(fS, "create_fragment");
   function dS(r, e, t) {
     var i = e.bibtex,
       n = e.error,
@@ -23654,20 +23672,20 @@ function _ts_generator(thisArg, body) {
       o,
       l;
     Cu(() => {
-      var a = ie.updateListener.of((c) => {
+      var h = ie.updateListener.of((c) => {
         o && c.docChanged && t(0, (i = o.state.doc.toString()));
       });
-      t(4, (l = new pr())), t(3, (o = new ie({ parent: s, state: Ae.create({ doc: i, extensions: [pF(), mF(), cF(), Ae.allowMultipleSelections.of(!0), MF(), uF(), h1(), c1(), eh.of([...zF, jF]), $F(), a, l.of([])] }) }))), o.focus(), (window.cmEditor = o);
+      t(4, (l = new pr())), t(3, (o = new ie({ parent: s, state: Ae.create({ doc: i, extensions: [pF(), mF(), cF(), Ae.allowMultipleSelections.of(!0), MF(), uF(), h1(), c1(), eh.of([...zF, jF]), $F(), h, l.of([])] }) }))), o.focus(), (window.cmEditor = o);
     });
-    function u(a) {
-      J[a ? "unshift" : "push"](() => {
-        (s = a), t(1, s);
+    function u(h) {
+      J[h ? "unshift" : "push"](() => {
+        (s = h), t(1, s);
       });
     }
     return (
-      h(u, "main_binding"),
-      (r.$$set = (a) => {
-        "bibtex" in a && t(0, (i = a.bibtex)), "error" in a && t(2, (n = a.error));
+      a(u, "main_binding"),
+      (r.$$set = (h) => {
+        "bibtex" in h && t(0, (i = h.bibtex)), "error" in h && t(2, (n = h.error));
       }),
       (r.$$.update = () => {
         r.$$.dirty & 28 &&
@@ -23677,9 +23695,9 @@ function _ts_generator(thisArg, body) {
                 effects: l.reconfigure(
                   KF(() => {
                     if (n && o) {
-                      var a = o.state.doc.line(n.line),
-                        c = a.from,
-                        f = a.to;
+                      var h = o.state.doc.line(n.line),
+                        c = h.from,
+                        f = h.to;
                       return [{ from: c, to: f, severity: "error", message: "Syntax Error" }];
                     } else return [];
                   }),
@@ -23690,14 +23708,14 @@ function _ts_generator(thisArg, body) {
       [i, s, n, o, l, u]
     );
   }
-  h(dS, "instance");
+  a(dS, "instance");
   var Ih =
       ((_class99 = class _class extends se {
         constructor(e) {
           super(), le(this, e, dS, fS, oe, { bibtex: 0, error: 2 });
         }
       }),
-      h(_class99, "Editor"),
+      a(_class99, "Editor"),
       _class99),
     f1 = Ih;
   function pS(r) {
@@ -23712,13 +23730,13 @@ function _ts_generator(thisArg, body) {
       c() {
         (e = O("details")), (t = O("summary")), (i = Y(r[0])), (n = $()), l && l.c(), x(t, "class", "svelte-ee92zc"), (e.open = r[1]), x(e, "class", "svelte-ee92zc");
       },
-      m(u, a) {
-        E(u, e, a), q(e, t), q(t, i), q(e, n), l && l.m(e, null), (s = !0);
+      m(u, h) {
+        E(u, e, h), q(e, t), q(t, i), q(e, n), l && l.m(e, null), (s = !0);
       },
       p(u, param) {
         var _param = _sliced_to_array(param, 1),
-          a = _param[0];
-        (!s || a & 1) && qe(i, u[0]), l && l.p && (!s || a & 4) && oi(l, o, u, u[2], s ? si(o, u[2], a, null) : li(u[2]), null), (!s || a & 2) && (e.open = u[1]);
+          h = _param[0];
+        (!s || h & 1) && qe(i, u[0]), l && l.p && (!s || h & 4) && oi(l, o, u, u[2], s ? si(o, u[2], h, null) : li(u[2]), null), (!s || h & 2) && (e.open = u[1]);
       },
       i(u) {
         s || (S(l, u), (s = !0));
@@ -23731,7 +23749,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(pS, "create_fragment");
+  a(pS, "create_fragment");
   function mS(r, e, t) {
     var tmp = e.$$slots,
       i = tmp === void 0 ? {} : tmp,
@@ -23746,14 +23764,14 @@ function _ts_generator(thisArg, body) {
       [s, o, n, i]
     );
   }
-  h(mS, "instance");
+  a(mS, "instance");
   var $h =
       ((_class100 = class _class extends se {
         constructor(e) {
           super(), le(this, e, mS, pS, oe, { title: 0, open: 1 });
         }
       }),
-      h(_class100, "Collapsible"),
+      a(_class100, "Collapsible"),
       _class100),
     et = $h;
   function gS(r) {
@@ -23777,7 +23795,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(gS, "create_fragment");
+  a(gS, "create_fragment");
   function DS(r, e, t) {
     var i = e.name,
       tmp = e.checked,
@@ -23786,8 +23804,8 @@ function _ts_generator(thisArg, body) {
     function o() {
       (n = this.checked), t(0, n);
     }
-    h(o, "input_change_handler");
-    var l = h(() => s("change"), "change_handler");
+    a(o, "input_change_handler");
+    var l = a(() => s("change"), "change_handler");
     return (
       (r.$$set = (u) => {
         "name" in u && t(1, (i = u.name)), "checked" in u && t(0, (n = u.checked));
@@ -23795,14 +23813,14 @@ function _ts_generator(thisArg, body) {
       [n, i, s, o, l]
     );
   }
-  h(DS, "instance");
+  a(DS, "instance");
   var qh =
       ((_class101 = class _class extends se {
         constructor(e) {
           super(), le(this, e, DS, gS, oe, { name: 1, checked: 0 });
         }
       }),
-      h(_class101, "Checkbox"),
+      a(_class101, "Checkbox"),
       _class101),
     $i = qh;
   function FS(r) {
@@ -23833,7 +23851,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(FS, "create_fragment");
+  a(FS, "create_fragment");
   function bS(r, e, t) {
     var tmp = e.$$slots,
       i = tmp === void 0 ? {} : tmp,
@@ -23849,14 +23867,14 @@ function _ts_generator(thisArg, body) {
       [s, o, n, i]
     );
   }
-  h(bS, "instance");
+  a(bS, "instance");
   var Vh =
       ((_class102 = class _class extends se {
         constructor(e) {
           super(), le(this, e, bS, FS, oe, { title: 0, inset: 1 });
         }
       }),
-      h(_class102, "Label"),
+      a(_class102, "Label"),
       _class102),
     tt = Vh;
   function yS(r) {
@@ -23887,7 +23905,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(yS, "create_fragment");
+  a(yS, "create_fragment");
   function ES(r, e, t) {
     var tmp = e.$$slots,
       i = tmp === void 0 ? {} : tmp,
@@ -23899,14 +23917,14 @@ function _ts_generator(thisArg, body) {
       [n, i]
     );
   }
-  h(ES, "instance");
+  a(ES, "instance");
   var Wh =
       ((_class103 = class _class extends se {
         constructor(e) {
           super(), le(this, e, ES, yS, oe, {});
         }
       }),
-      h(_class103, "SubOptions"),
+      a(_class103, "SubOptions"),
       _class103),
     Yo = Wh;
   function CS(r) {
@@ -23916,10 +23934,10 @@ function _ts_generator(thisArg, body) {
       n = r[3].title + "",
       s,
       o;
-    function l(a) {
-      r[6](a);
+    function l(h) {
+      r[6](h);
     }
-    h(l, "checkbox_checked_binding");
+    a(l, "checkbox_checked_binding");
     var u = { name: r[1] };
     return (
       r[0] !== void 0 && (u.checked = r[0]),
@@ -23930,26 +23948,26 @@ function _ts_generator(thisArg, body) {
         c() {
           M(e.$$.fragment), (i = $()), (s = Y(n));
         },
-        m(a, c) {
-          N(e, a, c), E(a, i, c), E(a, s, c), (o = !0);
+        m(h, c) {
+          N(e, h, c), E(h, i, c), E(h, s, c), (o = !0);
         },
-        p(a, c) {
+        p(h, c) {
           var f = {};
-          c & 2 && (f.name = a[1]), !t && c & 1 && ((t = !0), (f.checked = a[0]), X(() => (t = !1))), e.$set(f);
+          c & 2 && (f.name = h[1]), !t && c & 1 && ((t = !0), (f.checked = h[0]), X(() => (t = !1))), e.$set(f);
         },
-        i(a) {
-          o || (S(e.$$.fragment, a), (o = !0));
+        i(h) {
+          o || (S(e.$$.fragment, h), (o = !0));
         },
-        o(a) {
-          w(e.$$.fragment, a), (o = !1);
+        o(h) {
+          w(e.$$.fragment, h), (o = !1);
         },
-        d(a) {
-          R(e, a), a && y(i), a && y(s);
+        d(h) {
+          R(e, h), h && y(i), h && y(s);
         },
       }
     );
   }
-  h(CS, "create_default_slot_1");
+  a(CS, "create_default_slot_1");
   function d1(r) {
     var e,
       t,
@@ -23984,7 +24002,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(d1, "create_if_block");
+  a(d1, "create_if_block");
   function p1(r) {
     var e, t;
     return (
@@ -24012,7 +24030,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(p1, "create_if_block_1");
+  a(p1, "create_if_block_1");
   function BS(r) {
     var e,
       t = r[5].default,
@@ -24038,7 +24056,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(BS, "create_default_slot");
+  a(BS, "create_default_slot");
   function xS(r) {
     var _r__description;
     var e, t, i, n;
@@ -24079,7 +24097,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(xS, "create_fragment");
+  a(xS, "create_fragment");
   function vS(r, e, t) {
     var tmp = e.$$slots,
       i = tmp === void 0 ? {} : tmp,
@@ -24089,27 +24107,27 @@ function _ts_generator(thisArg, body) {
       tmp1 = e.checked,
       l = tmp1 === void 0 ? void 0 : tmp1,
       u = Bi(),
-      a = X0[o];
+      h = X0[o];
     function c(d) {
       (l = d), t(0, l);
     }
-    h(c, "checkbox_checked_binding");
-    var f = h(() => u("change", l), "change_handler");
+    a(c, "checkbox_checked_binding");
+    var f = a(() => u("change", l), "change_handler");
     return (
       (r.$$set = (d) => {
         "option" in d && t(1, (o = d.option)), "checked" in d && t(0, (l = d.checked)), "$$scope" in d && t(8, (n = d.$$scope));
       }),
-      [l, o, u, a, s, i, c, f, n]
+      [l, o, u, h, s, i, c, f, n]
     );
   }
-  h(vS, "instance");
+  a(vS, "instance");
   var zh =
       ((_class104 = class _class extends se {
         constructor(e) {
           super(), le(this, e, vS, xS, oe, { option: 1, checked: 0 });
         }
       }),
-      h(_class104, "Option"),
+      a(_class104, "Option"),
       _class104),
     me = zh;
   function AS(r) {
@@ -24129,61 +24147,61 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(AS, "create_default_slot_2");
+  a(AS, "create_default_slot_2");
   function kS(r) {
     var e, t, i, n, s, o, l;
     return {
       c() {
         (e = O("label")), (t = Y("Template:\n			")), (i = O("textarea")), (n = $()), (s = O("p")), (s.innerHTML = '<a href="./manual/key-generation.html" target="_blank">Template documentation</a>'), x(i, "name", "generateKeysTemplate");
       },
-      m(u, a) {
-        E(u, e, a), q(e, t), q(e, i), Ee(i, r[7]), E(u, n, a), E(u, s, a), o || ((l = ye(i, "input", r[14])), (o = !0));
+      m(u, h) {
+        E(u, e, h), q(e, t), q(e, i), Ee(i, r[7]), E(u, n, h), E(u, s, h), o || ((l = ye(i, "input", r[14])), (o = !0));
       },
-      p(u, a) {
-        a & 128 && Ee(i, u[7]);
+      p(u, h) {
+        h & 128 && Ee(i, u[7]);
       },
       d(u) {
         u && y(e), u && y(n), u && y(s), (o = !1), l();
       },
     };
   }
-  h(kS, "create_default_slot_1");
+  a(kS, "create_default_slot_1");
   function SS(r) {
-    var e, t, i, n, s, o, l, u, a, c, f, d, p, m, F, D, g, b;
+    var e, t, i, n, s, o, l, u, h, c, f, d, p, m, F, D, g, b;
     function B(_) {
       r[10](_);
     }
-    h(B, "option0_checked_binding");
+    a(B, "option0_checked_binding");
     var k = { option: "omit", $$slots: { default: [AS] }, $$scope: { ctx: r } };
     r[0] !== void 0 && (k.checked = r[0]), (e = new me({ props: k })), J.push(() => K(e, "checked", B));
     function C(_) {
       r[11](_);
     }
-    h(C, "option1_checked_binding");
+    a(C, "option1_checked_binding");
     var L = { option: "stripComments" };
     r[2] !== void 0 && (L.checked = r[2]), (n = new me({ props: L })), J.push(() => K(n, "checked", C));
     function Q(_) {
       r[12](_);
     }
-    h(Q, "option2_checked_binding");
+    a(Q, "option2_checked_binding");
     var W = { option: "tidyComments" };
     r[3] !== void 0 && (W.checked = r[3]), (l = new me({ props: W })), J.push(() => K(l, "checked", Q));
     function H(_) {
       r[13](_);
     }
-    h(H, "option3_checked_binding");
+    a(H, "option3_checked_binding");
     var G = { option: "lowercase" };
     r[4] !== void 0 && (G.checked = r[4]), (c = new me({ props: G })), J.push(() => K(c, "checked", H));
     function T(_) {
       r[15](_);
     }
-    h(T, "option4_checked_binding");
+    a(T, "option4_checked_binding");
     var j = { option: "generateKeys", $$slots: { default: [kS] }, $$scope: { ctx: r } };
     r[6] !== void 0 && (j.checked = r[6]), (p = new me({ props: j })), J.push(() => K(p, "checked", T));
     function te(_) {
       r[16](_);
     }
-    h(te, "option5_checked_binding");
+    a(te, "option5_checked_binding");
     var P = { option: "trailingCommas" };
     return (
       r[5] !== void 0 && (P.checked = r[5]),
@@ -24191,10 +24209,10 @@ function _ts_generator(thisArg, body) {
       J.push(() => K(D, "checked", te)),
       {
         c() {
-          M(e.$$.fragment), (i = $()), M(n.$$.fragment), (o = $()), M(l.$$.fragment), (a = $()), M(c.$$.fragment), (d = $()), M(p.$$.fragment), (F = $()), M(D.$$.fragment);
+          M(e.$$.fragment), (i = $()), M(n.$$.fragment), (o = $()), M(l.$$.fragment), (h = $()), M(c.$$.fragment), (d = $()), M(p.$$.fragment), (F = $()), M(D.$$.fragment);
         },
         m(_, ee) {
-          N(e, _, ee), E(_, i, ee), N(n, _, ee), E(_, o, ee), N(l, _, ee), E(_, a, ee), N(c, _, ee), E(_, d, ee), N(p, _, ee), E(_, F, ee), N(D, _, ee), (b = !0);
+          N(e, _, ee), E(_, i, ee), N(n, _, ee), E(_, o, ee), N(l, _, ee), E(_, h, ee), N(c, _, ee), E(_, d, ee), N(p, _, ee), E(_, F, ee), N(D, _, ee), (b = !0);
         },
         p(_, ee) {
           var ce = {};
@@ -24217,12 +24235,12 @@ function _ts_generator(thisArg, body) {
           w(e.$$.fragment, _), w(n.$$.fragment, _), w(l.$$.fragment, _), w(c.$$.fragment, _), w(p.$$.fragment, _), w(D.$$.fragment, _), (b = !1);
         },
         d(_) {
-          R(e, _), _ && y(i), R(n, _), _ && y(o), R(l, _), _ && y(a), R(c, _), _ && y(d), R(p, _), _ && y(F), R(D, _);
+          R(e, _), _ && y(i), R(n, _), _ && y(o), R(l, _), _ && y(h), R(c, _), _ && y(d), R(p, _), _ && y(F), R(D, _);
         },
       }
     );
   }
-  h(SS, "create_default_slot");
+  a(SS, "create_default_slot");
   function wS(r) {
     var e, t;
     return (
@@ -24252,9 +24270,9 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(wS, "create_fragment");
+  a(wS, "create_fragment");
   function QS(r, e, t) {
-    var i, n, s, o, l, u, a;
+    var i, n, s, o, l, u, h;
     var c = e.options,
       f = c.omit !== void 0 && c.omit.length > 0,
       d = (n = (i = c.omit) === null || i === void 0 ? void 0 : i.join(" ")) !== null && n !== void 0 ? n : "",
@@ -24263,40 +24281,40 @@ function _ts_generator(thisArg, body) {
       F = (l = c.lowercase) !== null && l !== void 0 ? l : !1,
       D = (u = c.trailingCommas) !== null && u !== void 0 ? u : !1,
       g = c.generateKeys !== void 0 && c.generateKeys.length > 0,
-      b = (a = c.generateKeys) !== null && a !== void 0 ? a : "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
+      b = (h = c.generateKeys) !== null && h !== void 0 ? h : "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
     function B() {
       (d = this.value), t(1, d);
     }
-    h(B, "textarea_input_handler");
+    a(B, "textarea_input_handler");
     function k(T) {
       (f = T), t(0, f);
     }
-    h(k, "option0_checked_binding");
+    a(k, "option0_checked_binding");
     function C(T) {
       (p = T), t(2, p);
     }
-    h(C, "option1_checked_binding");
+    a(C, "option1_checked_binding");
     function L(T) {
       (m = T), t(3, m);
     }
-    h(L, "option2_checked_binding");
+    a(L, "option2_checked_binding");
     function Q(T) {
       (F = T), t(4, F);
     }
-    h(Q, "option3_checked_binding");
+    a(Q, "option3_checked_binding");
     function W() {
       (b = this.value), t(7, b);
     }
-    h(W, "textarea_input_handler_1");
+    a(W, "textarea_input_handler_1");
     function H(T) {
       (g = T), t(6, g);
     }
-    h(H, "option4_checked_binding");
+    a(H, "option4_checked_binding");
     function G(T) {
       (D = T), t(5, D);
     }
     return (
-      h(G, "option5_checked_binding"),
+      a(G, "option5_checked_binding"),
       (r.$$set = (T) => {
         "options" in T && t(8, (c = T.options));
       }),
@@ -24306,14 +24324,14 @@ function _ts_generator(thisArg, body) {
       [f, d, p, m, F, D, g, b, c, B, k, C, L, Q, W, H, G]
     );
   }
-  h(QS, "instance");
+  a(QS, "instance");
   var Hh =
       ((_class105 = class _class extends se {
         constructor(e) {
           super(), le(this, e, QS, wS, oe, { options: 8 });
         }
       }),
-      h(_class105, "CleanupOptions"),
+      a(_class105, "CleanupOptions"),
       _class105),
     m1 = Hh;
   function g1(r) {
@@ -24322,12 +24340,12 @@ function _ts_generator(thisArg, body) {
       return (_e_toCLI = e.toCLI) === null || _e_toCLI === void 0 ? void 0 : _e_toCLI.call(e, r[e.key], r);
     }).filter((e) => typeof e == "string");
   }
-  h(g1, "optionsToCLIArgs");
+  a(g1, "optionsToCLIArgs");
   function D1(r, e, t) {
     var i = r.slice();
     return (i[2] = e[t][0]), (i[3] = e[t][1]), i;
   }
-  h(D1, "get_each_context");
+  a(D1, "get_each_context");
   function F1(r) {
     var e,
       t,
@@ -24349,7 +24367,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(F1, "create_if_block");
+  a(F1, "create_if_block");
   function b1(r) {
     var e,
       t = r[2] + "",
@@ -24372,7 +24390,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(b1, "create_each_block");
+  a(b1, "create_each_block");
   function _S(r) {
     var e,
       t,
@@ -24388,18 +24406,18 @@ function _ts_generator(thisArg, body) {
         for (var u = 0; u < l.length; u += 1) l[u].c();
         (s = Y(" YOUR_FILE.bib")), x(i, "id", "cli"), x(i, "class", "svelte-1xnx1c1");
       },
-      m(u, a) {
-        E(u, e, a), E(u, t, a), E(u, i, a), q(i, n);
+      m(u, h) {
+        E(u, e, h), E(u, t, h), E(u, i, h), q(i, n);
         for (var c = 0; c < l.length; c += 1) l[c] && l[c].m(i, null);
         q(i, s);
       },
-      p(u, a) {
-        if (a & 1) {
+      p(u, h) {
+        if (h & 1) {
           o = u[0];
           var c;
           for (c = 0; c < o.length; c += 1) {
             var f = D1(u, o, c);
-            l[c] ? l[c].p(f, a) : ((l[c] = b1(f)), l[c].c(), l[c].m(i, s));
+            l[c] ? l[c].p(f, h) : ((l[c] = b1(f)), l[c].c(), l[c].m(i, s));
           }
           for (; c < l.length; c += 1) l[c].d(1);
           l.length = o.length;
@@ -24410,7 +24428,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(_S, "create_default_slot");
+  a(_S, "create_default_slot");
   function US(r) {
     var e, t;
     return (
@@ -24440,7 +24458,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(US, "create_fragment");
+  a(US, "create_fragment");
   function LS(r, e, t) {
     var i = e.options,
       n;
@@ -24461,14 +24479,14 @@ function _ts_generator(thisArg, body) {
       [n, i]
     );
   }
-  h(LS, "instance");
+  a(LS, "instance");
   var jh =
       ((_class106 = class _class extends se {
         constructor(e) {
           super(), le(this, e, LS, US, oe, { options: 1 });
         }
       }),
-      h(_class106, "Cli"),
+      a(_class106, "Cli"),
       _class106),
     y1 = jh;
   function OS(r) {
@@ -24499,7 +24517,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(OS, "create_fragment");
+  a(OS, "create_fragment");
   function TS(r, e, t) {
     var i = e.name,
       n = e.group,
@@ -24510,21 +24528,21 @@ function _ts_generator(thisArg, body) {
       (n = this.__value), t(0, n);
     }
     return (
-      h(l, "input_change_handler"),
+      a(l, "input_change_handler"),
       (r.$$set = (u) => {
         "name" in u && t(1, (i = u.name)), "group" in u && t(0, (n = u.group)), "value" in u && t(2, (s = u.value));
       }),
       [n, i, s, l, o]
     );
   }
-  h(TS, "instance");
+  a(TS, "instance");
   var Yh =
       ((_class107 = class _class extends se {
         constructor(e) {
           super(), le(this, e, TS, OS, oe, { name: 1, group: 0, value: 2 });
         }
       }),
-      h(_class107, "Radio"),
+      a(_class107, "Radio"),
       _class107),
     yi = Yh;
   function RS(r) {
@@ -24532,7 +24550,7 @@ function _ts_generator(thisArg, body) {
     function s(l) {
       r[8](l);
     }
-    h(s, "checkbox_checked_binding");
+    a(s, "checkbox_checked_binding");
     var o = { name: "uniqKEY" };
     return (
       r[1] !== void 0 && (o.checked = r[1]),
@@ -24546,8 +24564,8 @@ function _ts_generator(thisArg, body) {
           N(e, l, u), E(l, i, u), (n = !0);
         },
         p(l, u) {
-          var a = {};
-          !t && u & 2 && ((t = !0), (a.checked = l[1]), X(() => (t = !1))), e.$set(a);
+          var h = {};
+          !t && u & 2 && ((t = !0), (h.checked = l[1]), X(() => (t = !1))), e.$set(h);
         },
         i(l) {
           n || (S(e.$$.fragment, l), (n = !0));
@@ -24561,13 +24579,13 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(RS, "create_default_slot_10");
+  a(RS, "create_default_slot_10");
   function NS(r) {
     var e, t, i, n;
     function s(l) {
       r[9](l);
     }
-    h(s, "checkbox_checked_binding_1");
+    a(s, "checkbox_checked_binding_1");
     var o = { name: "uniqDOI" };
     return (
       r[2] !== void 0 && (o.checked = r[2]),
@@ -24581,8 +24599,8 @@ function _ts_generator(thisArg, body) {
           N(e, l, u), E(l, i, u), (n = !0);
         },
         p(l, u) {
-          var a = {};
-          !t && u & 4 && ((t = !0), (a.checked = l[2]), X(() => (t = !1))), e.$set(a);
+          var h = {};
+          !t && u & 4 && ((t = !0), (h.checked = l[2]), X(() => (t = !1))), e.$set(h);
         },
         i(l) {
           n || (S(e.$$.fragment, l), (n = !0));
@@ -24596,13 +24614,13 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(NS, "create_default_slot_9");
+  a(NS, "create_default_slot_9");
   function MS(r) {
     var e, t, i, n;
     function s(l) {
       r[10](l);
     }
-    h(s, "checkbox_checked_binding_2");
+    a(s, "checkbox_checked_binding_2");
     var o = { name: "uniqCIT" };
     return (
       r[3] !== void 0 && (o.checked = r[3]),
@@ -24616,8 +24634,8 @@ function _ts_generator(thisArg, body) {
           N(e, l, u), E(l, i, u), (n = !0);
         },
         p(l, u) {
-          var a = {};
-          !t && u & 8 && ((t = !0), (a.checked = l[3]), X(() => (t = !1))), e.$set(a);
+          var h = {};
+          !t && u & 8 && ((t = !0), (h.checked = l[3]), X(() => (t = !1))), e.$set(h);
         },
         i(l) {
           n || (S(e.$$.fragment, l), (n = !0));
@@ -24631,13 +24649,13 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(MS, "create_default_slot_8");
+  a(MS, "create_default_slot_8");
   function PS(r) {
     var e, t, i, n;
     function s(l) {
       r[11](l);
     }
-    h(s, "checkbox_checked_binding_3");
+    a(s, "checkbox_checked_binding_3");
     var o = { name: "uniqABS" };
     return (
       r[4] !== void 0 && (o.checked = r[4]),
@@ -24651,8 +24669,8 @@ function _ts_generator(thisArg, body) {
           N(e, l, u), E(l, i, u), (n = !0);
         },
         p(l, u) {
-          var a = {};
-          !t && u & 16 && ((t = !0), (a.checked = l[4]), X(() => (t = !1))), e.$set(a);
+          var h = {};
+          !t && u & 16 && ((t = !0), (h.checked = l[4]), X(() => (t = !1))), e.$set(h);
         },
         i(l) {
           n || (S(e.$$.fragment, l), (n = !0));
@@ -24666,20 +24684,20 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(PS, "create_default_slot_7");
+  a(PS, "create_default_slot_7");
   function IS(r) {
-    var e, t, i, n, s, o, l, u, a, c;
+    var e, t, i, n, s, o, l, u, h, c;
     return (
       (i = new tt({ props: { $$slots: { default: [RS] }, $$scope: { ctx: r } } })),
       (s = new tt({ props: { $$slots: { default: [NS] }, $$scope: { ctx: r } } })),
       (l = new tt({ props: { $$slots: { default: [MS] }, $$scope: { ctx: r } } })),
-      (a = new tt({ props: { $$slots: { default: [PS] }, $$scope: { ctx: r } } })),
+      (h = new tt({ props: { $$slots: { default: [PS] }, $$scope: { ctx: r } } })),
       {
         c() {
-          (e = O("p")), (e.textContent = "What to check:"), (t = $()), M(i.$$.fragment), (n = $()), M(s.$$.fragment), (o = $()), M(l.$$.fragment), (u = $()), M(a.$$.fragment);
+          (e = O("p")), (e.textContent = "What to check:"), (t = $()), M(i.$$.fragment), (n = $()), M(s.$$.fragment), (o = $()), M(l.$$.fragment), (u = $()), M(h.$$.fragment);
         },
         m(f, d) {
-          E(f, e, d), E(f, t, d), N(i, f, d), E(f, n, d), N(s, f, d), E(f, o, d), N(l, f, d), E(f, u, d), N(a, f, d), (c = !0);
+          E(f, e, d), E(f, t, d), N(i, f, d), E(f, n, d), N(s, f, d), E(f, o, d), N(l, f, d), E(f, u, d), N(h, f, d), (c = !0);
         },
         p(f, d) {
           var p = {};
@@ -24689,27 +24707,27 @@ function _ts_generator(thisArg, body) {
           var F = {};
           d & 134217736 && (F.$$scope = { dirty: d, ctx: f }), l.$set(F);
           var D = {};
-          d & 134217744 && (D.$$scope = { dirty: d, ctx: f }), a.$set(D);
+          d & 134217744 && (D.$$scope = { dirty: d, ctx: f }), h.$set(D);
         },
         i(f) {
-          c || (S(i.$$.fragment, f), S(s.$$.fragment, f), S(l.$$.fragment, f), S(a.$$.fragment, f), (c = !0));
+          c || (S(i.$$.fragment, f), S(s.$$.fragment, f), S(l.$$.fragment, f), S(h.$$.fragment, f), (c = !0));
         },
         o(f) {
-          w(i.$$.fragment, f), w(s.$$.fragment, f), w(l.$$.fragment, f), w(a.$$.fragment, f), (c = !1);
+          w(i.$$.fragment, f), w(s.$$.fragment, f), w(l.$$.fragment, f), w(h.$$.fragment, f), (c = !1);
         },
         d(f) {
-          f && y(e), f && y(t), R(i, f), f && y(n), R(s, f), f && y(o), R(l, f), f && y(u), R(a, f);
+          f && y(e), f && y(t), R(i, f), f && y(n), R(s, f), f && y(o), R(l, f), f && y(u), R(h, f);
         },
       }
     );
   }
-  h(IS, "create_default_slot_6");
+  a(IS, "create_default_slot_6");
   function $S(r) {
     var e, t, i, n, s;
     function o(u) {
       r[13](u);
     }
-    h(o, "radio_group_binding");
+    a(o, "radio_group_binding");
     var l = { name: "mergeStrategy", value: "combine" };
     return (
       r[6] !== void 0 && (l.group = r[6]),
@@ -24719,12 +24737,12 @@ function _ts_generator(thisArg, body) {
         c() {
           M(e.$$.fragment), (i = $()), (n = O("span")), (n.innerHTML = "<strong>Combine</strong><br/> \n				<small>Keep original entry and merge in fields of duplicates if they do not\n					already exist</small>");
         },
-        m(u, a) {
-          N(e, u, a), E(u, i, a), E(u, n, a), (s = !0);
+        m(u, h) {
+          N(e, u, h), E(u, i, h), E(u, n, h), (s = !0);
         },
-        p(u, a) {
+        p(u, h) {
           var c = {};
-          !t && a & 64 && ((t = !0), (c.group = u[6]), X(() => (t = !1))), e.$set(c);
+          !t && h & 64 && ((t = !0), (c.group = u[6]), X(() => (t = !1))), e.$set(c);
         },
         i(u) {
           s || (S(e.$$.fragment, u), (s = !0));
@@ -24738,13 +24756,13 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h($S, "create_default_slot_5");
+  a($S, "create_default_slot_5");
   function qS(r) {
     var e, t, i, n, s;
     function o(u) {
       r[14](u);
     }
-    h(o, "radio_group_binding_1");
+    a(o, "radio_group_binding_1");
     var l = { name: "mergeStrategy", value: "overwrite" };
     return (
       r[6] !== void 0 && (l.group = r[6]),
@@ -24754,12 +24772,12 @@ function _ts_generator(thisArg, body) {
         c() {
           M(e.$$.fragment), (i = $()), (n = O("span")), (n.innerHTML = "<strong>Overwrite</strong><br/> \n				<small>Keep original entry and merge in fields of duplicates, overwriting\n					existing fields if they exist</small>");
         },
-        m(u, a) {
-          N(e, u, a), E(u, i, a), E(u, n, a), (s = !0);
+        m(u, h) {
+          N(e, u, h), E(u, i, h), E(u, n, h), (s = !0);
         },
-        p(u, a) {
+        p(u, h) {
           var c = {};
-          !t && a & 64 && ((t = !0), (c.group = u[6]), X(() => (t = !1))), e.$set(c);
+          !t && h & 64 && ((t = !0), (c.group = u[6]), X(() => (t = !1))), e.$set(c);
         },
         i(u) {
           s || (S(e.$$.fragment, u), (s = !0));
@@ -24773,13 +24791,13 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(qS, "create_default_slot_4");
+  a(qS, "create_default_slot_4");
   function VS(r) {
     var e, t, i, n, s;
     function o(u) {
       r[15](u);
     }
-    h(o, "radio_group_binding_2");
+    a(o, "radio_group_binding_2");
     var l = { name: "mergeStrategy", value: "first" };
     return (
       r[6] !== void 0 && (l.group = r[6]),
@@ -24789,12 +24807,12 @@ function _ts_generator(thisArg, body) {
         c() {
           M(e.$$.fragment), (i = $()), (n = O("span")), (n.innerHTML = "<strong>First</strong><br/> \n				<small>Only keep the original entry</small>");
         },
-        m(u, a) {
-          N(e, u, a), E(u, i, a), E(u, n, a), (s = !0);
+        m(u, h) {
+          N(e, u, h), E(u, i, h), E(u, n, h), (s = !0);
         },
-        p(u, a) {
+        p(u, h) {
           var c = {};
-          !t && a & 64 && ((t = !0), (c.group = u[6]), X(() => (t = !1))), e.$set(c);
+          !t && h & 64 && ((t = !0), (c.group = u[6]), X(() => (t = !1))), e.$set(c);
         },
         i(u) {
           s || (S(e.$$.fragment, u), (s = !0));
@@ -24808,13 +24826,13 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(VS, "create_default_slot_3");
+  a(VS, "create_default_slot_3");
   function WS(r) {
     var e, t, i, n, s;
     function o(u) {
       r[16](u);
     }
-    h(o, "radio_group_binding_3");
+    a(o, "radio_group_binding_3");
     var l = { name: "mergeStrategy", value: "last" };
     return (
       r[6] !== void 0 && (l.group = r[6]),
@@ -24824,12 +24842,12 @@ function _ts_generator(thisArg, body) {
         c() {
           M(e.$$.fragment), (i = $()), (n = O("span")), (n.innerHTML = "<strong>Last</strong><br/> \n				<small>Only keep the last found duplicate</small>");
         },
-        m(u, a) {
-          N(e, u, a), E(u, i, a), E(u, n, a), (s = !0);
+        m(u, h) {
+          N(e, u, h), E(u, i, h), E(u, n, h), (s = !0);
         },
-        p(u, a) {
+        p(u, h) {
           var c = {};
-          !t && a & 64 && ((t = !0), (c.group = u[6]), X(() => (t = !1))), e.$set(c);
+          !t && h & 64 && ((t = !0), (c.group = u[6]), X(() => (t = !1))), e.$set(c);
         },
         i(u) {
           s || (S(e.$$.fragment, u), (s = !0));
@@ -24843,7 +24861,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(WS, "create_default_slot_2");
+  a(WS, "create_default_slot_2");
   function zS(r) {
     var e, t, i, n, s, o, l, u;
     return (
@@ -24855,49 +24873,49 @@ function _ts_generator(thisArg, body) {
         c() {
           M(e.$$.fragment), (t = $()), M(i.$$.fragment), (n = $()), M(s.$$.fragment), (o = $()), M(l.$$.fragment);
         },
-        m(a, c) {
-          N(e, a, c), E(a, t, c), N(i, a, c), E(a, n, c), N(s, a, c), E(a, o, c), N(l, a, c), (u = !0);
+        m(h, c) {
+          N(e, h, c), E(h, t, c), N(i, h, c), E(h, n, c), N(s, h, c), E(h, o, c), N(l, h, c), (u = !0);
         },
-        p(a, c) {
+        p(h, c) {
           var f = {};
-          c & 134217792 && (f.$$scope = { dirty: c, ctx: a }), e.$set(f);
+          c & 134217792 && (f.$$scope = { dirty: c, ctx: h }), e.$set(f);
           var d = {};
-          c & 134217792 && (d.$$scope = { dirty: c, ctx: a }), i.$set(d);
+          c & 134217792 && (d.$$scope = { dirty: c, ctx: h }), i.$set(d);
           var p = {};
-          c & 134217792 && (p.$$scope = { dirty: c, ctx: a }), s.$set(p);
+          c & 134217792 && (p.$$scope = { dirty: c, ctx: h }), s.$set(p);
           var m = {};
-          c & 134217792 && (m.$$scope = { dirty: c, ctx: a }), l.$set(m);
+          c & 134217792 && (m.$$scope = { dirty: c, ctx: h }), l.$set(m);
         },
-        i(a) {
-          u || (S(e.$$.fragment, a), S(i.$$.fragment, a), S(s.$$.fragment, a), S(l.$$.fragment, a), (u = !0));
+        i(h) {
+          u || (S(e.$$.fragment, h), S(i.$$.fragment, h), S(s.$$.fragment, h), S(l.$$.fragment, h), (u = !0));
         },
-        o(a) {
-          w(e.$$.fragment, a), w(i.$$.fragment, a), w(s.$$.fragment, a), w(l.$$.fragment, a), (u = !1);
+        o(h) {
+          w(e.$$.fragment, h), w(i.$$.fragment, h), w(s.$$.fragment, h), w(l.$$.fragment, h), (u = !1);
         },
-        d(a) {
-          R(e, a), a && y(t), R(i, a), a && y(n), R(s, a), a && y(o), R(l, a);
+        d(h) {
+          R(e, h), h && y(t), R(i, h), h && y(n), R(s, h), h && y(o), R(l, h);
         },
       }
     );
   }
-  h(zS, "create_default_slot_1");
+  a(zS, "create_default_slot_1");
   function HS(r) {
     var e, t, i, n, s, o;
     function l(f) {
       r[12](f);
     }
-    h(l, "option0_checked_binding");
+    a(l, "option0_checked_binding");
     var u = { option: "duplicates", $$slots: { default: [IS] }, $$scope: { ctx: r } };
     r[0] !== void 0 && (u.checked = r[0]), (e = new me({ props: u })), J.push(() => K(e, "checked", l));
-    function a(f) {
+    function h(f) {
       r[17](f);
     }
-    h(a, "option1_checked_binding");
+    a(h, "option1_checked_binding");
     var c = { option: "merge", $$slots: { default: [zS] }, $$scope: { ctx: r } };
     return (
       r[5] !== void 0 && (c.checked = r[5]),
       (n = new me({ props: c })),
-      J.push(() => K(n, "checked", a)),
+      J.push(() => K(n, "checked", h)),
       {
         c() {
           M(e.$$.fragment), (i = $()), M(n.$$.fragment);
@@ -24923,7 +24941,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(HS, "create_default_slot");
+  a(HS, "create_default_slot");
   function jS(r) {
     var e, t;
     return (
@@ -24953,58 +24971,58 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(jS, "create_fragment");
+  a(jS, "create_fragment");
   function YS(r, e, t) {
-    var i, n, s, o, l, u, a, c, f;
+    var i, n, s, o, l, u, h, c, f;
     var d = e.options,
       p = d.duplicates !== void 0,
       m = (n = (i = d.duplicates) === null || i === void 0 ? void 0 : i.includes("key")) !== null && n !== void 0 ? n : !0,
       F = (o = (s = d.duplicates) === null || s === void 0 ? void 0 : s.includes("doi")) !== null && o !== void 0 ? o : !1,
       D = (u = (l = d.duplicates) === null || l === void 0 ? void 0 : l.includes("citation")) !== null && u !== void 0 ? u : !1,
-      g = (c = (a = d.duplicates) === null || a === void 0 ? void 0 : a.includes("abstract")) !== null && c !== void 0 ? c : !1,
+      g = (c = (h = d.duplicates) === null || h === void 0 ? void 0 : h.includes("abstract")) !== null && c !== void 0 ? c : !1,
       b = d.merge !== void 0,
       B = (f = d.merge) !== null && f !== void 0 ? f : "combine";
     function k(P) {
       (m = P), t(1, m);
     }
-    h(k, "checkbox_checked_binding");
+    a(k, "checkbox_checked_binding");
     function C(P) {
       (F = P), t(2, F);
     }
-    h(C, "checkbox_checked_binding_1");
+    a(C, "checkbox_checked_binding_1");
     function L(P) {
       (D = P), t(3, D);
     }
-    h(L, "checkbox_checked_binding_2");
+    a(L, "checkbox_checked_binding_2");
     function Q(P) {
       (g = P), t(4, g);
     }
-    h(Q, "checkbox_checked_binding_3");
+    a(Q, "checkbox_checked_binding_3");
     function W(P) {
       (p = P), t(0, p);
     }
-    h(W, "option0_checked_binding");
+    a(W, "option0_checked_binding");
     function H(P) {
       (B = P), t(6, B);
     }
-    h(H, "radio_group_binding");
+    a(H, "radio_group_binding");
     function G(P) {
       (B = P), t(6, B);
     }
-    h(G, "radio_group_binding_1");
+    a(G, "radio_group_binding_1");
     function T(P) {
       (B = P), t(6, B);
     }
-    h(T, "radio_group_binding_2");
+    a(T, "radio_group_binding_2");
     function j(P) {
       (B = P), t(6, B);
     }
-    h(j, "radio_group_binding_3");
+    a(j, "radio_group_binding_3");
     function te(P) {
       (b = P), t(5, b);
     }
     return (
-      h(te, "option1_checked_binding"),
+      a(te, "option1_checked_binding"),
       (r.$$set = (P) => {
         "options" in P && t(7, (d = P.options));
       }),
@@ -25014,14 +25032,14 @@ function _ts_generator(thisArg, body) {
       [p, m, F, D, g, b, B, d, k, C, L, Q, W, H, G, T, j, te]
     );
   }
-  h(YS, "instance");
+  a(YS, "instance");
   var Jh =
       ((_class108 = class _class extends se {
         constructor(e) {
           super(), le(this, e, YS, jS, oe, { options: 7 });
         }
       }),
-      h(_class108, "DuplicateOptions"),
+      a(_class108, "DuplicateOptions"),
       _class108),
     E1 = Jh;
   function JS(r) {
@@ -25041,7 +25059,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(JS, "create_else_block_1");
+  a(JS, "create_else_block_1");
   function GS(r) {
     var e,
       t,
@@ -25051,7 +25069,7 @@ function _ts_generator(thisArg, body) {
       o,
       l = r[0].line + "",
       u,
-      a,
+      h,
       c = r[0].column + "",
       f,
       d,
@@ -25060,25 +25078,25 @@ function _ts_generator(thisArg, body) {
     function F(b, B) {
       return b[0].hint ? KS : XS;
     }
-    h(F, "select_block_type_1");
+    a(F, "select_block_type_1");
     var D = F(r, -1),
       g = D(r);
     return {
       c() {
-        (e = O("strong")), (e.textContent = "There's a problem with the bibtex"), (t = O("br")), (i = $()), (s = Y(n)), (o = Y(" on line ")), (u = Y(l)), (a = Y(" column ")), (f = Y(c)), (d = O("br")), (p = $()), g.c(), (m = jt());
+        (e = O("strong")), (e.textContent = "There's a problem with the bibtex"), (t = O("br")), (i = $()), (s = Y(n)), (o = Y(" on line ")), (u = Y(l)), (h = Y(" column ")), (f = Y(c)), (d = O("br")), (p = $()), g.c(), (m = jt());
       },
       m(b, B) {
-        E(b, e, B), E(b, t, B), E(b, i, B), E(b, s, B), E(b, o, B), E(b, u, B), E(b, a, B), E(b, f, B), E(b, d, B), E(b, p, B), g.m(b, B), E(b, m, B);
+        E(b, e, B), E(b, t, B), E(b, i, B), E(b, s, B), E(b, o, B), E(b, u, B), E(b, h, B), E(b, f, B), E(b, d, B), E(b, p, B), g.m(b, B), E(b, m, B);
       },
       p(b, B) {
         B & 1 && n !== (n = b[0].name + "") && qe(s, n), B & 1 && l !== (l = b[0].line + "") && qe(u, l), B & 1 && c !== (c = b[0].column + "") && qe(f, c), D === (D = F(b, B)) && g ? g.p(b, B) : (g.d(1), (g = D(b)), g && (g.c(), g.m(m.parentNode, m)));
       },
       d(b) {
-        b && y(e), b && y(t), b && y(i), b && y(s), b && y(o), b && y(u), b && y(a), b && y(f), b && y(d), b && y(p), g.d(b), b && y(m);
+        b && y(e), b && y(t), b && y(i), b && y(s), b && y(o), b && y(u), b && y(h), b && y(f), b && y(d), b && y(p), g.d(b), b && y(m);
       },
     };
   }
-  h(GS, "create_if_block");
+  a(GS, "create_if_block");
   function XS(r) {
     var e,
       t = JSON.stringify(r[0].char) + "",
@@ -25091,18 +25109,18 @@ function _ts_generator(thisArg, body) {
       c() {
         (e = Y("Unexpected ")), (i = Y(t)), (n = Y(" in ")), (o = Y(s)), (l = Y("."));
       },
-      m(u, a) {
-        E(u, e, a), E(u, i, a), E(u, n, a), E(u, o, a), E(u, l, a);
+      m(u, h) {
+        E(u, e, h), E(u, i, h), E(u, n, h), E(u, o, h), E(u, l, h);
       },
-      p(u, a) {
-        a & 1 && t !== (t = JSON.stringify(u[0].char) + "") && qe(i, t), a & 1 && s !== (s = u[0].node.type + "") && qe(o, s);
+      p(u, h) {
+        h & 1 && t !== (t = JSON.stringify(u[0].char) + "") && qe(i, t), h & 1 && s !== (s = u[0].node.type + "") && qe(o, s);
       },
       d(u) {
         u && y(e), u && y(i), u && y(n), u && y(o), u && y(l);
       },
     };
   }
-  h(XS, "create_else_block");
+  a(XS, "create_else_block");
   function KS(r) {
     var e = r[0].hint + "",
       t;
@@ -25121,15 +25139,15 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(KS, "create_if_block_1");
+  a(KS, "create_if_block_1");
   function ZS(r) {
     var e, t, i, n, s, o, l;
     function u(f, d) {
       return f[0] instanceof at ? GS : JS;
     }
-    h(u, "select_block_type");
-    var a = u(r, -1),
-      c = a(r);
+    a(u, "select_block_type");
+    var h = u(r, -1),
+      c = h(r);
     return {
       c() {
         (e = O("div")),
@@ -25173,7 +25191,7 @@ function _ts_generator(thisArg, body) {
       p(f, param) {
         var _param = _sliced_to_array(param, 1),
           d = _param[0];
-        a === (a = u(f, d)) && c ? c.p(f, d) : (c.d(1), (c = a(f)), c && (c.c(), c.m(l, null)));
+        h === (h = u(f, d)) && c ? c.p(f, d) : (c.d(1), (c = h(f)), c && (c.c(), c.m(l, null)));
       },
       i: Se,
       o: Se,
@@ -25182,7 +25200,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(ZS, "create_fragment");
+  a(ZS, "create_fragment");
   function ew(r, e, t) {
     var i = e.error;
     return (
@@ -25192,26 +25210,26 @@ function _ts_generator(thisArg, body) {
       [i]
     );
   }
-  h(ew, "instance");
+  a(ew, "instance");
   var Gh =
       ((_class109 = class _class extends se {
         constructor(e) {
           super(), le(this, e, ew, ZS, oe, { error: 0 });
         }
       }),
-      h(_class109, "FeedbackError"),
+      a(_class109, "FeedbackError"),
       _class109),
     C1 = Gh;
   function B1(r, e, t) {
     var i = r.slice();
     return (i[4] = e[t]), i;
   }
-  h(B1, "get_each_context");
+  a(B1, "get_each_context");
   function x1(r, e, t) {
     var i = r.slice();
     return (i[7] = e[t]), i;
   }
-  h(x1, "get_each_context_1");
+  a(x1, "get_each_context_1");
   function tw(r) {
     var e,
       t = r[2],
@@ -25243,7 +25261,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(tw, "create_if_block_2");
+  a(tw, "create_if_block_2");
   function v1(r) {
     var e,
       t,
@@ -25262,13 +25280,13 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(v1, "create_each_block_1");
+  a(v1, "create_each_block_1");
   function A1(r) {
     var e;
     function t(s, o) {
       return s[3].length === 0 ? rw : iw;
     }
-    h(t, "select_block_type");
+    a(t, "select_block_type");
     var n = t(r, -1)(r);
     return {
       c() {
@@ -25285,7 +25303,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(A1, "create_if_block");
+  a(A1, "create_if_block");
   function iw(r) {
     var e,
       t,
@@ -25308,8 +25326,8 @@ function _ts_generator(thisArg, body) {
           n = o[3];
           var u;
           for (u = 0; u < n.length; u += 1) {
-            var a = B1(o, n, u);
-            s[u] ? s[u].p(a, l) : ((s[u] = k1(a)), s[u].c(), s[u].m(i, null));
+            var h = B1(o, n, u);
+            s[u] ? s[u].p(h, l) : ((s[u] = k1(h)), s[u].c(), s[u].m(i, null));
           }
           for (; u < s.length; u += 1) s[u].d(1);
           s.length = n.length;
@@ -25320,7 +25338,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(iw, "create_else_block");
+  a(iw, "create_else_block");
   function rw(r) {
     var e;
     return {
@@ -25336,7 +25354,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(rw, "create_if_block_1");
+  a(rw, "create_if_block_1");
   function k1(r) {
     var e,
       t = r[4].message + "",
@@ -25354,7 +25372,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(k1, "create_each_block");
+  a(k1, "create_each_block");
   function nw(r) {
     var e,
       t,
@@ -25364,7 +25382,7 @@ function _ts_generator(thisArg, body) {
       o,
       l,
       u,
-      a,
+      h,
       c,
       f = r[1].count + "",
       d,
@@ -25383,7 +25401,7 @@ function _ts_generator(thisArg, body) {
           (l = O("div")),
           (u = O("strong")),
           (u.textContent = "Successful!"),
-          (a = O("br")),
+          (h = O("br")),
           (c = Y("\n		Tidied ")),
           (d = Y(f)),
           (p = Y(" entries.\n\n		")),
@@ -25419,7 +25437,7 @@ function _ts_generator(thisArg, body) {
           x(e, "class", "container svelte-yy7yvg");
       },
       m(g, b) {
-        E(g, e, b), q(e, t), q(t, i), q(t, n), q(t, s), q(e, o), q(e, l), q(l, u), q(l, a), q(l, c), q(l, d), q(l, p), F && F.m(l, null), q(l, m), D && D.m(l, null);
+        E(g, e, b), q(e, t), q(t, i), q(t, n), q(t, s), q(e, o), q(e, l), q(l, u), q(l, h), q(l, c), q(l, d), q(l, p), F && F.m(l, null), q(l, m), D && D.m(l, null);
       },
       p(g, param) {
         var _param = _sliced_to_array(param, 1),
@@ -25433,7 +25451,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(nw, "create_fragment");
+  a(nw, "create_fragment");
   function sw(r, e, t) {
     var i = e.options,
       n = e.result,
@@ -25446,14 +25464,14 @@ function _ts_generator(thisArg, body) {
       [i, n, s, o]
     );
   }
-  h(sw, "instance");
+  a(sw, "instance");
   var Xh =
       ((_class110 = class _class extends se {
         constructor(e) {
           super(), le(this, e, sw, nw, oe, { options: 0, result: 1 });
         }
       }),
-      h(_class110, "FeedbackSuccess"),
+      a(_class110, "FeedbackSuccess"),
       _class110),
     S1 = Xh;
   function ow(r) {
@@ -25483,7 +25501,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(ow, "create_else_block");
+  a(ow, "create_else_block");
   function lw(r) {
     var e, t;
     return (
@@ -25511,7 +25529,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(lw, "create_if_block");
+  a(lw, "create_if_block");
   function uw(r) {
     var e,
       t,
@@ -25519,34 +25537,34 @@ function _ts_generator(thisArg, body) {
       n,
       s = [lw, ow],
       o = [];
-    function l(u, a) {
+    function l(u, h) {
       return u[1].status === "success" ? 0 : 1;
     }
     return (
-      h(l, "select_block_type"),
+      a(l, "select_block_type"),
       (t = l(r, -1)),
       (i = o[t] = s[t](r)),
       {
         c() {
           (e = O("div")), i.c(), x(e, "role", "alert"), x(e, "class", "svelte-1pqmac");
         },
-        m(u, a) {
-          E(u, e, a), o[t].m(e, null), (n = !0);
+        m(u, h) {
+          E(u, e, h), o[t].m(e, null), (n = !0);
         },
         p(u, param) {
           var _param = _sliced_to_array(param, 1),
-            a = _param[0];
+            h = _param[0];
           var c = t;
-          (t = l(u, a)),
+          (t = l(u, h)),
             t === c
-              ? o[t].p(u, a)
+              ? o[t].p(u, h)
               : (Yt(),
                 w(o[c], 1, 1, () => {
                   o[c] = null;
                 }),
                 Jt(),
                 (i = o[t]),
-                i ? i.p(u, a) : ((i = o[t] = s[t](u)), i.c()),
+                i ? i.p(u, h) : ((i = o[t] = s[t](u)), i.c()),
                 S(i, 1),
                 i.m(e, null));
         },
@@ -25562,7 +25580,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(uw, "create_fragment");
+  a(uw, "create_fragment");
   function aw(r, e, t) {
     var i = e.options,
       n = e.status;
@@ -25573,14 +25591,14 @@ function _ts_generator(thisArg, body) {
       [i, n]
     );
   }
-  h(aw, "instance");
+  a(aw, "instance");
   var Kh =
       ((_class111 = class _class extends se {
         constructor(e) {
           super(), le(this, e, aw, uw, oe, { options: 0, status: 1 });
         }
       }),
-      h(_class111, "Feedback"),
+      a(_class111, "Feedback"),
       _class111),
     w1 = Kh;
   function hw(r) {
@@ -25588,7 +25606,7 @@ function _ts_generator(thisArg, body) {
     function s(l) {
       r[3](l);
     }
-    h(s, "radio_group_binding");
+    a(s, "radio_group_binding");
     var o = { name: "indent", value: "tabs" };
     return (
       r[0] !== void 0 && (o.group = r[0]),
@@ -25602,8 +25620,8 @@ function _ts_generator(thisArg, body) {
           N(e, l, u), E(l, i, u), (n = !0);
         },
         p(l, u) {
-          var a = {};
-          !t && u & 1 && ((t = !0), (a.group = l[0]), X(() => (t = !1))), e.$set(a);
+          var h = {};
+          !t && u & 1 && ((t = !0), (h.group = l[0]), X(() => (t = !1))), e.$set(h);
         },
         i(l) {
           n || (S(e.$$.fragment, l), (n = !0));
@@ -25617,13 +25635,13 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(hw, "create_default_slot_3");
+  a(hw, "create_default_slot_3");
   function cw(r) {
     var e, t, i, n;
     function s(l) {
       r[4](l);
     }
-    h(s, "radio_group_binding_1");
+    a(s, "radio_group_binding_1");
     var o = { name: "indent", value: "spaces" };
     return (
       r[0] !== void 0 && (o.group = r[0]),
@@ -25637,8 +25655,8 @@ function _ts_generator(thisArg, body) {
           N(e, l, u), E(l, i, u), (n = !0);
         },
         p(l, u) {
-          var a = {};
-          !t && u & 1 && ((t = !0), (a.group = l[0]), X(() => (t = !1))), e.$set(a);
+          var h = {};
+          !t && u & 1 && ((t = !0), (h.group = l[0]), X(() => (t = !1))), e.$set(h);
         },
         i(l) {
           n || (S(e.$$.fragment, l), (n = !0));
@@ -25652,7 +25670,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(cw, "create_default_slot_2");
+  a(cw, "create_default_slot_2");
   function Q1(r) {
     var e, t;
     return (
@@ -25680,7 +25698,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(Q1, "create_if_block");
+  a(Q1, "create_if_block");
   function fw(r) {
     var e, t, i, n, s;
     return {
@@ -25698,7 +25716,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(fw, "create_default_slot_1");
+  a(fw, "create_default_slot_1");
   function dw(r) {
     var e, t, i, n, s, o;
     (e = new tt({ props: { title: "Indent fields with tabs", $$slots: { default: [hw] }, $$scope: { ctx: r } } })), (i = new tt({ props: { title: "Indent fields with spaces", $$slots: { default: [cw] }, $$scope: { ctx: r } } }));
@@ -25707,18 +25725,18 @@ function _ts_generator(thisArg, body) {
       c() {
         M(e.$$.fragment), (t = $()), M(i.$$.fragment), (n = $()), l && l.c(), (s = jt());
       },
-      m(u, a) {
-        N(e, u, a), E(u, t, a), N(i, u, a), E(u, n, a), l && l.m(u, a), E(u, s, a), (o = !0);
+      m(u, h) {
+        N(e, u, h), E(u, t, h), N(i, u, h), E(u, n, h), l && l.m(u, h), E(u, s, h), (o = !0);
       },
-      p(u, a) {
+      p(u, h) {
         var c = {};
-        a & 65 && (c.$$scope = { dirty: a, ctx: u }), e.$set(c);
+        h & 65 && (c.$$scope = { dirty: h, ctx: u }), e.$set(c);
         var f = {};
-        a & 65 && (f.$$scope = { dirty: a, ctx: u }),
+        h & 65 && (f.$$scope = { dirty: h, ctx: u }),
           i.$set(f),
           u[0] === "spaces"
             ? l
-              ? (l.p(u, a), a & 1 && S(l, 1))
+              ? (l.p(u, h), h & 1 && S(l, 1))
               : ((l = Q1(u)), l.c(), S(l, 1), l.m(s.parentNode, s))
             : l &&
               (Yt(),
@@ -25738,7 +25756,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(dw, "create_default_slot");
+  a(dw, "create_default_slot");
   function pw(r) {
     var e, t;
     return (
@@ -25768,26 +25786,26 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(pw, "create_fragment");
+  a(pw, "create_fragment");
   function mw(r, e, t) {
     var i = e.options,
       n = i.tab ? "tabs" : "spaces",
       s = i.space;
-    function o(a) {
-      (n = a), t(0, n);
+    function o(h) {
+      (n = h), t(0, n);
     }
-    h(o, "radio_group_binding");
-    function l(a) {
-      (n = a), t(0, n);
+    a(o, "radio_group_binding");
+    function l(h) {
+      (n = h), t(0, n);
     }
-    h(l, "radio_group_binding_1");
+    a(l, "radio_group_binding_1");
     function u() {
       (s = xt(this.value)), t(1, s);
     }
     return (
-      h(u, "input_input_handler"),
-      (r.$$set = (a) => {
-        "options" in a && t(2, (i = a.options));
+      a(u, "input_input_handler"),
+      (r.$$set = (h) => {
+        "options" in h && t(2, (i = h.options));
       }),
       (r.$$.update = () => {
         r.$$.dirty & 3 && (t(2, (i.space = s), i), t(2, (i.tab = n === "tabs"), i));
@@ -25795,18 +25813,18 @@ function _ts_generator(thisArg, body) {
       [n, s, i, o, l, u]
     );
   }
-  h(mw, "instance");
+  a(mw, "instance");
   var Zh =
       ((_class112 = class _class extends se {
         constructor(e) {
           super(), le(this, e, mw, pw, oe, { options: 2 });
         }
       }),
-      h(_class112, "IndentOptions"),
+      a(_class112, "IndentOptions"),
       _class112),
     _1 = Zh;
   function gw(r) {
-    var e, t, i, n, s, o, l, u, a;
+    var e, t, i, n, s, o, l, u, h;
     return {
       c() {
         (e = O("label")),
@@ -25822,52 +25840,52 @@ function _ts_generator(thisArg, body) {
           x(i, "spellcheck", "false");
       },
       m(c, f) {
-        E(c, e, f), q(e, t), q(e, i), Ee(i, r[3]), E(c, n, f), E(c, s, f), E(c, o, f), E(c, l, f), u || ((a = ye(i, "input", r[5])), (u = !0));
+        E(c, e, f), q(e, t), q(e, i), Ee(i, r[3]), E(c, n, f), E(c, s, f), E(c, o, f), E(c, l, f), u || ((h = ye(i, "input", r[5])), (u = !0));
       },
       p(c, f) {
         f & 8 && Ee(i, c[3]);
       },
       d(c) {
-        c && y(e), c && y(n), c && y(s), c && y(o), c && y(l), (u = !1), a();
+        c && y(e), c && y(n), c && y(s), c && y(o), c && y(l), (u = !1), h();
       },
     };
   }
-  h(gw, "create_default_slot_2");
+  a(gw, "create_default_slot_2");
   function Dw(r) {
     var e, t, i, n, s, o, l;
     return {
       c() {
         (e = O("label")), (t = Y("Field order:\n			")), (i = O("textarea")), (n = $()), (s = O("p")), (s.innerHTML = "Space delimited, e.g: <code>title author year</code>"), x(i, "name", "sortFieldList"), x(i, "spellcheck", "false");
       },
-      m(u, a) {
-        E(u, e, a), q(e, t), q(e, i), Ee(i, r[1]), E(u, n, a), E(u, s, a), o || ((l = ye(i, "input", r[7])), (o = !0));
+      m(u, h) {
+        E(u, e, h), q(e, t), q(e, i), Ee(i, r[1]), E(u, n, h), E(u, s, h), o || ((l = ye(i, "input", r[7])), (o = !0));
       },
-      p(u, a) {
-        a & 2 && Ee(i, u[1]);
+      p(u, h) {
+        h & 2 && Ee(i, u[1]);
       },
       d(u) {
         u && y(e), u && y(n), u && y(s), (o = !1), l();
       },
     };
   }
-  h(Dw, "create_default_slot_1");
+  a(Dw, "create_default_slot_1");
   function Fw(r) {
     var e, t, i, n, s, o;
     function l(f) {
       r[6](f);
     }
-    h(l, "option0_checked_binding");
+    a(l, "option0_checked_binding");
     var u = { option: "sort", $$slots: { default: [gw] }, $$scope: { ctx: r } };
     r[2] !== void 0 && (u.checked = r[2]), (e = new me({ props: u })), J.push(() => K(e, "checked", l));
-    function a(f) {
+    function h(f) {
       r[8](f);
     }
-    h(a, "option1_checked_binding");
+    a(h, "option1_checked_binding");
     var c = { option: "sortFields", $$slots: { default: [Dw] }, $$scope: { ctx: r } };
     return (
       r[0] !== void 0 && (c.checked = r[0]),
       (n = new me({ props: c })),
-      J.push(() => K(n, "checked", a)),
+      J.push(() => K(n, "checked", h)),
       {
         c() {
           M(e.$$.fragment), (i = $()), M(n.$$.fragment);
@@ -25893,7 +25911,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(Fw, "create_default_slot");
+  a(Fw, "create_default_slot");
   function bw(r) {
     var e, t;
     return (
@@ -25923,48 +25941,48 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(bw, "create_fragment");
+  a(bw, "create_fragment");
   function yw(r, e, t) {
     var i, n;
     var s = e.options,
       o = s.sortFields !== void 0 && s.sortFields.length > 0,
       l = ((i = s.sortFields) !== null && i !== void 0 ? i : Rs).join(" "),
       u = s.sort !== void 0 && s.sort.length > 0,
-      a = ((n = s.sort) !== null && n !== void 0 ? n : Nu).join(" ");
+      h = ((n = s.sort) !== null && n !== void 0 ? n : Nu).join(" ");
     function c() {
-      (a = this.value), t(3, a);
+      (h = this.value), t(3, h);
     }
-    h(c, "textarea_input_handler");
+    a(c, "textarea_input_handler");
     function f(m) {
       (u = m), t(2, u);
     }
-    h(f, "option0_checked_binding");
+    a(f, "option0_checked_binding");
     function d() {
       (l = this.value), t(1, l);
     }
-    h(d, "textarea_input_handler_1");
+    a(d, "textarea_input_handler_1");
     function p(m) {
       (o = m), t(0, o);
     }
     return (
-      h(p, "option1_checked_binding"),
+      a(p, "option1_checked_binding"),
       (r.$$set = (m) => {
         "options" in m && t(4, (s = m.options));
       }),
       (r.$$.update = () => {
-        r.$$.dirty & 15 && (t(4, (s.sortFields = o && l.length > 0 ? l.split(/[\n\t ,]+/) : void 0), s), t(4, (s.sort = u && a.length > 0 ? a.split(/[\n\t ,]+/) : void 0), s));
+        r.$$.dirty & 15 && (t(4, (s.sortFields = o && l.length > 0 ? l.split(/[\n\t ,]+/) : void 0), s), t(4, (s.sort = u && h.length > 0 ? h.split(/[\n\t ,]+/) : void 0), s));
       }),
-      [o, l, u, a, s, c, f, d, p]
+      [o, l, u, h, s, c, f, d, p]
     );
   }
-  h(yw, "instance");
+  a(yw, "instance");
   var ec =
       ((_class113 = class _class extends se {
         constructor(e) {
           super(), le(this, e, yw, bw, oe, { options: 4 });
         }
       }),
-      h(_class113, "SortingOptions"),
+      a(_class113, "SortingOptions"),
       _class113),
     U1 = ec;
   function Ew(r) {
@@ -25973,126 +25991,126 @@ function _ts_generator(thisArg, body) {
       c() {
         (e = O("label")), (t = Y("Fields to enclose in double braces:\n			")), (i = O("textarea")), (n = $()), (s = O("p")), (s.innerHTML = "Space delimited, e.g: <code>title journal</code>."), x(i, "name", "enclosingBracesList"), x(i, "spellcheck", "false");
       },
-      m(u, a) {
-        E(u, e, a), q(e, t), q(e, i), Ee(i, r[12]), E(u, n, a), E(u, s, a), o || ((l = ye(i, "input", r[17])), (o = !0));
+      m(u, h) {
+        E(u, e, h), q(e, t), q(e, i), Ee(i, r[12]), E(u, n, h), E(u, s, h), o || ((l = ye(i, "input", r[17])), (o = !0));
       },
-      p(u, a) {
-        a[0] & 4096 && Ee(i, u[12]);
+      p(u, h) {
+        h[0] & 4096 && Ee(i, u[12]);
       },
       d(u) {
         u && y(e), u && y(n), u && y(s), (o = !1), l();
       },
     };
   }
-  h(Ew, "create_default_slot_3");
+  a(Ew, "create_default_slot_3");
   function Cw(r) {
     var e, t, i, n, s, o, l;
     return {
       c() {
         (e = O("label")), (t = Y("Remove braces from values of these fields:\n			")), (i = O("textarea")), (n = $()), (s = O("p")), (s.innerHTML = "Space delimited, e.g: <code>title journal</code>."), x(i, "name", "removeBracesList"), x(i, "spellcheck", "false");
       },
-      m(u, a) {
-        E(u, e, a), q(e, t), q(e, i), Ee(i, r[14]), E(u, n, a), E(u, s, a), o || ((l = ye(i, "input", r[19])), (o = !0));
+      m(u, h) {
+        E(u, e, h), q(e, t), q(e, i), Ee(i, r[14]), E(u, n, h), E(u, s, h), o || ((l = ye(i, "input", r[19])), (o = !0));
       },
-      p(u, a) {
-        a[0] & 16384 && Ee(i, u[14]);
+      p(u, h) {
+        h[0] & 16384 && Ee(i, u[14]);
       },
       d(u) {
         u && y(e), u && y(n), u && y(s), (o = !1), l();
       },
     };
   }
-  h(Cw, "create_default_slot_2");
+  a(Cw, "create_default_slot_2");
   function Bw(r) {
     var e, t, i, n, s, o, l;
     return {
       c() {
         (e = O("label")), (t = Y("Maximum number of authors:\n			")), (i = O("input")), (n = $()), (s = O("p")), (s.textContent = 'Author lists longer than this will be truncated to "and others".'), x(i, "name", "maxAuthorsNum"), x(i, "type", "number");
       },
-      m(u, a) {
-        E(u, e, a), q(e, t), q(e, i), Ee(i, r[10]), E(u, n, a), E(u, s, a), o || ((l = ye(i, "input", r[29])), (o = !0));
+      m(u, h) {
+        E(u, e, h), q(e, t), q(e, i), Ee(i, r[10]), E(u, n, h), E(u, s, h), o || ((l = ye(i, "input", r[29])), (o = !0));
       },
-      p(u, a) {
-        a[0] & 1024 && xt(i.value) !== u[10] && Ee(i, u[10]);
+      p(u, h) {
+        h[0] & 1024 && xt(i.value) !== u[10] && Ee(i, u[10]);
       },
       d(u) {
         u && y(e), u && y(n), u && y(s), (o = !1), l();
       },
     };
   }
-  h(Bw, "create_default_slot_1");
+  a(Bw, "create_default_slot_1");
   function xw(r) {
-    var e, t, i, n, s, o, l, u, a, c, f, d, p, m, F, D, g, b, B, k, C, L, Q, W, H, G, T, j, te, P, _, ee, ce, xe, ve, ae, be, we;
+    var e, t, i, n, s, o, l, u, h, c, f, d, p, m, F, D, g, b, B, k, C, L, Q, W, H, G, T, j, te, P, _, ee, ce, xe, ve, ae, be, we;
     function Ye(A) {
       r[16](A);
     }
-    h(Ye, "option0_checked_binding");
+    a(Ye, "option0_checked_binding");
     var it = { option: "curly" };
     r[0] !== void 0 && (it.checked = r[0]), (i = new me({ props: it })), J.push(() => K(i, "checked", Ye));
     function Ft(A) {
       r[18](A);
     }
-    h(Ft, "option1_checked_binding");
+    a(Ft, "option1_checked_binding");
     var Vt = { option: "enclosingBraces", $$slots: { default: [Ew] }, $$scope: { ctx: r } };
     r[11] !== void 0 && (Vt.checked = r[11]), (o = new me({ props: Vt })), J.push(() => K(o, "checked", Ft));
     function qi(A) {
       r[20](A);
     }
-    h(qi, "option2_checked_binding");
+    a(qi, "option2_checked_binding");
     var ke = { option: "removeBraces", $$slots: { default: [Cw] }, $$scope: { ctx: r } };
-    r[13] !== void 0 && (ke.checked = r[13]), (a = new me({ props: ke })), J.push(() => K(a, "checked", qi));
+    r[13] !== void 0 && (ke.checked = r[13]), (h = new me({ props: ke })), J.push(() => K(h, "checked", qi));
     function re(A) {
       r[21](A);
     }
-    h(re, "option3_checked_binding");
+    a(re, "option3_checked_binding");
     var Oe = { option: "stripEnclosingBraces" };
     r[1] !== void 0 && (Oe.checked = r[1]), (d = new me({ props: Oe })), J.push(() => K(d, "checked", re));
     function Vi(A) {
       r[22](A);
     }
-    h(Vi, "option4_checked_binding");
+    a(Vi, "option4_checked_binding");
     var fe = { option: "numeric" };
     r[2] !== void 0 && (fe.checked = r[2]), (F = new me({ props: fe })), J.push(() => K(F, "checked", Vi));
     function Mn(A) {
       r[23](A);
     }
-    h(Mn, "option5_checked_binding");
+    a(Mn, "option5_checked_binding");
     var _r = { option: "months" };
     r[3] !== void 0 && (_r.checked = r[3]), (b = new me({ props: _r })), J.push(() => K(b, "checked", Mn));
     function Pn(A) {
       r[24](A);
     }
-    h(Pn, "option6_checked_binding");
+    a(Pn, "option6_checked_binding");
     var Ur = { option: "dropAllCaps" };
     r[4] !== void 0 && (Ur.checked = r[4]), (C = new me({ props: Ur })), J.push(() => K(C, "checked", Pn));
     function In(A) {
       r[25](A);
     }
-    h(In, "option7_checked_binding");
+    a(In, "option7_checked_binding");
     var sc = { option: "escape" };
     r[5] !== void 0 && (sc.checked = r[5]), (W = new me({ props: sc })), J.push(() => K(W, "checked", In));
     function P1(A) {
       r[26](A);
     }
-    h(P1, "option8_checked_binding");
+    a(P1, "option8_checked_binding");
     var oc = { option: "encodeUrls" };
     r[6] !== void 0 && (oc.checked = r[6]), (T = new me({ props: oc })), J.push(() => K(T, "checked", P1));
     function I1(A) {
       r[27](A);
     }
-    h(I1, "option9_checked_binding");
+    a(I1, "option9_checked_binding");
     var lc = { option: "removeEmptyFields" };
     r[7] !== void 0 && (lc.checked = r[7]), (P = new me({ props: lc })), J.push(() => K(P, "checked", I1));
     function $1(A) {
       r[28](A);
     }
-    h($1, "option10_checked_binding");
+    a($1, "option10_checked_binding");
     var uc = { option: "removeDuplicateFields" };
     r[8] !== void 0 && (uc.checked = r[8]), (ce = new me({ props: uc })), J.push(() => K(ce, "checked", $1));
     function q1(A) {
       r[30](A);
     }
-    h(q1, "option11_checked_binding");
+    a(q1, "option11_checked_binding");
     var ac = { option: "maxAuthors", $$slots: { default: [Bw] }, $$scope: { ctx: r } };
     return (
       r[9] !== void 0 && (ac.checked = r[9]),
@@ -26106,7 +26124,7 @@ function _ts_generator(thisArg, body) {
             (s = $()),
             M(o.$$.fragment),
             (u = $()),
-            M(a.$$.fragment),
+            M(h.$$.fragment),
             (f = $()),
             M(d.$$.fragment),
             (m = $()),
@@ -26128,7 +26146,7 @@ function _ts_generator(thisArg, body) {
             x(e, "id", "valueOptions");
         },
         m(A, ne) {
-          E(A, e, ne), E(A, t, ne), N(i, A, ne), E(A, s, ne), N(o, A, ne), E(A, u, ne), N(a, A, ne), E(A, f, ne), N(d, A, ne), E(A, m, ne), N(F, A, ne), E(A, g, ne), N(b, A, ne), E(A, k, ne), N(C, A, ne), E(A, Q, ne), N(W, A, ne), E(A, G, ne), N(T, A, ne), E(A, te, ne), N(P, A, ne), E(A, ee, ne), N(ce, A, ne), E(A, ve, ne), N(ae, A, ne), (we = !0);
+          E(A, e, ne), E(A, t, ne), N(i, A, ne), E(A, s, ne), N(o, A, ne), E(A, u, ne), N(h, A, ne), E(A, f, ne), N(d, A, ne), E(A, m, ne), N(F, A, ne), E(A, g, ne), N(b, A, ne), E(A, k, ne), N(C, A, ne), E(A, Q, ne), N(W, A, ne), E(A, G, ne), N(T, A, ne), E(A, te, ne), N(P, A, ne), E(A, ee, ne), N(ce, A, ne), E(A, ve, ne), N(ae, A, ne), (we = !0);
         },
         p(A, ne) {
           var hc = {};
@@ -26136,7 +26154,7 @@ function _ts_generator(thisArg, body) {
           var Jo = {};
           (ne[0] & 4096) | (ne[1] & 16384) && (Jo.$$scope = { dirty: ne, ctx: A }), !l && ne[0] & 2048 && ((l = !0), (Jo.checked = A[11]), X(() => (l = !1))), o.$set(Jo);
           var Go = {};
-          (ne[0] & 16384) | (ne[1] & 16384) && (Go.$$scope = { dirty: ne, ctx: A }), !c && ne[0] & 8192 && ((c = !0), (Go.checked = A[13]), X(() => (c = !1))), a.$set(Go);
+          (ne[0] & 16384) | (ne[1] & 16384) && (Go.$$scope = { dirty: ne, ctx: A }), !c && ne[0] & 8192 && ((c = !0), (Go.checked = A[13]), X(() => (c = !1))), h.$set(Go);
           var cc = {};
           !p && ne[0] & 2 && ((p = !0), (cc.checked = A[1]), X(() => (p = !1))), d.$set(cc);
           var fc = {};
@@ -26157,18 +26175,18 @@ function _ts_generator(thisArg, body) {
           (ne[0] & 1024) | (ne[1] & 16384) && (Xo.$$scope = { dirty: ne, ctx: A }), !be && ne[0] & 512 && ((be = !0), (Xo.checked = A[9]), X(() => (be = !1))), ae.$set(Xo);
         },
         i(A) {
-          we || (S(i.$$.fragment, A), S(o.$$.fragment, A), S(a.$$.fragment, A), S(d.$$.fragment, A), S(F.$$.fragment, A), S(b.$$.fragment, A), S(C.$$.fragment, A), S(W.$$.fragment, A), S(T.$$.fragment, A), S(P.$$.fragment, A), S(ce.$$.fragment, A), S(ae.$$.fragment, A), (we = !0));
+          we || (S(i.$$.fragment, A), S(o.$$.fragment, A), S(h.$$.fragment, A), S(d.$$.fragment, A), S(F.$$.fragment, A), S(b.$$.fragment, A), S(C.$$.fragment, A), S(W.$$.fragment, A), S(T.$$.fragment, A), S(P.$$.fragment, A), S(ce.$$.fragment, A), S(ae.$$.fragment, A), (we = !0));
         },
         o(A) {
-          w(i.$$.fragment, A), w(o.$$.fragment, A), w(a.$$.fragment, A), w(d.$$.fragment, A), w(F.$$.fragment, A), w(b.$$.fragment, A), w(C.$$.fragment, A), w(W.$$.fragment, A), w(T.$$.fragment, A), w(P.$$.fragment, A), w(ce.$$.fragment, A), w(ae.$$.fragment, A), (we = !1);
+          w(i.$$.fragment, A), w(o.$$.fragment, A), w(h.$$.fragment, A), w(d.$$.fragment, A), w(F.$$.fragment, A), w(b.$$.fragment, A), w(C.$$.fragment, A), w(W.$$.fragment, A), w(T.$$.fragment, A), w(P.$$.fragment, A), w(ce.$$.fragment, A), w(ae.$$.fragment, A), (we = !1);
         },
         d(A) {
-          A && y(e), A && y(t), R(i, A), A && y(s), R(o, A), A && y(u), R(a, A), A && y(f), R(d, A), A && y(m), R(F, A), A && y(g), R(b, A), A && y(k), R(C, A), A && y(Q), R(W, A), A && y(G), R(T, A), A && y(te), R(P, A), A && y(ee), R(ce, A), A && y(ve), R(ae, A);
+          A && y(e), A && y(t), R(i, A), A && y(s), R(o, A), A && y(u), R(h, A), A && y(f), R(d, A), A && y(m), R(F, A), A && y(g), R(b, A), A && y(k), R(C, A), A && y(Q), R(W, A), A && y(G), R(T, A), A && y(te), R(P, A), A && y(ee), R(ce, A), A && y(ve), R(ae, A);
         },
       }
     );
   }
-  h(xw, "create_default_slot");
+  a(xw, "create_default_slot");
   function vw(r) {
     var e, t;
     return (
@@ -26196,9 +26214,9 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(vw, "create_fragment");
+  a(vw, "create_fragment");
   function Aw(r, e, t) {
-    var i, n, s, o, l, u, a, c, f, d, p, m, F, D;
+    var i, n, s, o, l, u, h, c, f, d, p, m, F, D;
     var g = e.options,
       b = (i = g.curly) !== null && i !== void 0 ? i : !1,
       B = (n = g.stripEnclosingBraces) !== null && n !== void 0 ? n : !1,
@@ -26206,7 +26224,7 @@ function _ts_generator(thisArg, body) {
       C = (o = g.months) !== null && o !== void 0 ? o : !1,
       L = (l = g.dropAllCaps) !== null && l !== void 0 ? l : !1,
       Q = (u = g.escape) !== null && u !== void 0 ? u : !1,
-      W = (a = g.encodeUrls) !== null && a !== void 0 ? a : !1,
+      W = (h = g.encodeUrls) !== null && h !== void 0 ? h : !1,
       H = (c = g.removeEmptyFields) !== null && c !== void 0 ? c : !1,
       G = (f = g.removeDuplicateFields) !== null && f !== void 0 ? f : !1,
       T = g.maxAuthors !== void 0,
@@ -26218,64 +26236,64 @@ function _ts_generator(thisArg, body) {
     function ce(fe) {
       (b = fe), t(0, b);
     }
-    h(ce, "option0_checked_binding");
+    a(ce, "option0_checked_binding");
     function xe() {
       (P = this.value), t(12, P);
     }
-    h(xe, "textarea_input_handler");
+    a(xe, "textarea_input_handler");
     function ve(fe) {
       (te = fe), t(11, te);
     }
-    h(ve, "option1_checked_binding");
+    a(ve, "option1_checked_binding");
     function ae() {
       (ee = this.value), t(14, ee);
     }
-    h(ae, "textarea_input_handler_1");
+    a(ae, "textarea_input_handler_1");
     function be(fe) {
       (_ = fe), t(13, _);
     }
-    h(be, "option2_checked_binding");
+    a(be, "option2_checked_binding");
     function we(fe) {
       (B = fe), t(1, B);
     }
-    h(we, "option3_checked_binding");
+    a(we, "option3_checked_binding");
     function Ye(fe) {
       (k = fe), t(2, k);
     }
-    h(Ye, "option4_checked_binding");
+    a(Ye, "option4_checked_binding");
     function it(fe) {
       (C = fe), t(3, C);
     }
-    h(it, "option5_checked_binding");
+    a(it, "option5_checked_binding");
     function Ft(fe) {
       (L = fe), t(4, L);
     }
-    h(Ft, "option6_checked_binding");
+    a(Ft, "option6_checked_binding");
     function Vt(fe) {
       (Q = fe), t(5, Q);
     }
-    h(Vt, "option7_checked_binding");
+    a(Vt, "option7_checked_binding");
     function qi(fe) {
       (W = fe), t(6, W);
     }
-    h(qi, "option8_checked_binding");
+    a(qi, "option8_checked_binding");
     function ke(fe) {
       (H = fe), t(7, H);
     }
-    h(ke, "option9_checked_binding");
+    a(ke, "option9_checked_binding");
     function re(fe) {
       (G = fe), t(8, G);
     }
-    h(re, "option10_checked_binding");
+    a(re, "option10_checked_binding");
     function Oe() {
       (j = xt(this.value)), t(10, j);
     }
-    h(Oe, "input_input_handler");
+    a(Oe, "input_input_handler");
     function Vi(fe) {
       (T = fe), t(9, T);
     }
     return (
-      h(Vi, "option11_checked_binding"),
+      a(Vi, "option11_checked_binding"),
       (r.$$set = (fe) => {
         "options" in fe && t(15, (g = fe.options));
       }),
@@ -26297,14 +26315,14 @@ function _ts_generator(thisArg, body) {
       [b, B, k, C, L, Q, W, H, G, T, j, te, P, _, ee, g, ce, xe, ve, ae, be, we, Ye, it, Ft, Vt, qi, ke, re, Oe, Vi]
     );
   }
-  h(Aw, "instance");
+  a(Aw, "instance");
   var tc =
       ((_class114 = class _class extends se {
         constructor(e) {
           super(), le(this, e, Aw, vw, oe, { options: 15 }, null, [-1, -1]);
         }
       }),
-      h(_class114, "ValueOptions"),
+      a(_class114, "ValueOptions"),
       _class114),
     L1 = tc;
   function Sw(r) {
@@ -26324,7 +26342,7 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(Sw, "create_default_slot_2");
+  a(Sw, "create_default_slot_2");
   function ww(r) {
     var e, t, i, n, s;
     return {
@@ -26342,25 +26360,25 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(ww, "create_default_slot_1");
+  a(ww, "create_default_slot_1");
   function Qw(r) {
-    var e, t, i, n, s, o, l, u, a;
+    var e, t, i, n, s, o, l, u, h;
     function c(D) {
       r[6](D);
     }
-    h(c, "option0_checked_binding");
+    a(c, "option0_checked_binding");
     var f = { option: "align", $$slots: { default: [Sw] }, $$scope: { ctx: r } };
     r[1] !== void 0 && (f.checked = r[1]), (e = new me({ props: f })), J.push(() => K(e, "checked", c));
     function d(D) {
       r[8](D);
     }
-    h(d, "option1_checked_binding");
+    a(d, "option1_checked_binding");
     var p = { option: "wrap", $$slots: { default: [ww] }, $$scope: { ctx: r } };
     r[3] !== void 0 && (p.checked = r[3]), (n = new me({ props: p })), J.push(() => K(n, "checked", d));
     function m(D) {
       r[9](D);
     }
-    h(m, "option2_checked_binding");
+    a(m, "option2_checked_binding");
     var F = { option: "blankLines" };
     return (
       r[0].blankLines !== void 0 && (F.checked = r[0].blankLines),
@@ -26371,7 +26389,7 @@ function _ts_generator(thisArg, body) {
           M(e.$$.fragment), (i = $()), M(n.$$.fragment), (o = $()), M(l.$$.fragment);
         },
         m(D, g) {
-          N(e, D, g), E(D, i, g), N(n, D, g), E(D, o, g), N(l, D, g), (a = !0);
+          N(e, D, g), E(D, i, g), N(n, D, g), E(D, o, g), N(l, D, g), (h = !0);
         },
         p(D, g) {
           var b = {};
@@ -26382,10 +26400,10 @@ function _ts_generator(thisArg, body) {
           !u && g & 1 && ((u = !0), (k.checked = D[0].blankLines), X(() => (u = !1))), l.$set(k);
         },
         i(D) {
-          a || (S(e.$$.fragment, D), S(n.$$.fragment, D), S(l.$$.fragment, D), (a = !0));
+          h || (S(e.$$.fragment, D), S(n.$$.fragment, D), S(l.$$.fragment, D), (h = !0));
         },
         o(D) {
-          w(e.$$.fragment, D), w(n.$$.fragment, D), w(l.$$.fragment, D), (a = !1);
+          w(e.$$.fragment, D), w(n.$$.fragment, D), w(l.$$.fragment, D), (h = !1);
         },
         d(D) {
           R(e, D), D && y(i), R(n, D), D && y(o), R(l, D);
@@ -26393,7 +26411,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(Qw, "create_default_slot");
+  a(Qw, "create_default_slot");
   function _w(r) {
     var e, t;
     return (
@@ -26423,7 +26441,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(_w, "create_fragment");
+  a(_w, "create_fragment");
   function Uw(r, e, t) {
     var i;
     var n = e.options,
@@ -26431,44 +26449,44 @@ function _ts_generator(thisArg, body) {
       o = s ? n.align : 13,
       l = n.wrap !== void 0,
       u = (i = n.wrap) !== null && i !== void 0 ? i : 80;
-    function a() {
+    function h() {
       (o = xt(this.value)), t(2, o);
     }
-    h(a, "input_input_handler");
+    a(h, "input_input_handler");
     function c(m) {
       (s = m), t(1, s);
     }
-    h(c, "option0_checked_binding");
+    a(c, "option0_checked_binding");
     function f() {
       (u = xt(this.value)), t(4, u);
     }
-    h(f, "input_input_handler_1");
+    a(f, "input_input_handler_1");
     function d(m) {
       (l = m), t(3, l);
     }
-    h(d, "option1_checked_binding");
+    a(d, "option1_checked_binding");
     function p(m) {
       r.$$.not_equal(n.blankLines, m) && ((n.blankLines = m), t(0, n), t(1, s), t(2, o), t(3, l), t(4, u));
     }
     return (
-      h(p, "option2_checked_binding"),
+      a(p, "option2_checked_binding"),
       (r.$$set = (m) => {
         "options" in m && t(0, (n = m.options));
       }),
       (r.$$.update = () => {
         r.$$.dirty & 30 && (t(0, (n.align = s ? o : 1), n), t(0, (n.wrap = l ? u : void 0), n));
       }),
-      [n, s, o, l, u, a, c, f, d, p]
+      [n, s, o, l, u, h, c, f, d, p]
     );
   }
-  h(Uw, "instance");
+  a(Uw, "instance");
   var ic =
       ((_class115 = class _class extends se {
         constructor(e) {
           super(), le(this, e, Uw, _w, oe, { options: 0 });
         }
       }),
-      h(_class115, "WhitespaceOptions"),
+      a(_class115, "WhitespaceOptions"),
       _class115),
     O1 = ic;
   function T1(r) {
@@ -26498,43 +26516,43 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(T1, "create_if_block");
+  a(T1, "create_if_block");
   function Lw(r) {
-    var e, t, i, n, s, o, l, u, a, c, f, d, p, m, F, D, g, b, B, k, C, L, Q, W, H, G, T, j, te, P, _;
+    var e, t, i, n, s, o, l, u, h, c, f, d, p, m, F, D, g, b, B, k, C, L, Q, W, H, G, T, j, te, P, _;
     function ee(re) {
       r[4](re);
     }
-    h(ee, "indentoptions_options_binding");
+    a(ee, "indentoptions_options_binding");
     var ce = {};
     r[0] !== void 0 && (ce.options = r[0]), (s = new _1({ props: ce })), J.push(() => K(s, "options", ee));
     function xe(re) {
       r[5](re);
     }
-    h(xe, "whitespaceoptions_options_binding");
+    a(xe, "whitespaceoptions_options_binding");
     var ve = {};
     r[0] !== void 0 && (ve.options = r[0]), (u = new O1({ props: ve })), J.push(() => K(u, "options", xe));
     function ae(re) {
       r[6](re);
     }
-    h(ae, "valueoptions_options_binding");
+    a(ae, "valueoptions_options_binding");
     var be = {};
     r[0] !== void 0 && (be.options = r[0]), (f = new L1({ props: be })), J.push(() => K(f, "options", ae));
     function we(re) {
       r[7](re);
     }
-    h(we, "sortingoptions_options_binding");
+    a(we, "sortingoptions_options_binding");
     var Ye = {};
     r[0] !== void 0 && (Ye.options = r[0]), (m = new U1({ props: Ye })), J.push(() => K(m, "options", we));
     function it(re) {
       r[8](re);
     }
-    h(it, "duplicateoptions_options_binding");
+    a(it, "duplicateoptions_options_binding");
     var Ft = {};
     r[0] !== void 0 && (Ft.options = r[0]), (g = new E1({ props: Ft })), J.push(() => K(g, "options", it));
     function Vt(re) {
       r[9](re);
     }
-    h(Vt, "cleanupoptions_options_binding");
+    a(Vt, "cleanupoptions_options_binding");
     var qi = {};
     r[0] !== void 0 && (qi.options = r[0]), (k = new m1({ props: qi })), J.push(() => K(k, "options", Vt)), (Q = new y1({ props: { options: r[0] } }));
     var ke = r[1] && T1(r);
@@ -26582,7 +26600,7 @@ function _ts_generator(thisArg, body) {
         var Vi = {};
         !o && Oe & 1 && ((o = !0), (Vi.options = re[0]), X(() => (o = !1))), s.$set(Vi);
         var fe = {};
-        !a && Oe & 1 && ((a = !0), (fe.options = re[0]), X(() => (a = !1))), u.$set(fe);
+        !h && Oe & 1 && ((h = !0), (fe.options = re[0]), X(() => (h = !1))), u.$set(fe);
         var Mn = {};
         !d && Oe & 1 && ((d = !0), (Mn.options = re[0]), X(() => (d = !1))), f.$set(Mn);
         var _r = {};
@@ -26617,8 +26635,8 @@ function _ts_generator(thisArg, body) {
       },
     };
   }
-  h(Lw, "create_fragment");
-  var Ow = h(() => !1, "submit_handler");
+  a(Lw, "create_fragment");
+  var Ow = a(() => !1, "submit_handler");
   function Tw(r, e, t) {
     var i = e.status,
       n = e.running,
@@ -26627,43 +26645,43 @@ function _ts_generator(thisArg, body) {
     function l(m) {
       (s = m), t(0, s);
     }
-    h(l, "indentoptions_options_binding");
+    a(l, "indentoptions_options_binding");
     function u(m) {
       (s = m), t(0, s);
     }
-    h(u, "whitespaceoptions_options_binding");
-    function a(m) {
+    a(u, "whitespaceoptions_options_binding");
+    function h(m) {
       (s = m), t(0, s);
     }
-    h(a, "valueoptions_options_binding");
+    a(h, "valueoptions_options_binding");
     function c(m) {
       (s = m), t(0, s);
     }
-    h(c, "sortingoptions_options_binding");
+    a(c, "sortingoptions_options_binding");
     function f(m) {
       (s = m), t(0, s);
     }
-    h(f, "duplicateoptions_options_binding");
+    a(f, "duplicateoptions_options_binding");
     function d(m) {
       (s = m), t(0, s);
     }
-    h(d, "cleanupoptions_options_binding");
-    var p = h(() => o("tidy"), "click_handler");
+    a(d, "cleanupoptions_options_binding");
+    var p = a(() => o("tidy"), "click_handler");
     return (
       (r.$$set = (m) => {
         "status" in m && t(1, (i = m.status)), "running" in m && t(2, (n = m.running)), "options" in m && t(0, (s = m.options));
       }),
-      [s, i, n, o, l, u, a, c, f, d, p]
+      [s, i, n, o, l, u, h, c, f, d, p]
     );
   }
-  h(Tw, "instance");
+  a(Tw, "instance");
   var rc =
       ((_class116 = class _class extends se {
         constructor(e) {
           super(), le(this, e, Tw, Lw, oe, { status: 1, running: 2, options: 0 });
         }
       }),
-      h(_class116, "Sidebar"),
+      a(_class116, "Sidebar"),
       _class116),
     R1 = rc;
   var N1 =
@@ -26673,18 +26691,18 @@ function _ts_generator(thisArg, body) {
     function l(f) {
       r[6](f);
     }
-    h(l, "editor_bibtex_binding");
+    a(l, "editor_bibtex_binding");
     var u = { error: r[4] };
     r[2] !== void 0 && (u.bibtex = r[2]), (e = new f1({ props: u })), J.push(() => K(e, "bibtex", l));
-    function a(f) {
+    function h(f) {
       r[7](f);
     }
-    h(a, "sidebar_options_binding");
+    a(h, "sidebar_options_binding");
     var c = { status: r[3], running: r[1] };
     return (
       r[0] !== void 0 && (c.options = r[0]),
       (n = new R1({ props: c })),
-      J.push(() => K(n, "options", a)),
+      J.push(() => K(n, "options", h)),
       n.$on("tidy", r[5]),
       {
         c() {
@@ -26713,7 +26731,7 @@ function _ts_generator(thisArg, body) {
       }
     );
   }
-  h(Rw, "create_fragment");
+  a(Rw, "create_fragment");
   function Nw(r, e, t) {
     var i;
     var n = Kr({ tab: !0, align: 13, curly: !0, numeric: !0, escape: !1, duplicates: ["key"], sortFields: !0, removeDuplicateFields: !1 }),
@@ -26721,23 +26739,23 @@ function _ts_generator(thisArg, body) {
       o = N1,
       l = (i = f()) !== null && i !== void 0 ? i : n,
       u,
-      a;
+      h;
     function c() {
       t(1, (s = !0)),
         t(3, (u = void 0)),
-        t(4, (a = void 0)),
+        t(4, (h = void 0)),
         setTimeout(() => {
           try {
             var _$m = eg(o, l);
             t(2, (o = _$m.bibtex)), t(3, (u = { status: "success", result: _$m }));
           } catch (m) {
-            console.error("bibtex parse problem:", m), t(3, (u = { status: "error", error: m })), m instanceof at && t(4, (a = m));
+            console.error("bibtex parse problem:", m), t(3, (u = { status: "error", error: m })), m instanceof at && t(4, (h = m));
           } finally {
             t(1, (s = !1));
           }
         }, 100);
     }
-    h(c, "handleTidy");
+    a(c, "handleTidy");
     function f() {
       var m = window.location.search,
         D = new URLSearchParams(m).get("opt");
@@ -26749,7 +26767,7 @@ function _ts_generator(thisArg, body) {
           return;
         }
     }
-    h(f, "getOptionsFromURL"),
+    a(f, "getOptionsFromURL"),
       window.addEventListener("popstate", () => {
         var m;
         t(0, (l = (m = f()) !== null && m !== void 0 ? m : n));
@@ -26757,12 +26775,12 @@ function _ts_generator(thisArg, body) {
     function d(m) {
       (o = m), t(2, o);
     }
-    h(d, "editor_bibtex_binding");
+    a(d, "editor_bibtex_binding");
     function p(m) {
       (l = m), t(0, l);
     }
     return (
-      h(p, "sidebar_options_binding"),
+      a(p, "sidebar_options_binding"),
       (r.$$.update = () => {
         if (r.$$.dirty & 1) {
           var m = JSON.stringify(l),
@@ -26770,17 +26788,17 @@ function _ts_generator(thisArg, body) {
           window.history.pushState(l, "", "index.html?".concat(F.toString()));
         }
       }),
-      [l, s, o, u, a, c, d, p]
+      [l, s, o, u, h, c, d, p]
     );
   }
-  h(Nw, "instance");
+  a(Nw, "instance");
   var nc =
       ((_class117 = class _class extends se {
         constructor(e) {
           super(), le(this, e, Nw, Rw, oe, {});
         }
       }),
-      h(_class117, "App"),
+      a(_class117, "App"),
       _class117),
     M1 = nc;
   new M1({ target: document.body });

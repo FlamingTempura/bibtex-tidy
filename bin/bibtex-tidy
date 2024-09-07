@@ -524,6 +524,8 @@ function generateAST(input) {
           node.value += char;
         }
         break;
+      // Values may be enclosed in curly braces. Curly braces may be used within
+      // the value but they must be balanced.
       case "braced":
         if (char === "}" && node.depth === 0) {
           node = node.parent;
@@ -535,6 +537,11 @@ function generateAST(input) {
         }
         node.value += char;
         break;
+      // Values may be enclosed in double quotes. Curly braces may be used
+      // within quoted values but they must be balanced.
+      //
+      // To escape a double quote, surround it with braces `{"}`.
+      // https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
       case "quoted":
         if (char === '"' && node.depth === 0) {
           node = node.parent;
@@ -637,8 +644,7 @@ function parseLaTeX(input) {
   let node = rootNode;
   for (let i = 0; i < input.length; i++) {
     const char = input[i];
-    if (!char)
-      break;
+    if (!char) break;
     switch (node.type) {
       case "block": {
         if (char === "\\") {
@@ -3084,8 +3090,7 @@ function escapeSpecialCharacters(str) {
 function titleCase(str) {
   return str.replace(/(\w)(\S*)/g, (_, first, rest) => {
     const word = first + rest;
-    if (isRomanNumeral(word))
-      return word;
+    if (isRomanNumeral(word)) return word;
     return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
   });
 }
@@ -3164,15 +3169,13 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
   const abstracts = /* @__PURE__ */ new Map();
   for (const entry of getEntries(ast)) {
     const entryValues = valueLookup.get(entry);
-    if (!entryValues)
-      continue;
+    if (!entryValues) continue;
     for (const [rule, doMerge] of rules) {
       let duplicateOf;
       let warning;
       switch (rule) {
         case "key": {
-          if (!entry.key)
-            continue;
+          if (!entry.key) continue;
           const keyLC = entry.key.toLocaleLowerCase();
           duplicateOf = keys.get(keyLC);
           if (!duplicateOf) {
@@ -3184,8 +3187,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
         }
         case "doi": {
           const doi = alphaNum((_a = entryValues.get("doi")) != null ? _a : "");
-          if (!doi)
-            continue;
+          if (!doi) continue;
           duplicateOf = dois.get(doi);
           if (!duplicateOf) {
             dois.set(doi, entry);
@@ -3198,8 +3200,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
           const ttl = entryValues.get("title");
           const aut = entryValues.get("author");
           const num = entryValues.get("number");
-          if (!ttl || !aut)
-            continue;
+          if (!ttl || !aut) continue;
           const cit = [
             alphaNum((_c = (_b = parseAuthors(aut)[0]) == null ? void 0 : _b.lastName) != null ? _c : aut),
             alphaNum(ttl),
@@ -3216,8 +3217,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
         case "abstract": {
           const abstract = alphaNum((_d = entryValues.get("abstract")) != null ? _d : "");
           const abs = abstract.slice(0, 100);
-          if (!abs)
-            continue;
+          if (!abs) continue;
           duplicateOf = abstracts.get(abs);
           if (!duplicateOf) {
             abstracts.set(abs, entry);
@@ -3243,8 +3243,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
   return { entries: duplicateEntries, warnings };
 }
 function mergeEntries(merge, duplicateOf, entry) {
-  if (!merge)
-    return;
+  if (!merge) return;
   switch (merge) {
     case "last":
       duplicateOf.key = entry.key;
@@ -3263,6 +3262,7 @@ function mergeEntries(merge, duplicateOf, entry) {
         }
       }
       break;
+    // TODO: case 'keep-both'
     case "first":
       return;
   }
@@ -3330,16 +3330,14 @@ function formatBibtex(ast, options, replacementKeys) {
   let bibtex = ast.children.map(
     (child) => formatNode(child, options, indent, omitFields, replacementKeys)
   ).join("").trimEnd();
-  if (!bibtex.endsWith("\n"))
-    bibtex += "\n";
+  if (!bibtex.endsWith("\n")) bibtex += "\n";
   return bibtex;
 }
 function formatNode(child, options, indent, omitFields, replacementKeys) {
   if (child.type === "text") {
     return formatComment(child.text, options);
   }
-  if (!child.block)
-    throw new Error("FATAL!");
+  if (!child.block) throw new Error("FATAL!");
   switch (child.block.type) {
     case "preamble":
     case "string":
@@ -3370,33 +3368,26 @@ function formatEntry(entryType, entry, options, indent, omitFields, replacementK
   const itemType = lowercase ? entryType.toLocaleLowerCase() : entryType;
   bibtex += `@${itemType}{`;
   const key = replacementKey != null ? replacementKey : entry.key;
-  if (key)
-    bibtex += `${key},`;
+  if (key) bibtex += `${key},`;
   const fieldSeen = /* @__PURE__ */ new Set();
   for (const [i, field] of entry.fields.entries()) {
     const nameLowerCase = field.name.toLocaleLowerCase();
     const name = lowercase ? nameLowerCase : field.name;
-    if (field.name === "")
-      continue;
-    if (omitFields.has(nameLowerCase))
-      continue;
-    if (removeDuplicateFields && fieldSeen.has(nameLowerCase))
-      continue;
+    if (field.name === "") continue;
+    if (omitFields.has(nameLowerCase)) continue;
+    if (removeDuplicateFields && fieldSeen.has(nameLowerCase)) continue;
     fieldSeen.add(nameLowerCase);
     if (field.value.concat.length === 0) {
-      if (removeEmptyFields)
-        continue;
+      if (removeEmptyFields) continue;
       bibtex += `
 ${indent}${name}`;
     } else {
       const value = formatValue(field, options);
-      if (removeEmptyFields && (value === "{}" || value === '""'))
-        continue;
+      if (removeEmptyFields && (value === "{}" || value === '""')) continue;
       bibtex += `
 ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
     }
-    if (i < entry.fields.length - 1 || trailingCommas)
-      bibtex += ",";
+    if (i < entry.fields.length - 1 || trailingCommas) bibtex += ",";
   }
   bibtex += `
 }
@@ -3404,12 +3395,10 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
   return bibtex;
 }
 function formatComment(comment, { stripComments, tidyComments }) {
-  if (stripComments)
-    return "";
+  if (stripComments) return "";
   if (tidyComments) {
     const trimmed = comment.trim();
-    if (trimmed === "")
-      return "";
+    if (trimmed === "") return "";
     return trimmed + "\n";
   } else {
     return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
@@ -3592,8 +3581,7 @@ var MODIFIERS = {
   required: {
     description: "If data is missing, revert to existing key",
     callback: (words2) => {
-      if (words2.length === 0)
-        throw new MissingRequiredData();
+      if (words2.length === 0) throw new MissingRequiredData();
       return words2;
     }
   },
@@ -3622,11 +3610,9 @@ function generateKeys(ast, valueLookup, template) {
   for (const node of ast.children) {
     if (isEntryNode(node)) {
       const entryValues = valueLookup.get(node.block);
-      if (!entryValues)
-        continue;
+      if (!entryValues) continue;
       const newKey = generateKey(entryValues, template2);
-      if (!newKey)
-        continue;
+      if (!newKey) continue;
       const keyEntries = (_a = entriesByKey.get(newKey)) != null ? _a : [];
       entriesByKey.set(newKey, [...keyEntries, node.block]);
     }
@@ -3673,8 +3659,7 @@ function generateKey(valueLookup, template) {
       }
       return key.join("");
     });
-    if (newKey === "")
-      return;
+    if (newKey === "") return;
     return newKey;
   } catch (e) {
     if (e instanceof MissingRequiredData) {
@@ -3884,12 +3869,10 @@ var optionDefinitions = [
       "--space": (args) => args.length > 0 ? Number(args[0]) : true
     },
     toCLI: (val, opt) => {
-      if (opt.tab)
-        return void 0;
+      if (opt.tab) return void 0;
       if (typeof val === "number" && val !== DEFAULT_SPACE)
         return `--space=${val}`;
-      if (val && val !== DEFAULT_SPACE)
-        return "--space";
+      if (val && val !== DEFAULT_SPACE) return "--space";
       return void 0;
     },
     title: "Indent with spaces",
@@ -3917,8 +3900,7 @@ var optionDefinitions = [
       "--no-align": false
     },
     toCLI: (val) => {
-      if (val === false || val === 1 || val === 0)
-        return "--no-align";
+      if (val === false || val === 1 || val === 0) return "--no-align";
       if (typeof val === "number" && val !== DEFAULT_ALIGN)
         return `--align=${val}`;
       return void 0;
@@ -3949,8 +3931,7 @@ var optionDefinitions = [
     toCLI: (val) => {
       if (Array.isArray(val) && val.length > 0)
         return `--sort=${val.join(",")}`;
-      if (val === true)
-        return "--sort";
+      if (val === true) return "--sort";
       return void 0;
     },
     title: "Sort bibliography entries",
@@ -3971,8 +3952,7 @@ var optionDefinitions = [
     key: "duplicates",
     cli: {
       "--duplicates": (args) => {
-        if (args.length === 0)
-          return true;
+        if (args.length === 0) return true;
         for (const i of args) {
           if (i !== "doi" && i !== "key" && i !== "abstract" && i !== "citation") {
             console.error(`Invalid key for merge option: "${i}"`);
@@ -3985,8 +3965,7 @@ var optionDefinitions = [
     toCLI: (val) => {
       if (Array.isArray(val) && val.length > 0)
         return `--duplicates=${val.join(",")}`;
-      if (val === true)
-        return "--duplicates";
+      if (val === true) return "--duplicates";
       return void 0;
     },
     title: "Check for duplicates",
@@ -4009,8 +3988,7 @@ var optionDefinitions = [
     key: "merge",
     cli: {
       "--merge": (args) => {
-        if (args.length === 0)
-          return true;
+        if (args.length === 0) return true;
         if (args[0] !== "first" && args[0] !== "last" && args[0] !== "combine" && args[0] !== "overwrite") {
           console.error(`Invalid merge strategy: "${args[0]}"`);
           process.exit(1);
@@ -4020,10 +3998,8 @@ var optionDefinitions = [
       "--no-merge": false
     },
     toCLI: (val) => {
-      if (typeof val === "string")
-        return `--merge=${val}`;
-      if (val)
-        return "--merge";
+      if (typeof val === "string") return `--merge=${val}`;
+      if (val) return "--merge";
       return void 0;
     },
     title: "Merge duplicate entries",
@@ -4080,8 +4056,7 @@ var optionDefinitions = [
         }
         return `--sort-fields=${val.join(",")}`;
       }
-      if (val === true)
-        return "--sort-fields";
+      if (val === true) return "--sort-fields";
       return void 0;
     },
     title: "Sort fields",
@@ -4211,8 +4186,7 @@ var optionDefinitions = [
     toCLI: (val) => {
       if (Array.isArray(val) && val.length > 0)
         return `--enclosing-braces=${val.join(",")}`;
-      if (val === true)
-        return "--enclosing-braces";
+      if (val === true) return "--enclosing-braces";
       return void 0;
     },
     title: "Enclose values in double braces",
@@ -4234,8 +4208,7 @@ var optionDefinitions = [
     toCLI: (val) => {
       if (Array.isArray(val) && val.length > 0)
         return `--remove-braces=${val.join(",")}`;
-      if (val === true)
-        return "--remove-braces";
+      if (val === true) return "--remove-braces";
       return void 0;
     },
     title: "Remove braces",
@@ -4325,21 +4298,18 @@ function sortEntries(ast, fieldMaps, sort) {
     }
     const sortIndex = /* @__PURE__ */ new Map();
     for (let key of sort) {
-      if (key.startsWith("-"))
-        key = key.slice(1);
+      if (key.startsWith("-")) key = key.slice(1);
       let val;
       switch (key) {
         case "key":
-          if (((_b = item.block) == null ? void 0 : _b.type) !== "entry")
-            continue;
+          if (((_b = item.block) == null ? void 0 : _b.type) !== "entry") continue;
           val = (_c = item.block.key) != null ? _c : "";
           break;
         case "type":
           val = item.command;
           break;
         case "month": {
-          if (((_d = item.block) == null ? void 0 : _d.type) !== "entry")
-            continue;
+          if (((_d = item.block) == null ? void 0 : _d.type) !== "entry") continue;
           const v = (_e = fieldMaps.get(item.block)) == null ? void 0 : _e.get(key);
           const i = v ? MONTH_MACROS.indexOf(v) : -1;
           val = i > -1 ? i : "";
@@ -4349,8 +4319,7 @@ function sortEntries(ast, fieldMaps, sort) {
           val = isBibLaTeXSpecialEntry(item) ? 0 : 1;
           break;
         default:
-          if (((_f = item.block) == null ? void 0 : _f.type) !== "entry")
-            continue;
+          if (((_f = item.block) == null ? void 0 : _f.type) !== "entry") continue;
           val = (_h = (_g = fieldMaps.get(item.block)) == null ? void 0 : _g.get(key)) != null ? _h : "";
       }
       sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
@@ -4358,8 +4327,7 @@ function sortEntries(ast, fieldMaps, sort) {
     sortIndexes.set(item, sortIndex);
     while (precedingMeta.length > 0) {
       const index = precedingMeta.pop();
-      if (!index)
-        break;
+      if (!index) break;
       sortIndexes.set(index, sortIndex);
     }
   }
@@ -4370,10 +4338,8 @@ function sortEntries(ast, fieldMaps, sort) {
       var _a2, _b2, _c2, _d2;
       let ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "\uFFF0";
       let ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "\uFFF0";
-      if (typeof ia === "number")
-        ia = String(ia).padStart(50, "0");
-      if (typeof ib === "number")
-        ib = String(ib).padStart(50, "0");
+      if (typeof ia === "number") ia = String(ia).padStart(50, "0");
+      if (typeof ib === "number") ib = String(ib).padStart(50, "0");
       return (desc ? ib : ia).localeCompare(desc ? ia : ib);
     });
   }
@@ -4393,16 +4359,11 @@ function sortEntryFields(ast, fieldOrder) {
     entry.fields.sort((a, b) => {
       const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
       const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
-      if (orderA === -1 && orderB === -1)
-        return 0;
-      if (orderA === -1)
-        return 1;
-      if (orderB === -1)
-        return -1;
-      if (orderB < orderA)
-        return 1;
-      if (orderB > orderA)
-        return -1;
+      if (orderA === -1 && orderB === -1) return 0;
+      if (orderA === -1) return 1;
+      if (orderB === -1) return -1;
+      if (orderB < orderA) return 1;
+      if (orderB > orderA) return -1;
       return 0;
     });
   }
@@ -4428,10 +4389,8 @@ function tidy(input, options_ = {}) {
   ast.children = ast.children.filter(
     (child) => !isEntryNode(child) || !duplicates.entries.has(child.block)
   );
-  if (options.sort)
-    sortEntries(ast, valueLookup, options.sort);
-  if (options.sortFields)
-    sortEntryFields(ast, options.sortFields);
+  if (options.sort) sortEntries(ast, valueLookup, options.sort);
+  if (options.sortFields) sortEntryFields(ast, options.sortFields);
   const newKeys = options.generateKeys ? generateKeys(ast, valueLookup, options.generateKeys) : void 0;
   const bibtex = formatBibtex(ast, options, newKeys);
   return { bibtex, warnings, count: getEntries(ast).length };

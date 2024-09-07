@@ -463,6 +463,8 @@ function generateAST(input) {
           node.value += char;
         }
         break;
+      // Values may be enclosed in curly braces. Curly braces may be used within
+      // the value but they must be balanced.
       case "braced":
         if (char === "}" && node.depth === 0) {
           node = node.parent;
@@ -474,6 +476,11 @@ function generateAST(input) {
         }
         node.value += char;
         break;
+      // Values may be enclosed in double quotes. Curly braces may be used
+      // within quoted values but they must be balanced.
+      //
+      // To escape a double quote, surround it with braces `{"}`.
+      // https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
       case "quoted":
         if (char === '"' && node.depth === 0) {
           node = node.parent;
@@ -3352,6 +3359,7 @@ function mergeEntries(merge, duplicateOf, entry) {
         }
       }
       break;
+    // TODO: case 'keep-both'
     case "first":
       return;
   }
@@ -3591,7 +3599,7 @@ __name(formatValue, "formatValue");
 var SPECIAL_MARKERS = {
   auth: {
     description: "Last name of first authors",
-    callback: (v) => {
+    callback: /* @__PURE__ */ __name((v) => {
       var _authors_;
       var _v_get;
       var authors = parseAuthors((_v_get = v.get("author")) !== null && _v_get !== void 0 ? _v_get : "", true);
@@ -3603,11 +3611,11 @@ var SPECIAL_MARKERS = {
               "_",
             );
       return author ? [author] : [];
-    },
+    }, "callback"),
   },
   authEtAl: {
     description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
-    callback: (v) => {
+    callback: /* @__PURE__ */ __name((v) => {
       var _v_get;
       var authors = parseAuthors((_v_get = v.get("author")) !== null && _v_get !== void 0 ? _v_get : "", true);
       return [
@@ -3621,11 +3629,11 @@ var SPECIAL_MARKERS = {
           ),
         ...(authors.length > 2 ? ["Et", "Al"] : []),
       ];
-    },
+    }, "callback"),
   },
   authors: {
     description: "Last name all authors",
-    callback: (v) => {
+    callback: /* @__PURE__ */ __name((v) => {
       var _v_get;
       var authors = parseAuthors((_v_get = v.get("author")) !== null && _v_get !== void 0 ? _v_get : "", true);
       return authors.map((author) =>
@@ -3634,11 +3642,11 @@ var SPECIAL_MARKERS = {
           "_",
         ),
       );
-    },
+    }, "callback"),
   },
   authorsN: {
     description: "Last name N authors, with EtAl if more",
-    callback: function (v) {
+    callback: /* @__PURE__ */ __name(function (v) {
       var n = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 0;
       var _v_get;
       var authors = parseAuthors((_v_get = v.get("author")) !== null && _v_get !== void 0 ? _v_get : "", true);
@@ -3653,56 +3661,56 @@ var SPECIAL_MARKERS = {
           ),
         ...(authors.length > n ? ["Et", "Al"] : []),
       ];
-    },
+    }, "callback"),
   },
   veryshorttitle: {
     description: "First non-function word of the title",
-    callback: (v) => nonFunctionWords(title(v)).slice(0, 1),
+    callback: /* @__PURE__ */ __name((v) => nonFunctionWords(title(v)).slice(0, 1), "callback"),
   },
   shorttitle: {
     description: "First three non-function words of the title",
-    callback: (v) => nonFunctionWords(title(v)).slice(0, 3),
+    callback: /* @__PURE__ */ __name((v) => nonFunctionWords(title(v)).slice(0, 3), "callback"),
   },
   title: {
     description: "Full title, capitalized",
-    callback: (v) => capitalize(words(title(v))),
+    callback: /* @__PURE__ */ __name((v) => capitalize(words(title(v))), "callback"),
   },
   fulltitle: {
     description: "Full title, verbatim",
-    callback: (v) => words(title(v)),
+    callback: /* @__PURE__ */ __name((v) => words(title(v)), "callback"),
   },
   year: {
     description: "Year",
-    callback: (v) => {
+    callback: /* @__PURE__ */ __name((v) => {
       var _v_get;
       var year = (_v_get = v.get("year")) === null || _v_get === void 0 ? void 0 : _v_get.replace(/[^0-9]/g, "");
       return year ? [year] : [];
-    },
+    }, "callback"),
   },
   duplicateLetter: {
     description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
-    callback: () => ["[duplicateLetter]"],
+    callback: /* @__PURE__ */ __name(() => ["[duplicateLetter]"], "callback"),
   },
   duplicateNumber: {
     description: "If the multiple entries end up with the same key, then insert a number.",
-    callback: () => ["[duplicateNumber]"],
+    callback: /* @__PURE__ */ __name(() => ["[duplicateNumber]"], "callback"),
   },
 };
 var MODIFIERS = {
   required: {
     description: "If data is missing, revert to existing key",
-    callback: (words2) => {
+    callback: /* @__PURE__ */ __name((words2) => {
       if (words2.length === 0) throw new MissingRequiredData();
       return words2;
-    },
+    }, "callback"),
   },
   lower: {
     description: "Convert to lowercase",
-    callback: (words2) => words2.map((word) => word.toLocaleLowerCase()),
+    callback: /* @__PURE__ */ __name((words2) => words2.map((word) => word.toLocaleLowerCase()), "callback"),
   },
   upper: {
     description: "Convert to uppercase",
-    callback: (words2) => words2.map((word) => word.toLocaleUpperCase()),
+    callback: /* @__PURE__ */ __name((words2) => words2.map((word) => word.toLocaleUpperCase()), "callback"),
   },
   capitalize: {
     description: "Capitalize first letter of each word",
@@ -3916,8 +3924,8 @@ var optionDefinitions = [
   {
     key: "outputPath",
     cli: {
-      "--output": (args) => args[0],
-      "-o": (args) => args[0],
+      "--output": /* @__PURE__ */ __name((args) => args[0], "--output"),
+      "-o": /* @__PURE__ */ __name((args) => args[0], "-o"),
     },
     title: "Output path",
     description: ["Write output to specified path. When omitted (and -m/--modify is not used), the result will be printed to stdout."],
@@ -3939,15 +3947,15 @@ var optionDefinitions = [
   {
     key: "omit",
     cli: {
-      "--omit": (args) => {
+      "--omit": /* @__PURE__ */ __name((args) => {
         if (args.length === 0) {
           console.error("Expected a omit list");
           process.exit(1);
         }
         return args;
-      },
+      }, "--omit"),
     },
-    toCLI: (val) => (Array.isArray(val) && val.length > 0 ? "--omit=".concat(val.join(",")) : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (Array.isArray(val) && val.length > 0 ? "--omit=".concat(val.join(",")) : void 0), "toCLI"),
     title: "Remove fields",
     description: ["Remove specified fields from bibliography entries."],
     examples: ["--omit=id,name"],
@@ -3960,7 +3968,7 @@ var optionDefinitions = [
       "--curly": true,
       "--no-curly": false,
     },
-    toCLI: (val) => (val ? "--curly" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--curly" : void 0), "toCLI"),
     title: "Enclose values in braces",
     description: ['Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'],
     type: "boolean",
@@ -3972,7 +3980,7 @@ var optionDefinitions = [
       "--numeric": true,
       "--no-numeric": false,
     },
-    toCLI: (val) => (val ? "--numeric" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--numeric" : void 0), "toCLI"),
     title: "Use numeric values where possible",
     description: ["Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."],
     type: "boolean",
@@ -3983,7 +3991,7 @@ var optionDefinitions = [
     cli: {
       "--months": true,
     },
-    toCLI: (val) => (val ? "--months" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--months" : void 0), "toCLI"),
     title: "Abbreviate months",
     description: ["Convert all months to three letter abbreviations (jan, feb, etc)."],
     type: "boolean",
@@ -3992,14 +4000,14 @@ var optionDefinitions = [
   {
     key: "space",
     cli: {
-      "--space": (args) => (args.length > 0 ? Number(args[0]) : true),
+      "--space": /* @__PURE__ */ __name((args) => (args.length > 0 ? Number(args[0]) : true), "--space"),
     },
-    toCLI: (val, opt) => {
+    toCLI: /* @__PURE__ */ __name((val, opt) => {
       if (opt.tab) return void 0;
       if (typeof val === "number" && val !== DEFAULT_SPACE) return "--space=".concat(val);
       if (val && val !== DEFAULT_SPACE) return "--space";
       return void 0;
-    },
+    }, "toCLI"),
     title: "Indent with spaces",
     description: ["Indent all fields with the specified number of spaces. Ignored if tab is set."],
     examples: ["--space=2 (default)", "--space=4"],
@@ -4016,7 +4024,7 @@ var optionDefinitions = [
       "--tab": true,
       "--no-tab": false,
     },
-    toCLI: (val) => (val ? "--tab" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--tab" : void 0), "toCLI"),
     title: "Indent with tabs",
     description: ["Indent all fields with a tab."],
     type: "boolean",
@@ -4025,14 +4033,14 @@ var optionDefinitions = [
   {
     key: "align",
     cli: {
-      "--align": (args) => Number(args[0]),
+      "--align": /* @__PURE__ */ __name((args) => Number(args[0]), "--align"),
       "--no-align": false,
     },
-    toCLI: (val) => {
+    toCLI: /* @__PURE__ */ __name((val) => {
       if (val === false || val === 1 || val === 0) return "--no-align";
       if (typeof val === "number" && val !== DEFAULT_ALIGN) return "--align=".concat(val);
       return void 0;
-    },
+    }, "toCLI"),
     title: "Align values",
     description: ["Insert whitespace between fields and values so that values are visually aligned."],
     examples: ["--align=14 (default)"],
@@ -4049,7 +4057,7 @@ var optionDefinitions = [
       "--blank-lines": true,
       "--no-blank-lines": false,
     },
-    toCLI: (val) => (val ? "--blank-lines" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--blank-lines" : void 0), "toCLI"),
     title: "Insert blank lines",
     description: ["Insert an empty line between each entry."],
     type: "boolean",
@@ -4057,14 +4065,14 @@ var optionDefinitions = [
   {
     key: "sort",
     cli: {
-      "--sort": (args) => (args.length > 0 ? args : true),
+      "--sort": /* @__PURE__ */ __name((args) => (args.length > 0 ? args : true), "--sort"),
       "--no-sort": false,
     },
-    toCLI: (val) => {
+    toCLI: /* @__PURE__ */ __name((val) => {
       if (Array.isArray(val) && val.length > 0) return "--sort=".concat(val.join(","));
       if (val === true) return "--sort";
       return void 0;
-    },
+    }, "toCLI"),
     title: "Sort bibliography entries",
     description: ["Sort entries by the specified field names (citation key is used if no fields are specified). For descending order, prefix the field with a dash (-).", "Multiple fields may be specified to sort everything by first field, then by the second field whenever the first field for entries are equal, etc.", "The following additional fields are also permitted: key (entry citation key), type (sorts by the type of entry, e.g. article), and special (ensures that @string, @preamble, @set, and @xdata entries are first). "],
     examples: ["--sort (sort by citation key)", "--sort=-year,name (sort year descending then name ascending)", "--sort=name,year"],
@@ -4077,7 +4085,7 @@ var optionDefinitions = [
   {
     key: "duplicates",
     cli: {
-      "--duplicates": (args) => {
+      "--duplicates": /* @__PURE__ */ __name((args) => {
         if (args.length === 0) return true;
         var _iteratorNormalCompletion = true,
           _didIteratorError = false,
@@ -4105,13 +4113,13 @@ var optionDefinitions = [
           }
         }
         return args;
-      },
+      }, "--duplicates"),
     },
-    toCLI: (val) => {
+    toCLI: /* @__PURE__ */ __name((val) => {
       if (Array.isArray(val) && val.length > 0) return "--duplicates=".concat(val.join(","));
       if (val === true) return "--duplicates";
       return void 0;
-    },
+    }, "toCLI"),
     title: "Check for duplicates",
     description: ["Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."],
     examples: ["--duplicates doi (same DOIs)", "--duplicates key (same IDs)", "--duplicates abstract (similar abstracts)", "--duplicates citation (similar author and titles)", "--duplicates doi, key (identical DOI or keys)", "--duplicates (same DOI, key, abstract, or citation)"],
@@ -4120,26 +4128,26 @@ var optionDefinitions = [
       true: DEFAULT_MERGE_CHECK,
       false: void 0,
     },
-    defaultValue: (options) => (options.merge ? DEFAULT_MERGE_CHECK : void 0),
+    defaultValue: /* @__PURE__ */ __name((options) => (options.merge ? DEFAULT_MERGE_CHECK : void 0), "defaultValue"),
   },
   {
     key: "merge",
     cli: {
-      "--merge": (args) => {
+      "--merge": /* @__PURE__ */ __name((args) => {
         if (args.length === 0) return true;
         if (args[0] !== "first" && args[0] !== "last" && args[0] !== "combine" && args[0] !== "overwrite") {
           console.error('Invalid merge strategy: "'.concat(args[0], '"'));
           process.exit(1);
         }
         return args[0];
-      },
+      }, "--merge"),
       "--no-merge": false,
     },
-    toCLI: (val) => {
+    toCLI: /* @__PURE__ */ __name((val) => {
       if (typeof val === "string") return "--merge=".concat(val);
       if (val) return "--merge";
       return void 0;
-    },
+    }, "toCLI"),
     title: "Merge duplicate entries",
     description: ["Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:", "- first: only keep the original entry", "- last: only keep the last found duplicate", "- combine: keep original entry and merge in fields of duplicates if they do not already exist", "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"],
     type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
@@ -4153,7 +4161,7 @@ var optionDefinitions = [
     cli: {
       "--strip-enclosing-braces": true,
     },
-    toCLI: (val) => (val ? "--strip-enclosing-braces" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--strip-enclosing-braces" : void 0), "toCLI"),
     title: "Strip double-braced values",
     description: ["Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}."],
     type: "boolean",
@@ -4164,7 +4172,7 @@ var optionDefinitions = [
     cli: {
       "--drop-all-caps": true,
     },
-    toCLI: (val) => (val ? "--drop-all-caps" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--drop-all-caps" : void 0), "toCLI"),
     title: "Drop all caps",
     description: ["Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}. Roman numerals will be left unchanged."],
     type: "boolean",
@@ -4176,7 +4184,7 @@ var optionDefinitions = [
       "--escape": true,
       "--no-escape": false,
     },
-    toCLI: (val) => (val === false ? "--no-escape" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val === false ? "--no-escape" : void 0), "toCLI"),
     title: "Escape special characters",
     description: ["Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default."],
     type: "boolean",
@@ -4185,9 +4193,9 @@ var optionDefinitions = [
   {
     key: "sortFields",
     cli: {
-      "--sort-fields": (args) => (args.length > 0 ? args : true),
+      "--sort-fields": /* @__PURE__ */ __name((args) => (args.length > 0 ? args : true), "--sort-fields"),
     },
-    toCLI: (val) => {
+    toCLI: /* @__PURE__ */ __name((val) => {
       if (Array.isArray(val) && val.length > 0) {
         if (JSON.stringify(val) === JSON.stringify(DEFAULT_FIELD_SORT)) {
           return "--sort-fields";
@@ -4196,7 +4204,7 @@ var optionDefinitions = [
       }
       if (val === true) return "--sort-fields";
       return void 0;
-    },
+    }, "toCLI"),
     title: "Sort fields",
     description: ["Sort the fields within entries.", "If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata"],
     examples: ["--sort-fields=name,author"],
@@ -4210,7 +4218,7 @@ var optionDefinitions = [
   {
     key: "sortProperties",
     cli: {
-      "--sort-properties": (args) => (args.length > 0 ? args : true),
+      "--sort-properties": /* @__PURE__ */ __name((args) => (args.length > 0 ? args : true), "--sort-properties"),
     },
     title: "Sort properties",
     description: ["Alias of sort fields (legacy)"],
@@ -4223,7 +4231,7 @@ var optionDefinitions = [
       "--strip-comments": true,
       "--no-strip-comments": false,
     },
-    toCLI: (val) => (val ? "--strip-comments" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--strip-comments" : void 0), "toCLI"),
     title: "Remove comments",
     description: ["Remove all comments from the bibtex source."],
     type: "boolean",
@@ -4235,7 +4243,7 @@ var optionDefinitions = [
       "--trailing-commas": true,
       "--no-trailing-commas": true,
     },
-    toCLI: (val) => (val ? "--trailing-commas" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--trailing-commas" : void 0), "toCLI"),
     title: "Trailing commas",
     description: ["End the last key value pair in each entry with a comma."],
     type: "boolean",
@@ -4247,7 +4255,7 @@ var optionDefinitions = [
       "--encode-urls": true,
       "--no-encode-urls": true,
     },
-    toCLI: (val) => (val ? "--encode-urls" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--encode-urls" : void 0), "toCLI"),
     title: "Encode URLs",
     description: ["Replace invalid URL characters with percent encoded values."],
     type: "boolean",
@@ -4259,7 +4267,7 @@ var optionDefinitions = [
       "--tidy-comments": true,
       "--no-tidy-comments": false,
     },
-    toCLI: (val) => (val === false ? "--no-tidy-comments" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val === false ? "--no-tidy-comments" : void 0), "toCLI"),
     title: "Tidy comments",
     description: ["Remove whitespace surrounding comments."],
     type: "boolean",
@@ -4271,7 +4279,7 @@ var optionDefinitions = [
       "--remove-empty-fields": true,
       "--no-remove-empty-fields": false,
     },
-    toCLI: (val) => (val ? "--remove-empty-fields" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--remove-empty-fields" : void 0), "toCLI"),
     title: "Remove empty fields",
     description: ["Remove any fields that have empty values."],
     type: "boolean",
@@ -4283,7 +4291,7 @@ var optionDefinitions = [
       "--remove-dupe-fields": true,
       "--no-remove-dupe-fields": false,
     },
-    toCLI: (val) => (val === false ? "--no-remove-dupe-fields" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val === false ? "--no-remove-dupe-fields" : void 0), "toCLI"),
     title: "Remove duplicate fields",
     description: ["Only allow one of each field in each entry. Enabled by default."],
     type: "boolean",
@@ -4292,13 +4300,13 @@ var optionDefinitions = [
   {
     key: "generateKeys",
     cli: {
-      "--generate-keys": (args) => (args.length > 0 ? args : true),
+      "--generate-keys": /* @__PURE__ */ __name((args) => (args.length > 0 ? args : true), "--generate-keys"),
     },
-    toCLI: (val) => {
+    toCLI: /* @__PURE__ */ __name((val) => {
       if (val === true || val === DEFAULT_KEY_TEMPLATE) return "--generate-keys";
       if (typeof val === "string") return '--generate-keys="'.concat(val.replace(/"/g, '\\"'), '"');
       return void 0;
-    },
+    }, "toCLI"),
     title: "Generate citation keys [Experimental]",
     description: ["For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning."],
     type: "boolean | string",
@@ -4311,9 +4319,9 @@ var optionDefinitions = [
   {
     key: "maxAuthors",
     cli: {
-      "--max-authors": (args) => Number(args[0]),
+      "--max-authors": /* @__PURE__ */ __name((args) => Number(args[0]), "--max-authors"),
     },
-    toCLI: (val) => (val ? "--max-authors=".concat(val) : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--max-authors=".concat(val) : void 0), "toCLI"),
     title: "Maximum authors",
     description: ['Truncate authors if above a given number into "and others".'],
     type: "number",
@@ -4323,7 +4331,7 @@ var optionDefinitions = [
     cli: {
       "--no-lowercase": false,
     },
-    toCLI: (val) => (val === false ? "--no-lowercase" : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val === false ? "--no-lowercase" : void 0), "toCLI"),
     title: "Lowercase fields",
     description: ["Lowercase field names and entry type. Enabled by default."],
     type: "boolean",
@@ -4332,13 +4340,13 @@ var optionDefinitions = [
   {
     key: "enclosingBraces",
     cli: {
-      "--enclosing-braces": (args) => (args.length > 0 ? args : true),
+      "--enclosing-braces": /* @__PURE__ */ __name((args) => (args.length > 0 ? args : true), "--enclosing-braces"),
     },
-    toCLI: (val) => {
+    toCLI: /* @__PURE__ */ __name((val) => {
       if (Array.isArray(val) && val.length > 0) return "--enclosing-braces=".concat(val.join(","));
       if (val === true) return "--enclosing-braces";
       return void 0;
-    },
+    }, "toCLI"),
     title: "Enclose values in double braces",
     description: ["Enclose the given fields in double braces, such that case is preserved during BibTeX compilation."],
     examples: ["--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})", "--enclosing-braces (equivalent to ---enclosing-braces=title)"],
@@ -4351,13 +4359,13 @@ var optionDefinitions = [
   {
     key: "removeBraces",
     cli: {
-      "--remove-braces": (args) => (args.length > 0 ? args : true),
+      "--remove-braces": /* @__PURE__ */ __name((args) => (args.length > 0 ? args : true), "--remove-braces"),
     },
-    toCLI: (val) => {
+    toCLI: /* @__PURE__ */ __name((val) => {
       if (Array.isArray(val) && val.length > 0) return "--remove-braces=".concat(val.join(","));
       if (val === true) return "--remove-braces";
       return void 0;
-    },
+    }, "toCLI"),
     title: "Remove braces",
     description: ["Remove any curly braces within the value, unless they are part of a command."],
     examples: ["--remove-braces=title,journal", "--remove-braces (equivalent to ---remove-braces=title)"],
@@ -4370,10 +4378,10 @@ var optionDefinitions = [
   {
     key: "wrap",
     cli: {
-      "--wrap": (args) => (args.length > 0 ? Number(args[0]) : true),
+      "--wrap": /* @__PURE__ */ __name((args) => (args.length > 0 ? Number(args[0]) : true), "--wrap"),
       "--no-wrap": false,
     },
-    toCLI: (val) => (val ? "--wrap=".concat(val) : void 0),
+    toCLI: /* @__PURE__ */ __name((val) => (val ? "--wrap=".concat(val) : void 0), "toCLI"),
     title: "Wrap values",
     description: ["Wrap long values at the given column"],
     examples: ["--wrap (80 by default)", "--wrap=82"],
