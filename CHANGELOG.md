@@ -177,3 +177,9 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 - Upgrade deps
 - Accessibility tweak
 - Upgrade dependencies
+
+### Unrelease
+
+- Support filenames with spaces (#416, #428)
+- Do not flatten braces which contain commands (#407, #423)
+- Upgrade dependencies
