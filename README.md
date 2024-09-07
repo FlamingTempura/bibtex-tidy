@@ -7,8 +7,9 @@ Tidy bibtex files. [Try it out](https://flamingtempura.github.io/bibtex-tidy/).
 There are several ways you can use bibtex-tidy:
 * [In your browser](https://flamingtempura.github.io/bibtex-tidy/)
 * [CLI](#sec-cli)
-* As a pre-commit-hook
+* [As a pre-commit-hook](#sec-precommit)
 * [Javascript/Typescript API](#sec-api)
+* [Docker](#sec-docker)
 
 ## Example
 
@@ -53,7 +54,7 @@ After `bibtex-tidy references.bib`:
 }
 ```
 
-<a name="sec-cli" />
+<a name="sec-cli"></a>
 
 ## CLI
 
@@ -239,7 +240,7 @@ bibtex-tidy references.bib
       
 ```
 
-<a name="sec-api" />
+<a name="sec-api"></a>
 
 ## Javascript/Typescript API
 
@@ -254,6 +255,23 @@ tidy.tidy(bibtex, { curly: true });
 ```
 
 Documentation for the options can be found [here](https://github.com/FlamingTempura/bibtex-tidy/blob/master/src/__generated__/optionsType.ts)
+
+<a name="sec-precommit"></a>
+
+## Pre-Commit Hook
+
+If you keep your bibtex files in a git repository, you can run bibtex-tidy each time you commit using [pre-commit](https://pre-commit.com/):
+
+```yaml
+repos:
+-   repo: https://github.com/FlamingTempura/bibtex-tidy
+    rev: v1.14.0 # see changelog for latest version
+    hooks:
+    -   id: bibtex-tidy
+        args: ['--align=100', '--curly'] # any other settings
+```
+
+<a name="sec-docker"></a>
 
 ## Docker
 
