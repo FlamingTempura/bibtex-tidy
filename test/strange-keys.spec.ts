@@ -1,5 +1,5 @@
-import { equal, notEqual, strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { equal, notEqual, strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @article{ strange(key)=(has_odd-characters?:*£"!<>/ ,
@@ -46,12 +46,12 @@ const invalidInputWithSpaces = bibtex`
 title={Foo}
 }`;
 
-test('strange characters in citation key', async () => {
+test("strange characters in citation key", async () => {
 	const tidied = await bibtexTidy(input);
 	strictEqual(tidied.bibtex, output);
 
 	for (const input of invalidInputs) {
-		let err;
+		let err: unknown;
 		try {
 			await bibtexTidy(input);
 		} catch (e) {
@@ -59,16 +59,16 @@ test('strange characters in citation key', async () => {
 		}
 		notEqual(err, undefined);
 		equal(
-			String(err).includes('The entry key cannot contain the character'),
-			true
+			String(err).includes("The entry key cannot contain the character"),
+			true,
 		);
 	}
-	let err;
+	let err: unknown;
 	try {
 		await bibtexTidy(invalidInputWithSpaces);
 	} catch (e) {
 		err = e;
 	}
 	notEqual(err, undefined);
-	equal(String(err).includes('The entry key cannot contain whitespace'), true);
+	equal(String(err).includes("The entry key cannot contain whitespace"), true);
 });

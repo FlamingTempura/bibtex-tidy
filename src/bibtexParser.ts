@@ -1,10 +1,10 @@
 export class RootNode {
-	type = 'root' as const;
+	type = "root" as const;
 	constructor(public children: (TextNode | BlockNode)[] = []) {}
 }
 
 export class TextNode {
-	type = 'text' as const;
+	type = "text" as const;
 	constructor(
 		public parent: RootNode,
 		public text: string,
@@ -13,15 +13,15 @@ export class TextNode {
 	}
 }
 export class BlockNode {
-	type = 'block' as const;
-	public command = '';
+	type = "block" as const;
+	public command = "";
 	public block?: CommentNode | PreambleNode | StringNode | EntryNode;
 	constructor(public parent: RootNode) {
 		parent.children.push(this);
 	}
 }
 export class CommentNode {
-	type = 'comment' as const;
+	type = "comment" as const;
 	constructor(
 		public parent: BlockNode,
 		public raw: string,
@@ -32,7 +32,7 @@ export class CommentNode {
 	}
 }
 class PreambleNode {
-	type = 'preamble' as const;
+	type = "preamble" as const;
 	constructor(
 		public parent: BlockNode,
 		public raw: string,
@@ -43,7 +43,7 @@ class PreambleNode {
 	}
 }
 class StringNode {
-	type = 'string' as const;
+	type = "string" as const;
 	constructor(
 		public parent: BlockNode,
 		public raw: string,
@@ -54,31 +54,31 @@ class StringNode {
 	}
 }
 export class EntryNode {
-	type = 'entry' as const;
+	type = "entry" as const;
 	key?: string;
 	keyEnded?: boolean;
 	fields: FieldNode[];
 	constructor(
 		public parent: BlockNode,
-		public wrapType: '{' | '(',
+		public wrapType: "{" | "(",
 	) {
 		parent.block = this;
 		this.fields = [];
 	}
 }
 export class FieldNode {
-	type = 'field' as const;
+	type = "field" as const;
 	/** Each value is concatenated */
 	value: ConcatNode;
 	constructor(
 		public parent: EntryNode,
-		public name: string = '',
+		public name = "",
 	) {
 		this.value = new ConcatNode(this);
 	}
 }
 class ConcatNode {
-	type = 'concat' as const;
+	type = "concat" as const;
 	concat: (LiteralNode | BracedNode | QuotedNode)[];
 	canConsumeValue = true;
 	constructor(public parent: FieldNode) {
@@ -86,7 +86,7 @@ class ConcatNode {
 	}
 }
 class LiteralNode {
-	type = 'literal' as const;
+	type = "literal" as const;
 	constructor(
 		public parent: ConcatNode,
 		public value: string,
@@ -95,8 +95,8 @@ class LiteralNode {
 	}
 }
 class BracedNode {
-	type = 'braced' as const;
-	value = '';
+	type = "braced" as const;
+	value = "";
 	/** Used to count opening and closing braces */
 	depth = 0;
 	constructor(public parent: ConcatNode) {
@@ -104,8 +104,8 @@ class BracedNode {
 	}
 }
 class QuotedNode {
-	type = 'quoted' as const;
-	value = '';
+	type = "quoted" as const;
+	value = "";
 	/** Used to count opening and closing braces */
 	depth = 0;
 	constructor(public parent: ConcatNode) {
@@ -134,26 +134,26 @@ export function generateAST(input: string): RootNode {
 	let column = 0;
 
 	for (let i = 0; i < input.length; i++) {
-		const char = input[i] ?? '';
-		const prev = input[i - 1] ?? '';
+		const char = input[i] ?? "";
+		const prev = input[i - 1] ?? "";
 
-		if (char === '\n') {
+		if (char === "\n") {
 			line++;
 			column = 0;
 		}
 		column++;
 
 		switch (node.type) {
-			case 'root': {
-				node = char === '@' ? new BlockNode(node) : new TextNode(node, char);
+			case "root": {
+				node = char === "@" ? new BlockNode(node) : new TextNode(node, char);
 				break;
 			}
 
-			case 'text': {
+			case "text": {
 				// Whitespace or closing curly brace should precede an entry. This might
 				// not be correct but allows parsing of "valid" bibtex files in the
 				// wild.
-				if (char === '@' && /[\s\r\n}]/.test(prev)) {
+				if (char === "@" && /[\s\r\n}]/.test(prev)) {
 					node = new BlockNode(node.parent);
 				} else {
 					node.text += char;
@@ -161,40 +161,40 @@ export function generateAST(input: string): RootNode {
 				break;
 			}
 
-			case 'block': {
-				if (char === '@') {
+			case "block": {
+				if (char === "@") {
 					// everything prior to this was a comment
 					const prevNode =
 						node.parent.children[node.parent.children.length - 2];
-					if (prevNode?.type === 'text') {
-						prevNode.text += '@' + node.command;
+					if (prevNode?.type === "text") {
+						prevNode.text += `@${node.command}`;
 					} else {
 						// insert text node 1 from the end
 						node.parent.children.pop();
-						new TextNode(node.parent, '@' + node.command);
+						new TextNode(node.parent, `@${node.command}`);
 						node.parent.children.push(node);
 					}
-					node.command = '';
-				} else if (char === '{' || char === '(') {
+					node.command = "";
+				} else if (char === "{" || char === "(") {
 					const commandTrimmed = node.command.trim();
-					if (commandTrimmed === '' || /\s/.test(commandTrimmed)) {
+					if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
 						// A block without a command is invalid. It's sometimes used in comments though, e.g. @(#)
 						// replace the block node
 						node.parent.children.pop();
-						node = new TextNode(node.parent, '@' + node.command + char);
+						node = new TextNode(node.parent, `@${node.command}${char}`);
 					} else {
 						node.command = commandTrimmed;
 						const command: string = node.command.toLowerCase();
-						const [braces, parens] = char === '{' ? [1, 0] : [0, 1];
-						const raw = '@' + command + char;
+						const [braces, parens] = char === "{" ? [1, 0] : [0, 1];
+						const raw = `@${command}${char}`;
 						switch (command) {
-							case 'string':
+							case "string":
 								node = new StringNode(node, raw, braces, parens);
 								break;
-							case 'preamble':
+							case "preamble":
 								node = new PreambleNode(node, raw, braces, parens);
 								break;
-							case 'comment':
+							case "comment":
 								node = new CommentNode(node, raw, braces, parens);
 								break;
 							default:
@@ -205,23 +205,23 @@ export function generateAST(input: string): RootNode {
 				} else if (char.match(/[=#,})[\]]/)) {
 					// replace the block node
 					node.parent.children.pop();
-					node = new TextNode(node.parent, '@' + node.command + char);
+					node = new TextNode(node.parent, `@${node.command}${char}`);
 				} else {
 					node.command += char;
 				}
 				break;
 			}
 
-			case 'comment':
-			case 'string':
-			case 'preamble':
-				if (char === '{') {
+			case "comment":
+			case "string":
+			case "preamble":
+				if (char === "{") {
 					node.braces++;
-				} else if (char === '}') {
+				} else if (char === "}") {
 					node.braces--;
-				} else if (char === '(') {
+				} else if (char === "(") {
 					node.parens++;
-				} else if (char === ')') {
+				} else if (char === ")") {
 					node.parens--;
 				}
 				node.raw += char;
@@ -230,7 +230,7 @@ export function generateAST(input: string): RootNode {
 				}
 				break;
 
-			case 'entry': {
+			case "entry": {
 				if (isWhitespace(char)) {
 					if (!node.key) {
 						// Before key, ignore
@@ -238,14 +238,14 @@ export function generateAST(input: string): RootNode {
 						// Ensure subsequent characters are not appended to the key
 						node.keyEnded = true;
 					}
-				} else if (char === ',') {
+				} else if (char === ",") {
 					node = new FieldNode(node);
 				} else if (
-					(node.wrapType === '{' && char === '}') ||
-					(node.wrapType === '(' && char === ')')
+					(node.wrapType === "{" && char === "}") ||
+					(node.wrapType === "(" && char === ")")
 				) {
 					node = node.parent.parent; // root
-				} else if (char === '=' && node.key && isValidFieldName(node.key)) {
+				} else if (char === "=" && node.key && isValidFieldName(node.key)) {
 					// Entry has no key, this is a field name
 					const field: FieldNode = new FieldNode(node, node.key);
 					node.fields.push(field);
@@ -258,7 +258,7 @@ export function generateAST(input: string): RootNode {
 						i,
 						line,
 						column,
-						`The entry key cannot contain whitespace`,
+						"The entry key cannot contain whitespace",
 					);
 				} else if (!isValidKeyCharacter(char)) {
 					throw new BibTeXSyntaxError(
@@ -270,19 +270,19 @@ export function generateAST(input: string): RootNode {
 						`The entry key cannot contain the character (${char})`,
 					);
 				} else {
-					node.key = (node.key ?? '') + char;
+					node.key = (node.key ?? "") + char;
 				}
 				break;
 			}
 
-			case 'field': {
-				if (char === '}' || char === ')') {
+			case "field": {
+				if (char === "}" || char === ")") {
 					node.name = node.name.trim();
 					node = node.parent.parent.parent; // root
-				} else if (char === '=') {
+				} else if (char === "=") {
 					node.name = node.name.trim();
 					node = node.value;
-				} else if (char === ',') {
+				} else if (char === ",") {
 					node.name = node.name.trim();
 					node = new FieldNode(node.parent);
 				} else if (!isValidFieldName(char)) {
@@ -300,28 +300,28 @@ export function generateAST(input: string): RootNode {
 				break;
 			}
 
-			case 'concat': {
+			case "concat": {
 				if (isWhitespace(char)) {
 					break; // noop
-				} else if (node.canConsumeValue) {
+				}
+				if (node.canConsumeValue) {
 					if (/[#=,}()[\]]/.test(char)) {
 						throw new BibTeXSyntaxError(input, node, i, line, column);
+					}
+					node.canConsumeValue = false;
+					if (char === "{") {
+						node = new BracedNode(node);
+					} else if (char === '"') {
+						node = new QuotedNode(node);
 					} else {
-						node.canConsumeValue = false;
-						if (char === '{') {
-							node = new BracedNode(node);
-						} else if (char === '"') {
-							node = new QuotedNode(node);
-						} else {
-							node = new LiteralNode(node, char);
-						}
+						node = new LiteralNode(node, char);
 					}
 				} else {
-					if (char === ',') {
+					if (char === ",") {
 						node = new FieldNode(node.parent.parent);
-					} else if (char === '}' || char === ')') {
+					} else if (char === "}" || char === ")") {
 						node = node.parent.parent.parent.parent; // root
-					} else if (char === '#') {
+					} else if (char === "#") {
 						node.canConsumeValue = true;
 					} else {
 						throw new BibTeXSyntaxError(input, node, i, line, column);
@@ -330,15 +330,15 @@ export function generateAST(input: string): RootNode {
 				break;
 			}
 
-			case 'literal':
+			case "literal":
 				if (isWhitespace(char)) {
 					// end of literal
 					node = node.parent;
-				} else if (char === ',') {
+				} else if (char === ",") {
 					node = new FieldNode(node.parent.parent.parent);
-				} else if (char === '}') {
+				} else if (char === "}") {
 					node = node.parent.parent.parent.parent.parent; // root
-				} else if (char === '#') {
+				} else if (char === "#") {
 					node = node.parent;
 					node.canConsumeValue = true;
 				} else {
@@ -348,13 +348,14 @@ export function generateAST(input: string): RootNode {
 
 			// Values may be enclosed in curly braces. Curly braces may be used within
 			// the value but they must be balanced.
-			case 'braced':
-				if (char === '}' && node.depth === 0) {
+			case "braced":
+				if (char === "}" && node.depth === 0) {
 					node = node.parent; // values
 					break;
-				} else if (char === '{') {
+				}
+				if (char === "{") {
 					node.depth++;
-				} else if (char === '}') {
+				} else if (char === "}") {
 					node.depth--;
 				}
 				node.value += char;
@@ -365,13 +366,14 @@ export function generateAST(input: string): RootNode {
 			//
 			// To escape a double quote, surround it with braces `{"}`.
 			// https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
-			case 'quoted':
+			case "quoted":
 				if (char === '"' && node.depth === 0) {
 					node = node.parent; // values
 					break;
-				} else if (char === '{') {
+				}
+				if (char === "{") {
 					node.depth++;
-				} else if (char === '}') {
+				} else if (char === "}") {
 					node.depth--;
 					if (node.depth < 0) {
 						throw new BibTeXSyntaxError(input, node, i, line, column);
@@ -411,14 +413,9 @@ export class BibTeXSyntaxError extends Error {
 		public hint?: string,
 	) {
 		super(
-			`Line ${line}:${column}: Syntax Error in ${node.type} (${hint})\n` +
-				input.slice(Math.max(0, pos - 20), pos) +
-				'>>' +
-				input[pos] +
-				'<<' +
-				input.slice(pos + 1, pos + 20),
+			`Line ${line}:${column}: Syntax Error in ${node.type} (${hint})\n${input.slice(Math.max(0, pos - 20), pos)}>>${input[pos]}<<${input.slice(pos + 1, pos + 20)}`,
 		);
-		this.name = 'Syntax Error';
-		this.char = input[pos] ?? '';
+		this.name = "Syntax Error";
+		this.char = input[pos] ?? "";
 	}
 }

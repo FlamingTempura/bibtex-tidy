@@ -1,51 +1,51 @@
 <script lang="ts">
-	import type { OptionsNormalized } from '../optionUtils';
-	import Collapsible from './Collapsible.svelte';
-	import Option from './Option.svelte';
+import type { OptionsNormalized } from "../optionUtils";
+import Collapsible from "./Collapsible.svelte";
+import Option from "./Option.svelte";
 
-	export let options: OptionsNormalized;
+export let options: OptionsNormalized;
 
-	let curly = options.curly ?? false;
-	let stripEnclosingBraces = options.stripEnclosingBraces ?? false;
-	let numeric = options.numeric ?? false;
-	let months = options.months ?? false;
-	let dropAllCaps = options.dropAllCaps ?? false;
-	let escape = options.escape ?? false;
-	let encodeUrls = options.encodeUrls ?? false;
-	let removeEmptyFields = options.removeEmptyFields ?? false;
-	let removeDuplicateFields = options.removeDuplicateFields ?? false;
+let curly = options.curly ?? false;
+let stripEnclosingBraces = options.stripEnclosingBraces ?? false;
+let numeric = options.numeric ?? false;
+let months = options.months ?? false;
+let dropAllCaps = options.dropAllCaps ?? false;
+let enableEscape = options.escape ?? false;
+let encodeUrls = options.encodeUrls ?? false;
+let removeEmptyFields = options.removeEmptyFields ?? false;
+let removeDuplicateFields = options.removeDuplicateFields ?? false;
 
-	let maxAuthorsChecked = options.maxAuthors !== undefined;
-	let maxAuthorsValue = options.maxAuthors ?? 3;
+let maxAuthorsChecked = options.maxAuthors !== undefined;
+let maxAuthorsValue = options.maxAuthors ?? 3;
 
-	let enclosingBracesChecked =
-		options.enclosingBraces !== undefined && options.enclosingBraces.length > 0;
-	let enclosingBracesValue = options.enclosingBraces?.join(' ') ?? 'title';
+let enclosingBracesChecked =
+	options.enclosingBraces !== undefined && options.enclosingBraces.length > 0;
+let enclosingBracesValue = options.enclosingBraces?.join(" ") ?? "title";
 
-	let removeBracesChecked =
-		options.removeBraces !== undefined && options.removeBraces.length > 0;
-	let removeBracesValue = options.enclosingBraces?.join(' ') ?? 'title';
+let removeBracesChecked =
+	options.removeBraces !== undefined && options.removeBraces.length > 0;
+let removeBracesValue = options.enclosingBraces?.join(" ") ?? "title";
 
-	$: {
-		options.curly = curly;
-		options.stripEnclosingBraces = stripEnclosingBraces;
-		options.numeric = numeric;
-		options.months = months;
-		options.dropAllCaps = dropAllCaps;
-		options.escape = escape;
-		options.encodeUrls = encodeUrls;
-		options.removeEmptyFields = removeEmptyFields;
-		options.removeDuplicateFields = removeDuplicateFields;
-		options.maxAuthors = maxAuthorsChecked ? maxAuthorsValue : undefined;
-		options.enclosingBraces =
-			enclosingBracesChecked && enclosingBracesValue.length > 0
-				? enclosingBracesValue.split(/[\n\t ,]+/)
-				: undefined;
-		options.removeBraces =
-			removeBracesChecked && removeBracesValue.length > 0
-				? removeBracesValue.split(/[\n\t ,]+/)
-				: undefined;
-	}
+$: {
+	options.curly = curly;
+	options.stripEnclosingBraces = stripEnclosingBraces;
+	options.numeric = numeric;
+	options.months = months;
+	options.dropAllCaps = dropAllCaps;
+	options.escape = enableEscape;
+	options.encodeUrls = encodeUrls;
+	options.removeEmptyFields = removeEmptyFields;
+	options.removeDuplicateFields = removeDuplicateFields;
+	options.maxAuthors = maxAuthorsChecked ? maxAuthorsValue : undefined;
+	options.enclosingBraces =
+		enclosingBracesChecked && enclosingBracesValue.length > 0
+			? enclosingBracesValue.split(/[\n\t ,]+/)
+			: undefined;
+	options.removeBraces =
+		removeBracesChecked && removeBracesValue.length > 0
+			? removeBracesValue.split(/[\n\t ,]+/)
+			: undefined;
+}
 </script>
 
 <Collapsible open={true} title="Values">
@@ -87,7 +87,7 @@
 
 	<Option option="dropAllCaps" bind:checked={dropAllCaps} />
 
-	<Option option="escape" bind:checked={escape} />
+	<Option option="escape" bind:checked={enableEscape} />
 
 	<Option option="encodeUrls" bind:checked={encodeUrls} />
 

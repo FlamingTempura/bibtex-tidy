@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE {foobar,
@@ -44,7 +44,7 @@ const output = bibtex`
 }
 `;
 
-test('wrap values', async () => {
+test("wrap values", async () => {
 	const tidied = await bibtexTidy(input, { wrap: 82 });
 	strictEqual(tidied.bibtex, output);
 });

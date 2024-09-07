@@ -1,36 +1,36 @@
 <script lang="ts">
-	import type { OptionsNormalized } from '../optionUtils';
-	import Collapsible from './Collapsible.svelte';
-	import Option from './Option.svelte';
+import type { OptionsNormalized } from "../optionUtils";
+import Collapsible from "./Collapsible.svelte";
+import Option from "./Option.svelte";
 
-	export let options: OptionsNormalized;
+export let options: OptionsNormalized;
 
-	let omitChecked = options.omit !== undefined && options.omit.length > 0;
-	let omitValue = options.omit?.join(' ') ?? '';
+let omitChecked = options.omit !== undefined && options.omit.length > 0;
+let omitValue = options.omit?.join(" ") ?? "";
 
-	let stripComments = options.stripComments ?? false;
-	let tidyComments = options.tidyComments ?? false;
-	let lowercase = options.lowercase ?? false;
-	let trailingCommasChecked = options.trailingCommas ?? false;
+let stripComments = options.stripComments ?? false;
+let tidyComments = options.tidyComments ?? false;
+let lowercase = options.lowercase ?? false;
+let trailingCommasChecked = options.trailingCommas ?? false;
 
-	let generateKeysChecked =
-		options.generateKeys !== undefined && options.generateKeys.length > 0;
-	let generateKeysValue =
-		options.generateKeys ??
-		'[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]';
+let generateKeysChecked =
+	options.generateKeys !== undefined && options.generateKeys.length > 0;
+let generateKeysValue =
+	options.generateKeys ??
+	"[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
 
-	$: {
-		options.omit =
-			omitChecked && omitValue.length > 0
-				? omitValue.split(/[\n\t ,]+/)
-				: undefined;
+$: {
+	options.omit =
+		omitChecked && omitValue.length > 0
+			? omitValue.split(/[\n\t ,]+/)
+			: undefined;
 
-		options.stripComments = stripComments;
-		options.tidyComments = tidyComments;
-		options.lowercase = lowercase;
-		options.trailingCommas = trailingCommasChecked;
-		options.generateKeys = generateKeysChecked ? generateKeysValue : undefined;
-	}
+	options.stripComments = stripComments;
+	options.tidyComments = tidyComments;
+	options.lowercase = lowercase;
+	options.trailingCommas = trailingCommasChecked;
+	options.generateKeys = generateKeysChecked ? generateKeysValue : undefined;
+}
 </script>
 
 <Collapsible title="Clean up" open={true}>

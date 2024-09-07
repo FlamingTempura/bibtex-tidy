@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 
@@ -123,9 +123,9 @@ const output = bibtex`
 }
 `;
 
-test('sort entries by numeric keys', async () => {
+test("sort entries by numeric keys", async () => {
 	const tidied = await bibtexTidy(input, {
-		sort: ['year', 'month', 'day'],
+		sort: ["year", "month", "day"],
 		numeric: true,
 	});
 	strictEqual(tidied.bibtex, output);

@@ -1,6 +1,6 @@
-import type { RootNode, EntryNode } from './bibtexParser';
-import { parseAuthors } from './parseAuthors';
-import { isEntryNode } from './utils';
+import type { EntryNode, RootNode } from "./bibtexParser";
+import { parseAuthors } from "./parseAuthors";
+import { isEntryNode } from "./utils";
 
 export const SPECIAL_MARKERS: Record<
 	string,
@@ -13,79 +13,79 @@ export const SPECIAL_MARKERS: Record<
 	}
 > = {
 	auth: {
-		description: 'Last name of first authors',
+		description: "Last name of first authors",
 		callback: (v) => {
-			const authors = parseAuthors(v.get('author') ?? '', true);
-			const author = authors[0]?.lastName.replace(/[^\p{Letter}]+/gu, '_');
+			const authors = parseAuthors(v.get("author") ?? "", true);
+			const author = authors[0]?.lastName.replace(/[^\p{Letter}]+/gu, "_");
 			return author ? [author] : [];
 		},
 	},
 	authEtAl: {
 		description:
-			'If 1 or 2 authors, both authors, otherwise first author and EtAl',
+			"If 1 or 2 authors, both authors, otherwise first author and EtAl",
 		callback: (v) => {
-			const authors = parseAuthors(v.get('author') ?? '', true);
+			const authors = parseAuthors(v.get("author") ?? "", true);
 			return [
 				...authors
 					.slice(0, 2)
-					.map((author) => author.lastName.replace(/[^\p{Letter}]+/gu, '_')),
-				...(authors.length > 2 ? ['Et', 'Al'] : []),
+					.map((author) => author.lastName.replace(/[^\p{Letter}]+/gu, "_")),
+				...(authors.length > 2 ? ["Et", "Al"] : []),
 			];
 		},
 	},
 	authors: {
-		description: 'Last name all authors',
+		description: "Last name all authors",
 		callback: (v) => {
-			const authors = parseAuthors(v.get('author') ?? '', true);
+			const authors = parseAuthors(v.get("author") ?? "", true);
 			return authors.map((author) =>
-				author.lastName.replace(/[^\p{Letter}]+/gu, '_'),
+				author.lastName.replace(/[^\p{Letter}]+/gu, "_"),
 			);
 		},
 	},
 	authorsN: {
-		description: 'Last name N authors, with EtAl if more',
+		description: "Last name N authors, with EtAl if more",
 		callback: (v, n = 0) => {
-			const authors = parseAuthors(v.get('author') ?? '', true);
+			const authors = parseAuthors(v.get("author") ?? "", true);
 			return [
 				...authors
 					.slice(0, n)
-					.map((author) => author.lastName.replace(/[^\p{Letter}]+/gu, '_')),
-				...(authors.length > n ? ['Et', 'Al'] : []),
+					.map((author) => author.lastName.replace(/[^\p{Letter}]+/gu, "_")),
+				...(authors.length > n ? ["Et", "Al"] : []),
 			];
 		},
 	},
 	veryshorttitle: {
-		description: 'First non-function word of the title',
+		description: "First non-function word of the title",
 		callback: (v) => nonFunctionWords(title(v)).slice(0, 1),
 	},
 	shorttitle: {
-		description: 'First three non-function words of the title',
+		description: "First three non-function words of the title",
 		callback: (v) => nonFunctionWords(title(v)).slice(0, 3),
 	},
 	title: {
-		description: 'Full title, capitalized',
+		description: "Full title, capitalized",
 		callback: (v) => capitalize(words(title(v))),
 	},
 	fulltitle: {
-		description: 'Full title, verbatim',
+		description: "Full title, verbatim",
 		callback: (v) => words(title(v)),
 	},
 	year: {
-		description: 'Year',
+		description: "Year",
 		callback: (v) => {
-			const year = v.get('year')?.replace(/[^0-9]/g, '');
+			const year = v.get("year")?.replace(/[^0-9]/g, "");
 			return year ? [year] : [];
 		},
 	},
 	duplicateLetter: {
 		description:
-			'If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.',
-		callback: () => ['[duplicateLetter]'],
+			"If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
+		callback: () => ["[duplicateLetter]"],
 	},
 	duplicateNumber: {
 		description:
-			'If the multiple entries end up with the same key, then insert a number.',
-		callback: () => ['[duplicateNumber]'],
+			"If the multiple entries end up with the same key, then insert a number.",
+		callback: () => ["[duplicateNumber]"],
 	},
 };
 
@@ -94,22 +94,22 @@ export const MODIFIERS: Record<
 	{ description: string; callback: (value: string[]) => string[] }
 > = {
 	required: {
-		description: 'If data is missing, revert to existing key',
+		description: "If data is missing, revert to existing key",
 		callback: (words) => {
 			if (words.length === 0) throw new MissingRequiredData();
 			return words;
 		},
 	},
 	lower: {
-		description: 'Convert to lowercase',
+		description: "Convert to lowercase",
 		callback: (words) => words.map((word) => word.toLocaleLowerCase()),
 	},
 	upper: {
-		description: 'Convert to uppercase',
+		description: "Convert to uppercase",
 		callback: (words) => words.map((word) => word.toLocaleUpperCase()),
 	},
 	capitalize: {
-		description: 'Capitalize first letter of each word',
+		description: "Capitalize first letter of each word",
 		callback: capitalize,
 	},
 };
@@ -132,10 +132,10 @@ export function generateKeys(
 ): Map<EntryNode, string> {
 	let template2 = template;
 	if (
-		!template.includes('[duplicateLetter]') &&
-		!template.includes('[duplicateNumber]')
+		!template.includes("[duplicateLetter]") &&
+		!template.includes("[duplicateNumber]")
 	) {
-		template2 = template + '[duplicateLetter]';
+		template2 = `${template}[duplicateLetter]`;
 	}
 
 	const entriesByKey = new Map<string, EntryNode[]>();
@@ -156,8 +156,8 @@ export function generateKeys(
 	for (const [key, entries] of entriesByKey) {
 		for (const [i, entry] of entries.entries()) {
 			const duplicateLetter =
-				entries.length > 1 ? String.fromCharCode(97 + i) : ''; // FIXME: this will break after 26 duplicates
-			const duplicateNumber = entries.length > 1 ? String(i + 1) : '';
+				entries.length > 1 ? String.fromCharCode(97 + i) : ""; // FIXME: this will break after 26 duplicates
+			const duplicateNumber = entries.length > 1 ? String(i + 1) : "";
 			entry.key = key
 				.replace(/\[duplicateLetter\]/g, duplicateLetter)
 				.replace(/\[duplicateNumber\]/g, duplicateNumber);
@@ -173,14 +173,14 @@ export function generateKey(
 ): string | undefined {
 	try {
 		const newKey = template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (m) => {
-			const [tokenKeyN, ...modifierKeys] = m.slice(1, -1).split(':');
+			const [tokenKeyN, ...modifierKeys] = m.slice(1, -1).split(":");
 			if (!tokenKeyN) {
-				throw new Error('Token parse error');
+				throw new Error("Token parse error");
 			}
 			let n: number | undefined;
 			const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
 				n = Number(m);
-				return 'N';
+				return "N";
 			});
 			const token = SPECIAL_MARKERS[tokenKey];
 			let key: string[];
@@ -202,10 +202,10 @@ export function generateKey(
 				}
 			}
 
-			return key.join('');
+			return key.join("");
 		});
 
-		if (newKey === '') return; // keep existing key
+		if (newKey === "") return; // keep existing key
 		return newKey;
 	} catch (e) {
 		if (e instanceof MissingRequiredData) {
@@ -217,12 +217,57 @@ export function generateKey(
 
 //prettier-ignore
 export const functionWords = new Set([
-  'a', 'about', 'above', 'across', 'against', 'along', 'among', 'an', 'and', 
-  'around', 'at', 'before', 'behind', 'below', 'beneath', 'beside', 'between', 
-  'beyond', 'but', 'by', 'down', 'during', 'except', 'for', 'for', 'from', 
-  'in', 'inside', 'into', 'like', 'near', 'nor', 'of', 'off', 'on', 'onto', 
-  'or', 'since', 'so', 'the', 'through', 'to', 'toward', 'under', 'until', 
-  'up', 'upon', 'with', 'within', 'without', 'yet'
+	"a",
+	"about",
+	"above",
+	"across",
+	"against",
+	"along",
+	"among",
+	"an",
+	"and",
+	"around",
+	"at",
+	"before",
+	"behind",
+	"below",
+	"beneath",
+	"beside",
+	"between",
+	"beyond",
+	"but",
+	"by",
+	"down",
+	"during",
+	"except",
+	"for",
+	"for",
+	"from",
+	"in",
+	"inside",
+	"into",
+	"like",
+	"near",
+	"nor",
+	"of",
+	"off",
+	"on",
+	"onto",
+	"or",
+	"since",
+	"so",
+	"the",
+	"through",
+	"to",
+	"toward",
+	"under",
+	"until",
+	"up",
+	"upon",
+	"with",
+	"within",
+	"without",
+	"yet",
 ]);
 
 function nonFunctionWords(value: string): string[] {
@@ -243,5 +288,5 @@ function capitalize(words: string[]): string[] {
 }
 
 function title(entryValues: Map<string, string>): string {
-	return entryValues.get('title') ?? entryValues.get('booktitle') ?? '';
+	return entryValues.get("title") ?? entryValues.get("booktitle") ?? "";
 }

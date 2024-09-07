@@ -1,17 +1,17 @@
 <script lang="ts">
-	import type { OptionsNormalized } from '../optionUtils';
-	import { optionsToCLIArgs } from '../optionsToCLIArgs';
-	import Collapsible from './Collapsible.svelte';
+import type { OptionsNormalized } from "../optionUtils";
+import { optionsToCLIArgs } from "../optionsToCLIArgs";
+import Collapsible from "./Collapsible.svelte";
 
-	export let options: OptionsNormalized;
+export let options: OptionsNormalized;
 
-	let args: string[][];
-	$: {
-		args = optionsToCLIArgs(options).map((opt) => {
-			const i = opt.indexOf('=');
-			return i === -1 ? [opt] : [opt.slice(0, i), opt.slice(i + 1)];
-		});
-	}
+let args: string[][];
+$: {
+	args = optionsToCLIArgs(options).map((opt) => {
+		const i = opt.indexOf("=");
+		return i === -1 ? [opt] : [opt.slice(0, i), opt.slice(i + 1)];
+	});
+}
 </script>
 
 <Collapsible title="CLI">

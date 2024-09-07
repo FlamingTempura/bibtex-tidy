@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -27,7 +27,7 @@ const output = bibtex`
 }
 `;
 
-test('curly (enforce braced values)', async () => {
+test("curly (enforce braced values)", async () => {
 	const tidied = await bibtexTidy(input, { curly: true });
 	strictEqual(tidied.bibtex, output);
 });

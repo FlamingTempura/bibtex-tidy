@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 
@@ -30,7 +30,7 @@ const output = bibtex`
 }
 `;
 
-test('spacing before first entry', async () => {
+test("spacing before first entry", async () => {
 	const tidied = await bibtexTidy(input, { tidyComments: false });
 	strictEqual(tidied.bibtex, output);
 });

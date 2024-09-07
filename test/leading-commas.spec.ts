@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE{Cesar2013
@@ -30,7 +30,7 @@ const output = bibtex`
 }
 `;
 
-test('leading commas', async () => {
+test("leading commas", async () => {
 	const tidied = await bibtexTidy(input); // leading commas - #48
 	strictEqual(tidied.bibtex, output);
 });

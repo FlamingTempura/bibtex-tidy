@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 %references
@@ -45,7 +45,7 @@ const output = bibtex`
 }
 `;
 
-test('sort entries by special entries first', async () => {
-	const tidied = await bibtexTidy(input, { sort: ['special'] });
+test("sort entries by special entries first", async () => {
+	const tidied = await bibtexTidy(input, { sort: ["special"] });
 	strictEqual(tidied.bibtex, output);
 });

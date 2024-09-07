@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { BibTeXTidyResult } from '..';
-	import type { OptionsNormalized } from '../optionUtils';
+import type { BibTeXTidyResult } from "..";
+import type { OptionsNormalized } from "../optionUtils";
 
-	export let options: OptionsNormalized;
-	export let result: BibTeXTidyResult;
+export let options: OptionsNormalized;
+export let result: BibTeXTidyResult;
 
-	let warnings = result.warnings.filter((w) => w.code !== 'DUPLICATE_ENTRY');
-	let dupes = result.warnings.filter((w) => w.code === 'DUPLICATE_ENTRY');
+let warnings = result.warnings.filter((w) => w.code !== "DUPLICATE_ENTRY");
+let dupes = result.warnings.filter((w) => w.code === "DUPLICATE_ENTRY");
 </script>
 
 <div class="container">

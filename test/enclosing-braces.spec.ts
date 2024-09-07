@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -59,9 +59,9 @@ const output3 = bibtex`
 }
 `;
 
-test('enclosing braces', async () => {
+test("enclosing braces", async () => {
 	const tidied1 = await bibtexTidy(input, {
-		enclosingBraces: ['title', 'shorttitle', 'journal'],
+		enclosingBraces: ["title", "shorttitle", "journal"],
 		curly: true,
 	});
 	strictEqual(output1, tidied1.bibtex);

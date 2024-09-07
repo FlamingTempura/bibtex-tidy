@@ -1,36 +1,37 @@
-import type { BlockNode, EntryNode, TextNode } from './bibtexParser';
-import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from './latexParser';
-import { specialCharacters } from './unicode';
+import type { BlockNode, EntryNode, TextNode } from "./bibtexParser";
+import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from "./latexParser";
+import { specialCharacters } from "./unicode";
 
 export function escapeSpecialCharacters(str: string): string {
+	let result = str;
 	const mathExpressions: string[] = [];
 
-	str = str.replace(/\$[^$]+\$/, (match) => {
+	result = result.replace(/\$[^$]+\$/, (match) => {
 		mathExpressions.push(match);
 		return `MATH.EXP.${mathExpressions.length - 1}`;
 	});
 
-	let newstr = '';
+	let newstr = "";
 	let escapeMode = false;
 
-	for (let i = 0; i < str.length; i++) {
+	for (let i = 0; i < result.length; i++) {
 		if (escapeMode) {
 			escapeMode = false;
-			newstr += str[i];
+			newstr += result[i];
 			continue;
 		}
-		if (str[i] === '\\') {
+		if (result[i] === "\\") {
 			escapeMode = true;
-			newstr += str[i];
+			newstr += result[i];
 			continue;
 		}
 		// iterate through each character and if it's a special char replace with latex code
-		const c = str.charCodeAt(i).toString(16).padStart(4, '0');
-		newstr += specialCharacters.get(c) ?? str[i];
+		const c = result.charCodeAt(i).toString(16).padStart(4, "0");
+		newstr += specialCharacters.get(c) ?? result[i];
 	}
 	return newstr.replace(
 		/MATH\.EXP\.(\d+)/,
-		(_, i) => mathExpressions[Number(i)] ?? '',
+		(_, i) => mathExpressions[Number(i)] ?? "",
 	);
 }
 
@@ -50,24 +51,24 @@ function isRomanNumeral(str: string): boolean {
  * Remove all non-alphanumeric characters
  */
 export function alphaNum(str: string): string {
-	return str.replace(/[^0-9A-Za-z]/g, '').toLocaleLowerCase();
+	return str.replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
 }
 
 /** Normalize new lines. Convert CR/CRLF to LF. */
 export function convertCRLF(str: string): string {
-	return str.replace(/\r\n?/g, '\n');
+	return str.replace(/\r\n?/g, "\n");
 }
 
 export function wrapText(line: string, lineWidth: number): string[] {
-	const words: string[] = line.split(' ');
+	const words: string[] = line.split(" ");
 	const lines: string[] = [];
-	let currLine = '';
+	let currLine = "";
 	for (const [i, word] of words.entries()) {
 		if (currLine.length + word.length + 1 > lineWidth && i > 0) {
 			lines.push(currLine.trim());
-			currLine = '';
+			currLine = "";
 		}
-		currLine += word + ' ';
+		currLine += `${word} `;
 	}
 	return [...lines, currLine.trim()];
 }
@@ -79,9 +80,9 @@ export function wrapText(line: string, lineWidth: number): string[] {
 export function unwrapText(str: string): string {
 	// Preserve paragraphs (one or more empty lines) by replacing them with markers
 	return str
-		.replace(/\s*\n\s*\n\s*/g, '<<BIBTEX_TIDY_PARA>>')
-		.replace(/\s*\n\s*/g, ' ')
-		.replace(/<<BIBTEX_TIDY_PARA>>/g, '\n\n');
+		.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>")
+		.replace(/\s*\n\s*/g, " ")
+		.replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
 }
 
 /**
@@ -92,39 +93,41 @@ export function addEnclosingBraces(
 	str: string,
 	removeInsideBraces?: boolean,
 ): string {
+	let result = str;
 	if (removeInsideBraces) {
-		str = stringifyLaTeX(flattenLaTeX(parseLaTeX(str)));
+		result = stringifyLaTeX(flattenLaTeX(parseLaTeX(result)));
 	}
-	return `{${str}}`;
+	return `{${result}}`;
 }
 
 export function removeEnclosingBraces(str: string): string {
-	return str.replace(/^\{([^{}]*)\}$/g, '$1');
+	return str.replace(/^\{([^{}]*)\}$/g, "$1");
 }
 
 export function escapeURL(str: string): string {
-	return str.replace(/\\?_/g, '\\%5F');
+	return str.replace(/\\?_/g, "\\%5F");
 }
 
 export function limitAuthors(str: string, maxAuthors: number): string {
-	const authors = str.split(' and ');
+	const authors = str.split(" and ");
 	if (authors.length > maxAuthors) {
-		return [...authors.slice(0, maxAuthors), 'others'].join(' and ');
+		return [...authors.slice(0, maxAuthors), "others"].join(" and ");
 	}
 	return str;
 }
 
 /** Replace single dash with double dash in page range **/
 export function formatPageRange(str: string): string {
+	let result = str;
 	// TODO: replace with replaceAll when more widespread node support
 	for (let i = 0; i < 4; i++) {
-		str = str.replace(/(\d)\s*-\s*(\d)/g, '$1--$2');
+		result = result.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
 	}
-	return str;
+	return result;
 }
 
 export function isEntryNode(
 	node: TextNode | BlockNode,
 ): node is BlockNode & { block: EntryNode } {
-	return node.type !== 'text' && node.block?.type === 'entry';
+	return node.type !== "text" && node.block?.type === "entry";
 }

@@ -32,10 +32,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 
 // src/cli/cli.ts
-var import_assert = __toESM(require("assert"));
-var import_fs = require("fs");
-var import_promises = require("fs/promises");
-var import_process = require("process");
+var import_node_assert = __toESM(require("assert"));
+var import_node_fs = require("fs");
+var import_node_process = require("process");
 
 // src/__generated__/manPage.ts
 var manPage = [
@@ -363,10 +362,10 @@ function generateAST(input) {
         if (char === "@") {
           const prevNode = node.parent.children[node.parent.children.length - 2];
           if ((prevNode == null ? void 0 : prevNode.type) === "text") {
-            prevNode.text += "@" + node.command;
+            prevNode.text += `@${node.command}`;
           } else {
             node.parent.children.pop();
-            new TextNode(node.parent, "@" + node.command);
+            new TextNode(node.parent, `@${node.command}`);
             node.parent.children.push(node);
           }
           node.command = "";
@@ -374,12 +373,12 @@ function generateAST(input) {
           const commandTrimmed = node.command.trim();
           if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
             node.parent.children.pop();
-            node = new TextNode(node.parent, "@" + node.command + char);
+            node = new TextNode(node.parent, `@${node.command}${char}`);
           } else {
             node.command = commandTrimmed;
             const command = node.command.toLowerCase();
             const [braces, parens] = char === "{" ? [1, 0] : [0, 1];
-            const raw = "@" + command + char;
+            const raw = `@${command}${char}`;
             switch (command) {
               case "string":
                 node = new StringNode(node, raw, braces, parens);
@@ -397,7 +396,7 @@ function generateAST(input) {
           }
         } else if (char.match(/[=#,})[\]]/)) {
           node.parent.children.pop();
-          node = new TextNode(node.parent, "@" + node.command + char);
+          node = new TextNode(node.parent, `@${node.command}${char}`);
         } else {
           node.command += char;
         }
@@ -442,7 +441,7 @@ function generateAST(input) {
             i,
             line,
             column,
-            `The entry key cannot contain whitespace`
+            "The entry key cannot contain whitespace"
           );
         } else if (!isValidKeyCharacter(char)) {
           throw new BibTeXSyntaxError(
@@ -484,18 +483,18 @@ function generateAST(input) {
       case "concat": {
         if (isWhitespace(char)) {
           break;
-        } else if (node.canConsumeValue) {
+        }
+        if (node.canConsumeValue) {
           if (/[#=,}()[\]]/.test(char)) {
             throw new BibTeXSyntaxError(input, node, i, line, column);
+          }
+          node.canConsumeValue = false;
+          if (char === "{") {
+            node = new BracedNode(node);
+          } else if (char === '"') {
+            node = new QuotedNode(node);
           } else {
-            node.canConsumeValue = false;
-            if (char === "{") {
-              node = new BracedNode(node);
-            } else if (char === '"') {
-              node = new QuotedNode(node);
-            } else {
-              node = new LiteralNode(node, char);
-            }
+            node = new LiteralNode(node, char);
           }
         } else {
           if (char === ",") {
@@ -530,7 +529,8 @@ function generateAST(input) {
         if (char === "}" && node.depth === 0) {
           node = node.parent;
           break;
-        } else if (char === "{") {
+        }
+        if (char === "{") {
           node.depth++;
         } else if (char === "}") {
           node.depth--;
@@ -546,7 +546,8 @@ function generateAST(input) {
         if (char === '"' && node.depth === 0) {
           node = node.parent;
           break;
-        } else if (char === "{") {
+        }
+        if (char === "{") {
           node.depth++;
         } else if (char === "}") {
           node.depth--;
@@ -574,7 +575,7 @@ var BibTeXSyntaxError = class extends Error {
     var _a;
     super(
       `Line ${line}:${column}: Syntax Error in ${node.type} (${hint})
-` + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20)
+${input.slice(Math.max(0, pos - 20), pos)}>>${input[pos]}<<${input.slice(pos + 1, pos + 20)}`
     );
     this.node = node;
     this.line = line;
@@ -598,13 +599,12 @@ function parseAuthors(authors, sanitize) {
         firstNames: name.slice(commaPos + 1).trim(),
         lastName: name.slice(0, commaPos).trim()
       };
-    } else {
-      const lastSpacePos = name.lastIndexOf(" ");
-      return {
-        firstNames: name.slice(0, lastSpacePos).trim(),
-        lastName: name.slice(lastSpacePos).trim()
-      };
     }
+    const lastSpacePos = name.lastIndexOf(" ");
+    return {
+      firstNames: name.slice(0, lastSpacePos).trim(),
+      lastName: name.slice(lastSpacePos).trim()
+    };
   });
 }
 
@@ -704,13 +704,13 @@ function stringifyBlock(block) {
     case "root":
       return content;
     case "curly":
-      return "{" + content + "}";
+      return `{${content}}`;
     case "square":
-      return "[" + content + "]";
+      return `[${content}]`;
   }
 }
 function stringifyCommand(node) {
-  return "\\" + node.command + node.args.map(stringifyBlock).join("");
+  return `\\${node.command}${node.args.map(stringifyBlock).join("")}`;
 }
 function flattenLaTeX(block) {
   const newBlock = { ...block, children: [] };
@@ -3058,26 +3058,27 @@ var specialCharacters = /* @__PURE__ */ new Map([
 // src/utils.ts
 function escapeSpecialCharacters(str) {
   var _a;
+  let result = str;
   const mathExpressions = [];
-  str = str.replace(/\$[^$]+\$/, (match) => {
+  result = result.replace(/\$[^$]+\$/, (match) => {
     mathExpressions.push(match);
     return `MATH.EXP.${mathExpressions.length - 1}`;
   });
   let newstr = "";
   let escapeMode = false;
-  for (let i = 0; i < str.length; i++) {
+  for (let i = 0; i < result.length; i++) {
     if (escapeMode) {
       escapeMode = false;
-      newstr += str[i];
+      newstr += result[i];
       continue;
     }
-    if (str[i] === "\\") {
+    if (result[i] === "\\") {
       escapeMode = true;
-      newstr += str[i];
+      newstr += result[i];
       continue;
     }
-    const c = str.charCodeAt(i).toString(16).padStart(4, "0");
-    newstr += (_a = specialCharacters.get(c)) != null ? _a : str[i];
+    const c = result.charCodeAt(i).toString(16).padStart(4, "0");
+    newstr += (_a = specialCharacters.get(c)) != null ? _a : result[i];
   }
   return newstr.replace(
     /MATH\.EXP\.(\d+)/,
@@ -3112,7 +3113,7 @@ function wrapText(line, lineWidth) {
       lines.push(currLine.trim());
       currLine = "";
     }
-    currLine += word + " ";
+    currLine += `${word} `;
   }
   return [...lines, currLine.trim()];
 }
@@ -3120,10 +3121,11 @@ function unwrapText(str) {
   return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
 }
 function addEnclosingBraces(str, removeInsideBraces) {
+  let result = str;
   if (removeInsideBraces) {
-    str = stringifyLaTeX(flattenLaTeX(parseLaTeX(str)));
+    result = stringifyLaTeX(flattenLaTeX(parseLaTeX(result)));
   }
-  return `{${str}}`;
+  return `{${result}}`;
 }
 function removeEnclosingBraces(str) {
   return str.replace(/^\{([^{}]*)\}$/g, "$1");
@@ -3139,10 +3141,11 @@ function limitAuthors(str, maxAuthors) {
   return str;
 }
 function formatPageRange(str) {
+  let result = str;
   for (let i = 0; i < 4; i++) {
-    str = str.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
+    result = result.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
   }
-  return str;
+  return result;
 }
 function isEntryNode(node) {
   var _a;
@@ -3342,7 +3345,7 @@ function formatNode(child, options, indent, omitFields, replacementKeys) {
     case "preamble":
     case "string":
       return `${child.block.raw}
-` + (options.blankLines ? "\n" : "");
+${options.blankLines ? "\n" : ""}`;
     case "comment":
       return formatComment(child.block.raw, options);
     case "entry":
@@ -3389,9 +3392,7 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
     }
     if (i < entry.fields.length - 1 || trailingCommas) bibtex += ",";
   }
-  bibtex += `
-}
-`;
+  bibtex += "\n}\n";
   return bibtex;
 }
 function formatComment(comment, { stripComments, tidyComments }) {
@@ -3399,10 +3400,10 @@ function formatComment(comment, { stripComments, tidyComments }) {
   if (tidyComments) {
     const trimmed = comment.trim();
     if (trimmed === "") return "";
-    return trimmed + "\n";
-  } else {
-    return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
+    return `${trimmed}
+`;
   }
+  return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
 }
 function formatValue(field, options) {
   const {
@@ -3411,7 +3412,7 @@ function formatValue(field, options) {
     align,
     stripEnclosingBraces,
     dropAllCaps,
-    escape,
+    escape: enableEscape,
     encodeUrls,
     wrap,
     maxAuthors,
@@ -3458,7 +3459,7 @@ function formatValue(field, options) {
     if (nameLowerCase === "url" && encodeUrls) {
       value = escapeURL(value);
     }
-    if (escape) {
+    if (enableEscape) {
       value = escapeSpecialCharacters(value);
     }
     if (nameLowerCase === "pages") {
@@ -3486,18 +3487,20 @@ function formatValue(field, options) {
           const wrapCol = wrap;
           paragraphs = paragraphs.map(
             (paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join(
-              "\n" + valIndent
+              `
+${valIndent}`
             )
           );
         }
-        value = "\n" + valIndent + paragraphs.join(`
+        value = `
+${valIndent}${paragraphs.join(`
 
-${valIndent}`) + "\n" + indent;
+${valIndent}`)}
+${indent}`;
       }
       return addEnclosingBraces(value);
-    } else {
-      return `"${value}"`;
     }
+    return `"${value}"`;
   }).join(" # ");
 }
 
@@ -3604,7 +3607,7 @@ function generateKeys(ast, valueLookup, template) {
   var _a;
   let template2 = template;
   if (!template.includes("[duplicateLetter]") && !template.includes("[duplicateNumber]")) {
-    template2 = template + "[duplicateLetter]";
+    template2 = `${template}[duplicateLetter]`;
   }
   const entriesByKey = /* @__PURE__ */ new Map();
   for (const node of ast.children) {
@@ -3817,7 +3820,7 @@ var optionDefinitions = [
     cli: {
       "--omit": (args) => {
         if (args.length === 0) {
-          console.error(`Expected a omit list`);
+          console.error("Expected a omit list");
           process.exit(1);
         }
         return args;
@@ -3833,7 +3836,7 @@ var optionDefinitions = [
   {
     key: "curly",
     cli: { "--curly": true, "--no-curly": false },
-    toCLI: (val) => val ? `--curly` : void 0,
+    toCLI: (val) => val ? "--curly" : void 0,
     title: "Enclose values in braces",
     description: [
       'Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'
@@ -3844,7 +3847,7 @@ var optionDefinitions = [
   {
     key: "numeric",
     cli: { "--numeric": true, "--no-numeric": false },
-    toCLI: (val) => val ? `--numeric` : void 0,
+    toCLI: (val) => val ? "--numeric" : void 0,
     title: "Use numeric values where possible",
     description: [
       "Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."
@@ -3855,7 +3858,7 @@ var optionDefinitions = [
   {
     key: "months",
     cli: { "--months": true },
-    toCLI: (val) => val ? `--months` : void 0,
+    toCLI: (val) => val ? "--months" : void 0,
     title: "Abbreviate months",
     description: [
       "Convert all months to three letter abbreviations (jan, feb, etc)."
@@ -3887,7 +3890,7 @@ var optionDefinitions = [
   {
     key: "tab",
     cli: { "--tab": true, "--no-tab": false },
-    toCLI: (val) => val ? `--tab` : void 0,
+    toCLI: (val) => val ? "--tab" : void 0,
     title: "Indent with tabs",
     description: ["Indent all fields with a tab."],
     type: "boolean",
@@ -3917,7 +3920,7 @@ var optionDefinitions = [
   {
     key: "blankLines",
     cli: { "--blank-lines": true, "--no-blank-lines": false },
-    toCLI: (val) => val ? `--blank-lines` : void 0,
+    toCLI: (val) => val ? "--blank-lines" : void 0,
     title: "Insert blank lines",
     description: ["Insert an empty line between each entry."],
     type: "boolean"
@@ -4372,8 +4375,8 @@ function sortEntryFields(ast, fieldOrder) {
 // src/index.ts
 function tidy(input, options_ = {}) {
   const options = normalizeOptions(options_);
-  input = convertCRLF(input);
-  const ast = generateAST(input);
+  const inputFixed = convertCRLF(input);
+  const ast = generateAST(inputFixed);
   const warnings = getEntries(ast).filter((entry) => !entry.key).map((entry) => ({
     code: "MISSING_KEY",
     message: `${entry.parent.command} entry does not have a citation key.`
@@ -4521,7 +4524,7 @@ function parseArguments(argv2) {
           mode = "value";
         } else {
           flushKV();
-          currKey = "-" + c;
+          currKey = `-${c}`;
         }
         break;
       }
@@ -4569,31 +4572,31 @@ function argsToOptions(argv2, skipInputArgs) {
 }
 
 // src/cli/cli.ts
-var { readFile, writeFile } = import_fs.promises;
-var nodeVer = Number(import_process.versions.node.split(".")[0]);
+var { readFile, writeFile, copyFile } = import_node_fs.promises;
+var nodeVer = Number(import_node_process.versions.node.split(".")[0]);
 if (nodeVer < 12) {
-  console.error(`bibtex-tidy requires Node.js v12.0.0 or later`);
-  (0, import_process.exit)(1);
+  console.error("bibtex-tidy requires Node.js v12.0.0 or later");
+  (0, import_node_process.exit)(1);
 }
 async function start() {
   const hasStdin = !process.stdin.isTTY;
   const { inputFiles, options, unknownArgs } = argsToOptions(
-    import_process.argv.slice(2).join(" "),
+    import_node_process.argv.slice(2).join(" "),
     hasStdin
   );
   if (unknownArgs.length > 0) {
     const plural = unknownArgs.length > 1 ? "s" : "";
     console.error(`Unknown option${plural}: ${unknownArgs.join(", ")}`);
     console.error(`Try 'bibtex-tidy --help for more information.`);
-    (0, import_process.exit)(1);
+    (0, import_node_process.exit)(1);
   }
   if (options.version) {
     console.log(`v${version}`);
-    (0, import_process.exit)(0);
+    (0, import_node_process.exit)(0);
   }
   if (options.help || inputFiles.length === 0 && !hasStdin) {
     console.log(manPage.join("\n"));
-    (0, import_process.exit)(0);
+    (0, import_node_process.exit)(0);
   }
   const deprecatedStdInFlag = inputFiles.includes("-");
   const outputToStdout = !options.outputPath && !options.modify;
@@ -4662,7 +4665,7 @@ async function tidyInputFiles(inputFiles, options) {
       process.exit(1);
     }
     console.log("Tidying...");
-    (0, import_assert.default)(inputFiles[0]);
+    (0, import_node_assert.default)(inputFiles[0]);
     const result = tidy(await readFile(inputFiles[0], "utf8"), options);
     if (options.outputPath) {
       await tidyToOutputFile(result, options.outputPath, options);
@@ -4676,7 +4679,7 @@ function tidyToStdout(result) {
 }
 async function tidyToOutputFile(result, path, options) {
   if (options.backup) {
-    await (0, import_promises.copyFile)(path, `${path}.original`);
+    await copyFile(path, `${path}.original`);
   }
   await writeFile(path, result.bibtex, "utf8");
   const log = [];
@@ -4689,13 +4692,16 @@ async function tidyToOutputFile(result, path, options) {
     log.push(`${dupes.length} entries merged`);
   }
   if (!options.quiet) {
-    process.stdout.write(log.join("\n") + "\n");
+    process.stdout.write(`${log.join("\n")}
+`);
   }
 }
 async function readStdin() {
   return new Promise((resolve) => {
     let bibtex = "";
-    process.stdin.on("data", (chunk) => bibtex += chunk).on("end", () => resolve(bibtex)).setEncoding("utf8");
+    process.stdin.on("data", (chunk) => {
+      bibtex += chunk;
+    }).on("end", () => resolve(bibtex)).setEncoding("utf8");
   });
 }
 var origLog = console.log;

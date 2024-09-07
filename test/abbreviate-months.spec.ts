@@ -1,7 +1,7 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
-test('abbreviate months', async () => {
+test("abbreviate months", async () => {
 	const inputs = [
 		bibtex`@article{foo, title={Foo}, month = {3} }`,
 		bibtex`@article{foo, title={Foo}, month = 3 }`,
@@ -27,7 +27,7 @@ test('abbreviate months', async () => {
 	}
 });
 
-test('do not abbreviate invalid months', async () => {
+test("do not abbreviate invalid months", async () => {
 	const input1 = bibtex`@article{foo, title={Foo}, month = {17} }`;
 
 	const expected1 = bibtex`

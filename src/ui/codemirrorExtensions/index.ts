@@ -9,13 +9,13 @@
 // on errors, allowing us to remove this lezer based parser.
 
 import {
+	HighlightStyle,
 	LRLanguage,
 	LanguageSupport,
-	HighlightStyle,
 	syntaxHighlighting,
-} from '@codemirror/language';
-import { styleTags, tags as t } from '@lezer/highlight';
-import { parser } from './bibtex';
+} from "@codemirror/language";
+import { styleTags, tags as t } from "@lezer/highlight";
+import { parser } from "./__generated__/bibtex";
 
 const language = LRLanguage.define({
 	parser: parser.configure({
@@ -38,12 +38,12 @@ const language = LRLanguage.define({
 });
 
 const highlighting = HighlightStyle.define([
-	{ tag: t.comment, color: 'var(--light5)' },
-	{ tag: t.name, color: 'var(--orange)' },
-	{ tag: t.number, color: 'var(--light-blue)' },
-	{ tag: t.string, color: 'var(--green)' },
-	{ tag: t.className, color: 'var(--pink)' },
-	{ tag: t.variableName, color: 'white' },
+	{ tag: t.comment, color: "var(--light5)" },
+	{ tag: t.name, color: "var(--orange)" },
+	{ tag: t.number, color: "var(--light-blue)" },
+	{ tag: t.string, color: "var(--green)" },
+	{ tag: t.className, color: "var(--pink)" },
+	{ tag: t.variableName, color: "white" },
 ]);
 
 export function bibtexLanguage() {

@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @article{blah,
@@ -16,7 +16,7 @@ const output = bibtex`
 }
 `;
 
-test('should not mess up long numbers', async () => {
+test("should not mess up long numbers", async () => {
 	const tidied = await bibtexTidy(input);
 	strictEqual(tidied.bibtex, output);
 });

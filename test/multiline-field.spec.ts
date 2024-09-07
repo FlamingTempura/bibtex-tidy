@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = `% Entries
 @ARTICLE{Cesar2013,
@@ -18,7 +18,7 @@ const output = bibtex`
 }
 `;
 
-test('multiline fields', async () => {
+test("multiline fields", async () => {
 	const tidied = await bibtexTidy(input); // #86, #177 (multiline fields), #198 (ACM bibtex)
 	strictEqual(tidied.bibtex, output);
 });

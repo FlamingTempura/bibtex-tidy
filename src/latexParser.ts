@@ -1,7 +1,7 @@
 export class BlockNode {
-	type = 'block' as const;
+	type = "block" as const;
 	constructor(
-		public kind: 'root' | 'square' | 'curly',
+		public kind: "root" | "square" | "curly",
 		public parent?: BlockNode | CommandNode,
 		public children: (TextNode | CommandNode | BlockNode)[] = [],
 	) {
@@ -13,19 +13,19 @@ export class BlockNode {
 	}
 }
 export class TextNode {
-	type = 'text' as const;
+	type = "text" as const;
 	constructor(
 		public parent: BlockNode,
-		public text: string = '',
+		public text = "",
 	) {
 		parent.children.push(this);
 	}
 }
 export class CommandNode {
-	type = 'command' as const;
+	type = "command" as const;
 	constructor(
 		public parent: BlockNode,
-		public command: string = '',
+		public command = "",
 		public args: BlockNode[] = [],
 	) {
 		parent.children.push(this);
@@ -35,21 +35,21 @@ export class CommandNode {
 type Node = BlockNode | TextNode | CommandNode;
 
 export function parseLaTeX(input: string): BlockNode {
-	const rootNode = new BlockNode('root');
+	const rootNode = new BlockNode("root");
 	let node: Node = rootNode;
 	for (let i = 0; i < input.length; i++) {
 		const char = input[i];
 		if (!char) break;
 
 		switch (node.type) {
-			case 'block': {
-				if (char === '\\') {
+			case "block": {
+				if (char === "\\") {
 					node = new CommandNode(node);
-				} else if (char === '{') {
-					node = new BlockNode('curly', node);
+				} else if (char === "{") {
+					node = new BlockNode("curly", node);
 				} else if (
-					((char === '}' && node.kind === 'curly') ||
-						(char === ']' && node.kind === 'square')) &&
+					((char === "}" && node.kind === "curly") ||
+						(char === "]" && node.kind === "square")) &&
 					node.parent
 				) {
 					node = node.parent;
@@ -59,13 +59,13 @@ export function parseLaTeX(input: string): BlockNode {
 				break;
 			}
 
-			case 'text': {
-				if (char === '\\' || char === '{') {
+			case "text": {
+				if (char === "\\" || char === "{") {
 					node = node.parent;
 					i--; // repeat
 				} else if (
-					(char === '}' && node.parent.kind === 'curly') ||
-					(char === ']' && node.parent.kind === 'square')
+					(char === "}" && node.parent.kind === "curly") ||
+					(char === "]" && node.parent.kind === "square")
 				) {
 					node = node.parent;
 					i--;
@@ -75,14 +75,14 @@ export function parseLaTeX(input: string): BlockNode {
 				break;
 			}
 
-			case 'command': {
-				if (char === '{') {
-					node = new BlockNode('curly', node);
-				} else if (char === '[') {
-					node = new BlockNode('square', node);
+			case "command": {
+				if (char === "{") {
+					node = new BlockNode("curly", node);
+				} else if (char === "[") {
+					node = new BlockNode("square", node);
 				} else if (
-					(char === '}' && node.parent.kind === 'curly') ||
-					(char === ']' && node.parent.kind === 'square') ||
+					(char === "}" && node.parent.kind === "curly") ||
+					(char === "]" && node.parent.kind === "square") ||
 					/\s/.test(char) ||
 					node.args.length > 0
 				) {
@@ -105,27 +105,27 @@ function stringifyBlock(block: BlockNode): string {
 	const content = block.children
 		.map((node) => {
 			switch (node.type) {
-				case 'block':
+				case "block":
 					return stringifyBlock(node);
-				case 'command':
+				case "command":
 					return stringifyCommand(node);
-				case 'text':
+				case "text":
 					return node.text;
 			}
 		})
-		.join('');
+		.join("");
 	switch (block.kind) {
-		case 'root':
+		case "root":
 			return content;
-		case 'curly':
-			return '{' + content + '}';
-		case 'square':
-			return '[' + content + ']';
+		case "curly":
+			return `{${content}}`;
+		case "square":
+			return `[${content}]`;
 	}
 }
 
 function stringifyCommand(node: CommandNode): string {
-	return '\\' + node.command + node.args.map(stringifyBlock).join('');
+	return `\\${node.command}${node.args.map(stringifyBlock).join("")}`;
 }
 
 /**
@@ -134,7 +134,7 @@ function stringifyCommand(node: CommandNode): string {
 export function flattenLaTeX(block: BlockNode): BlockNode {
 	const newBlock: BlockNode = { ...block, children: [] };
 	for (const child of block.children) {
-		if (child.type === 'block' && child.kind === 'curly') {
+		if (child.type === "block" && child.kind === "curly") {
 			const newChild = flattenLaTeX(child);
 			newBlock.children.push(...newChild.children);
 		} else {

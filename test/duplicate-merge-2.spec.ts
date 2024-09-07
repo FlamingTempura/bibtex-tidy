@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @article{Hess2012a,
@@ -425,7 +425,7 @@ const output = bibtex`
 }
 `;
 
-test('merge duplicates 2', async () => {
+test("merge duplicates 2", async () => {
 	const tidied = await bibtexTidy(input, {
 		merge: true,
 		tab: true,

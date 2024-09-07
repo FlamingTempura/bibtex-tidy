@@ -27,18 +27,18 @@
 		"serve": "node -r esbuild-register build.ts --serve",
 		"test": "node -r esbuild-register build.ts  --no-defs && node -r esbuild-register test/index.ts",
 		"typecheck": "tsc --noEmit",
-		"prettier": "prettier --write build.ts {test,src,docs}/**/*.{ts,html}",
 		"cover": "./scripts/cover.sh",
 		"preversion": "git pull --rebase",
 		"version": "./scripts/prepare-release.sh",
 		"postversion": "git push --follow-tags && npm publish",
-		"codemirror-grammar": "node ./node_modules/@lezer/generator/dist/lezer-generator.cjs src/ui/bibtex.grammar -o src/ui/bibtex.ts",
-		"lint": "eslint src test build.ts"
+		"codemirror-grammar": "lezer-generator src/ui/codemirrorExtensions/bibtex.grammar -o src/ui/codemirrorExtensions/__generated__/bibtex.ts",
+		"check": "npx @biomejs/biome check"
 	},
 	"engines": {
 		"node": ">12"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "^1.8.3",
 		"@codemirror/commands": "^6.6.1",
 		"@codemirror/language": "^6.10.2",
 		"@codemirror/lint": "^6.8.1",
@@ -48,79 +48,16 @@
 		"@swc/core": "^1.7.23",
 		"@tsconfig/svelte": "^5.0.4",
 		"@types/node": "^22.5.4",
-		"@typescript-eslint/eslint-plugin": "^6.4.0",
-		"@typescript-eslint/parser": "^6.4.0",
 		"c8": "^10.1.2",
 		"core-js": "^3.38.1",
 		"dts-bundle-generator": "^9.5.1",
 		"esbuild": "^0.23.1",
 		"esbuild-register": "^3.6.0",
 		"esbuild-svelte": "^0.8.1",
-		"eslint": "^8.47.0",
-		"eslint-plugin-import": "^2.28.1",
-		"eslint-plugin-svelte3": "^4.0.0",
-		"prettier": "^3.2.5",
+		"prettier": "^3.3.3",
 		"puppeteer": "^23.3.0",
 		"regexpu-core": "^6.0.0",
 		"svelte-preprocess": "^5.1.4",
 		"typescript": "^5.5.4"
-	},
-	"prettier": {
-		"useTabs": true,
-		"singleQuote": true
-	},
-	"eslintConfig": {
-		"root": true,
-		"parser": "@typescript-eslint/parser",
-		"parserOptions": {
-			"project": [
-				"./tsconfig.json"
-			],
-			"extraFileExtensions": [
-				".svelte"
-			]
-		},
-		"plugins": [
-			"@typescript-eslint",
-			"svelte3"
-		],
-		"extends": [
-			"eslint:recommended",
-			"plugin:@typescript-eslint/eslint-recommended",
-			"plugin:@typescript-eslint/strict",
-			"plugin:import/recommended",
-			"plugin:import/typescript"
-		],
-		"overrides": [
-			{
-				"files": [
-					"*.svelte"
-				],
-				"processor": "svelte3/svelte3"
-			}
-		],
-		"settings": {
-			"svelte3/typescript": true
-		},
-		"env": {
-			"es6": true,
-			"browser": true
-		},
-		"rules": {
-			"import/order": [
-				"warn",
-				{
-					"alphabetize": {
-						"order": "asc"
-					}
-				}
-			],
-			"@typescript-eslint/consistent-type-definitions": [
-				"warn",
-				"type"
-			],
-			"no-unused-vars": "off",
-			"@typescript-eslint/switch-exhaustiveness-check": "warn"
-		}
 	}
 }

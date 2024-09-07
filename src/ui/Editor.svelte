@@ -1,108 +1,107 @@
 <script lang="ts">
-	import { indentWithTab, history, historyKeymap } from '@codemirror/commands';
-	import { bracketMatching } from '@codemirror/language';
-	import { linter } from '@codemirror/lint';
-	import { EditorState, Compartment } from '@codemirror/state';
-	import {
-		EditorView,
-		drawSelection,
-		lineNumbers,
-		keymap,
-		ViewUpdate,
-		dropCursor,
-		highlightActiveLineGutter,
-	} from '@codemirror/view';
-	import { onMount } from 'svelte';
-	import type { BibTeXSyntaxError } from '../bibtexParser';
-	import CopyButton from './CopyButton.svelte';
-	import {
-		bibtexLanguage,
-		bibtexSyntaxHighlighting,
-	} from './codemirrorExtensions';
+import { history, historyKeymap, indentWithTab } from "@codemirror/commands";
+import { bracketMatching } from "@codemirror/language";
+import { linter } from "@codemirror/lint";
+import { Compartment, EditorState } from "@codemirror/state";
+import {
+	EditorView,
+	type ViewUpdate,
+	drawSelection,
+	dropCursor,
+	highlightActiveLineGutter,
+	keymap,
+	lineNumbers,
+} from "@codemirror/view";
+import { onMount } from "svelte";
+import type { BibTeXSyntaxError } from "../bibtexParser";
+import CopyButton from "./CopyButton.svelte";
+import {
+	bibtexLanguage,
+	bibtexSyntaxHighlighting,
+} from "./codemirrorExtensions";
 
-	export let bibtex: string;
-	export let error: BibTeXSyntaxError | undefined;
+export let bibtex: string;
+export let error: BibTeXSyntaxError | undefined;
 
-	let editorRef: HTMLElement;
-	let cmEditor: EditorView | undefined;
-	let lintCompartment: Compartment;
+let editorRef: HTMLElement;
+let cmEditor: EditorView | undefined;
+let lintCompartment: Compartment;
 
-	onMount(() => {
-		const onUpdate = EditorView.updateListener.of((v: ViewUpdate) => {
-			if (cmEditor && v.docChanged) {
-				bibtex = cmEditor.state.doc.toString();
-			}
-		});
-
-		lintCompartment = new Compartment();
-
-		cmEditor = new EditorView({
-			parent: editorRef,
-			state: EditorState.create({
-				doc: bibtex,
-				extensions: [
-					lineNumbers(),
-
-					highlightActiveLineGutter(),
-
-					// For dragging text onto the editor
-					dropCursor(),
-
-					EditorState.allowMultipleSelections.of(true),
-
-					// Highlight matching brackets
-					bracketMatching(),
-
-					// Replace native selection with customisable one (e.g. background
-					// color)
-					drawSelection(),
-
-					bibtexLanguage(),
-					bibtexSyntaxHighlighting(),
-
-					keymap.of([...historyKeymap, indentWithTab]),
-					// Enables undo/redo. Without this, codemirror completely bugs out on
-					// undo/redo
-					history(),
-					// Listen for changes and propagate to state
-					onUpdate,
-
-					lintCompartment.of([]),
-				],
-			}),
-		});
-
-		cmEditor.focus();
-
-		// make editor available for tests
-		window.cmEditor = cmEditor;
+onMount(() => {
+	const onUpdate = EditorView.updateListener.of((v: ViewUpdate) => {
+		if (cmEditor && v.docChanged) {
+			bibtex = cmEditor.state.doc.toString();
+		}
 	});
 
-	$: {
-		cmEditor?.dispatch({
-			effects: lintCompartment.reconfigure(
-				linter(() => {
-					if (error && cmEditor) {
-						const line = cmEditor.state.doc.line(error.line);
-						const from = line.from;
-						const to = line.to;
-						return [{ from, to, severity: 'error', message: 'Syntax Error' }];
-					} else {
-						return [];
-					}
-				})
-			),
+	lintCompartment = new Compartment();
+
+	cmEditor = new EditorView({
+		parent: editorRef,
+		state: EditorState.create({
+			doc: bibtex,
+			extensions: [
+				lineNumbers(),
+
+				highlightActiveLineGutter(),
+
+				// For dragging text onto the editor
+				dropCursor(),
+
+				EditorState.allowMultipleSelections.of(true),
+
+				// Highlight matching brackets
+				bracketMatching(),
+
+				// Replace native selection with customisable one (e.g. background
+				// color)
+				drawSelection(),
+
+				bibtexLanguage(),
+				bibtexSyntaxHighlighting(),
+
+				keymap.of([...historyKeymap, indentWithTab]),
+				// Enables undo/redo. Without this, codemirror completely bugs out on
+				// undo/redo
+				history(),
+				// Listen for changes and propagate to state
+				onUpdate,
+
+				lintCompartment.of([]),
+			],
+		}),
+	});
+
+	cmEditor.focus();
+
+	// make editor available for tests
+	window.cmEditor = cmEditor;
+});
+
+$: {
+	cmEditor?.dispatch({
+		effects: lintCompartment.reconfigure(
+			linter(() => {
+				if (error && cmEditor) {
+					const line = cmEditor.state.doc.line(error.line);
+					const from = line.from;
+					const to = line.to;
+					return [{ from, to, severity: "error", message: "Syntax Error" }];
+				}
+				return [];
+			}),
+		),
+	});
+}
+
+$: {
+	// update editor content from incoming state
+	if (cmEditor && bibtex !== cmEditor.state.doc.toString()) {
+		cmEditor.dispatch({
+			changes: { from: 0, to: cmEditor.state.doc.length, insert: bibtex },
 		});
 	}
-
-	$: {
-		// update editor content from incoming state
-		if (cmEditor && bibtex !== cmEditor.state.doc.toString()) {
-			cmEditor.dispatch({
-				changes: { from: 0, to: cmEditor.state.doc.length, insert: bibtex },
-			});
-		}
-	}
+}
 </script>
 
 <main id="editor" bind:this={editorRef}>

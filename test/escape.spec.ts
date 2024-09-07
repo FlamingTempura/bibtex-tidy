@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @misc{q,
@@ -24,7 +24,7 @@ const outputUnescaped = bibtex`
 }
 `;
 
-test('do not escape latex characters', async () => {
+test("do not escape latex characters", async () => {
 	const tidied1 = await bibtexTidy(input, { escape: true });
 	strictEqual(tidied1.bibtex, outputEscaped);
 

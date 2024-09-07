@@ -1,6 +1,6 @@
-import { optionDefinitions } from '../optionDefinitions';
-import type { CLIOptions } from '../optionUtils';
-import { parseArguments } from './argsParser';
+import { optionDefinitions } from "../optionDefinitions";
+import type { CLIOptions } from "../optionUtils";
+import { parseArguments } from "./argsParser";
 
 const cliOptions: Record<string, { option: keyof CLIOptions; value: unknown }> =
 	{};
@@ -34,17 +34,17 @@ export function argsToOptions(
 
 	const last = kvs.at(-1);
 	if (
-		!kvs.some((kv) => kv.key === '') &&
+		!kvs.some((kv) => kv.key === "") &&
 		!skipInputArgs &&
 		last &&
 		last.values.length > 0
 	) {
-		kvs.push({ key: '', values: last.values });
+		kvs.push({ key: "", values: last.values });
 		last.values = [];
 	}
 
 	for (const { key, values } of kvs) {
-		if (key === '') {
+		if (key === "") {
 			inputFiles.push(...values);
 			continue;
 		}
@@ -55,7 +55,7 @@ export function argsToOptions(
 			continue;
 		}
 
-		if (typeof cliOption.value === 'function') {
+		if (typeof cliOption.value === "function") {
 			options[cliOption.option] = cliOption.value(values);
 		} else {
 			//@ts-expect-error tricky typing

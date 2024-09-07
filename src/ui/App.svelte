@@ -1,79 +1,79 @@
 <script lang="ts">
-	import { tidy, type BibTeXTidyResult } from '../';
-	import { BibTeXSyntaxError } from '../bibtexParser';
-	import { normalizeOptions, type OptionsNormalized } from '../optionUtils';
-	import Editor from './Editor.svelte';
-	import Sidebar from './Sidebar.svelte';
-	import { DEFAULT_BIBTEX } from './defaultBibtex';
+import { type BibTeXTidyResult, tidy } from "../";
+import { BibTeXSyntaxError } from "../bibtexParser";
+import { type OptionsNormalized, normalizeOptions } from "../optionUtils";
+import Editor from "./Editor.svelte";
+import Sidebar from "./Sidebar.svelte";
+import { DEFAULT_BIBTEX } from "./defaultBibtex";
 
-	// Unfortunatly when the UI was originally made public it had different
-	// defaults to the CLI/JS API. In future it might be good to make the UI
-	// consistent.
-	const optionDefaults = normalizeOptions({
-		tab: true,
-		align: 13,
-		curly: true,
-		numeric: true,
-		escape: false,
-		duplicates: ['key'],
-		sortFields: true,
-		removeDuplicateFields: false,
-	});
+// Unfortunatly when the UI was originally made public it had different
+// defaults to the CLI/JS API. In future it might be good to make the UI
+// consistent.
+const optionDefaults = normalizeOptions({
+	tab: true,
+	align: 13,
+	curly: true,
+	numeric: true,
+	escape: false,
+	duplicates: ["key"],
+	sortFields: true,
+	removeDuplicateFields: false,
+});
 
-	let running = false;
-	let bibtex: string = DEFAULT_BIBTEX;
-	let options: OptionsNormalized = getOptionsFromURL() ?? optionDefaults;
+let running = false;
+let bibtex: string = DEFAULT_BIBTEX;
+let options: OptionsNormalized = getOptionsFromURL() ?? optionDefaults;
 
-	let status:
-		| { status: 'success'; result: BibTeXTidyResult }
-		| { status: 'error'; error: unknown }
-		| undefined;
-	let error: BibTeXSyntaxError | undefined;
+let status:
+	| { status: "success"; result: BibTeXTidyResult }
+	| { status: "error"; error: unknown }
+	| undefined;
+let error: BibTeXSyntaxError | undefined;
 
-	function handleTidy() {
-		running = true;
-		status = undefined;
-		error = undefined;
-		setTimeout(() => {
-			// TODO: requestAnimationFrame
-			try {
-				const result = tidy(bibtex, options);
-				bibtex = result.bibtex;
-				status = { status: 'success', result };
-			} catch (e: unknown) {
-				console.error('bibtex parse problem:', e);
-				status = { status: 'error', error: e };
-				if (e instanceof BibTeXSyntaxError) {
-					error = e;
-				}
-			} finally {
-				running = false;
-			}
-		}, 100);
-	}
-
-	function getOptionsFromURL(): OptionsNormalized | undefined {
-		const queryString = window.location.search;
-		const urlParams = new URLSearchParams(queryString);
-		const optionsJSON = urlParams.get('opt');
-		if (!optionsJSON) return;
+function handleTidy() {
+	running = true;
+	status = undefined;
+	error = undefined;
+	setTimeout(() => {
+		// TODO: requestAnimationFrame
 		try {
-			return normalizeOptions(JSON.parse(optionsJSON));
-		} catch (e) {
-			console.error('Error parsing options in URL');
-			return;
+			const result = tidy(bibtex, options);
+			bibtex = result.bibtex;
+			status = { status: "success", result };
+		} catch (e: unknown) {
+			console.error("bibtex parse problem:", e);
+			status = { status: "error", error: e };
+			if (e instanceof BibTeXSyntaxError) {
+				error = e;
+			}
+		} finally {
+			running = false;
 		}
-	}
+	}, 100);
+}
 
-	window.addEventListener('popstate', () => {
-		options = getOptionsFromURL() ?? optionDefaults;
-	});
-
-	$: {
-		const optionsJSON = JSON.stringify(options);
-		const params = new URLSearchParams([['opt', optionsJSON]]);
-		window.history.pushState(options, '', `index.html?${params.toString()}`);
+function getOptionsFromURL(): OptionsNormalized | undefined {
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+	const optionsJSON = urlParams.get("opt");
+	if (!optionsJSON) return;
+	try {
+		return normalizeOptions(JSON.parse(optionsJSON));
+	} catch (e) {
+		console.error("Error parsing options in URL");
+		return;
 	}
+}
+
+window.addEventListener("popstate", () => {
+	options = getOptionsFromURL() ?? optionDefaults;
+});
+
+$: {
+	const optionsJSON = JSON.stringify(options);
+	const params = new URLSearchParams([["opt", optionsJSON]]);
+	window.history.pushState(options, "", `index.html?${params.toString()}`);
+}
 </script>
 
 <Editor bind:bibtex {error} />

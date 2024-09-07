@@ -1,6 +1,6 @@
-import { strictEqual } from 'assert';
-import { generateKey } from '../src/generateKeys';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { generateKey } from "../src/generateKeys";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE{article-minimal,
@@ -478,39 +478,39 @@ const outputCustom = bibtex`
 }
 `;
 
-test('generate keys', async () => {
+test("generate keys", async () => {
 	const tidied1 = await bibtexTidy(input, { generateKeys: true });
 	strictEqual(tidied1.bibtex, outputDefault);
 
 	const tidied2 = await bibtexTidy(input, {
-		generateKeys: '[auth:upper][year][shorttitle:capitalize]',
+		generateKeys: "[auth:upper][year][shorttitle:capitalize]",
 	});
 	strictEqual(tidied2.bibtex, outputCustom);
 
 	const entryValues = new Map([
-		['title', 'A story of 2 foo and 1 bar: the best story'],
-		['author', 'Bar, Foo and Mee, Moo and One, Two'],
-		['year', '2018'],
-		['journal', 'Foo and Goo'],
+		["title", "A story of 2 foo and 1 bar: the best story"],
+		["author", "Bar, Foo and Mee, Moo and One, Two"],
+		["year", "2018"],
+		["journal", "Foo and Goo"],
 	]);
-	strictEqual(generateKey(entryValues, '[auth:upper][year]'), 'BAR2018');
-	strictEqual(generateKey(entryValues, '[authEtAl:lower]'), 'barmeeetal');
-	strictEqual(generateKey(entryValues, '[authEtAl:capitalize]'), 'BarMeeEtAl');
-	strictEqual(generateKey(entryValues, '[authors:capitalize]'), 'BarMeeOne');
-	strictEqual(generateKey(entryValues, '[authors1]'), 'BarEtAl');
-	strictEqual(generateKey(entryValues, '[veryshorttitle]'), 'story');
-	strictEqual(generateKey(entryValues, '[shorttitle]'), 'story2foo');
+	strictEqual(generateKey(entryValues, "[auth:upper][year]"), "BAR2018");
+	strictEqual(generateKey(entryValues, "[authEtAl:lower]"), "barmeeetal");
+	strictEqual(generateKey(entryValues, "[authEtAl:capitalize]"), "BarMeeEtAl");
+	strictEqual(generateKey(entryValues, "[authors:capitalize]"), "BarMeeOne");
+	strictEqual(generateKey(entryValues, "[authors1]"), "BarEtAl");
+	strictEqual(generateKey(entryValues, "[veryshorttitle]"), "story");
+	strictEqual(generateKey(entryValues, "[shorttitle]"), "story2foo");
 	strictEqual(
-		generateKey(entryValues, '[title]'),
-		'AStoryOf2FooAnd1BarTheBestStory'
+		generateKey(entryValues, "[title]"),
+		"AStoryOf2FooAnd1BarTheBestStory",
 	);
 	strictEqual(
-		generateKey(entryValues, '[fulltitle]'),
-		'Astoryof2fooand1barthebeststory'
+		generateKey(entryValues, "[fulltitle]"),
+		"Astoryof2fooand1barthebeststory",
 	);
-	strictEqual(generateKey(entryValues, '[JOURNAL]'), 'FooandGoo');
-	strictEqual(generateKey(entryValues, '[JOURNAL:capitalize]'), 'FooAndGoo');
-	strictEqual(generateKey(entryValues, '[YEAR]'), '2018');
-	strictEqual(generateKey(entryValues, '[AUTHOR]'), 'BarFooandMeeMooandOneTwo');
-	strictEqual(generateKey(entryValues, '[BOOKTITLE]'), undefined);
+	strictEqual(generateKey(entryValues, "[JOURNAL]"), "FooandGoo");
+	strictEqual(generateKey(entryValues, "[JOURNAL:capitalize]"), "FooAndGoo");
+	strictEqual(generateKey(entryValues, "[YEAR]"), "2018");
+	strictEqual(generateKey(entryValues, "[AUTHOR]"), "BarFooandMeeMooandOneTwo");
+	strictEqual(generateKey(entryValues, "[BOOKTITLE]"), undefined);
 });

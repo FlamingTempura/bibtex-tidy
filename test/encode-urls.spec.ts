@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 
@@ -24,7 +24,7 @@ const output = bibtex`
 }
 `;
 
-test('encode urls', async () => {
+test("encode urls", async () => {
 	const tidied = await bibtexTidy(input, { encodeUrls: true });
 	strictEqual(tidied.bibtex, output);
 });

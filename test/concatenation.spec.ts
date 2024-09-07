@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE {test,
@@ -16,7 +16,7 @@ const output = bibtex`
 }
 `;
 
-test('remove empty fields', async () => {
+test("remove empty fields", async () => {
 	const tidiedWithEmpty = await bibtexTidy(input);
 	strictEqual(tidiedWithEmpty.bibtex, output);
 });

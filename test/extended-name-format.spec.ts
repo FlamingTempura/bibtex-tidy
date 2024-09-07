@@ -1,4 +1,4 @@
-import { bibtex, bibtexTidy, test } from './utils';
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @CUSTOMD{LDN3,
@@ -7,7 +7,7 @@ const input = bibtex`
 }
 `;
 
-test('extended name format (BibLaTeX)', async () => {
+test("extended name format (BibLaTeX)", async () => {
 	// just check it parses
 	await bibtexTidy(input);
 });

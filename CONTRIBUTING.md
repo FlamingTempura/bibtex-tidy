@@ -52,8 +52,8 @@ The general advice is to avoid using a dependency unless it saves adding signifi
 
 ### Cleaning up
 
-Before you create a PR, please ensure you have run prettier on your code:
+Before you create a PR, please ensure you have run the biome linter and prettier on your code:
 
 ```
-npm run prettier
+npm run check -- --write
 ```

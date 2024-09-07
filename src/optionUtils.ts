@@ -1,35 +1,35 @@
-import type { BibTeXTidyOptions } from './__generated__/optionsType';
-import { optionDefinitions } from './optionDefinitions';
+import type { BibTeXTidyOptions } from "./__generated__/optionsType";
+import { optionDefinitions } from "./optionDefinitions";
 
 export type CLIOptions = BibTeXTidyOptions;
 
 export type Options = Omit<
 	BibTeXTidyOptions,
-	'help' | 'version' | 'quiet' | 'backup'
+	"help" | "version" | "quiet" | "backup"
 >;
 
 export type MergeStrategy = Exclude<
-	BibTeXTidyOptions['merge'],
+	BibTeXTidyOptions["merge"],
 	boolean | undefined
 >;
 export type DuplicateRule = Exclude<
-	BibTeXTidyOptions['duplicates'],
+	BibTeXTidyOptions["duplicates"],
 	boolean | undefined
 >[number];
 
 export type OptionsNormalized = Omit<
 	Options,
-	| 'sortProperties'
-	| 'duplicates'
-	| 'align'
-	| 'merge'
-	| 'sort'
-	| 'sortFields'
-	| 'wrap'
-	| 'enclosingBraces'
-	| 'removeBraces'
-	| 'generateKeys'
-	| 'blankLines'
+	| "sortProperties"
+	| "duplicates"
+	| "align"
+	| "merge"
+	| "sort"
+	| "sortFields"
+	| "wrap"
+	| "enclosingBraces"
+	| "removeBraces"
+	| "generateKeys"
+	| "blankLines"
 > & {
 	align: number;
 	sort?: string[];
@@ -49,14 +49,14 @@ export function normalizeOptions(options: Options): OptionsNormalized {
 		optionDefinitions.map((def): [keyof OptionsNormalized, unknown] => {
 			const key = def.key as keyof OptionsNormalized;
 			const value = options[key];
-			if (def.convertBoolean && typeof value === 'boolean') {
+			if (def.convertBoolean && typeof value === "boolean") {
 				return [
 					key,
 					value ? def.convertBoolean.true : def.convertBoolean.false,
 				];
 			}
-			if (typeof value === 'undefined' && def.defaultValue !== undefined) {
-				if (typeof def.defaultValue === 'function') {
+			if (typeof value === "undefined" && def.defaultValue !== undefined) {
+				if (typeof def.defaultValue === "function") {
 					return [key, def.defaultValue(options)];
 				}
 				return [key, def.defaultValue];

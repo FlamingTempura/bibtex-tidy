@@ -3,18 +3,18 @@
  * options, but descending order values.
  */
 const OPTIONS_WITH_SORTED_VALUES = [
-	'--sort',
-	'--sort-fields',
-	'--sort-properties',
+	"--sort",
+	"--sort-fields",
+	"--sort-properties",
 ];
 
 type Mode =
-	| 'key'
-	| 'single-letter-keys'
-	| 'value'
-	| 'csv-value'
-	| 'double-quoted'
-	| 'single-quoted';
+	| "key"
+	| "single-letter-keys"
+	| "value"
+	| "csv-value"
+	| "double-quoted"
+	| "single-quoted";
 
 /**
  * Parses shell arguments of the form <input files> <options> (in any order). Options with
@@ -24,11 +24,11 @@ type Mode =
 export function parseArguments(argv: string): KeyValues[] {
 	const kvs: KeyValues[] = [];
 
-	let mode: Mode = 'value';
-	let prevMode: Mode = 'key';
+	let mode: Mode = "value";
+	let prevMode: Mode = "key";
 
-	let currValue = '';
-	let currKey = '';
+	let currValue = "";
+	let currKey = "";
 	let currValues: string[] = [];
 
 	function flushKV() {
@@ -36,42 +36,42 @@ export function parseArguments(argv: string): KeyValues[] {
 			kvs.push({ key: currKey, values: currValues });
 		}
 		currValues = [];
-		currValue = '';
-		currKey = '';
+		currValue = "";
+		currKey = "";
 	}
 
 	function flushValue() {
 		if (currValue) {
 			currValues.push(currValue);
 		}
-		currValue = '';
+		currValue = "";
 	}
 
 	for (let i = 0; i < argv.length; i++) {
 		const c = argv[i];
 		const next = argv[i + 1];
 		switch (mode) {
-			case 'value': {
+			case "value": {
 				if (c === '"') {
 					prevMode = mode;
-					mode = 'double-quoted';
+					mode = "double-quoted";
 				} else if (c === "'") {
 					prevMode = mode;
-					mode = 'single-quoted';
-				} else if (currValue === '-' && c === '-') {
+					mode = "single-quoted";
+				} else if (currValue === "-" && c === "-") {
 					flushKV();
-					currKey = '--';
-					mode = 'key';
+					currKey = "--";
+					mode = "key";
 				} else if (
-					currValue === '' &&
-					c === '-' &&
+					currValue === "" &&
+					c === "-" &&
 					next?.match(/[a-zA-Z]/) &&
 					!OPTIONS_WITH_SORTED_VALUES.includes(currKey)
 				) {
-					currValue = '';
+					currValue = "";
 					flushKV();
-					mode = 'single-letter-keys';
-				} else if (c === ' ') {
+					mode = "single-letter-keys";
+				} else if (c === " ") {
 					flushValue();
 				} else {
 					currValue += c;
@@ -79,30 +79,30 @@ export function parseArguments(argv: string): KeyValues[] {
 				break;
 			}
 
-			case 'csv-value': {
+			case "csv-value": {
 				if (c === '"') {
 					prevMode = mode;
-					mode = 'double-quoted';
+					mode = "double-quoted";
 				} else if (c === "'") {
 					prevMode = mode;
-					mode = 'single-quoted';
-				} else if (currValue === '-' && c === '-') {
+					mode = "single-quoted";
+				} else if (currValue === "-" && c === "-") {
 					flushKV();
-					currKey = '--';
-					mode = 'key';
-				} else if (c === ',') {
+					currKey = "--";
+					mode = "key";
+				} else if (c === ",") {
 					flushValue();
-				} else if (c === ' ') {
+				} else if (c === " ") {
 					flushValue();
 					flushKV();
-					mode = 'value';
+					mode = "value";
 				} else {
 					currValue += c;
 				}
 				break;
 			}
 
-			case 'double-quoted': {
+			case "double-quoted": {
 				if (c === '"') {
 					mode = prevMode;
 				} else {
@@ -111,7 +111,7 @@ export function parseArguments(argv: string): KeyValues[] {
 				break;
 			}
 
-			case 'single-quoted': {
+			case "single-quoted": {
 				if (c === "'") {
 					mode = prevMode;
 				} else {
@@ -120,23 +120,23 @@ export function parseArguments(argv: string): KeyValues[] {
 				break;
 			}
 
-			case 'key': {
-				if (c === ' ') {
-					mode = 'value';
-				} else if (c === '=') {
-					mode = 'csv-value';
+			case "key": {
+				if (c === " ") {
+					mode = "value";
+				} else if (c === "=") {
+					mode = "csv-value";
 				} else {
 					currKey += c;
 				}
 				break;
 			}
 
-			case 'single-letter-keys': {
-				if (c === ' ') {
-					mode = 'value';
+			case "single-letter-keys": {
+				if (c === " ") {
+					mode = "value";
 				} else {
 					flushKV();
-					currKey = '-' + c;
+					currKey = `-${c}`;
 				}
 				break;
 			}

@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -41,7 +41,7 @@ const outputUnaligned = bibtex`
 }
 `;
 
-test('align', async () => {
+test("align", async () => {
 	const tidied1 = await bibtexTidy(input, { align: 20 });
 	strictEqual(tidied1.bibtex, outputAligned);
 

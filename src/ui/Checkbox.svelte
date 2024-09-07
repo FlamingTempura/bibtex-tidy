@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+import { createEventDispatcher } from "svelte";
 
-	export let name: string | undefined;
-	export let checked: boolean | undefined = undefined;
+export let name: string | undefined;
+export let checked: boolean | undefined = undefined;
 
-	let dispatch = createEventDispatcher<{ change: undefined }>();
+const dispatch = createEventDispatcher<{ change: undefined }>();
 </script>
 
 <input
 	type="checkbox"
 	{name}
 	bind:checked
-	on:change={() => dispatch('change')}
+	on:change={() => dispatch("change")}
 />
 
 <style>
@@ -32,7 +32,7 @@
 	}
 	input:checked:before,
 	input:checked:after {
-		content: '';
+		content: "";
 		position: absolute;
 		background: var(--main-bg);
 		width: 2px;

@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @comment{jabref-meta: groupsversion:3;} % zotero export
@@ -226,7 +226,7 @@ Book{landru21,
 }
 `;
 
-test('complex bib', async () => {
+test("complex bib", async () => {
 	const tidied = await bibtexTidy(input);
 	strictEqual(tidied.bibtex, output);
 });

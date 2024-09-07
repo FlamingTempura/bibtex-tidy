@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -41,10 +41,10 @@ const outputSortedCustom = bibtex`
 }
 `;
 
-test('sort fields', async () => {
+test("sort fields", async () => {
 	const tidied = await bibtexTidy(input, { sortFields: true });
 	strictEqual(tidied.bibtex, outputSortedDefault);
 
-	const tidied2 = await bibtexTidy(input, { sortFields: ['year', 'author'] });
+	const tidied2 = await bibtexTidy(input, { sortFields: ["year", "author"] });
 	strictEqual(tidied2.bibtex, outputSortedCustom);
 });

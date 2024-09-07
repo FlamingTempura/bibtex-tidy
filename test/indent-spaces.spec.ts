@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -41,7 +41,7 @@ const outputDefaultSpaces = bibtex`
 }
 `;
 
-test('indent with spaces', async () => {
+test("indent with spaces", async () => {
 	const tidied1 = await bibtexTidy(input, { space: true });
 	strictEqual(tidied1.bibtex, outputDefaultSpaces);
 

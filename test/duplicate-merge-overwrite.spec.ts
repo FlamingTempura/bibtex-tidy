@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @book{sweig42,
@@ -29,10 +29,10 @@ const output = bibtex`
 }
 `;
 
-test('merge duplicates (overwrite)', async () => {
-	const tidied = await bibtexTidy(input, { merge: 'overwrite' });
+test("merge duplicates (overwrite)", async () => {
+	const tidied = await bibtexTidy(input, { merge: "overwrite" });
 	const warnings = tidied.api?.warnings.filter(
-		(w) => w.code === 'DUPLICATE_ENTRY'
+		(w) => w.code === "DUPLICATE_ENTRY",
 	);
 	strictEqual(tidied.bibtex, output);
 	strictEqual(warnings?.length, 1);

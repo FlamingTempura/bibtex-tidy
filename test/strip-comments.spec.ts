@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 %references
@@ -134,7 +134,7 @@ const output = bibtex`
 }
 `;
 
-test('strip comments', async () => {
+test("strip comments", async () => {
 	const tidied = await bibtexTidy(input, { stripComments: true });
 	strictEqual(tidied.bibtex, output);
 });

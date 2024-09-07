@@ -1,9 +1,9 @@
-import type { EntryNode, RootNode } from './bibtexParser';
-import type { DuplicateRule, MergeStrategy } from './optionUtils';
-import { parseAuthors } from './parseAuthors';
-import { alphaNum } from './utils';
-import { getEntries } from '.';
-import type { Warning } from '.';
+import { getEntries } from ".";
+import type { Warning } from ".";
+import type { EntryNode, RootNode } from "./bibtexParser";
+import type { DuplicateRule, MergeStrategy } from "./optionUtils";
+import { parseAuthors } from "./parseAuthors";
+import { alphaNum } from "./utils";
 
 export function checkForDuplicates(
 	ast: RootNode,
@@ -19,9 +19,9 @@ export function checkForDuplicates(
 		}
 	}
 
-	if (!rules.has('key')) {
+	if (!rules.has("key")) {
 		// always check key uniqueness
-		rules.set('key', false);
+		rules.set("key", false);
 	}
 
 	const duplicateEntries = new Set<EntryNode>();
@@ -43,7 +43,7 @@ export function checkForDuplicates(
 			let warning: string | undefined;
 
 			switch (rule) {
-				case 'key': {
+				case "key": {
 					if (!entry.key) continue;
 					// Bibtex keys are case insensitive
 					// https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
@@ -57,8 +57,8 @@ export function checkForDuplicates(
 					break;
 				}
 
-				case 'doi': {
-					const doi = alphaNum(entryValues.get('doi') ?? '');
+				case "doi": {
+					const doi = alphaNum(entryValues.get("doi") ?? "");
 					if (!doi) continue;
 					duplicateOf = dois.get(doi);
 					if (!duplicateOf) {
@@ -69,17 +69,17 @@ export function checkForDuplicates(
 					break;
 				}
 
-				case 'citation': {
-					const ttl = entryValues.get('title');
-					const aut = entryValues.get('author');
+				case "citation": {
+					const ttl = entryValues.get("title");
+					const aut = entryValues.get("author");
 					// Author/title can be identical for numbered reports https://github.com/FlamingTempura/bibtex-tidy/issues/364
-					const num = entryValues.get('number');
+					const num = entryValues.get("number");
 					if (!ttl || !aut) continue;
 					const cit: string = [
 						alphaNum(parseAuthors(aut)[0]?.lastName ?? aut),
 						alphaNum(ttl),
-						alphaNum(num ?? '0'),
-					].join(':');
+						alphaNum(num ?? "0"),
+					].join(":");
 					duplicateOf = citations.get(cit);
 					if (!duplicateOf) {
 						citations.set(cit, entry);
@@ -89,8 +89,8 @@ export function checkForDuplicates(
 					break;
 				}
 
-				case 'abstract': {
-					const abstract = alphaNum(entryValues.get('abstract') ?? '');
+				case "abstract": {
+					const abstract = alphaNum(entryValues.get("abstract") ?? "");
 					const abs = abstract.slice(0, 100);
 					if (!abs) continue;
 					duplicateOf = abstracts.get(abs);
@@ -109,9 +109,9 @@ export function checkForDuplicates(
 			}
 			if (warning) {
 				warnings.push({
-					code: 'DUPLICATE_ENTRY',
+					code: "DUPLICATE_ENTRY",
 					rule,
-					message: `Duplicate ${doMerge ? 'removed' : 'detected'}. ${warning}`,
+					message: `Duplicate ${doMerge ? "removed" : "detected"}. ${warning}`,
 				});
 			}
 		}
@@ -127,26 +127,26 @@ function mergeEntries(
 ): void {
 	if (!merge) return;
 	switch (merge) {
-		case 'last':
+		case "last":
 			duplicateOf.key = entry.key;
 			duplicateOf.fields = entry.fields;
 			break;
 
-		case 'combine':
-		case 'overwrite':
+		case "combine":
+		case "overwrite":
 			for (const field of entry.fields) {
 				const existing = duplicateOf.fields.find(
 					(f) => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase(),
 				);
 				if (!existing) {
 					duplicateOf.fields.push(field);
-				} else if (merge === 'overwrite') {
+				} else if (merge === "overwrite") {
 					existing.value = field.value;
 				}
 			}
 			break;
 		// TODO: case 'keep-both'
-		case 'first':
+		case "first":
 			return;
 	}
 }

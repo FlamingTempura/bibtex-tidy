@@ -1,5 +1,5 @@
-import { deepStrictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { deepStrictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @book{test,
@@ -26,7 +26,7 @@ const output2 = bibtex`
 }
 `;
 
-test('remove duplicate fields', async () => {
+test("remove duplicate fields", async () => {
 	const tidied1 = await bibtexTidy(input, {});
 	const tidied2 = await bibtexTidy(input, { removeDuplicateFields: false });
 

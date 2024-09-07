@@ -1,25 +1,25 @@
 import type {
 	BlockNode,
-	FieldNode,
-	TextNode,
 	EntryNode,
+	FieldNode,
 	RootNode,
-} from './bibtexParser';
-import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from './latexParser';
-import { MONTH_CONVERSIONS, MONTH_SET } from './months';
-import type { OptionsNormalized } from './optionUtils';
+	TextNode,
+} from "./bibtexParser";
+import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from "./latexParser";
+import { MONTH_CONVERSIONS, MONTH_SET } from "./months";
+import type { OptionsNormalized } from "./optionUtils";
 
 import {
-	titleCase,
-	escapeSpecialCharacters,
-	wrapText,
-	unwrapText,
 	addEnclosingBraces,
+	escapeSpecialCharacters,
 	escapeURL,
-	removeEnclosingBraces,
-	limitAuthors,
 	formatPageRange,
-} from './utils';
+	limitAuthors,
+	removeEnclosingBraces,
+	titleCase,
+	unwrapText,
+	wrapText,
+} from "./utils";
 
 export function formatBibtex(
 	ast: RootNode,
@@ -28,16 +28,16 @@ export function formatBibtex(
 ): string {
 	const { omit, tab, space } = options;
 
-	const indent: string = tab ? '\t' : ' '.repeat(space);
+	const indent: string = tab ? "\t" : " ".repeat(space);
 	const omitFields = new Set<string>(omit);
 	let bibtex: string = ast.children
 		.map((child) =>
 			formatNode(child, options, indent, omitFields, replacementKeys),
 		)
-		.join('')
+		.join("")
 		.trimEnd();
 
-	if (!bibtex.endsWith('\n')) bibtex += '\n';
+	if (!bibtex.endsWith("\n")) bibtex += "\n";
 
 	return bibtex;
 }
@@ -49,20 +49,20 @@ function formatNode(
 	omitFields: Set<string>,
 	replacementKeys?: Map<EntryNode, string>,
 ): string {
-	if (child.type === 'text') {
+	if (child.type === "text") {
 		return formatComment(child.text, options);
 	}
 
-	if (!child.block) throw new Error('FATAL!');
+	if (!child.block) throw new Error("FATAL!");
 
 	switch (child.block.type) {
-		case 'preamble':
-		case 'string':
+		case "preamble":
+		case "string":
 			// keep preambles as they were
-			return `${child.block.raw}\n` + (options.blankLines ? '\n' : '');
-		case 'comment':
+			return `${child.block.raw}\n${options.blankLines ? "\n" : ""}`;
+		case "comment":
 			return formatComment(child.block.raw, options);
-		case 'entry':
+		case "entry":
 			return (
 				formatEntry(
 					child.command,
@@ -71,7 +71,7 @@ function formatNode(
 					indent,
 					omitFields,
 					replacementKeys?.get(child.block),
-				) + (options.blankLines ? '\n' : '')
+				) + (options.blankLines ? "\n" : "")
 			);
 	}
 }
@@ -92,7 +92,7 @@ function formatEntry(
 		lowercase,
 	} = options;
 
-	let bibtex = '';
+	let bibtex = "";
 	const itemType = lowercase ? entryType.toLocaleLowerCase() : entryType;
 	bibtex += `@${itemType}{`;
 	const key = replacementKey ?? entry.key;
@@ -103,7 +103,7 @@ function formatEntry(
 		const nameLowerCase = field.name.toLocaleLowerCase();
 		const name = lowercase ? nameLowerCase : field.name;
 
-		if (field.name === '') continue;
+		if (field.name === "") continue;
 		if (omitFields.has(nameLowerCase)) continue;
 		if (removeDuplicateFields && fieldSeen.has(nameLowerCase)) continue;
 		fieldSeen.add(nameLowerCase);
@@ -113,13 +113,13 @@ function formatEntry(
 			bibtex += `\n${indent}${name}`;
 		} else {
 			const value = formatValue(field, options);
-			if (removeEmptyFields && (value === '{}' || value === '""')) continue;
+			if (removeEmptyFields && (value === "{}" || value === '""')) continue;
 			bibtex += `\n${indent}${name.trim().padEnd(align - 1)} = ${value}`;
 		}
 
-		if (i < entry.fields.length - 1 || trailingCommas) bibtex += ',';
+		if (i < entry.fields.length - 1 || trailingCommas) bibtex += ",";
 	}
-	bibtex += `\n}\n`;
+	bibtex += "\n}\n";
 	return bibtex;
 }
 
@@ -127,16 +127,15 @@ function formatComment(
 	comment: string,
 	{ stripComments, tidyComments }: OptionsNormalized,
 ): string {
-	if (stripComments) return '';
+	if (stripComments) return "";
 	if (tidyComments) {
 		// tidy comments by trimming whitespace and ending with one newline
 		const trimmed = comment.trim();
-		if (trimmed === '') return '';
-		return trimmed + '\n';
-	} else {
-		// make sure that comment whitespace does not flow into the first line of an entry
-		return comment.replace(/^[ \t]*\n|[ \t]*$/g, '');
+		if (trimmed === "") return "";
+		return `${trimmed}\n`;
 	}
+	// make sure that comment whitespace does not flow into the first line of an entry
+	return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
 }
 
 export function formatValue(
@@ -149,7 +148,7 @@ export function formatValue(
 		align,
 		stripEnclosingBraces,
 		dropAllCaps,
-		escape,
+		escape: enableEscape,
 		encodeUrls,
 		wrap,
 		maxAuthors,
@@ -162,7 +161,7 @@ export function formatValue(
 
 	const nameLowerCase = field.name.toLocaleLowerCase();
 
-	const indent: string = tab ? '\t' : ' '.repeat(space);
+	const indent: string = tab ? "\t" : " ".repeat(space);
 	const enclosingBracesFields = new Set<string>(
 		(enclosingBraces ?? []).map((field) => field.toLocaleLowerCase()),
 	);
@@ -175,22 +174,22 @@ export function formatValue(
 			const isNumeric = value.match(/^[1-9][0-9]*$/);
 
 			if (isNumeric && curly) {
-				type = 'braced';
+				type = "braced";
 			}
 
-			if (abbreviateMonths && nameLowerCase === 'month') {
+			if (abbreviateMonths && nameLowerCase === "month") {
 				const abbreviation = MONTH_CONVERSIONS[value.toLowerCase()];
 				if (abbreviation) {
 					return abbreviation;
 				}
 			}
 
-			if (type === 'literal' || (numeric && isNumeric)) {
+			if (type === "literal" || (numeric && isNumeric)) {
 				return value;
 			}
 
 			const dig3 = value.slice(0, 3).toLowerCase();
-			const isMonthAbbrv = nameLowerCase === 'month' && MONTH_SET.has(dig3);
+			const isMonthAbbrv = nameLowerCase === "month" && MONTH_SET.has(dig3);
 			if (!curly && numeric && isMonthAbbrv) {
 				return dig3;
 			}
@@ -205,17 +204,17 @@ export function formatValue(
 				value = titleCase(value);
 			}
 			// url encode must happen before escape special characters
-			if (nameLowerCase === 'url' && encodeUrls) {
+			if (nameLowerCase === "url" && encodeUrls) {
 				value = escapeURL(value);
 			}
 			// escape special characters like %
-			if (escape) {
+			if (enableEscape) {
 				value = escapeSpecialCharacters(value);
 			}
-			if (nameLowerCase === 'pages') {
+			if (nameLowerCase === "pages") {
 				value = formatPageRange(value);
 			}
-			if (nameLowerCase === 'author' && maxAuthors) {
+			if (nameLowerCase === "author" && maxAuthors) {
 				value = limitAuthors(value, maxAuthors);
 			}
 
@@ -226,19 +225,19 @@ export function formatValue(
 			// compiler to preserve case)
 			if (
 				enclosingBracesFields.has(nameLowerCase) &&
-				(type === 'braced' || curly)
+				(type === "braced" || curly)
 			) {
 				value = addEnclosingBraces(value, true);
 			}
 
 			// Braced values should be trimmed, unless part of a concatenation
-			if (type === 'braced' && field.value.concat.length === 1) {
+			if (type === "braced" && field.value.concat.length === 1) {
 				value = value.trim();
 			}
 
-			if (type === 'braced' || curly) {
+			if (type === "braced" || curly) {
 				const lineLength = `${indent}${align}{${value}}`.length;
-				const multiLine = value.includes('\n\n');
+				const multiLine = value.includes("\n\n");
 				// If the value contains multiple paragraphs, then output the value at a separate indent level, e.g.
 				// abstract     = {
 				//   Paragraph 1
@@ -246,29 +245,23 @@ export function formatValue(
 				//   Paragraph 2
 				// }
 				if ((wrap && lineLength > wrap) || multiLine) {
-					let paragraphs = value.split('\n\n');
+					let paragraphs = value.split("\n\n");
 					const valIndent = indent.repeat(2);
 
 					if (wrap) {
 						const wrapCol = wrap;
 						paragraphs = paragraphs.map((paragraph) =>
 							wrapText(paragraph, wrapCol - valIndent.length).join(
-								'\n' + valIndent,
+								`\n${valIndent}`,
 							),
 						);
 					}
 
-					value =
-						'\n' +
-						valIndent +
-						paragraphs.join(`\n\n${valIndent}`) +
-						'\n' +
-						indent;
+					value = `\n${valIndent}${paragraphs.join(`\n\n${valIndent}`)}\n${indent}`;
 				}
 				return addEnclosingBraces(value);
-			} else {
-				return `"${value}"`;
 			}
+			return `"${value}"`;
 		})
-		.join(' # ');
+		.join(" # ");
 }

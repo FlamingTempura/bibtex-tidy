@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @article{ art,
@@ -15,7 +15,7 @@ const output = bibtex`
 }
 `;
 
-test('@ in title', async () => {
+test("@ in title", async () => {
 	const tidied = await bibtexTidy(input); // @ in title - #124 (https://github.com/sciunto-org/python-bibtexparser/issues/124)
 	strictEqual(tidied.bibtex, output);
 });

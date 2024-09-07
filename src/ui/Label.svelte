@@ -1,6 +1,6 @@
 <script lang="ts">
-	export let title: string | undefined = undefined;
-	export let inset: boolean | undefined = undefined;
+export let title: string | undefined = undefined;
+export let inset: boolean | undefined = undefined;
 </script>
 
 <label {title} class:inset><slot /></label>

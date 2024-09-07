@@ -1,24 +1,24 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import type { BibTeXTidyResult } from '..';
-	import type { OptionsNormalized } from '../optionUtils';
-	import CleanupOptions from './CleanupOptions.svelte';
-	import Cli from './Cli.svelte';
-	import DuplicateOptions from './DuplicateOptions.svelte';
-	import Feedback from './Feedback.svelte';
-	import IndentOptions from './IndentOptions.svelte';
-	import SortingOptions from './SortingOptions.svelte';
-	import ValueOptions from './ValueOptions.svelte';
-	import WhitespaceOptions from './WhitespaceOptions.svelte';
+import { createEventDispatcher } from "svelte";
+import type { BibTeXTidyResult } from "..";
+import type { OptionsNormalized } from "../optionUtils";
+import CleanupOptions from "./CleanupOptions.svelte";
+import Cli from "./Cli.svelte";
+import DuplicateOptions from "./DuplicateOptions.svelte";
+import Feedback from "./Feedback.svelte";
+import IndentOptions from "./IndentOptions.svelte";
+import SortingOptions from "./SortingOptions.svelte";
+import ValueOptions from "./ValueOptions.svelte";
+import WhitespaceOptions from "./WhitespaceOptions.svelte";
 
-	export let status:
-		| { status: 'success'; result: BibTeXTidyResult }
-		| { status: 'error'; error: unknown }
-		| undefined;
-	export let running: boolean;
-	export let options: OptionsNormalized;
+export let status:
+	| { status: "success"; result: BibTeXTidyResult }
+	| { status: "error"; error: unknown }
+	| undefined;
+export let running: boolean;
+export let options: OptionsNormalized;
 
-	let dispatch = createEventDispatcher<{ tidy: undefined }>();
+let dispatch = createEventDispatcher<{ tidy: undefined }>();
 </script>
 
 <aside id="sidebar">

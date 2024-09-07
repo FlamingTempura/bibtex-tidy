@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { BibTeXSyntaxError } from '../bibtexParser';
-	export let error: unknown;
+import { BibTeXSyntaxError } from "../bibtexParser";
+export let error: unknown;
 </script>
 
 <div class="container">

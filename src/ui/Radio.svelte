@@ -1,7 +1,7 @@
 <script lang="ts">
-	export let name: string | undefined;
-	export let group: string;
-	export let value: string | undefined = undefined;
+export let name: string | undefined;
+export let group: string;
+export let value: string | undefined = undefined;
 </script>
 
 <input type="radio" {name} {value} bind:group />

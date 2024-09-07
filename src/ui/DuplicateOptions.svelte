@@ -1,36 +1,34 @@
 <script lang="ts">
-	import type { MergeStrategy, OptionsNormalized } from '../optionUtils';
-	import Checkbox from './Checkbox.svelte';
-	import Collapsible from './Collapsible.svelte';
-	import Label from './Label.svelte';
-	import Option from './Option.svelte';
-	import Radio from './Radio.svelte';
+import type { MergeStrategy, OptionsNormalized } from "../optionUtils";
+import Checkbox from "./Checkbox.svelte";
+import Collapsible from "./Collapsible.svelte";
+import Label from "./Label.svelte";
+import Option from "./Option.svelte";
+import Radio from "./Radio.svelte";
 
-	export let options: OptionsNormalized;
+export let options: OptionsNormalized;
 
-	let duplicateCheckChecked = options.duplicates !== undefined;
-	let duplicateCheckKey = options.duplicates?.includes('key') ?? true;
-	let duplicateCheckDOI = options.duplicates?.includes('doi') ?? false;
-	let duplicateCheckCitation =
-		options.duplicates?.includes('citation') ?? false;
-	let duplicateCheckAbstract =
-		options.duplicates?.includes('abstract') ?? false;
+let duplicateCheckChecked = options.duplicates !== undefined;
+let duplicateCheckKey = options.duplicates?.includes("key") ?? true;
+let duplicateCheckDOI = options.duplicates?.includes("doi") ?? false;
+let duplicateCheckCitation = options.duplicates?.includes("citation") ?? false;
+let duplicateCheckAbstract = options.duplicates?.includes("abstract") ?? false;
 
-	let mergeChecked = options.merge !== undefined;
-	let mergeValue: MergeStrategy = options.merge ?? 'combine';
+let mergeChecked = options.merge !== undefined;
+let mergeValue: MergeStrategy = options.merge ?? "combine";
 
-	$: {
-		if (duplicateCheckChecked) {
-			options.duplicates = [];
-			if (duplicateCheckKey) options.duplicates.push('key');
-			if (duplicateCheckDOI) options.duplicates.push('doi');
-			if (duplicateCheckCitation) options.duplicates.push('citation');
-			if (duplicateCheckAbstract) options.duplicates.push('abstract');
-		} else {
-			options.duplicates = undefined;
-		}
-		options.merge = mergeChecked ? mergeValue : undefined;
+$: {
+	if (duplicateCheckChecked) {
+		options.duplicates = [];
+		if (duplicateCheckKey) options.duplicates.push("key");
+		if (duplicateCheckDOI) options.duplicates.push("doi");
+		if (duplicateCheckCitation) options.duplicates.push("citation");
+		if (duplicateCheckAbstract) options.duplicates.push("abstract");
+	} else {
+		options.duplicates = undefined;
 	}
+	options.merge = mergeChecked ? mergeValue : undefined;
+}
 </script>
 
 <Collapsible title="Duplicates" open={true}>

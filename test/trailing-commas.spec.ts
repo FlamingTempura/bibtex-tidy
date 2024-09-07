@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -27,7 +27,7 @@ const output = bibtex`
 }
 `;
 
-test('trailing commas', async () => {
+test("trailing commas", async () => {
 	const tidied = await bibtexTidy(input, { trailingCommas: true });
 	strictEqual(tidied.bibtex, output);
 });

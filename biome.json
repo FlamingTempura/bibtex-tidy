@@ -1,0 +1,29 @@
+{
+	"files": {
+		"include": [
+			"src/**/*",
+			"test/**/*",
+			"build.ts",
+			"package.json",
+			"tsconfig.json",
+			"biome.json"
+		],
+		"ignore": [
+			"**/__generated__/**",
+			"src/ui/codemirrorExtensions/bibtex.terms.ts"
+		]
+	},
+	"overrides": [
+		{
+			"include": ["*.svelte"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useConst": "off",
+						"useImportType": "off"
+					}
+				}
+			}
+		}
+	]
+}

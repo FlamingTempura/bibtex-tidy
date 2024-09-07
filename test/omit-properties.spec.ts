@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE {feinberg1983technique,
@@ -25,7 +25,7 @@ const output = bibtex`
 }
 `;
 
-test('omit properties', async () => {
-	const tidied = await bibtexTidy(input, { omit: ['title', 'pages'] });
+test("omit properties", async () => {
+	const tidied = await bibtexTidy(input, { omit: ["title", "pages"] });
 	strictEqual(tidied.bibtex, output);
 });

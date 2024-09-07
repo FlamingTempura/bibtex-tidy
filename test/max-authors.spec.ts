@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE {test,
@@ -18,7 +18,7 @@ const output = bibtex`
 }
 `;
 
-test('maximum number of authors', async () => {
+test("maximum number of authors", async () => {
 	const tidied = await bibtexTidy(input, { maxAuthors: 4 });
 	strictEqual(tidied.bibtex, output);
 });

@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { DEFAULT_WRAP } from '../optionDefinitions';
-	import type { OptionsNormalized } from '../optionUtils';
-	import Collapsible from './Collapsible.svelte';
-	import Option from './Option.svelte';
+import { DEFAULT_WRAP } from "../optionDefinitions";
+import type { OptionsNormalized } from "../optionUtils";
+import Collapsible from "./Collapsible.svelte";
+import Option from "./Option.svelte";
 
-	export let options: OptionsNormalized;
+export let options: OptionsNormalized;
 
-	let alignChecked = options.align > 1; // FIXME: allow undefined
-	let alignValue = alignChecked ? options.align : 13;
-	let wrapChecked = options.wrap !== undefined;
-	let wrapValue = options.wrap ?? DEFAULT_WRAP;
+let alignChecked = options.align > 1; // FIXME: allow undefined
+let alignValue = alignChecked ? options.align : 13;
+let wrapChecked = options.wrap !== undefined;
+let wrapValue = options.wrap ?? DEFAULT_WRAP;
 
-	$: {
-		options.align = alignChecked ? alignValue : 1; // FIXME: allow undefined
-		options.wrap = wrapChecked ? wrapValue : undefined;
-	}
+$: {
+	options.align = alignChecked ? alignValue : 1; // FIXME: allow undefined
+	options.wrap = wrapChecked ? wrapValue : undefined;
+}
 </script>
 
 <Collapsible title="Whitespace" open={true}>

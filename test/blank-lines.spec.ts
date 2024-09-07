@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @preamble{Foo}
@@ -24,7 +24,7 @@ Comment
 }
 `;
 
-test('insert blank lines between blocks', async () => {
+test("insert blank lines between blocks", async () => {
 	const tidied = await bibtexTidy(input, { blankLines: true });
 	strictEqual(tidied.bibtex, output);
 });

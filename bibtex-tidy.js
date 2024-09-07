@@ -313,10 +313,10 @@ function generateAST(input) {
         if (char === "@") {
           var prevNode = node.parent.children[node.parent.children.length - 2];
           if ((prevNode === null || prevNode === void 0 ? void 0 : prevNode.type) === "text") {
-            prevNode.text += "@" + node.command;
+            prevNode.text += "@".concat(node.command);
           } else {
             node.parent.children.pop();
-            new TextNode(node.parent, "@" + node.command);
+            new TextNode(node.parent, "@".concat(node.command));
             node.parent.children.push(node);
           }
           node.command = "";
@@ -324,14 +324,14 @@ function generateAST(input) {
           var commandTrimmed = node.command.trim();
           if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
             node.parent.children.pop();
-            node = new TextNode(node.parent, "@" + node.command + char);
+            node = new TextNode(node.parent, "@".concat(node.command).concat(char));
           } else {
             node.command = commandTrimmed;
             var command = node.command.toLowerCase();
             var _ref = _sliced_to_array(char === "{" ? [1, 0] : [0, 1], 2),
               braces = _ref[0],
               parens = _ref[1];
-            var raw = "@" + command + char;
+            var raw = "@".concat(command).concat(char);
             switch (command) {
               case "string":
                 node = new StringNode(node, raw, braces, parens);
@@ -349,7 +349,7 @@ function generateAST(input) {
           }
         } else if (char.match(/[=#,})[\]]/)) {
           node.parent.children.pop();
-          node = new TextNode(node.parent, "@" + node.command + char);
+          node = new TextNode(node.parent, "@".concat(node.command).concat(char));
         } else {
           node.command += char;
         }
@@ -423,18 +423,18 @@ function generateAST(input) {
       case "concat": {
         if (isWhitespace(char)) {
           break;
-        } else if (node.canConsumeValue) {
+        }
+        if (node.canConsumeValue) {
           if (/[#=,}()[\]]/.test(char)) {
             throw new BibTeXSyntaxError(input, node, i, line, column);
+          }
+          node.canConsumeValue = false;
+          if (char === "{") {
+            node = new BracedNode(node);
+          } else if (char === '"') {
+            node = new QuotedNode(node);
           } else {
-            node.canConsumeValue = false;
-            if (char === "{") {
-              node = new BracedNode(node);
-            } else if (char === '"') {
-              node = new QuotedNode(node);
-            } else {
-              node = new LiteralNode(node, char);
-            }
+            node = new LiteralNode(node, char);
           }
         } else {
           if (char === ",") {
@@ -469,7 +469,8 @@ function generateAST(input) {
         if (char === "}" && node.depth === 0) {
           node = node.parent;
           break;
-        } else if (char === "{") {
+        }
+        if (char === "{") {
           node.depth++;
         } else if (char === "}") {
           node.depth--;
@@ -485,7 +486,8 @@ function generateAST(input) {
         if (char === '"' && node.depth === 0) {
           node = node.parent;
           break;
-        } else if (char === "{") {
+        }
+        if (char === "{") {
           node.depth++;
         } else if (char === "}") {
           node.depth--;
@@ -515,7 +517,16 @@ __name(isValidFieldName, "isValidFieldName");
 var BibTeXSyntaxError =
   ((_class12 = class _class extends Error {
     constructor(input, node, pos, line, column, hint) {
-      super("Line ".concat(line, ":").concat(column, ": Syntax Error in ").concat(node.type, " (").concat(hint, ")\n") + input.slice(Math.max(0, pos - 20), pos) + ">>" + input[pos] + "<<" + input.slice(pos + 1, pos + 20));
+      super(
+        "Line "
+          .concat(line, ":")
+          .concat(column, ": Syntax Error in ")
+          .concat(node.type, " (")
+          .concat(hint, ")\n")
+          .concat(input.slice(Math.max(0, pos - 20), pos), ">>")
+          .concat(input[pos], "<<")
+          .concat(input.slice(pos + 1, pos + 20)),
+      );
       this.node = node;
       this.line = line;
       this.column = column;
@@ -543,13 +554,12 @@ function parseAuthors(authors, sanitize) {
           firstNames: name.slice(commaPos + 1).trim(),
           lastName: name.slice(0, commaPos).trim(),
         };
-      } else {
-        var lastSpacePos = name.lastIndexOf(" ");
-        return {
-          firstNames: name.slice(0, lastSpacePos).trim(),
-          lastName: name.slice(lastSpacePos).trim(),
-        };
       }
+      var lastSpacePos = name.lastIndexOf(" ");
+      return {
+        firstNames: name.slice(0, lastSpacePos).trim(),
+        lastName: name.slice(lastSpacePos).trim(),
+      };
     });
 }
 __name(parseAuthors, "parseAuthors");
@@ -666,14 +676,14 @@ function stringifyBlock(block) {
     case "root":
       return content;
     case "curly":
-      return "{" + content + "}";
+      return "{".concat(content, "}");
     case "square":
-      return "[" + content + "]";
+      return "[".concat(content, "]");
   }
 }
 __name(stringifyBlock, "stringifyBlock");
 function stringifyCommand(node) {
-  return "\\" + node.command + node.args.map(stringifyBlock).join("");
+  return "\\".concat(node.command).concat(node.args.map(stringifyBlock).join(""));
 }
 __name(stringifyCommand, "stringifyCommand");
 function flattenLaTeX(block) {
@@ -3041,27 +3051,28 @@ var specialCharacters = /* @__PURE__ */ new Map([
 ]);
 // src/utils.ts
 function escapeSpecialCharacters(str) {
+  var result = str;
   var mathExpressions = [];
-  str = str.replace(/\$[^$]+\$/, (match) => {
+  result = result.replace(/\$[^$]+\$/, (match) => {
     mathExpressions.push(match);
     return "MATH.EXP.".concat(mathExpressions.length - 1);
   });
   var newstr = "";
   var escapeMode = false;
-  for (var i = 0; i < str.length; i++) {
+  for (var i = 0; i < result.length; i++) {
     if (escapeMode) {
       escapeMode = false;
-      newstr += str[i];
+      newstr += result[i];
       continue;
     }
-    if (str[i] === "\\") {
+    if (result[i] === "\\") {
       escapeMode = true;
-      newstr += str[i];
+      newstr += result[i];
       continue;
     }
-    var c = str.charCodeAt(i).toString(16).padStart(4, "0");
+    var c = result.charCodeAt(i).toString(16).padStart(4, "0");
     var _specialCharacters_get;
-    newstr += (_specialCharacters_get = specialCharacters.get(c)) !== null && _specialCharacters_get !== void 0 ? _specialCharacters_get : str[i];
+    newstr += (_specialCharacters_get = specialCharacters.get(c)) !== null && _specialCharacters_get !== void 0 ? _specialCharacters_get : result[i];
   }
   return newstr.replace(/MATH\.EXP\.(\d+)/, (_, i) => {
     var _mathExpressions_Number;
@@ -3105,7 +3116,7 @@ function wrapText(line, lineWidth) {
         lines.push(currLine.trim());
         currLine = "";
       }
-      currLine += word + " ";
+      currLine += "".concat(word, " ");
     }
   } catch (err) {
     _didIteratorError = true;
@@ -3132,10 +3143,11 @@ function unwrapText(str) {
 }
 __name(unwrapText, "unwrapText");
 function addEnclosingBraces(str, removeInsideBraces) {
+  var result = str;
   if (removeInsideBraces) {
-    str = stringifyLaTeX(flattenLaTeX(parseLaTeX(str)));
+    result = stringifyLaTeX(flattenLaTeX(parseLaTeX(result)));
   }
-  return "{".concat(str, "}");
+  return "{".concat(result, "}");
 }
 __name(addEnclosingBraces, "addEnclosingBraces");
 function removeEnclosingBraces(str) {
@@ -3155,10 +3167,11 @@ function limitAuthors(str, maxAuthors) {
 }
 __name(limitAuthors, "limitAuthors");
 function formatPageRange(str) {
+  var result = str;
   for (var i = 0; i < 4; i++) {
-    str = str.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
+    result = result.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
   }
-  return str;
+  return result;
 }
 __name(formatPageRange, "formatPageRange");
 function isEntryNode(node) {
@@ -3428,7 +3441,7 @@ function formatNode(child, options, indent, omitFields, replacementKeys) {
   switch (child.block.type) {
     case "preamble":
     case "string":
-      return "".concat(child.block.raw, "\n") + (options.blankLines ? "\n" : "");
+      return "".concat(child.block.raw, "\n").concat(options.blankLines ? "\n" : "");
     case "comment":
       return formatComment(child.block.raw, options);
     case "entry":
@@ -3500,10 +3513,9 @@ function formatComment(comment, param) {
   if (tidyComments) {
     var trimmed = comment.trim();
     if (trimmed === "") return "";
-    return trimmed + "\n";
-  } else {
-    return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
+    return "".concat(trimmed, "\n");
   }
+  return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
 }
 __name(formatComment, "formatComment");
 function formatValue(field, options) {
@@ -3512,7 +3524,7 @@ function formatValue(field, options) {
     align = options.align,
     stripEnclosingBraces = options.stripEnclosingBraces,
     dropAllCaps = options.dropAllCaps,
-    escape = options.escape,
+    enableEscape = options.escape,
     encodeUrls = options.encodeUrls,
     wrap = options.wrap,
     maxAuthors = options.maxAuthors,
@@ -3557,7 +3569,7 @@ function formatValue(field, options) {
       if (nameLowerCase === "url" && encodeUrls) {
         value = escapeURL(value);
       }
-      if (escape) {
+      if (enableEscape) {
         value = escapeSpecialCharacters(value);
       }
       if (nameLowerCase === "pages") {
@@ -3583,14 +3595,16 @@ function formatValue(field, options) {
           var valIndent = indent.repeat(2);
           if (wrap) {
             var wrapCol = wrap;
-            paragraphs = paragraphs.map((paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join("\n" + valIndent));
+            paragraphs = paragraphs.map((paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join("\n".concat(valIndent)));
           }
-          value = "\n" + valIndent + paragraphs.join("\n\n".concat(valIndent)) + "\n" + indent;
+          value = "\n"
+            .concat(valIndent)
+            .concat(paragraphs.join("\n\n".concat(valIndent)), "\n")
+            .concat(indent);
         }
         return addEnclosingBraces(value);
-      } else {
-        return '"'.concat(value, '"');
       }
+      return '"'.concat(value, '"');
     })
     .join(" # ");
 }
@@ -3721,7 +3735,7 @@ var MissingRequiredData = ((_class15 = class _class extends Error {}), __name(_c
 function generateKeys(ast, valueLookup, template) {
   var template2 = template;
   if (!template.includes("[duplicateLetter]") && !template.includes("[duplicateNumber]")) {
-    template2 = template + "[duplicateLetter]";
+    template2 = "".concat(template, "[duplicateLetter]");
   }
   var entriesByKey = /* @__PURE__ */ new Map();
   var _iteratorNormalCompletion = true,
@@ -4617,8 +4631,8 @@ __name(sortEntryFields, "sortEntryFields");
 function tidy(input) {
   var options_ = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
   var options = normalizeOptions(options_);
-  input = convertCRLF(input);
-  var ast = generateAST(input);
+  var inputFixed = convertCRLF(input);
+  var ast = generateAST(inputFixed);
   var warnings = getEntries(ast)
     .filter((entry) => !entry.key)
     .map((entry) => ({

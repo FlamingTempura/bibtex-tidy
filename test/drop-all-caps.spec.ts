@@ -1,5 +1,5 @@
-import { strictEqual } from 'assert';
-import { bibtex, bibtexTidy, test } from './utils';
+import { strictEqual } from "node:assert";
+import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 
@@ -26,7 +26,7 @@ const output = bibtex`
 }
 `;
 
-test('drop all caps', async () => {
+test("drop all caps", async () => {
 	const tidied = await bibtexTidy(input, { dropAllCaps: true });
 	strictEqual(tidied.bibtex, output);
 });

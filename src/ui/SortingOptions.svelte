@@ -1,28 +1,28 @@
 <script lang="ts">
-	import { DEFAULT_FIELD_SORT, DEFAULT_SORT } from '../optionDefinitions';
-	import type { OptionsNormalized } from '../optionUtils';
-	import Collapsible from './Collapsible.svelte';
-	import Option from './Option.svelte';
+import { DEFAULT_FIELD_SORT, DEFAULT_SORT } from "../optionDefinitions";
+import type { OptionsNormalized } from "../optionUtils";
+import Collapsible from "./Collapsible.svelte";
+import Option from "./Option.svelte";
 
-	export let options: OptionsNormalized;
+export let options: OptionsNormalized;
 
-	let sortFieldsChecked =
-		options.sortFields !== undefined && options.sortFields.length > 0;
-	let sortFieldsValue = (options.sortFields ?? DEFAULT_FIELD_SORT).join(' ');
+let sortFieldsChecked =
+	options.sortFields !== undefined && options.sortFields.length > 0;
+let sortFieldsValue = (options.sortFields ?? DEFAULT_FIELD_SORT).join(" ");
 
-	let sortChecked = options.sort !== undefined && options.sort.length > 0;
-	let sortValue = (options.sort ?? DEFAULT_SORT).join(' ');
+let sortChecked = options.sort !== undefined && options.sort.length > 0;
+let sortValue = (options.sort ?? DEFAULT_SORT).join(" ");
 
-	$: {
-		options.sortFields =
-			sortFieldsChecked && sortFieldsValue.length > 0
-				? sortFieldsValue.split(/[\n\t ,]+/)
-				: undefined;
-		options.sort =
-			sortChecked && sortValue.length > 0
-				? sortValue.split(/[\n\t ,]+/)
-				: undefined;
-	}
+$: {
+	options.sortFields =
+		sortFieldsChecked && sortFieldsValue.length > 0
+			? sortFieldsValue.split(/[\n\t ,]+/)
+			: undefined;
+	options.sort =
+		sortChecked && sortValue.length > 0
+			? sortValue.split(/[\n\t ,]+/)
+			: undefined;
+}
 </script>
 
 <Collapsible title="Sorting" open={true}>
