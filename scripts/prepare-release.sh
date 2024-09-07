@@ -13,7 +13,7 @@ npm run build
 
 # Allow reviewing staged changes
 echo ""
-read -p "Ready for release? (Please review changelog) " -n 1 -r
+read -p "Ready for release? (Please review/edit changelog then press &) " -n 1 -r
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
   exit 1
