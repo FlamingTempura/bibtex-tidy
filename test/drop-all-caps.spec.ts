@@ -21,7 +21,7 @@ const output = bibtex`
   title         = {{Quantum somethings}},
   journal       = {Journal of {B}lah},
   booktitle     = {Journal Of Somethings},
-  url           = {http://example.com/something\_with/unusual?characters=faoo\#bar},
+  url           = {http://example.com/something_with/unusual?characters=faoo#bar},
   volume        = {Volume VII}
 }
 `;

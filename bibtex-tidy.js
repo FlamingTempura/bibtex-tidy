@@ -3199,6 +3199,16 @@ var MONTH_CONVERSIONS = {
 };
 
 // src/format.ts
+var VERBATIM_FIELDS = [
+  "url",
+  "doi",
+  "eprint",
+  "file",
+  "verba",
+  "verbb",
+  "verbc",
+  "pdf"
+];
 function formatBibtex(ast, options, replacementKeys) {
   const { omit, tab, space } = options;
   const indent = tab ? "	" : " ".repeat(space);
@@ -3336,7 +3346,7 @@ function formatValue(field, options) {
     if (nameLowerCase === "url" && encodeUrls) {
       value = escapeURL(value);
     }
-    if (enableEscape) {
+    if (!VERBATIM_FIELDS.includes(nameLowerCase) && enableEscape) {
       value = escapeSpecialCharacters(value);
     }
     if (nameLowerCase === "pages") {

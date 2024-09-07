@@ -21,6 +21,21 @@ import {
 	wrapText,
 } from "./utils";
 
+/**
+ * The following fields are listed in the BibLaTeX documentation as verbatim (may contain
+ * special characters). Source: Kime et al (2024) The biblatex Package (v3.20).
+ */
+const VERBATIM_FIELDS = [
+	"url",
+	"doi",
+	"eprint",
+	"file",
+	"verba",
+	"verbb",
+	"verbc",
+	"pdf",
+];
+
 export function formatBibtex(
 	ast: RootNode,
 	options: OptionsNormalized,
@@ -207,8 +222,9 @@ export function formatValue(
 			if (nameLowerCase === "url" && encodeUrls) {
 				value = escapeURL(value);
 			}
-			// escape special characters like %
-			if (enableEscape) {
+			// escape special characters like %. Do not do this on the url field, which is a
+			// special bibtex field where special characters are output verbatim.
+			if (!VERBATIM_FIELDS.includes(nameLowerCase) && enableEscape) {
 				value = escapeSpecialCharacters(value);
 			}
 			if (nameLowerCase === "pages") {
