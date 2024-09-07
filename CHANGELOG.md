@@ -178,7 +178,7 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 - Accessibility tweak
 - Upgrade dependencies
 
-### v1.13.1
+### v1.14
 
 - Support filenames with spaces (#416, #428)
 - Do not flatten braces which contain commands (#407, #423)
