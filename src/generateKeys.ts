@@ -1,6 +1,10 @@
-import type { EntryNode, RootNode } from "./bibtexParser";
-import { parseAuthors } from "./parseAuthors";
-import { isEntryNode } from "./utils";
+import type { EntryNode, RootNode } from "./parsers/bibtexParser";
+import {
+	type EntryKeyTemplateToken,
+	parseEntryKeyTemplate,
+} from "./parsers/entryKeyTemplateParser";
+import { parseNameList } from "./parsers/nameFieldParser";
+import { isEntryNode as hasEntryNode } from "./utils";
 
 export const SPECIAL_MARKERS: Record<
 	string,
@@ -9,14 +13,15 @@ export const SPECIAL_MARKERS: Record<
 		callback: (
 			valueLookup: Map<string, string>,
 			n: number | undefined,
+			duplicate: number | undefined,
 		) => string[];
 	}
 > = {
 	auth: {
 		description: "Last name of first authors",
 		callback: (v) => {
-			const authors = parseAuthors(v.get("author") ?? "");
-			const author = authors[0]?.lastName;
+			const authors = parseNameList(v.get("author") ?? "");
+			const author = authors[0]?.last;
 			return author ? [author] : [];
 		},
 	},
@@ -24,9 +29,9 @@ export const SPECIAL_MARKERS: Record<
 		description:
 			"If 1 or 2 authors, both authors, otherwise first author and EtAl",
 		callback: (v) => {
-			const authors = parseAuthors(v.get("author") ?? "");
+			const authors = parseNameList(v.get("author") ?? "");
 			return [
-				...authors.slice(0, 2).map((author) => author.lastName),
+				...authors.slice(0, 2).map((author) => author.last),
 				...(authors.length > 2 ? ["Et", "Al"] : []),
 			];
 		},
@@ -34,16 +39,16 @@ export const SPECIAL_MARKERS: Record<
 	authors: {
 		description: "Last name all authors",
 		callback: (v) => {
-			const authors = parseAuthors(v.get("author") ?? "");
-			return authors.map((author) => author.lastName);
+			const authors = parseNameList(v.get("author") ?? "");
+			return authors.map((author) => author.last);
 		},
 	},
 	authorsN: {
 		description: "Last name N authors, with EtAl if more",
 		callback: (v, n = 0) => {
-			const authors = parseAuthors(v.get("author") ?? "");
+			const authors = parseNameList(v.get("author") ?? "");
 			return [
-				...authors.slice(0, n).map((author) => author.lastName),
+				...authors.slice(0, n).map((author) => author.last),
 				...(authors.length > n ? ["Et", "Al"] : []),
 			];
 		},
@@ -74,14 +79,18 @@ export const SPECIAL_MARKERS: Record<
 	duplicateLetter: {
 		description:
 			"If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
-		callback: () => ["[duplicateLetter]"],
+		callback: (_, __, duplicate) => [duplicate ? numToLetter(duplicate) : ""],
 	},
 	duplicateNumber: {
 		description:
 			"If the multiple entries end up with the same key, then insert a number.",
-		callback: () => ["[duplicateNumber]"],
+		callback: (_, __, duplicate) => [duplicate ? String(duplicate) : ""],
 	},
 };
+
+function numToLetter(n: number) {
+	return String.fromCharCode(96 + n); // FIXME: this will break after 26 duplicates;
+}
 
 export const MODIFIERS: Record<
 	string,
@@ -133,30 +142,33 @@ export function generateKeys(
 	}
 
 	const parsedTemplate = parseEntryKeyTemplate(template);
-
 	const entriesByKey = new Map<string, EntryNode[]>();
 
 	for (const node of ast.children) {
-		if (isEntryNode(node)) {
-			const entryValues = valueLookup.get(node.block);
-			if (!entryValues) continue;
-			const newKey = generateKey(entryValues, parsedTemplate);
-			if (!newKey) continue;
-			const keyEntries = entriesByKey.get(newKey) ?? [];
-			entriesByKey.set(newKey, [...keyEntries, node.block]);
-		}
+		if (!hasEntryNode(node)) continue;
+		const entryValues = valueLookup.get(node.block);
+		if (!entryValues) continue;
+		const key = generateKey(entryValues, parsedTemplate);
+		if (!key) continue;
+
+		const entriesSoFar = entriesByKey.get(key) ?? [];
+		entriesSoFar.push(node.block);
+		entriesByKey.set(key, entriesSoFar);
 	}
 
 	const keys = new Map<EntryNode, string>();
-
 	for (const [key, entries] of entriesByKey) {
-		for (const [i, entry] of entries.entries()) {
-			const duplicateLetter =
-				entries.length > 1 ? String.fromCharCode(97 + i) : ""; // FIXME: this will break after 26 duplicates
-			const duplicateNumber = entries.length > 1 ? String(i + 1) : "";
-			entry.key = key
-				.replace(/\[duplicateLetter\]/g, duplicateLetter)
-				.replace(/\[duplicateNumber\]/g, duplicateNumber);
+		const regenerateDuplicate = entries.length > 1;
+		for (let i = 0; i < entries.length; i++) {
+			const node = entries[i];
+			if (!node) continue;
+			const entryValues = valueLookup.get(node);
+			if (!entryValues) continue;
+			const newKey = regenerateDuplicate
+				? generateKey(entryValues, parsedTemplate, i + 1)
+				: key;
+			if (!newKey) continue;
+			keys.set(node, newKey);
 		}
 	}
 
@@ -166,6 +178,7 @@ export function generateKeys(
 export function generateKey(
 	valueLookup: Map<string, string>,
 	entryKeyTemplate: EntryKeyTemplateToken[],
+	duplicateNumber?: number,
 ): string | undefined {
 	try {
 		let newKey = entryKeyTemplate
@@ -173,20 +186,20 @@ export function generateKey(
 				if (typeof token === "string") {
 					return token;
 				}
-				const { markerName, parameter, modifierNames } = token;
+				const { marker, parameter, modifiers } = token;
 
-				const specialMarker = SPECIAL_MARKERS[markerName];
+				const specialMarker = SPECIAL_MARKERS[marker];
 				let key: string[];
 				if (specialMarker) {
-					key = specialMarker.callback(valueLookup, parameter);
-				} else if (markerName === markerName.toLocaleUpperCase()) {
-					const value = valueLookup.get(markerName.toLocaleLowerCase());
+					key = specialMarker.callback(valueLookup, parameter, duplicateNumber);
+				} else if (marker === marker.toLocaleUpperCase()) {
+					const value = valueLookup.get(marker.toLocaleLowerCase());
 					key = value ? words(value) : [];
 				} else {
-					throw new Error(`Invalid citation key token ${markerName}`);
+					throw new Error(`Invalid citation key token ${marker}`);
 				}
 
-				for (const modifierKey of modifierNames) {
+				for (const modifierKey of modifiers) {
 					const modifier = MODIFIERS[modifierKey];
 					if (modifier) {
 						key = modifier.callback(key);
@@ -208,47 +221,6 @@ export function generateKey(
 		}
 		throw e;
 	}
-}
-
-type EntryKeyTemplateToken =
-	| string
-	| { markerName: string; parameter?: number; modifierNames: string[] };
-
-export function parseEntryKeyTemplate(
-	template: string,
-): EntryKeyTemplateToken[] {
-	const tokens: EntryKeyTemplateToken[] = [];
-	const matches = template.matchAll(/\[[^:\]]+(?::[^:\]]+)*\]/g);
-
-	let pos = 0;
-	for (const match of matches) {
-		if (match.index === undefined) break;
-		if (match.index !== pos) {
-			tokens.push(template.slice(pos, match.index));
-		}
-		const [tokenKeyN, ...modifierKeys] = match[0].slice(1, -1).split(":");
-		if (!tokenKeyN) {
-			throw new Error("Token parse error");
-		}
-
-		let n: number | undefined;
-		const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
-			n = Number(m);
-			return "N";
-		});
-
-		tokens.push({
-			markerName: tokenKey,
-			parameter: n,
-			modifierNames: modifierKeys,
-		});
-		pos = match.index + match[0].length;
-	}
-	if (pos < template.length) {
-		tokens.push(template.slice(pos));
-	}
-
-	return tokens;
 }
 
 export const functionWords = new Set([
@@ -331,7 +303,10 @@ function title(entryValues: Map<string, string>): string {
  * and tildes (~) are always forbidden. biber additionally forbids round brackets (()),
  * quotation marks (", '), and the equals sign (=). Source: Kime et al (2024) The biblatex
  * Package (v3.20).
+ *
+ * Also remove other kinds of punctuation (.,:;[]_) to create tidy entry keys - though these
+ * are technically valid in entry keys.
  */
 function removeUnsafeEntryKeyChars(str: string): string {
-	return str.replace(/[{},\s\\#%~()"'=]+/g, "_");
+	return str.replace(/[{},\s\\#%~()"'=.,:;[\]_]+/g, "");
 }

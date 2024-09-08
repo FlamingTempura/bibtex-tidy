@@ -1,10 +1,14 @@
-import { type EntryNode, type RootNode, generateAST } from "./bibtexParser";
 import { checkForDuplicates } from "./duplicates";
 import { formatBibtex, formatValue } from "./format";
 import { generateKeys } from "./generateKeys";
-import { parseLaTeX } from "./latexParser";
 import { normalizeOptions } from "./optionUtils";
 import type { DuplicateRule, Options, OptionsNormalized } from "./optionUtils";
+import {
+	type EntryNode,
+	type RootNode,
+	generateAST,
+} from "./parsers/bibtexParser";
+import { parseLaTeX } from "./parsers/latexParser";
 import { sortEntries, sortEntryFields } from "./sort";
 import { convertCRLF, isEntryNode } from "./utils";
 
@@ -66,7 +70,7 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	return { bibtex, warnings, count: getEntries(ast).length };
 }
 
-function generateValueLookup(
+export function generateValueLookup(
 	ast: RootNode,
 	options: OptionsNormalized,
 ): Map<EntryNode, Map<string, string>> {

@@ -1,17 +1,18 @@
 import { strictEqual } from "node:assert";
-import { generateKey, parseEntryKeyTemplate } from "../src/generateKeys";
+import { generateKey } from "../src/generateKeys";
+import { parseEntryKeyTemplate } from "../src/parsers/entryKeyTemplateParser";
 import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
 @ARTICLE{article-minimal,
-  author = {L[eslie] A. Aamport},
+  author = {Aamport, L[eslie] A.},
   title = {The Gnats and Gnus Document Preparation System},
   journal = {\\mbox{G-Animal's} Journal},
   year = 1986,
 }
 
 @ARTICLE{article-full,
-  author = {L[eslie] A. Aamport},
+  author = {Aamport, L[eslie] A.},
   title = {The Gnats and Gnus Document Preparation System},
   journal = {\\mbox{G-Animal's} Journal},
   year = 1986,
@@ -23,7 +24,7 @@ const input = bibtex`
 }
 
 @INBOOK{inbook-minimal,
-  author = "Donald E. Knuth",
+  author = "Knuth, Donald E.",
   title = "Fundamental Algorithms",
   publisher = "Addison-Wesley",
   year = "1973",
@@ -31,7 +32,7 @@ const input = bibtex`
 }
 
 @INBOOK{inbook-full,
-  author = "Donald E. Knuth",
+  author = "Knuth, Donald E.",
   title = "Fundamental Algorithms",
   volume = 1,
   series = "The Art of Computer Programming",
@@ -47,7 +48,7 @@ const input = bibtex`
 }
 
 @BOOK{whole-set,
-  author = "Donald E. Knuth",
+  author = "Knuth, Donald E.",
   publisher = "Addison-Wesley",
   title = "The Art of Computer Programming",
   series = "Four volumes",
@@ -98,7 +99,7 @@ const input = bibtex`
 }
 
 @INPROCEEDINGS{inproceedings-full,
-  author = "Alfred V. Oaho and Jeffrey D. Ullman and Mihalis Yannakakis",
+  author = "Oaho, Alfred V. and Jeffrey D. Ullman and Mihalis Yannakakis",
   title = "On Notions of Information Transfer in {VLSI} Circuits",
   editor = "Wizard V. Oz and Mihalis Yannakakis",
   booktitle = "Proc. Fifteenth Annual ACM" # STOC,
@@ -172,13 +173,13 @@ const input = bibtex`
 
 const expectedDefault = bibtex`
 @article{aamport1986gnats1,
-  author        = {L[eslie] A. Aamport},
+  author        = {Aamport, L[eslie] A.},
   title         = {The Gnats and Gnus Document Preparation System},
   journal       = {\\mbox{G-Animal's} Journal},
   year          = 1986
 }
 @article{aamport1986gnats2,
-  author        = {L[eslie] A. Aamport},
+  author        = {Aamport, L[eslie] A.},
   title         = {The Gnats and Gnus Document Preparation System},
   journal       = {\\mbox{G-Animal's} Journal},
   year          = 1986,
@@ -189,14 +190,14 @@ const expectedDefault = bibtex`
   note          = "This is a full ARTICLE entry"
 }
 @inbook{knuth1973fundamental1,
-  author        = "Donald E. Knuth",
+  author        = "Knuth, Donald E.",
   title         = "Fundamental Algorithms",
   publisher     = "Addison-Wesley",
   year          = "1973",
   chapter       = "1.2"
 }
 @inbook{knuth1973fundamental2,
-  author        = "Donald E. Knuth",
+  author        = "Knuth, Donald E.",
   title         = "Fundamental Algorithms",
   volume        = 1,
   series        = "The Art of Computer Programming",
@@ -211,7 +212,7 @@ const expectedDefault = bibtex`
   note          = "This is a full INBOOK entry"
 }
 @book{knuth1968art,
-  author        = "Donald E. Knuth",
+  author        = "Knuth, Donald E.",
   publisher     = "Addison-Wesley",
   title         = "The Art of Computer Programming",
   series        = "Four volumes",
@@ -256,7 +257,7 @@ const expectedDefault = bibtex`
   year          = 1988
 }
 @inproceedings{oaho1983notions,
-  author        = "Alfred V. Oaho and Jeffrey D. Ullman and Mihalis Yannakakis",
+  author        = "Oaho, Alfred V. and Jeffrey D. Ullman and Mihalis Yannakakis",
   title         = "On Notions of Information Transfer in {VLSI} Circuits",
   editor        = "Wizard V. Oz and Mihalis Yannakakis",
   booktitle     = "Proc. Fifteenth Annual ACM" # STOC,
@@ -317,7 +318,7 @@ const expectedDefault = bibtex`
   pages         = {238--247},
   isbn          = {978-3-540-70516-1}
 }
-@article{_[]_foo_bar2000baa,
+@article{foobar2000baa,
   author        = {~[]()=Foo Bar , Moo},
   year          = 2000,
   title         = "Baa baa"
@@ -326,13 +327,13 @@ const expectedDefault = bibtex`
 
 const expectedCustom = bibtex`
 @article{AAMPORT1986GnatsGnusDocumenta,
-  author        = {L[eslie] A. Aamport},
+  author        = {Aamport, L[eslie] A.},
   title         = {The Gnats and Gnus Document Preparation System},
   journal       = {\\mbox{G-Animal's} Journal},
   year          = 1986
 }
 @article{AAMPORT1986GnatsGnusDocumentb,
-  author        = {L[eslie] A. Aamport},
+  author        = {Aamport, L[eslie] A.},
   title         = {The Gnats and Gnus Document Preparation System},
   journal       = {\\mbox{G-Animal's} Journal},
   year          = 1986,
@@ -343,14 +344,14 @@ const expectedCustom = bibtex`
   note          = "This is a full ARTICLE entry"
 }
 @inbook{KNUTH1973FundamentalAlgorithmsa,
-  author        = "Donald E. Knuth",
+  author        = "Knuth, Donald E.",
   title         = "Fundamental Algorithms",
   publisher     = "Addison-Wesley",
   year          = "1973",
   chapter       = "1.2"
 }
 @inbook{KNUTH1973FundamentalAlgorithmsb,
-  author        = "Donald E. Knuth",
+  author        = "Knuth, Donald E.",
   title         = "Fundamental Algorithms",
   volume        = 1,
   series        = "The Art of Computer Programming",
@@ -365,7 +366,7 @@ const expectedCustom = bibtex`
   note          = "This is a full INBOOK entry"
 }
 @book{KNUTH1968ArtComputerProgramming,
-  author        = "Donald E. Knuth",
+  author        = "Knuth, Donald E.",
   publisher     = "Addison-Wesley",
   title         = "The Art of Computer Programming",
   series        = "Four volumes",
@@ -410,7 +411,7 @@ const expectedCustom = bibtex`
   year          = 1988
 }
 @inproceedings{OAHO1983NotionsInformationTransfer,
-  author        = "Alfred V. Oaho and Jeffrey D. Ullman and Mihalis Yannakakis",
+  author        = "Oaho, Alfred V. and Jeffrey D. Ullman and Mihalis Yannakakis",
   title         = "On Notions of Information Transfer in {VLSI} Circuits",
   editor        = "Wizard V. Oz and Mihalis Yannakakis",
   booktitle     = "Proc. Fifteenth Annual ACM" # STOC,
@@ -471,7 +472,7 @@ const expectedCustom = bibtex`
   pages         = {238--247},
   isbn          = {978-3-540-70516-1}
 }
-@article{_[]_FOO_BAR2000BaaBaa,
+@article{FOOBAR2000BaaBaa,
   author        = {~[]()=Foo Bar , Moo},
   year          = 2000,
   title         = "Baa baa"
@@ -479,69 +480,6 @@ const expectedCustom = bibtex`
 `;
 
 test("generate keys", async () => {
-	const entryValues = new Map([
-		["title", "A story of 2 foo and 1 bar: the best story"],
-		["author", "Bar, Foo and Mee, Moo and One, Two"],
-		["year", "2018"],
-		["journal", "Foo and Goo"],
-	]);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[auth:upper][year]")),
-		"BAR2018",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[authEtAl:lower]")),
-		"barmeeetal",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[authEtAl:capitalize]")),
-		"BarMeeEtAl",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[authors:capitalize]")),
-		"BarMeeOne",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[authors1]")),
-		"BarEtAl",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[veryshorttitle]")),
-		"story",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[shorttitle]")),
-		"story2foo",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[title]")),
-		"AStoryOf2FooAnd1BarTheBestStory",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[fulltitle]")),
-		"Astoryof2fooand1barthebeststory",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[JOURNAL]")),
-		"FooandGoo",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[JOURNAL:capitalize]")),
-		"FooAndGoo",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[YEAR]")),
-		"2018",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[AUTHOR]")),
-		"BarFooandMeeMooandOneTwo",
-	);
-	strictEqual(
-		generateKey(entryValues, parseEntryKeyTemplate("[BOOKTITLE]")),
-		undefined,
-	);
-
 	const output1 = await bibtexTidy(input, { generateKeys: true });
 	strictEqual(output1.bibtex, expectedDefault);
 

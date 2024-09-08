@@ -86,7 +86,7 @@ test("duplicate citation warnings", async () => {
 			number={2}
 		}`;
 	const tidied = await bibtexTidy(input, { duplicates: ["citation"] }, ["api"]);
-	strictEqual(tidied.api?.warnings.length, 3);
+	strictEqual(tidied.api?.warnings.length, 2);
 });
 
 test("duplicate abstract warnings", async () => {

@@ -34,430 +34,149 @@ __export(src_exports, {
 });
 module.exports = __toCommonJS(src_exports);
 
-// src/bibtexParser.ts
-var RootNode = class {
-  constructor(children = []) {
-    this.children = children;
-    this.type = "root";
+// src/parsers/nameFieldParser.ts
+function parseNameList(value) {
+  return value.split(/\s+and\s+/i).map(parseName);
+}
+__name(parseNameList, "parseNameList");
+function detectNameSyntax(tokens) {
+  const names = tokens.filter((token) => token.type === "name");
+  const prefixes = tokens.filter((token) => token.type === "prefix");
+  const commas = tokens.filter((token) => token.type === "comma");
+  if (tokens.length === 0) {
+    return "Empty";
   }
-  static {
-    __name(this, "RootNode");
+  if (tokens.length === 1 && nameStr(tokens) === "others") {
+    return "Others";
   }
-};
-var TextNode = class {
-  constructor(parent, text) {
-    this.parent = parent;
-    this.text = text;
-    this.type = "text";
-    parent.children.push(this);
+  if (tokens.length === names.length && tokens.length === 1) {
+    return "LastName";
   }
-  static {
-    __name(this, "TextNode");
+  if (tokens.length === names.length) {
+    return "FirstName LastNames";
   }
-};
-var BlockNode = class {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "block";
-    this.command = "";
-    parent.children.push(this);
+  if (prefixes.length > 0 && commas.length === 0) {
+    return "FirstNames Prefixes LastNames";
   }
-  static {
-    __name(this, "BlockNode");
+  if (commas.length === 1) {
+    return "LastNames, FirstNames Prefixes";
   }
-};
-var CommentNode = class {
-  constructor(parent, raw, braces, parens) {
-    this.parent = parent;
-    this.raw = raw;
-    this.braces = braces;
-    this.parens = parens;
-    this.type = "comment";
-    parent.block = this;
+  if (commas.length === 2) {
+    return "LastNames, Suffixes, FirstNames Prefixes";
   }
-  static {
-    __name(this, "CommentNode");
-  }
-};
-var PreambleNode = class {
-  constructor(parent, raw, braces, parens) {
-    this.parent = parent;
-    this.raw = raw;
-    this.braces = braces;
-    this.parens = parens;
-    this.type = "preamble";
-    parent.block = this;
-  }
-  static {
-    __name(this, "PreambleNode");
-  }
-};
-var StringNode = class {
-  constructor(parent, raw, braces, parens) {
-    this.parent = parent;
-    this.raw = raw;
-    this.braces = braces;
-    this.parens = parens;
-    this.type = "string";
-    parent.block = this;
-  }
-  static {
-    __name(this, "StringNode");
-  }
-};
-var EntryNode = class {
-  constructor(parent, wrapType) {
-    this.parent = parent;
-    this.wrapType = wrapType;
-    this.type = "entry";
-    parent.block = this;
-    this.fields = [];
-  }
-  static {
-    __name(this, "EntryNode");
-  }
-};
-var FieldNode = class {
-  constructor(parent, name = "") {
-    this.parent = parent;
-    this.name = name;
-    this.type = "field";
-    this.value = new ConcatNode(this);
-  }
-  static {
-    __name(this, "FieldNode");
-  }
-};
-var ConcatNode = class {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "concat";
-    this.canConsumeValue = true;
-    this.concat = [];
-  }
-  static {
-    __name(this, "ConcatNode");
-  }
-};
-var LiteralNode = class {
-  constructor(parent, value) {
-    this.parent = parent;
-    this.value = value;
-    this.type = "literal";
-    parent.concat.push(this);
-  }
-  static {
-    __name(this, "LiteralNode");
-  }
-};
-var BracedNode = class {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "braced";
-    this.value = "";
-    /** Used to count opening and closing braces */
-    this.depth = 0;
-    parent.concat.push(this);
-  }
-  static {
-    __name(this, "BracedNode");
-  }
-};
-var QuotedNode = class {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "quoted";
-    this.value = "";
-    /** Used to count opening and closing braces */
-    this.depth = 0;
-    parent.concat.push(this);
-  }
-  static {
-    __name(this, "QuotedNode");
-  }
-};
-function generateAST(input) {
-  const rootNode = new RootNode();
-  let node = rootNode;
-  let line = 1;
-  let column = 0;
-  for (let i = 0; i < input.length; i++) {
-    const char = input[i] ?? "";
-    const prev = input[i - 1] ?? "";
-    if (char === "\n") {
-      line++;
-      column = 0;
+  throw new Error(
+    `Invalid name syntax: ${tokens.map((token) => token.type).join(" ")}`
+  );
+}
+__name(detectNameSyntax, "detectNameSyntax");
+function parseName(name) {
+  const tokens = tokeniseName(name);
+  switch (detectNameSyntax(tokens)) {
+    case "Empty":
+      return { first: "", last: "", pre: "", suf: "" };
+    case "Others":
+      return { first: "", last: "others", pre: "", suf: "" };
+    case "LastName":
+      return { first: "", last: nameStr(tokens), pre: "", suf: "" };
+    case "FirstName LastNames": {
+      const [first, last] = partition(tokens, ["name", "name"]);
+      return { first: nameStr(first), last: nameStr(last), pre: "", suf: "" };
     }
-    column++;
-    switch (node.type) {
-      case "root": {
-        node = char === "@" ? new BlockNode(node) : new TextNode(node, char);
-        break;
-      }
-      case "text": {
-        if (char === "@" && /[\s\r\n}]/.test(prev)) {
-          node = new BlockNode(node.parent);
-        } else {
-          node.text += char;
-        }
-        break;
-      }
-      case "block": {
-        if (char === "@") {
-          const prevNode = node.parent.children[node.parent.children.length - 2];
-          if (prevNode?.type === "text") {
-            prevNode.text += `@${node.command}`;
-          } else {
-            node.parent.children.pop();
-            new TextNode(node.parent, `@${node.command}`);
-            node.parent.children.push(node);
-          }
-          node.command = "";
-        } else if (char === "{" || char === "(") {
-          const commandTrimmed = node.command.trim();
-          if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
-            node.parent.children.pop();
-            node = new TextNode(node.parent, `@${node.command}${char}`);
-          } else {
-            node.command = commandTrimmed;
-            const command = node.command.toLowerCase();
-            const [braces, parens] = char === "{" ? [1, 0] : [0, 1];
-            const raw = `@${command}${char}`;
-            switch (command) {
-              case "string":
-                node = new StringNode(node, raw, braces, parens);
-                break;
-              case "preamble":
-                node = new PreambleNode(node, raw, braces, parens);
-                break;
-              case "comment":
-                node = new CommentNode(node, raw, braces, parens);
-                break;
-              default:
-                node = new EntryNode(node, char);
-                break;
-            }
-          }
-        } else if (char.match(/[=#,})[\]]/)) {
-          node.parent.children.pop();
-          node = new TextNode(node.parent, `@${node.command}${char}`);
-        } else {
-          node.command += char;
-        }
-        break;
-      }
-      case "comment":
-      case "string":
-      case "preamble":
-        if (char === "{") {
-          node.braces++;
-        } else if (char === "}") {
-          node.braces--;
-        } else if (char === "(") {
-          node.parens++;
-        } else if (char === ")") {
-          node.parens--;
-        }
-        node.raw += char;
-        if (node.braces === 0 && node.parens === 0) {
-          node = node.parent.parent;
-        }
-        break;
-      case "entry": {
-        if (isWhitespace(char)) {
-          if (!node.key) {
-          } else {
-            node.keyEnded = true;
-          }
-        } else if (char === ",") {
-          node = new FieldNode(node);
-        } else if (node.wrapType === "{" && char === "}" || node.wrapType === "(" && char === ")") {
-          node = node.parent.parent;
-        } else if (char === "=" && node.key && isValidFieldName(node.key)) {
-          const field = new FieldNode(node, node.key);
-          node.fields.push(field);
-          node.key = void 0;
-          node = field.value;
-        } else if (node.keyEnded) {
-          throw new BibTeXSyntaxError(
-            input,
-            node,
-            i,
-            line,
-            column,
-            "The entry key cannot contain whitespace"
-          );
-        } else if (!isValidKeyCharacter(char)) {
-          throw new BibTeXSyntaxError(
-            input,
-            node,
-            i,
-            line,
-            column,
-            `The entry key cannot contain the character (${char})`
-          );
-        } else {
-          node.key = (node.key ?? "") + char;
-        }
-        break;
-      }
-      case "field": {
-        if (char === "}" || char === ")") {
-          node.name = node.name.trim();
-          node = node.parent.parent.parent;
-        } else if (char === "=") {
-          node.name = node.name.trim();
-          node = node.value;
-        } else if (char === ",") {
-          node.name = node.name.trim();
-          node = new FieldNode(node.parent);
-        } else if (!isValidFieldName(char)) {
-          throw new BibTeXSyntaxError(input, node, i, line, column);
-        } else if (!node.name) {
-          if (!isWhitespace(char)) {
-            node.parent.fields.push(node);
-            node.name = char;
-          } else {
-          }
-        } else {
-          node.name += char;
-        }
-        break;
-      }
-      case "concat": {
-        if (isWhitespace(char)) {
-          break;
-        }
-        if (node.canConsumeValue) {
-          if (/[#=,}()[\]]/.test(char)) {
-            throw new BibTeXSyntaxError(input, node, i, line, column);
-          }
-          node.canConsumeValue = false;
-          if (char === "{") {
-            node = new BracedNode(node);
-          } else if (char === '"') {
-            node = new QuotedNode(node);
-          } else {
-            node = new LiteralNode(node, char);
-          }
-        } else {
-          if (char === ",") {
-            node = new FieldNode(node.parent.parent);
-          } else if (char === "}" || char === ")") {
-            node = node.parent.parent.parent.parent;
-          } else if (char === "#") {
-            node.canConsumeValue = true;
-          } else {
-            throw new BibTeXSyntaxError(input, node, i, line, column);
-          }
-        }
-        break;
-      }
-      case "literal":
-        if (isWhitespace(char)) {
-          node = node.parent;
-        } else if (char === ",") {
-          node = new FieldNode(node.parent.parent.parent);
-        } else if (char === "}") {
-          node = node.parent.parent.parent.parent.parent;
-        } else if (char === "#") {
-          node = node.parent;
-          node.canConsumeValue = true;
-        } else {
-          node.value += char;
-        }
-        break;
-      // Values may be enclosed in curly braces. Curly braces may be used within
-      // the value but they must be balanced.
-      case "braced":
-        if (char === "}" && node.depth === 0) {
-          node = node.parent;
-          break;
-        }
-        if (char === "{") {
-          node.depth++;
-        } else if (char === "}") {
-          node.depth--;
-        }
-        node.value += char;
-        break;
-      // Values may be enclosed in double quotes. Curly braces may be used
-      // within quoted values but they must be balanced.
-      //
-      // To escape a double quote, surround it with braces `{"}`.
-      // https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
-      case "quoted":
-        if (char === '"' && node.depth === 0) {
-          node = node.parent;
-          break;
-        }
-        if (char === "{") {
-          node.depth++;
-        } else if (char === "}") {
-          node.depth--;
-          if (node.depth < 0) {
-            throw new BibTeXSyntaxError(input, node, i, line, column);
-          }
-        }
-        node.value += char;
-        break;
-    }
-  }
-  return rootNode;
-}
-__name(generateAST, "generateAST");
-function isWhitespace(string) {
-  return /^[ \t\n\r]*$/.test(string);
-}
-__name(isWhitespace, "isWhitespace");
-function isValidKeyCharacter(char) {
-  return !/[#%{}~$,]/.test(char);
-}
-__name(isValidKeyCharacter, "isValidKeyCharacter");
-function isValidFieldName(char) {
-  return !/[=,{}()[\]]/.test(char);
-}
-__name(isValidFieldName, "isValidFieldName");
-var BibTeXSyntaxError = class extends Error {
-  constructor(input, node, pos, line, column, hint) {
-    super(
-      `Line ${line}:${column}: Syntax Error in ${node.type} (${hint})
-${input.slice(Math.max(0, pos - 20), pos)}>>${input[pos]}<<${input.slice(pos + 1, pos + 20)}`
-    );
-    this.node = node;
-    this.line = line;
-    this.column = column;
-    this.hint = hint;
-    this.name = "Syntax Error";
-    this.char = input[pos] ?? "";
-  }
-  static {
-    __name(this, "BibTeXSyntaxError");
-  }
-};
-
-// src/parseAuthors.ts
-function parseAuthors(authors) {
-  return authors.replace(/\s+/g, " ").split(/ and /i).map((nameRaw) => {
-    const name = nameRaw.trim();
-    const commaPos = name.indexOf(",");
-    if (commaPos > -1) {
+    case "FirstNames Prefixes LastNames": {
+      const [first, pre, last] = partition(tokens, [
+        "name",
+        "prefix",
+        "name"
+      ]);
       return {
-        firstNames: name.slice(commaPos + 1).trim(),
-        lastName: name.slice(0, commaPos).trim()
+        first: nameStr(first),
+        pre: nameStr(pre),
+        last: nameStr(last),
+        suf: ""
       };
     }
-    const lastSpacePos = name.lastIndexOf(" ");
-    return {
-      firstNames: name.slice(0, lastSpacePos).trim(),
-      lastName: name.slice(lastSpacePos).trim()
-    };
-  });
+    case "LastNames, FirstNames Prefixes": {
+      const [lastNames, firstNames, prefixes] = partition(tokens, [
+        "name",
+        "comma",
+        "prefix"
+      ]);
+      return {
+        last: nameStr(lastNames),
+        first: nameStr(firstNames),
+        pre: nameStr(prefixes),
+        suf: ""
+      };
+    }
+    case "LastNames, Suffixes, FirstNames Prefixes": {
+      const [lastNames, suffixes, firstNames, prefixes] = partition(tokens, [
+        "name",
+        "comma",
+        "comma",
+        "prefix"
+      ]);
+      return {
+        last: nameStr(lastNames),
+        suf: nameStr(suffixes),
+        first: nameStr(firstNames),
+        pre: nameStr(prefixes)
+      };
+    }
+  }
 }
-__name(parseAuthors, "parseAuthors");
+__name(parseName, "parseName");
+function tokeniseName(name) {
+  const tokens = [];
+  let current = "";
+  function flushToken() {
+    if (!current) return;
+    tokens.push({
+      type: isPrefixToken(current) ? "prefix" : "name",
+      value: current
+    });
+  }
+  __name(flushToken, "flushToken");
+  for (const c of name) {
+    if (c === ",") {
+      flushToken();
+      tokens.push({ type: "comma" });
+      current = "";
+    } else if (/\s/.test(c)) {
+      flushToken();
+      current = "";
+    } else {
+      current += c;
+    }
+  }
+  flushToken();
+  return tokens;
+}
+__name(tokeniseName, "tokeniseName");
+function nameStr(tokens) {
+  return tokens.filter(
+    (token) => token.type !== "comma"
+  ).map((token) => token.value).join(" ");
+}
+__name(nameStr, "nameStr");
+function isPrefixToken(token) {
+  return /^[a-z]/.test(token);
+}
+__name(isPrefixToken, "isPrefixToken");
+function partition(tokens, divideBefore) {
+  const partitions = divideBefore.map(() => []);
+  let currPartition = -1;
+  for (const token of tokens) {
+    if (divideBefore[currPartition + 1] === token.type) {
+      currPartition++;
+    }
+    partitions[currPartition]?.push(token);
+  }
+  return partitions;
+}
+__name(partition, "partition");
 
-// src/latexParser.ts
-var BlockNode2 = class _BlockNode {
+// src/parsers/latexParser.ts
+var BlockNode = class _BlockNode {
   constructor(kind, parent, children = []) {
     this.kind = kind;
     this.parent = parent;
@@ -476,7 +195,7 @@ var BlockNode2 = class _BlockNode {
     return this.children.map((child) => child.renderAsText()).join("");
   }
 };
-var TextNode2 = class {
+var TextNode = class {
   constructor(parent, text = "") {
     this.parent = parent;
     this.text = text;
@@ -506,7 +225,7 @@ var CommandNode = class {
   }
 };
 function parseLaTeX(input) {
-  const rootNode = new BlockNode2("root");
+  const rootNode = new BlockNode("root");
   let node = rootNode;
   for (let i = 0; i < input.length; i++) {
     const char = input[i];
@@ -516,11 +235,11 @@ function parseLaTeX(input) {
         if (char === "\\") {
           node = new CommandNode(node);
         } else if (char === "{") {
-          node = new BlockNode2("curly", node);
+          node = new BlockNode("curly", node);
         } else if ((char === "}" && node.kind === "curly" || char === "]" && node.kind === "square") && node.parent) {
           node = node.parent;
         } else {
-          node = new TextNode2(node, char);
+          node = new TextNode(node, char);
         }
         break;
       }
@@ -538,9 +257,9 @@ function parseLaTeX(input) {
       }
       case "command": {
         if (char === "{") {
-          node = new BlockNode2("curly", node);
+          node = new BlockNode("curly", node);
         } else if (char === "[") {
-          node = new BlockNode2("square", node);
+          node = new BlockNode("square", node);
         } else if (char === "}" && node.parent.kind === "curly" || char === "]" && node.parent.kind === "square" || /\s/.test(char) || node.args.length > 0) {
           node = node.parent;
           i--;
@@ -583,7 +302,7 @@ function stringifyCommand(node) {
 }
 __name(stringifyCommand, "stringifyCommand");
 function flattenLaTeX(block) {
-  const newBlock = new BlockNode2(block.kind);
+  const newBlock = new BlockNode(block.kind);
   for (const child of block.children) {
     if (child.type === "block" && child.kind === "curly" && child.children.every((child2) => child2.type !== "command")) {
       const newChild = flattenLaTeX(child);
@@ -3082,7 +2801,7 @@ function checkForDuplicates(ast, valueLookup, duplicateRules, merge) {
           const num = entryValues.get("number");
           if (!ttl || !aut) continue;
           const cit = [
-            alphaNum(parseAuthors(aut)[0]?.lastName ?? aut),
+            alphaNum(parseNameList(aut)[0]?.last ?? aut),
             alphaNum(ttl),
             alphaNum(num ?? "0")
           ].join(":");
@@ -3398,22 +3117,55 @@ ${indent}`;
 }
 __name(formatValue, "formatValue");
 
+// src/parsers/entryKeyTemplateParser.ts
+function parseEntryKeyTemplate(template) {
+  const tokens = [];
+  const matches = template.matchAll(/\[[^:\]]+(?::[^:\]]+)*\]/g);
+  let pos = 0;
+  for (const match of matches) {
+    if (match.index === void 0) break;
+    if (match.index !== pos) {
+      tokens.push(template.slice(pos, match.index));
+    }
+    const [tokenKeyN, ...modifierKeys] = match[0].slice(1, -1).split(":");
+    if (!tokenKeyN) {
+      throw new Error("Token parse error");
+    }
+    let n;
+    const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
+      n = Number(m);
+      return "N";
+    });
+    tokens.push({
+      marker: tokenKey,
+      parameter: n,
+      modifiers: modifierKeys
+    });
+    pos = match.index + match[0].length;
+  }
+  if (pos < template.length) {
+    tokens.push(template.slice(pos));
+  }
+  return tokens;
+}
+__name(parseEntryKeyTemplate, "parseEntryKeyTemplate");
+
 // src/generateKeys.ts
 var SPECIAL_MARKERS = {
   auth: {
     description: "Last name of first authors",
     callback: /* @__PURE__ */ __name((v) => {
-      const authors = parseAuthors(v.get("author") ?? "");
-      const author = authors[0]?.lastName;
+      const authors = parseNameList(v.get("author") ?? "");
+      const author = authors[0]?.last;
       return author ? [author] : [];
     }, "callback")
   },
   authEtAl: {
     description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
     callback: /* @__PURE__ */ __name((v) => {
-      const authors = parseAuthors(v.get("author") ?? "");
+      const authors = parseNameList(v.get("author") ?? "");
       return [
-        ...authors.slice(0, 2).map((author) => author.lastName),
+        ...authors.slice(0, 2).map((author) => author.last),
         ...authors.length > 2 ? ["Et", "Al"] : []
       ];
     }, "callback")
@@ -3421,16 +3173,16 @@ var SPECIAL_MARKERS = {
   authors: {
     description: "Last name all authors",
     callback: /* @__PURE__ */ __name((v) => {
-      const authors = parseAuthors(v.get("author") ?? "");
-      return authors.map((author) => author.lastName);
+      const authors = parseNameList(v.get("author") ?? "");
+      return authors.map((author) => author.last);
     }, "callback")
   },
   authorsN: {
     description: "Last name N authors, with EtAl if more",
     callback: /* @__PURE__ */ __name((v, n = 0) => {
-      const authors = parseAuthors(v.get("author") ?? "");
+      const authors = parseNameList(v.get("author") ?? "");
       return [
-        ...authors.slice(0, n).map((author) => author.lastName),
+        ...authors.slice(0, n).map((author) => author.last),
         ...authors.length > n ? ["Et", "Al"] : []
       ];
     }, "callback")
@@ -3460,13 +3212,17 @@ var SPECIAL_MARKERS = {
   },
   duplicateLetter: {
     description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
-    callback: /* @__PURE__ */ __name(() => ["[duplicateLetter]"], "callback")
+    callback: /* @__PURE__ */ __name((_, __, duplicate) => [duplicate ? numToLetter(duplicate) : ""], "callback")
   },
   duplicateNumber: {
     description: "If the multiple entries end up with the same key, then insert a number.",
-    callback: /* @__PURE__ */ __name(() => ["[duplicateNumber]"], "callback")
+    callback: /* @__PURE__ */ __name((_, __, duplicate) => [duplicate ? String(duplicate) : ""], "callback")
   }
 };
+function numToLetter(n) {
+  return String.fromCharCode(96 + n);
+}
+__name(numToLetter, "numToLetter");
 var MODIFIERS = {
   required: {
     description: "If data is missing, revert to existing key",
@@ -3501,44 +3257,49 @@ function generateKeys(ast, valueLookup, entryKeyTemplate) {
   const parsedTemplate = parseEntryKeyTemplate(template);
   const entriesByKey = /* @__PURE__ */ new Map();
   for (const node of ast.children) {
-    if (isEntryNode(node)) {
-      const entryValues = valueLookup.get(node.block);
-      if (!entryValues) continue;
-      const newKey = generateKey(entryValues, parsedTemplate);
-      if (!newKey) continue;
-      const keyEntries = entriesByKey.get(newKey) ?? [];
-      entriesByKey.set(newKey, [...keyEntries, node.block]);
-    }
+    if (!isEntryNode(node)) continue;
+    const entryValues = valueLookup.get(node.block);
+    if (!entryValues) continue;
+    const key = generateKey(entryValues, parsedTemplate);
+    if (!key) continue;
+    const entriesSoFar = entriesByKey.get(key) ?? [];
+    entriesSoFar.push(node.block);
+    entriesByKey.set(key, entriesSoFar);
   }
   const keys = /* @__PURE__ */ new Map();
   for (const [key, entries] of entriesByKey) {
-    for (const [i, entry] of entries.entries()) {
-      const duplicateLetter = entries.length > 1 ? String.fromCharCode(97 + i) : "";
-      const duplicateNumber = entries.length > 1 ? String(i + 1) : "";
-      entry.key = key.replace(/\[duplicateLetter\]/g, duplicateLetter).replace(/\[duplicateNumber\]/g, duplicateNumber);
+    const regenerateDuplicate = entries.length > 1;
+    for (let i = 0; i < entries.length; i++) {
+      const node = entries[i];
+      if (!node) continue;
+      const entryValues = valueLookup.get(node);
+      if (!entryValues) continue;
+      const newKey = regenerateDuplicate ? generateKey(entryValues, parsedTemplate, i + 1) : key;
+      if (!newKey) continue;
+      keys.set(node, newKey);
     }
   }
   return keys;
 }
 __name(generateKeys, "generateKeys");
-function generateKey(valueLookup, entryKeyTemplate) {
+function generateKey(valueLookup, entryKeyTemplate, duplicateNumber) {
   try {
     let newKey = entryKeyTemplate.map((token) => {
       if (typeof token === "string") {
         return token;
       }
-      const { markerName, parameter, modifierNames } = token;
-      const specialMarker = SPECIAL_MARKERS[markerName];
+      const { marker, parameter, modifiers } = token;
+      const specialMarker = SPECIAL_MARKERS[marker];
       let key;
       if (specialMarker) {
-        key = specialMarker.callback(valueLookup, parameter);
-      } else if (markerName === markerName.toLocaleUpperCase()) {
-        const value = valueLookup.get(markerName.toLocaleLowerCase());
+        key = specialMarker.callback(valueLookup, parameter, duplicateNumber);
+      } else if (marker === marker.toLocaleUpperCase()) {
+        const value = valueLookup.get(marker.toLocaleLowerCase());
         key = value ? words(value) : [];
       } else {
-        throw new Error(`Invalid citation key token ${markerName}`);
+        throw new Error(`Invalid citation key token ${marker}`);
       }
-      for (const modifierKey of modifierNames) {
+      for (const modifierKey of modifiers) {
         const modifier = MODIFIERS[modifierKey];
         if (modifier) {
           key = modifier.callback(key);
@@ -3559,37 +3320,6 @@ function generateKey(valueLookup, entryKeyTemplate) {
   }
 }
 __name(generateKey, "generateKey");
-function parseEntryKeyTemplate(template) {
-  const tokens = [];
-  const matches = template.matchAll(/\[[^:\]]+(?::[^:\]]+)*\]/g);
-  let pos = 0;
-  for (const match of matches) {
-    if (match.index === void 0) break;
-    if (match.index !== pos) {
-      tokens.push(template.slice(pos, match.index));
-    }
-    const [tokenKeyN, ...modifierKeys] = match[0].slice(1, -1).split(":");
-    if (!tokenKeyN) {
-      throw new Error("Token parse error");
-    }
-    let n;
-    const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
-      n = Number(m);
-      return "N";
-    });
-    tokens.push({
-      markerName: tokenKey,
-      parameter: n,
-      modifierNames: modifierKeys
-    });
-    pos = match.index + match[0].length;
-  }
-  if (pos < template.length) {
-    tokens.push(template.slice(pos));
-  }
-  return tokens;
-}
-__name(parseEntryKeyTemplate, "parseEntryKeyTemplate");
 var functionWords = /* @__PURE__ */ new Set([
   "a",
   "about",
@@ -3664,7 +3394,7 @@ function title(entryValues) {
 }
 __name(title, "title");
 function removeUnsafeEntryKeyChars(str) {
-  return str.replace(/[{},\s\\#%~()"'=]+/g, "_");
+  return str.replace(/[{},\s\\#%~()"'=.,:;[\]_]+/g, "");
 }
 __name(removeUnsafeEntryKeyChars, "removeUnsafeEntryKeyChars");
 
@@ -4214,6 +3944,408 @@ function normalizeOptions(options) {
   );
 }
 __name(normalizeOptions, "normalizeOptions");
+
+// src/parsers/bibtexParser.ts
+var RootNode = class {
+  constructor(children = []) {
+    this.children = children;
+    this.type = "root";
+  }
+  static {
+    __name(this, "RootNode");
+  }
+};
+var TextNode2 = class {
+  constructor(parent, text) {
+    this.parent = parent;
+    this.text = text;
+    this.type = "text";
+    parent.children.push(this);
+  }
+  static {
+    __name(this, "TextNode");
+  }
+};
+var BlockNode2 = class {
+  constructor(parent) {
+    this.parent = parent;
+    this.type = "block";
+    this.command = "";
+    parent.children.push(this);
+  }
+  static {
+    __name(this, "BlockNode");
+  }
+};
+var CommentNode = class {
+  constructor(parent, raw, braces, parens) {
+    this.parent = parent;
+    this.raw = raw;
+    this.braces = braces;
+    this.parens = parens;
+    this.type = "comment";
+    parent.block = this;
+  }
+  static {
+    __name(this, "CommentNode");
+  }
+};
+var PreambleNode = class {
+  constructor(parent, raw, braces, parens) {
+    this.parent = parent;
+    this.raw = raw;
+    this.braces = braces;
+    this.parens = parens;
+    this.type = "preamble";
+    parent.block = this;
+  }
+  static {
+    __name(this, "PreambleNode");
+  }
+};
+var StringNode = class {
+  constructor(parent, raw, braces, parens) {
+    this.parent = parent;
+    this.raw = raw;
+    this.braces = braces;
+    this.parens = parens;
+    this.type = "string";
+    parent.block = this;
+  }
+  static {
+    __name(this, "StringNode");
+  }
+};
+var EntryNode = class {
+  constructor(parent, wrapType) {
+    this.parent = parent;
+    this.wrapType = wrapType;
+    this.type = "entry";
+    parent.block = this;
+    this.fields = [];
+  }
+  static {
+    __name(this, "EntryNode");
+  }
+};
+var FieldNode = class {
+  constructor(parent, name = "") {
+    this.parent = parent;
+    this.name = name;
+    this.type = "field";
+    this.value = new ConcatNode(this);
+  }
+  static {
+    __name(this, "FieldNode");
+  }
+};
+var ConcatNode = class {
+  constructor(parent) {
+    this.parent = parent;
+    this.type = "concat";
+    this.canConsumeValue = true;
+    this.concat = [];
+  }
+  static {
+    __name(this, "ConcatNode");
+  }
+};
+var LiteralNode = class {
+  constructor(parent, value) {
+    this.parent = parent;
+    this.value = value;
+    this.type = "literal";
+    parent.concat.push(this);
+  }
+  static {
+    __name(this, "LiteralNode");
+  }
+};
+var BracedNode = class {
+  constructor(parent) {
+    this.parent = parent;
+    this.type = "braced";
+    this.value = "";
+    /** Used to count opening and closing braces */
+    this.depth = 0;
+    parent.concat.push(this);
+  }
+  static {
+    __name(this, "BracedNode");
+  }
+};
+var QuotedNode = class {
+  constructor(parent) {
+    this.parent = parent;
+    this.type = "quoted";
+    this.value = "";
+    /** Used to count opening and closing braces */
+    this.depth = 0;
+    parent.concat.push(this);
+  }
+  static {
+    __name(this, "QuotedNode");
+  }
+};
+function generateAST(input) {
+  const rootNode = new RootNode();
+  let node = rootNode;
+  let line = 1;
+  let column = 0;
+  for (let i = 0; i < input.length; i++) {
+    const char = input[i] ?? "";
+    const prev = input[i - 1] ?? "";
+    if (char === "\n") {
+      line++;
+      column = 0;
+    }
+    column++;
+    switch (node.type) {
+      case "root": {
+        node = char === "@" ? new BlockNode2(node) : new TextNode2(node, char);
+        break;
+      }
+      case "text": {
+        if (char === "@" && /[\s\r\n}]/.test(prev)) {
+          node = new BlockNode2(node.parent);
+        } else {
+          node.text += char;
+        }
+        break;
+      }
+      case "block": {
+        if (char === "@") {
+          const prevNode = node.parent.children[node.parent.children.length - 2];
+          if (prevNode?.type === "text") {
+            prevNode.text += `@${node.command}`;
+          } else {
+            node.parent.children.pop();
+            new TextNode2(node.parent, `@${node.command}`);
+            node.parent.children.push(node);
+          }
+          node.command = "";
+        } else if (char === "{" || char === "(") {
+          const commandTrimmed = node.command.trim();
+          if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
+            node.parent.children.pop();
+            node = new TextNode2(node.parent, `@${node.command}${char}`);
+          } else {
+            node.command = commandTrimmed;
+            const command = node.command.toLowerCase();
+            const [braces, parens] = char === "{" ? [1, 0] : [0, 1];
+            const raw = `@${command}${char}`;
+            switch (command) {
+              case "string":
+                node = new StringNode(node, raw, braces, parens);
+                break;
+              case "preamble":
+                node = new PreambleNode(node, raw, braces, parens);
+                break;
+              case "comment":
+                node = new CommentNode(node, raw, braces, parens);
+                break;
+              default:
+                node = new EntryNode(node, char);
+                break;
+            }
+          }
+        } else if (char.match(/[=#,})[\]]/)) {
+          node.parent.children.pop();
+          node = new TextNode2(node.parent, `@${node.command}${char}`);
+        } else {
+          node.command += char;
+        }
+        break;
+      }
+      case "comment":
+      case "string":
+      case "preamble":
+        if (char === "{") {
+          node.braces++;
+        } else if (char === "}") {
+          node.braces--;
+        } else if (char === "(") {
+          node.parens++;
+        } else if (char === ")") {
+          node.parens--;
+        }
+        node.raw += char;
+        if (node.braces === 0 && node.parens === 0) {
+          node = node.parent.parent;
+        }
+        break;
+      case "entry": {
+        if (isWhitespace(char)) {
+          if (!node.key) {
+          } else {
+            node.keyEnded = true;
+          }
+        } else if (char === ",") {
+          node = new FieldNode(node);
+        } else if (node.wrapType === "{" && char === "}" || node.wrapType === "(" && char === ")") {
+          node = node.parent.parent;
+        } else if (char === "=" && node.key && isValidFieldName(node.key)) {
+          const field = new FieldNode(node, node.key);
+          node.fields.push(field);
+          node.key = void 0;
+          node = field.value;
+        } else if (node.keyEnded) {
+          throw new BibTeXSyntaxError(
+            input,
+            node,
+            i,
+            line,
+            column,
+            "The entry key cannot contain whitespace"
+          );
+        } else if (!isValidKeyCharacter(char)) {
+          throw new BibTeXSyntaxError(
+            input,
+            node,
+            i,
+            line,
+            column,
+            `The entry key cannot contain the character (${char})`
+          );
+        } else {
+          node.key = (node.key ?? "") + char;
+        }
+        break;
+      }
+      case "field": {
+        if (char === "}" || char === ")") {
+          node.name = node.name.trim();
+          node = node.parent.parent.parent;
+        } else if (char === "=") {
+          node.name = node.name.trim();
+          node = node.value;
+        } else if (char === ",") {
+          node.name = node.name.trim();
+          node = new FieldNode(node.parent);
+        } else if (!isValidFieldName(char)) {
+          throw new BibTeXSyntaxError(input, node, i, line, column);
+        } else if (!node.name) {
+          if (!isWhitespace(char)) {
+            node.parent.fields.push(node);
+            node.name = char;
+          } else {
+          }
+        } else {
+          node.name += char;
+        }
+        break;
+      }
+      case "concat": {
+        if (isWhitespace(char)) {
+          break;
+        }
+        if (node.canConsumeValue) {
+          if (/[#=,}()[\]]/.test(char)) {
+            throw new BibTeXSyntaxError(input, node, i, line, column);
+          }
+          node.canConsumeValue = false;
+          if (char === "{") {
+            node = new BracedNode(node);
+          } else if (char === '"') {
+            node = new QuotedNode(node);
+          } else {
+            node = new LiteralNode(node, char);
+          }
+        } else {
+          if (char === ",") {
+            node = new FieldNode(node.parent.parent);
+          } else if (char === "}" || char === ")") {
+            node = node.parent.parent.parent.parent;
+          } else if (char === "#") {
+            node.canConsumeValue = true;
+          } else {
+            throw new BibTeXSyntaxError(input, node, i, line, column);
+          }
+        }
+        break;
+      }
+      case "literal":
+        if (isWhitespace(char)) {
+          node = node.parent;
+        } else if (char === ",") {
+          node = new FieldNode(node.parent.parent.parent);
+        } else if (char === "}") {
+          node = node.parent.parent.parent.parent.parent;
+        } else if (char === "#") {
+          node = node.parent;
+          node.canConsumeValue = true;
+        } else {
+          node.value += char;
+        }
+        break;
+      // Values may be enclosed in curly braces. Curly braces may be used within
+      // the value but they must be balanced.
+      case "braced":
+        if (char === "}" && node.depth === 0) {
+          node = node.parent;
+          break;
+        }
+        if (char === "{") {
+          node.depth++;
+        } else if (char === "}") {
+          node.depth--;
+        }
+        node.value += char;
+        break;
+      // Values may be enclosed in double quotes. Curly braces may be used
+      // within quoted values but they must be balanced.
+      //
+      // To escape a double quote, surround it with braces `{"}`.
+      // https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
+      case "quoted":
+        if (char === '"' && node.depth === 0) {
+          node = node.parent;
+          break;
+        }
+        if (char === "{") {
+          node.depth++;
+        } else if (char === "}") {
+          node.depth--;
+          if (node.depth < 0) {
+            throw new BibTeXSyntaxError(input, node, i, line, column);
+          }
+        }
+        node.value += char;
+        break;
+    }
+  }
+  return rootNode;
+}
+__name(generateAST, "generateAST");
+function isWhitespace(string) {
+  return /^[ \t\n\r]*$/.test(string);
+}
+__name(isWhitespace, "isWhitespace");
+function isValidKeyCharacter(char) {
+  return !/[#%{}~$,]/.test(char);
+}
+__name(isValidKeyCharacter, "isValidKeyCharacter");
+function isValidFieldName(char) {
+  return !/[=,{}()[\]]/.test(char);
+}
+__name(isValidFieldName, "isValidFieldName");
+var BibTeXSyntaxError = class extends Error {
+  constructor(input, node, pos, line, column, hint) {
+    super(
+      `Line ${line}:${column}: Syntax Error in ${node.type} (${hint})
+${input.slice(Math.max(0, pos - 20), pos)}>>${input[pos]}<<${input.slice(pos + 1, pos + 20)}`
+    );
+    this.node = node;
+    this.line = line;
+    this.column = column;
+    this.hint = hint;
+    this.name = "Syntax Error";
+    this.char = input[pos] ?? "";
+  }
+  static {
+    __name(this, "BibTeXSyntaxError");
+  }
+};
 
 // src/sort.ts
 function sortEntries(ast, fieldMaps, sort) {

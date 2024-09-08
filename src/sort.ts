@@ -1,5 +1,10 @@
-import type { BlockNode, EntryNode, RootNode, TextNode } from "./bibtexParser";
 import { MONTH_MACROS } from "./months";
+import type {
+	BlockNode,
+	EntryNode,
+	RootNode,
+	TextNode,
+} from "./parsers/bibtexParser";
 import { getEntries } from "./tidy";
 
 type SortIndex = Map<string, string | number>;

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { type BibTeXTidyResult, tidy } from "../";
-import { BibTeXSyntaxError } from "../bibtexParser";
 import { type OptionsNormalized, normalizeOptions } from "../optionUtils";
+import { BibTeXSyntaxError } from "../parsers/bibtexParser";
 import Editor from "./Editor.svelte";
 import Sidebar from "./Sidebar.svelte";
 import { DEFAULT_BIBTEX } from "./defaultBibtex";

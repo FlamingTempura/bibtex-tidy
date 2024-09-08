@@ -1,13 +1,17 @@
+import { MONTH_CONVERSIONS, MONTH_SET } from "./months";
+import type { OptionsNormalized } from "./optionUtils";
 import type {
 	BlockNode,
 	EntryNode,
 	FieldNode,
 	RootNode,
 	TextNode,
-} from "./bibtexParser";
-import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from "./latexParser";
-import { MONTH_CONVERSIONS, MONTH_SET } from "./months";
-import type { OptionsNormalized } from "./optionUtils";
+} from "./parsers/bibtexParser";
+import {
+	flattenLaTeX,
+	parseLaTeX,
+	stringifyLaTeX,
+} from "./parsers/latexParser";
 
 import {
 	doubleEnclose,

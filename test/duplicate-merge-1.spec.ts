@@ -23,7 +23,7 @@ author="Feinberg, Andrew P and Vogelstein, Bert",
     doi = {1.1}
     }
 @inproceedings{Smith2009,
-  author="Caroline JA Smith",
+  author="Smith, Caroline JA",
   year=2009,
   month=dec,
   title={{Quantum somethings}},
@@ -32,7 +32,7 @@ author="Feinberg, Andrew P and Vogelstein, Bert",
 
 % test duplicate (author and title)
 @inproceedings{Smith2009a,
-  author="Caroline JA Smith",
+  author="Smith, Caroline JA",
   year=2009,
   month=dec,
   title={{Quantum somethings}},
@@ -69,7 +69,7 @@ title = {Methods for Research}
   }
   % another comment
   @inproceedings{Smith2009,
-    author="Caroline JA Smith",
+    author="Smith, Caroline JA",
   year=2009,
   month=dec,
   title={{Quantum somethings}},journal={Journal of {B}lah}
@@ -103,7 +103,7 @@ const output = bibtex`
   booktitle     = {things}
 }
 @inproceedings{Smith2009,
-  author        = "Caroline JA Smith",
+  author        = "Smith, Caroline JA",
   year          = 2009,
   month         = dec,
   title         = {{Quantum somethings}},

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { BibTeXSyntaxError } from "../bibtexParser";
+import { BibTeXSyntaxError } from "../parsers/bibtexParser";
 export let error: unknown;
 </script>
 

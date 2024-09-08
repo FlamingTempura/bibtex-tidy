@@ -1,7 +1,11 @@
+import "../src/generateKeys.spec";
+import "../src/duplicates.spec";
+import "../src/parsers/entryKeyTemplateParser.spec";
 import "../src/cli/argsParser.spec";
 import "../src/cli/argsToOptions.spec";
-import "../src/latexParser.spec";
-import "../src/parseAuthors.spec";
+
+import "../src/parsers/latexParser.spec";
+import "../src/parsers/nameFieldParser.spec";
 import "./abbreviate-months.spec";
 import "./align.spec";
 import "./at-symbol-in-comment.spec";
@@ -44,7 +48,6 @@ import "./extended-name-format.spec";
 import "./generate-keys.spec";
 import "./indent-spaces.spec";
 import "./indent-tab.spec";
-import "./index";
 import "./leading-commas.spec";
 import "./max-authors.spec";
 import "./multiline-field.spec";

@@ -1,91 +1,3 @@
-declare class RootNode {
-	children: (TextNode | BlockNode)[];
-	type: "root";
-	constructor(children?: (TextNode | BlockNode)[]);
-}
-declare class TextNode {
-	parent: RootNode;
-	text: string;
-	type: "text";
-	constructor(parent: RootNode, text: string);
-}
-declare class BlockNode {
-	parent: RootNode;
-	type: "block";
-	command: string;
-	block?: CommentNode | PreambleNode | StringNode | EntryNode;
-	constructor(parent: RootNode);
-}
-declare class CommentNode {
-	parent: BlockNode;
-	raw: string;
-	braces: number;
-	parens: number;
-	type: "comment";
-	constructor(parent: BlockNode, raw: string, braces: number, parens: number);
-}
-declare class PreambleNode {
-	parent: BlockNode;
-	raw: string;
-	braces: number;
-	parens: number;
-	type: "preamble";
-	constructor(parent: BlockNode, raw: string, braces: number, parens: number);
-}
-declare class StringNode {
-	parent: BlockNode;
-	raw: string;
-	braces: number;
-	parens: number;
-	type: "string";
-	constructor(parent: BlockNode, raw: string, braces: number, parens: number);
-}
-declare class EntryNode {
-	parent: BlockNode;
-	wrapType: "{" | "(";
-	type: "entry";
-	key?: string;
-	keyEnded?: boolean;
-	fields: FieldNode[];
-	constructor(parent: BlockNode, wrapType: "{" | "(");
-}
-declare class FieldNode {
-	parent: EntryNode;
-	name: string;
-	type: "field";
-	/** Each value is concatenated */
-	value: ConcatNode;
-	constructor(parent: EntryNode, name?: string);
-}
-declare class ConcatNode {
-	parent: FieldNode;
-	type: "concat";
-	concat: (LiteralNode | BracedNode | QuotedNode)[];
-	canConsumeValue: boolean;
-	constructor(parent: FieldNode);
-}
-declare class LiteralNode {
-	parent: ConcatNode;
-	value: string;
-	type: "literal";
-	constructor(parent: ConcatNode, value: string);
-}
-declare class BracedNode {
-	parent: ConcatNode;
-	type: "braced";
-	value: string;
-	/** Used to count opening and closing braces */
-	depth: number;
-	constructor(parent: ConcatNode);
-}
-declare class QuotedNode {
-	parent: ConcatNode;
-	type: "quoted";
-	value: string;
-	/** Used to count opening and closing braces */
-	depth: number;
-	constructor(parent: ConcatNode);
-}
 /**
  * bibtex-tidy v1.14.0
  * https://github.com/FlamingTempura/bibtex-tidy
@@ -314,6 +226,94 @@ export type BibTeXTidyOptions = {
 };
 export type Options = Omit<BibTeXTidyOptions, "help" | "version" | "quiet" | "backup">;
 export type DuplicateRule = Exclude<BibTeXTidyOptions["duplicates"], boolean | undefined>[number];
+declare class RootNode {
+	children: (TextNode | BlockNode)[];
+	type: "root";
+	constructor(children?: (TextNode | BlockNode)[]);
+}
+declare class TextNode {
+	parent: RootNode;
+	text: string;
+	type: "text";
+	constructor(parent: RootNode, text: string);
+}
+declare class BlockNode {
+	parent: RootNode;
+	type: "block";
+	command: string;
+	block?: CommentNode | PreambleNode | StringNode | EntryNode;
+	constructor(parent: RootNode);
+}
+declare class CommentNode {
+	parent: BlockNode;
+	raw: string;
+	braces: number;
+	parens: number;
+	type: "comment";
+	constructor(parent: BlockNode, raw: string, braces: number, parens: number);
+}
+declare class PreambleNode {
+	parent: BlockNode;
+	raw: string;
+	braces: number;
+	parens: number;
+	type: "preamble";
+	constructor(parent: BlockNode, raw: string, braces: number, parens: number);
+}
+declare class StringNode {
+	parent: BlockNode;
+	raw: string;
+	braces: number;
+	parens: number;
+	type: "string";
+	constructor(parent: BlockNode, raw: string, braces: number, parens: number);
+}
+declare class EntryNode {
+	parent: BlockNode;
+	wrapType: "{" | "(";
+	type: "entry";
+	key?: string;
+	keyEnded?: boolean;
+	fields: FieldNode[];
+	constructor(parent: BlockNode, wrapType: "{" | "(");
+}
+declare class FieldNode {
+	parent: EntryNode;
+	name: string;
+	type: "field";
+	/** Each value is concatenated */
+	value: ConcatNode;
+	constructor(parent: EntryNode, name?: string);
+}
+declare class ConcatNode {
+	parent: FieldNode;
+	type: "concat";
+	concat: (LiteralNode | BracedNode | QuotedNode)[];
+	canConsumeValue: boolean;
+	constructor(parent: FieldNode);
+}
+declare class LiteralNode {
+	parent: ConcatNode;
+	value: string;
+	type: "literal";
+	constructor(parent: ConcatNode, value: string);
+}
+declare class BracedNode {
+	parent: ConcatNode;
+	type: "braced";
+	value: string;
+	/** Used to count opening and closing braces */
+	depth: number;
+	constructor(parent: ConcatNode);
+}
+declare class QuotedNode {
+	parent: ConcatNode;
+	type: "quoted";
+	value: string;
+	/** Used to count opening and closing braces */
+	depth: number;
+	constructor(parent: ConcatNode);
+}
 export type Warning = ({
 	code: "MISSING_KEY";
 } | {

@@ -1,5 +1,5 @@
-import type { BlockNode, EntryNode, TextNode } from "./bibtexParser";
-import { parseLaTeX, stringifyLaTeX } from "./latexParser";
+import type { BlockNode, EntryNode, TextNode } from "./parsers/bibtexParser";
+import { parseLaTeX, stringifyLaTeX } from "./parsers/latexParser";
 import { specialCharacters } from "./unicode";
 
 export function escapeSpecialCharacters(str: string): string {
