@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import { test } from "../../test/utils";
+import { describe, it } from "node:test";
 import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from "./latexParser";
 
 const testStrings = [
@@ -43,17 +43,21 @@ const testStrings = [
 	},
 ];
 
-test("latex parser", () => {
-	for (const str of testStrings) {
-		assert.strictEqual(stringifyLaTeX(parseLaTeX(str.input)), str.input);
-	}
+describe("latex parser", () => {
+	it("parses latex", () => {
+		for (const str of testStrings) {
+			assert.strictEqual(stringifyLaTeX(parseLaTeX(str.input)), str.input);
+		}
+	});
 });
 
-test("flattening latex", () => {
-	for (const str of testStrings) {
-		assert.strictEqual(
-			stringifyLaTeX(flattenLaTeX(parseLaTeX(str.input))),
-			str.flattened,
-		);
-	}
+describe("flattening latex", () => {
+	it("flattens latex", () => {
+		for (const str of testStrings) {
+			assert.strictEqual(
+				stringifyLaTeX(flattenLaTeX(parseLaTeX(str.input))),
+				str.flattened,
+			);
+		}
+	});
 });

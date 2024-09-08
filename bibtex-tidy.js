@@ -29,7 +29,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  getEntries: () => getEntries2,
+  getEntries: () => getEntries,
   tidy: () => tidy
 });
 module.exports = __toCommonJS(src_exports);
@@ -227,6 +227,1781 @@ function flattenLaTeX(block) {
   return newBlock;
 }
 __name(flattenLaTeX, "flattenLaTeX");
+
+// src/utils.ts
+function alphaNum(str) {
+  return str.replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
+}
+__name(alphaNum, "alphaNum");
+function convertCRLF(str) {
+  return str.replace(/\r\n?/g, "\n");
+}
+__name(convertCRLF, "convertCRLF");
+function wrapText(line, lineWidth) {
+  const words2 = line.split(" ");
+  const lines = [];
+  let currLine = "";
+  for (const [i, word] of words2.entries()) {
+    if (currLine.length + word.length + 1 > lineWidth && i > 0) {
+      lines.push(currLine.trim());
+      currLine = "";
+    }
+    currLine += `${word} `;
+  }
+  return [...lines, currLine.trim()];
+}
+__name(wrapText, "wrapText");
+function unwrapText(str) {
+  return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
+}
+__name(unwrapText, "unwrapText");
+function doubleEnclose(str) {
+  const latex = parseLaTeX(str);
+  const alreadyDoubleEnclosed = latex.children.length === 1 && latex.children[0]?.type === "block" && latex.children[0]?.kind === "curly" && latex.children[0].children.length === 1 && latex.children[0].children[0]?.type === "block" && latex.children[0].children[0]?.kind === "curly";
+  const result = stringifyLaTeX(latex);
+  return alreadyDoubleEnclosed ? result : `{${result}}`;
+}
+__name(doubleEnclose, "doubleEnclose");
+function isEntryNode(node) {
+  return node.type !== "text" && node.block?.type === "entry";
+}
+__name(isEntryNode, "isEntryNode");
+
+// src/format.ts
+function formatBibtex(ast, options, replacementKeys) {
+  const { omit, tab, space } = options;
+  const indent = tab ? "	" : " ".repeat(space);
+  const omitFields = new Set(omit);
+  let bibtex = ast.children.map(
+    (child) => formatNode(child, options, indent, omitFields, replacementKeys)
+  ).join("").trimEnd();
+  if (!bibtex.endsWith("\n")) bibtex += "\n";
+  return bibtex;
+}
+__name(formatBibtex, "formatBibtex");
+function formatNode(child, options, indent, omitFields, replacementKeys) {
+  if (child.type === "text") {
+    return formatComment(child.text, options);
+  }
+  if (!child.block) throw new Error("FATAL!");
+  switch (child.block.type) {
+    case "preamble":
+    case "string":
+      return `${child.block.raw}
+${options.blankLines ? "\n" : ""}`;
+    case "comment":
+      return formatComment(child.block.raw, options);
+    case "entry":
+      return formatEntry(
+        child.command,
+        child.block,
+        options,
+        indent,
+        omitFields,
+        replacementKeys?.get(child.block)
+      ) + (options.blankLines ? "\n" : "");
+  }
+}
+__name(formatNode, "formatNode");
+function formatEntry(entryType, entry, options, indent, omitFields, replacementKey) {
+  const {
+    align,
+    trailingCommas,
+    removeDuplicateFields,
+    removeEmptyFields,
+    lowercase
+  } = options;
+  let bibtex = "";
+  const itemType = lowercase ? entryType.toLocaleLowerCase() : entryType;
+  bibtex += `@${itemType}{`;
+  const key = replacementKey ?? entry.key;
+  if (key) bibtex += `${key},`;
+  const fieldSeen = /* @__PURE__ */ new Set();
+  for (const [i, field] of entry.fields.entries()) {
+    const nameLowerCase = field.name.toLocaleLowerCase();
+    const name = lowercase ? nameLowerCase : field.name;
+    if (field.name === "") continue;
+    if (omitFields.has(nameLowerCase)) continue;
+    if (removeDuplicateFields && fieldSeen.has(nameLowerCase)) continue;
+    fieldSeen.add(nameLowerCase);
+    if (field.value.concat.length === 0) {
+      if (removeEmptyFields) continue;
+      bibtex += `
+${indent}${name}`;
+    } else {
+      const value = formatValue(field, options);
+      if (removeEmptyFields && (value === "{}" || value === '""')) continue;
+      bibtex += `
+${indent}${name.trim().padEnd(align - 1)} = ${value}`;
+    }
+    if (i < entry.fields.length - 1 || trailingCommas) bibtex += ",";
+  }
+  bibtex += "\n}\n";
+  return bibtex;
+}
+__name(formatEntry, "formatEntry");
+function formatComment(comment, { stripComments, tidyComments }) {
+  if (stripComments) return "";
+  if (tidyComments) {
+    const trimmed = comment.trim();
+    if (trimmed === "") return "";
+    return `${trimmed}
+`;
+  }
+  return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
+}
+__name(formatComment, "formatComment");
+function formatValue(field, options) {
+  const { curly, numeric, align, wrap, tab, space, enclosingBraces } = options;
+  const nameLowerCase = field.name.toLocaleLowerCase();
+  const indent = tab ? "	" : " ".repeat(space);
+  const enclosingBracesFields = new Set(
+    (enclosingBraces ?? []).map((field2) => field2.toLocaleLowerCase())
+  );
+  return field.value.concat.map(({ type, value }) => {
+    const isNumeric = value.match(/^[1-9][0-9]*$/);
+    if (isNumeric && curly) {
+      type = "braced";
+    }
+    if (type === "literal" || numeric && isNumeric) {
+      return value;
+    }
+    const dig3 = value.slice(0, 3).toLowerCase();
+    const isMonthAbbrv = nameLowerCase === "month" && MONTH_SET.has(dig3);
+    if (!curly && numeric && isMonthAbbrv) {
+      return dig3;
+    }
+    value = unwrapText(value);
+    if (enclosingBracesFields.has(nameLowerCase) && (type === "braced" || curly)) {
+      value = doubleEnclose(value);
+    }
+    if (type === "braced" && field.value.concat.length === 1) {
+      value = value.trim();
+    }
+    if (type === "braced" || curly) {
+      const lineLength = `${indent}${align}{${value}}`.length;
+      const multiLine = value.includes("\n\n");
+      if (wrap && lineLength > wrap || multiLine) {
+        let paragraphs = value.split("\n\n");
+        const valIndent = indent.repeat(2);
+        if (wrap) {
+          const wrapCol = wrap;
+          paragraphs = paragraphs.map(
+            (paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join(
+              `
+${valIndent}`
+            )
+          );
+        }
+        value = `
+${valIndent}${paragraphs.join(`
+
+${valIndent}`)}
+${indent}`;
+      }
+      return doubleEnclose(value);
+    }
+    return `"${value}"`;
+  }).join(" # ");
+}
+__name(formatValue, "formatValue");
+
+// src/optionDefinitions.ts
+var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
+var DEFAULT_ALIGN = 14;
+var DEFAULT_SPACE = 2;
+var DEFAULT_WRAP = 80;
+var DEFAULT_FIELD_SORT = [
+  "title",
+  "shorttitle",
+  "author",
+  "year",
+  "month",
+  "day",
+  "journal",
+  "booktitle",
+  "location",
+  "on",
+  "publisher",
+  "address",
+  "series",
+  "volume",
+  "number",
+  "pages",
+  "doi",
+  "isbn",
+  "issn",
+  "url",
+  "urldate",
+  "copyright",
+  "category",
+  "note",
+  "metadata"
+];
+var DEFAULT_SORT = ["key"];
+var DEFAULT_KEY_TEMPLATE = "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
+var optionDefinitions = [
+  {
+    key: "help",
+    cli: { "--help": true, "-h": true },
+    title: "Help",
+    description: ["Show help"],
+    type: "boolean"
+  },
+  {
+    key: "v2",
+    cli: { "--v2": true },
+    title: "Enable planned v2 CLI changes",
+    description: [
+      "Input files will no longer be modified by default. Instead, you will need to specify `--modify`/`-m` option to overwrite the file, or `--output`/`-o` to output to a different file."
+    ],
+    type: "string",
+    defaultValue: void 0
+  },
+  {
+    key: "outputPath",
+    cli: { "--output": /* @__PURE__ */ __name((args) => args[0], "--output"), "-o": /* @__PURE__ */ __name((args) => args[0], "-o") },
+    title: "Output path",
+    description: [
+      "Write output to specified path. When omitted (and -m/--modify is not used), the result will be printed to stdout."
+    ],
+    type: "string",
+    defaultValue: void 0
+  },
+  {
+    key: "modify",
+    cli: { "--modify": true, "-m": true, "--no-modify": false },
+    title: "Modify input files",
+    description: [
+      "Overwrite the original input files with the tidied result. This is enabled by default but will be disabled by default in v2. For v1, use --no-modify to output to stdout instead of overwriting the input files."
+    ],
+    type: "boolean",
+    defaultValue: true
+    // TODO: In v2, switch this to false
+  },
+  {
+    key: "omit",
+    cli: {
+      "--omit": /* @__PURE__ */ __name((args) => {
+        if (args.length === 0) {
+          console.error("Expected a omit list");
+          process.exit(1);
+        }
+        return args;
+      }, "--omit")
+    },
+    toCLI: /* @__PURE__ */ __name((val) => Array.isArray(val) && val.length > 0 ? `--omit=${val.join(",")}` : void 0, "toCLI"),
+    title: "Remove fields",
+    description: ["Remove specified fields from bibliography entries."],
+    examples: ["--omit=id,name"],
+    type: "string[]",
+    defaultValue: []
+  },
+  {
+    key: "curly",
+    cli: { "--curly": true, "--no-curly": false },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--curly" : void 0, "toCLI"),
+    title: "Enclose values in braces",
+    description: [
+      'Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "numeric",
+    cli: { "--numeric": true, "--no-numeric": false },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--numeric" : void 0, "toCLI"),
+    title: "Use numeric values where possible",
+    description: [
+      "Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "months",
+    cli: { "--months": true },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--months" : void 0, "toCLI"),
+    title: "Abbreviate months",
+    description: [
+      "Convert all months to three letter abbreviations (jan, feb, etc)."
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "space",
+    cli: {
+      "--space": /* @__PURE__ */ __name((args) => args.length > 0 ? Number(args[0]) : true, "--space")
+    },
+    toCLI: /* @__PURE__ */ __name((val, opt) => {
+      if (opt.tab) return void 0;
+      if (typeof val === "number" && val !== DEFAULT_SPACE)
+        return `--space=${val}`;
+      if (val && val !== DEFAULT_SPACE) return "--space";
+      return void 0;
+    }, "toCLI"),
+    title: "Indent with spaces",
+    description: [
+      "Indent all fields with the specified number of spaces. Ignored if tab is set."
+    ],
+    examples: ["--space=2 (default)", "--space=4"],
+    type: "boolean | number",
+    convertBoolean: { true: DEFAULT_SPACE, false: void 0 },
+    defaultValue: DEFAULT_SPACE
+  },
+  {
+    key: "tab",
+    cli: { "--tab": true, "--no-tab": false },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--tab" : void 0, "toCLI"),
+    title: "Indent with tabs",
+    description: ["Indent all fields with a tab."],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "align",
+    cli: {
+      "--align": /* @__PURE__ */ __name((args) => Number(args[0]), "--align"),
+      "--no-align": false
+    },
+    toCLI: /* @__PURE__ */ __name((val) => {
+      if (val === false || val === 1 || val === 0) return "--no-align";
+      if (typeof val === "number" && val !== DEFAULT_ALIGN)
+        return `--align=${val}`;
+      return void 0;
+    }, "toCLI"),
+    title: "Align values",
+    description: [
+      "Insert whitespace between fields and values so that values are visually aligned."
+    ],
+    examples: ["--align=14 (default)"],
+    type: "boolean | number",
+    convertBoolean: { true: DEFAULT_ALIGN, false: 1 },
+    defaultValue: DEFAULT_ALIGN
+  },
+  {
+    key: "blankLines",
+    cli: { "--blank-lines": true, "--no-blank-lines": false },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--blank-lines" : void 0, "toCLI"),
+    title: "Insert blank lines",
+    description: ["Insert an empty line between each entry."],
+    type: "boolean"
+  },
+  {
+    key: "sort",
+    cli: {
+      "--sort": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--sort"),
+      "--no-sort": false
+    },
+    toCLI: /* @__PURE__ */ __name((val) => {
+      if (Array.isArray(val) && val.length > 0)
+        return `--sort=${val.join(",")}`;
+      if (val === true) return "--sort";
+      return void 0;
+    }, "toCLI"),
+    title: "Sort bibliography entries",
+    description: [
+      "Sort entries by the specified field names (citation key is used if no fields are specified). For descending order, prefix the field with a dash (-).",
+      "Multiple fields may be specified to sort everything by first field, then by the second field whenever the first field for entries are equal, etc.",
+      "The following additional fields are also permitted: key (entry citation key), type (sorts by the type of entry, e.g. article), and special (ensures that @string, @preamble, @set, and @xdata entries are first). "
+    ],
+    examples: [
+      "--sort (sort by citation key)",
+      "--sort=-year,name (sort year descending then name ascending)",
+      "--sort=name,year"
+    ],
+    type: "boolean | string[]",
+    convertBoolean: { true: DEFAULT_SORT, false: void 0 }
+  },
+  {
+    key: "duplicates",
+    cli: {
+      "--duplicates": /* @__PURE__ */ __name((args) => {
+        if (args.length === 0) return true;
+        for (const i of args) {
+          if (i !== "doi" && i !== "key" && i !== "abstract" && i !== "citation") {
+            console.error(`Invalid key for merge option: "${i}"`);
+            process.exit(1);
+          }
+        }
+        return args;
+      }, "--duplicates")
+    },
+    toCLI: /* @__PURE__ */ __name((val) => {
+      if (Array.isArray(val) && val.length > 0)
+        return `--duplicates=${val.join(",")}`;
+      if (val === true) return "--duplicates";
+      return void 0;
+    }, "toCLI"),
+    title: "Check for duplicates",
+    description: [
+      "Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."
+    ],
+    examples: [
+      "--duplicates doi (same DOIs)",
+      "--duplicates key (same IDs)",
+      "--duplicates abstract (similar abstracts)",
+      "--duplicates citation (similar author and titles)",
+      "--duplicates doi, key (identical DOI or keys)",
+      "--duplicates (same DOI, key, abstract, or citation)"
+    ],
+    type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
+    convertBoolean: { true: DEFAULT_MERGE_CHECK, false: void 0 },
+    defaultValue: /* @__PURE__ */ __name((options) => options.merge ? DEFAULT_MERGE_CHECK : void 0, "defaultValue")
+  },
+  {
+    key: "merge",
+    cli: {
+      "--merge": /* @__PURE__ */ __name((args) => {
+        if (args.length === 0) return true;
+        if (args[0] !== "first" && args[0] !== "last" && args[0] !== "combine" && args[0] !== "overwrite") {
+          console.error(`Invalid merge strategy: "${args[0]}"`);
+          process.exit(1);
+        }
+        return args[0];
+      }, "--merge"),
+      "--no-merge": false
+    },
+    toCLI: /* @__PURE__ */ __name((val) => {
+      if (typeof val === "string") return `--merge=${val}`;
+      if (val) return "--merge";
+      return void 0;
+    }, "toCLI"),
+    title: "Merge duplicate entries",
+    description: [
+      "Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:",
+      "- first: only keep the original entry",
+      "- last: only keep the last found duplicate",
+      "- combine: keep original entry and merge in fields of duplicates if they do not already exist",
+      "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"
+    ],
+    type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
+    convertBoolean: { true: "combine", false: void 0 }
+  },
+  {
+    key: "stripEnclosingBraces",
+    cli: { "--strip-enclosing-braces": true },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--strip-enclosing-braces" : void 0, "toCLI"),
+    title: "Strip double-braced values",
+    description: [
+      "Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}."
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "dropAllCaps",
+    cli: { "--drop-all-caps": true },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--drop-all-caps" : void 0, "toCLI"),
+    title: "Drop all caps",
+    description: [
+      "Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}. Roman numerals will be left unchanged."
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "escape",
+    cli: { "--escape": true, "--no-escape": false },
+    toCLI: /* @__PURE__ */ __name((val) => val === false ? "--no-escape" : void 0, "toCLI"),
+    title: "Escape special characters",
+    description: [
+      "Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default."
+    ],
+    type: "boolean",
+    defaultValue: true
+  },
+  {
+    key: "sortFields",
+    cli: { "--sort-fields": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--sort-fields") },
+    toCLI: /* @__PURE__ */ __name((val) => {
+      if (Array.isArray(val) && val.length > 0) {
+        if (JSON.stringify(val) === JSON.stringify(DEFAULT_FIELD_SORT)) {
+          return "--sort-fields";
+        }
+        return `--sort-fields=${val.join(",")}`;
+      }
+      if (val === true) return "--sort-fields";
+      return void 0;
+    }, "toCLI"),
+    title: "Sort fields",
+    description: [
+      "Sort the fields within entries.",
+      "If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata"
+    ],
+    examples: ["--sort-fields=name,author"],
+    type: "boolean | string[]",
+    convertBoolean: { true: DEFAULT_FIELD_SORT, false: void 0 },
+    defaultValue: void 0
+  },
+  {
+    key: "sortProperties",
+    cli: { "--sort-properties": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--sort-properties") },
+    title: "Sort properties",
+    description: ["Alias of sort fields (legacy)"],
+    type: "boolean | string[]",
+    deprecated: true
+  },
+  {
+    key: "stripComments",
+    cli: { "--strip-comments": true, "--no-strip-comments": false },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--strip-comments" : void 0, "toCLI"),
+    title: "Remove comments",
+    description: ["Remove all comments from the bibtex source."],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "trailingCommas",
+    cli: { "--trailing-commas": true, "--no-trailing-commas": true },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--trailing-commas" : void 0, "toCLI"),
+    title: "Trailing commas",
+    description: ["End the last key value pair in each entry with a comma."],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "encodeUrls",
+    cli: { "--encode-urls": true, "--no-encode-urls": true },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--encode-urls" : void 0, "toCLI"),
+    title: "Encode URLs",
+    description: [
+      "Replace invalid URL characters with percent encoded values."
+    ],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "tidyComments",
+    cli: { "--tidy-comments": true, "--no-tidy-comments": false },
+    toCLI: /* @__PURE__ */ __name((val) => val === false ? "--no-tidy-comments" : void 0, "toCLI"),
+    title: "Tidy comments",
+    description: ["Remove whitespace surrounding comments."],
+    type: "boolean",
+    defaultValue: true
+  },
+  {
+    key: "removeEmptyFields",
+    cli: { "--remove-empty-fields": true, "--no-remove-empty-fields": false },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--remove-empty-fields" : void 0, "toCLI"),
+    title: "Remove empty fields",
+    description: ["Remove any fields that have empty values."],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
+    key: "removeDuplicateFields",
+    cli: {
+      "--remove-dupe-fields": true,
+      "--no-remove-dupe-fields": false
+    },
+    toCLI: /* @__PURE__ */ __name((val) => val === false ? "--no-remove-dupe-fields" : void 0, "toCLI"),
+    title: "Remove duplicate fields",
+    description: [
+      "Only allow one of each field in each entry. Enabled by default."
+    ],
+    type: "boolean",
+    defaultValue: true
+  },
+  {
+    key: "generateKeys",
+    cli: { "--generate-keys": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--generate-keys") },
+    toCLI: /* @__PURE__ */ __name((val) => {
+      if (val === true || val === DEFAULT_KEY_TEMPLATE)
+        return "--generate-keys";
+      if (typeof val === "string")
+        return `--generate-keys="${val.replace(/"/g, '\\"')}"`;
+      return void 0;
+    }, "toCLI"),
+    title: "Generate citation keys [Experimental]",
+    description: [
+      "For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning."
+    ],
+    type: "boolean | string",
+    convertBoolean: {
+      true: DEFAULT_KEY_TEMPLATE,
+      false: void 0
+    },
+    defaultValue: void 0
+  },
+  {
+    key: "maxAuthors",
+    cli: { "--max-authors": /* @__PURE__ */ __name((args) => Number(args[0]), "--max-authors") },
+    toCLI: /* @__PURE__ */ __name((val) => val ? `--max-authors=${val}` : void 0, "toCLI"),
+    title: "Maximum authors",
+    description: [
+      'Truncate authors if above a given number into "and others".'
+    ],
+    type: "number"
+  },
+  {
+    key: "lowercase",
+    cli: { "--no-lowercase": false },
+    toCLI: /* @__PURE__ */ __name((val) => val === false ? "--no-lowercase" : void 0, "toCLI"),
+    title: "Lowercase fields",
+    description: ["Lowercase field names and entry type. Enabled by default."],
+    type: "boolean",
+    defaultValue: true
+  },
+  {
+    key: "enclosingBraces",
+    cli: {
+      "--enclosing-braces": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--enclosing-braces")
+    },
+    toCLI: /* @__PURE__ */ __name((val) => {
+      if (Array.isArray(val) && val.length > 0)
+        return `--enclosing-braces=${val.join(",")}`;
+      if (val === true) return "--enclosing-braces";
+      return void 0;
+    }, "toCLI"),
+    title: "Enclose values in double braces",
+    description: [
+      "Enclose the given fields in double braces, such that case is preserved during BibTeX compilation."
+    ],
+    examples: [
+      "--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})",
+      "--enclosing-braces (equivalent to ---enclosing-braces=title)"
+    ],
+    type: "boolean | string[]",
+    convertBoolean: { true: ["title"], false: void 0 }
+  },
+  {
+    key: "removeBraces",
+    cli: {
+      "--remove-braces": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--remove-braces")
+    },
+    toCLI: /* @__PURE__ */ __name((val) => {
+      if (Array.isArray(val) && val.length > 0)
+        return `--remove-braces=${val.join(",")}`;
+      if (val === true) return "--remove-braces";
+      return void 0;
+    }, "toCLI"),
+    title: "Remove braces",
+    description: [
+      "Remove any curly braces within the value, unless they are part of a command."
+    ],
+    examples: [
+      "--remove-braces=title,journal",
+      "--remove-braces (equivalent to ---remove-braces=title)"
+    ],
+    type: "boolean | string[]",
+    convertBoolean: { true: ["title"], false: void 0 }
+  },
+  {
+    key: "wrap",
+    cli: {
+      "--wrap": /* @__PURE__ */ __name((args) => args.length > 0 ? Number(args[0]) : true, "--wrap"),
+      "--no-wrap": false
+    },
+    toCLI: /* @__PURE__ */ __name((val) => val ? `--wrap=${val}` : void 0, "toCLI"),
+    title: "Wrap values",
+    description: ["Wrap long values at the given column"],
+    examples: ["--wrap (80 by default)", "--wrap=82"],
+    type: "boolean | number",
+    convertBoolean: { true: DEFAULT_WRAP, false: void 0 }
+  },
+  {
+    key: "version",
+    cli: { "--version": true, "-v": true },
+    title: "Version",
+    description: ["Show bibtex-tidy version."],
+    type: "boolean"
+  },
+  {
+    key: "quiet",
+    cli: { "--quiet": true },
+    title: "Quiet",
+    description: ["Suppress logs on stdout."],
+    type: "boolean"
+  },
+  {
+    key: "backup",
+    cli: { "--backup": true, "--no-backup": false },
+    title: "Backup",
+    description: [
+      "Make a backup <filename>.original. Enabled by default (unless --modify is explicitly provided or outputting to a different file/stdio). Deprecated but provided for backward compatibility."
+    ],
+    type: "boolean",
+    defaultValue: true,
+    deprecated: true
+  }
+];
+
+// src/optionUtils.ts
+function normalizeOptions(options) {
+  return Object.fromEntries(
+    optionDefinitions.map((def) => {
+      const key = def.key;
+      const value = options[key];
+      if (def.convertBoolean && typeof value === "boolean") {
+        return [
+          key,
+          value ? def.convertBoolean.true : def.convertBoolean.false
+        ];
+      }
+      if (typeof value === "undefined" && def.defaultValue !== void 0) {
+        if (typeof def.defaultValue === "function") {
+          return [key, def.defaultValue(options)];
+        }
+        return [key, def.defaultValue];
+      }
+      return [key, value];
+    })
+  );
+}
+__name(normalizeOptions, "normalizeOptions");
+
+// src/cache.ts
+var Cache = class {
+  constructor(tidyOptions = normalizeOptions({})) {
+    this.tidyOptions = tidyOptions;
+    this.valueLookup = /* @__PURE__ */ new Map();
+    this.fieldLookup = /* @__PURE__ */ new Map();
+    this.renderValueLookup = /* @__PURE__ */ new Map();
+  }
+  static {
+    __name(this, "Cache");
+  }
+  lookupEntryValue(entry, field) {
+    const fieldName = field.toLocaleLowerCase();
+    let value = this.valueLookup.get(entry)?.get(field);
+    if (value === void 0) {
+      const field2 = this.lookupField(entry, fieldName);
+      if (!field2) {
+        value = "";
+      } else {
+        value = formatValue(field2, this.tidyOptions) ?? "";
+      }
+      this.valueLookup.set(entry, /* @__PURE__ */ new Map([[fieldName, value]]));
+    }
+    return value;
+  }
+  invalidateEntryValue(entry, field) {
+    this.valueLookup.get(entry)?.delete(field.toLocaleLowerCase());
+    this.renderValueLookup.get(entry)?.delete(field.toLocaleLowerCase());
+  }
+  lookupField(entry, fieldLc) {
+    let fieldNode = this.fieldLookup.get(entry)?.get(fieldLc);
+    if (fieldNode === void 0) {
+      fieldNode = entry.fields.find(
+        (field) => field.name.toLocaleLowerCase() === fieldLc
+      );
+    }
+    return fieldNode;
+  }
+  lookupRenderedEntryValue(entry, field) {
+    const fieldName = field.toLocaleLowerCase();
+    let value = this.renderValueLookup.get(entry)?.get(field);
+    if (value === void 0) {
+      const entryValue = this.lookupEntryValue(entry, fieldName);
+      value = parseLaTeX(entryValue).renderAsText();
+      this.renderValueLookup.set(entry, /* @__PURE__ */ new Map([[fieldName, value]]));
+    }
+    return value;
+  }
+  lookupRenderedEntryValues(entry) {
+    const values = /* @__PURE__ */ new Map();
+    for (const field of entry.fields) {
+      values.set(field.name, this.lookupRenderedEntryValue(entry, field.name));
+    }
+    return values;
+  }
+};
+
+// src/parsers/nameFieldParser.ts
+function parseNameList(value) {
+  return value.split(/\s+and\s+/i).map(parseName);
+}
+__name(parseNameList, "parseNameList");
+function detectNameSyntax(tokens) {
+  const names = tokens.filter((token) => token.type === "name");
+  const prefixes = tokens.filter((token) => token.type === "prefix");
+  const commas = tokens.filter((token) => token.type === "comma");
+  if (tokens.length === 0) {
+    return "Empty";
+  }
+  if (tokens.length === 1 && nameStr(tokens) === "others") {
+    return "Others";
+  }
+  if (tokens.length === names.length && tokens.length === 1) {
+    return "LastName";
+  }
+  if (tokens.length === names.length) {
+    return "FirstName LastNames";
+  }
+  if (prefixes.length > 0 && commas.length === 0) {
+    return "FirstNames Prefixes LastNames";
+  }
+  if (commas.length === 1) {
+    return "LastNames, FirstNames Prefixes";
+  }
+  if (commas.length === 2) {
+    return "LastNames, Suffixes, FirstNames Prefixes";
+  }
+  throw new Error(
+    `Invalid name syntax: ${tokens.map((token) => token.type).join(" ")}`
+  );
+}
+__name(detectNameSyntax, "detectNameSyntax");
+function parseName(name) {
+  const tokens = tokeniseName(name);
+  switch (detectNameSyntax(tokens)) {
+    case "Empty":
+      return { first: "", last: "", pre: "", suf: "" };
+    case "Others":
+      return { first: "", last: "others", pre: "", suf: "" };
+    case "LastName":
+      return { first: "", last: nameStr(tokens), pre: "", suf: "" };
+    case "FirstName LastNames": {
+      const [first, last] = partition(tokens, ["name", "name"]);
+      return { first: nameStr(first), last: nameStr(last), pre: "", suf: "" };
+    }
+    case "FirstNames Prefixes LastNames": {
+      const [first, pre, last] = partition(tokens, [
+        "name",
+        "prefix",
+        "name"
+      ]);
+      return {
+        first: nameStr(first),
+        pre: nameStr(pre),
+        last: nameStr(last),
+        suf: ""
+      };
+    }
+    case "LastNames, FirstNames Prefixes": {
+      const [lastNames, firstNames, prefixes] = partition(tokens, [
+        "name",
+        "comma",
+        "prefix"
+      ]);
+      return {
+        last: nameStr(lastNames),
+        first: nameStr(firstNames),
+        pre: nameStr(prefixes),
+        suf: ""
+      };
+    }
+    case "LastNames, Suffixes, FirstNames Prefixes": {
+      const [lastNames, suffixes, firstNames, prefixes] = partition(tokens, [
+        "name",
+        "comma",
+        "comma",
+        "prefix"
+      ]);
+      return {
+        last: nameStr(lastNames),
+        suf: nameStr(suffixes),
+        first: nameStr(firstNames),
+        pre: nameStr(prefixes)
+      };
+    }
+  }
+}
+__name(parseName, "parseName");
+function tokeniseName(name) {
+  const tokens = [];
+  let current = "";
+  function flushToken() {
+    if (!current) return;
+    tokens.push({
+      type: isPrefixToken(current) ? "prefix" : "name",
+      value: current
+    });
+  }
+  __name(flushToken, "flushToken");
+  for (const c of name) {
+    if (c === ",") {
+      flushToken();
+      tokens.push({ type: "comma" });
+      current = "";
+    } else if (/\s/.test(c)) {
+      flushToken();
+      current = "";
+    } else {
+      current += c;
+    }
+  }
+  flushToken();
+  return tokens;
+}
+__name(tokeniseName, "tokeniseName");
+function nameStr(tokens) {
+  return tokens.filter(
+    (token) => token.type !== "comma"
+  ).map((token) => token.value).join(" ");
+}
+__name(nameStr, "nameStr");
+function isPrefixToken(token) {
+  return /^[a-z]/.test(token);
+}
+__name(isPrefixToken, "isPrefixToken");
+function partition(tokens, divideBefore) {
+  const partitions = divideBefore.map(() => []);
+  let currPartition = -1;
+  for (const token of tokens) {
+    if (divideBefore[currPartition + 1] === token.type) {
+      currPartition++;
+    }
+    partitions[currPartition]?.push(token);
+  }
+  return partitions;
+}
+__name(partition, "partition");
+
+// src/duplicates.ts
+function checkForDuplicates(entries, cache, duplicateRules, merge) {
+  const rules = /* @__PURE__ */ new Map();
+  if (duplicateRules) {
+    for (const rule of duplicateRules) {
+      rules.set(rule, !!merge);
+    }
+  }
+  if (!rules.has("key")) {
+    rules.set("key", false);
+  }
+  const duplicateEntries = /* @__PURE__ */ new Set();
+  const warnings = [];
+  const keys = /* @__PURE__ */ new Map();
+  const dois = /* @__PURE__ */ new Map();
+  const citations = /* @__PURE__ */ new Map();
+  const abstracts = /* @__PURE__ */ new Map();
+  for (const entry of entries) {
+    for (const [rule, doMerge] of rules) {
+      let duplicateOf;
+      let warning;
+      switch (rule) {
+        case "key": {
+          if (!entry.key) continue;
+          const keyLC = entry.key.toLocaleLowerCase();
+          duplicateOf = keys.get(keyLC);
+          if (!duplicateOf) {
+            keys.set(keyLC, entry);
+          } else {
+            warning = `The citation key ${entry.key} has already been used.`;
+          }
+          break;
+        }
+        case "doi": {
+          const doi = alphaNum(cache.lookupEntryValue(entry, "doi"));
+          if (!doi) continue;
+          duplicateOf = dois.get(doi);
+          if (!duplicateOf) {
+            dois.set(doi, entry);
+          } else {
+            warning = `Entry ${entry.key} has an identical DOI to entry ${duplicateOf.key}.`;
+          }
+          break;
+        }
+        case "citation": {
+          const ttl = cache.lookupEntryValue(entry, "title");
+          const aut = cache.lookupEntryValue(entry, "author");
+          const num = cache.lookupEntryValue(entry, "number");
+          if (!ttl || !aut) continue;
+          const cit = [
+            alphaNum(parseNameList(aut)[0]?.last ?? aut),
+            alphaNum(ttl),
+            alphaNum(num ?? "0")
+          ].join(":");
+          duplicateOf = citations.get(cit);
+          if (!duplicateOf) {
+            citations.set(cit, entry);
+          } else {
+            warning = `Entry ${entry.key} has similar content to entry ${duplicateOf.key}.`;
+          }
+          break;
+        }
+        case "abstract": {
+          const abstract = alphaNum(cache.lookupEntryValue(entry, "abstract"));
+          const abs = abstract.slice(0, 100);
+          if (!abs) continue;
+          duplicateOf = abstracts.get(abs);
+          if (!duplicateOf) {
+            abstracts.set(abs, entry);
+          } else {
+            warning = `Entry ${entry.key} has a similar abstract to entry ${duplicateOf.key}.`;
+          }
+          break;
+        }
+      }
+      if (duplicateOf && doMerge) {
+        duplicateEntries.add(entry);
+        mergeEntries(merge, duplicateOf, entry);
+      }
+      if (warning) {
+        warnings.push({
+          code: "DUPLICATE_ENTRY",
+          rule,
+          message: `Duplicate ${doMerge ? "removed" : "detected"}. ${warning}`
+        });
+      }
+    }
+  }
+  return { entries: duplicateEntries, warnings };
+}
+__name(checkForDuplicates, "checkForDuplicates");
+function mergeEntries(merge, duplicateOf, entry) {
+  if (!merge) return;
+  switch (merge) {
+    case "last":
+      duplicateOf.key = entry.key;
+      duplicateOf.fields = entry.fields;
+      break;
+    case "combine":
+    case "overwrite":
+      for (const field of entry.fields) {
+        const existing = duplicateOf.fields.find(
+          (f) => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase()
+        );
+        if (!existing) {
+          duplicateOf.fields.push(field);
+        } else if (merge === "overwrite") {
+          existing.value = field.value;
+        }
+      }
+      break;
+    // TODO: case 'keep-both'
+    case "first":
+      return;
+  }
+}
+__name(mergeEntries, "mergeEntries");
+
+// src/parsers/entryKeyTemplateParser.ts
+function parseEntryKeyTemplate(template) {
+  const tokens = [];
+  const matches = template.matchAll(/\[[^:\]]+(?::[^:\]]+)*\]/g);
+  let pos = 0;
+  for (const match of matches) {
+    if (match.index === void 0) break;
+    if (match.index !== pos) {
+      tokens.push(template.slice(pos, match.index));
+    }
+    const [tokenKeyN, ...modifierKeys] = match[0].slice(1, -1).split(":");
+    if (!tokenKeyN) {
+      throw new Error("Token parse error");
+    }
+    let n;
+    const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
+      n = Number(m);
+      return "N";
+    });
+    tokens.push({
+      marker: tokenKey,
+      parameter: n,
+      modifiers: modifierKeys
+    });
+    pos = match.index + match[0].length;
+  }
+  if (pos < template.length) {
+    tokens.push(template.slice(pos));
+  }
+  return tokens;
+}
+__name(parseEntryKeyTemplate, "parseEntryKeyTemplate");
+
+// src/generateKeys.ts
+var SPECIAL_MARKERS = {
+  auth: {
+    description: "Last name of first authors",
+    callback: /* @__PURE__ */ __name((v) => {
+      const authors = parseNameList(v.get("author") ?? "");
+      const author = authors[0]?.last;
+      return author ? [author] : [];
+    }, "callback")
+  },
+  authEtAl: {
+    description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
+    callback: /* @__PURE__ */ __name((v) => {
+      const authors = parseNameList(v.get("author") ?? "");
+      return [
+        ...authors.slice(0, 2).map((author) => author.last),
+        ...authors.length > 2 ? ["Et", "Al"] : []
+      ];
+    }, "callback")
+  },
+  authors: {
+    description: "Last name all authors",
+    callback: /* @__PURE__ */ __name((v) => {
+      const authors = parseNameList(v.get("author") ?? "");
+      return authors.map((author) => author.last);
+    }, "callback")
+  },
+  authorsN: {
+    description: "Last name N authors, with EtAl if more",
+    callback: /* @__PURE__ */ __name((v, n = 0) => {
+      const authors = parseNameList(v.get("author") ?? "");
+      return [
+        ...authors.slice(0, n).map((author) => author.last),
+        ...authors.length > n ? ["Et", "Al"] : []
+      ];
+    }, "callback")
+  },
+  veryshorttitle: {
+    description: "First non-function word of the title",
+    callback: /* @__PURE__ */ __name((v) => nonFunctionWords(title(v)).slice(0, 1), "callback")
+  },
+  shorttitle: {
+    description: "First three non-function words of the title",
+    callback: /* @__PURE__ */ __name((v) => nonFunctionWords(title(v)).slice(0, 3), "callback")
+  },
+  title: {
+    description: "Full title, capitalized",
+    callback: /* @__PURE__ */ __name((v) => capitalize(words(title(v))), "callback")
+  },
+  fulltitle: {
+    description: "Full title, verbatim",
+    callback: /* @__PURE__ */ __name((v) => words(title(v)), "callback")
+  },
+  year: {
+    description: "Year",
+    callback: /* @__PURE__ */ __name((v) => {
+      const year = v.get("year")?.replace(/[^0-9]/g, "");
+      return year ? [year] : [];
+    }, "callback")
+  },
+  duplicateLetter: {
+    description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
+    callback: /* @__PURE__ */ __name((_, __, duplicate) => [duplicate ? numToLetter(duplicate) : ""], "callback")
+  },
+  duplicateNumber: {
+    description: "If the multiple entries end up with the same key, then insert a number.",
+    callback: /* @__PURE__ */ __name((_, __, duplicate) => [duplicate ? String(duplicate) : ""], "callback")
+  }
+};
+function numToLetter(n) {
+  return String.fromCharCode(96 + n);
+}
+__name(numToLetter, "numToLetter");
+var MODIFIERS = {
+  required: {
+    description: "If data is missing, revert to existing key",
+    callback: /* @__PURE__ */ __name((words2) => {
+      if (words2.length === 0) throw new MissingRequiredData();
+      return words2;
+    }, "callback")
+  },
+  lower: {
+    description: "Convert to lowercase",
+    callback: /* @__PURE__ */ __name((words2) => words2.map((word) => word.toLocaleLowerCase()), "callback")
+  },
+  upper: {
+    description: "Convert to uppercase",
+    callback: /* @__PURE__ */ __name((words2) => words2.map((word) => word.toLocaleUpperCase()), "callback")
+  },
+  capitalize: {
+    description: "Capitalize first letter of each word",
+    callback: capitalize
+  }
+};
+var MissingRequiredData = class extends Error {
+  static {
+    __name(this, "MissingRequiredData");
+  }
+};
+function generateKeys(entries, cache, entryKeyTemplate) {
+  let template = entryKeyTemplate;
+  if (!entryKeyTemplate.includes("[duplicateLetter]") && !entryKeyTemplate.includes("[duplicateNumber]")) {
+    template = `${entryKeyTemplate}[duplicateLetter]`;
+  }
+  const parsedTemplate = parseEntryKeyTemplate(template);
+  const entriesByKey = /* @__PURE__ */ new Map();
+  for (const entry of entries) {
+    const entryValues = cache.lookupRenderedEntryValues(entry);
+    const key = generateKey(entryValues, parsedTemplate);
+    if (!key) continue;
+    const entriesSoFar = entriesByKey.get(key) ?? [];
+    entriesSoFar.push(entry);
+    entriesByKey.set(key, entriesSoFar);
+  }
+  const keys = /* @__PURE__ */ new Map();
+  for (const [key, entries2] of entriesByKey) {
+    const regenerateDuplicate = entries2.length > 1;
+    for (let i = 0; i < entries2.length; i++) {
+      const node = entries2[i];
+      if (!node) continue;
+      const entryValues = cache.lookupRenderedEntryValues(node);
+      const newKey = regenerateDuplicate ? generateKey(entryValues, parsedTemplate, i + 1) : key;
+      if (!newKey) continue;
+      keys.set(node, newKey);
+    }
+  }
+  return keys;
+}
+__name(generateKeys, "generateKeys");
+function generateKey(valueLookup, entryKeyTemplate, duplicateNumber) {
+  try {
+    let newKey = entryKeyTemplate.map((token) => {
+      if (typeof token === "string") {
+        return token;
+      }
+      const { marker, parameter, modifiers } = token;
+      const specialMarker = SPECIAL_MARKERS[marker];
+      let key;
+      if (specialMarker) {
+        key = specialMarker.callback(valueLookup, parameter, duplicateNumber);
+      } else if (marker === marker.toLocaleUpperCase()) {
+        const value = valueLookup.get(marker.toLocaleLowerCase());
+        key = value ? words(value) : [];
+      } else {
+        throw new Error(`Invalid citation key token ${marker}`);
+      }
+      for (const modifierKey of modifiers) {
+        const modifier = MODIFIERS[modifierKey];
+        if (modifier) {
+          key = modifier.callback(key);
+        } else {
+          throw new Error(`Invalid modifier ${modifierKey}`);
+        }
+      }
+      return key.join("");
+    }).join("");
+    newKey = removeUnsafeEntryKeyChars(newKey);
+    if (newKey === "") return;
+    return newKey;
+  } catch (e) {
+    if (e instanceof MissingRequiredData) {
+      return;
+    }
+    throw e;
+  }
+}
+__name(generateKey, "generateKey");
+var functionWords = /* @__PURE__ */ new Set([
+  "a",
+  "about",
+  "above",
+  "across",
+  "against",
+  "along",
+  "among",
+  "an",
+  "and",
+  "around",
+  "at",
+  "before",
+  "behind",
+  "below",
+  "beneath",
+  "beside",
+  "between",
+  "beyond",
+  "but",
+  "by",
+  "down",
+  "during",
+  "except",
+  "for",
+  "for",
+  "from",
+  "in",
+  "inside",
+  "into",
+  "like",
+  "near",
+  "nor",
+  "of",
+  "off",
+  "on",
+  "onto",
+  "or",
+  "since",
+  "so",
+  "the",
+  "through",
+  "to",
+  "toward",
+  "under",
+  "until",
+  "up",
+  "upon",
+  "with",
+  "within",
+  "without",
+  "yet"
+]);
+function nonFunctionWords(value) {
+  return words(value).filter(
+    (word) => !functionWords.has(word.toLocaleLowerCase())
+  );
+}
+__name(nonFunctionWords, "nonFunctionWords");
+function words(value) {
+  return value.split(/[\s.,:;]+/).filter((word) => word.length > 0);
+}
+__name(words, "words");
+function capitalize(words2) {
+  return words2.map(
+    (word) => word.slice(0, 1).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase()
+  );
+}
+__name(capitalize, "capitalize");
+function title(entryValues) {
+  return entryValues.get("title") ?? entryValues.get("booktitle") ?? "";
+}
+__name(title, "title");
+function removeUnsafeEntryKeyChars(str) {
+  return str.replace(/[{},\s\\#%~()"'=.,:;[\]_]+/g, "");
+}
+__name(removeUnsafeEntryKeyChars, "removeUnsafeEntryKeyChars");
+
+// src/parsers/bibtexParser.ts
+var RootNode = class {
+  constructor(children = []) {
+    this.children = children;
+    this.type = "root";
+  }
+  static {
+    __name(this, "RootNode");
+  }
+};
+var TextNode2 = class {
+  constructor(parent, text) {
+    this.parent = parent;
+    this.text = text;
+    this.type = "text";
+    parent.children.push(this);
+  }
+  static {
+    __name(this, "TextNode");
+  }
+};
+var BlockNode2 = class {
+  constructor(parent) {
+    this.parent = parent;
+    this.type = "block";
+    this.command = "";
+    parent.children.push(this);
+  }
+  static {
+    __name(this, "BlockNode");
+  }
+};
+var CommentNode = class {
+  constructor(parent, raw, braces, parens) {
+    this.parent = parent;
+    this.raw = raw;
+    this.braces = braces;
+    this.parens = parens;
+    this.type = "comment";
+    parent.block = this;
+  }
+  static {
+    __name(this, "CommentNode");
+  }
+};
+var PreambleNode = class {
+  constructor(parent, raw, braces, parens) {
+    this.parent = parent;
+    this.raw = raw;
+    this.braces = braces;
+    this.parens = parens;
+    this.type = "preamble";
+    parent.block = this;
+  }
+  static {
+    __name(this, "PreambleNode");
+  }
+};
+var StringNode = class {
+  constructor(parent, raw, braces, parens) {
+    this.parent = parent;
+    this.raw = raw;
+    this.braces = braces;
+    this.parens = parens;
+    this.type = "string";
+    parent.block = this;
+  }
+  static {
+    __name(this, "StringNode");
+  }
+};
+var EntryNode = class {
+  constructor(parent, wrapType) {
+    this.parent = parent;
+    this.wrapType = wrapType;
+    this.type = "entry";
+    parent.block = this;
+    this.fields = [];
+  }
+  static {
+    __name(this, "EntryNode");
+  }
+};
+var FieldNode = class {
+  constructor(parent, name = "") {
+    this.parent = parent;
+    this.name = name;
+    this.type = "field";
+    this.value = new ConcatNode(this);
+  }
+  static {
+    __name(this, "FieldNode");
+  }
+};
+var ConcatNode = class {
+  constructor(parent) {
+    this.parent = parent;
+    this.type = "concat";
+    this.canConsumeValue = true;
+    this.concat = [];
+  }
+  static {
+    __name(this, "ConcatNode");
+  }
+};
+var LiteralNode = class {
+  constructor(parent, value) {
+    this.parent = parent;
+    this.value = value;
+    this.type = "literal";
+  }
+  static {
+    __name(this, "LiteralNode");
+  }
+};
+function createLiteralNode(parent, value) {
+  const node = new LiteralNode(parent, value);
+  parent.concat.push(node);
+  return node;
+}
+__name(createLiteralNode, "createLiteralNode");
+var BracedNode = class {
+  constructor(parent) {
+    this.parent = parent;
+    this.type = "braced";
+    this.value = "";
+    /** Used to count opening and closing braces */
+    this.depth = 0;
+  }
+  static {
+    __name(this, "BracedNode");
+  }
+};
+function createBracedNode(parent) {
+  const node = new BracedNode(parent);
+  parent.concat.push(node);
+  return node;
+}
+__name(createBracedNode, "createBracedNode");
+var QuotedNode = class {
+  constructor(parent) {
+    this.parent = parent;
+    this.type = "quoted";
+    this.value = "";
+    /** Used to count opening and closing braces */
+    this.depth = 0;
+  }
+  static {
+    __name(this, "QuotedNode");
+  }
+};
+function createQuotedNode(parent) {
+  const node = new QuotedNode(parent);
+  parent.concat.push(node);
+  return node;
+}
+__name(createQuotedNode, "createQuotedNode");
+function parseBibTeX(input) {
+  const rootNode = new RootNode();
+  let node = rootNode;
+  let line = 1;
+  let column = 0;
+  for (let i = 0; i < input.length; i++) {
+    const char = input[i] ?? "";
+    const prev = input[i - 1] ?? "";
+    if (char === "\n") {
+      line++;
+      column = 0;
+    }
+    column++;
+    switch (node.type) {
+      case "root": {
+        node = char === "@" ? new BlockNode2(node) : new TextNode2(node, char);
+        break;
+      }
+      case "text": {
+        if (char === "@" && /[\s\r\n}]/.test(prev)) {
+          node = new BlockNode2(node.parent);
+        } else {
+          node.text += char;
+        }
+        break;
+      }
+      case "block": {
+        if (char === "@") {
+          const prevNode = node.parent.children[node.parent.children.length - 2];
+          if (prevNode?.type === "text") {
+            prevNode.text += `@${node.command}`;
+          } else {
+            node.parent.children.pop();
+            new TextNode2(node.parent, `@${node.command}`);
+            node.parent.children.push(node);
+          }
+          node.command = "";
+        } else if (char === "{" || char === "(") {
+          const commandTrimmed = node.command.trim();
+          if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
+            node.parent.children.pop();
+            node = new TextNode2(node.parent, `@${node.command}${char}`);
+          } else {
+            node.command = commandTrimmed;
+            const command = node.command.toLowerCase();
+            const [braces, parens] = char === "{" ? [1, 0] : [0, 1];
+            const raw = `@${command}${char}`;
+            switch (command) {
+              case "string":
+                node = new StringNode(node, raw, braces, parens);
+                break;
+              case "preamble":
+                node = new PreambleNode(node, raw, braces, parens);
+                break;
+              case "comment":
+                node = new CommentNode(node, raw, braces, parens);
+                break;
+              default:
+                node = new EntryNode(node, char);
+                break;
+            }
+          }
+        } else if (char.match(/[=#,})[\]]/)) {
+          node.parent.children.pop();
+          node = new TextNode2(node.parent, `@${node.command}${char}`);
+        } else {
+          node.command += char;
+        }
+        break;
+      }
+      case "comment":
+      case "string":
+      case "preamble":
+        if (char === "{") {
+          node.braces++;
+        } else if (char === "}") {
+          node.braces--;
+        } else if (char === "(") {
+          node.parens++;
+        } else if (char === ")") {
+          node.parens--;
+        }
+        node.raw += char;
+        if (node.braces === 0 && node.parens === 0) {
+          node = node.parent.parent;
+        }
+        break;
+      case "entry": {
+        if (isWhitespace(char)) {
+          if (!node.key) {
+          } else {
+            node.keyEnded = true;
+          }
+        } else if (char === ",") {
+          node = new FieldNode(node);
+        } else if (node.wrapType === "{" && char === "}" || node.wrapType === "(" && char === ")") {
+          node = node.parent.parent;
+        } else if (char === "=" && node.key && isValidFieldName(node.key)) {
+          const field = new FieldNode(node, node.key);
+          node.fields.push(field);
+          node.key = void 0;
+          node = field.value;
+        } else if (node.keyEnded) {
+          throw new BibTeXSyntaxError(
+            input,
+            node,
+            i,
+            line,
+            column,
+            "The entry key cannot contain whitespace"
+          );
+        } else if (!isValidKeyCharacter(char)) {
+          throw new BibTeXSyntaxError(
+            input,
+            node,
+            i,
+            line,
+            column,
+            `The entry key cannot contain the character (${char})`
+          );
+        } else {
+          node.key = (node.key ?? "") + char;
+        }
+        break;
+      }
+      case "field": {
+        if (char === "}" || char === ")") {
+          node.name = node.name.trim();
+          node = node.parent.parent.parent;
+        } else if (char === "=") {
+          node.name = node.name.trim();
+          node = node.value;
+        } else if (char === ",") {
+          node.name = node.name.trim();
+          node = new FieldNode(node.parent);
+        } else if (!isValidFieldName(char)) {
+          throw new BibTeXSyntaxError(input, node, i, line, column);
+        } else if (!node.name) {
+          if (!isWhitespace(char)) {
+            node.parent.fields.push(node);
+            node.name = char;
+          } else {
+          }
+        } else {
+          node.name += char;
+        }
+        break;
+      }
+      case "concat": {
+        if (isWhitespace(char)) {
+          break;
+        }
+        if (node.canConsumeValue) {
+          if (/[#=,}()[\]]/.test(char)) {
+            throw new BibTeXSyntaxError(input, node, i, line, column);
+          }
+          node.canConsumeValue = false;
+          if (char === "{") {
+            node = createBracedNode(node);
+          } else if (char === '"') {
+            node = createQuotedNode(node);
+          } else {
+            node = createLiteralNode(node, char);
+          }
+        } else {
+          if (char === ",") {
+            node = new FieldNode(node.parent.parent);
+          } else if (char === "}" || char === ")") {
+            node = node.parent.parent.parent.parent;
+          } else if (char === "#") {
+            node.canConsumeValue = true;
+          } else {
+            throw new BibTeXSyntaxError(input, node, i, line, column);
+          }
+        }
+        break;
+      }
+      case "literal":
+        if (isWhitespace(char)) {
+          node = node.parent;
+        } else if (char === ",") {
+          node = new FieldNode(node.parent.parent.parent);
+        } else if (char === "}") {
+          node = node.parent.parent.parent.parent.parent;
+        } else if (char === "#") {
+          node = node.parent;
+          node.canConsumeValue = true;
+        } else {
+          node.value += char;
+        }
+        break;
+      // Values may be enclosed in curly braces. Curly braces may be used within
+      // the value but they must be balanced.
+      case "braced":
+        if (char === "}" && node.depth === 0) {
+          node = node.parent;
+          break;
+        }
+        if (char === "{") {
+          node.depth++;
+        } else if (char === "}") {
+          node.depth--;
+        }
+        node.value += char;
+        break;
+      // Values may be enclosed in double quotes. Curly braces may be used
+      // within quoted values but they must be balanced.
+      //
+      // To escape a double quote, surround it with braces `{"}`.
+      // https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
+      case "quoted":
+        if (char === '"' && node.depth === 0) {
+          node = node.parent;
+          break;
+        }
+        if (char === "{") {
+          node.depth++;
+        } else if (char === "}") {
+          node.depth--;
+          if (node.depth < 0) {
+            throw new BibTeXSyntaxError(input, node, i, line, column);
+          }
+        }
+        node.value += char;
+        break;
+    }
+  }
+  return rootNode;
+}
+__name(parseBibTeX, "parseBibTeX");
+function isWhitespace(string) {
+  return /^[ \t\n\r]*$/.test(string);
+}
+__name(isWhitespace, "isWhitespace");
+function isValidKeyCharacter(char) {
+  return !/[#%{}~$,]/.test(char);
+}
+__name(isValidKeyCharacter, "isValidKeyCharacter");
+function isValidFieldName(char) {
+  return !/[=,{}()[\]]/.test(char);
+}
+__name(isValidFieldName, "isValidFieldName");
+var BibTeXSyntaxError = class extends Error {
+  constructor(input, node, pos, line, column, hint) {
+    super(
+      `Line ${line}:${column}: Syntax Error in ${node.type} (${hint})
+${input.slice(Math.max(0, pos - 20), pos)}>>${input[pos]}<<${input.slice(pos + 1, pos + 20)}`
+    );
+    this.node = node;
+    this.line = line;
+    this.column = column;
+    this.hint = hint;
+    this.name = "Syntax Error";
+    this.char = input[pos] ?? "";
+  }
+  static {
+    __name(this, "BibTeXSyntaxError");
+  }
+};
+
+// src/modifiers/abbreviateMonthsModifier.ts
+var abbreviateMonthsModifier = {
+  condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(options.months && fieldName === "month"), "condition"),
+  modifyNode: /* @__PURE__ */ __name((node) => {
+    const concatNode = node.value;
+    for (let i = 0; i < concatNode.concat.length; i++) {
+      const child = concatNode.concat[i];
+      const abbreviation = MONTH_CONVERSIONS[child.value.toLowerCase()];
+      if (abbreviation) {
+        concatNode.concat[i] = new LiteralNode(concatNode, abbreviation);
+      }
+    }
+  }, "modifyNode")
+};
+
+// src/modifiers/dropAllCapsModifier.ts
+var dropAllCapsModifier = {
+  condition: /* @__PURE__ */ __name((fieldName, options, entry, cache) => Boolean(
+    options.dropAllCaps && !cache.lookupRenderedEntryValue(entry, fieldName).match(/[a-z]/)
+  ), "condition"),
+  modifyRenderedValue: /* @__PURE__ */ __name((str) => {
+    return str.replace(/(\w)(\S*)/g, (_, first, rest) => {
+      const word = first + rest;
+      if (isRomanNumeral(word)) return word;
+      return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
+    });
+  }, "modifyRenderedValue")
+};
+function isRomanNumeral(str) {
+  return /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/.test(str);
+}
+__name(isRomanNumeral, "isRomanNumeral");
+
+// src/modifiers/encodeUrlsModifier.ts
+var encodeUrlsModifier = {
+  condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(fieldName === "url" && options.encodeUrls), "condition"),
+  modifyRenderedValue: /* @__PURE__ */ __name((str) => str.replace(/\\?_/g, "\\%5F"), "modifyRenderedValue")
+};
 
 // src/unicode.ts
 var specialCharacters = /* @__PURE__ */ new Map([
@@ -2558,111 +4333,7 @@ var specialCharacters = /* @__PURE__ */ new Map([
   ["d7ff", "\\mathtt{9}"]
 ]);
 
-// src/utils.ts
-function escapeSpecialCharacters(str) {
-  let result = str;
-  const mathExpressions = [];
-  result = result.replace(/\$[^$]+\$/g, (match) => {
-    mathExpressions.push(match);
-    return `MATH.EXP.${mathExpressions.length - 1}`;
-  });
-  let newstr = "";
-  let escapeMode = false;
-  for (let i = 0; i < result.length; i++) {
-    if (escapeMode) {
-      escapeMode = false;
-      newstr += result[i];
-      continue;
-    }
-    if (result[i] === "\\") {
-      escapeMode = true;
-      newstr += result[i];
-      continue;
-    }
-    const c = result.charCodeAt(i).toString(16).padStart(4, "0");
-    newstr += specialCharacters.get(c) ?? result[i];
-  }
-  return newstr.replace(
-    /MATH\.EXP\.(\d+)/g,
-    (_, i) => mathExpressions[Number(i)] ?? ""
-  );
-}
-__name(escapeSpecialCharacters, "escapeSpecialCharacters");
-function titleCase(str) {
-  return str.replace(/(\w)(\S*)/g, (_, first, rest) => {
-    const word = first + rest;
-    if (isRomanNumeral(word)) return word;
-    return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
-  });
-}
-__name(titleCase, "titleCase");
-function isRomanNumeral(str) {
-  return /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/.test(str);
-}
-__name(isRomanNumeral, "isRomanNumeral");
-function alphaNum(str) {
-  return str.replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
-}
-__name(alphaNum, "alphaNum");
-function convertCRLF(str) {
-  return str.replace(/\r\n?/g, "\n");
-}
-__name(convertCRLF, "convertCRLF");
-function wrapText(line, lineWidth) {
-  const words2 = line.split(" ");
-  const lines = [];
-  let currLine = "";
-  for (const [i, word] of words2.entries()) {
-    if (currLine.length + word.length + 1 > lineWidth && i > 0) {
-      lines.push(currLine.trim());
-      currLine = "";
-    }
-    currLine += `${word} `;
-  }
-  return [...lines, currLine.trim()];
-}
-__name(wrapText, "wrapText");
-function unwrapText(str) {
-  return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
-}
-__name(unwrapText, "unwrapText");
-function doubleEnclose(str) {
-  const latex = parseLaTeX(str);
-  const alreadyDoubleEnclosed = latex.children.length === 1 && latex.children[0]?.type === "block" && latex.children[0]?.kind === "curly" && latex.children[0].children.length === 1 && latex.children[0].children[0]?.type === "block" && latex.children[0].children[0]?.kind === "curly";
-  const result = stringifyLaTeX(latex);
-  return alreadyDoubleEnclosed ? result : `{${result}}`;
-}
-__name(doubleEnclose, "doubleEnclose");
-function removeEnclosingBraces(str) {
-  return str.replace(/^\{([^{}]*)\}$/g, "$1");
-}
-__name(removeEnclosingBraces, "removeEnclosingBraces");
-function escapeURL(str) {
-  return str.replace(/\\?_/g, "\\%5F");
-}
-__name(escapeURL, "escapeURL");
-function limitAuthors(str, maxAuthors) {
-  const authors = str.split(" and ");
-  if (authors.length > maxAuthors) {
-    return [...authors.slice(0, maxAuthors), "others"].join(" and ");
-  }
-  return str;
-}
-__name(limitAuthors, "limitAuthors");
-function formatPageRange(str) {
-  let result = str;
-  for (let i = 0; i < 4; i++) {
-    result = result.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
-  }
-  return result;
-}
-__name(formatPageRange, "formatPageRange");
-function isEntryNode(node) {
-  return node.type !== "text" && node.block?.type === "entry";
-}
-__name(isEntryNode, "isEntryNode");
-
-// src/format.ts
+// src/modifiers/escapeCharactersModifier.ts
 var VERBATIM_FIELDS = [
   "url",
   "doi",
@@ -2673,1726 +4344,75 @@ var VERBATIM_FIELDS = [
   "verbc",
   "pdf"
 ];
-function formatBibtex(ast, options, replacementKeys) {
-  const { omit, tab, space } = options;
-  const indent = tab ? "	" : " ".repeat(space);
-  const omitFields = new Set(omit);
-  let bibtex = ast.children.map(
-    (child) => formatNode(child, options, indent, omitFields, replacementKeys)
-  ).join("").trimEnd();
-  if (!bibtex.endsWith("\n")) bibtex += "\n";
-  return bibtex;
-}
-__name(formatBibtex, "formatBibtex");
-function formatNode(child, options, indent, omitFields, replacementKeys) {
-  if (child.type === "text") {
-    return formatComment(child.text, options);
-  }
-  if (!child.block) throw new Error("FATAL!");
-  switch (child.block.type) {
-    case "preamble":
-    case "string":
-      return `${child.block.raw}
-${options.blankLines ? "\n" : ""}`;
-    case "comment":
-      return formatComment(child.block.raw, options);
-    case "entry":
-      return formatEntry(
-        child.command,
-        child.block,
-        options,
-        indent,
-        omitFields,
-        replacementKeys?.get(child.block)
-      ) + (options.blankLines ? "\n" : "");
-  }
-}
-__name(formatNode, "formatNode");
-function formatEntry(entryType, entry, options, indent, omitFields, replacementKey) {
-  const {
-    align,
-    trailingCommas,
-    removeDuplicateFields,
-    removeEmptyFields,
-    lowercase
-  } = options;
-  let bibtex = "";
-  const itemType = lowercase ? entryType.toLocaleLowerCase() : entryType;
-  bibtex += `@${itemType}{`;
-  const key = replacementKey ?? entry.key;
-  if (key) bibtex += `${key},`;
-  const fieldSeen = /* @__PURE__ */ new Set();
-  for (const [i, field] of entry.fields.entries()) {
-    const nameLowerCase = field.name.toLocaleLowerCase();
-    const name = lowercase ? nameLowerCase : field.name;
-    if (field.name === "") continue;
-    if (omitFields.has(nameLowerCase)) continue;
-    if (removeDuplicateFields && fieldSeen.has(nameLowerCase)) continue;
-    fieldSeen.add(nameLowerCase);
-    if (field.value.concat.length === 0) {
-      if (removeEmptyFields) continue;
-      bibtex += `
-${indent}${name}`;
-    } else {
-      const value = formatValue(field, options);
-      if (removeEmptyFields && (value === "{}" || value === '""')) continue;
-      bibtex += `
-${indent}${name.trim().padEnd(align - 1)} = ${value}`;
-    }
-    if (i < entry.fields.length - 1 || trailingCommas) bibtex += ",";
-  }
-  bibtex += "\n}\n";
-  return bibtex;
-}
-__name(formatEntry, "formatEntry");
-function formatComment(comment, { stripComments, tidyComments }) {
-  if (stripComments) return "";
-  if (tidyComments) {
-    const trimmed = comment.trim();
-    if (trimmed === "") return "";
-    return `${trimmed}
-`;
-  }
-  return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
-}
-__name(formatComment, "formatComment");
-function formatValue(field, options) {
-  const {
-    curly,
-    numeric,
-    align,
-    stripEnclosingBraces,
-    dropAllCaps,
-    escape: enableEscape,
-    encodeUrls,
-    wrap,
-    maxAuthors,
-    tab,
-    space,
-    enclosingBraces,
-    removeBraces,
-    months: abbreviateMonths
-  } = options;
-  const nameLowerCase = field.name.toLocaleLowerCase();
-  const indent = tab ? "	" : " ".repeat(space);
-  const enclosingBracesFields = new Set(
-    (enclosingBraces ?? []).map((field2) => field2.toLocaleLowerCase())
-  );
-  const removeBracesFields = new Set(
-    (removeBraces ?? []).map((field2) => field2.toLocaleLowerCase())
-  );
-  return field.value.concat.map(({ type, value }) => {
-    const isNumeric = value.match(/^[1-9][0-9]*$/);
-    if (isNumeric && curly) {
-      type = "braced";
-    }
-    if (abbreviateMonths && nameLowerCase === "month") {
-      const abbreviation = MONTH_CONVERSIONS[value.toLowerCase()];
-      if (abbreviation) {
-        return abbreviation;
-      }
-    }
-    if (type === "literal" || numeric && isNumeric) {
-      return value;
-    }
-    const dig3 = value.slice(0, 3).toLowerCase();
-    const isMonthAbbrv = nameLowerCase === "month" && MONTH_SET.has(dig3);
-    if (!curly && numeric && isMonthAbbrv) {
-      return dig3;
-    }
-    value = unwrapText(value);
-    if (stripEnclosingBraces) {
-      value = removeEnclosingBraces(value);
-    }
-    if (dropAllCaps && !value.match(/[a-z]/)) {
-      value = titleCase(value);
-    }
-    if (nameLowerCase === "url" && encodeUrls) {
-      value = escapeURL(value);
-    }
-    if (!VERBATIM_FIELDS.includes(nameLowerCase) && enableEscape) {
-      value = escapeSpecialCharacters(value);
-    }
-    if (nameLowerCase === "pages") {
-      value = formatPageRange(value);
-    }
-    if (nameLowerCase === "author" && maxAuthors) {
-      value = limitAuthors(value, maxAuthors);
-    }
-    if (removeBracesFields.has(nameLowerCase)) {
-      value = stringifyLaTeX(flattenLaTeX(parseLaTeX(value)));
-    }
-    if (enclosingBracesFields.has(nameLowerCase) && (type === "braced" || curly)) {
-      value = doubleEnclose(value);
-    }
-    if (type === "braced" && field.value.concat.length === 1) {
-      value = value.trim();
-    }
-    if (type === "braced" || curly) {
-      const lineLength = `${indent}${align}{${value}}`.length;
-      const multiLine = value.includes("\n\n");
-      if (wrap && lineLength > wrap || multiLine) {
-        let paragraphs = value.split("\n\n");
-        const valIndent = indent.repeat(2);
-        if (wrap) {
-          const wrapCol = wrap;
-          paragraphs = paragraphs.map(
-            (paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join(
-              `
-${valIndent}`
-            )
-          );
-        }
-        value = `
-${valIndent}${paragraphs.join(`
-
-${valIndent}`)}
-${indent}`;
-      }
-      return doubleEnclose(value);
-    }
-    return `"${value}"`;
-  }).join(" # ");
-}
-__name(formatValue, "formatValue");
-
-// src/optionDefinitions.ts
-var DEFAULT_MERGE_CHECK = ["doi", "citation", "abstract"];
-var DEFAULT_ALIGN = 14;
-var DEFAULT_SPACE = 2;
-var DEFAULT_WRAP = 80;
-var DEFAULT_FIELD_SORT = [
-  "title",
-  "shorttitle",
-  "author",
-  "year",
-  "month",
-  "day",
-  "journal",
-  "booktitle",
-  "location",
-  "on",
-  "publisher",
-  "address",
-  "series",
-  "volume",
-  "number",
-  "pages",
-  "doi",
-  "isbn",
-  "issn",
-  "url",
-  "urldate",
-  "copyright",
-  "category",
-  "note",
-  "metadata"
-];
-var DEFAULT_SORT = ["key"];
-var DEFAULT_KEY_TEMPLATE = "[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
-var optionDefinitions = [
-  {
-    key: "help",
-    cli: { "--help": true, "-h": true },
-    title: "Help",
-    description: ["Show help"],
-    type: "boolean"
-  },
-  {
-    key: "v2",
-    cli: { "--v2": true },
-    title: "Enable planned v2 CLI changes",
-    description: [
-      "Input files will no longer be modified by default. Instead, you will need to specify `--modify`/`-m` option to overwrite the file, or `--output`/`-o` to output to a different file."
-    ],
-    type: "string",
-    defaultValue: void 0
-  },
-  {
-    key: "outputPath",
-    cli: { "--output": /* @__PURE__ */ __name((args) => args[0], "--output"), "-o": /* @__PURE__ */ __name((args) => args[0], "-o") },
-    title: "Output path",
-    description: [
-      "Write output to specified path. When omitted (and -m/--modify is not used), the result will be printed to stdout."
-    ],
-    type: "string",
-    defaultValue: void 0
-  },
-  {
-    key: "modify",
-    cli: { "--modify": true, "-m": true, "--no-modify": false },
-    title: "Modify input files",
-    description: [
-      "Overwrite the original input files with the tidied result. This is enabled by default but will be disabled by default in v2. For v1, use --no-modify to output to stdout instead of overwriting the input files."
-    ],
-    type: "boolean",
-    defaultValue: true
-    // TODO: In v2, switch this to false
-  },
-  {
-    key: "omit",
-    cli: {
-      "--omit": /* @__PURE__ */ __name((args) => {
-        if (args.length === 0) {
-          console.error("Expected a omit list");
-          process.exit(1);
-        }
-        return args;
-      }, "--omit")
-    },
-    toCLI: /* @__PURE__ */ __name((val) => Array.isArray(val) && val.length > 0 ? `--omit=${val.join(",")}` : void 0, "toCLI"),
-    title: "Remove fields",
-    description: ["Remove specified fields from bibliography entries."],
-    examples: ["--omit=id,name"],
-    type: "string[]",
-    defaultValue: []
-  },
-  {
-    key: "curly",
-    cli: { "--curly": true, "--no-curly": false },
-    toCLI: /* @__PURE__ */ __name((val) => val ? "--curly" : void 0, "toCLI"),
-    title: "Enclose values in braces",
-    description: [
-      'Enclose all property values in braces. Quoted values will be converted to braces. For example, "Journal of Tea" will become {Journal of Tea}.'
-    ],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "numeric",
-    cli: { "--numeric": true, "--no-numeric": false },
-    toCLI: /* @__PURE__ */ __name((val) => val ? "--numeric" : void 0, "toCLI"),
-    title: "Use numeric values where possible",
-    description: [
-      "Strip quotes and braces from numeric/month values. For example, {1998} will become 1998."
-    ],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "months",
-    cli: { "--months": true },
-    toCLI: /* @__PURE__ */ __name((val) => val ? "--months" : void 0, "toCLI"),
-    title: "Abbreviate months",
-    description: [
-      "Convert all months to three letter abbreviations (jan, feb, etc)."
-    ],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "space",
-    cli: {
-      "--space": /* @__PURE__ */ __name((args) => args.length > 0 ? Number(args[0]) : true, "--space")
-    },
-    toCLI: /* @__PURE__ */ __name((val, opt) => {
-      if (opt.tab) return void 0;
-      if (typeof val === "number" && val !== DEFAULT_SPACE)
-        return `--space=${val}`;
-      if (val && val !== DEFAULT_SPACE) return "--space";
-      return void 0;
-    }, "toCLI"),
-    title: "Indent with spaces",
-    description: [
-      "Indent all fields with the specified number of spaces. Ignored if tab is set."
-    ],
-    examples: ["--space=2 (default)", "--space=4"],
-    type: "boolean | number",
-    convertBoolean: { true: DEFAULT_SPACE, false: void 0 },
-    defaultValue: DEFAULT_SPACE
-  },
-  {
-    key: "tab",
-    cli: { "--tab": true, "--no-tab": false },
-    toCLI: /* @__PURE__ */ __name((val) => val ? "--tab" : void 0, "toCLI"),
-    title: "Indent with tabs",
-    description: ["Indent all fields with a tab."],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "align",
-    cli: {
-      "--align": /* @__PURE__ */ __name((args) => Number(args[0]), "--align"),
-      "--no-align": false
-    },
-    toCLI: /* @__PURE__ */ __name((val) => {
-      if (val === false || val === 1 || val === 0) return "--no-align";
-      if (typeof val === "number" && val !== DEFAULT_ALIGN)
-        return `--align=${val}`;
-      return void 0;
-    }, "toCLI"),
-    title: "Align values",
-    description: [
-      "Insert whitespace between fields and values so that values are visually aligned."
-    ],
-    examples: ["--align=14 (default)"],
-    type: "boolean | number",
-    convertBoolean: { true: DEFAULT_ALIGN, false: 1 },
-    defaultValue: DEFAULT_ALIGN
-  },
-  {
-    key: "blankLines",
-    cli: { "--blank-lines": true, "--no-blank-lines": false },
-    toCLI: /* @__PURE__ */ __name((val) => val ? "--blank-lines" : void 0, "toCLI"),
-    title: "Insert blank lines",
-    description: ["Insert an empty line between each entry."],
-    type: "boolean"
-  },
-  {
-    key: "sort",
-    cli: {
-      "--sort": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--sort"),
-      "--no-sort": false
-    },
-    toCLI: /* @__PURE__ */ __name((val) => {
-      if (Array.isArray(val) && val.length > 0)
-        return `--sort=${val.join(",")}`;
-      if (val === true) return "--sort";
-      return void 0;
-    }, "toCLI"),
-    title: "Sort bibliography entries",
-    description: [
-      "Sort entries by the specified field names (citation key is used if no fields are specified). For descending order, prefix the field with a dash (-).",
-      "Multiple fields may be specified to sort everything by first field, then by the second field whenever the first field for entries are equal, etc.",
-      "The following additional fields are also permitted: key (entry citation key), type (sorts by the type of entry, e.g. article), and special (ensures that @string, @preamble, @set, and @xdata entries are first). "
-    ],
-    examples: [
-      "--sort (sort by citation key)",
-      "--sort=-year,name (sort year descending then name ascending)",
-      "--sort=name,year"
-    ],
-    type: "boolean | string[]",
-    convertBoolean: { true: DEFAULT_SORT, false: void 0 }
-  },
-  {
-    key: "duplicates",
-    cli: {
-      "--duplicates": /* @__PURE__ */ __name((args) => {
-        if (args.length === 0) return true;
-        for (const i of args) {
-          if (i !== "doi" && i !== "key" && i !== "abstract" && i !== "citation") {
-            console.error(`Invalid key for merge option: "${i}"`);
-            process.exit(1);
-          }
-        }
-        return args;
-      }, "--duplicates")
-    },
-    toCLI: /* @__PURE__ */ __name((val) => {
-      if (Array.isArray(val) && val.length > 0)
-        return `--duplicates=${val.join(",")}`;
-      if (val === true) return "--duplicates";
-      return void 0;
-    }, "toCLI"),
-    title: "Check for duplicates",
-    description: [
-      "Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."
-    ],
-    examples: [
-      "--duplicates doi (same DOIs)",
-      "--duplicates key (same IDs)",
-      "--duplicates abstract (similar abstracts)",
-      "--duplicates citation (similar author and titles)",
-      "--duplicates doi, key (identical DOI or keys)",
-      "--duplicates (same DOI, key, abstract, or citation)"
-    ],
-    type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
-    convertBoolean: { true: DEFAULT_MERGE_CHECK, false: void 0 },
-    defaultValue: /* @__PURE__ */ __name((options) => options.merge ? DEFAULT_MERGE_CHECK : void 0, "defaultValue")
-  },
-  {
-    key: "merge",
-    cli: {
-      "--merge": /* @__PURE__ */ __name((args) => {
-        if (args.length === 0) return true;
-        if (args[0] !== "first" && args[0] !== "last" && args[0] !== "combine" && args[0] !== "overwrite") {
-          console.error(`Invalid merge strategy: "${args[0]}"`);
-          process.exit(1);
-        }
-        return args[0];
-      }, "--merge"),
-      "--no-merge": false
-    },
-    toCLI: /* @__PURE__ */ __name((val) => {
-      if (typeof val === "string") return `--merge=${val}`;
-      if (val) return "--merge";
-      return void 0;
-    }, "toCLI"),
-    title: "Merge duplicate entries",
-    description: [
-      "Merge duplicates entries. Use the duplicates option to determine how duplicates are identified. There are different ways to merge:",
-      "- first: only keep the original entry",
-      "- last: only keep the last found duplicate",
-      "- combine: keep original entry and merge in fields of duplicates if they do not already exist",
-      "- overwrite: keep original entry and merge in fields of duplicates, overwriting existing fields if they exist"
-    ],
-    type: "boolean | 'first' | 'last' | 'combine' | 'overwrite'",
-    convertBoolean: { true: "combine", false: void 0 }
-  },
-  {
-    key: "stripEnclosingBraces",
-    cli: { "--strip-enclosing-braces": true },
-    toCLI: /* @__PURE__ */ __name((val) => val ? "--strip-enclosing-braces" : void 0, "toCLI"),
-    title: "Strip double-braced values",
-    description: [
-      "Where an entire value is enclosed in double braces, remove the extra braces. For example, {{Journal of Tea}} will become {Journal of Tea}."
-    ],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "dropAllCaps",
-    cli: { "--drop-all-caps": true },
-    toCLI: /* @__PURE__ */ __name((val) => val ? "--drop-all-caps" : void 0, "toCLI"),
-    title: "Drop all caps",
-    description: [
-      "Where values are all caps, make them title case. For example, {JOURNAL OF TEA} will become {Journal of Tea}. Roman numerals will be left unchanged."
-    ],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "escape",
-    cli: { "--escape": true, "--no-escape": false },
-    toCLI: /* @__PURE__ */ __name((val) => val === false ? "--no-escape" : void 0, "toCLI"),
-    title: "Escape special characters",
-    description: [
-      "Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default."
-    ],
-    type: "boolean",
-    defaultValue: true
-  },
-  {
-    key: "sortFields",
-    cli: { "--sort-fields": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--sort-fields") },
-    toCLI: /* @__PURE__ */ __name((val) => {
-      if (Array.isArray(val) && val.length > 0) {
-        if (JSON.stringify(val) === JSON.stringify(DEFAULT_FIELD_SORT)) {
-          return "--sort-fields";
-        }
-        return `--sort-fields=${val.join(",")}`;
-      }
-      if (val === true) return "--sort-fields";
-      return void 0;
-    }, "toCLI"),
-    title: "Sort fields",
-    description: [
-      "Sort the fields within entries.",
-      "If no fields are specified fields will be sorted by: title, shorttitle, author, year, month, day, journal, booktitle, location, on, publisher, address, series, volume, number, pages, doi, isbn, issn, url, urldate, copyright, category, note, metadata"
-    ],
-    examples: ["--sort-fields=name,author"],
-    type: "boolean | string[]",
-    convertBoolean: { true: DEFAULT_FIELD_SORT, false: void 0 },
-    defaultValue: void 0
-  },
-  {
-    key: "sortProperties",
-    cli: { "--sort-properties": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--sort-properties") },
-    title: "Sort properties",
-    description: ["Alias of sort fields (legacy)"],
-    type: "boolean | string[]",
-    deprecated: true
-  },
-  {
-    key: "stripComments",
-    cli: { "--strip-comments": true, "--no-strip-comments": false },
-    toCLI: /* @__PURE__ */ __name((val) => val ? "--strip-comments" : void 0, "toCLI"),
-    title: "Remove comments",
-    description: ["Remove all comments from the bibtex source."],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "trailingCommas",
-    cli: { "--trailing-commas": true, "--no-trailing-commas": true },
-    toCLI: /* @__PURE__ */ __name((val) => val ? "--trailing-commas" : void 0, "toCLI"),
-    title: "Trailing commas",
-    description: ["End the last key value pair in each entry with a comma."],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "encodeUrls",
-    cli: { "--encode-urls": true, "--no-encode-urls": true },
-    toCLI: /* @__PURE__ */ __name((val) => val ? "--encode-urls" : void 0, "toCLI"),
-    title: "Encode URLs",
-    description: [
-      "Replace invalid URL characters with percent encoded values."
-    ],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "tidyComments",
-    cli: { "--tidy-comments": true, "--no-tidy-comments": false },
-    toCLI: /* @__PURE__ */ __name((val) => val === false ? "--no-tidy-comments" : void 0, "toCLI"),
-    title: "Tidy comments",
-    description: ["Remove whitespace surrounding comments."],
-    type: "boolean",
-    defaultValue: true
-  },
-  {
-    key: "removeEmptyFields",
-    cli: { "--remove-empty-fields": true, "--no-remove-empty-fields": false },
-    toCLI: /* @__PURE__ */ __name((val) => val ? "--remove-empty-fields" : void 0, "toCLI"),
-    title: "Remove empty fields",
-    description: ["Remove any fields that have empty values."],
-    type: "boolean",
-    defaultValue: false
-  },
-  {
-    key: "removeDuplicateFields",
-    cli: {
-      "--remove-dupe-fields": true,
-      "--no-remove-dupe-fields": false
-    },
-    toCLI: /* @__PURE__ */ __name((val) => val === false ? "--no-remove-dupe-fields" : void 0, "toCLI"),
-    title: "Remove duplicate fields",
-    description: [
-      "Only allow one of each field in each entry. Enabled by default."
-    ],
-    type: "boolean",
-    defaultValue: true
-  },
-  {
-    key: "generateKeys",
-    cli: { "--generate-keys": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--generate-keys") },
-    toCLI: /* @__PURE__ */ __name((val) => {
-      if (val === true || val === DEFAULT_KEY_TEMPLATE)
-        return "--generate-keys";
-      if (typeof val === "string")
-        return `--generate-keys="${val.replace(/"/g, '\\"')}"`;
-      return void 0;
-    }, "toCLI"),
-    title: "Generate citation keys [Experimental]",
-    description: [
-      "For all entries replace the key with a new key of the form <author><year><title>. A JabRef citation pattern can be provided. This is an experimental option that may change without warning."
-    ],
-    type: "boolean | string",
-    convertBoolean: {
-      true: DEFAULT_KEY_TEMPLATE,
-      false: void 0
-    },
-    defaultValue: void 0
-  },
-  {
-    key: "maxAuthors",
-    cli: { "--max-authors": /* @__PURE__ */ __name((args) => Number(args[0]), "--max-authors") },
-    toCLI: /* @__PURE__ */ __name((val) => val ? `--max-authors=${val}` : void 0, "toCLI"),
-    title: "Maximum authors",
-    description: [
-      'Truncate authors if above a given number into "and others".'
-    ],
-    type: "number"
-  },
-  {
-    key: "lowercase",
-    cli: { "--no-lowercase": false },
-    toCLI: /* @__PURE__ */ __name((val) => val === false ? "--no-lowercase" : void 0, "toCLI"),
-    title: "Lowercase fields",
-    description: ["Lowercase field names and entry type. Enabled by default."],
-    type: "boolean",
-    defaultValue: true
-  },
-  {
-    key: "enclosingBraces",
-    cli: {
-      "--enclosing-braces": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--enclosing-braces")
-    },
-    toCLI: /* @__PURE__ */ __name((val) => {
-      if (Array.isArray(val) && val.length > 0)
-        return `--enclosing-braces=${val.join(",")}`;
-      if (val === true) return "--enclosing-braces";
-      return void 0;
-    }, "toCLI"),
-    title: "Enclose values in double braces",
-    description: [
-      "Enclose the given fields in double braces, such that case is preserved during BibTeX compilation."
-    ],
-    examples: [
-      "--enclosing-braces=title,journal (output title and journal fields will be of the form {{This is a title}})",
-      "--enclosing-braces (equivalent to ---enclosing-braces=title)"
-    ],
-    type: "boolean | string[]",
-    convertBoolean: { true: ["title"], false: void 0 }
-  },
-  {
-    key: "removeBraces",
-    cli: {
-      "--remove-braces": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--remove-braces")
-    },
-    toCLI: /* @__PURE__ */ __name((val) => {
-      if (Array.isArray(val) && val.length > 0)
-        return `--remove-braces=${val.join(",")}`;
-      if (val === true) return "--remove-braces";
-      return void 0;
-    }, "toCLI"),
-    title: "Remove braces",
-    description: [
-      "Remove any curly braces within the value, unless they are part of a command."
-    ],
-    examples: [
-      "--remove-braces=title,journal",
-      "--remove-braces (equivalent to ---remove-braces=title)"
-    ],
-    type: "boolean | string[]",
-    convertBoolean: { true: ["title"], false: void 0 }
-  },
-  {
-    key: "wrap",
-    cli: {
-      "--wrap": /* @__PURE__ */ __name((args) => args.length > 0 ? Number(args[0]) : true, "--wrap"),
-      "--no-wrap": false
-    },
-    toCLI: /* @__PURE__ */ __name((val) => val ? `--wrap=${val}` : void 0, "toCLI"),
-    title: "Wrap values",
-    description: ["Wrap long values at the given column"],
-    examples: ["--wrap (80 by default)", "--wrap=82"],
-    type: "boolean | number",
-    convertBoolean: { true: DEFAULT_WRAP, false: void 0 }
-  },
-  {
-    key: "version",
-    cli: { "--version": true, "-v": true },
-    title: "Version",
-    description: ["Show bibtex-tidy version."],
-    type: "boolean"
-  },
-  {
-    key: "quiet",
-    cli: { "--quiet": true },
-    title: "Quiet",
-    description: ["Suppress logs on stdout."],
-    type: "boolean"
-  },
-  {
-    key: "backup",
-    cli: { "--backup": true, "--no-backup": false },
-    title: "Backup",
-    description: [
-      "Make a backup <filename>.original. Enabled by default (unless --modify is explicitly provided or outputting to a different file/stdio). Deprecated but provided for backward compatibility."
-    ],
-    type: "boolean",
-    defaultValue: true,
-    deprecated: true
-  }
-];
-
-// src/optionUtils.ts
-function normalizeOptions(options) {
-  return Object.fromEntries(
-    optionDefinitions.map((def) => {
-      const key = def.key;
-      const value = options[key];
-      if (def.convertBoolean && typeof value === "boolean") {
-        return [
-          key,
-          value ? def.convertBoolean.true : def.convertBoolean.false
-        ];
-      }
-      if (typeof value === "undefined" && def.defaultValue !== void 0) {
-        if (typeof def.defaultValue === "function") {
-          return [key, def.defaultValue(options)];
-        }
-        return [key, def.defaultValue];
-      }
-      return [key, value];
-    })
-  );
-}
-__name(normalizeOptions, "normalizeOptions");
-
-// src/cache.ts
-var Cache = class {
-  constructor(tidyOptions = normalizeOptions({})) {
-    this.tidyOptions = tidyOptions;
-    this.valueLookup = /* @__PURE__ */ new Map();
-    this.fieldLookup = /* @__PURE__ */ new Map();
-    this.renderValueLookup = /* @__PURE__ */ new Map();
-  }
-  static {
-    __name(this, "Cache");
-  }
-  lookupEntryValue(entry, field) {
-    const fieldName = field.toLocaleLowerCase();
-    let value = this.valueLookup.get(entry)?.get(field);
-    if (value === void 0) {
-      const field2 = this.lookupField(entry, fieldName);
-      if (!field2) {
-        value = "";
-      } else {
-        value = formatValue(field2, this.tidyOptions) ?? "";
-      }
-      this.valueLookup.set(entry, /* @__PURE__ */ new Map([[fieldName, value]]));
-    }
-    return value;
-  }
-  lookupField(entry, fieldLc) {
-    let fieldNode = this.fieldLookup.get(entry)?.get(fieldLc);
-    if (fieldNode === void 0) {
-      fieldNode = entry.fields.find(
-        (field) => field.name.toLocaleLowerCase() === fieldLc
-      );
-    }
-    return fieldNode;
-  }
-  lookupRenderedEntryValue(entry, field) {
-    const fieldName = field.toLocaleLowerCase();
-    let value = this.renderValueLookup.get(entry)?.get(field);
-    if (value === void 0) {
-      const entryValue = this.lookupEntryValue(entry, fieldName);
-      value = parseLaTeX(entryValue).renderAsText();
-      this.renderValueLookup.set(entry, /* @__PURE__ */ new Map([[fieldName, value]]));
-    }
-    return value;
-  }
-  lookupRenderedEntryValues(entry) {
-    const values = /* @__PURE__ */ new Map();
-    for (const field of entry.fields) {
-      values.set(field.name, this.lookupRenderedEntryValue(entry, field.name));
-    }
-    return values;
-  }
-};
-
-// src/parsers/nameFieldParser.ts
-function parseNameList(value) {
-  return value.split(/\s+and\s+/i).map(parseName);
-}
-__name(parseNameList, "parseNameList");
-function detectNameSyntax(tokens) {
-  const names = tokens.filter((token) => token.type === "name");
-  const prefixes = tokens.filter((token) => token.type === "prefix");
-  const commas = tokens.filter((token) => token.type === "comma");
-  if (tokens.length === 0) {
-    return "Empty";
-  }
-  if (tokens.length === 1 && nameStr(tokens) === "others") {
-    return "Others";
-  }
-  if (tokens.length === names.length && tokens.length === 1) {
-    return "LastName";
-  }
-  if (tokens.length === names.length) {
-    return "FirstName LastNames";
-  }
-  if (prefixes.length > 0 && commas.length === 0) {
-    return "FirstNames Prefixes LastNames";
-  }
-  if (commas.length === 1) {
-    return "LastNames, FirstNames Prefixes";
-  }
-  if (commas.length === 2) {
-    return "LastNames, Suffixes, FirstNames Prefixes";
-  }
-  throw new Error(
-    `Invalid name syntax: ${tokens.map((token) => token.type).join(" ")}`
-  );
-}
-__name(detectNameSyntax, "detectNameSyntax");
-function parseName(name) {
-  const tokens = tokeniseName(name);
-  switch (detectNameSyntax(tokens)) {
-    case "Empty":
-      return { first: "", last: "", pre: "", suf: "" };
-    case "Others":
-      return { first: "", last: "others", pre: "", suf: "" };
-    case "LastName":
-      return { first: "", last: nameStr(tokens), pre: "", suf: "" };
-    case "FirstName LastNames": {
-      const [first, last] = partition(tokens, ["name", "name"]);
-      return { first: nameStr(first), last: nameStr(last), pre: "", suf: "" };
-    }
-    case "FirstNames Prefixes LastNames": {
-      const [first, pre, last] = partition(tokens, [
-        "name",
-        "prefix",
-        "name"
-      ]);
-      return {
-        first: nameStr(first),
-        pre: nameStr(pre),
-        last: nameStr(last),
-        suf: ""
-      };
-    }
-    case "LastNames, FirstNames Prefixes": {
-      const [lastNames, firstNames, prefixes] = partition(tokens, [
-        "name",
-        "comma",
-        "prefix"
-      ]);
-      return {
-        last: nameStr(lastNames),
-        first: nameStr(firstNames),
-        pre: nameStr(prefixes),
-        suf: ""
-      };
-    }
-    case "LastNames, Suffixes, FirstNames Prefixes": {
-      const [lastNames, suffixes, firstNames, prefixes] = partition(tokens, [
-        "name",
-        "comma",
-        "comma",
-        "prefix"
-      ]);
-      return {
-        last: nameStr(lastNames),
-        suf: nameStr(suffixes),
-        first: nameStr(firstNames),
-        pre: nameStr(prefixes)
-      };
-    }
-  }
-}
-__name(parseName, "parseName");
-function tokeniseName(name) {
-  const tokens = [];
-  let current = "";
-  function flushToken() {
-    if (!current) return;
-    tokens.push({
-      type: isPrefixToken(current) ? "prefix" : "name",
-      value: current
+var escapeCharactersModifier = {
+  condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(options.escape && !VERBATIM_FIELDS.includes(fieldName)), "condition"),
+  modifyRenderedValue: /* @__PURE__ */ __name((str) => {
+    let result = str;
+    const mathExpressions = [];
+    result = result.replace(/\$[^$]+\$/g, (match) => {
+      mathExpressions.push(match);
+      return `MATH.EXP.${mathExpressions.length - 1}`;
     });
-  }
-  __name(flushToken, "flushToken");
-  for (const c of name) {
-    if (c === ",") {
-      flushToken();
-      tokens.push({ type: "comma" });
-      current = "";
-    } else if (/\s/.test(c)) {
-      flushToken();
-      current = "";
-    } else {
-      current += c;
+    let newstr = "";
+    let escapeMode = false;
+    for (let i = 0; i < result.length; i++) {
+      if (escapeMode) {
+        escapeMode = false;
+        newstr += result[i];
+        continue;
+      }
+      if (result[i] === "\\") {
+        escapeMode = true;
+        newstr += result[i];
+        continue;
+      }
+      const c = result.charCodeAt(i).toString(16).padStart(4, "0");
+      newstr += specialCharacters.get(c) ?? result[i];
     }
-  }
-  flushToken();
-  return tokens;
-}
-__name(tokeniseName, "tokeniseName");
-function nameStr(tokens) {
-  return tokens.filter(
-    (token) => token.type !== "comma"
-  ).map((token) => token.value).join(" ");
-}
-__name(nameStr, "nameStr");
-function isPrefixToken(token) {
-  return /^[a-z]/.test(token);
-}
-__name(isPrefixToken, "isPrefixToken");
-function partition(tokens, divideBefore) {
-  const partitions = divideBefore.map(() => []);
-  let currPartition = -1;
-  for (const token of tokens) {
-    if (divideBefore[currPartition + 1] === token.type) {
-      currPartition++;
-    }
-    partitions[currPartition]?.push(token);
-  }
-  return partitions;
-}
-__name(partition, "partition");
-
-// src/duplicates.ts
-function checkForDuplicates(entries, cache, duplicateRules, merge) {
-  const rules = /* @__PURE__ */ new Map();
-  if (duplicateRules) {
-    for (const rule of duplicateRules) {
-      rules.set(rule, !!merge);
-    }
-  }
-  if (!rules.has("key")) {
-    rules.set("key", false);
-  }
-  const duplicateEntries = /* @__PURE__ */ new Set();
-  const warnings = [];
-  const keys = /* @__PURE__ */ new Map();
-  const dois = /* @__PURE__ */ new Map();
-  const citations = /* @__PURE__ */ new Map();
-  const abstracts = /* @__PURE__ */ new Map();
-  for (const entry of entries) {
-    for (const [rule, doMerge] of rules) {
-      let duplicateOf;
-      let warning;
-      switch (rule) {
-        case "key": {
-          if (!entry.key) continue;
-          const keyLC = entry.key.toLocaleLowerCase();
-          duplicateOf = keys.get(keyLC);
-          if (!duplicateOf) {
-            keys.set(keyLC, entry);
-          } else {
-            warning = `The citation key ${entry.key} has already been used.`;
-          }
-          break;
-        }
-        case "doi": {
-          const doi = alphaNum(cache.lookupEntryValue(entry, "doi"));
-          if (!doi) continue;
-          duplicateOf = dois.get(doi);
-          if (!duplicateOf) {
-            dois.set(doi, entry);
-          } else {
-            warning = `Entry ${entry.key} has an identical DOI to entry ${duplicateOf.key}.`;
-          }
-          break;
-        }
-        case "citation": {
-          const ttl = cache.lookupEntryValue(entry, "title");
-          const aut = cache.lookupEntryValue(entry, "author");
-          const num = cache.lookupEntryValue(entry, "number");
-          if (!ttl || !aut) continue;
-          const cit = [
-            alphaNum(parseNameList(aut)[0]?.last ?? aut),
-            alphaNum(ttl),
-            alphaNum(num ?? "0")
-          ].join(":");
-          duplicateOf = citations.get(cit);
-          if (!duplicateOf) {
-            citations.set(cit, entry);
-          } else {
-            warning = `Entry ${entry.key} has similar content to entry ${duplicateOf.key}.`;
-          }
-          break;
-        }
-        case "abstract": {
-          const abstract = alphaNum(cache.lookupEntryValue(entry, "abstract"));
-          const abs = abstract.slice(0, 100);
-          if (!abs) continue;
-          duplicateOf = abstracts.get(abs);
-          if (!duplicateOf) {
-            abstracts.set(abs, entry);
-          } else {
-            warning = `Entry ${entry.key} has a similar abstract to entry ${duplicateOf.key}.`;
-          }
-          break;
-        }
-      }
-      if (duplicateOf && doMerge) {
-        duplicateEntries.add(entry);
-        mergeEntries(merge, duplicateOf, entry);
-      }
-      if (warning) {
-        warnings.push({
-          code: "DUPLICATE_ENTRY",
-          rule,
-          message: `Duplicate ${doMerge ? "removed" : "detected"}. ${warning}`
-        });
-      }
-    }
-  }
-  return { entries: duplicateEntries, warnings };
-}
-__name(checkForDuplicates, "checkForDuplicates");
-function mergeEntries(merge, duplicateOf, entry) {
-  if (!merge) return;
-  switch (merge) {
-    case "last":
-      duplicateOf.key = entry.key;
-      duplicateOf.fields = entry.fields;
-      break;
-    case "combine":
-    case "overwrite":
-      for (const field of entry.fields) {
-        const existing = duplicateOf.fields.find(
-          (f) => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase()
-        );
-        if (!existing) {
-          duplicateOf.fields.push(field);
-        } else if (merge === "overwrite") {
-          existing.value = field.value;
-        }
-      }
-      break;
-    // TODO: case 'keep-both'
-    case "first":
-      return;
-  }
-}
-__name(mergeEntries, "mergeEntries");
-
-// src/parsers/entryKeyTemplateParser.ts
-function parseEntryKeyTemplate(template) {
-  const tokens = [];
-  const matches = template.matchAll(/\[[^:\]]+(?::[^:\]]+)*\]/g);
-  let pos = 0;
-  for (const match of matches) {
-    if (match.index === void 0) break;
-    if (match.index !== pos) {
-      tokens.push(template.slice(pos, match.index));
-    }
-    const [tokenKeyN, ...modifierKeys] = match[0].slice(1, -1).split(":");
-    if (!tokenKeyN) {
-      throw new Error("Token parse error");
-    }
-    let n;
-    const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
-      n = Number(m);
-      return "N";
-    });
-    tokens.push({
-      marker: tokenKey,
-      parameter: n,
-      modifiers: modifierKeys
-    });
-    pos = match.index + match[0].length;
-  }
-  if (pos < template.length) {
-    tokens.push(template.slice(pos));
-  }
-  return tokens;
-}
-__name(parseEntryKeyTemplate, "parseEntryKeyTemplate");
-
-// src/generateKeys.ts
-var SPECIAL_MARKERS = {
-  auth: {
-    description: "Last name of first authors",
-    callback: /* @__PURE__ */ __name((v) => {
-      const authors = parseNameList(v.get("author") ?? "");
-      const author = authors[0]?.last;
-      return author ? [author] : [];
-    }, "callback")
-  },
-  authEtAl: {
-    description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
-    callback: /* @__PURE__ */ __name((v) => {
-      const authors = parseNameList(v.get("author") ?? "");
-      return [
-        ...authors.slice(0, 2).map((author) => author.last),
-        ...authors.length > 2 ? ["Et", "Al"] : []
-      ];
-    }, "callback")
-  },
-  authors: {
-    description: "Last name all authors",
-    callback: /* @__PURE__ */ __name((v) => {
-      const authors = parseNameList(v.get("author") ?? "");
-      return authors.map((author) => author.last);
-    }, "callback")
-  },
-  authorsN: {
-    description: "Last name N authors, with EtAl if more",
-    callback: /* @__PURE__ */ __name((v, n = 0) => {
-      const authors = parseNameList(v.get("author") ?? "");
-      return [
-        ...authors.slice(0, n).map((author) => author.last),
-        ...authors.length > n ? ["Et", "Al"] : []
-      ];
-    }, "callback")
-  },
-  veryshorttitle: {
-    description: "First non-function word of the title",
-    callback: /* @__PURE__ */ __name((v) => nonFunctionWords(title(v)).slice(0, 1), "callback")
-  },
-  shorttitle: {
-    description: "First three non-function words of the title",
-    callback: /* @__PURE__ */ __name((v) => nonFunctionWords(title(v)).slice(0, 3), "callback")
-  },
-  title: {
-    description: "Full title, capitalized",
-    callback: /* @__PURE__ */ __name((v) => capitalize(words(title(v))), "callback")
-  },
-  fulltitle: {
-    description: "Full title, verbatim",
-    callback: /* @__PURE__ */ __name((v) => words(title(v)), "callback")
-  },
-  year: {
-    description: "Year",
-    callback: /* @__PURE__ */ __name((v) => {
-      const year = v.get("year")?.replace(/[^0-9]/g, "");
-      return year ? [year] : [];
-    }, "callback")
-  },
-  duplicateLetter: {
-    description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
-    callback: /* @__PURE__ */ __name((_, __, duplicate) => [duplicate ? numToLetter(duplicate) : ""], "callback")
-  },
-  duplicateNumber: {
-    description: "If the multiple entries end up with the same key, then insert a number.",
-    callback: /* @__PURE__ */ __name((_, __, duplicate) => [duplicate ? String(duplicate) : ""], "callback")
-  }
-};
-function numToLetter(n) {
-  return String.fromCharCode(96 + n);
-}
-__name(numToLetter, "numToLetter");
-var MODIFIERS = {
-  required: {
-    description: "If data is missing, revert to existing key",
-    callback: /* @__PURE__ */ __name((words2) => {
-      if (words2.length === 0) throw new MissingRequiredData();
-      return words2;
-    }, "callback")
-  },
-  lower: {
-    description: "Convert to lowercase",
-    callback: /* @__PURE__ */ __name((words2) => words2.map((word) => word.toLocaleLowerCase()), "callback")
-  },
-  upper: {
-    description: "Convert to uppercase",
-    callback: /* @__PURE__ */ __name((words2) => words2.map((word) => word.toLocaleUpperCase()), "callback")
-  },
-  capitalize: {
-    description: "Capitalize first letter of each word",
-    callback: capitalize
-  }
-};
-var MissingRequiredData = class extends Error {
-  static {
-    __name(this, "MissingRequiredData");
-  }
-};
-function generateKeys(entries, cache, entryKeyTemplate) {
-  let template = entryKeyTemplate;
-  if (!entryKeyTemplate.includes("[duplicateLetter]") && !entryKeyTemplate.includes("[duplicateNumber]")) {
-    template = `${entryKeyTemplate}[duplicateLetter]`;
-  }
-  const parsedTemplate = parseEntryKeyTemplate(template);
-  const entriesByKey = /* @__PURE__ */ new Map();
-  for (const entry of entries) {
-    const entryValues = cache.lookupRenderedEntryValues(entry);
-    const key = generateKey(entryValues, parsedTemplate);
-    if (!key) continue;
-    const entriesSoFar = entriesByKey.get(key) ?? [];
-    entriesSoFar.push(entry);
-    entriesByKey.set(key, entriesSoFar);
-  }
-  const keys = /* @__PURE__ */ new Map();
-  for (const [key, entries2] of entriesByKey) {
-    const regenerateDuplicate = entries2.length > 1;
-    for (let i = 0; i < entries2.length; i++) {
-      const node = entries2[i];
-      if (!node) continue;
-      const entryValues = cache.lookupRenderedEntryValues(node);
-      const newKey = regenerateDuplicate ? generateKey(entryValues, parsedTemplate, i + 1) : key;
-      if (!newKey) continue;
-      keys.set(node, newKey);
-    }
-  }
-  return keys;
-}
-__name(generateKeys, "generateKeys");
-function generateKey(valueLookup, entryKeyTemplate, duplicateNumber) {
-  try {
-    let newKey = entryKeyTemplate.map((token) => {
-      if (typeof token === "string") {
-        return token;
-      }
-      const { marker, parameter, modifiers } = token;
-      const specialMarker = SPECIAL_MARKERS[marker];
-      let key;
-      if (specialMarker) {
-        key = specialMarker.callback(valueLookup, parameter, duplicateNumber);
-      } else if (marker === marker.toLocaleUpperCase()) {
-        const value = valueLookup.get(marker.toLocaleLowerCase());
-        key = value ? words(value) : [];
-      } else {
-        throw new Error(`Invalid citation key token ${marker}`);
-      }
-      for (const modifierKey of modifiers) {
-        const modifier = MODIFIERS[modifierKey];
-        if (modifier) {
-          key = modifier.callback(key);
-        } else {
-          throw new Error(`Invalid modifier ${modifierKey}`);
-        }
-      }
-      return key.join("");
-    }).join("");
-    newKey = removeUnsafeEntryKeyChars(newKey);
-    if (newKey === "") return;
-    return newKey;
-  } catch (e) {
-    if (e instanceof MissingRequiredData) {
-      return;
-    }
-    throw e;
-  }
-}
-__name(generateKey, "generateKey");
-var functionWords = /* @__PURE__ */ new Set([
-  "a",
-  "about",
-  "above",
-  "across",
-  "against",
-  "along",
-  "among",
-  "an",
-  "and",
-  "around",
-  "at",
-  "before",
-  "behind",
-  "below",
-  "beneath",
-  "beside",
-  "between",
-  "beyond",
-  "but",
-  "by",
-  "down",
-  "during",
-  "except",
-  "for",
-  "for",
-  "from",
-  "in",
-  "inside",
-  "into",
-  "like",
-  "near",
-  "nor",
-  "of",
-  "off",
-  "on",
-  "onto",
-  "or",
-  "since",
-  "so",
-  "the",
-  "through",
-  "to",
-  "toward",
-  "under",
-  "until",
-  "up",
-  "upon",
-  "with",
-  "within",
-  "without",
-  "yet"
-]);
-function nonFunctionWords(value) {
-  return words(value).filter(
-    (word) => !functionWords.has(word.toLocaleLowerCase())
-  );
-}
-__name(nonFunctionWords, "nonFunctionWords");
-function words(value) {
-  return value.split(/[\s.,:;]+/).filter((word) => word.length > 0);
-}
-__name(words, "words");
-function capitalize(words2) {
-  return words2.map(
-    (word) => word.slice(0, 1).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase()
-  );
-}
-__name(capitalize, "capitalize");
-function title(entryValues) {
-  return entryValues.get("title") ?? entryValues.get("booktitle") ?? "";
-}
-__name(title, "title");
-function removeUnsafeEntryKeyChars(str) {
-  return str.replace(/[{},\s\\#%~()"'=.,:;[\]_]+/g, "");
-}
-__name(removeUnsafeEntryKeyChars, "removeUnsafeEntryKeyChars");
-
-// src/parsers/bibtexParser.ts
-var RootNode = class {
-  constructor(children = []) {
-    this.children = children;
-    this.type = "root";
-  }
-  static {
-    __name(this, "RootNode");
-  }
-};
-var TextNode2 = class {
-  constructor(parent, text) {
-    this.parent = parent;
-    this.text = text;
-    this.type = "text";
-    parent.children.push(this);
-  }
-  static {
-    __name(this, "TextNode");
-  }
-};
-var BlockNode2 = class {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "block";
-    this.command = "";
-    parent.children.push(this);
-  }
-  static {
-    __name(this, "BlockNode");
-  }
-};
-var CommentNode = class {
-  constructor(parent, raw, braces, parens) {
-    this.parent = parent;
-    this.raw = raw;
-    this.braces = braces;
-    this.parens = parens;
-    this.type = "comment";
-    parent.block = this;
-  }
-  static {
-    __name(this, "CommentNode");
-  }
-};
-var PreambleNode = class {
-  constructor(parent, raw, braces, parens) {
-    this.parent = parent;
-    this.raw = raw;
-    this.braces = braces;
-    this.parens = parens;
-    this.type = "preamble";
-    parent.block = this;
-  }
-  static {
-    __name(this, "PreambleNode");
-  }
-};
-var StringNode = class {
-  constructor(parent, raw, braces, parens) {
-    this.parent = parent;
-    this.raw = raw;
-    this.braces = braces;
-    this.parens = parens;
-    this.type = "string";
-    parent.block = this;
-  }
-  static {
-    __name(this, "StringNode");
-  }
-};
-var EntryNode = class {
-  constructor(parent, wrapType) {
-    this.parent = parent;
-    this.wrapType = wrapType;
-    this.type = "entry";
-    parent.block = this;
-    this.fields = [];
-  }
-  static {
-    __name(this, "EntryNode");
-  }
-};
-var FieldNode = class {
-  constructor(parent, name = "") {
-    this.parent = parent;
-    this.name = name;
-    this.type = "field";
-    this.value = new ConcatNode(this);
-  }
-  static {
-    __name(this, "FieldNode");
-  }
-};
-var ConcatNode = class {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "concat";
-    this.canConsumeValue = true;
-    this.concat = [];
-  }
-  static {
-    __name(this, "ConcatNode");
-  }
-};
-var LiteralNode = class {
-  constructor(parent, value) {
-    this.parent = parent;
-    this.value = value;
-    this.type = "literal";
-    parent.concat.push(this);
-  }
-  static {
-    __name(this, "LiteralNode");
-  }
-};
-var BracedNode = class {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "braced";
-    this.value = "";
-    /** Used to count opening and closing braces */
-    this.depth = 0;
-    parent.concat.push(this);
-  }
-  static {
-    __name(this, "BracedNode");
-  }
-};
-var QuotedNode = class {
-  constructor(parent) {
-    this.parent = parent;
-    this.type = "quoted";
-    this.value = "";
-    /** Used to count opening and closing braces */
-    this.depth = 0;
-    parent.concat.push(this);
-  }
-  static {
-    __name(this, "QuotedNode");
-  }
-};
-function generateAST(input) {
-  const rootNode = new RootNode();
-  let node = rootNode;
-  let line = 1;
-  let column = 0;
-  for (let i = 0; i < input.length; i++) {
-    const char = input[i] ?? "";
-    const prev = input[i - 1] ?? "";
-    if (char === "\n") {
-      line++;
-      column = 0;
-    }
-    column++;
-    switch (node.type) {
-      case "root": {
-        node = char === "@" ? new BlockNode2(node) : new TextNode2(node, char);
-        break;
-      }
-      case "text": {
-        if (char === "@" && /[\s\r\n}]/.test(prev)) {
-          node = new BlockNode2(node.parent);
-        } else {
-          node.text += char;
-        }
-        break;
-      }
-      case "block": {
-        if (char === "@") {
-          const prevNode = node.parent.children[node.parent.children.length - 2];
-          if (prevNode?.type === "text") {
-            prevNode.text += `@${node.command}`;
-          } else {
-            node.parent.children.pop();
-            new TextNode2(node.parent, `@${node.command}`);
-            node.parent.children.push(node);
-          }
-          node.command = "";
-        } else if (char === "{" || char === "(") {
-          const commandTrimmed = node.command.trim();
-          if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
-            node.parent.children.pop();
-            node = new TextNode2(node.parent, `@${node.command}${char}`);
-          } else {
-            node.command = commandTrimmed;
-            const command = node.command.toLowerCase();
-            const [braces, parens] = char === "{" ? [1, 0] : [0, 1];
-            const raw = `@${command}${char}`;
-            switch (command) {
-              case "string":
-                node = new StringNode(node, raw, braces, parens);
-                break;
-              case "preamble":
-                node = new PreambleNode(node, raw, braces, parens);
-                break;
-              case "comment":
-                node = new CommentNode(node, raw, braces, parens);
-                break;
-              default:
-                node = new EntryNode(node, char);
-                break;
-            }
-          }
-        } else if (char.match(/[=#,})[\]]/)) {
-          node.parent.children.pop();
-          node = new TextNode2(node.parent, `@${node.command}${char}`);
-        } else {
-          node.command += char;
-        }
-        break;
-      }
-      case "comment":
-      case "string":
-      case "preamble":
-        if (char === "{") {
-          node.braces++;
-        } else if (char === "}") {
-          node.braces--;
-        } else if (char === "(") {
-          node.parens++;
-        } else if (char === ")") {
-          node.parens--;
-        }
-        node.raw += char;
-        if (node.braces === 0 && node.parens === 0) {
-          node = node.parent.parent;
-        }
-        break;
-      case "entry": {
-        if (isWhitespace(char)) {
-          if (!node.key) {
-          } else {
-            node.keyEnded = true;
-          }
-        } else if (char === ",") {
-          node = new FieldNode(node);
-        } else if (node.wrapType === "{" && char === "}" || node.wrapType === "(" && char === ")") {
-          node = node.parent.parent;
-        } else if (char === "=" && node.key && isValidFieldName(node.key)) {
-          const field = new FieldNode(node, node.key);
-          node.fields.push(field);
-          node.key = void 0;
-          node = field.value;
-        } else if (node.keyEnded) {
-          throw new BibTeXSyntaxError(
-            input,
-            node,
-            i,
-            line,
-            column,
-            "The entry key cannot contain whitespace"
-          );
-        } else if (!isValidKeyCharacter(char)) {
-          throw new BibTeXSyntaxError(
-            input,
-            node,
-            i,
-            line,
-            column,
-            `The entry key cannot contain the character (${char})`
-          );
-        } else {
-          node.key = (node.key ?? "") + char;
-        }
-        break;
-      }
-      case "field": {
-        if (char === "}" || char === ")") {
-          node.name = node.name.trim();
-          node = node.parent.parent.parent;
-        } else if (char === "=") {
-          node.name = node.name.trim();
-          node = node.value;
-        } else if (char === ",") {
-          node.name = node.name.trim();
-          node = new FieldNode(node.parent);
-        } else if (!isValidFieldName(char)) {
-          throw new BibTeXSyntaxError(input, node, i, line, column);
-        } else if (!node.name) {
-          if (!isWhitespace(char)) {
-            node.parent.fields.push(node);
-            node.name = char;
-          } else {
-          }
-        } else {
-          node.name += char;
-        }
-        break;
-      }
-      case "concat": {
-        if (isWhitespace(char)) {
-          break;
-        }
-        if (node.canConsumeValue) {
-          if (/[#=,}()[\]]/.test(char)) {
-            throw new BibTeXSyntaxError(input, node, i, line, column);
-          }
-          node.canConsumeValue = false;
-          if (char === "{") {
-            node = new BracedNode(node);
-          } else if (char === '"') {
-            node = new QuotedNode(node);
-          } else {
-            node = new LiteralNode(node, char);
-          }
-        } else {
-          if (char === ",") {
-            node = new FieldNode(node.parent.parent);
-          } else if (char === "}" || char === ")") {
-            node = node.parent.parent.parent.parent;
-          } else if (char === "#") {
-            node.canConsumeValue = true;
-          } else {
-            throw new BibTeXSyntaxError(input, node, i, line, column);
-          }
-        }
-        break;
-      }
-      case "literal":
-        if (isWhitespace(char)) {
-          node = node.parent;
-        } else if (char === ",") {
-          node = new FieldNode(node.parent.parent.parent);
-        } else if (char === "}") {
-          node = node.parent.parent.parent.parent.parent;
-        } else if (char === "#") {
-          node = node.parent;
-          node.canConsumeValue = true;
-        } else {
-          node.value += char;
-        }
-        break;
-      // Values may be enclosed in curly braces. Curly braces may be used within
-      // the value but they must be balanced.
-      case "braced":
-        if (char === "}" && node.depth === 0) {
-          node = node.parent;
-          break;
-        }
-        if (char === "{") {
-          node.depth++;
-        } else if (char === "}") {
-          node.depth--;
-        }
-        node.value += char;
-        break;
-      // Values may be enclosed in double quotes. Curly braces may be used
-      // within quoted values but they must be balanced.
-      //
-      // To escape a double quote, surround it with braces `{"}`.
-      // https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
-      case "quoted":
-        if (char === '"' && node.depth === 0) {
-          node = node.parent;
-          break;
-        }
-        if (char === "{") {
-          node.depth++;
-        } else if (char === "}") {
-          node.depth--;
-          if (node.depth < 0) {
-            throw new BibTeXSyntaxError(input, node, i, line, column);
-          }
-        }
-        node.value += char;
-        break;
-    }
-  }
-  return rootNode;
-}
-__name(generateAST, "generateAST");
-function isWhitespace(string) {
-  return /^[ \t\n\r]*$/.test(string);
-}
-__name(isWhitespace, "isWhitespace");
-function isValidKeyCharacter(char) {
-  return !/[#%{}~$,]/.test(char);
-}
-__name(isValidKeyCharacter, "isValidKeyCharacter");
-function isValidFieldName(char) {
-  return !/[=,{}()[\]]/.test(char);
-}
-__name(isValidFieldName, "isValidFieldName");
-var BibTeXSyntaxError = class extends Error {
-  constructor(input, node, pos, line, column, hint) {
-    super(
-      `Line ${line}:${column}: Syntax Error in ${node.type} (${hint})
-${input.slice(Math.max(0, pos - 20), pos)}>>${input[pos]}<<${input.slice(pos + 1, pos + 20)}`
+    return newstr.replace(
+      /MATH\.EXP\.(\d+)/g,
+      (_, i) => mathExpressions[Number(i)] ?? ""
     );
-    this.node = node;
-    this.line = line;
-    this.column = column;
-    this.hint = hint;
-    this.name = "Syntax Error";
-    this.char = input[pos] ?? "";
-  }
-  static {
-    __name(this, "BibTeXSyntaxError");
-  }
+  }, "modifyRenderedValue")
+};
+
+// src/modifiers/formatPageRangeModifier.ts
+var formatPageRangeModifier = {
+  condition: /* @__PURE__ */ __name((fieldName) => fieldName === "pages", "condition"),
+  modifyRenderedValue: /* @__PURE__ */ __name((str) => {
+    let result = str;
+    for (let i = 0; i < 4; i++) {
+      result = result.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
+    }
+    return result;
+  }, "modifyRenderedValue")
+};
+
+// src/modifiers/limitAuthorsModifier.ts
+var limitAuthorsModifier = {
+  condition: /* @__PURE__ */ __name((fieldName, options) => fieldName === "author" && options.maxAuthors ? options.maxAuthors : false, "condition"),
+  modifyRenderedValue: /* @__PURE__ */ __name((str, maxAuthors) => {
+    const authors = str.split(" and ");
+    if (authors.length > maxAuthors) {
+      return [...authors.slice(0, maxAuthors), "others"].join(" and ");
+    }
+    return str;
+  }, "modifyRenderedValue")
+};
+
+// src/modifiers/removeBracesModifier.ts
+var removeBracesModifier = {
+  condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(
+    options.removeBraces?.some((f) => f.toLocaleLowerCase() === fieldName)
+  ), "condition"),
+  // TODO: memoize
+  modifyRenderedValue: /* @__PURE__ */ __name((str) => stringifyLaTeX(flattenLaTeX(parseLaTeX(str))), "modifyRenderedValue")
+};
+
+// src/modifiers/stripEnclosingBracesModifier.ts
+var stripEnclosingBracesModifier = {
+  condition: /* @__PURE__ */ __name((_, options) => Boolean(options.stripEnclosingBraces), "condition"),
+  modifyRenderedValue: /* @__PURE__ */ __name((str) => str.replace(/^\{([^{}]*)\}$/g, "$1"), "modifyRenderedValue")
 };
 
 // src/sort.ts
@@ -4483,13 +4503,51 @@ __name(sortEntryFields, "sortEntryFields");
 function tidy(input, options_ = {}) {
   const options = normalizeOptions(options_);
   const inputFixed = convertCRLF(input);
-  const ast = generateAST(inputFixed);
-  const entries = getEntries2(ast);
-  const warnings = getEntries2(ast).filter((entry) => !entry.key).map((entry) => ({
+  const ast = parseBibTeX(inputFixed);
+  const entries = getEntries(ast);
+  const warnings = entries.filter((entry) => !entry.key).map((entry) => ({
     code: "MISSING_KEY",
     message: `${entry.parent.command} entry does not have a citation key.`
   }));
   const cache = new Cache(options);
+  const valueModifiers = [
+    encodeUrlsModifier,
+    limitAuthorsModifier,
+    escapeCharactersModifier,
+    dropAllCapsModifier,
+    formatPageRangeModifier,
+    abbreviateMonthsModifier,
+    stripEnclosingBracesModifier,
+    removeBracesModifier
+  ];
+  for (const entry of entries) {
+    for (const field of entry.fields) {
+      for (const modifier of valueModifiers) {
+        const params = modifier.condition(
+          field.name.toLocaleLowerCase(),
+          options,
+          entry,
+          cache
+        );
+        if (!params) continue;
+        if (modifier.modifyNode) {
+          modifier.modifyNode(field, params);
+          cache.invalidateEntryValue(entry, field.name);
+        }
+        for (const node of field.value.concat) {
+          if (node.type === "braced" || node.type === "quoted") {
+            if (modifier.modifyRenderedValue) {
+              const newValue = modifier.modifyRenderedValue(node.value, params);
+              if (newValue !== node.value) {
+                node.value = newValue;
+                cache.invalidateEntryValue(entry, field.name);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
   const duplicates = checkForDuplicates(
     entries,
     cache,
@@ -4507,10 +4565,10 @@ function tidy(input, options_ = {}) {
   return { bibtex, warnings, count: entries.length };
 }
 __name(tidy, "tidy");
-function getEntries2(ast) {
+function getEntries(ast) {
   return ast.children.filter(isEntryNode).map((node) => node.block);
 }
-__name(getEntries2, "getEntries");
+__name(getEntries, "getEntries");
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   getEntries,

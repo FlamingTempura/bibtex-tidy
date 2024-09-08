@@ -1,51 +1,5 @@
 import type { BlockNode, EntryNode, TextNode } from "./parsers/bibtexParser";
 import { parseLaTeX, stringifyLaTeX } from "./parsers/latexParser";
-import { specialCharacters } from "./unicode";
-
-export function escapeSpecialCharacters(str: string): string {
-	let result = str;
-	const mathExpressions: string[] = [];
-
-	result = result.replace(/\$[^$]+\$/g, (match) => {
-		mathExpressions.push(match);
-		return `MATH.EXP.${mathExpressions.length - 1}`;
-	});
-
-	let newstr = "";
-	let escapeMode = false;
-
-	for (let i = 0; i < result.length; i++) {
-		if (escapeMode) {
-			escapeMode = false;
-			newstr += result[i];
-			continue;
-		}
-		if (result[i] === "\\") {
-			escapeMode = true;
-			newstr += result[i];
-			continue;
-		}
-		// iterate through each character and if it's a special char replace with latex code
-		const c = result.charCodeAt(i).toString(16).padStart(4, "0");
-		newstr += specialCharacters.get(c) ?? result[i];
-	}
-	return newstr.replace(
-		/MATH\.EXP\.(\d+)/g,
-		(_, i) => mathExpressions[Number(i)] ?? "",
-	);
-}
-
-export function titleCase(str: string): string {
-	return str.replace(/(\w)(\S*)/g, (_, first, rest) => {
-		const word = first + rest;
-		if (isRomanNumeral(word)) return word;
-		return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
-	});
-}
-
-function isRomanNumeral(str: string): boolean {
-	return /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/.test(str);
-}
 
 /**
  * Remove all non-alphanumeric characters
@@ -102,32 +56,6 @@ export function doubleEnclose(str: string): string {
 
 	const result = stringifyLaTeX(latex);
 	return alreadyDoubleEnclosed ? result : `{${result}}`;
-}
-
-export function removeEnclosingBraces(str: string): string {
-	return str.replace(/^\{([^{}]*)\}$/g, "$1");
-}
-
-export function escapeURL(str: string): string {
-	return str.replace(/\\?_/g, "\\%5F");
-}
-
-export function limitAuthors(str: string, maxAuthors: number): string {
-	const authors = str.split(" and ");
-	if (authors.length > maxAuthors) {
-		return [...authors.slice(0, maxAuthors), "others"].join(" and ");
-	}
-	return str;
-}
-
-/** Replace single dash with double dash in page range **/
-export function formatPageRange(str: string): string {
-	let result = str;
-	// TODO: replace with replaceAll when more widespread node support
-	for (let i = 0; i < 4; i++) {
-		result = result.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
-	}
-	return result;
 }
 
 export function isEntryNode(

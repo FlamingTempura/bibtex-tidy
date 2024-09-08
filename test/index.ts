@@ -1,11 +1,3 @@
-import "../src/generateKeys.spec";
-import "../src/duplicates.spec";
-import "../src/parsers/entryKeyTemplateParser.spec";
-import "../src/cli/argsParser.spec";
-import "../src/cli/argsToOptions.spec";
-
-import "../src/parsers/latexParser.spec";
-import "../src/parsers/nameFieldParser.spec";
 import "./abbreviate-months.spec";
 import "./align.spec";
 import "./at-symbol-in-comment.spec";

@@ -16,3 +16,4 @@ test/.tmp*
 .tmp
 .DS_store
 Notes
+lcov.info

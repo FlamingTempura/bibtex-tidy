@@ -77,7 +77,7 @@ export class FieldNode {
 		this.value = new ConcatNode(this);
 	}
 }
-class ConcatNode {
+export class ConcatNode {
 	type = "concat" as const;
 	concat: (LiteralNode | BracedNode | QuotedNode)[];
 	canConsumeValue = true;
@@ -85,32 +85,46 @@ class ConcatNode {
 		this.concat = [];
 	}
 }
-class LiteralNode {
+export class LiteralNode {
 	type = "literal" as const;
 	constructor(
 		public parent: ConcatNode,
 		public value: string,
-	) {
-		parent.concat.push(this);
-	}
+	) {}
 }
-class BracedNode {
+
+function createLiteralNode(parent: ConcatNode, value: string): LiteralNode {
+	const node = new LiteralNode(parent, value);
+	parent.concat.push(node);
+	return node;
+}
+
+export class BracedNode {
 	type = "braced" as const;
 	value = "";
 	/** Used to count opening and closing braces */
 	depth = 0;
-	constructor(public parent: ConcatNode) {
-		parent.concat.push(this);
-	}
+	constructor(public parent: ConcatNode) {}
 }
-class QuotedNode {
+
+function createBracedNode(parent: ConcatNode): BracedNode {
+	const node = new BracedNode(parent);
+	parent.concat.push(node);
+	return node;
+}
+
+export class QuotedNode {
 	type = "quoted" as const;
 	value = "";
 	/** Used to count opening and closing braces */
 	depth = 0;
-	constructor(public parent: ConcatNode) {
-		parent.concat.push(this);
-	}
+	constructor(public parent: ConcatNode) {}
+}
+
+function createQuotedNode(parent: ConcatNode): QuotedNode {
+	const node = new QuotedNode(parent);
+	parent.concat.push(node);
+	return node;
 }
 
 type Node =
@@ -310,11 +324,11 @@ export function parseBibTeX(input: string): RootNode {
 					}
 					node.canConsumeValue = false;
 					if (char === "{") {
-						node = new BracedNode(node);
+						node = createBracedNode(node);
 					} else if (char === '"') {
-						node = new QuotedNode(node);
+						node = createQuotedNode(node);
 					} else {
-						node = new LiteralNode(node, char);
+						node = createLiteralNode(node, char);
 					}
 				} else {
 					if (char === ",") {

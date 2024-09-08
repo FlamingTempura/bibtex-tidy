@@ -23,11 +23,13 @@ export class Cache {
 		return value;
 	}
 
+	public invalidateEntryValue(entry: EntryNode, field: string): void {
+		this.valueLookup.get(entry)?.delete(field.toLocaleLowerCase());
+		this.renderValueLookup.get(entry)?.delete(field.toLocaleLowerCase());
+	}
+
 	private fieldLookup = new Map<EntryNode, Map<string, FieldNode>>();
-	private lookupField(
-		entry: EntryNode,
-		fieldLc: string,
-	): FieldNode | undefined {
+	public lookupField(entry: EntryNode, fieldLc: string): FieldNode | undefined {
 		let fieldNode = this.fieldLookup.get(entry)?.get(fieldLc);
 		if (fieldNode === undefined) {
 			fieldNode = entry.fields.find(
@@ -38,7 +40,7 @@ export class Cache {
 	}
 
 	private renderValueLookup = new Map<EntryNode, Map<string, string>>();
-	private lookupRenderedEntryValue(entry: EntryNode, field: string): string {
+	public lookupRenderedEntryValue(entry: EntryNode, field: string): string {
 		const fieldName = field.toLocaleLowerCase();
 		let value = this.renderValueLookup.get(entry)?.get(field);
 		if (value === undefined) {

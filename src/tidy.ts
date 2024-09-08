@@ -2,10 +2,19 @@ import { Cache } from "./cache";
 import { checkForDuplicates } from "./duplicates";
 import { formatBibtex } from "./format";
 import { generateKeys } from "./generateKeys";
+import { abbreviateMonthsModifier } from "./modifiers/abbreviateMonthsModifier";
+import { dropAllCapsModifier } from "./modifiers/dropAllCapsModifier";
+import { encodeUrlsModifier } from "./modifiers/encodeUrlsModifier";
+import { escapeCharactersModifier } from "./modifiers/escapeCharactersModifier";
+import { formatPageRangeModifier } from "./modifiers/formatPageRangeModifier";
+import { limitAuthorsModifier } from "./modifiers/limitAuthorsModifier";
+import { removeBracesModifier } from "./modifiers/removeBracesModifier";
+import { stripEnclosingBracesModifier } from "./modifiers/stripEnclosingBracesModifier";
 import { normalizeOptions } from "./optionUtils";
 import type { DuplicateRule, Options } from "./optionUtils";
 import {
 	type EntryNode,
+	LiteralNode,
 	type RootNode,
 	parseBibTeX,
 } from "./parsers/bibtexParser";
@@ -39,6 +48,48 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 		}));
 
 	const cache = new Cache(options);
+
+	const valueModifiers = [
+		encodeUrlsModifier,
+		limitAuthorsModifier,
+		escapeCharactersModifier,
+		dropAllCapsModifier,
+		formatPageRangeModifier,
+		abbreviateMonthsModifier,
+		stripEnclosingBracesModifier,
+		removeBracesModifier,
+	];
+
+	for (const entry of entries) {
+		for (const field of entry.fields) {
+			for (const modifier of valueModifiers) {
+				const params = modifier.condition(
+					field.name.toLocaleLowerCase(),
+					options,
+					entry,
+					cache,
+				);
+				if (!params) continue;
+				if (modifier.modifyNode) {
+					//@ts-expect-error
+					modifier.modifyNode(field, params);
+					cache.invalidateEntryValue(entry, field.name);
+				}
+				for (const node of field.value.concat) {
+					if (node.type === "braced" || node.type === "quoted") {
+						if (modifier.modifyRenderedValue) {
+							//@ts-expect-error
+							const newValue = modifier.modifyRenderedValue(node.value, params);
+							if (newValue !== node.value) {
+								node.value = newValue;
+								cache.invalidateEntryValue(entry, field.name);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	const duplicates = checkForDuplicates(
 		entries,

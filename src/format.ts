@@ -1,4 +1,4 @@
-import { MONTH_CONVERSIONS, MONTH_SET } from "./months";
+import { MONTH_SET } from "./months";
 import type { OptionsNormalized } from "./optionUtils";
 import type {
 	BlockNode,
@@ -7,38 +7,8 @@ import type {
 	RootNode,
 	TextNode,
 } from "./parsers/bibtexParser";
-import {
-	flattenLaTeX,
-	parseLaTeX,
-	stringifyLaTeX,
-} from "./parsers/latexParser";
 
-import {
-	doubleEnclose,
-	escapeSpecialCharacters,
-	escapeURL,
-	formatPageRange,
-	limitAuthors,
-	removeEnclosingBraces,
-	titleCase,
-	unwrapText,
-	wrapText,
-} from "./utils";
-
-/**
- * The following fields are listed in the BibLaTeX documentation as verbatim (may contain
- * special characters). Source: Kime et al (2024) The biblatex Package (v3.20).
- */
-const VERBATIM_FIELDS = [
-	"url",
-	"doi",
-	"eprint",
-	"file",
-	"verba",
-	"verbb",
-	"verbc",
-	"pdf",
-];
+import { doubleEnclose, unwrapText, wrapText } from "./utils";
 
 export function formatBibtex(
 	ast: RootNode,
@@ -161,31 +131,13 @@ export function formatValue(
 	field: FieldNode,
 	options: OptionsNormalized,
 ): string | undefined {
-	const {
-		curly,
-		numeric,
-		align,
-		stripEnclosingBraces,
-		dropAllCaps,
-		escape: enableEscape,
-		encodeUrls,
-		wrap,
-		maxAuthors,
-		tab,
-		space,
-		enclosingBraces,
-		removeBraces,
-		months: abbreviateMonths,
-	} = options;
+	const { curly, numeric, align, wrap, tab, space, enclosingBraces } = options;
 
 	const nameLowerCase = field.name.toLocaleLowerCase();
 
 	const indent: string = tab ? "\t" : " ".repeat(space);
 	const enclosingBracesFields = new Set<string>(
 		(enclosingBraces ?? []).map((field) => field.toLocaleLowerCase()),
-	);
-	const removeBracesFields = new Set<string>(
-		(removeBraces ?? []).map((field) => field.toLocaleLowerCase()),
 	);
 
 	return field.value.concat
@@ -194,13 +146,6 @@ export function formatValue(
 
 			if (isNumeric && curly) {
 				type = "braced";
-			}
-
-			if (abbreviateMonths && nameLowerCase === "month") {
-				const abbreviation = MONTH_CONVERSIONS[value.toLowerCase()];
-				if (abbreviation) {
-					return abbreviation;
-				}
 			}
 
 			if (type === "literal" || (numeric && isNumeric)) {
@@ -214,33 +159,7 @@ export function formatValue(
 			}
 
 			value = unwrapText(value);
-			// if a field's value has double braces {{blah}}, lose the inner brace
-			if (stripEnclosingBraces) {
-				value = removeEnclosingBraces(value);
-			}
-			// if a field's value is all caps, convert it to title case
-			if (dropAllCaps && !value.match(/[a-z]/)) {
-				value = titleCase(value);
-			}
-			// url encode must happen before escape special characters
-			if (nameLowerCase === "url" && encodeUrls) {
-				value = escapeURL(value);
-			}
-			// escape special characters like %. Do not do this on the url field, which is a
-			// special bibtex field where special characters are output verbatim.
-			if (!VERBATIM_FIELDS.includes(nameLowerCase) && enableEscape) {
-				value = escapeSpecialCharacters(value);
-			}
-			if (nameLowerCase === "pages") {
-				value = formatPageRange(value);
-			}
-			if (nameLowerCase === "author" && maxAuthors) {
-				value = limitAuthors(value, maxAuthors);
-			}
 
-			if (removeBracesFields.has(nameLowerCase)) {
-				value = stringifyLaTeX(flattenLaTeX(parseLaTeX(value)));
-			}
 			// if the user requested, wrap the value in braces (this forces bibtex
 			// compiler to preserve case)
 			if (
