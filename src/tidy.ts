@@ -1,14 +1,14 @@
+import { Cache } from "./cache";
 import { checkForDuplicates } from "./duplicates";
-import { formatBibtex, formatValue } from "./format";
+import { formatBibtex } from "./format";
 import { generateKeys } from "./generateKeys";
 import { normalizeOptions } from "./optionUtils";
-import type { DuplicateRule, Options, OptionsNormalized } from "./optionUtils";
+import type { DuplicateRule, Options } from "./optionUtils";
 import {
 	type EntryNode,
 	type RootNode,
-	generateAST,
+	parseBibTeX,
 } from "./parsers/bibtexParser";
-import { parseLaTeX } from "./parsers/latexParser";
 import { sortEntries, sortEntryFields } from "./sort";
 import { convertCRLF, isEntryNode } from "./utils";
 
@@ -27,25 +27,22 @@ export type BibTeXTidyResult = {
 
 export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	const options = normalizeOptions(options_);
-
 	const inputFixed = convertCRLF(input);
+	const ast = parseBibTeX(inputFixed);
+	const entries = getEntries(ast);
 
-	// Parse the bibtex and retrieve the items (includes comments, entries, strings, preambles)
-	const ast = generateAST(inputFixed);
-
-	const warnings: Warning[] = getEntries(ast)
+	const warnings: Warning[] = entries
 		.filter((entry) => !entry.key)
 		.map((entry) => ({
 			code: "MISSING_KEY",
 			message: `${entry.parent.command} entry does not have a citation key.`,
 		}));
 
-	const valueLookup = generateValueLookup(ast, options);
-	const renderedValueLookup = generateRenderedValueLookup(ast, options);
+	const cache = new Cache(options);
 
 	const duplicates = checkForDuplicates(
-		ast,
-		valueLookup,
+		entries,
+		cache,
 		options.duplicates,
 		options.merge,
 	);
@@ -57,53 +54,18 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	);
 
 	// sort needs to happen after merging all entries is complete
-	if (options.sort) sortEntries(ast, valueLookup, options.sort);
+	if (options.sort) sortEntries(ast, cache, options.sort);
 
-	if (options.sortFields) sortEntryFields(ast, options.sortFields);
+	if (options.sortFields) sortEntryFields(entries, options.sortFields);
 
 	const newKeys = options.generateKeys
-		? generateKeys(ast, renderedValueLookup, options.generateKeys)
+		? generateKeys(entries, cache, options.generateKeys)
 		: undefined;
 
 	const bibtex = formatBibtex(ast, options, newKeys);
 
-	return { bibtex, warnings, count: getEntries(ast).length };
+	return { bibtex, warnings, count: entries.length };
 }
-
-export function generateValueLookup(
-	ast: RootNode,
-	options: OptionsNormalized,
-): Map<EntryNode, Map<string, string>> {
-	return new Map(
-		getEntries(ast).map((entry) => [
-			entry,
-			new Map(
-				entry.fields.map((field) => [
-					field.name.toLocaleLowerCase(),
-					formatValue(field, options) ?? "",
-				]),
-			),
-		]),
-	);
-}
-
-function generateRenderedValueLookup(
-	ast: RootNode,
-	options: OptionsNormalized,
-): Map<EntryNode, Map<string, string>> {
-	return new Map(
-		[...generateValueLookup(ast, options)].map(([entry, fields]) => [
-			entry,
-			new Map(
-				[...fields.entries()].map(([name, value]) => [
-					name,
-					parseLaTeX(value).renderAsText(),
-				]),
-			),
-		]),
-	);
-}
-
 export function getEntries(ast: RootNode): EntryNode[] {
 	return ast.children.filter(isEntryNode).map((node) => node.block);
 }

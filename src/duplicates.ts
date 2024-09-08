@@ -1,12 +1,13 @@
+import type { Cache } from "./cache";
 import type { DuplicateRule, MergeStrategy } from "./optionUtils";
-import type { EntryNode, RootNode } from "./parsers/bibtexParser";
+import type { EntryNode } from "./parsers/bibtexParser";
 import { parseNameList } from "./parsers/nameFieldParser";
-import { type Warning, getEntries } from "./tidy";
+import type { Warning } from "./tidy";
 import { alphaNum } from "./utils";
 
 export function checkForDuplicates(
-	ast: RootNode,
-	valueLookup: Map<EntryNode, Map<string, string | undefined>>,
+	entries: EntryNode[],
+	cache: Cache,
 	duplicateRules?: DuplicateRule[],
 	merge?: MergeStrategy,
 ): { entries: Set<EntryNode>; warnings: Warning[] } {
@@ -33,10 +34,7 @@ export function checkForDuplicates(
 	const citations = new Map<string, EntryNode>();
 	const abstracts = new Map<string, EntryNode>();
 
-	for (const entry of getEntries(ast)) {
-		const entryValues = valueLookup.get(entry);
-		if (!entryValues) continue;
-
+	for (const entry of entries) {
 		for (const [rule, doMerge] of rules) {
 			let duplicateOf: EntryNode | undefined;
 			let warning: string | undefined;
@@ -57,7 +55,7 @@ export function checkForDuplicates(
 				}
 
 				case "doi": {
-					const doi = alphaNum(entryValues.get("doi") ?? "");
+					const doi = alphaNum(cache.lookupEntryValue(entry, "doi"));
 					if (!doi) continue;
 					duplicateOf = dois.get(doi);
 					if (!duplicateOf) {
@@ -69,10 +67,10 @@ export function checkForDuplicates(
 				}
 
 				case "citation": {
-					const ttl = entryValues.get("title");
-					const aut = entryValues.get("author");
+					const ttl = cache.lookupEntryValue(entry, "title");
+					const aut = cache.lookupEntryValue(entry, "author");
 					// Author/title can be identical for numbered reports https://github.com/FlamingTempura/bibtex-tidy/issues/364
-					const num = entryValues.get("number");
+					const num = cache.lookupEntryValue(entry, "number");
 					if (!ttl || !aut) continue;
 					const cit: string = [
 						alphaNum(parseNameList(aut)[0]?.last ?? aut),
@@ -89,7 +87,7 @@ export function checkForDuplicates(
 				}
 
 				case "abstract": {
-					const abstract = alphaNum(entryValues.get("abstract") ?? "");
+					const abstract = alphaNum(cache.lookupEntryValue(entry, "abstract"));
 					const abs = abstract.slice(0, 100);
 					if (!abs) continue;
 					duplicateOf = abstracts.get(abs);

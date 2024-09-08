@@ -127,7 +127,7 @@ type Node =
 	| BracedNode
 	| QuotedNode;
 
-export function generateAST(input: string): RootNode {
+export function parseBibTeX(input: string): RootNode {
 	const rootNode = new RootNode();
 	let node: Node = rootNode;
 	let line = 1;

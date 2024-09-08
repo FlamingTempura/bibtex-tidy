@@ -1,10 +1,10 @@
-import type { EntryNode, RootNode } from "./parsers/bibtexParser";
+import type { Cache } from "./cache";
+import type { EntryNode } from "./parsers/bibtexParser";
 import {
 	type EntryKeyTemplateToken,
 	parseEntryKeyTemplate,
 } from "./parsers/entryKeyTemplateParser";
 import { parseNameList } from "./parsers/nameFieldParser";
-import { isEntryNode as hasEntryNode } from "./utils";
 
 export const SPECIAL_MARKERS: Record<
 	string,
@@ -129,8 +129,8 @@ class MissingRequiredData extends Error {}
  * TODO: Check the output against Jabref itself
  */
 export function generateKeys(
-	ast: RootNode,
-	valueLookup: Map<EntryNode, Map<string, string>>,
+	entries: EntryNode[],
+	cache: Cache,
 	entryKeyTemplate: string,
 ): Map<EntryNode, string> {
 	let template = entryKeyTemplate;
@@ -144,15 +144,13 @@ export function generateKeys(
 	const parsedTemplate = parseEntryKeyTemplate(template);
 	const entriesByKey = new Map<string, EntryNode[]>();
 
-	for (const node of ast.children) {
-		if (!hasEntryNode(node)) continue;
-		const entryValues = valueLookup.get(node.block);
-		if (!entryValues) continue;
+	for (const entry of entries) {
+		const entryValues = cache.lookupRenderedEntryValues(entry);
 		const key = generateKey(entryValues, parsedTemplate);
 		if (!key) continue;
 
 		const entriesSoFar = entriesByKey.get(key) ?? [];
-		entriesSoFar.push(node.block);
+		entriesSoFar.push(entry);
 		entriesByKey.set(key, entriesSoFar);
 	}
 
@@ -162,8 +160,7 @@ export function generateKeys(
 		for (let i = 0; i < entries.length; i++) {
 			const node = entries[i];
 			if (!node) continue;
-			const entryValues = valueLookup.get(node);
-			if (!entryValues) continue;
+			const entryValues = cache.lookupRenderedEntryValues(node);
 			const newKey = regenerateDuplicate
 				? generateKey(entryValues, parsedTemplate, i + 1)
 				: key;

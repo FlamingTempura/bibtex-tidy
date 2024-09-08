@@ -1,3 +1,4 @@
+import type { Cache } from "./cache";
 import { MONTH_MACROS } from "./months";
 import type {
 	BlockNode,
@@ -5,15 +6,10 @@ import type {
 	RootNode,
 	TextNode,
 } from "./parsers/bibtexParser";
-import { getEntries } from "./tidy";
 
 type SortIndex = Map<string, string | number>;
 
-export function sortEntries(
-	ast: RootNode,
-	fieldMaps: Map<EntryNode, Map<string, string | undefined>>,
-	sort: string[],
-): void {
+export function sortEntries(ast: RootNode, cache: Cache, sort: string[]): void {
 	// Map of items to sort values e.g. { year: 2009, author: 'West', ... }
 	const sortIndexes = new Map<TextNode | BlockNode, SortIndex>();
 
@@ -47,7 +43,7 @@ export function sortEntries(
 
 				case "month": {
 					if (item.block?.type !== "entry") continue;
-					const v = fieldMaps.get(item.block)?.get(key);
+					const v = cache.lookupEntryValue(item.block, key);
 					const i = v ? (MONTH_MACROS as readonly string[]).indexOf(v) : -1;
 					val = i > -1 ? i : "";
 					break;
@@ -59,7 +55,7 @@ export function sortEntries(
 
 				default:
 					if (item.block?.type !== "entry") continue;
-					val = fieldMaps.get(item.block)?.get(key) ?? "";
+					val = cache.lookupEntryValue(item.block, key);
 			}
 			sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
 		}
@@ -103,8 +99,11 @@ function isBibLaTeXSpecialEntry(node: BlockNode) {
 	return SPECIAL_ENTRIES.has(node.command.toLowerCase());
 }
 
-export function sortEntryFields(ast: RootNode, fieldOrder: string[]): void {
-	for (const entry of getEntries(ast)) {
+export function sortEntryFields(
+	entries: EntryNode[],
+	fieldOrder: string[],
+): void {
+	for (const entry of entries) {
 		entry.fields.sort((a, b) => {
 			const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
 			const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
