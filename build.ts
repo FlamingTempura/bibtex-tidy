@@ -2,10 +2,8 @@ import { chmod, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { env } from "node:process";
 import { generateDtsBundle } from "dts-bundle-generator";
-import { type BuildOptions, type Plugin, build, context } from "esbuild";
+import { type BuildOptions, build, context } from "esbuild";
 import sveltePlugin from "esbuild-svelte";
-//@ts-expect-error missing types
-import rewritePattern from "regexpu-core";
 import autoPreprocess from "svelte-preprocess";
 import { author, homepage, version } from "./package.json";
 import { MODIFIERS, SPECIAL_MARKERS, functionWords } from "./src/generateKeys";
@@ -32,8 +30,6 @@ const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join(__dirname, "bin", "bibtex-tidy");
  * WOFF2                        35     14     10    39  None
  * HTML main                    26     12      7    21  None
  * CSS appearance: none          4     12     3.1   2   None
- * regexp u flag                50*    12     10    46  None   *downlevel by regexpu
- * regexp \p{} char classes     64*    79     11.1* 78* None   *downlevel by regexpu
  * Optional chaining            80*    80*    13.1* 74* None   *downlevel by esbuild
  * Template literals            41     13     9.1   34  None
  * let/const                    41     12     10    44   11
@@ -72,30 +68,6 @@ const jsBanner: string[] = [
 	"",
 ];
 
-// Transforms unicode regexps for older browsers. This needs to be an esbuild
-// plugin so it can transform regexp literals before esbuild transforms them
-// into RegExp constructors. May be supported by swc in future
-// https://github.com/swc-project/swc/issues/1649
-const regexpuPlugin: Plugin = {
-	name: "regexpu",
-	setup(build) {
-		build.onLoad({ filter: /\.m?[jt]s$/, namespace: "" }, async (args) => {
-			const contents = await readFile(args.path, "utf8");
-			const newContents = contents.replace(
-				/\(\/(.*)\/([a-z]*u[a-z]*)/g,
-				(_, pattern, flags) => {
-					const newPattern = rewritePattern(pattern, flags, {
-						unicodeFlag: "transform",
-						unicodePropertyEscapes: "transform",
-					});
-					return `(/${newPattern}/${flags.replace("u", "")}`;
-				},
-			);
-			return { contents: newContents, loader: "ts" };
-		});
-	},
-};
-
 const webBuildOptions: BuildOptions = {
 	banner: { js: jsBanner.join("\n") },
 	bundle: true,
@@ -106,7 +78,7 @@ const webBuildOptions: BuildOptions = {
 	// esbuild replaces the extension, e.g. js for css
 	outfile: join(WEB_PATH, "bundle.js"),
 	platform: "browser",
-	plugins: [sveltePlugin({ preprocess: autoPreprocess() }), regexpuPlugin],
+	plugins: [sveltePlugin({ preprocess: autoPreprocess() })],
 	supported: {
 		// esbuild falsely identifies these as not supported for the target browsers
 		"for-of": true,
@@ -124,7 +96,6 @@ const jsLibBuildOptions: BuildOptions = {
 	keepNames: true,
 	outfile: join(__dirname, "bibtex-tidy.js"),
 	platform: "node",
-	plugins: [regexpuPlugin],
 	write: true,
 };
 

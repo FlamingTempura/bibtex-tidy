@@ -1,5 +1,5 @@
 import { strictEqual } from "node:assert";
-import { generateKey } from "../src/generateKeys";
+import { generateKey, parseEntryKeyTemplate } from "../src/generateKeys";
 import { bibtex, bibtexTidy, test } from "./utils";
 
 const input = bibtex`
@@ -170,7 +170,7 @@ const input = bibtex`
     title = "Baa baa",
   }`;
 
-const outputDefault = bibtex`
+const expectedDefault = bibtex`
 @article{aamport1986gnats1,
   author        = {L[eslie] A. Aamport},
   title         = {The Gnats and Gnus Document Preparation System},
@@ -317,14 +317,14 @@ const outputDefault = bibtex`
   pages         = {238--247},
   isbn          = {978-3-540-70516-1}
 }
-@article{_foo_bar2000baa,
+@article{_[]_foo_bar2000baa,
   author        = {~[]()=Foo Bar , Moo},
   year          = 2000,
   title         = "Baa baa"
 }
 `;
 
-const outputCustom = bibtex`
+const expectedCustom = bibtex`
 @article{AAMPORT1986GnatsGnusDocumenta,
   author        = {L[eslie] A. Aamport},
   title         = {The Gnats and Gnus Document Preparation System},
@@ -471,7 +471,7 @@ const outputCustom = bibtex`
   pages         = {238--247},
   isbn          = {978-3-540-70516-1}
 }
-@article{_FOO_BAR2000BaaBaa,
+@article{_[]_FOO_BAR2000BaaBaa,
   author        = {~[]()=Foo Bar , Moo},
   year          = 2000,
   title         = "Baa baa"
@@ -479,38 +479,74 @@ const outputCustom = bibtex`
 `;
 
 test("generate keys", async () => {
-	const tidied1 = await bibtexTidy(input, { generateKeys: true });
-	strictEqual(tidied1.bibtex, outputDefault);
-
-	const tidied2 = await bibtexTidy(input, {
-		generateKeys: "[auth:upper][year][shorttitle:capitalize]",
-	});
-	strictEqual(tidied2.bibtex, outputCustom);
-
 	const entryValues = new Map([
 		["title", "A story of 2 foo and 1 bar: the best story"],
 		["author", "Bar, Foo and Mee, Moo and One, Two"],
 		["year", "2018"],
 		["journal", "Foo and Goo"],
 	]);
-	strictEqual(generateKey(entryValues, "[auth:upper][year]"), "BAR2018");
-	strictEqual(generateKey(entryValues, "[authEtAl:lower]"), "barmeeetal");
-	strictEqual(generateKey(entryValues, "[authEtAl:capitalize]"), "BarMeeEtAl");
-	strictEqual(generateKey(entryValues, "[authors:capitalize]"), "BarMeeOne");
-	strictEqual(generateKey(entryValues, "[authors1]"), "BarEtAl");
-	strictEqual(generateKey(entryValues, "[veryshorttitle]"), "story");
-	strictEqual(generateKey(entryValues, "[shorttitle]"), "story2foo");
 	strictEqual(
-		generateKey(entryValues, "[title]"),
+		generateKey(entryValues, parseEntryKeyTemplate("[auth:upper][year]")),
+		"BAR2018",
+	);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[authEtAl:lower]")),
+		"barmeeetal",
+	);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[authEtAl:capitalize]")),
+		"BarMeeEtAl",
+	);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[authors:capitalize]")),
+		"BarMeeOne",
+	);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[authors1]")),
+		"BarEtAl",
+	);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[veryshorttitle]")),
+		"story",
+	);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[shorttitle]")),
+		"story2foo",
+	);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[title]")),
 		"AStoryOf2FooAnd1BarTheBestStory",
 	);
 	strictEqual(
-		generateKey(entryValues, "[fulltitle]"),
+		generateKey(entryValues, parseEntryKeyTemplate("[fulltitle]")),
 		"Astoryof2fooand1barthebeststory",
 	);
-	strictEqual(generateKey(entryValues, "[JOURNAL]"), "FooandGoo");
-	strictEqual(generateKey(entryValues, "[JOURNAL:capitalize]"), "FooAndGoo");
-	strictEqual(generateKey(entryValues, "[YEAR]"), "2018");
-	strictEqual(generateKey(entryValues, "[AUTHOR]"), "BarFooandMeeMooandOneTwo");
-	strictEqual(generateKey(entryValues, "[BOOKTITLE]"), undefined);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[JOURNAL]")),
+		"FooandGoo",
+	);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[JOURNAL:capitalize]")),
+		"FooAndGoo",
+	);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[YEAR]")),
+		"2018",
+	);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[AUTHOR]")),
+		"BarFooandMeeMooandOneTwo",
+	);
+	strictEqual(
+		generateKey(entryValues, parseEntryKeyTemplate("[BOOKTITLE]")),
+		undefined,
+	);
+
+	const output1 = await bibtexTidy(input, { generateKeys: true });
+	strictEqual(output1.bibtex, expectedDefault);
+
+	const output2 = await bibtexTidy(input, {
+		generateKeys: "[auth:upper][year][shorttitle:capitalize]",
+	});
+	strictEqual(output2.bibtex, expectedCustom);
 });

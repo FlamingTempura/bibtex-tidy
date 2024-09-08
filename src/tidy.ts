@@ -2,6 +2,7 @@ import { type EntryNode, type RootNode, generateAST } from "./bibtexParser";
 import { checkForDuplicates } from "./duplicates";
 import { formatBibtex, formatValue } from "./format";
 import { generateKeys } from "./generateKeys";
+import { parseLaTeX } from "./latexParser";
 import { normalizeOptions } from "./optionUtils";
 import type { DuplicateRule, Options, OptionsNormalized } from "./optionUtils";
 import { sortEntries, sortEntryFields } from "./sort";
@@ -36,6 +37,7 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 		}));
 
 	const valueLookup = generateValueLookup(ast, options);
+	const renderedValueLookup = generateRenderedValueLookup(ast, options);
 
 	const duplicates = checkForDuplicates(
 		ast,
@@ -56,7 +58,7 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	if (options.sortFields) sortEntryFields(ast, options.sortFields);
 
 	const newKeys = options.generateKeys
-		? generateKeys(ast, valueLookup, options.generateKeys)
+		? generateKeys(ast, renderedValueLookup, options.generateKeys)
 		: undefined;
 
 	const bibtex = formatBibtex(ast, options, newKeys);
@@ -75,6 +77,23 @@ function generateValueLookup(
 				entry.fields.map((field) => [
 					field.name.toLocaleLowerCase(),
 					formatValue(field, options) ?? "",
+				]),
+			),
+		]),
+	);
+}
+
+function generateRenderedValueLookup(
+	ast: RootNode,
+	options: OptionsNormalized,
+): Map<EntryNode, Map<string, string>> {
+	return new Map(
+		[...generateValueLookup(ast, options)].map(([entry, fields]) => [
+			entry,
+			new Map(
+				[...fields.entries()].map(([name, value]) => [
+					name,
+					parseLaTeX(value).renderAsText(),
 				]),
 			),
 		]),

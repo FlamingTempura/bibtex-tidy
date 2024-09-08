@@ -22,7 +22,6 @@ const DEFAULT_MERGE_CHECK: string[] = ["doi", "citation", "abstract"];
 export const DEFAULT_ALIGN = 14;
 export const DEFAULT_SPACE = 2;
 export const DEFAULT_WRAP = 80;
-//prettier-ignore
 export const DEFAULT_FIELD_SORT = [
 	"title",
 	"shorttitle",

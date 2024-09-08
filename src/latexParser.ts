@@ -11,6 +11,9 @@ export class BlockNode {
 			parent.args.push(this);
 		}
 	}
+	renderAsText(): string {
+		return this.children.map((child) => child.renderAsText()).join("");
+	}
 }
 export class TextNode {
 	type = "text" as const;
@@ -19,6 +22,9 @@ export class TextNode {
 		public text = "",
 	) {
 		parent.children.push(this);
+	}
+	renderAsText(): string {
+		return this.text.replace(/"/g, ""); // HACK: latex parser should parse this properly as a block
 	}
 }
 export class CommandNode {
@@ -29,6 +35,9 @@ export class CommandNode {
 		public args: BlockNode[] = [],
 	) {
 		parent.children.push(this);
+	}
+	renderAsText(): string {
+		return this.args.map((arg) => arg.renderAsText()).join("");
 	}
 }
 
@@ -135,7 +144,7 @@ function stringifyCommand(node: CommandNode): string {
  *    text in the block (like \bf)
  */
 export function flattenLaTeX(block: BlockNode): BlockNode {
-	const newBlock: BlockNode = { ...block, children: [] };
+	const newBlock = new BlockNode(block.kind);
 	for (const child of block.children) {
 		if (
 			child.type === "block" &&

@@ -587,12 +587,9 @@ ${input.slice(Math.max(0, pos - 20), pos)}>>${input[pos]}<<${input.slice(pos + 1
 };
 
 // src/parseAuthors.ts
-function parseAuthors(authors, sanitize) {
+function parseAuthors(authors) {
   return authors.replace(/\s+/g, " ").split(/ and /i).map((nameRaw) => {
-    let name = nameRaw.trim();
-    if (sanitize) {
-      name = name.replace(/["{}]/g, "");
-    }
+    const name = nameRaw.trim();
     const commaPos = name.indexOf(",");
     if (commaPos > -1) {
       return {
@@ -621,6 +618,9 @@ var BlockNode2 = class _BlockNode {
       parent.args.push(this);
     }
   }
+  renderAsText() {
+    return this.children.map((child) => child.renderAsText()).join("");
+  }
 };
 var TextNode2 = class {
   constructor(parent, text = "") {
@@ -628,6 +628,9 @@ var TextNode2 = class {
     this.text = text;
     this.type = "text";
     parent.children.push(this);
+  }
+  renderAsText() {
+    return this.text.replace(/"/g, "");
   }
 };
 var CommandNode = class {
@@ -637,6 +640,9 @@ var CommandNode = class {
     this.args = args;
     this.type = "command";
     parent.children.push(this);
+  }
+  renderAsText() {
+    return this.args.map((arg) => arg.renderAsText()).join("");
   }
 };
 function parseLaTeX(input) {
@@ -713,7 +719,7 @@ function stringifyCommand(node) {
   return `\\${node.command}${node.args.map(stringifyBlock).join("")}`;
 }
 function flattenLaTeX(block) {
-  const newBlock = { ...block, children: [] };
+  const newBlock = new BlockNode2(block.kind);
   for (const child of block.children) {
     if (child.type === "block" && child.kind === "curly" && child.children.every((child2) => child2.type !== "command")) {
       const newChild = flattenLaTeX(child);
@@ -3520,8 +3526,8 @@ var SPECIAL_MARKERS = {
     description: "Last name of first authors",
     callback: (v) => {
       var _a, _b;
-      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
-      const author = (_b = authors[0]) == null ? void 0 : _b.lastName.replace(/[^\p{Letter}]+/gu, "_");
+      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "");
+      const author = (_b = authors[0]) == null ? void 0 : _b.lastName;
       return author ? [author] : [];
     }
   },
@@ -3529,9 +3535,9 @@ var SPECIAL_MARKERS = {
     description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
     callback: (v) => {
       var _a;
-      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "");
       return [
-        ...authors.slice(0, 2).map((author) => author.lastName.replace(/[^\p{Letter}]+/gu, "_")),
+        ...authors.slice(0, 2).map((author) => author.lastName),
         ...authors.length > 2 ? ["Et", "Al"] : []
       ];
     }
@@ -3540,19 +3546,17 @@ var SPECIAL_MARKERS = {
     description: "Last name all authors",
     callback: (v) => {
       var _a;
-      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
-      return authors.map(
-        (author) => author.lastName.replace(/[^\p{Letter}]+/gu, "_")
-      );
+      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "");
+      return authors.map((author) => author.lastName);
     }
   },
   authorsN: {
     description: "Last name N authors, with EtAl if more",
     callback: (v, n = 0) => {
       var _a;
-      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "", true);
+      const authors = parseAuthors((_a = v.get("author")) != null ? _a : "");
       return [
-        ...authors.slice(0, n).map((author) => author.lastName.replace(/[^\p{Letter}]+/gu, "_")),
+        ...authors.slice(0, n).map((author) => author.lastName),
         ...authors.length > n ? ["Et", "Al"] : []
       ];
     }
@@ -3613,18 +3617,19 @@ var MODIFIERS = {
 };
 var MissingRequiredData = class extends Error {
 };
-function generateKeys(ast, valueLookup, template) {
+function generateKeys(ast, valueLookup, entryKeyTemplate) {
   var _a;
-  let template2 = template;
-  if (!template.includes("[duplicateLetter]") && !template.includes("[duplicateNumber]")) {
-    template2 = `${template}[duplicateLetter]`;
+  let template = entryKeyTemplate;
+  if (!entryKeyTemplate.includes("[duplicateLetter]") && !entryKeyTemplate.includes("[duplicateNumber]")) {
+    template = `${entryKeyTemplate}[duplicateLetter]`;
   }
+  const parsedTemplate = parseEntryKeyTemplate(template);
   const entriesByKey = /* @__PURE__ */ new Map();
   for (const node of ast.children) {
     if (isEntryNode(node)) {
       const entryValues = valueLookup.get(node.block);
       if (!entryValues) continue;
-      const newKey = generateKey(entryValues, template2);
+      const newKey = generateKey(entryValues, parsedTemplate);
       if (!newKey) continue;
       const keyEntries = (_a = entriesByKey.get(newKey)) != null ? _a : [];
       entriesByKey.set(newKey, [...keyEntries, node.block]);
@@ -3640,29 +3645,24 @@ function generateKeys(ast, valueLookup, template) {
   }
   return keys;
 }
-function generateKey(valueLookup, template) {
+function generateKey(valueLookup, entryKeyTemplate) {
   try {
-    const newKey = template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (m) => {
-      const [tokenKeyN, ...modifierKeys] = m.slice(1, -1).split(":");
-      if (!tokenKeyN) {
-        throw new Error("Token parse error");
+    let newKey = entryKeyTemplate.map((token) => {
+      if (typeof token === "string") {
+        return token;
       }
-      let n;
-      const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m2) => {
-        n = Number(m2);
-        return "N";
-      });
-      const token = SPECIAL_MARKERS[tokenKey];
+      const { markerName, parameter, modifierNames } = token;
+      const specialMarker = SPECIAL_MARKERS[markerName];
       let key;
-      if (token) {
-        key = token.callback(valueLookup, n);
-      } else if (tokenKey === tokenKey.toLocaleUpperCase()) {
-        const value = valueLookup.get(tokenKey.toLocaleLowerCase());
+      if (specialMarker) {
+        key = specialMarker.callback(valueLookup, parameter);
+      } else if (markerName === markerName.toLocaleUpperCase()) {
+        const value = valueLookup.get(markerName.toLocaleLowerCase());
         key = value ? words(value) : [];
       } else {
-        throw new Error(`Invalid citation key token ${tokenKey}`);
+        throw new Error(`Invalid citation key token ${markerName}`);
       }
-      for (const modifierKey of modifierKeys) {
+      for (const modifierKey of modifierNames) {
         const modifier = MODIFIERS[modifierKey];
         if (modifier) {
           key = modifier.callback(key);
@@ -3671,7 +3671,8 @@ function generateKey(valueLookup, template) {
         }
       }
       return key.join("");
-    });
+    }).join("");
+    newKey = removeUnsafeEntryKeyChars(newKey);
     if (newKey === "") return;
     return newKey;
   } catch (e) {
@@ -3680,6 +3681,36 @@ function generateKey(valueLookup, template) {
     }
     throw e;
   }
+}
+function parseEntryKeyTemplate(template) {
+  const tokens = [];
+  const matches = template.matchAll(/\[[^:\]]+(?::[^:\]]+)*\]/g);
+  let pos = 0;
+  for (const match of matches) {
+    if (match.index === void 0) break;
+    if (match.index !== pos) {
+      tokens.push(template.slice(pos, match.index));
+    }
+    const [tokenKeyN, ...modifierKeys] = match[0].slice(1, -1).split(":");
+    if (!tokenKeyN) {
+      throw new Error("Token parse error");
+    }
+    let n;
+    const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
+      n = Number(m);
+      return "N";
+    });
+    tokens.push({
+      markerName: tokenKey,
+      parameter: n,
+      modifierNames: modifierKeys
+    });
+    pos = match.index + match[0].length;
+  }
+  if (pos < template.length) {
+    tokens.push(template.slice(pos));
+  }
+  return tokens;
 }
 var functionWords = /* @__PURE__ */ new Set([
   "a",
@@ -3740,7 +3771,7 @@ function nonFunctionWords(value) {
   );
 }
 function words(value) {
-  return value.split(/[^\p{Letter}\d]+/u).filter((word) => word.length > 0);
+  return value.split(/[\s.,:;]+/).filter((word) => word.length > 0);
 }
 function capitalize(words2) {
   return words2.map(
@@ -3750,6 +3781,9 @@ function capitalize(words2) {
 function title(entryValues) {
   var _a, _b;
   return (_b = (_a = entryValues.get("title")) != null ? _a : entryValues.get("booktitle")) != null ? _b : "";
+}
+function removeUnsafeEntryKeyChars(str) {
+  return str.replace(/[{},\s\\#%~()"'=]+/g, "_");
 }
 
 // src/optionDefinitions.ts
@@ -4391,6 +4425,7 @@ function tidy(input, options_ = {}) {
     message: `${entry.parent.command} entry does not have a citation key.`
   }));
   const valueLookup = generateValueLookup(ast, options);
+  const renderedValueLookup = generateRenderedValueLookup(ast, options);
   const duplicates = checkForDuplicates(
     ast,
     valueLookup,
@@ -4403,7 +4438,7 @@ function tidy(input, options_ = {}) {
   );
   if (options.sort) sortEntries(ast, valueLookup, options.sort);
   if (options.sortFields) sortEntryFields(ast, options.sortFields);
-  const newKeys = options.generateKeys ? generateKeys(ast, valueLookup, options.generateKeys) : void 0;
+  const newKeys = options.generateKeys ? generateKeys(ast, renderedValueLookup, options.generateKeys) : void 0;
   const bibtex = formatBibtex(ast, options, newKeys);
   return { bibtex, warnings, count: getEntries(ast).length };
 }
@@ -4419,6 +4454,19 @@ function generateValueLookup(ast, options) {
             (_a = formatValue(field, options)) != null ? _a : ""
           ];
         })
+      )
+    ])
+  );
+}
+function generateRenderedValueLookup(ast, options) {
+  return new Map(
+    [...generateValueLookup(ast, options)].map(([entry, fields]) => [
+      entry,
+      new Map(
+        [...fields.entries()].map(([name, value]) => [
+          name,
+          parseLaTeX(value).renderAsText()
+        ])
       )
     ])
   );

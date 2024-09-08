@@ -15,8 +15,8 @@ export const SPECIAL_MARKERS: Record<
 	auth: {
 		description: "Last name of first authors",
 		callback: (v) => {
-			const authors = parseAuthors(v.get("author") ?? "", true);
-			const author = authors[0]?.lastName.replace(/[^\p{Letter}]+/gu, "_");
+			const authors = parseAuthors(v.get("author") ?? "");
+			const author = authors[0]?.lastName;
 			return author ? [author] : [];
 		},
 	},
@@ -24,11 +24,9 @@ export const SPECIAL_MARKERS: Record<
 		description:
 			"If 1 or 2 authors, both authors, otherwise first author and EtAl",
 		callback: (v) => {
-			const authors = parseAuthors(v.get("author") ?? "", true);
+			const authors = parseAuthors(v.get("author") ?? "");
 			return [
-				...authors
-					.slice(0, 2)
-					.map((author) => author.lastName.replace(/[^\p{Letter}]+/gu, "_")),
+				...authors.slice(0, 2).map((author) => author.lastName),
 				...(authors.length > 2 ? ["Et", "Al"] : []),
 			];
 		},
@@ -36,20 +34,16 @@ export const SPECIAL_MARKERS: Record<
 	authors: {
 		description: "Last name all authors",
 		callback: (v) => {
-			const authors = parseAuthors(v.get("author") ?? "", true);
-			return authors.map((author) =>
-				author.lastName.replace(/[^\p{Letter}]+/gu, "_"),
-			);
+			const authors = parseAuthors(v.get("author") ?? "");
+			return authors.map((author) => author.lastName);
 		},
 	},
 	authorsN: {
 		description: "Last name N authors, with EtAl if more",
 		callback: (v, n = 0) => {
-			const authors = parseAuthors(v.get("author") ?? "", true);
+			const authors = parseAuthors(v.get("author") ?? "");
 			return [
-				...authors
-					.slice(0, n)
-					.map((author) => author.lastName.replace(/[^\p{Letter}]+/gu, "_")),
+				...authors.slice(0, n).map((author) => author.lastName),
 				...(authors.length > n ? ["Et", "Al"] : []),
 			];
 		},
@@ -128,15 +122,17 @@ class MissingRequiredData extends Error {}
 export function generateKeys(
 	ast: RootNode,
 	valueLookup: Map<EntryNode, Map<string, string>>,
-	template: string,
+	entryKeyTemplate: string,
 ): Map<EntryNode, string> {
-	let template2 = template;
+	let template = entryKeyTemplate;
 	if (
-		!template.includes("[duplicateLetter]") &&
-		!template.includes("[duplicateNumber]")
+		!entryKeyTemplate.includes("[duplicateLetter]") &&
+		!entryKeyTemplate.includes("[duplicateNumber]")
 	) {
-		template2 = `${template}[duplicateLetter]`;
+		template = `${entryKeyTemplate}[duplicateLetter]`;
 	}
+
+	const parsedTemplate = parseEntryKeyTemplate(template);
 
 	const entriesByKey = new Map<string, EntryNode[]>();
 
@@ -144,7 +140,7 @@ export function generateKeys(
 		if (isEntryNode(node)) {
 			const entryValues = valueLookup.get(node.block);
 			if (!entryValues) continue;
-			const newKey = generateKey(entryValues, template2);
+			const newKey = generateKey(entryValues, parsedTemplate);
 			if (!newKey) continue;
 			const keyEntries = entriesByKey.get(newKey) ?? [];
 			entriesByKey.set(newKey, [...keyEntries, node.block]);
@@ -169,42 +165,41 @@ export function generateKeys(
 
 export function generateKey(
 	valueLookup: Map<string, string>,
-	template: string,
+	entryKeyTemplate: EntryKeyTemplateToken[],
 ): string | undefined {
 	try {
-		const newKey = template.replace(/\[[^:\]]+(?::[^:\]]+)*\]/g, (m) => {
-			const [tokenKeyN, ...modifierKeys] = m.slice(1, -1).split(":");
-			if (!tokenKeyN) {
-				throw new Error("Token parse error");
-			}
-			let n: number | undefined;
-			const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
-				n = Number(m);
-				return "N";
-			});
-			const token = SPECIAL_MARKERS[tokenKey];
-			let key: string[];
-			if (token) {
-				key = token.callback(valueLookup, n);
-			} else if (tokenKey === tokenKey.toLocaleUpperCase()) {
-				const value = valueLookup.get(tokenKey.toLocaleLowerCase());
-				key = value ? words(value) : [];
-			} else {
-				throw new Error(`Invalid citation key token ${tokenKey}`);
-			}
-
-			for (const modifierKey of modifierKeys) {
-				const modifier = MODIFIERS[modifierKey];
-				if (modifier) {
-					key = modifier.callback(key);
-				} else {
-					throw new Error(`Invalid modifier ${modifierKey}`);
+		let newKey = entryKeyTemplate
+			.map((token) => {
+				if (typeof token === "string") {
+					return token;
 				}
-			}
+				const { markerName, parameter, modifierNames } = token;
 
-			return key.join("");
-		});
+				const specialMarker = SPECIAL_MARKERS[markerName];
+				let key: string[];
+				if (specialMarker) {
+					key = specialMarker.callback(valueLookup, parameter);
+				} else if (markerName === markerName.toLocaleUpperCase()) {
+					const value = valueLookup.get(markerName.toLocaleLowerCase());
+					key = value ? words(value) : [];
+				} else {
+					throw new Error(`Invalid citation key token ${markerName}`);
+				}
 
+				for (const modifierKey of modifierNames) {
+					const modifier = MODIFIERS[modifierKey];
+					if (modifier) {
+						key = modifier.callback(key);
+					} else {
+						throw new Error(`Invalid modifier ${modifierKey}`);
+					}
+				}
+
+				return key.join("");
+			})
+			.join("");
+
+		newKey = removeUnsafeEntryKeyChars(newKey);
 		if (newKey === "") return; // keep existing key
 		return newKey;
 	} catch (e) {
@@ -215,7 +210,47 @@ export function generateKey(
 	}
 }
 
-//prettier-ignore
+type EntryKeyTemplateToken =
+	| string
+	| { markerName: string; parameter?: number; modifierNames: string[] };
+
+export function parseEntryKeyTemplate(
+	template: string,
+): EntryKeyTemplateToken[] {
+	const tokens: EntryKeyTemplateToken[] = [];
+	const matches = template.matchAll(/\[[^:\]]+(?::[^:\]]+)*\]/g);
+
+	let pos = 0;
+	for (const match of matches) {
+		if (match.index === undefined) break;
+		if (match.index !== pos) {
+			tokens.push(template.slice(pos, match.index));
+		}
+		const [tokenKeyN, ...modifierKeys] = match[0].slice(1, -1).split(":");
+		if (!tokenKeyN) {
+			throw new Error("Token parse error");
+		}
+
+		let n: number | undefined;
+		const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
+			n = Number(m);
+			return "N";
+		});
+
+		tokens.push({
+			markerName: tokenKey,
+			parameter: n,
+			modifierNames: modifierKeys,
+		});
+		pos = match.index + match[0].length;
+	}
+	if (pos < template.length) {
+		tokens.push(template.slice(pos));
+	}
+
+	return tokens;
+}
+
 export const functionWords = new Set([
 	"a",
 	"about",
@@ -277,7 +312,7 @@ function nonFunctionWords(value: string): string[] {
 }
 
 function words(value: string): string[] {
-	return value.split(/[^\p{Letter}\d]+/u).filter((word) => word.length > 0);
+	return value.split(/[\s.,:;]+/).filter((word) => word.length > 0);
 }
 
 function capitalize(words: string[]): string[] {
@@ -289,4 +324,14 @@ function capitalize(words: string[]): string[] {
 
 function title(entryValues: Map<string, string>): string {
 	return entryValues.get("title") ?? entryValues.get("booktitle") ?? "";
+}
+
+/**
+ * "Curly braces ({}), commas, spaces, backslashes (\), hashes (#), percent characters (%)
+ * and tildes (~) are always forbidden. biber additionally forbids round brackets (()),
+ * quotation marks (", '), and the equals sign (=). Source: Kime et al (2024) The biblatex
+ * Package (v3.20).
+ */
+function removeUnsafeEntryKeyChars(str: string): string {
+	return str.replace(/[{},\s\\#%~()"'=]+/g, "_");
 }

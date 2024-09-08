@@ -54,7 +54,6 @@
 		"esbuild-register": "^3.6.0",
 		"esbuild-svelte": "^0.8.1",
 		"puppeteer": "^23.3.0",
-		"regexpu-core": "^6.0.0",
 		"svelte-preprocess": "^5.1.4",
 		"typescript": "^5.5.4"
 	}
