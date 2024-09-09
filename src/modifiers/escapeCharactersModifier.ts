@@ -1,5 +1,5 @@
+import type { Modifier } from "../types";
 import { specialCharacters } from "../unicode";
-import type { Modifier } from "./limitAuthorsModifier";
 
 /**
  * The following fields are listed in the BibLaTeX documentation as verbatim (may contain
@@ -18,7 +18,8 @@ const VERBATIM_FIELDS = [
 
 // escape special characters like %. Do not do this on the url field, which is a
 // special bibtex field where special characters are output verbatim.
-export const escapeCharactersModifier: Modifier<boolean> = {
+export const escapeCharactersModifier: Modifier = {
+	type: "FieldModifier",
 	condition: (fieldName, options) =>
 		Boolean(options.escape && !VERBATIM_FIELDS.includes(fieldName)),
 	modifyRenderedValue: (str) => {

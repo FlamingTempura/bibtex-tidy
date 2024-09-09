@@ -1,7 +1,8 @@
-import type { Modifier } from "./limitAuthorsModifier";
+import type { Modifier } from "../types";
 
 /** Replace single dash with double dash in page range **/
 export const formatPageRangeModifier: Modifier<boolean> = {
+	type: "FieldModifier",
 	condition: (fieldName) => fieldName === "pages",
 	modifyRenderedValue: (str) => {
 		let result = str;

@@ -1,8 +1,9 @@
 import { MONTH_CONVERSIONS } from "../months";
-import { ConcatNode, LiteralNode } from "../parsers/bibtexParser";
-import type { Modifier } from "./limitAuthorsModifier";
+import { LiteralNode } from "../parsers/bibtexParser";
+import type { Modifier } from "../types";
 
-export const abbreviateMonthsModifier: Modifier<boolean> = {
+export const abbreviateMonthsModifier: Modifier = {
+	type: "FieldModifier",
 	condition: (fieldName, options) =>
 		Boolean(options.months && fieldName === "month"),
 	modifyNode: (node) => {
