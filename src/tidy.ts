@@ -1,24 +1,31 @@
 import { Cache } from "./cache";
-import { checkForDuplicates } from "./duplicates";
 import { formatBibtex } from "./format";
-import { generateKeys } from "./generateKeys";
 import { abbreviateMonthsModifier } from "./modifiers/abbreviateMonthsModifier";
 import { dropAllCapsModifier } from "./modifiers/dropAllCapsModifier";
 import { encodeUrlsModifier } from "./modifiers/encodeUrlsModifier";
 import { escapeCharactersModifier } from "./modifiers/escapeCharactersModifier";
 import { formatPageRangeModifier } from "./modifiers/formatPageRangeModifier";
+import { generateKeysModifier } from "./modifiers/generateKeysModifier";
 import { limitAuthorsModifier } from "./modifiers/limitAuthorsModifier";
+import { lowercaseEntryTypeModifier } from "./modifiers/lowercaseEntryTypeModifier";
+import { lowercaseFieldsModifier } from "./modifiers/lowercaseFieldsModifier";
+import { mergeEntriesModifier } from "./modifiers/mergeEntriesModifier";
+import { omitFieldModifier } from "./modifiers/omitFieldModifier";
 import { removeBracesModifier } from "./modifiers/removeBracesModifier";
+import { removeCommentsModifier } from "./modifiers/removeCommentsModifier";
+import { removeDuplicateFieldsModifier } from "./modifiers/removeDuplicateFieldsModifier";
+import { removeEmptyFieldsModifier } from "./modifiers/removeEmptyFieldsModifier";
+import { sortEntriesModifier } from "./modifiers/sortEntriesModifier";
+import { sortFieldsModifier } from "./modifiers/sortFieldsModifier";
 import { stripEnclosingBracesModifier } from "./modifiers/stripEnclosingBracesModifier";
+import { trimCommentsModifier } from "./modifiers/trimCommentsModifier";
 import { normalizeOptions } from "./optionUtils";
 import type { DuplicateRule, Options } from "./optionUtils";
 import {
 	type EntryNode,
-	LiteralNode,
 	type RootNode,
 	parseBibTeX,
 } from "./parsers/bibtexParser";
-import { sortEntries, sortEntryFields } from "./sort";
 import { convertCRLF, isEntryNode } from "./utils";
 
 export type Warning = (
@@ -33,6 +40,28 @@ export type BibTeXTidyResult = {
 	warnings: Warning[];
 	count: number;
 };
+
+const modifiers = [
+	encodeUrlsModifier,
+	limitAuthorsModifier,
+	escapeCharactersModifier,
+	dropAllCapsModifier,
+	formatPageRangeModifier,
+	abbreviateMonthsModifier,
+	stripEnclosingBracesModifier,
+	removeBracesModifier,
+	omitFieldModifier,
+	mergeEntriesModifier,
+	sortEntriesModifier,
+	sortFieldsModifier,
+	generateKeysModifier,
+	removeDuplicateFieldsModifier,
+	removeEmptyFieldsModifier,
+	lowercaseFieldsModifier,
+	lowercaseEntryTypeModifier,
+	removeCommentsModifier,
+	trimCommentsModifier,
+];
 
 export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	const options = normalizeOptions(options_);
@@ -49,20 +78,19 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 
 	const cache = new Cache(options);
 
-	const valueModifiers = [
-		encodeUrlsModifier,
-		limitAuthorsModifier,
-		escapeCharactersModifier,
-		dropAllCapsModifier,
-		formatPageRangeModifier,
-		abbreviateMonthsModifier,
-		stripEnclosingBracesModifier,
-		removeBracesModifier,
-	];
+	for (const modifier of modifiers) {
+		if (modifier.type !== "RootModifier") continue;
+		const params = modifier.condition(options);
+		if (!params) continue;
+		//@ts-expect-error
+		const result = modifier.modifyRoot(ast, cache, params);
+		if (result) warnings.push(...result);
+	}
 
 	for (const entry of entries) {
 		for (const field of entry.fields) {
-			for (const modifier of valueModifiers) {
+			for (const modifier of modifiers) {
+				if (modifier.type !== "FieldModifier") continue;
 				const params = modifier.condition(
 					field.name.toLocaleLowerCase(),
 					options,
@@ -91,29 +119,7 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 		}
 	}
 
-	const duplicates = checkForDuplicates(
-		entries,
-		cache,
-		options.duplicates,
-		options.merge,
-	);
-
-	warnings.push(...duplicates.warnings);
-
-	ast.children = ast.children.filter(
-		(child) => !isEntryNode(child) || !duplicates.entries.has(child.block),
-	);
-
-	// sort needs to happen after merging all entries is complete
-	if (options.sort) sortEntries(ast, cache, options.sort);
-
-	if (options.sortFields) sortEntryFields(entries, options.sortFields);
-
-	const newKeys = options.generateKeys
-		? generateKeys(entries, cache, options.generateKeys)
-		: undefined;
-
-	const bibtex = formatBibtex(ast, options, newKeys);
+	const bibtex = formatBibtex(ast, options);
 
 	return { bibtex, warnings, count: entries.length };
 }

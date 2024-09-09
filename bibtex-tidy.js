@@ -268,20 +268,17 @@ function isEntryNode(node) {
 __name(isEntryNode, "isEntryNode");
 
 // src/format.ts
-function formatBibtex(ast, options, replacementKeys) {
-  const { omit, tab, space } = options;
+function formatBibtex(ast, options) {
+  const { tab, space } = options;
   const indent = tab ? "	" : " ".repeat(space);
-  const omitFields = new Set(omit);
-  let bibtex = ast.children.map(
-    (child) => formatNode(child, options, indent, omitFields, replacementKeys)
-  ).join("").trimEnd();
-  if (!bibtex.endsWith("\n")) bibtex += "\n";
-  return bibtex;
+  const bibtex = ast.children.map((child) => formatNode(child, options, indent)).join("").trimEnd();
+  return `${bibtex}
+`;
 }
 __name(formatBibtex, "formatBibtex");
-function formatNode(child, options, indent, omitFields, replacementKeys) {
+function formatNode(child, options, indent) {
   if (child.type === "text") {
-    return formatComment(child.text, options);
+    return formatComment(child.text);
   }
   if (!child.block) throw new Error("FATAL!");
   switch (child.block.type) {
@@ -290,49 +287,23 @@ function formatNode(child, options, indent, omitFields, replacementKeys) {
       return `${child.block.raw}
 ${options.blankLines ? "\n" : ""}`;
     case "comment":
-      return formatComment(child.block.raw, options);
+      return formatComment(child.block.raw);
     case "entry":
-      return formatEntry(
-        child.command,
-        child.block,
-        options,
-        indent,
-        omitFields,
-        replacementKeys?.get(child.block)
-      ) + (options.blankLines ? "\n" : "");
+      return formatEntry(child.command, child.block, options, indent) + (options.blankLines ? "\n" : "");
   }
 }
 __name(formatNode, "formatNode");
-function formatEntry(entryType, entry, options, indent, omitFields, replacementKey) {
-  const {
-    align,
-    trailingCommas,
-    removeDuplicateFields,
-    removeEmptyFields,
-    lowercase
-  } = options;
-  let bibtex = "";
-  const itemType = lowercase ? entryType.toLocaleLowerCase() : entryType;
-  bibtex += `@${itemType}{`;
-  const key = replacementKey ?? entry.key;
-  if (key) bibtex += `${key},`;
-  const fieldSeen = /* @__PURE__ */ new Set();
+function formatEntry(entryType, entry, options, indent) {
+  const { align, trailingCommas } = options;
+  let bibtex = `@${entryType}{`;
+  if (entry.key) bibtex += `${entry.key},`;
   for (const [i, field] of entry.fields.entries()) {
-    const nameLowerCase = field.name.toLocaleLowerCase();
-    const name = lowercase ? nameLowerCase : field.name;
-    if (field.name === "") continue;
-    if (omitFields.has(nameLowerCase)) continue;
-    if (removeDuplicateFields && fieldSeen.has(nameLowerCase)) continue;
-    fieldSeen.add(nameLowerCase);
-    if (field.value.concat.length === 0) {
-      if (removeEmptyFields) continue;
-      bibtex += `
-${indent}${name}`;
-    } else {
-      const value = formatValue(field, options);
-      if (removeEmptyFields && (value === "{}" || value === '""')) continue;
-      bibtex += `
-${indent}${name.trim().padEnd(align - 1)} = ${value}`;
+    bibtex += `
+${indent}${field.name}`;
+    const value = formatValue(field, options);
+    if (value) {
+      const gap = Math.max(align - field.name.length, 1);
+      bibtex += `${" ".repeat(gap)}= ${value}`;
     }
     if (i < entry.fields.length - 1 || trailingCommas) bibtex += ",";
   }
@@ -340,14 +311,7 @@ ${indent}${name.trim().padEnd(align - 1)} = ${value}`;
   return bibtex;
 }
 __name(formatEntry, "formatEntry");
-function formatComment(comment, { stripComments, tidyComments }) {
-  if (stripComments) return "";
-  if (tidyComments) {
-    const trimmed = comment.trim();
-    if (trimmed === "") return "";
-    return `${trimmed}
-`;
-  }
+function formatComment(comment) {
   return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
 }
 __name(formatComment, "formatComment");
@@ -1010,543 +974,6 @@ var Cache = class {
   }
 };
 
-// src/parsers/nameFieldParser.ts
-function parseNameList(value) {
-  return value.split(/\s+and\s+/i).map(parseName);
-}
-__name(parseNameList, "parseNameList");
-function detectNameSyntax(tokens) {
-  const names = tokens.filter((token) => token.type === "name");
-  const prefixes = tokens.filter((token) => token.type === "prefix");
-  const commas = tokens.filter((token) => token.type === "comma");
-  if (tokens.length === 0) {
-    return "Empty";
-  }
-  if (tokens.length === 1 && nameStr(tokens) === "others") {
-    return "Others";
-  }
-  if (tokens.length === names.length && tokens.length === 1) {
-    return "LastName";
-  }
-  if (tokens.length === names.length) {
-    return "FirstName LastNames";
-  }
-  if (prefixes.length > 0 && commas.length === 0) {
-    return "FirstNames Prefixes LastNames";
-  }
-  if (commas.length === 1) {
-    return "LastNames, FirstNames Prefixes";
-  }
-  if (commas.length === 2) {
-    return "LastNames, Suffixes, FirstNames Prefixes";
-  }
-  throw new Error(
-    `Invalid name syntax: ${tokens.map((token) => token.type).join(" ")}`
-  );
-}
-__name(detectNameSyntax, "detectNameSyntax");
-function parseName(name) {
-  const tokens = tokeniseName(name);
-  switch (detectNameSyntax(tokens)) {
-    case "Empty":
-      return { first: "", last: "", pre: "", suf: "" };
-    case "Others":
-      return { first: "", last: "others", pre: "", suf: "" };
-    case "LastName":
-      return { first: "", last: nameStr(tokens), pre: "", suf: "" };
-    case "FirstName LastNames": {
-      const [first, last] = partition(tokens, ["name", "name"]);
-      return { first: nameStr(first), last: nameStr(last), pre: "", suf: "" };
-    }
-    case "FirstNames Prefixes LastNames": {
-      const [first, pre, last] = partition(tokens, [
-        "name",
-        "prefix",
-        "name"
-      ]);
-      return {
-        first: nameStr(first),
-        pre: nameStr(pre),
-        last: nameStr(last),
-        suf: ""
-      };
-    }
-    case "LastNames, FirstNames Prefixes": {
-      const [lastNames, firstNames, prefixes] = partition(tokens, [
-        "name",
-        "comma",
-        "prefix"
-      ]);
-      return {
-        last: nameStr(lastNames),
-        first: nameStr(firstNames),
-        pre: nameStr(prefixes),
-        suf: ""
-      };
-    }
-    case "LastNames, Suffixes, FirstNames Prefixes": {
-      const [lastNames, suffixes, firstNames, prefixes] = partition(tokens, [
-        "name",
-        "comma",
-        "comma",
-        "prefix"
-      ]);
-      return {
-        last: nameStr(lastNames),
-        suf: nameStr(suffixes),
-        first: nameStr(firstNames),
-        pre: nameStr(prefixes)
-      };
-    }
-  }
-}
-__name(parseName, "parseName");
-function tokeniseName(name) {
-  const tokens = [];
-  let current = "";
-  function flushToken() {
-    if (!current) return;
-    tokens.push({
-      type: isPrefixToken(current) ? "prefix" : "name",
-      value: current
-    });
-  }
-  __name(flushToken, "flushToken");
-  for (const c of name) {
-    if (c === ",") {
-      flushToken();
-      tokens.push({ type: "comma" });
-      current = "";
-    } else if (/\s/.test(c)) {
-      flushToken();
-      current = "";
-    } else {
-      current += c;
-    }
-  }
-  flushToken();
-  return tokens;
-}
-__name(tokeniseName, "tokeniseName");
-function nameStr(tokens) {
-  return tokens.filter(
-    (token) => token.type !== "comma"
-  ).map((token) => token.value).join(" ");
-}
-__name(nameStr, "nameStr");
-function isPrefixToken(token) {
-  return /^[a-z]/.test(token);
-}
-__name(isPrefixToken, "isPrefixToken");
-function partition(tokens, divideBefore) {
-  const partitions = divideBefore.map(() => []);
-  let currPartition = -1;
-  for (const token of tokens) {
-    if (divideBefore[currPartition + 1] === token.type) {
-      currPartition++;
-    }
-    partitions[currPartition]?.push(token);
-  }
-  return partitions;
-}
-__name(partition, "partition");
-
-// src/duplicates.ts
-function checkForDuplicates(entries, cache, duplicateRules, merge) {
-  const rules = /* @__PURE__ */ new Map();
-  if (duplicateRules) {
-    for (const rule of duplicateRules) {
-      rules.set(rule, !!merge);
-    }
-  }
-  if (!rules.has("key")) {
-    rules.set("key", false);
-  }
-  const duplicateEntries = /* @__PURE__ */ new Set();
-  const warnings = [];
-  const keys = /* @__PURE__ */ new Map();
-  const dois = /* @__PURE__ */ new Map();
-  const citations = /* @__PURE__ */ new Map();
-  const abstracts = /* @__PURE__ */ new Map();
-  for (const entry of entries) {
-    for (const [rule, doMerge] of rules) {
-      let duplicateOf;
-      let warning;
-      switch (rule) {
-        case "key": {
-          if (!entry.key) continue;
-          const keyLC = entry.key.toLocaleLowerCase();
-          duplicateOf = keys.get(keyLC);
-          if (!duplicateOf) {
-            keys.set(keyLC, entry);
-          } else {
-            warning = `The citation key ${entry.key} has already been used.`;
-          }
-          break;
-        }
-        case "doi": {
-          const doi = alphaNum(cache.lookupEntryValue(entry, "doi"));
-          if (!doi) continue;
-          duplicateOf = dois.get(doi);
-          if (!duplicateOf) {
-            dois.set(doi, entry);
-          } else {
-            warning = `Entry ${entry.key} has an identical DOI to entry ${duplicateOf.key}.`;
-          }
-          break;
-        }
-        case "citation": {
-          const ttl = cache.lookupEntryValue(entry, "title");
-          const aut = cache.lookupEntryValue(entry, "author");
-          const num = cache.lookupEntryValue(entry, "number");
-          if (!ttl || !aut) continue;
-          const cit = [
-            alphaNum(parseNameList(aut)[0]?.last ?? aut),
-            alphaNum(ttl),
-            alphaNum(num ?? "0")
-          ].join(":");
-          duplicateOf = citations.get(cit);
-          if (!duplicateOf) {
-            citations.set(cit, entry);
-          } else {
-            warning = `Entry ${entry.key} has similar content to entry ${duplicateOf.key}.`;
-          }
-          break;
-        }
-        case "abstract": {
-          const abstract = alphaNum(cache.lookupEntryValue(entry, "abstract"));
-          const abs = abstract.slice(0, 100);
-          if (!abs) continue;
-          duplicateOf = abstracts.get(abs);
-          if (!duplicateOf) {
-            abstracts.set(abs, entry);
-          } else {
-            warning = `Entry ${entry.key} has a similar abstract to entry ${duplicateOf.key}.`;
-          }
-          break;
-        }
-      }
-      if (duplicateOf && doMerge) {
-        duplicateEntries.add(entry);
-        mergeEntries(merge, duplicateOf, entry);
-      }
-      if (warning) {
-        warnings.push({
-          code: "DUPLICATE_ENTRY",
-          rule,
-          message: `Duplicate ${doMerge ? "removed" : "detected"}. ${warning}`
-        });
-      }
-    }
-  }
-  return { entries: duplicateEntries, warnings };
-}
-__name(checkForDuplicates, "checkForDuplicates");
-function mergeEntries(merge, duplicateOf, entry) {
-  if (!merge) return;
-  switch (merge) {
-    case "last":
-      duplicateOf.key = entry.key;
-      duplicateOf.fields = entry.fields;
-      break;
-    case "combine":
-    case "overwrite":
-      for (const field of entry.fields) {
-        const existing = duplicateOf.fields.find(
-          (f) => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase()
-        );
-        if (!existing) {
-          duplicateOf.fields.push(field);
-        } else if (merge === "overwrite") {
-          existing.value = field.value;
-        }
-      }
-      break;
-    // TODO: case 'keep-both'
-    case "first":
-      return;
-  }
-}
-__name(mergeEntries, "mergeEntries");
-
-// src/parsers/entryKeyTemplateParser.ts
-function parseEntryKeyTemplate(template) {
-  const tokens = [];
-  const matches = template.matchAll(/\[[^:\]]+(?::[^:\]]+)*\]/g);
-  let pos = 0;
-  for (const match of matches) {
-    if (match.index === void 0) break;
-    if (match.index !== pos) {
-      tokens.push(template.slice(pos, match.index));
-    }
-    const [tokenKeyN, ...modifierKeys] = match[0].slice(1, -1).split(":");
-    if (!tokenKeyN) {
-      throw new Error("Token parse error");
-    }
-    let n;
-    const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
-      n = Number(m);
-      return "N";
-    });
-    tokens.push({
-      marker: tokenKey,
-      parameter: n,
-      modifiers: modifierKeys
-    });
-    pos = match.index + match[0].length;
-  }
-  if (pos < template.length) {
-    tokens.push(template.slice(pos));
-  }
-  return tokens;
-}
-__name(parseEntryKeyTemplate, "parseEntryKeyTemplate");
-
-// src/generateKeys.ts
-var SPECIAL_MARKERS = {
-  auth: {
-    description: "Last name of first authors",
-    callback: /* @__PURE__ */ __name((v) => {
-      const authors = parseNameList(v.get("author") ?? "");
-      const author = authors[0]?.last;
-      return author ? [author] : [];
-    }, "callback")
-  },
-  authEtAl: {
-    description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
-    callback: /* @__PURE__ */ __name((v) => {
-      const authors = parseNameList(v.get("author") ?? "");
-      return [
-        ...authors.slice(0, 2).map((author) => author.last),
-        ...authors.length > 2 ? ["Et", "Al"] : []
-      ];
-    }, "callback")
-  },
-  authors: {
-    description: "Last name all authors",
-    callback: /* @__PURE__ */ __name((v) => {
-      const authors = parseNameList(v.get("author") ?? "");
-      return authors.map((author) => author.last);
-    }, "callback")
-  },
-  authorsN: {
-    description: "Last name N authors, with EtAl if more",
-    callback: /* @__PURE__ */ __name((v, n = 0) => {
-      const authors = parseNameList(v.get("author") ?? "");
-      return [
-        ...authors.slice(0, n).map((author) => author.last),
-        ...authors.length > n ? ["Et", "Al"] : []
-      ];
-    }, "callback")
-  },
-  veryshorttitle: {
-    description: "First non-function word of the title",
-    callback: /* @__PURE__ */ __name((v) => nonFunctionWords(title(v)).slice(0, 1), "callback")
-  },
-  shorttitle: {
-    description: "First three non-function words of the title",
-    callback: /* @__PURE__ */ __name((v) => nonFunctionWords(title(v)).slice(0, 3), "callback")
-  },
-  title: {
-    description: "Full title, capitalized",
-    callback: /* @__PURE__ */ __name((v) => capitalize(words(title(v))), "callback")
-  },
-  fulltitle: {
-    description: "Full title, verbatim",
-    callback: /* @__PURE__ */ __name((v) => words(title(v)), "callback")
-  },
-  year: {
-    description: "Year",
-    callback: /* @__PURE__ */ __name((v) => {
-      const year = v.get("year")?.replace(/[^0-9]/g, "");
-      return year ? [year] : [];
-    }, "callback")
-  },
-  duplicateLetter: {
-    description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
-    callback: /* @__PURE__ */ __name((_, __, duplicate) => [duplicate ? numToLetter(duplicate) : ""], "callback")
-  },
-  duplicateNumber: {
-    description: "If the multiple entries end up with the same key, then insert a number.",
-    callback: /* @__PURE__ */ __name((_, __, duplicate) => [duplicate ? String(duplicate) : ""], "callback")
-  }
-};
-function numToLetter(n) {
-  return String.fromCharCode(96 + n);
-}
-__name(numToLetter, "numToLetter");
-var MODIFIERS = {
-  required: {
-    description: "If data is missing, revert to existing key",
-    callback: /* @__PURE__ */ __name((words2) => {
-      if (words2.length === 0) throw new MissingRequiredData();
-      return words2;
-    }, "callback")
-  },
-  lower: {
-    description: "Convert to lowercase",
-    callback: /* @__PURE__ */ __name((words2) => words2.map((word) => word.toLocaleLowerCase()), "callback")
-  },
-  upper: {
-    description: "Convert to uppercase",
-    callback: /* @__PURE__ */ __name((words2) => words2.map((word) => word.toLocaleUpperCase()), "callback")
-  },
-  capitalize: {
-    description: "Capitalize first letter of each word",
-    callback: capitalize
-  }
-};
-var MissingRequiredData = class extends Error {
-  static {
-    __name(this, "MissingRequiredData");
-  }
-};
-function generateKeys(entries, cache, entryKeyTemplate) {
-  let template = entryKeyTemplate;
-  if (!entryKeyTemplate.includes("[duplicateLetter]") && !entryKeyTemplate.includes("[duplicateNumber]")) {
-    template = `${entryKeyTemplate}[duplicateLetter]`;
-  }
-  const parsedTemplate = parseEntryKeyTemplate(template);
-  const entriesByKey = /* @__PURE__ */ new Map();
-  for (const entry of entries) {
-    const entryValues = cache.lookupRenderedEntryValues(entry);
-    const key = generateKey(entryValues, parsedTemplate);
-    if (!key) continue;
-    const entriesSoFar = entriesByKey.get(key) ?? [];
-    entriesSoFar.push(entry);
-    entriesByKey.set(key, entriesSoFar);
-  }
-  const keys = /* @__PURE__ */ new Map();
-  for (const [key, entries2] of entriesByKey) {
-    const regenerateDuplicate = entries2.length > 1;
-    for (let i = 0; i < entries2.length; i++) {
-      const node = entries2[i];
-      if (!node) continue;
-      const entryValues = cache.lookupRenderedEntryValues(node);
-      const newKey = regenerateDuplicate ? generateKey(entryValues, parsedTemplate, i + 1) : key;
-      if (!newKey) continue;
-      keys.set(node, newKey);
-    }
-  }
-  return keys;
-}
-__name(generateKeys, "generateKeys");
-function generateKey(valueLookup, entryKeyTemplate, duplicateNumber) {
-  try {
-    let newKey = entryKeyTemplate.map((token) => {
-      if (typeof token === "string") {
-        return token;
-      }
-      const { marker, parameter, modifiers } = token;
-      const specialMarker = SPECIAL_MARKERS[marker];
-      let key;
-      if (specialMarker) {
-        key = specialMarker.callback(valueLookup, parameter, duplicateNumber);
-      } else if (marker === marker.toLocaleUpperCase()) {
-        const value = valueLookup.get(marker.toLocaleLowerCase());
-        key = value ? words(value) : [];
-      } else {
-        throw new Error(`Invalid citation key token ${marker}`);
-      }
-      for (const modifierKey of modifiers) {
-        const modifier = MODIFIERS[modifierKey];
-        if (modifier) {
-          key = modifier.callback(key);
-        } else {
-          throw new Error(`Invalid modifier ${modifierKey}`);
-        }
-      }
-      return key.join("");
-    }).join("");
-    newKey = removeUnsafeEntryKeyChars(newKey);
-    if (newKey === "") return;
-    return newKey;
-  } catch (e) {
-    if (e instanceof MissingRequiredData) {
-      return;
-    }
-    throw e;
-  }
-}
-__name(generateKey, "generateKey");
-var functionWords = /* @__PURE__ */ new Set([
-  "a",
-  "about",
-  "above",
-  "across",
-  "against",
-  "along",
-  "among",
-  "an",
-  "and",
-  "around",
-  "at",
-  "before",
-  "behind",
-  "below",
-  "beneath",
-  "beside",
-  "between",
-  "beyond",
-  "but",
-  "by",
-  "down",
-  "during",
-  "except",
-  "for",
-  "for",
-  "from",
-  "in",
-  "inside",
-  "into",
-  "like",
-  "near",
-  "nor",
-  "of",
-  "off",
-  "on",
-  "onto",
-  "or",
-  "since",
-  "so",
-  "the",
-  "through",
-  "to",
-  "toward",
-  "under",
-  "until",
-  "up",
-  "upon",
-  "with",
-  "within",
-  "without",
-  "yet"
-]);
-function nonFunctionWords(value) {
-  return words(value).filter(
-    (word) => !functionWords.has(word.toLocaleLowerCase())
-  );
-}
-__name(nonFunctionWords, "nonFunctionWords");
-function words(value) {
-  return value.split(/[\s.,:;]+/).filter((word) => word.length > 0);
-}
-__name(words, "words");
-function capitalize(words2) {
-  return words2.map(
-    (word) => word.slice(0, 1).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase()
-  );
-}
-__name(capitalize, "capitalize");
-function title(entryValues) {
-  return entryValues.get("title") ?? entryValues.get("booktitle") ?? "";
-}
-__name(title, "title");
-function removeUnsafeEntryKeyChars(str) {
-  return str.replace(/[{},\s\\#%~()"'=.,:;[\]_]+/g, "");
-}
-__name(removeUnsafeEntryKeyChars, "removeUnsafeEntryKeyChars");
-
 // src/parsers/bibtexParser.ts
 var RootNode = class {
   constructor(children = []) {
@@ -1966,6 +1393,7 @@ ${input.slice(Math.max(0, pos - 20), pos)}>>${input[pos]}<<${input.slice(pos + 1
 
 // src/modifiers/abbreviateMonthsModifier.ts
 var abbreviateMonthsModifier = {
+  type: "FieldModifier",
   condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(options.months && fieldName === "month"), "condition"),
   modifyNode: /* @__PURE__ */ __name((node) => {
     const concatNode = node.value;
@@ -1981,6 +1409,7 @@ var abbreviateMonthsModifier = {
 
 // src/modifiers/dropAllCapsModifier.ts
 var dropAllCapsModifier = {
+  type: "FieldModifier",
   condition: /* @__PURE__ */ __name((fieldName, options, entry, cache) => Boolean(
     options.dropAllCaps && !cache.lookupRenderedEntryValue(entry, fieldName).match(/[a-z]/)
   ), "condition"),
@@ -1999,6 +1428,7 @@ __name(isRomanNumeral, "isRomanNumeral");
 
 // src/modifiers/encodeUrlsModifier.ts
 var encodeUrlsModifier = {
+  type: "FieldModifier",
   condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(fieldName === "url" && options.encodeUrls), "condition"),
   modifyRenderedValue: /* @__PURE__ */ __name((str) => str.replace(/\\?_/g, "\\%5F"), "modifyRenderedValue")
 };
@@ -4345,6 +3775,7 @@ var VERBATIM_FIELDS = [
   "pdf"
 ];
 var escapeCharactersModifier = {
+  type: "FieldModifier",
   condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(options.escape && !VERBATIM_FIELDS.includes(fieldName)), "condition"),
   modifyRenderedValue: /* @__PURE__ */ __name((str) => {
     let result = str;
@@ -4378,6 +3809,7 @@ var escapeCharactersModifier = {
 
 // src/modifiers/formatPageRangeModifier.ts
 var formatPageRangeModifier = {
+  type: "FieldModifier",
   condition: /* @__PURE__ */ __name((fieldName) => fieldName === "pages", "condition"),
   modifyRenderedValue: /* @__PURE__ */ __name((str) => {
     let result = str;
@@ -4388,8 +3820,446 @@ var formatPageRangeModifier = {
   }, "modifyRenderedValue")
 };
 
+// src/parsers/entryKeyTemplateParser.ts
+function parseEntryKeyTemplate(template) {
+  const tokens = [];
+  const matches = template.matchAll(/\[[^:\]]+(?::[^:\]]+)*\]/g);
+  let pos = 0;
+  for (const match of matches) {
+    if (match.index === void 0) break;
+    if (match.index !== pos) {
+      tokens.push(template.slice(pos, match.index));
+    }
+    const [tokenKeyN, ...modifierKeys] = match[0].slice(1, -1).split(":");
+    if (!tokenKeyN) {
+      throw new Error("Token parse error");
+    }
+    let n;
+    const tokenKey = tokenKeyN.replace(/[0-9]+/g, (m) => {
+      n = Number(m);
+      return "N";
+    });
+    tokens.push({
+      marker: tokenKey,
+      parameter: n,
+      modifiers: modifierKeys
+    });
+    pos = match.index + match[0].length;
+  }
+  if (pos < template.length) {
+    tokens.push(template.slice(pos));
+  }
+  return tokens;
+}
+__name(parseEntryKeyTemplate, "parseEntryKeyTemplate");
+
+// src/parsers/nameFieldParser.ts
+function parseNameList(value) {
+  return value.split(/\s+and\s+/i).map(parseName);
+}
+__name(parseNameList, "parseNameList");
+function detectNameSyntax(tokens) {
+  const names = tokens.filter((token) => token.type === "name");
+  const prefixes = tokens.filter((token) => token.type === "prefix");
+  const commas = tokens.filter((token) => token.type === "comma");
+  if (tokens.length === 0) {
+    return "Empty";
+  }
+  if (tokens.length === 1 && nameStr(tokens) === "others") {
+    return "Others";
+  }
+  if (tokens.length === names.length && tokens.length === 1) {
+    return "LastName";
+  }
+  if (tokens.length === names.length) {
+    return "FirstName LastNames";
+  }
+  if (prefixes.length > 0 && commas.length === 0) {
+    return "FirstNames Prefixes LastNames";
+  }
+  if (commas.length === 1) {
+    return "LastNames, FirstNames Prefixes";
+  }
+  if (commas.length === 2) {
+    return "LastNames, Suffixes, FirstNames Prefixes";
+  }
+  throw new Error(
+    `Invalid name syntax: ${tokens.map((token) => token.type).join(" ")}`
+  );
+}
+__name(detectNameSyntax, "detectNameSyntax");
+function parseName(name) {
+  const tokens = tokeniseName(name);
+  switch (detectNameSyntax(tokens)) {
+    case "Empty":
+      return { first: "", last: "", pre: "", suf: "" };
+    case "Others":
+      return { first: "", last: "others", pre: "", suf: "" };
+    case "LastName":
+      return { first: "", last: nameStr(tokens), pre: "", suf: "" };
+    case "FirstName LastNames": {
+      const [first, last] = partition(tokens, ["name", "name"]);
+      return { first: nameStr(first), last: nameStr(last), pre: "", suf: "" };
+    }
+    case "FirstNames Prefixes LastNames": {
+      const [first, pre, last] = partition(tokens, [
+        "name",
+        "prefix",
+        "name"
+      ]);
+      return {
+        first: nameStr(first),
+        pre: nameStr(pre),
+        last: nameStr(last),
+        suf: ""
+      };
+    }
+    case "LastNames, FirstNames Prefixes": {
+      const [lastNames, firstNames, prefixes] = partition(tokens, [
+        "name",
+        "comma",
+        "prefix"
+      ]);
+      return {
+        last: nameStr(lastNames),
+        first: nameStr(firstNames),
+        pre: nameStr(prefixes),
+        suf: ""
+      };
+    }
+    case "LastNames, Suffixes, FirstNames Prefixes": {
+      const [lastNames, suffixes, firstNames, prefixes] = partition(tokens, [
+        "name",
+        "comma",
+        "comma",
+        "prefix"
+      ]);
+      return {
+        last: nameStr(lastNames),
+        suf: nameStr(suffixes),
+        first: nameStr(firstNames),
+        pre: nameStr(prefixes)
+      };
+    }
+  }
+}
+__name(parseName, "parseName");
+function tokeniseName(name) {
+  const tokens = [];
+  let current = "";
+  function flushToken() {
+    if (!current) return;
+    tokens.push({
+      type: isPrefixToken(current) ? "prefix" : "name",
+      value: current
+    });
+  }
+  __name(flushToken, "flushToken");
+  for (const c of name) {
+    if (c === ",") {
+      flushToken();
+      tokens.push({ type: "comma" });
+      current = "";
+    } else if (/\s/.test(c)) {
+      flushToken();
+      current = "";
+    } else {
+      current += c;
+    }
+  }
+  flushToken();
+  return tokens;
+}
+__name(tokeniseName, "tokeniseName");
+function nameStr(tokens) {
+  return tokens.filter(
+    (token) => token.type !== "comma"
+  ).map((token) => token.value).join(" ");
+}
+__name(nameStr, "nameStr");
+function isPrefixToken(token) {
+  return /^[a-z]/.test(token);
+}
+__name(isPrefixToken, "isPrefixToken");
+function partition(tokens, divideBefore) {
+  const partitions = divideBefore.map(() => []);
+  let currPartition = -1;
+  for (const token of tokens) {
+    if (divideBefore[currPartition + 1] === token.type) {
+      currPartition++;
+    }
+    partitions[currPartition]?.push(token);
+  }
+  return partitions;
+}
+__name(partition, "partition");
+
+// src/generateKeys.ts
+var SPECIAL_MARKERS = {
+  auth: {
+    description: "Last name of first authors",
+    callback: /* @__PURE__ */ __name((v) => {
+      const authors = parseNameList(v.get("author") ?? "");
+      const author = authors[0]?.last;
+      return author ? [author] : [];
+    }, "callback")
+  },
+  authEtAl: {
+    description: "If 1 or 2 authors, both authors, otherwise first author and EtAl",
+    callback: /* @__PURE__ */ __name((v) => {
+      const authors = parseNameList(v.get("author") ?? "");
+      return [
+        ...authors.slice(0, 2).map((author) => author.last),
+        ...authors.length > 2 ? ["Et", "Al"] : []
+      ];
+    }, "callback")
+  },
+  authors: {
+    description: "Last name all authors",
+    callback: /* @__PURE__ */ __name((v) => {
+      const authors = parseNameList(v.get("author") ?? "");
+      return authors.map((author) => author.last);
+    }, "callback")
+  },
+  authorsN: {
+    description: "Last name N authors, with EtAl if more",
+    callback: /* @__PURE__ */ __name((v, n = 0) => {
+      const authors = parseNameList(v.get("author") ?? "");
+      return [
+        ...authors.slice(0, n).map((author) => author.last),
+        ...authors.length > n ? ["Et", "Al"] : []
+      ];
+    }, "callback")
+  },
+  veryshorttitle: {
+    description: "First non-function word of the title",
+    callback: /* @__PURE__ */ __name((v) => nonFunctionWords(title(v)).slice(0, 1), "callback")
+  },
+  shorttitle: {
+    description: "First three non-function words of the title",
+    callback: /* @__PURE__ */ __name((v) => nonFunctionWords(title(v)).slice(0, 3), "callback")
+  },
+  title: {
+    description: "Full title, capitalized",
+    callback: /* @__PURE__ */ __name((v) => capitalize(words(title(v))), "callback")
+  },
+  fulltitle: {
+    description: "Full title, verbatim",
+    callback: /* @__PURE__ */ __name((v) => words(title(v)), "callback")
+  },
+  year: {
+    description: "Year",
+    callback: /* @__PURE__ */ __name((v) => {
+      const year = v.get("year")?.replace(/[^0-9]/g, "");
+      return year ? [year] : [];
+    }, "callback")
+  },
+  duplicateLetter: {
+    description: "If the multiple entries end up with the same key, then insert a letter a-z. By default this will be inserted at the end.",
+    callback: /* @__PURE__ */ __name((_, __, duplicate) => [duplicate ? numToLetter(duplicate) : ""], "callback")
+  },
+  duplicateNumber: {
+    description: "If the multiple entries end up with the same key, then insert a number.",
+    callback: /* @__PURE__ */ __name((_, __, duplicate) => [duplicate ? String(duplicate) : ""], "callback")
+  }
+};
+function numToLetter(n) {
+  return String.fromCharCode(96 + n);
+}
+__name(numToLetter, "numToLetter");
+var MODIFIERS = {
+  required: {
+    description: "If data is missing, revert to existing key",
+    callback: /* @__PURE__ */ __name((words2) => {
+      if (words2.length === 0) throw new MissingRequiredData();
+      return words2;
+    }, "callback")
+  },
+  lower: {
+    description: "Convert to lowercase",
+    callback: /* @__PURE__ */ __name((words2) => words2.map((word) => word.toLocaleLowerCase()), "callback")
+  },
+  upper: {
+    description: "Convert to uppercase",
+    callback: /* @__PURE__ */ __name((words2) => words2.map((word) => word.toLocaleUpperCase()), "callback")
+  },
+  capitalize: {
+    description: "Capitalize first letter of each word",
+    callback: capitalize
+  }
+};
+var MissingRequiredData = class extends Error {
+  static {
+    __name(this, "MissingRequiredData");
+  }
+};
+function generateKeys(entries, cache, entryKeyTemplate) {
+  let template = entryKeyTemplate;
+  if (!entryKeyTemplate.includes("[duplicateLetter]") && !entryKeyTemplate.includes("[duplicateNumber]")) {
+    template = `${entryKeyTemplate}[duplicateLetter]`;
+  }
+  const parsedTemplate = parseEntryKeyTemplate(template);
+  const entriesByKey = /* @__PURE__ */ new Map();
+  for (const entry of entries) {
+    const entryValues = cache.lookupRenderedEntryValues(entry);
+    const key = generateKey(entryValues, parsedTemplate);
+    if (!key) continue;
+    const entriesSoFar = entriesByKey.get(key) ?? [];
+    entriesSoFar.push(entry);
+    entriesByKey.set(key, entriesSoFar);
+  }
+  const keys = /* @__PURE__ */ new Map();
+  for (const [key, entries2] of entriesByKey) {
+    const regenerateDuplicate = entries2.length > 1;
+    for (let i = 0; i < entries2.length; i++) {
+      const node = entries2[i];
+      if (!node) continue;
+      const entryValues = cache.lookupRenderedEntryValues(node);
+      const newKey = regenerateDuplicate ? generateKey(entryValues, parsedTemplate, i + 1) : key;
+      if (!newKey) continue;
+      keys.set(node, newKey);
+    }
+  }
+  return keys;
+}
+__name(generateKeys, "generateKeys");
+function generateKey(valueLookup, entryKeyTemplate, duplicateNumber) {
+  try {
+    let newKey = entryKeyTemplate.map((token) => {
+      if (typeof token === "string") {
+        return token;
+      }
+      const { marker, parameter, modifiers: modifiers2 } = token;
+      const specialMarker = SPECIAL_MARKERS[marker];
+      let key;
+      if (specialMarker) {
+        key = specialMarker.callback(valueLookup, parameter, duplicateNumber);
+      } else if (marker === marker.toLocaleUpperCase()) {
+        const value = valueLookup.get(marker.toLocaleLowerCase());
+        key = value ? words(value) : [];
+      } else {
+        throw new Error(`Invalid citation key token ${marker}`);
+      }
+      for (const modifierKey of modifiers2) {
+        const modifier = MODIFIERS[modifierKey];
+        if (modifier) {
+          key = modifier.callback(key);
+        } else {
+          throw new Error(`Invalid modifier ${modifierKey}`);
+        }
+      }
+      return key.join("");
+    }).join("");
+    newKey = removeUnsafeEntryKeyChars(newKey);
+    if (newKey === "") return;
+    return newKey;
+  } catch (e) {
+    if (e instanceof MissingRequiredData) {
+      return;
+    }
+    throw e;
+  }
+}
+__name(generateKey, "generateKey");
+var functionWords = /* @__PURE__ */ new Set([
+  "a",
+  "about",
+  "above",
+  "across",
+  "against",
+  "along",
+  "among",
+  "an",
+  "and",
+  "around",
+  "at",
+  "before",
+  "behind",
+  "below",
+  "beneath",
+  "beside",
+  "between",
+  "beyond",
+  "but",
+  "by",
+  "down",
+  "during",
+  "except",
+  "for",
+  "for",
+  "from",
+  "in",
+  "inside",
+  "into",
+  "like",
+  "near",
+  "nor",
+  "of",
+  "off",
+  "on",
+  "onto",
+  "or",
+  "since",
+  "so",
+  "the",
+  "through",
+  "to",
+  "toward",
+  "under",
+  "until",
+  "up",
+  "upon",
+  "with",
+  "within",
+  "without",
+  "yet"
+]);
+function nonFunctionWords(value) {
+  return words(value).filter(
+    (word) => !functionWords.has(word.toLocaleLowerCase())
+  );
+}
+__name(nonFunctionWords, "nonFunctionWords");
+function words(value) {
+  return value.split(/[\s.,:;]+/).filter((word) => word.length > 0);
+}
+__name(words, "words");
+function capitalize(words2) {
+  return words2.map(
+    (word) => word.slice(0, 1).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase()
+  );
+}
+__name(capitalize, "capitalize");
+function title(entryValues) {
+  return entryValues.get("title") ?? entryValues.get("booktitle") ?? "";
+}
+__name(title, "title");
+function removeUnsafeEntryKeyChars(str) {
+  return str.replace(/[{},\s\\#%~()"'=.,:;[\]_]+/g, "");
+}
+__name(removeUnsafeEntryKeyChars, "removeUnsafeEntryKeyChars");
+
+// src/modifiers/generateKeysModifier.ts
+var generateKeysModifier = {
+  type: "RootModifier",
+  condition: /* @__PURE__ */ __name((options) => options.generateKeys ?? false, "condition"),
+  modifyRoot: /* @__PURE__ */ __name((root, cache, entryKeyTemplate) => {
+    const newKeys = generateKeys(getEntries(root), cache, entryKeyTemplate);
+    for (const node of root.children) {
+      if (node.type === "block" && node.block?.type === "entry") {
+        const newKey = newKeys.get(node.block);
+        if (newKey) {
+          node.block.key = newKey;
+        }
+      }
+    }
+    return void 0;
+  }, "modifyRoot")
+};
+
 // src/modifiers/limitAuthorsModifier.ts
 var limitAuthorsModifier = {
+  type: "FieldModifier",
   condition: /* @__PURE__ */ __name((fieldName, options) => fieldName === "author" && options.maxAuthors ? options.maxAuthors : false, "condition"),
   modifyRenderedValue: /* @__PURE__ */ __name((str, maxAuthors) => {
     const authors = str.split(" and ");
@@ -4400,8 +4270,186 @@ var limitAuthorsModifier = {
   }, "modifyRenderedValue")
 };
 
+// src/modifiers/lowercaseEntryTypeModifier.ts
+var lowercaseEntryTypeModifier = {
+  type: "RootModifier",
+  condition: /* @__PURE__ */ __name((options) => Boolean(options.lowercase), "condition"),
+  modifyRoot: /* @__PURE__ */ __name((root) => {
+    for (const node of root.children) {
+      if (node.type === "block" && node.block?.type === "entry") {
+        node.command = node.command.toLocaleLowerCase();
+      }
+    }
+    return void 0;
+  }, "modifyRoot")
+};
+
+// src/modifiers/lowercaseFieldsModifier.ts
+var lowercaseFieldsModifier = {
+  type: "RootModifier",
+  condition: /* @__PURE__ */ __name((options) => Boolean(options.lowercase), "condition"),
+  modifyRoot: /* @__PURE__ */ __name((root, cache) => {
+    for (const node of root.children) {
+      if (node.type === "block" && node.block?.type === "entry") {
+        for (const field of node.block.fields) {
+          field.name = field.name.toLocaleLowerCase();
+        }
+      }
+    }
+    return void 0;
+  }, "modifyRoot")
+};
+
+// src/duplicates.ts
+function checkForDuplicates(entries, cache, duplicateRules, merge) {
+  const rules = /* @__PURE__ */ new Map();
+  if (duplicateRules) {
+    for (const rule of duplicateRules) {
+      rules.set(rule, !!merge);
+    }
+  }
+  if (!rules.has("key")) {
+    rules.set("key", false);
+  }
+  const duplicateEntries = /* @__PURE__ */ new Set();
+  const warnings = [];
+  const keys = /* @__PURE__ */ new Map();
+  const dois = /* @__PURE__ */ new Map();
+  const citations = /* @__PURE__ */ new Map();
+  const abstracts = /* @__PURE__ */ new Map();
+  for (const entry of entries) {
+    for (const [rule, doMerge] of rules) {
+      let duplicateOf;
+      let warning;
+      switch (rule) {
+        case "key": {
+          if (!entry.key) continue;
+          const keyLC = entry.key.toLocaleLowerCase();
+          duplicateOf = keys.get(keyLC);
+          if (!duplicateOf) {
+            keys.set(keyLC, entry);
+          } else {
+            warning = `The citation key ${entry.key} has already been used.`;
+          }
+          break;
+        }
+        case "doi": {
+          const doi = alphaNum(cache.lookupEntryValue(entry, "doi"));
+          if (!doi) continue;
+          duplicateOf = dois.get(doi);
+          if (!duplicateOf) {
+            dois.set(doi, entry);
+          } else {
+            warning = `Entry ${entry.key} has an identical DOI to entry ${duplicateOf.key}.`;
+          }
+          break;
+        }
+        case "citation": {
+          const ttl = cache.lookupEntryValue(entry, "title");
+          const aut = cache.lookupEntryValue(entry, "author");
+          const num = cache.lookupEntryValue(entry, "number");
+          if (!ttl || !aut) continue;
+          const cit = [
+            alphaNum(parseNameList(aut)[0]?.last ?? aut),
+            alphaNum(ttl),
+            alphaNum(num ?? "0")
+          ].join(":");
+          duplicateOf = citations.get(cit);
+          if (!duplicateOf) {
+            citations.set(cit, entry);
+          } else {
+            warning = `Entry ${entry.key} has similar content to entry ${duplicateOf.key}.`;
+          }
+          break;
+        }
+        case "abstract": {
+          const abstract = alphaNum(cache.lookupEntryValue(entry, "abstract"));
+          const abs = abstract.slice(0, 100);
+          if (!abs) continue;
+          duplicateOf = abstracts.get(abs);
+          if (!duplicateOf) {
+            abstracts.set(abs, entry);
+          } else {
+            warning = `Entry ${entry.key} has a similar abstract to entry ${duplicateOf.key}.`;
+          }
+          break;
+        }
+      }
+      if (duplicateOf && doMerge) {
+        duplicateEntries.add(entry);
+        mergeEntries(merge, duplicateOf, entry);
+      }
+      if (warning) {
+        warnings.push({
+          code: "DUPLICATE_ENTRY",
+          rule,
+          message: `Duplicate ${doMerge ? "removed" : "detected"}. ${warning}`
+        });
+      }
+    }
+  }
+  return { entries: duplicateEntries, warnings };
+}
+__name(checkForDuplicates, "checkForDuplicates");
+function mergeEntries(merge, duplicateOf, entry) {
+  if (!merge) return;
+  switch (merge) {
+    case "last":
+      duplicateOf.key = entry.key;
+      duplicateOf.fields = entry.fields;
+      break;
+    case "combine":
+    case "overwrite":
+      for (const field of entry.fields) {
+        const existing = duplicateOf.fields.find(
+          (f) => f.name.toLocaleLowerCase() === field.name.toLocaleLowerCase()
+        );
+        if (!existing) {
+          duplicateOf.fields.push(field);
+        } else if (merge === "overwrite") {
+          existing.value = field.value;
+        }
+      }
+      break;
+    // TODO: case 'keep-both'
+    case "first":
+      return;
+  }
+}
+__name(mergeEntries, "mergeEntries");
+
+// src/modifiers/mergeEntriesModifier.ts
+var mergeEntriesModifier = {
+  type: "RootModifier",
+  condition: /* @__PURE__ */ __name((options) => options, "condition"),
+  modifyRoot: /* @__PURE__ */ __name((root, cache, options) => {
+    const entries = getEntries(root);
+    const duplicates = checkForDuplicates(
+      entries,
+      cache,
+      options.duplicates,
+      options.merge
+    );
+    root.children = root.children.filter(
+      (child) => !isEntryNode(child) || !duplicates.entries.has(child.block)
+    );
+    return duplicates.warnings;
+  }, "modifyRoot")
+};
+
+// src/modifiers/omitFieldModifier.ts
+var omitFieldModifier = {
+  type: "FieldModifier",
+  condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(options.omit?.some((f) => f.toLocaleLowerCase() === fieldName)), "condition"),
+  // TODO: memoize
+  modifyNode: /* @__PURE__ */ __name((node) => {
+    node.parent.fields = node.parent.fields.filter((f) => f !== node);
+  }, "modifyNode")
+};
+
 // src/modifiers/removeBracesModifier.ts
 var removeBracesModifier = {
+  type: "FieldModifier",
   condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(
     options.removeBraces?.some((f) => f.toLocaleLowerCase() === fieldName)
   ), "condition"),
@@ -4409,10 +4457,55 @@ var removeBracesModifier = {
   modifyRenderedValue: /* @__PURE__ */ __name((str) => stringifyLaTeX(flattenLaTeX(parseLaTeX(str))), "modifyRenderedValue")
 };
 
-// src/modifiers/stripEnclosingBracesModifier.ts
-var stripEnclosingBracesModifier = {
-  condition: /* @__PURE__ */ __name((_, options) => Boolean(options.stripEnclosingBraces), "condition"),
-  modifyRenderedValue: /* @__PURE__ */ __name((str) => str.replace(/^\{([^{}]*)\}$/g, "$1"), "modifyRenderedValue")
+// src/modifiers/removeCommentsModifier.ts
+var removeCommentsModifier = {
+  type: "RootModifier",
+  condition: /* @__PURE__ */ __name((options) => Boolean(options.stripComments), "condition"),
+  modifyRoot: /* @__PURE__ */ __name((root) => {
+    root.children = root.children.filter(
+      (child) => child.type !== "text" && (child.type !== "block" || child.block?.type !== "comment")
+    );
+    return void 0;
+  }, "modifyRoot")
+};
+
+// src/modifiers/removeDuplicateFieldsModifier.ts
+var removeDuplicateFieldsModifier = {
+  type: "RootModifier",
+  condition: /* @__PURE__ */ __name((options) => Boolean(options.removeDuplicateFields), "condition"),
+  modifyRoot: /* @__PURE__ */ __name((root) => {
+    for (const node of root.children) {
+      if (node.type === "block" && node.block?.type === "entry") {
+        const fieldSeen = /* @__PURE__ */ new Set();
+        node.block.fields = node.block.fields.filter((field) => {
+          const nameLc = field.name.toLocaleLowerCase();
+          if (fieldSeen.has(nameLc)) {
+            return false;
+          }
+          fieldSeen.add(nameLc);
+          return true;
+        });
+      }
+    }
+    return void 0;
+  }, "modifyRoot")
+};
+
+// src/modifiers/removeEmptyFieldsModifier.ts
+var removeEmptyFieldsModifier = {
+  type: "RootModifier",
+  condition: /* @__PURE__ */ __name((options) => Boolean(options.removeEmptyFields), "condition"),
+  modifyRoot: /* @__PURE__ */ __name((root, cache) => {
+    for (const node of root.children) {
+      if (node.type === "block" && node.block?.type === "entry") {
+        const entry = node.block;
+        entry.fields = entry.fields.filter(
+          (field) => cache.lookupRenderedEntryValue(entry, field.name) !== ""
+        );
+      }
+    }
+    return void 0;
+  }, "modifyRoot")
 };
 
 // src/sort.ts
@@ -4499,7 +4592,79 @@ function sortEntryFields(entries, fieldOrder) {
 }
 __name(sortEntryFields, "sortEntryFields");
 
+// src/modifiers/sortEntriesModifier.ts
+var sortEntriesModifier = {
+  type: "RootModifier",
+  condition: /* @__PURE__ */ __name((options) => options.sort ?? false, "condition"),
+  modifyRoot: /* @__PURE__ */ __name((...args) => {
+    sortEntries(...args);
+    return void 0;
+  }, "modifyRoot")
+};
+
+// src/modifiers/sortFieldsModifier.ts
+var sortFieldsModifier = {
+  type: "RootModifier",
+  condition: /* @__PURE__ */ __name((options) => options.sortFields ?? false, "condition"),
+  modifyRoot: /* @__PURE__ */ __name((root, _, sortFields) => {
+    const entries = getEntries(root);
+    sortEntryFields(entries, sortFields);
+    return void 0;
+  }, "modifyRoot")
+};
+
+// src/modifiers/stripEnclosingBracesModifier.ts
+var stripEnclosingBracesModifier = {
+  type: "FieldModifier",
+  condition: /* @__PURE__ */ __name((_, options) => Boolean(options.stripEnclosingBraces), "condition"),
+  modifyRenderedValue: /* @__PURE__ */ __name((str) => str.replace(/^\{([^{}]*)\}$/g, "$1"), "modifyRenderedValue")
+};
+
+// src/modifiers/trimCommentsModifier.ts
+var trimCommentsModifier = {
+  type: "RootModifier",
+  condition: /* @__PURE__ */ __name((options) => Boolean(options.tidyComments), "condition"),
+  modifyRoot: /* @__PURE__ */ __name((root) => {
+    for (const child of root.children) {
+      if (child.type === "text") {
+        child.text = tidyComment(child.text);
+      } else if (child.block?.type === "comment") {
+        child.block.raw = tidyComment(child.block.raw);
+      }
+    }
+    return void 0;
+  }, "modifyRoot")
+};
+function tidyComment(comment) {
+  const trimmed = comment.trim();
+  if (trimmed === "") return "";
+  return `${trimmed}
+`;
+}
+__name(tidyComment, "tidyComment");
+
 // src/tidy.ts
+var modifiers = [
+  encodeUrlsModifier,
+  limitAuthorsModifier,
+  escapeCharactersModifier,
+  dropAllCapsModifier,
+  formatPageRangeModifier,
+  abbreviateMonthsModifier,
+  stripEnclosingBracesModifier,
+  removeBracesModifier,
+  omitFieldModifier,
+  mergeEntriesModifier,
+  sortEntriesModifier,
+  sortFieldsModifier,
+  generateKeysModifier,
+  removeDuplicateFieldsModifier,
+  removeEmptyFieldsModifier,
+  lowercaseFieldsModifier,
+  lowercaseEntryTypeModifier,
+  removeCommentsModifier,
+  trimCommentsModifier
+];
 function tidy(input, options_ = {}) {
   const options = normalizeOptions(options_);
   const inputFixed = convertCRLF(input);
@@ -4510,19 +4675,17 @@ function tidy(input, options_ = {}) {
     message: `${entry.parent.command} entry does not have a citation key.`
   }));
   const cache = new Cache(options);
-  const valueModifiers = [
-    encodeUrlsModifier,
-    limitAuthorsModifier,
-    escapeCharactersModifier,
-    dropAllCapsModifier,
-    formatPageRangeModifier,
-    abbreviateMonthsModifier,
-    stripEnclosingBracesModifier,
-    removeBracesModifier
-  ];
+  for (const modifier of modifiers) {
+    if (modifier.type !== "RootModifier") continue;
+    const params = modifier.condition(options);
+    if (!params) continue;
+    const result = modifier.modifyRoot(ast, cache, params);
+    if (result) warnings.push(...result);
+  }
   for (const entry of entries) {
     for (const field of entry.fields) {
-      for (const modifier of valueModifiers) {
+      for (const modifier of modifiers) {
+        if (modifier.type !== "FieldModifier") continue;
         const params = modifier.condition(
           field.name.toLocaleLowerCase(),
           options,
@@ -4548,20 +4711,7 @@ function tidy(input, options_ = {}) {
       }
     }
   }
-  const duplicates = checkForDuplicates(
-    entries,
-    cache,
-    options.duplicates,
-    options.merge
-  );
-  warnings.push(...duplicates.warnings);
-  ast.children = ast.children.filter(
-    (child) => !isEntryNode(child) || !duplicates.entries.has(child.block)
-  );
-  if (options.sort) sortEntries(ast, cache, options.sort);
-  if (options.sortFields) sortEntryFields(entries, options.sortFields);
-  const newKeys = options.generateKeys ? generateKeys(entries, cache, options.generateKeys) : void 0;
-  const bibtex = formatBibtex(ast, options, newKeys);
+  const bibtex = formatBibtex(ast, options);
   return { bibtex, warnings, count: entries.length };
 }
 __name(tidy, "tidy");

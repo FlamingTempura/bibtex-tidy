@@ -3,9 +3,10 @@ import {
 	parseLaTeX,
 	stringifyLaTeX,
 } from "../parsers/latexParser";
-import type { Modifier } from "./limitAuthorsModifier";
+import type { Modifier } from "../types";
 
 export const removeBracesModifier: Modifier<boolean> = {
+	type: "FieldModifier",
 	condition: (fieldName, options) =>
 		Boolean(
 			options.removeBraces?.some((f) => f.toLocaleLowerCase() === fieldName),

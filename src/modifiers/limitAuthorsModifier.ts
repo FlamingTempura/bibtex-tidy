@@ -1,22 +1,7 @@
-import type { Cache } from "../cache";
-import type { OptionsNormalized } from "../optionUtils";
-import type { ConcatNode, EntryNode, FieldNode } from "../parsers/bibtexParser";
-
-/**
- * Modifies the AST prior to formatting
- */
-export type Modifier<Params> = {
-	condition: (
-		fieldName: string,
-		options: OptionsNormalized,
-		entry: EntryNode,
-		cache: Cache,
-	) => Params | false;
-	modifyRenderedValue?: (value: string, params: Params) => string;
-	modifyNode?: (node: FieldNode, params: Params) => void;
-};
+import type { Modifier } from "../types";
 
 export const limitAuthorsModifier: Modifier<number> = {
+	type: "FieldModifier",
 	condition: (fieldName, options) =>
 		fieldName === "author" && options.maxAuthors ? options.maxAuthors : false,
 	modifyRenderedValue: (str, maxAuthors) => {
