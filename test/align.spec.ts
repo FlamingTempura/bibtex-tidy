@@ -13,7 +13,7 @@ const input = bibtex`
     month={aug},
     publisher={Elsevier},}`;
 
-const outputAligned = bibtex`
+const expectedAligned = bibtex`
 @article{feinberg1983technique,
   number              = {1},
   title               = {A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
@@ -27,7 +27,7 @@ const outputAligned = bibtex`
 }
 `;
 
-const outputUnaligned = bibtex`
+const expectedUnaligned = bibtex`
 @article{feinberg1983technique,
   number = {1},
   title = {A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
@@ -43,8 +43,8 @@ const outputUnaligned = bibtex`
 
 test("align", async () => {
 	const tidied1 = await bibtexTidy(input, { align: 20 });
-	strictEqual(tidied1.bibtex, outputAligned);
+	strictEqual(tidied1.bibtex, expectedAligned);
 
 	const tidied2 = await bibtexTidy(input, { align: false });
-	strictEqual(tidied2.bibtex, outputUnaligned);
+	strictEqual(tidied2.bibtex, expectedUnaligned);
 });

@@ -13,7 +13,7 @@ author="Feinberg, Andrew P and Vogelstein, Bert",
   month={aug},
   publisher={Elsevier},}`;
 
-const output = bibtex`
+const expected = bibtex`
 @article{feinberg1983technique,
   number        = 1,
   title         = {A technique for radiolabeling DNA restriction endonuclease fragments to high specific activity},
@@ -22,12 +22,12 @@ const output = bibtex`
   volume        = 132,
   pages         = {6--13},
   year          = 1983,
-  month         = aug,
+  month         = {aug},
   publisher     = {Elsevier}
 }
 `;
 
 test("numeric (enforce numeric values)", async () => {
-	const tidied = await bibtexTidy(input, { numeric: true });
-	strictEqual(tidied.bibtex, output);
+	const output = await bibtexTidy(input, { numeric: true });
+	strictEqual(output.bibtex, expected);
 });

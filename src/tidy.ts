@@ -2,6 +2,7 @@ import { Cache } from "./cache";
 import { formatBibtex } from "./format";
 import { abbreviateMonthsModifier } from "./modifiers/abbreviateMonthsModifier";
 import { dropAllCapsModifier } from "./modifiers/dropAllCapsModifier";
+import { encloseBracesModifier } from "./modifiers/encloseBracesModifier";
 import { encodeUrlsModifier } from "./modifiers/encodeUrlsModifier";
 import { escapeCharactersModifier } from "./modifiers/escapeCharactersModifier";
 import { formatPageRangeModifier } from "./modifiers/formatPageRangeModifier";
@@ -11,6 +12,8 @@ import { lowercaseEntryTypeModifier } from "./modifiers/lowercaseEntryTypeModifi
 import { lowercaseFieldsModifier } from "./modifiers/lowercaseFieldsModifier";
 import { mergeEntriesModifier } from "./modifiers/mergeEntriesModifier";
 import { omitFieldModifier } from "./modifiers/omitFieldModifier";
+import { preferCurlyModifier } from "./modifiers/preferCurlyModifier";
+import { preferNumericModifier } from "./modifiers/preferNumericModifier";
 import { removeBracesModifier } from "./modifiers/removeBracesModifier";
 import { removeCommentsModifier } from "./modifiers/removeCommentsModifier";
 import { removeDuplicateFieldsModifier } from "./modifiers/removeDuplicateFieldsModifier";
@@ -52,6 +55,7 @@ const modifiers = [
 	removeBracesModifier,
 	omitFieldModifier,
 	mergeEntriesModifier,
+	preferNumericModifier,
 	sortEntriesModifier,
 	sortFieldsModifier,
 	generateKeysModifier,
@@ -61,6 +65,8 @@ const modifiers = [
 	lowercaseEntryTypeModifier,
 	removeCommentsModifier,
 	trimCommentsModifier,
+	preferCurlyModifier,
+	encloseBracesModifier,
 ];
 
 export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
@@ -79,38 +85,39 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	const cache = new Cache(options);
 
 	for (const modifier of modifiers) {
-		if (modifier.type !== "RootModifier") continue;
-		const params = modifier.condition(options);
-		if (!params) continue;
-		//@ts-expect-error
-		const result = modifier.modifyRoot(ast, cache, params);
-		if (result) warnings.push(...result);
-	}
-
-	for (const entry of entries) {
-		for (const field of entry.fields) {
-			for (const modifier of modifiers) {
-				if (modifier.type !== "FieldModifier") continue;
-				const params = modifier.condition(
-					field.name.toLocaleLowerCase(),
-					options,
-					entry,
-					cache,
-				);
-				if (!params) continue;
-				if (modifier.modifyNode) {
-					//@ts-expect-error
-					modifier.modifyNode(field, params);
-					cache.invalidateEntryValue(entry, field.name);
-				}
-				for (const node of field.value.concat) {
-					if (node.type === "braced" || node.type === "quoted") {
-						if (modifier.modifyRenderedValue) {
-							//@ts-expect-error
-							const newValue = modifier.modifyRenderedValue(node.value, params);
-							if (newValue !== node.value) {
-								node.value = newValue;
-								cache.invalidateEntryValue(entry, field.name);
+		if (modifier.type === "RootModifier") {
+			const params = modifier.condition(options);
+			if (!params) continue;
+			//@ts-expect-error
+			const result = modifier.modifyRoot(ast, cache, params);
+			if (result) warnings.push(...result);
+		} else {
+			for (const entry of entries) {
+				for (const field of entry.fields) {
+					const params = modifier.condition(
+						field.name.toLocaleLowerCase(),
+						options,
+						entry,
+						cache,
+					);
+					if (!params) continue;
+					if (modifier.modifyNode) {
+						//@ts-expect-error
+						modifier.modifyNode(field, params);
+						cache.invalidateEntryValue(entry, field.name);
+					}
+					for (const node of field.value.concat) {
+						if (node.type === "braced" || node.type === "quoted") {
+							if (modifier.modifyRenderedValue) {
+								const newValue = modifier.modifyRenderedValue(
+									node.value,
+									//@ts-expect-error
+									params,
+								);
+								if (newValue !== node.value) {
+									node.value = newValue;
+									cache.invalidateEntryValue(entry, field.name);
+								}
 							}
 						}
 					}

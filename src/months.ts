@@ -13,8 +13,6 @@ export const MONTH_MACROS = [
 	"dec",
 ] as const;
 
-export const MONTH_SET = new Set<string>(MONTH_MACROS);
-
 export const MONTH_CONVERSIONS: Record<string, (typeof MONTH_MACROS)[number]> =
 	{
 		"1": "jan",

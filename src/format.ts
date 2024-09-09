@@ -1,4 +1,4 @@
-import { MONTH_SET } from "./months";
+import { doubleEnclose } from "./modifiers/encloseBracesModifier";
 import type { OptionsNormalized } from "./optionUtils";
 import type {
 	BlockNode,
@@ -8,26 +8,27 @@ import type {
 	TextNode,
 } from "./parsers/bibtexParser";
 
-import { doubleEnclose, unwrapText, wrapText } from "./utils";
+import { unwrapText, wrapText } from "./utils";
 
+type WhitespaceOptions = Pick<
+	OptionsNormalized,
+	"tab" | "space" | "align" | "trailingCommas" | "blankLines" | "wrap"
+>;
 export function formatBibtex(
 	ast: RootNode,
-	options: OptionsNormalized,
+	options: WhitespaceOptions,
 ): string {
-	const { tab, space } = options;
-
-	const indent: string = tab ? "\t" : " ".repeat(space);
+	const indent: string = options.tab ? "\t" : " ".repeat(options.space);
 	const bibtex: string = ast.children
 		.map((child) => formatNode(child, options, indent))
 		.join("")
 		.trimEnd();
-
 	return `${bibtex}\n`;
 }
 
 function formatNode(
 	child: TextNode | BlockNode,
-	options: OptionsNormalized,
+	options: WhitespaceOptions,
 	indent: string,
 ): string {
 	if (child.type === "text") {
@@ -54,11 +55,9 @@ function formatNode(
 function formatEntry(
 	entryType: string, // article, journal, etc
 	entry: EntryNode,
-	options: OptionsNormalized,
+	options: WhitespaceOptions,
 	indent: string,
 ) {
-	const { align, trailingCommas } = options;
-
 	let bibtex = `@${entryType}{`;
 	if (entry.key) bibtex += `${entry.key},`;
 
@@ -66,10 +65,10 @@ function formatEntry(
 		bibtex += `\n${indent}${field.name}`;
 		const value = formatValue(field, options);
 		if (value) {
-			const gap = Math.max(align - field.name.length, 1);
+			const gap = Math.max(options.align - field.name.length, 1);
 			bibtex += `${" ".repeat(gap)}= ${value}`;
 		}
-		if (i < entry.fields.length - 1 || trailingCommas) bibtex += ",";
+		if (i < entry.fields.length - 1 || options.trailingCommas) bibtex += ",";
 	}
 	bibtex += "\n}\n";
 	return bibtex;
@@ -82,52 +81,26 @@ function formatComment(comment: string): string {
 
 export function formatValue(
 	field: FieldNode,
-	options: OptionsNormalized,
+	options: WhitespaceOptions,
 ): string | undefined {
-	const { curly, numeric, align, wrap, tab, space, enclosingBraces } = options;
-
-	const nameLowerCase = field.name.toLocaleLowerCase();
+	const { align, wrap, tab, space } = options;
 
 	const indent: string = tab ? "\t" : " ".repeat(space);
-	const enclosingBracesFields = new Set<string>(
-		(enclosingBraces ?? []).map((field) => field.toLocaleLowerCase()),
-	);
 
 	return field.value.concat
 		.map(({ type, value }) => {
-			const isNumeric = value.match(/^[1-9][0-9]*$/);
-
-			if (isNumeric && curly) {
-				type = "braced";
-			}
-
-			if (type === "literal" || (numeric && isNumeric)) {
+			if (type === "literal") {
 				return value;
 			}
 
-			const dig3 = value.slice(0, 3).toLowerCase();
-			const isMonthAbbrv = nameLowerCase === "month" && MONTH_SET.has(dig3);
-			if (!curly && numeric && isMonthAbbrv) {
-				return dig3;
-			}
-
 			value = unwrapText(value);
-
-			// if the user requested, wrap the value in braces (this forces bibtex
-			// compiler to preserve case)
-			if (
-				enclosingBracesFields.has(nameLowerCase) &&
-				(type === "braced" || curly)
-			) {
-				value = doubleEnclose(value);
-			}
 
 			// Braced values should be trimmed, unless part of a concatenation
 			if (type === "braced" && field.value.concat.length === 1) {
 				value = value.trim();
 			}
 
-			if (type === "braced" || curly) {
+			if (type === "braced") {
 				const lineLength = `${indent}${align}{${value}}`.length;
 				const multiLine = value.includes("\n\n");
 				// If the value contains multiple paragraphs, then output the value at a separate indent level, e.g.

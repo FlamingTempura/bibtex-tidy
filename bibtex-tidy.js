@@ -34,60 +34,6 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/months.ts
-var MONTH_MACROS = [
-  "jan",
-  "feb",
-  "mar",
-  "apr",
-  "may",
-  "jun",
-  "jul",
-  "aug",
-  "sep",
-  "oct",
-  "nov",
-  "dec"
-];
-var MONTH_SET = new Set(MONTH_MACROS);
-var MONTH_CONVERSIONS = {
-  "1": "jan",
-  "2": "feb",
-  "3": "mar",
-  "4": "apr",
-  "5": "may",
-  "6": "jun",
-  "7": "jul",
-  "8": "aug",
-  "9": "sep",
-  "10": "oct",
-  "11": "nov",
-  "12": "dec",
-  jan: "jan",
-  feb: "feb",
-  mar: "mar",
-  apr: "apr",
-  may: "may",
-  jun: "jun",
-  jul: "jul",
-  aug: "aug",
-  sep: "sep",
-  oct: "oct",
-  nov: "nov",
-  dec: "dec",
-  january: "jan",
-  february: "feb",
-  march: "mar",
-  april: "apr",
-  june: "jun",
-  july: "jul",
-  august: "aug",
-  september: "sep",
-  october: "oct",
-  november: "nov",
-  december: "dec"
-};
-
 // src/parsers/latexParser.ts
 var BlockNode = class _BlockNode {
   constructor(kind, parent, children = []) {
@@ -228,6 +174,26 @@ function flattenLaTeX(block) {
 }
 __name(flattenLaTeX, "flattenLaTeX");
 
+// src/modifiers/encloseBracesModifier.ts
+var encloseBracesModifier = {
+  type: "FieldModifier",
+  condition: /* @__PURE__ */ __name((fieldName, options) => options.enclosingBraces?.some((f) => f.toLocaleLowerCase() === fieldName) ?? false, "condition"),
+  modifyNode: /* @__PURE__ */ __name((node) => {
+    for (const child of node.value.concat) {
+      if (child.type === "braced") {
+        child.value = doubleEnclose(child.value);
+      }
+    }
+  }, "modifyNode")
+};
+function doubleEnclose(str) {
+  const latex = parseLaTeX(str);
+  const alreadyDoubleEnclosed = latex.children.length === 1 && latex.children[0]?.type === "block" && latex.children[0]?.kind === "curly" && latex.children[0].children.length === 1 && latex.children[0].children[0]?.type === "block" && latex.children[0].children[0]?.kind === "curly";
+  const result = stringifyLaTeX(latex);
+  return alreadyDoubleEnclosed ? result : `{${result}}`;
+}
+__name(doubleEnclose, "doubleEnclose");
+
 // src/utils.ts
 function alphaNum(str) {
   return str.replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
@@ -255,13 +221,6 @@ function unwrapText(str) {
   return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
 }
 __name(unwrapText, "unwrapText");
-function doubleEnclose(str) {
-  const latex = parseLaTeX(str);
-  const alreadyDoubleEnclosed = latex.children.length === 1 && latex.children[0]?.type === "block" && latex.children[0]?.kind === "curly" && latex.children[0].children.length === 1 && latex.children[0].children[0]?.type === "block" && latex.children[0].children[0]?.kind === "curly";
-  const result = stringifyLaTeX(latex);
-  return alreadyDoubleEnclosed ? result : `{${result}}`;
-}
-__name(doubleEnclose, "doubleEnclose");
 function isEntryNode(node) {
   return node.type !== "text" && node.block?.type === "entry";
 }
@@ -316,33 +275,17 @@ function formatComment(comment) {
 }
 __name(formatComment, "formatComment");
 function formatValue(field, options) {
-  const { curly, numeric, align, wrap, tab, space, enclosingBraces } = options;
-  const nameLowerCase = field.name.toLocaleLowerCase();
+  const { align, wrap, tab, space } = options;
   const indent = tab ? "	" : " ".repeat(space);
-  const enclosingBracesFields = new Set(
-    (enclosingBraces ?? []).map((field2) => field2.toLocaleLowerCase())
-  );
   return field.value.concat.map(({ type, value }) => {
-    const isNumeric = value.match(/^[1-9][0-9]*$/);
-    if (isNumeric && curly) {
-      type = "braced";
-    }
-    if (type === "literal" || numeric && isNumeric) {
+    if (type === "literal") {
       return value;
     }
-    const dig3 = value.slice(0, 3).toLowerCase();
-    const isMonthAbbrv = nameLowerCase === "month" && MONTH_SET.has(dig3);
-    if (!curly && numeric && isMonthAbbrv) {
-      return dig3;
-    }
     value = unwrapText(value);
-    if (enclosingBracesFields.has(nameLowerCase) && (type === "braced" || curly)) {
-      value = doubleEnclose(value);
-    }
     if (type === "braced" && field.value.concat.length === 1) {
       value = value.trim();
     }
-    if (type === "braced" || curly) {
+    if (type === "braced") {
       const lineLength = `${indent}${align}{${value}}`.length;
       const multiLine = value.includes("\n\n");
       if (wrap && lineLength > wrap || multiLine) {
@@ -972,6 +915,59 @@ var Cache = class {
     }
     return values;
   }
+};
+
+// src/months.ts
+var MONTH_MACROS = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec"
+];
+var MONTH_CONVERSIONS = {
+  "1": "jan",
+  "2": "feb",
+  "3": "mar",
+  "4": "apr",
+  "5": "may",
+  "6": "jun",
+  "7": "jul",
+  "8": "aug",
+  "9": "sep",
+  "10": "oct",
+  "11": "nov",
+  "12": "dec",
+  jan: "jan",
+  feb: "feb",
+  mar: "mar",
+  apr: "apr",
+  may: "may",
+  jun: "jun",
+  jul: "jul",
+  aug: "aug",
+  sep: "sep",
+  oct: "oct",
+  nov: "nov",
+  dec: "dec",
+  january: "jan",
+  february: "feb",
+  march: "mar",
+  april: "apr",
+  june: "jun",
+  july: "jul",
+  august: "aug",
+  september: "sep",
+  october: "oct",
+  november: "nov",
+  december: "dec"
 };
 
 // src/parsers/bibtexParser.ts
@@ -4447,6 +4443,31 @@ var omitFieldModifier = {
   }, "modifyNode")
 };
 
+// src/modifiers/preferCurlyModifier.ts
+var preferCurlyModifier = {
+  type: "FieldModifier",
+  condition: /* @__PURE__ */ __name((_, options) => options.curly ?? false, "condition"),
+  modifyNode: /* @__PURE__ */ __name((node) => {
+    for (const child of node.value.concat) {
+      child.type = "braced";
+    }
+  }, "modifyNode")
+};
+
+// src/modifiers/preferNumericModifier.ts
+var preferNumericModifier = {
+  type: "FieldModifier",
+  condition: /* @__PURE__ */ __name((_, options) => options.numeric ?? false, "condition"),
+  modifyNode: /* @__PURE__ */ __name((node) => {
+    for (const child of node.value.concat) {
+      const isNumeric = child.value.match(/^[1-9][0-9]*$/);
+      if (isNumeric) {
+        child.type = "literal";
+      }
+    }
+  }, "modifyNode")
+};
+
 // src/modifiers/removeBracesModifier.ts
 var removeBracesModifier = {
   type: "FieldModifier",
@@ -4655,6 +4676,7 @@ var modifiers = [
   removeBracesModifier,
   omitFieldModifier,
   mergeEntriesModifier,
+  preferNumericModifier,
   sortEntriesModifier,
   sortFieldsModifier,
   generateKeysModifier,
@@ -4663,7 +4685,9 @@ var modifiers = [
   lowercaseFieldsModifier,
   lowercaseEntryTypeModifier,
   removeCommentsModifier,
-  trimCommentsModifier
+  trimCommentsModifier,
+  preferCurlyModifier,
+  encloseBracesModifier
 ];
 function tidy(input, options_ = {}) {
   const options = normalizeOptions(options_);
@@ -4676,34 +4700,37 @@ function tidy(input, options_ = {}) {
   }));
   const cache = new Cache(options);
   for (const modifier of modifiers) {
-    if (modifier.type !== "RootModifier") continue;
-    const params = modifier.condition(options);
-    if (!params) continue;
-    const result = modifier.modifyRoot(ast, cache, params);
-    if (result) warnings.push(...result);
-  }
-  for (const entry of entries) {
-    for (const field of entry.fields) {
-      for (const modifier of modifiers) {
-        if (modifier.type !== "FieldModifier") continue;
-        const params = modifier.condition(
-          field.name.toLocaleLowerCase(),
-          options,
-          entry,
-          cache
-        );
-        if (!params) continue;
-        if (modifier.modifyNode) {
-          modifier.modifyNode(field, params);
-          cache.invalidateEntryValue(entry, field.name);
-        }
-        for (const node of field.value.concat) {
-          if (node.type === "braced" || node.type === "quoted") {
-            if (modifier.modifyRenderedValue) {
-              const newValue = modifier.modifyRenderedValue(node.value, params);
-              if (newValue !== node.value) {
-                node.value = newValue;
-                cache.invalidateEntryValue(entry, field.name);
+    if (modifier.type === "RootModifier") {
+      const params = modifier.condition(options);
+      if (!params) continue;
+      const result = modifier.modifyRoot(ast, cache, params);
+      if (result) warnings.push(...result);
+    } else {
+      for (const entry of entries) {
+        for (const field of entry.fields) {
+          const params = modifier.condition(
+            field.name.toLocaleLowerCase(),
+            options,
+            entry,
+            cache
+          );
+          if (!params) continue;
+          if (modifier.modifyNode) {
+            modifier.modifyNode(field, params);
+            cache.invalidateEntryValue(entry, field.name);
+          }
+          for (const node of field.value.concat) {
+            if (node.type === "braced" || node.type === "quoted") {
+              if (modifier.modifyRenderedValue) {
+                const newValue = modifier.modifyRenderedValue(
+                  node.value,
+                  //@ts-expect-error
+                  params
+                );
+                if (newValue !== node.value) {
+                  node.value = newValue;
+                  cache.invalidateEntryValue(entry, field.name);
+                }
               }
             }
           }
