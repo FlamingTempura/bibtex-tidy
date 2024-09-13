@@ -1,4 +1,4 @@
-import type { Cache } from "./cache";
+import type { ASTProxy } from "./cache";
 import type { DuplicateRule, MergeStrategy } from "./optionUtils";
 import type { EntryNode } from "./parsers/bibtexParser";
 import { parseNameList } from "./parsers/nameFieldParser";
@@ -7,7 +7,7 @@ import { alphaNum } from "./utils";
 
 export function checkForDuplicates(
 	entries: EntryNode[],
-	cache: Cache,
+	cache: ASTProxy,
 	duplicateRules?: DuplicateRule[],
 	merge?: MergeStrategy,
 ): { entries: Set<EntryNode>; warnings: Warning[] } {

@@ -1,6 +1,7 @@
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
-export const removeCommentsModifier: Modifier = {
+export const removeCommentsModifier: Transformation = {
+	name: "remove-comments",
 	type: "RootModifier",
 	condition: (options) => Boolean(options.stripComments),
 	modifyRoot: (root) => {

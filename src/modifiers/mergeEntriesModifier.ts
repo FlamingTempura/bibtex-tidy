@@ -1,27 +1,34 @@
 import { getEntries } from "..";
 import { checkForDuplicates } from "../duplicates";
-import type { OptionsNormalized } from "../optionUtils";
-import type { Modifier } from "../types";
+import type { MergeStrategy, OptionsNormalized } from "../optionUtils";
+import type { Transformation } from "../types";
 import { isEntryNode } from "../utils";
 
-// Must happen after generate keys, before sorting entries
-export const mergeEntriesModifier: Modifier<OptionsNormalized> = {
-	type: "RootModifier",
-	condition: (options) => options,
-	modifyRoot: (root, cache, options) => {
-		const entries = getEntries(root);
+export function createMergeEntriesTransformation(
+	duplicatesOpt: OptionsNormalized["duplicates"],
+	merge?: MergeStrategy,
+): Transformation {
+	// Must happen after generate keys, before sorting entries
+	return {
+		name: "merge-entries",
+		dependencies: ["generate-keys", "sort-entries"],
 
-		const duplicates = checkForDuplicates(
-			entries,
-			cache,
-			options.duplicates,
-			options.merge,
-		);
+		apply: (astProxy) => {
+			const entries = astProxy.allEntries();
 
-		root.children = root.children.filter(
-			(child) => !isEntryNode(child) || !duplicates.entries.has(child.block),
-		);
+			const duplicates = checkForDuplicates(
+				entries,
+				astProxy,
+				duplicatesOpt,
+				merge,
+			);
 
-		return duplicates.warnings;
-	},
-};
+			const root = astProxy.getAst();
+			root.children = root.children.filter(
+				(child) => !isEntryNode(child) || !duplicates.entries.has(child.block),
+			);
+
+			return duplicates.warnings;
+		},
+	};
+}

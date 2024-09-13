@@ -1,4 +1,4 @@
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 import { specialCharacters } from "../unicode";
 
 /**
@@ -18,7 +18,8 @@ const VERBATIM_FIELDS = [
 
 // escape special characters like %. Do not do this on the url field, which is a
 // special bibtex field where special characters are output verbatim.
-export const escapeCharactersModifier: Modifier = {
+export const escapeCharactersModifier: Transformation = {
+	name: "escape-characters",
 	type: "FieldModifier",
 	condition: (fieldName, options) =>
 		Boolean(options.escape && !VERBATIM_FIELDS.includes(fieldName)),

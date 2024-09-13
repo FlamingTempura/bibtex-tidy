@@ -1,10 +1,16 @@
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
-export const omitFieldModifier: Modifier<boolean> = {
-	type: "FieldModifier",
-	condition: (fieldName, options) =>
-		Boolean(options.omit?.some((f) => f.toLocaleLowerCase() === fieldName)), // TODO: memoize
-	modifyNode: (node) => {
-		node.parent.fields = node.parent.fields.filter((f) => f !== node);
-	},
-};
+export function createOmitFieldsModifier(omit: string[]): Transformation {
+	return {
+		name: "omit-fields",
+		apply(ast) {
+			const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
+			for (const field of ast.allFields()) {
+				if (set.has(field.name.toLocaleLowerCase())) {
+					field.parent.fields = field.parent.fields.filter((f) => f !== field);
+				}
+			}
+			return undefined;
+		},
+	};
+}

@@ -3,9 +3,10 @@ import {
 	parseLaTeX,
 	stringifyLaTeX,
 } from "../parsers/latexParser";
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
-export const removeBracesModifier: Modifier<boolean> = {
+export const removeBracesModifier: Transformation = {
+	name: "remove-braces",
 	type: "FieldModifier",
 	condition: (fieldName, options) =>
 		Boolean(

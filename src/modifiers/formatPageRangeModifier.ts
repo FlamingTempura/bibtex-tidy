@@ -1,7 +1,8 @@
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
 /** Replace single dash with double dash in page range **/
-export const formatPageRangeModifier: Modifier<boolean> = {
+export const formatPageRangeModifier: Transformation = {
+	name: "format-page-range",
 	type: "FieldModifier",
 	condition: (fieldName) => fieldName === "pages",
 	modifyRenderedValue: (str) => {

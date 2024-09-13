@@ -176,7 +176,9 @@ __name(flattenLaTeX, "flattenLaTeX");
 
 // src/modifiers/encloseBracesModifier.ts
 var encloseBracesModifier = {
+  name: "enclose-braces",
   type: "FieldModifier",
+  dependencies: ["prefer-curly"],
   condition: /* @__PURE__ */ __name((fieldName, options) => options.enclosingBraces?.some((f) => f.toLocaleLowerCase() === fieldName) ?? false, "condition"),
   modifyNode: /* @__PURE__ */ __name((node) => {
     for (const child of node.value.concat) {
@@ -228,8 +230,7 @@ __name(isEntryNode, "isEntryNode");
 
 // src/format.ts
 function formatBibtex(ast, options) {
-  const { tab, space } = options;
-  const indent = tab ? "	" : " ".repeat(space);
+  const indent = options.tab ? "	" : " ".repeat(options.space);
   const bibtex = ast.children.map((child) => formatNode(child, options, indent)).join("").trimEnd();
   return `${bibtex}
 `;
@@ -253,7 +254,6 @@ ${options.blankLines ? "\n" : ""}`;
 }
 __name(formatNode, "formatNode");
 function formatEntry(entryType, entry, options, indent) {
-  const { align, trailingCommas } = options;
   let bibtex = `@${entryType}{`;
   if (entry.key) bibtex += `${entry.key},`;
   for (const [i, field] of entry.fields.entries()) {
@@ -261,10 +261,10 @@ function formatEntry(entryType, entry, options, indent) {
 ${indent}${field.name}`;
     const value = formatValue(field, options);
     if (value) {
-      const gap = Math.max(align - field.name.length, 1);
+      const gap = Math.max(options.align - field.name.length, 1);
       bibtex += `${" ".repeat(gap)}= ${value}`;
     }
-    if (i < entry.fields.length - 1 || trailingCommas) bibtex += ",";
+    if (i < entry.fields.length - 1 || options.trailingCommas) bibtex += ",";
   }
   bibtex += "\n}\n";
   return bibtex;
@@ -861,15 +861,48 @@ function normalizeOptions(options) {
 __name(normalizeOptions, "normalizeOptions");
 
 // src/cache.ts
-var Cache = class {
-  constructor(tidyOptions = normalizeOptions({})) {
+var ASTProxy = class {
+  constructor(ast, tidyOptions = normalizeOptions({})) {
+    this.ast = ast;
     this.tidyOptions = tidyOptions;
     this.valueLookup = /* @__PURE__ */ new Map();
     this.fieldLookup = /* @__PURE__ */ new Map();
     this.renderValueLookup = /* @__PURE__ */ new Map();
   }
   static {
-    __name(this, "Cache");
+    __name(this, "ASTProxy");
+  }
+  getAst() {
+    return this.ast;
+  }
+  allFields() {
+    return this.allEntries().flatMap((entry) => entry.fields);
+  }
+  allEntries() {
+    return this.ast.children.filter((node) => node.type === "block").map((block) => block.block).filter((entry) => entry?.type === "entry");
+  }
+  mutateEntries(cb) {
+    const entries = this.allEntries();
+    for (const entry of entries) {
+      cb(entry);
+    }
+  }
+  iterateFields(cb) {
+    const fields = this.allFields();
+    for (const field of fields) {
+      cb(field);
+    }
+  }
+  setFieldValue(field, value) {
+    field.value.concat = value;
+    this.invalidateEntryValue(field.parent, field.name);
+  }
+  mutateValues(cb) {
+    this.iterateFields((field) => {
+      for (const node of field.value.concat) {
+        cb(node);
+      }
+    });
   }
   lookupEntryValue(entry, field) {
     const fieldName = field.toLocaleLowerCase();
@@ -908,6 +941,9 @@ var Cache = class {
     }
     return value;
   }
+  lookupRenderedEntryValue2(field) {
+    return this.lookupRenderedEntryValue(field.parent, field.name);
+  }
   lookupRenderedEntryValues(entry) {
     const values = /* @__PURE__ */ new Map();
     for (const field of entry.fields) {
@@ -915,59 +951,6 @@ var Cache = class {
     }
     return values;
   }
-};
-
-// src/months.ts
-var MONTH_MACROS = [
-  "jan",
-  "feb",
-  "mar",
-  "apr",
-  "may",
-  "jun",
-  "jul",
-  "aug",
-  "sep",
-  "oct",
-  "nov",
-  "dec"
-];
-var MONTH_CONVERSIONS = {
-  "1": "jan",
-  "2": "feb",
-  "3": "mar",
-  "4": "apr",
-  "5": "may",
-  "6": "jun",
-  "7": "jul",
-  "8": "aug",
-  "9": "sep",
-  "10": "oct",
-  "11": "nov",
-  "12": "dec",
-  jan: "jan",
-  feb: "feb",
-  mar: "mar",
-  apr: "apr",
-  may: "may",
-  jun: "jun",
-  jul: "jul",
-  aug: "aug",
-  sep: "sep",
-  oct: "oct",
-  nov: "nov",
-  dec: "dec",
-  january: "jan",
-  february: "feb",
-  march: "mar",
-  april: "apr",
-  june: "jun",
-  july: "jul",
-  august: "aug",
-  september: "sep",
-  october: "oct",
-  november: "nov",
-  december: "dec"
 };
 
 // src/parsers/bibtexParser.ts
@@ -1388,35 +1371,102 @@ ${input.slice(Math.max(0, pos - 20), pos)}>>${input[pos]}<<${input.slice(pos + 1
 };
 
 // src/modifiers/abbreviateMonthsModifier.ts
-var abbreviateMonthsModifier = {
-  type: "FieldModifier",
-  condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(options.months && fieldName === "month"), "condition"),
-  modifyNode: /* @__PURE__ */ __name((node) => {
-    const concatNode = node.value;
-    for (let i = 0; i < concatNode.concat.length; i++) {
-      const child = concatNode.concat[i];
-      const abbreviation = MONTH_CONVERSIONS[child.value.toLowerCase()];
-      if (abbreviation) {
-        concatNode.concat[i] = new LiteralNode(concatNode, abbreviation);
+function createAbbreviateMonthsTransformation() {
+  return {
+    name: "abbreviate-months",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      for (const field of astProxy.allFields()) {
+        abbreviateMonthInField(astProxy, field);
       }
-    }
-  }, "modifyNode")
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createAbbreviateMonthsTransformation, "createAbbreviateMonthsTransformation");
+function abbreviateMonthInField(astProxy, field) {
+  if (field.name.toLowerCase() === "month") {
+    astProxy.setFieldValue(
+      field,
+      field.value.concat.map((node) => {
+        const abbr = abbreviateMonth(node.value);
+        return abbr ? new LiteralNode(node.parent, abbr) : node;
+      })
+    );
+  }
+}
+__name(abbreviateMonthInField, "abbreviateMonthInField");
+function abbreviateMonth(month) {
+  return MONTH_CONVERSIONS[month.toLowerCase()];
+}
+__name(abbreviateMonth, "abbreviateMonth");
+var MONTH_CONVERSIONS = {
+  "1": "jan",
+  "2": "feb",
+  "3": "mar",
+  "4": "apr",
+  "5": "may",
+  "6": "jun",
+  "7": "jul",
+  "8": "aug",
+  "9": "sep",
+  "10": "oct",
+  "11": "nov",
+  "12": "dec",
+  jan: "jan",
+  feb: "feb",
+  mar: "mar",
+  apr: "apr",
+  may: "may",
+  jun: "jun",
+  jul: "jul",
+  aug: "aug",
+  sep: "sep",
+  oct: "oct",
+  nov: "nov",
+  dec: "dec",
+  january: "jan",
+  february: "feb",
+  march: "mar",
+  april: "apr",
+  june: "jun",
+  july: "jul",
+  august: "aug",
+  september: "sep",
+  october: "oct",
+  november: "nov",
+  december: "dec"
 };
 
 // src/modifiers/dropAllCapsModifier.ts
-var dropAllCapsModifier = {
-  type: "FieldModifier",
-  condition: /* @__PURE__ */ __name((fieldName, options, entry, cache) => Boolean(
-    options.dropAllCaps && !cache.lookupRenderedEntryValue(entry, fieldName).match(/[a-z]/)
-  ), "condition"),
-  modifyRenderedValue: /* @__PURE__ */ __name((str) => {
-    return str.replace(/(\w)(\S*)/g, (_, first, rest) => {
-      const word = first + rest;
-      if (isRomanNumeral(word)) return word;
-      return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
-    });
-  }, "modifyRenderedValue")
-};
+function createDropAllCapsTransformation() {
+  return {
+    name: "drop-all-caps",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      for (const field of astProxy.allFields()) {
+        dropAllCapsInField(astProxy, field);
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createDropAllCapsTransformation, "createDropAllCapsTransformation");
+function dropAllCapsInField(astProxy, field) {
+  if (!astProxy.lookupRenderedEntryValue2(field).match(/[a-z]/)) {
+    for (const node of field.value.concat) {
+      node.value = titleCase(node.value);
+    }
+    astProxy.invalidateEntryValue(field.parent, field.name);
+  }
+}
+__name(dropAllCapsInField, "dropAllCapsInField");
+function titleCase(str) {
+  return str.replace(/(\w)(\S*)/g, (_, first, rest) => {
+    const word = first + rest;
+    if (isRomanNumeral(word)) return word;
+    return first.toLocaleUpperCase() + rest.toLocaleLowerCase();
+  });
+}
+__name(titleCase, "titleCase");
 function isRomanNumeral(str) {
   return /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/.test(str);
 }
@@ -1424,6 +1474,7 @@ __name(isRomanNumeral, "isRomanNumeral");
 
 // src/modifiers/encodeUrlsModifier.ts
 var encodeUrlsModifier = {
+  name: "encode-urls",
   type: "FieldModifier",
   condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(fieldName === "url" && options.encodeUrls), "condition"),
   modifyRenderedValue: /* @__PURE__ */ __name((str) => str.replace(/\\?_/g, "\\%5F"), "modifyRenderedValue")
@@ -3771,6 +3822,7 @@ var VERBATIM_FIELDS = [
   "pdf"
 ];
 var escapeCharactersModifier = {
+  name: "escape-characters",
   type: "FieldModifier",
   condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(options.escape && !VERBATIM_FIELDS.includes(fieldName)), "condition"),
   modifyRenderedValue: /* @__PURE__ */ __name((str) => {
@@ -3805,6 +3857,7 @@ var escapeCharactersModifier = {
 
 // src/modifiers/formatPageRangeModifier.ts
 var formatPageRangeModifier = {
+  name: "format-page-range",
   type: "FieldModifier",
   condition: /* @__PURE__ */ __name((fieldName) => fieldName === "pages", "condition"),
   modifyRenderedValue: /* @__PURE__ */ __name((str) => {
@@ -4125,7 +4178,7 @@ function generateKey(valueLookup, entryKeyTemplate, duplicateNumber) {
       if (typeof token === "string") {
         return token;
       }
-      const { marker, parameter, modifiers: modifiers2 } = token;
+      const { marker, parameter, modifiers } = token;
       const specialMarker = SPECIAL_MARKERS[marker];
       let key;
       if (specialMarker) {
@@ -4136,7 +4189,7 @@ function generateKey(valueLookup, entryKeyTemplate, duplicateNumber) {
       } else {
         throw new Error(`Invalid citation key token ${marker}`);
       }
-      for (const modifierKey of modifiers2) {
+      for (const modifierKey of modifiers) {
         const modifier = MODIFIERS[modifierKey];
         if (modifier) {
           key = modifier.callback(key);
@@ -4236,65 +4289,71 @@ function removeUnsafeEntryKeyChars(str) {
 __name(removeUnsafeEntryKeyChars, "removeUnsafeEntryKeyChars");
 
 // src/modifiers/generateKeysModifier.ts
-var generateKeysModifier = {
-  type: "RootModifier",
-  condition: /* @__PURE__ */ __name((options) => options.generateKeys ?? false, "condition"),
-  modifyRoot: /* @__PURE__ */ __name((root, cache, entryKeyTemplate) => {
-    const newKeys = generateKeys(getEntries(root), cache, entryKeyTemplate);
-    for (const node of root.children) {
-      if (node.type === "block" && node.block?.type === "entry") {
-        const newKey = newKeys.get(node.block);
+function createGenerateKeysTransformation(template) {
+  return {
+    name: "generate-keys",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      const newKeys = generateKeys(astProxy.allEntries(), astProxy, template);
+      for (const entry of astProxy.allEntries()) {
+        const newKey = newKeys.get(entry);
         if (newKey) {
-          node.block.key = newKey;
+          entry.key = newKey;
         }
       }
-    }
-    return void 0;
-  }, "modifyRoot")
-};
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createGenerateKeysTransformation, "createGenerateKeysTransformation");
 
 // src/modifiers/limitAuthorsModifier.ts
-var limitAuthorsModifier = {
-  type: "FieldModifier",
-  condition: /* @__PURE__ */ __name((fieldName, options) => fieldName === "author" && options.maxAuthors ? options.maxAuthors : false, "condition"),
-  modifyRenderedValue: /* @__PURE__ */ __name((str, maxAuthors) => {
-    const authors = str.split(" and ");
-    if (authors.length > maxAuthors) {
-      return [...authors.slice(0, maxAuthors), "others"].join(" and ");
-    }
-    return str;
-  }, "modifyRenderedValue")
-};
+function createLimitAuthorsTransformation(maxAuthors) {
+  return {
+    name: "limit-authors",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      astProxy.mutateValues((node) => {
+        if (node.parent.parent.name.toLocaleLowerCase() === "author") {
+          const authors = node.value.split(" and ");
+          if (authors.length > maxAuthors) {
+            node.value = [...authors.slice(0, maxAuthors), "others"].join(
+              " and "
+            );
+          }
+        }
+      });
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createLimitAuthorsTransformation, "createLimitAuthorsTransformation");
 
 // src/modifiers/lowercaseEntryTypeModifier.ts
-var lowercaseEntryTypeModifier = {
-  type: "RootModifier",
-  condition: /* @__PURE__ */ __name((options) => Boolean(options.lowercase), "condition"),
-  modifyRoot: /* @__PURE__ */ __name((root) => {
-    for (const node of root.children) {
-      if (node.type === "block" && node.block?.type === "entry") {
-        node.command = node.command.toLocaleLowerCase();
+function createLowercaseEntryTypeModifier() {
+  return {
+    name: "lowercase-entry-type",
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const entry of ast.allEntries()) {
+        entry.parent.command = entry.parent.command.toLocaleLowerCase();
       }
-    }
-    return void 0;
-  }, "modifyRoot")
-};
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createLowercaseEntryTypeModifier, "createLowercaseEntryTypeModifier");
 
 // src/modifiers/lowercaseFieldsModifier.ts
-var lowercaseFieldsModifier = {
-  type: "RootModifier",
-  condition: /* @__PURE__ */ __name((options) => Boolean(options.lowercase), "condition"),
-  modifyRoot: /* @__PURE__ */ __name((root, cache) => {
-    for (const node of root.children) {
-      if (node.type === "block" && node.block?.type === "entry") {
-        for (const field of node.block.fields) {
-          field.name = field.name.toLocaleLowerCase();
-        }
+function createLowercaseFieldsModifier() {
+  return {
+    name: "lowercase-fields",
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const field of ast.allFields()) {
+        field.name = field.name.toLocaleLowerCase();
       }
-    }
-    return void 0;
-  }, "modifyRoot")
-};
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createLowercaseFieldsModifier, "createLowercaseFieldsModifier");
 
 // src/duplicates.ts
 function checkForDuplicates(entries, cache, duplicateRules, merge) {
@@ -4415,36 +4474,48 @@ function mergeEntries(merge, duplicateOf, entry) {
 __name(mergeEntries, "mergeEntries");
 
 // src/modifiers/mergeEntriesModifier.ts
-var mergeEntriesModifier = {
-  type: "RootModifier",
-  condition: /* @__PURE__ */ __name((options) => options, "condition"),
-  modifyRoot: /* @__PURE__ */ __name((root, cache, options) => {
-    const entries = getEntries(root);
-    const duplicates = checkForDuplicates(
-      entries,
-      cache,
-      options.duplicates,
-      options.merge
-    );
-    root.children = root.children.filter(
-      (child) => !isEntryNode(child) || !duplicates.entries.has(child.block)
-    );
-    return duplicates.warnings;
-  }, "modifyRoot")
-};
+function createMergeEntriesTransformation(duplicatesOpt, merge) {
+  return {
+    name: "merge-entries",
+    dependencies: ["generate-keys", "sort-entries"],
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      const entries = astProxy.allEntries();
+      const duplicates = checkForDuplicates(
+        entries,
+        astProxy,
+        duplicatesOpt,
+        merge
+      );
+      const root = astProxy.getAst();
+      root.children = root.children.filter(
+        (child) => !isEntryNode(child) || !duplicates.entries.has(child.block)
+      );
+      return duplicates.warnings;
+    }, "apply")
+  };
+}
+__name(createMergeEntriesTransformation, "createMergeEntriesTransformation");
 
 // src/modifiers/omitFieldModifier.ts
-var omitFieldModifier = {
-  type: "FieldModifier",
-  condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(options.omit?.some((f) => f.toLocaleLowerCase() === fieldName)), "condition"),
-  // TODO: memoize
-  modifyNode: /* @__PURE__ */ __name((node) => {
-    node.parent.fields = node.parent.fields.filter((f) => f !== node);
-  }, "modifyNode")
-};
+function createOmitFieldsModifier(omit) {
+  return {
+    name: "omit-fields",
+    apply(ast) {
+      const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
+      for (const field of ast.allFields()) {
+        if (set.has(field.name.toLocaleLowerCase())) {
+          field.parent.fields = field.parent.fields.filter((f) => f !== field);
+        }
+      }
+      return void 0;
+    }
+  };
+}
+__name(createOmitFieldsModifier, "createOmitFieldsModifier");
 
 // src/modifiers/preferCurlyModifier.ts
 var preferCurlyModifier = {
+  name: "prefer-curly",
   type: "FieldModifier",
   condition: /* @__PURE__ */ __name((_, options) => options.curly ?? false, "condition"),
   modifyNode: /* @__PURE__ */ __name((node) => {
@@ -4456,6 +4527,7 @@ var preferCurlyModifier = {
 
 // src/modifiers/preferNumericModifier.ts
 var preferNumericModifier = {
+  name: "prefer-numeric",
   type: "FieldModifier",
   condition: /* @__PURE__ */ __name((_, options) => options.numeric ?? false, "condition"),
   modifyNode: /* @__PURE__ */ __name((node) => {
@@ -4470,6 +4542,7 @@ var preferNumericModifier = {
 
 // src/modifiers/removeBracesModifier.ts
 var removeBracesModifier = {
+  name: "remove-braces",
   type: "FieldModifier",
   condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(
     options.removeBraces?.some((f) => f.toLocaleLowerCase() === fieldName)
@@ -4480,6 +4553,7 @@ var removeBracesModifier = {
 
 // src/modifiers/removeCommentsModifier.ts
 var removeCommentsModifier = {
+  name: "remove-comments",
   type: "RootModifier",
   condition: /* @__PURE__ */ __name((options) => Boolean(options.stripComments), "condition"),
   modifyRoot: /* @__PURE__ */ __name((root) => {
@@ -4492,6 +4566,7 @@ var removeCommentsModifier = {
 
 // src/modifiers/removeDuplicateFieldsModifier.ts
 var removeDuplicateFieldsModifier = {
+  name: "remove-duplicate-fields",
   type: "RootModifier",
   condition: /* @__PURE__ */ __name((options) => Boolean(options.removeDuplicateFields), "condition"),
   modifyRoot: /* @__PURE__ */ __name((root) => {
@@ -4514,6 +4589,7 @@ var removeDuplicateFieldsModifier = {
 
 // src/modifiers/removeEmptyFieldsModifier.ts
 var removeEmptyFieldsModifier = {
+  name: "remove-empty-fields",
   type: "RootModifier",
   condition: /* @__PURE__ */ __name((options) => Boolean(options.removeEmptyFields), "condition"),
   modifyRoot: /* @__PURE__ */ __name((root, cache) => {
@@ -4528,6 +4604,22 @@ var removeEmptyFieldsModifier = {
     return void 0;
   }, "modifyRoot")
 };
+
+// src/months.ts
+var MONTH_MACROS = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec"
+];
 
 // src/sort.ts
 function sortEntries(ast, cache, sort) {
@@ -4614,28 +4706,34 @@ function sortEntryFields(entries, fieldOrder) {
 __name(sortEntryFields, "sortEntryFields");
 
 // src/modifiers/sortEntriesModifier.ts
-var sortEntriesModifier = {
-  type: "RootModifier",
-  condition: /* @__PURE__ */ __name((options) => options.sort ?? false, "condition"),
-  modifyRoot: /* @__PURE__ */ __name((...args) => {
-    sortEntries(...args);
-    return void 0;
-  }, "modifyRoot")
-};
+function createSortEntriesModifier(sort) {
+  return {
+    name: "sort-entries",
+    dependencies: ["generate-keys", "merge-entries"],
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      sortEntries(astProxy.getAst(), astProxy, sort);
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createSortEntriesModifier, "createSortEntriesModifier");
 
 // src/modifiers/sortFieldsModifier.ts
-var sortFieldsModifier = {
-  type: "RootModifier",
-  condition: /* @__PURE__ */ __name((options) => options.sortFields ?? false, "condition"),
-  modifyRoot: /* @__PURE__ */ __name((root, _, sortFields) => {
-    const entries = getEntries(root);
-    sortEntryFields(entries, sortFields);
-    return void 0;
-  }, "modifyRoot")
-};
+function createSortFieldsModifier(sortFields) {
+  return {
+    name: "sort-fields",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      const entries = astProxy.allEntries();
+      sortEntryFields(entries, sortFields);
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createSortFieldsModifier, "createSortFieldsModifier");
 
 // src/modifiers/stripEnclosingBracesModifier.ts
 var stripEnclosingBracesModifier = {
+  name: "strip-enclosing-braces",
   type: "FieldModifier",
   condition: /* @__PURE__ */ __name((_, options) => Boolean(options.stripEnclosingBraces), "condition"),
   modifyRenderedValue: /* @__PURE__ */ __name((str) => str.replace(/^\{([^{}]*)\}$/g, "$1"), "modifyRenderedValue")
@@ -4643,6 +4741,7 @@ var stripEnclosingBracesModifier = {
 
 // src/modifiers/trimCommentsModifier.ts
 var trimCommentsModifier = {
+  name: "trim-comments",
   type: "RootModifier",
   condition: /* @__PURE__ */ __name((options) => Boolean(options.tidyComments), "condition"),
   modifyRoot: /* @__PURE__ */ __name((root) => {
@@ -4664,65 +4763,134 @@ function tidyComment(comment) {
 }
 __name(tidyComment, "tidyComment");
 
+// src/pipeline.ts
+function sortPipeline(transformations) {
+  const sorted = [];
+  const visited = /* @__PURE__ */ new Set();
+  const visit = /* @__PURE__ */ __name((transformation) => {
+    if (visited.has(transformation.name)) return;
+    visited.add(transformation.name);
+    for (const dep of transformation.dependencies ?? []) {
+      const depTransformation = transformations.find((t) => t.name === dep);
+      if (depTransformation) visit(depTransformation);
+    }
+    sorted.push(transformation);
+  }, "visit");
+  transformations.forEach(visit);
+  return sorted;
+}
+__name(sortPipeline, "sortPipeline");
+function generateTransformationPipeline(options) {
+  const pipeline = [];
+  if (options.months) {
+    pipeline.push(createAbbreviateMonthsTransformation());
+  }
+  if (options.dropAllCaps) {
+    pipeline.push(createDropAllCapsTransformation());
+  }
+  if (options.encodeUrls) {
+    pipeline.push(encodeUrlsModifier);
+  }
+  if (options.escape) {
+    pipeline.push(escapeCharactersModifier);
+  }
+  pipeline.push(formatPageRangeModifier);
+  if (options.generateKeys) {
+    pipeline.push(createGenerateKeysTransformation(options.generateKeys));
+  }
+  if (options.maxAuthors) {
+    pipeline.push(createLimitAuthorsTransformation(options.maxAuthors));
+  }
+  if (options.lowercase) {
+    pipeline.push(
+      createLowercaseEntryTypeModifier(),
+      createLowercaseFieldsModifier()
+    );
+  }
+  if (options.merge || options.duplicates) {
+    pipeline.push(
+      createMergeEntriesTransformation(options.duplicates, options.merge)
+    );
+  }
+  if (options.omit) {
+    pipeline.push(createOmitFieldsModifier(options.omit));
+  }
+  if (options.enclosingBraces) {
+    pipeline.push(encloseBracesModifier);
+  }
+  if (options.curly) {
+    pipeline.push(preferCurlyModifier);
+  }
+  if (options.numeric) {
+    pipeline.push(preferNumericModifier);
+  }
+  if (options.removeBraces) {
+    pipeline.push(removeBracesModifier);
+  }
+  if (options.stripComments) {
+    pipeline.push(removeCommentsModifier);
+  }
+  if (options.removeDuplicateFields) {
+    pipeline.push(removeDuplicateFieldsModifier);
+  }
+  if (options.removeEmptyFields) {
+    pipeline.push(removeEmptyFieldsModifier);
+  }
+  if (options.sort) {
+    pipeline.push(createSortEntriesModifier(options.sort));
+  }
+  if (options.sortFields) {
+    pipeline.push(createSortFieldsModifier(options.sortFields));
+  }
+  if (options.stripEnclosingBraces) {
+    pipeline.push(stripEnclosingBracesModifier);
+  }
+  if (options.tidyComments) {
+    pipeline.push(trimCommentsModifier);
+  }
+  return sortPipeline(pipeline);
+}
+__name(generateTransformationPipeline, "generateTransformationPipeline");
+
 // src/tidy.ts
-var modifiers = [
-  encodeUrlsModifier,
-  limitAuthorsModifier,
-  escapeCharactersModifier,
-  dropAllCapsModifier,
-  formatPageRangeModifier,
-  abbreviateMonthsModifier,
-  stripEnclosingBracesModifier,
-  removeBracesModifier,
-  omitFieldModifier,
-  mergeEntriesModifier,
-  preferNumericModifier,
-  sortEntriesModifier,
-  sortFieldsModifier,
-  generateKeysModifier,
-  removeDuplicateFieldsModifier,
-  removeEmptyFieldsModifier,
-  lowercaseFieldsModifier,
-  lowercaseEntryTypeModifier,
-  removeCommentsModifier,
-  trimCommentsModifier,
-  preferCurlyModifier,
-  encloseBracesModifier
-];
 function tidy(input, options_ = {}) {
   const options = normalizeOptions(options_);
   const inputFixed = convertCRLF(input);
   const ast = parseBibTeX(inputFixed);
-  const entries = getEntries(ast);
+  const entries = getEntries2(ast);
   const warnings = entries.filter((entry) => !entry.key).map((entry) => ({
     code: "MISSING_KEY",
     message: `${entry.parent.command} entry does not have a citation key.`
   }));
-  const cache = new Cache(options);
-  for (const modifier of modifiers) {
-    if (modifier.type === "RootModifier") {
-      const params = modifier.condition(options);
+  const cache = new ASTProxy(ast, options);
+  const pipeline = generateTransformationPipeline(options);
+  for (const transformation of pipeline) {
+    if (!("type" in transformation)) {
+      const result = transformation.apply(cache);
+      if (result) warnings.push(...result);
+    } else if (transformation.type === "RootModifier") {
+      const params = transformation.condition(options);
       if (!params) continue;
-      const result = modifier.modifyRoot(ast, cache, params);
+      const result = transformation.modifyRoot(ast, cache, params);
       if (result) warnings.push(...result);
     } else {
       for (const entry of entries) {
         for (const field of entry.fields) {
-          const params = modifier.condition(
+          const params = transformation.condition(
             field.name.toLocaleLowerCase(),
             options,
             entry,
             cache
           );
           if (!params) continue;
-          if (modifier.modifyNode) {
-            modifier.modifyNode(field, params);
+          if (transformation.modifyNode) {
+            transformation.modifyNode(field, params);
             cache.invalidateEntryValue(entry, field.name);
           }
           for (const node of field.value.concat) {
             if (node.type === "braced" || node.type === "quoted") {
-              if (modifier.modifyRenderedValue) {
-                const newValue = modifier.modifyRenderedValue(
+              if (transformation.modifyRenderedValue) {
+                const newValue = transformation.modifyRenderedValue(
                   node.value,
                   //@ts-expect-error
                   params
@@ -4742,10 +4910,10 @@ function tidy(input, options_ = {}) {
   return { bibtex, warnings, count: entries.length };
 }
 __name(tidy, "tidy");
-function getEntries(ast) {
+function getEntries2(ast) {
   return ast.children.filter(isEntryNode).map((node) => node.block);
 }
-__name(getEntries, "getEntries");
+__name(getEntries2, "getEntries");
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   getEntries,

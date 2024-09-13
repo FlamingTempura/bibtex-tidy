@@ -1,6 +1,7 @@
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
-export const removeDuplicateFieldsModifier: Modifier = {
+export const removeDuplicateFieldsModifier: Transformation = {
+	name: "remove-duplicate-fields",
 	type: "RootModifier",
 	condition: (options) => Boolean(options.removeDuplicateFields),
 	modifyRoot: (root) => {

@@ -1,14 +1,13 @@
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
-export const lowercaseEntryTypeModifier: Modifier = {
-	type: "RootModifier",
-	condition: (options) => Boolean(options.lowercase),
-	modifyRoot: (root) => {
-		for (const node of root.children) {
-			if (node.type === "block" && node.block?.type === "entry") {
-				node.command = node.command.toLocaleLowerCase();
+export function createLowercaseEntryTypeModifier(): Transformation {
+	return {
+		name: "lowercase-entry-type",
+		apply: (ast) => {
+			for (const entry of ast.allEntries()) {
+				entry.parent.command = entry.parent.command.toLocaleLowerCase();
 			}
-		}
-		return undefined;
-	},
-};
+			return undefined;
+		},
+	};
+}

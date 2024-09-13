@@ -1,10 +1,12 @@
 import { parseLaTeX, stringifyLaTeX } from "../parsers/latexParser";
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
 // if the user requested, wrap the value in braces (this forces bibtex
 // compiler to preserve case)
-export const encloseBracesModifier: Modifier<boolean> = {
+export const encloseBracesModifier: Transformation = {
+	name: "enclose-braces",
 	type: "FieldModifier",
+	dependencies: ["prefer-curly"],
 	condition: (fieldName, options) =>
 		options.enclosingBraces?.some((f) => f.toLocaleLowerCase() === fieldName) ??
 		false,
