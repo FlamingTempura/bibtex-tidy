@@ -1,11 +1,13 @@
-import type { Transformation } from "../types";
+import type { Transform } from "../types";
 
-export function createOmitFieldsModifier(omit: string[]): Transformation {
+export function createRemoveSpecifiedFieldsTransform(
+	omit: string[],
+): Transform {
 	return {
-		name: "omit-fields",
+		name: "remove-specified-fields",
 		apply(ast) {
 			const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
-			for (const field of ast.allFields()) {
+			for (const field of ast.fields()) {
 				if (set.has(field.name.toLocaleLowerCase())) {
 					field.parent.fields = field.parent.fields.filter((f) => f !== field);
 				}

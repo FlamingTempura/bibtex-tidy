@@ -1,37 +1,21 @@
-import type { Warning } from ".";
-import type { ASTProxy } from "./cache";
-import type { OptionsNormalized } from "./optionUtils";
-import type { EntryNode, FieldNode, RootNode } from "./parsers/bibtexParser";
+import type { ASTProxy } from "./ASTProxy";
+import type { DuplicateRule } from "./optionUtils";
 
-/**
- * Modifies the AST prior to formatting
- */
-export type Transformation = {
+export type Transform = {
 	name: string;
 	dependencies?: string[];
-} & (
-	| {
-			apply: (ast: ASTProxy) => Warning[] | undefined;
-	  }
-	| (
-			| {
-					type: "FieldModifier";
-					condition: (
-						fieldName: string,
-						options: OptionsNormalized,
-						entry: EntryNode,
-						cache: ASTProxy,
-					) => boolean;
-					modifyRenderedValue?: (value: string) => string;
-					modifyNode?: (node: FieldNode) => void;
-			  }
-			| {
-					type: "RootModifier";
-					condition: (options: OptionsNormalized) => boolean;
-					modifyRoot: (
-						root: RootNode,
-						cache: ASTProxy,
-					) => Warning[] | undefined;
-			  }
-	  )
-);
+	apply: (ast: ASTProxy) => Warning[] | undefined;
+};
+
+export type Warning = (
+	| { code: "MISSING_KEY" }
+	| { code: "DUPLICATE_ENTRY"; rule: DuplicateRule }
+) & {
+	message: string;
+};
+
+export type BibTeXTidyResult = {
+	bibtex: string;
+	warnings: Warning[];
+	count: number;
+};

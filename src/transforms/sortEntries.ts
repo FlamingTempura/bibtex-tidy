@@ -1,19 +1,36 @@
-import type { ASTProxy } from "./cache";
-import { MONTH_MACROS } from "./months";
-import type {
-	BlockNode,
-	EntryNode,
-	RootNode,
-	TextNode,
-} from "./parsers/bibtexParser";
+import type { ASTProxy } from "../ASTProxy";
+import type { BlockNode, RootNode, TextNode } from "../parsers/bibtexParser";
+import type { Transform } from "../types";
+
+const MONTH_MACROS = [
+	"jan",
+	"feb",
+	"mar",
+	"apr",
+	"may",
+	"jun",
+	"jul",
+	"aug",
+	"sep",
+	"oct",
+	"nov",
+	"dec",
+] as const;
+
+export function createSortEntriesTransform(sort: string[]): Transform {
+	return {
+		name: "sort-entries",
+		dependencies: ["generate-keys", "merge-entries", "prefer-numeric"],
+		apply: (astProxy) => {
+			sortEntries(astProxy.root(), astProxy, sort);
+			return undefined;
+		},
+	};
+}
 
 type SortIndex = Map<string, string | number>;
 
-export function sortEntries(
-	ast: RootNode,
-	cache: ASTProxy,
-	sort: string[],
-): void {
+function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 	// Map of items to sort values e.g. { year: 2009, author: 'West', ... }
 	const sortIndexes = new Map<TextNode | BlockNode, SortIndex>();
 
@@ -47,7 +64,7 @@ export function sortEntries(
 
 				case "month": {
 					if (item.block?.type !== "entry") continue;
-					const v = cache.lookupEntryValue(item.block, key);
+					const v = cache.lookupRenderedEntryValue(item.block, key);
 					const i = v ? (MONTH_MACROS as readonly string[]).indexOf(v) : -1;
 					val = i > -1 ? i : "";
 					break;
@@ -59,7 +76,7 @@ export function sortEntries(
 
 				default:
 					if (item.block?.type !== "entry") continue;
-					val = cache.lookupEntryValue(item.block, key);
+					val = cache.lookupRenderedEntryValue(item.block, key);
 			}
 			sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
 		}
@@ -101,22 +118,4 @@ const SPECIAL_ENTRIES = new Set([
  */
 function isBibLaTeXSpecialEntry(node: BlockNode) {
 	return SPECIAL_ENTRIES.has(node.command.toLowerCase());
-}
-
-export function sortEntryFields(
-	entries: EntryNode[],
-	fieldOrder: string[],
-): void {
-	for (const entry of entries) {
-		entry.fields.sort((a, b) => {
-			const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
-			const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
-			if (orderA === -1 && orderB === -1) return 0;
-			if (orderA === -1) return 1;
-			if (orderB === -1) return -1;
-			if (orderB < orderA) return 1;
-			if (orderB > orderA) return -1;
-			return 0;
-		});
-	}
 }

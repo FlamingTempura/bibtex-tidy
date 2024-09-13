@@ -174,20 +174,27 @@ function flattenLaTeX(block) {
 }
 __name(flattenLaTeX, "flattenLaTeX");
 
-// src/modifiers/encloseBracesModifier.ts
-var encloseBracesModifier = {
-  name: "enclose-braces",
-  type: "FieldModifier",
-  dependencies: ["prefer-curly"],
-  condition: /* @__PURE__ */ __name((fieldName, options) => options.enclosingBraces?.some((f) => f.toLocaleLowerCase() === fieldName) ?? false, "condition"),
-  modifyNode: /* @__PURE__ */ __name((node) => {
-    for (const child of node.value.concat) {
-      if (child.type === "braced") {
-        child.value = doubleEnclose(child.value);
+// src/transforms/encloseBraces.ts
+function createEncloseBracesTransform(fields) {
+  const set = new Set(fields.map((f) => f.toLocaleLowerCase()));
+  return {
+    name: "enclose-braces",
+    dependencies: ["prefer-curly"],
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const field of ast.fields()) {
+        if (set.has(field.name.toLocaleLowerCase())) {
+          for (const node of field.value.concat) {
+            if (node.type === "braced") {
+              node.value = doubleEnclose(node.value);
+            }
+          }
+        }
       }
-    }
-  }, "modifyNode")
-};
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createEncloseBracesTransform, "createEncloseBracesTransform");
 function doubleEnclose(str) {
   const latex = parseLaTeX(str);
   const alreadyDoubleEnclosed = latex.children.length === 1 && latex.children[0]?.type === "block" && latex.children[0]?.kind === "curly" && latex.children[0].children.length === 1 && latex.children[0].children[0]?.type === "block" && latex.children[0].children[0]?.kind === "curly";
@@ -860,67 +867,28 @@ function normalizeOptions(options) {
 }
 __name(normalizeOptions, "normalizeOptions");
 
-// src/cache.ts
+// src/ASTProxy.ts
 var ASTProxy = class {
   constructor(ast, tidyOptions = normalizeOptions({})) {
     this.ast = ast;
     this.tidyOptions = tidyOptions;
-    this.valueLookup = /* @__PURE__ */ new Map();
     this.fieldLookup = /* @__PURE__ */ new Map();
     this.renderValueLookup = /* @__PURE__ */ new Map();
   }
   static {
     __name(this, "ASTProxy");
   }
-  getAst() {
+  root() {
     return this.ast;
   }
-  allFields() {
-    return this.allEntries().flatMap((entry) => entry.fields);
+  fields() {
+    return this.entries().flatMap((entry) => entry.fields);
   }
-  allEntries() {
+  entries() {
     return this.ast.children.filter((node) => node.type === "block").map((block) => block.block).filter((entry) => entry?.type === "entry");
   }
-  mutateEntries(cb) {
-    const entries = this.allEntries();
-    for (const entry of entries) {
-      cb(entry);
-    }
-  }
-  iterateFields(cb) {
-    const fields = this.allFields();
-    for (const field of fields) {
-      cb(field);
-    }
-  }
-  setFieldValue(field, value) {
-    field.value.concat = value;
-    this.invalidateEntryValue(field.parent, field.name);
-  }
-  mutateValues(cb) {
-    this.iterateFields((field) => {
-      for (const node of field.value.concat) {
-        cb(node);
-      }
-    });
-  }
-  lookupEntryValue(entry, field) {
-    const fieldName = field.toLocaleLowerCase();
-    let value = this.valueLookup.get(entry)?.get(field);
-    if (value === void 0) {
-      const field2 = this.lookupField(entry, fieldName);
-      if (!field2) {
-        value = "";
-      } else {
-        value = formatValue(field2, this.tidyOptions) ?? "";
-      }
-      this.valueLookup.set(entry, /* @__PURE__ */ new Map([[fieldName, value]]));
-    }
-    return value;
-  }
-  invalidateEntryValue(entry, field) {
-    this.valueLookup.get(entry)?.delete(field.toLocaleLowerCase());
-    this.renderValueLookup.get(entry)?.delete(field.toLocaleLowerCase());
+  invalidateField(field) {
+    this.renderValueLookup.delete(field);
   }
   lookupField(entry, fieldLc) {
     let fieldNode = this.fieldLookup.get(entry)?.get(fieldLc);
@@ -931,23 +899,23 @@ var ASTProxy = class {
     }
     return fieldNode;
   }
-  lookupRenderedEntryValue(entry, field) {
-    const fieldName = field.toLocaleLowerCase();
-    let value = this.renderValueLookup.get(entry)?.get(field);
+  lookupRenderedEntryValue(node, fieldName) {
+    const field = node.type === "entry" ? this.lookupField(node, (fieldName ?? "").toLocaleLowerCase()) : node;
+    if (!field) {
+      return "";
+    }
+    let value = this.renderValueLookup.get(field);
     if (value === void 0) {
-      const entryValue = this.lookupEntryValue(entry, fieldName);
+      const entryValue = formatValue(field, this.tidyOptions) ?? "";
       value = parseLaTeX(entryValue).renderAsText();
-      this.renderValueLookup.set(entry, /* @__PURE__ */ new Map([[fieldName, value]]));
+      this.renderValueLookup.set(field, value);
     }
     return value;
-  }
-  lookupRenderedEntryValue2(field) {
-    return this.lookupRenderedEntryValue(field.parent, field.name);
   }
   lookupRenderedEntryValues(entry) {
     const values = /* @__PURE__ */ new Map();
     for (const field of entry.fields) {
-      values.set(field.name, this.lookupRenderedEntryValue(entry, field.name));
+      values.set(field.name, this.lookupRenderedEntryValue(field));
     }
     return values;
   }
@@ -1370,92 +1338,73 @@ ${input.slice(Math.max(0, pos - 20), pos)}>>${input[pos]}<<${input.slice(pos + 1
   }
 };
 
-// src/modifiers/abbreviateMonthsModifier.ts
-function createAbbreviateMonthsTransformation() {
+// src/transforms/abbreviateMonths.ts
+var monthAliases = {
+  jan: ["1", "jan", "january"],
+  feb: ["2", "feb", "february"],
+  mar: ["3", "mar", "march"],
+  apr: ["4", "apr", "may"],
+  may: ["5", "may", "april"],
+  jun: ["6", "jun", "june"],
+  jul: ["7", "jul", "july"],
+  aug: ["8", "aug", "august"],
+  sep: ["9", "sep", "september"],
+  oct: ["10", "oct", "october"],
+  nov: ["11", "nov", "november"],
+  dec: ["12", "dec", "december"]
+};
+function createAbbreviateMonthsTransform() {
+  const months = new Map(
+    Object.entries(monthAliases).flatMap(
+      ([abbr, aliases]) => aliases.map((alias) => [alias, abbr])
+    )
+  );
   return {
     name: "abbreviate-months",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      for (const field of astProxy.allFields()) {
-        abbreviateMonthInField(astProxy, field);
+      for (const field of astProxy.fields()) {
+        if (field.name.toLowerCase() === "month") {
+          abbreviateMonthInField(astProxy, field, months);
+        }
       }
       return void 0;
     }, "apply")
   };
 }
-__name(createAbbreviateMonthsTransformation, "createAbbreviateMonthsTransformation");
-function abbreviateMonthInField(astProxy, field) {
-  if (field.name.toLowerCase() === "month") {
-    astProxy.setFieldValue(
-      field,
-      field.value.concat.map((node) => {
-        const abbr = abbreviateMonth(node.value);
-        return abbr ? new LiteralNode(node.parent, abbr) : node;
-      })
-    );
-  }
+__name(createAbbreviateMonthsTransform, "createAbbreviateMonthsTransform");
+function abbreviateMonthInField(astProxy, field, months) {
+  field.value.concat = field.value.concat.map((node) => {
+    const abbr = abbreviateMonth(node.value, months);
+    return abbr ? new LiteralNode(node.parent, abbr) : node;
+  });
+  astProxy.invalidateField(field);
 }
 __name(abbreviateMonthInField, "abbreviateMonthInField");
-function abbreviateMonth(month) {
-  return MONTH_CONVERSIONS[month.toLowerCase()];
+function abbreviateMonth(month, months) {
+  return months.get(month.toLowerCase());
 }
 __name(abbreviateMonth, "abbreviateMonth");
-var MONTH_CONVERSIONS = {
-  "1": "jan",
-  "2": "feb",
-  "3": "mar",
-  "4": "apr",
-  "5": "may",
-  "6": "jun",
-  "7": "jul",
-  "8": "aug",
-  "9": "sep",
-  "10": "oct",
-  "11": "nov",
-  "12": "dec",
-  jan: "jan",
-  feb: "feb",
-  mar: "mar",
-  apr: "apr",
-  may: "may",
-  jun: "jun",
-  jul: "jul",
-  aug: "aug",
-  sep: "sep",
-  oct: "oct",
-  nov: "nov",
-  dec: "dec",
-  january: "jan",
-  february: "feb",
-  march: "mar",
-  april: "apr",
-  june: "jun",
-  july: "jul",
-  august: "aug",
-  september: "sep",
-  october: "oct",
-  november: "nov",
-  december: "dec"
-};
 
-// src/modifiers/dropAllCapsModifier.ts
-function createDropAllCapsTransformation() {
+// src/transforms/dropAllCaps.ts
+function createDropAllCapsTransform() {
   return {
     name: "drop-all-caps",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      for (const field of astProxy.allFields()) {
+      for (const field of astProxy.fields()) {
         dropAllCapsInField(astProxy, field);
       }
       return void 0;
     }, "apply")
   };
 }
-__name(createDropAllCapsTransformation, "createDropAllCapsTransformation");
+__name(createDropAllCapsTransform, "createDropAllCapsTransform");
 function dropAllCapsInField(astProxy, field) {
-  if (!astProxy.lookupRenderedEntryValue2(field).match(/[a-z]/)) {
+  if (!astProxy.lookupRenderedEntryValue(field).match(/[a-z]/)) {
+    console.log(astProxy.lookupRenderedEntryValue(field));
     for (const node of field.value.concat) {
       node.value = titleCase(node.value);
     }
-    astProxy.invalidateEntryValue(field.parent, field.name);
+    astProxy.invalidateField(field);
   }
 }
 __name(dropAllCapsInField, "dropAllCapsInField");
@@ -1472,13 +1421,28 @@ function isRomanNumeral(str) {
 }
 __name(isRomanNumeral, "isRomanNumeral");
 
-// src/modifiers/encodeUrlsModifier.ts
-var encodeUrlsModifier = {
-  name: "encode-urls",
-  type: "FieldModifier",
-  condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(fieldName === "url" && options.encodeUrls), "condition"),
-  modifyRenderedValue: /* @__PURE__ */ __name((str) => str.replace(/\\?_/g, "\\%5F"), "modifyRenderedValue")
-};
+// src/transforms/encodeUrls.ts
+function createEncodeUrlsTransform() {
+  return {
+    name: "encode-urls",
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const field of ast.fields()) {
+        if (field.name.toLocaleLowerCase() === "url") {
+          for (const entry of field.value.concat) {
+            entry.value = encodeUrl(entry.value);
+          }
+          ast.invalidateField(field);
+        }
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createEncodeUrlsTransform, "createEncodeUrlsTransform");
+function encodeUrl(url) {
+  return url.replace(/\\?_/g, "\\%5F");
+}
+__name(encodeUrl, "encodeUrl");
 
 // src/unicode.ts
 var specialCharacters = /* @__PURE__ */ new Map([
@@ -3810,7 +3774,7 @@ var specialCharacters = /* @__PURE__ */ new Map([
   ["d7ff", "\\mathtt{9}"]
 ]);
 
-// src/modifiers/escapeCharactersModifier.ts
+// src/transforms/escapeCharacters.ts
 var VERBATIM_FIELDS = [
   "url",
   "doi",
@@ -3821,53 +3785,79 @@ var VERBATIM_FIELDS = [
   "verbc",
   "pdf"
 ];
-var escapeCharactersModifier = {
-  name: "escape-characters",
-  type: "FieldModifier",
-  condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(options.escape && !VERBATIM_FIELDS.includes(fieldName)), "condition"),
-  modifyRenderedValue: /* @__PURE__ */ __name((str) => {
-    let result = str;
-    const mathExpressions = [];
-    result = result.replace(/\$[^$]+\$/g, (match) => {
-      mathExpressions.push(match);
-      return `MATH.EXP.${mathExpressions.length - 1}`;
-    });
-    let newstr = "";
-    let escapeMode = false;
-    for (let i = 0; i < result.length; i++) {
-      if (escapeMode) {
-        escapeMode = false;
-        newstr += result[i];
-        continue;
+function createEscapeCharactersTransform() {
+  return {
+    name: "escape-characters",
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const field of ast.fields()) {
+        if (VERBATIM_FIELDS.includes(field.name)) {
+          continue;
+        }
+        for (const entry of field.value.concat) {
+          entry.value = escapeCharacters(entry.value);
+        }
       }
-      if (result[i] === "\\") {
-        escapeMode = true;
-        newstr += result[i];
-        continue;
-      }
-      const c = result.charCodeAt(i).toString(16).padStart(4, "0");
-      newstr += specialCharacters.get(c) ?? result[i];
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createEscapeCharactersTransform, "createEscapeCharactersTransform");
+function escapeCharacters(value) {
+  let result = value;
+  const mathExpressions = [];
+  result = result.replace(/\$[^$]+\$/g, (match) => {
+    mathExpressions.push(match);
+    return `MATH.EXP.${mathExpressions.length - 1}`;
+  });
+  let newstr = "";
+  let escapeMode = false;
+  for (let i = 0; i < result.length; i++) {
+    if (escapeMode) {
+      escapeMode = false;
+      newstr += result[i];
+      continue;
     }
-    return newstr.replace(
-      /MATH\.EXP\.(\d+)/g,
-      (_, i) => mathExpressions[Number(i)] ?? ""
-    );
-  }, "modifyRenderedValue")
-};
+    if (result[i] === "\\") {
+      escapeMode = true;
+      newstr += result[i];
+      continue;
+    }
+    const c = result.charCodeAt(i).toString(16).padStart(4, "0");
+    newstr += specialCharacters.get(c) ?? result[i];
+  }
+  return newstr.replace(
+    /MATH\.EXP\.(\d+)/g,
+    (_, i) => mathExpressions[Number(i)] ?? ""
+  );
+}
+__name(escapeCharacters, "escapeCharacters");
 
-// src/modifiers/formatPageRangeModifier.ts
-var formatPageRangeModifier = {
-  name: "format-page-range",
-  type: "FieldModifier",
-  condition: /* @__PURE__ */ __name((fieldName) => fieldName === "pages", "condition"),
-  modifyRenderedValue: /* @__PURE__ */ __name((str) => {
-    let result = str;
-    for (let i = 0; i < 4; i++) {
-      result = result.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
+// src/transforms/formatPageRange.ts
+function createFormatPageRangeTransform() {
+  return {
+    name: "format-page-range",
+    apply(ast) {
+      for (const field of ast.fields()) {
+        if (field.name.toLocaleLowerCase() === "pages") {
+          for (const entry of field.value.concat) {
+            entry.value = formatPageRange(entry.value);
+          }
+          ast.invalidateField(field);
+        }
+      }
+      return void 0;
     }
-    return result;
-  }, "modifyRenderedValue")
-};
+  };
+}
+__name(createFormatPageRangeTransform, "createFormatPageRangeTransform");
+function formatPageRange(str) {
+  let result = str;
+  for (let i = 0; i < 4; i++) {
+    result = result.replace(/(\d)\s*-\s*(\d)/g, "$1--$2");
+  }
+  return result;
+}
+__name(formatPageRange, "formatPageRange");
 
 // src/parsers/entryKeyTemplateParser.ts
 function parseEntryKeyTemplate(template) {
@@ -4288,13 +4278,13 @@ function removeUnsafeEntryKeyChars(str) {
 }
 __name(removeUnsafeEntryKeyChars, "removeUnsafeEntryKeyChars");
 
-// src/modifiers/generateKeysModifier.ts
-function createGenerateKeysTransformation(template) {
+// src/transforms/generateKeys.ts
+function createGenerateKeysTransform(template) {
   return {
     name: "generate-keys",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      const newKeys = generateKeys(astProxy.allEntries(), astProxy, template);
-      for (const entry of astProxy.allEntries()) {
+      const newKeys = generateKeys(astProxy.entries(), astProxy, template);
+      for (const entry of astProxy.entries()) {
         const newKey = newKeys.get(entry);
         if (newKey) {
           entry.key = newKey;
@@ -4304,56 +4294,63 @@ function createGenerateKeysTransformation(template) {
     }, "apply")
   };
 }
-__name(createGenerateKeysTransformation, "createGenerateKeysTransformation");
+__name(createGenerateKeysTransform, "createGenerateKeysTransform");
 
-// src/modifiers/limitAuthorsModifier.ts
-function createLimitAuthorsTransformation(maxAuthors) {
+// src/transforms/limitAuthors.ts
+function createLimitAuthorsTransform(maxAuthors) {
   return {
     name: "limit-authors",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      astProxy.mutateValues((node) => {
-        if (node.parent.parent.name.toLocaleLowerCase() === "author") {
-          const authors = node.value.split(" and ");
-          if (authors.length > maxAuthors) {
-            node.value = [...authors.slice(0, maxAuthors), "others"].join(
-              " and "
-            );
+      const fields = astProxy.fields();
+      for (const field of fields) {
+        if (field.name.toLocaleLowerCase() === "author") {
+          for (const node of field.value.concat) {
+            const authors = node.value.split(" and ");
+            if (authors.length > maxAuthors) {
+              node.value = [...authors.slice(0, maxAuthors), "others"].join(
+                " and "
+              );
+            }
           }
         }
-      });
+      }
       return void 0;
     }, "apply")
   };
 }
-__name(createLimitAuthorsTransformation, "createLimitAuthorsTransformation");
+__name(createLimitAuthorsTransform, "createLimitAuthorsTransform");
 
-// src/modifiers/lowercaseEntryTypeModifier.ts
-function createLowercaseEntryTypeModifier() {
+// src/transforms/lowercaseEntryType.ts
+function createLowercaseEntryTypeTransform() {
   return {
     name: "lowercase-entry-type",
     apply: /* @__PURE__ */ __name((ast) => {
-      for (const entry of ast.allEntries()) {
+      for (const entry of ast.entries()) {
         entry.parent.command = entry.parent.command.toLocaleLowerCase();
       }
       return void 0;
     }, "apply")
   };
 }
-__name(createLowercaseEntryTypeModifier, "createLowercaseEntryTypeModifier");
+__name(createLowercaseEntryTypeTransform, "createLowercaseEntryTypeTransform");
 
-// src/modifiers/lowercaseFieldsModifier.ts
-function createLowercaseFieldsModifier() {
+// src/transforms/lowercaseFields.ts
+function createLowercaseFieldsTransform() {
   return {
     name: "lowercase-fields",
     apply: /* @__PURE__ */ __name((ast) => {
-      for (const field of ast.allFields()) {
-        field.name = field.name.toLocaleLowerCase();
+      for (const field of ast.fields()) {
+        const newName = field.name.toLocaleLowerCase();
+        if (newName !== field.name) {
+          field.name = newName;
+          ast.invalidateField(field);
+        }
       }
       return void 0;
     }, "apply")
   };
 }
-__name(createLowercaseFieldsModifier, "createLowercaseFieldsModifier");
+__name(createLowercaseFieldsTransform, "createLowercaseFieldsTransform");
 
 // src/duplicates.ts
 function checkForDuplicates(entries, cache, duplicateRules, merge) {
@@ -4389,7 +4386,7 @@ function checkForDuplicates(entries, cache, duplicateRules, merge) {
           break;
         }
         case "doi": {
-          const doi = alphaNum(cache.lookupEntryValue(entry, "doi"));
+          const doi = alphaNum(cache.lookupRenderedEntryValue(entry, "doi"));
           if (!doi) continue;
           duplicateOf = dois.get(doi);
           if (!duplicateOf) {
@@ -4400,9 +4397,9 @@ function checkForDuplicates(entries, cache, duplicateRules, merge) {
           break;
         }
         case "citation": {
-          const ttl = cache.lookupEntryValue(entry, "title");
-          const aut = cache.lookupEntryValue(entry, "author");
-          const num = cache.lookupEntryValue(entry, "number");
+          const ttl = cache.lookupRenderedEntryValue(entry, "title");
+          const aut = cache.lookupRenderedEntryValue(entry, "author");
+          const num = cache.lookupRenderedEntryValue(entry, "number");
           if (!ttl || !aut) continue;
           const cit = [
             alphaNum(parseNameList(aut)[0]?.last ?? aut),
@@ -4418,7 +4415,9 @@ function checkForDuplicates(entries, cache, duplicateRules, merge) {
           break;
         }
         case "abstract": {
-          const abstract = alphaNum(cache.lookupEntryValue(entry, "abstract"));
+          const abstract = alphaNum(
+            cache.lookupRenderedEntryValue(entry, "abstract")
+          );
           const abs = abstract.slice(0, 100);
           if (!abs) continue;
           duplicateOf = abstracts.get(abs);
@@ -4473,20 +4472,20 @@ function mergeEntries(merge, duplicateOf, entry) {
 }
 __name(mergeEntries, "mergeEntries");
 
-// src/modifiers/mergeEntriesModifier.ts
-function createMergeEntriesTransformation(duplicatesOpt, merge) {
+// src/transforms/mergeEntries.ts
+function createMergeEntriesTransform(duplicatesOpt, merge) {
   return {
     name: "merge-entries",
     dependencies: ["generate-keys", "sort-entries"],
     apply: /* @__PURE__ */ __name((astProxy) => {
-      const entries = astProxy.allEntries();
+      const entries = astProxy.entries();
       const duplicates = checkForDuplicates(
         entries,
         astProxy,
         duplicatesOpt,
         merge
       );
-      const root = astProxy.getAst();
+      const root = astProxy.root();
       root.children = root.children.filter(
         (child) => !isEntryNode(child) || !duplicates.entries.has(child.block)
       );
@@ -4494,15 +4493,15 @@ function createMergeEntriesTransformation(duplicatesOpt, merge) {
     }, "apply")
   };
 }
-__name(createMergeEntriesTransformation, "createMergeEntriesTransformation");
+__name(createMergeEntriesTransform, "createMergeEntriesTransform");
 
-// src/modifiers/omitFieldModifier.ts
-function createOmitFieldsModifier(omit) {
+// src/transforms/removeSpecifiedFields.ts
+function createRemoveSpecifiedFieldsTransform(omit) {
   return {
-    name: "omit-fields",
+    name: "remove-specified-fields",
     apply(ast) {
       const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
-      for (const field of ast.allFields()) {
+      for (const field of ast.fields()) {
         if (set.has(field.name.toLocaleLowerCase())) {
           field.parent.fields = field.parent.fields.filter((f) => f !== field);
         }
@@ -4511,101 +4510,124 @@ function createOmitFieldsModifier(omit) {
     }
   };
 }
-__name(createOmitFieldsModifier, "createOmitFieldsModifier");
+__name(createRemoveSpecifiedFieldsTransform, "createRemoveSpecifiedFieldsTransform");
 
-// src/modifiers/preferCurlyModifier.ts
-var preferCurlyModifier = {
-  name: "prefer-curly",
-  type: "FieldModifier",
-  condition: /* @__PURE__ */ __name((_, options) => options.curly ?? false, "condition"),
-  modifyNode: /* @__PURE__ */ __name((node) => {
-    for (const child of node.value.concat) {
-      child.type = "braced";
-    }
-  }, "modifyNode")
-};
-
-// src/modifiers/preferNumericModifier.ts
-var preferNumericModifier = {
-  name: "prefer-numeric",
-  type: "FieldModifier",
-  condition: /* @__PURE__ */ __name((_, options) => options.numeric ?? false, "condition"),
-  modifyNode: /* @__PURE__ */ __name((node) => {
-    for (const child of node.value.concat) {
-      const isNumeric = child.value.match(/^[1-9][0-9]*$/);
-      if (isNumeric) {
-        child.type = "literal";
+// src/transforms/preferCurly.ts
+function createPreferCurlyTransform() {
+  return {
+    name: "prefer-curly",
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const field of ast.fields()) {
+        for (const child of field.value.concat) {
+          child.type = "braced";
+        }
+        ast.invalidateField(field);
       }
-    }
-  }, "modifyNode")
-};
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createPreferCurlyTransform, "createPreferCurlyTransform");
 
-// src/modifiers/removeBracesModifier.ts
-var removeBracesModifier = {
-  name: "remove-braces",
-  type: "FieldModifier",
-  condition: /* @__PURE__ */ __name((fieldName, options) => Boolean(
-    options.removeBraces?.some((f) => f.toLocaleLowerCase() === fieldName)
-  ), "condition"),
-  // TODO: memoize
-  modifyRenderedValue: /* @__PURE__ */ __name((str) => stringifyLaTeX(flattenLaTeX(parseLaTeX(str))), "modifyRenderedValue")
-};
-
-// src/modifiers/removeCommentsModifier.ts
-var removeCommentsModifier = {
-  name: "remove-comments",
-  type: "RootModifier",
-  condition: /* @__PURE__ */ __name((options) => Boolean(options.stripComments), "condition"),
-  modifyRoot: /* @__PURE__ */ __name((root) => {
-    root.children = root.children.filter(
-      (child) => child.type !== "text" && (child.type !== "block" || child.block?.type !== "comment")
-    );
-    return void 0;
-  }, "modifyRoot")
-};
-
-// src/modifiers/removeDuplicateFieldsModifier.ts
-var removeDuplicateFieldsModifier = {
-  name: "remove-duplicate-fields",
-  type: "RootModifier",
-  condition: /* @__PURE__ */ __name((options) => Boolean(options.removeDuplicateFields), "condition"),
-  modifyRoot: /* @__PURE__ */ __name((root) => {
-    for (const node of root.children) {
-      if (node.type === "block" && node.block?.type === "entry") {
-        const fieldSeen = /* @__PURE__ */ new Set();
-        node.block.fields = node.block.fields.filter((field) => {
-          const nameLc = field.name.toLocaleLowerCase();
-          if (fieldSeen.has(nameLc)) {
-            return false;
+// src/transforms/preferNumeric.ts
+function createPreferNumericTransform() {
+  return {
+    name: "prefer-numeric",
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const field of ast.fields()) {
+        for (const child of field.value.concat) {
+          const isNumeric = child.value.match(/^[1-9][0-9]*$/);
+          if (isNumeric) {
+            child.type = "literal";
           }
-          fieldSeen.add(nameLc);
-          return true;
-        });
+        }
+        ast.invalidateField(field);
       }
-    }
-    return void 0;
-  }, "modifyRoot")
-};
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createPreferNumericTransform, "createPreferNumericTransform");
 
-// src/modifiers/removeEmptyFieldsModifier.ts
-var removeEmptyFieldsModifier = {
-  name: "remove-empty-fields",
-  type: "RootModifier",
-  condition: /* @__PURE__ */ __name((options) => Boolean(options.removeEmptyFields), "condition"),
-  modifyRoot: /* @__PURE__ */ __name((root, cache) => {
-    for (const node of root.children) {
-      if (node.type === "block" && node.block?.type === "entry") {
-        const entry = node.block;
-        entry.fields = entry.fields.filter(
-          (field) => cache.lookupRenderedEntryValue(entry, field.name) !== ""
-        );
+// src/transforms/removeBraces.ts
+function createRemoveBracesTransform(fields) {
+  const set = new Set(fields.map((f) => f.toLocaleLowerCase()));
+  return {
+    name: "remove-braces",
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const field of ast.fields()) {
+        if (set.has(field.name.toLocaleLowerCase())) {
+          for (const node of field.value.concat) {
+            if (node.type === "braced") {
+              node.value = stringifyLaTeX(flattenLaTeX(parseLaTeX(node.value)));
+            }
+          }
+        }
       }
-    }
-    return void 0;
-  }, "modifyRoot")
-};
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createRemoveBracesTransform, "createRemoveBracesTransform");
 
-// src/months.ts
+// src/transforms/removeComments.ts
+function createRemoveCommentsTransform() {
+  return {
+    name: "remove-comments",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      astProxy.root().children = astProxy.root().children.filter(
+        (child) => child.type !== "text" && (child.type !== "block" || child.block?.type !== "comment")
+      );
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createRemoveCommentsTransform, "createRemoveCommentsTransform");
+
+// src/transforms/removeDuplicateFields.ts
+function createRemoveDuplicateFieldsTransform() {
+  return {
+    name: "remove-duplicate-fields",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      for (const node of astProxy.root().children) {
+        if (node.type === "block" && node.block?.type === "entry") {
+          const fieldSeen = /* @__PURE__ */ new Set();
+          node.block.fields = node.block.fields.filter((field) => {
+            const nameLc = field.name.toLocaleLowerCase();
+            if (fieldSeen.has(nameLc)) {
+              return false;
+            }
+            fieldSeen.add(nameLc);
+            return true;
+          });
+        }
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createRemoveDuplicateFieldsTransform, "createRemoveDuplicateFieldsTransform");
+
+// src/transforms/removeEmptyFields.ts
+function createRemoveEmptyFieldsTransform() {
+  return {
+    name: "remove-empty-fields",
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const node of ast.root().children) {
+        if (node.type === "block" && node.block?.type === "entry") {
+          const entry = node.block;
+          entry.fields = entry.fields.filter(
+            (field) => ast.lookupRenderedEntryValue(field) !== ""
+          );
+        }
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createRemoveEmptyFieldsTransform, "createRemoveEmptyFieldsTransform");
+
+// src/transforms/sortEntries.ts
 var MONTH_MACROS = [
   "jan",
   "feb",
@@ -4620,8 +4642,17 @@ var MONTH_MACROS = [
   "nov",
   "dec"
 ];
-
-// src/sort.ts
+function createSortEntriesTransform(sort) {
+  return {
+    name: "sort-entries",
+    dependencies: ["generate-keys", "merge-entries", "prefer-numeric"],
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      sortEntries(astProxy.root(), astProxy, sort);
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createSortEntriesTransform, "createSortEntriesTransform");
 function sortEntries(ast, cache, sort) {
   const sortIndexes = /* @__PURE__ */ new Map();
   const precedingMeta = [];
@@ -4644,7 +4675,7 @@ function sortEntries(ast, cache, sort) {
           break;
         case "month": {
           if (item.block?.type !== "entry") continue;
-          const v = cache.lookupEntryValue(item.block, key);
+          const v = cache.lookupRenderedEntryValue(item.block, key);
           const i = v ? MONTH_MACROS.indexOf(v) : -1;
           val = i > -1 ? i : "";
           break;
@@ -4654,7 +4685,7 @@ function sortEntries(ast, cache, sort) {
           break;
         default:
           if (item.block?.type !== "entry") continue;
-          val = cache.lookupEntryValue(item.block, key);
+          val = cache.lookupRenderedEntryValue(item.block, key);
       }
       sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
     }
@@ -4689,6 +4720,19 @@ function isBibLaTeXSpecialEntry(node) {
   return SPECIAL_ENTRIES.has(node.command.toLowerCase());
 }
 __name(isBibLaTeXSpecialEntry, "isBibLaTeXSpecialEntry");
+
+// src/transforms/sortFields.ts
+function createSortFieldsTransform(sortFields) {
+  return {
+    name: "sort-fields",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      const entries = astProxy.entries();
+      sortEntryFields(entries, sortFields);
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createSortFieldsTransform, "createSortFieldsTransform");
 function sortEntryFields(entries, fieldOrder) {
   for (const entry of entries) {
     entry.fields.sort((a, b) => {
@@ -4705,56 +4749,42 @@ function sortEntryFields(entries, fieldOrder) {
 }
 __name(sortEntryFields, "sortEntryFields");
 
-// src/modifiers/sortEntriesModifier.ts
-function createSortEntriesModifier(sort) {
+// src/transforms/removeEnclosingBraces.ts
+function createRemoveEnclosingBracesTransform() {
   return {
-    name: "sort-entries",
-    dependencies: ["generate-keys", "merge-entries"],
-    apply: /* @__PURE__ */ __name((astProxy) => {
-      sortEntries(astProxy.getAst(), astProxy, sort);
-      return void 0;
-    }, "apply")
-  };
-}
-__name(createSortEntriesModifier, "createSortEntriesModifier");
-
-// src/modifiers/sortFieldsModifier.ts
-function createSortFieldsModifier(sortFields) {
-  return {
-    name: "sort-fields",
-    apply: /* @__PURE__ */ __name((astProxy) => {
-      const entries = astProxy.allEntries();
-      sortEntryFields(entries, sortFields);
-      return void 0;
-    }, "apply")
-  };
-}
-__name(createSortFieldsModifier, "createSortFieldsModifier");
-
-// src/modifiers/stripEnclosingBracesModifier.ts
-var stripEnclosingBracesModifier = {
-  name: "strip-enclosing-braces",
-  type: "FieldModifier",
-  condition: /* @__PURE__ */ __name((_, options) => Boolean(options.stripEnclosingBraces), "condition"),
-  modifyRenderedValue: /* @__PURE__ */ __name((str) => str.replace(/^\{([^{}]*)\}$/g, "$1"), "modifyRenderedValue")
-};
-
-// src/modifiers/trimCommentsModifier.ts
-var trimCommentsModifier = {
-  name: "trim-comments",
-  type: "RootModifier",
-  condition: /* @__PURE__ */ __name((options) => Boolean(options.tidyComments), "condition"),
-  modifyRoot: /* @__PURE__ */ __name((root) => {
-    for (const child of root.children) {
-      if (child.type === "text") {
-        child.text = tidyComment(child.text);
-      } else if (child.block?.type === "comment") {
-        child.block.raw = tidyComment(child.block.raw);
+    name: "remove-enclosing-braces",
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const field of ast.fields()) {
+        for (const node of field.value.concat) {
+          if (node.type === "braced") {
+            node.value = node.value.replace(/^\{([^{}]*)\}$/g, "$1");
+          }
+          ast.invalidateField(field);
+        }
       }
-    }
-    return void 0;
-  }, "modifyRoot")
-};
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createRemoveEnclosingBracesTransform, "createRemoveEnclosingBracesTransform");
+
+// src/transforms/trimComments.ts
+function createTrimCommentsTransform() {
+  return {
+    name: "trim-comments",
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const child of ast.root().children) {
+        if (child.type === "text") {
+          child.text = tidyComment(child.text);
+        } else if (child.block?.type === "comment") {
+          child.block.raw = tidyComment(child.block.raw);
+        }
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createTrimCommentsTransform, "createTrimCommentsTransform");
 function tidyComment(comment) {
   const trimmed = comment.trim();
   if (trimmed === "") return "";
@@ -4764,156 +4794,117 @@ function tidyComment(comment) {
 __name(tidyComment, "tidyComment");
 
 // src/pipeline.ts
-function sortPipeline(transformations) {
+function sortPipeline(Transforms) {
   const sorted = [];
   const visited = /* @__PURE__ */ new Set();
-  const visit = /* @__PURE__ */ __name((transformation) => {
-    if (visited.has(transformation.name)) return;
-    visited.add(transformation.name);
-    for (const dep of transformation.dependencies ?? []) {
-      const depTransformation = transformations.find((t) => t.name === dep);
-      if (depTransformation) visit(depTransformation);
+  const visit = /* @__PURE__ */ __name((Transform) => {
+    if (visited.has(Transform.name)) return;
+    visited.add(Transform.name);
+    for (const dep of Transform.dependencies ?? []) {
+      const depTransform = Transforms.find((t) => t.name === dep);
+      if (depTransform) visit(depTransform);
     }
-    sorted.push(transformation);
+    sorted.push(Transform);
   }, "visit");
-  transformations.forEach(visit);
+  Transforms.forEach(visit);
   return sorted;
 }
 __name(sortPipeline, "sortPipeline");
-function generateTransformationPipeline(options) {
+function generateTransformPipeline(options) {
   const pipeline = [];
   if (options.months) {
-    pipeline.push(createAbbreviateMonthsTransformation());
+    pipeline.push(createAbbreviateMonthsTransform());
   }
   if (options.dropAllCaps) {
-    pipeline.push(createDropAllCapsTransformation());
+    pipeline.push(createDropAllCapsTransform());
   }
   if (options.encodeUrls) {
-    pipeline.push(encodeUrlsModifier);
+    pipeline.push(createEncodeUrlsTransform());
   }
   if (options.escape) {
-    pipeline.push(escapeCharactersModifier);
+    pipeline.push(createEscapeCharactersTransform());
   }
-  pipeline.push(formatPageRangeModifier);
+  pipeline.push(createFormatPageRangeTransform());
   if (options.generateKeys) {
-    pipeline.push(createGenerateKeysTransformation(options.generateKeys));
+    pipeline.push(createGenerateKeysTransform(options.generateKeys));
   }
   if (options.maxAuthors) {
-    pipeline.push(createLimitAuthorsTransformation(options.maxAuthors));
+    pipeline.push(createLimitAuthorsTransform(options.maxAuthors));
   }
   if (options.lowercase) {
     pipeline.push(
-      createLowercaseEntryTypeModifier(),
-      createLowercaseFieldsModifier()
+      createLowercaseEntryTypeTransform(),
+      createLowercaseFieldsTransform()
     );
   }
   if (options.merge || options.duplicates) {
     pipeline.push(
-      createMergeEntriesTransformation(options.duplicates, options.merge)
+      createMergeEntriesTransform(options.duplicates, options.merge)
     );
   }
   if (options.omit) {
-    pipeline.push(createOmitFieldsModifier(options.omit));
+    pipeline.push(createRemoveSpecifiedFieldsTransform(options.omit));
   }
   if (options.enclosingBraces) {
-    pipeline.push(encloseBracesModifier);
+    pipeline.push(createEncloseBracesTransform(options.enclosingBraces));
   }
   if (options.curly) {
-    pipeline.push(preferCurlyModifier);
+    pipeline.push(createPreferCurlyTransform());
   }
   if (options.numeric) {
-    pipeline.push(preferNumericModifier);
+    pipeline.push(createPreferNumericTransform());
   }
   if (options.removeBraces) {
-    pipeline.push(removeBracesModifier);
+    pipeline.push(createRemoveBracesTransform(options.removeBraces));
   }
   if (options.stripComments) {
-    pipeline.push(removeCommentsModifier);
+    pipeline.push(createRemoveCommentsTransform());
   }
   if (options.removeDuplicateFields) {
-    pipeline.push(removeDuplicateFieldsModifier);
+    pipeline.push(createRemoveDuplicateFieldsTransform());
   }
   if (options.removeEmptyFields) {
-    pipeline.push(removeEmptyFieldsModifier);
+    pipeline.push(createRemoveEmptyFieldsTransform());
   }
   if (options.sort) {
-    pipeline.push(createSortEntriesModifier(options.sort));
+    pipeline.push(createSortEntriesTransform(options.sort));
   }
   if (options.sortFields) {
-    pipeline.push(createSortFieldsModifier(options.sortFields));
+    pipeline.push(createSortFieldsTransform(options.sortFields));
   }
   if (options.stripEnclosingBraces) {
-    pipeline.push(stripEnclosingBracesModifier);
+    pipeline.push(createRemoveEnclosingBracesTransform());
   }
   if (options.tidyComments) {
-    pipeline.push(trimCommentsModifier);
+    pipeline.push(createTrimCommentsTransform());
   }
   return sortPipeline(pipeline);
 }
-__name(generateTransformationPipeline, "generateTransformationPipeline");
+__name(generateTransformPipeline, "generateTransformPipeline");
 
 // src/tidy.ts
 function tidy(input, options_ = {}) {
   const options = normalizeOptions(options_);
   const inputFixed = convertCRLF(input);
   const ast = parseBibTeX(inputFixed);
-  const entries = getEntries2(ast);
-  const warnings = entries.filter((entry) => !entry.key).map((entry) => ({
+  const cache = new ASTProxy(ast, options);
+  const pipeline = generateTransformPipeline(options);
+  const warnings = cache.entries().filter((entry) => !entry.key).map((entry) => ({
     code: "MISSING_KEY",
     message: `${entry.parent.command} entry does not have a citation key.`
   }));
-  const cache = new ASTProxy(ast, options);
-  const pipeline = generateTransformationPipeline(options);
-  for (const transformation of pipeline) {
-    if (!("type" in transformation)) {
-      const result = transformation.apply(cache);
-      if (result) warnings.push(...result);
-    } else if (transformation.type === "RootModifier") {
-      const params = transformation.condition(options);
-      if (!params) continue;
-      const result = transformation.modifyRoot(ast, cache, params);
-      if (result) warnings.push(...result);
-    } else {
-      for (const entry of entries) {
-        for (const field of entry.fields) {
-          const params = transformation.condition(
-            field.name.toLocaleLowerCase(),
-            options,
-            entry,
-            cache
-          );
-          if (!params) continue;
-          if (transformation.modifyNode) {
-            transformation.modifyNode(field, params);
-            cache.invalidateEntryValue(entry, field.name);
-          }
-          for (const node of field.value.concat) {
-            if (node.type === "braced" || node.type === "quoted") {
-              if (transformation.modifyRenderedValue) {
-                const newValue = transformation.modifyRenderedValue(
-                  node.value,
-                  //@ts-expect-error
-                  params
-                );
-                if (newValue !== node.value) {
-                  node.value = newValue;
-                  cache.invalidateEntryValue(entry, field.name);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+  for (const Transform of pipeline) {
+    const result = Transform.apply(cache);
+    if (result) warnings.push(...result);
   }
   const bibtex = formatBibtex(ast, options);
-  return { bibtex, warnings, count: entries.length };
+  return { bibtex, warnings, count: cache.entries().length };
 }
 __name(tidy, "tidy");
-function getEntries2(ast) {
+function getEntries(ast) {
   return ast.children.filter(isEntryNode).map((node) => node.block);
 }
-__name(getEntries2, "getEntries");
+__name(getEntries, "getEntries");
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   getEntries,

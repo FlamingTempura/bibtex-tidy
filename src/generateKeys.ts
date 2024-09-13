@@ -1,4 +1,4 @@
-import type { ASTProxy } from "./cache";
+import type { ASTProxy } from "./ASTProxy";
 import type { EntryNode } from "./parsers/bibtexParser";
 import {
 	type EntryKeyTemplateToken,
