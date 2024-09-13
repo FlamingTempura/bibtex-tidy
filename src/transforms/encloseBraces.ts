@@ -1,23 +1,27 @@
 import { parseLaTeX, stringifyLaTeX } from "../parsers/latexParser";
-import type { Transformation } from "../types";
+import type { Transform } from "../types";
 
 // if the user requested, wrap the value in braces (this forces bibtex
 // compiler to preserve case)
-export const encloseBracesModifier: Transformation = {
-	name: "enclose-braces",
-	type: "FieldModifier",
-	dependencies: ["prefer-curly"],
-	condition: (fieldName, options) =>
-		options.enclosingBraces?.some((f) => f.toLocaleLowerCase() === fieldName) ??
-		false,
-	modifyNode: (node) => {
-		for (const child of node.value.concat) {
-			if (child.type === "braced") {
-				child.value = doubleEnclose(child.value);
+export function createEncloseBracesTransform(fields: string[]): Transform {
+	const set = new Set(fields.map((f) => f.toLocaleLowerCase()));
+	return {
+		name: "enclose-braces",
+		dependencies: ["prefer-curly"],
+		apply: (ast) => {
+			for (const field of ast.fields()) {
+				if (set.has(field.name.toLocaleLowerCase())) {
+					for (const node of field.value.concat) {
+						if (node.type === "braced") {
+							node.value = doubleEnclose(node.value);
+						}
+					}
+				}
 			}
-		}
-	},
-};
+			return undefined;
+		},
+	};
+}
 
 /**
  * Remove all braces (unless part of a command) and enclose entire value in

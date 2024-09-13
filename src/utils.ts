@@ -1,5 +1,4 @@
 import type { BlockNode, EntryNode, TextNode } from "./parsers/bibtexParser";
-import { parseLaTeX, stringifyLaTeX } from "./parsers/latexParser";
 
 /**
  * Remove all non-alphanumeric characters
@@ -37,25 +36,6 @@ export function unwrapText(str: string): string {
 		.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>")
 		.replace(/\s*\n\s*/g, " ")
 		.replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
-}
-
-/**
- * Remove all braces (unless part of a command) and enclose entire value in
- * braces
- */
-export function doubleEnclose(str: string): string {
-	const latex = parseLaTeX(str);
-
-	const alreadyDoubleEnclosed =
-		latex.children.length === 1 &&
-		latex.children[0]?.type === "block" &&
-		latex.children[0]?.kind === "curly" &&
-		latex.children[0].children.length === 1 &&
-		latex.children[0].children[0]?.type === "block" &&
-		latex.children[0].children[0]?.kind === "curly";
-
-	const result = stringifyLaTeX(latex);
-	return alreadyDoubleEnclosed ? result : `{${result}}`;
 }
 
 export function isEntryNode(

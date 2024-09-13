@@ -1,12 +1,12 @@
-import type { ASTProxy } from "../cache";
+import type { ASTProxy } from "../ASTProxy";
 import type { FieldNode } from "../parsers/bibtexParser";
-import type { Transformation } from "../types";
+import type { Transform } from "../types";
 
-export function createDropAllCapsTransformation(): Transformation {
+export function createDropAllCapsTransform(): Transform {
 	return {
 		name: "drop-all-caps",
 		apply: (astProxy) => {
-			for (const field of astProxy.allFields()) {
+			for (const field of astProxy.fields()) {
 				dropAllCapsInField(astProxy, field);
 			}
 			return undefined;
@@ -15,11 +15,12 @@ export function createDropAllCapsTransformation(): Transformation {
 }
 
 function dropAllCapsInField(astProxy: ASTProxy, field: FieldNode) {
-	if (!astProxy.lookupRenderedEntryValue2(field).match(/[a-z]/)) {
+	if (!astProxy.lookupRenderedEntryValue(field).match(/[a-z]/)) {
+		console.log(astProxy.lookupRenderedEntryValue(field));
 		for (const node of field.value.concat) {
 			node.value = titleCase(node.value);
 		}
-		astProxy.invalidateEntryValue(field.parent, field.name);
+		astProxy.invalidateField(field);
 	}
 }
 

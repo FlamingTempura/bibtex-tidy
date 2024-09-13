@@ -1,121 +1,121 @@
-import { createAbbreviateMonthsTransformation } from "./modifiers/abbreviateMonthsModifier";
-import { createDropAllCapsTransformation } from "./modifiers/dropAllCapsModifier";
-import { encloseBracesModifier } from "./modifiers/encloseBracesModifier";
-import { encodeUrlsModifier } from "./modifiers/encodeUrlsModifier";
-import { escapeCharactersModifier } from "./modifiers/escapeCharactersModifier";
-import { formatPageRangeModifier } from "./modifiers/formatPageRangeModifier";
-import { createGenerateKeysTransformation } from "./modifiers/generateKeysModifier";
-import { createLimitAuthorsTransformation } from "./modifiers/limitAuthorsModifier";
-import { createLowercaseEntryTypeModifier } from "./modifiers/lowercaseEntryTypeModifier";
-import { createLowercaseFieldsModifier } from "./modifiers/lowercaseFieldsModifier";
-import { createMergeEntriesTransformation } from "./modifiers/mergeEntriesModifier";
-import { createOmitFieldsModifier } from "./modifiers/omitFieldModifier";
-import { preferCurlyModifier } from "./modifiers/preferCurlyModifier";
-import { preferNumericModifier } from "./modifiers/preferNumericModifier";
-import { removeBracesModifier } from "./modifiers/removeBracesModifier";
-import { removeCommentsModifier } from "./modifiers/removeCommentsModifier";
-import { removeDuplicateFieldsModifier } from "./modifiers/removeDuplicateFieldsModifier";
-import { removeEmptyFieldsModifier } from "./modifiers/removeEmptyFieldsModifier";
-import { createSortEntriesModifier } from "./modifiers/sortEntriesModifier";
-import { createSortFieldsModifier } from "./modifiers/sortFieldsModifier";
-import { stripEnclosingBracesModifier } from "./modifiers/stripEnclosingBracesModifier";
-import { trimCommentsModifier } from "./modifiers/trimCommentsModifier";
 import type { OptionsNormalized } from "./optionUtils";
-import type { Transformation } from "./types";
+import { createAbbreviateMonthsTransform } from "./transforms/abbreviateMonths";
+import { createDropAllCapsTransform } from "./transforms/dropAllCaps";
+import { createEncloseBracesTransform } from "./transforms/encloseBraces";
+import { createEncodeUrlsTransform } from "./transforms/encodeUrls";
+import { createEscapeCharactersTransform } from "./transforms/escapeCharacters";
+import { createFormatPageRangeTransform } from "./transforms/formatPageRange";
+import { createGenerateKeysTransform } from "./transforms/generateKeys";
+import { createLimitAuthorsTransform } from "./transforms/limitAuthors";
+import { createLowercaseEntryTypeTransform } from "./transforms/lowercaseEntryType";
+import { createLowercaseFieldsTransform } from "./transforms/lowercaseFields";
+import { createMergeEntriesTransform } from "./transforms/mergeEntries";
+import { createRemoveSpecifiedFieldsTransform } from "./transforms/removeSpecifiedFields";
+import { createPreferCurlyTransform } from "./transforms/preferCurly";
+import { createPreferNumericTransform } from "./transforms/preferNumeric";
+import { createRemoveBracesTransform } from "./transforms/removeBraces";
+import { createRemoveCommentsTransform } from "./transforms/removeComments";
+import { createRemoveDuplicateFieldsTransform } from "./transforms/removeDuplicateFields";
+import { createRemoveEmptyFieldsTransform } from "./transforms/removeEmptyFields";
+import { createSortEntriesTransform } from "./transforms/sortEntries";
+import { createSortFieldsTransform } from "./transforms/sortFields";
+import { createRemoveEnclosingBracesTransform } from "./transforms/removeEnclosingBraces";
+import { createTrimCommentsTransform } from "./transforms/trimComments";
+import type { Transform } from "./types";
 
-function sortPipeline(transformations: Transformation[]): Transformation[] {
-	const sorted: Transformation[] = [];
+function sortPipeline(Transforms: Transform[]): Transform[] {
+	const sorted: Transform[] = [];
 	const visited: Set<string> = new Set();
 
-	const visit = (transformation: Transformation) => {
-		if (visited.has(transformation.name)) return;
-		visited.add(transformation.name);
+	const visit = (Transform: Transform) => {
+		if (visited.has(Transform.name)) return;
+		visited.add(Transform.name);
 
-		for (const dep of transformation.dependencies ?? []) {
-			const depTransformation = transformations.find((t) => t.name === dep);
-			if (depTransformation) visit(depTransformation);
+		for (const dep of Transform.dependencies ?? []) {
+			const depTransform = Transforms.find((t) => t.name === dep);
+			if (depTransform) visit(depTransform);
 		}
 
-		sorted.push(transformation);
+		sorted.push(Transform);
 	};
 
-	transformations.forEach(visit);
+	Transforms.forEach(visit);
 	return sorted;
 }
 
 /**
- * Prepares a transformation based on the provided options.
- * Returns the transformation if it should be applied, or undefined if it should be skipped.
+ * Prepares a Transform based on the provided options.
+ * Returns the Transform if it should be applied, or undefined if it should be skipped.
  */
-export function generateTransformationPipeline(
+export function generateTransformPipeline(
 	options: OptionsNormalized,
-): Transformation[] {
-	const pipeline: Transformation[] = [];
+): Transform[] {
+	const pipeline: Transform[] = [];
 	if (options.months) {
-		pipeline.push(createAbbreviateMonthsTransformation());
+		pipeline.push(createAbbreviateMonthsTransform());
 	}
 	if (options.dropAllCaps) {
-		pipeline.push(createDropAllCapsTransformation());
+		pipeline.push(createDropAllCapsTransform());
 	}
 	if (options.encodeUrls) {
-		pipeline.push(encodeUrlsModifier);
+		pipeline.push(createEncodeUrlsTransform());
 	}
 	if (options.escape) {
-		pipeline.push(escapeCharactersModifier);
+		pipeline.push(createEscapeCharactersTransform());
 	}
-	pipeline.push(formatPageRangeModifier);
+	pipeline.push(createFormatPageRangeTransform());
 	if (options.generateKeys) {
-		pipeline.push(createGenerateKeysTransformation(options.generateKeys));
+		pipeline.push(createGenerateKeysTransform(options.generateKeys));
 	}
 	if (options.maxAuthors) {
-		pipeline.push(createLimitAuthorsTransformation(options.maxAuthors));
+		pipeline.push(createLimitAuthorsTransform(options.maxAuthors));
 	}
 	if (options.lowercase) {
 		pipeline.push(
-			createLowercaseEntryTypeModifier(),
-			createLowercaseFieldsModifier(),
+			createLowercaseEntryTypeTransform(),
+			createLowercaseFieldsTransform(),
 		);
 	}
 	if (options.merge || options.duplicates) {
 		pipeline.push(
-			createMergeEntriesTransformation(options.duplicates, options.merge),
+			createMergeEntriesTransform(options.duplicates, options.merge),
 		);
 	}
 	if (options.omit) {
-		pipeline.push(createOmitFieldsModifier(options.omit));
+		pipeline.push(createRemoveSpecifiedFieldsTransform(options.omit));
 	}
 	if (options.enclosingBraces) {
-		pipeline.push(encloseBracesModifier);
+		pipeline.push(createEncloseBracesTransform(options.enclosingBraces));
 	}
 	if (options.curly) {
-		pipeline.push(preferCurlyModifier);
+		pipeline.push(createPreferCurlyTransform());
 	}
 	if (options.numeric) {
-		pipeline.push(preferNumericModifier);
+		pipeline.push(createPreferNumericTransform());
 	}
 	if (options.removeBraces) {
-		pipeline.push(removeBracesModifier);
+		pipeline.push(createRemoveBracesTransform(options.removeBraces));
 	}
 	if (options.stripComments) {
-		pipeline.push(removeCommentsModifier);
+		pipeline.push(createRemoveCommentsTransform());
 	}
 	if (options.removeDuplicateFields) {
-		pipeline.push(removeDuplicateFieldsModifier);
+		pipeline.push(createRemoveDuplicateFieldsTransform());
 	}
 	if (options.removeEmptyFields) {
-		pipeline.push(removeEmptyFieldsModifier);
+		pipeline.push(createRemoveEmptyFieldsTransform());
 	}
 	if (options.sort) {
-		pipeline.push(createSortEntriesModifier(options.sort));
+		pipeline.push(createSortEntriesTransform(options.sort));
 	}
 	if (options.sortFields) {
-		pipeline.push(createSortFieldsModifier(options.sortFields));
+		pipeline.push(createSortFieldsTransform(options.sortFields));
 	}
 	if (options.stripEnclosingBraces) {
-		pipeline.push(stripEnclosingBracesModifier);
+		pipeline.push(createRemoveEnclosingBracesTransform());
 	}
 	if (options.tidyComments) {
-		pipeline.push(trimCommentsModifier);
+		pipeline.push(createTrimCommentsTransform());
 	}
 	return sortPipeline(pipeline);
 }

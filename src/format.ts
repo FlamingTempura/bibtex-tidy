@@ -1,4 +1,3 @@
-import { doubleEnclose } from "./modifiers/encloseBracesModifier";
 import type { OptionsNormalized } from "./optionUtils";
 import type {
 	BlockNode,
@@ -7,6 +6,7 @@ import type {
 	RootNode,
 	TextNode,
 } from "./parsers/bibtexParser";
+import { doubleEnclose } from "./transforms/encloseBraces";
 
 import { unwrapText, wrapText } from "./utils";
 

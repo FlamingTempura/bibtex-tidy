@@ -1,8 +1,8 @@
-import type { ASTProxy } from "./cache";
+import type { ASTProxy } from "./ASTProxy";
 import type { DuplicateRule, MergeStrategy } from "./optionUtils";
 import type { EntryNode } from "./parsers/bibtexParser";
 import { parseNameList } from "./parsers/nameFieldParser";
-import type { Warning } from "./tidy";
+import type { Warning } from "./types";
 import { alphaNum } from "./utils";
 
 export function checkForDuplicates(
@@ -55,7 +55,7 @@ export function checkForDuplicates(
 				}
 
 				case "doi": {
-					const doi = alphaNum(cache.lookupEntryValue(entry, "doi"));
+					const doi = alphaNum(cache.lookupRenderedEntryValue(entry, "doi"));
 					if (!doi) continue;
 					duplicateOf = dois.get(doi);
 					if (!duplicateOf) {
@@ -67,10 +67,10 @@ export function checkForDuplicates(
 				}
 
 				case "citation": {
-					const ttl = cache.lookupEntryValue(entry, "title");
-					const aut = cache.lookupEntryValue(entry, "author");
+					const ttl = cache.lookupRenderedEntryValue(entry, "title");
+					const aut = cache.lookupRenderedEntryValue(entry, "author");
 					// Author/title can be identical for numbered reports https://github.com/FlamingTempura/bibtex-tidy/issues/364
-					const num = cache.lookupEntryValue(entry, "number");
+					const num = cache.lookupRenderedEntryValue(entry, "number");
 					if (!ttl || !aut) continue;
 					const cit: string = [
 						alphaNum(parseNameList(aut)[0]?.last ?? aut),
@@ -87,7 +87,9 @@ export function checkForDuplicates(
 				}
 
 				case "abstract": {
-					const abstract = alphaNum(cache.lookupEntryValue(entry, "abstract"));
+					const abstract = alphaNum(
+						cache.lookupRenderedEntryValue(entry, "abstract"),
+					);
 					const abs = abstract.slice(0, 100);
 					if (!abs) continue;
 					duplicateOf = abstracts.get(abs);

@@ -1,20 +1,19 @@
-import { getEntries } from "..";
 import { checkForDuplicates } from "../duplicates";
 import type { MergeStrategy, OptionsNormalized } from "../optionUtils";
-import type { Transformation } from "../types";
+import type { Transform } from "../types";
 import { isEntryNode } from "../utils";
 
-export function createMergeEntriesTransformation(
+export function createMergeEntriesTransform(
 	duplicatesOpt: OptionsNormalized["duplicates"],
 	merge?: MergeStrategy,
-): Transformation {
+): Transform {
 	// Must happen after generate keys, before sorting entries
 	return {
 		name: "merge-entries",
 		dependencies: ["generate-keys", "sort-entries"],
 
 		apply: (astProxy) => {
-			const entries = astProxy.allEntries();
+			const entries = astProxy.entries();
 
 			const duplicates = checkForDuplicates(
 				entries,
@@ -23,7 +22,7 @@ export function createMergeEntriesTransformation(
 				merge,
 			);
 
-			const root = astProxy.getAst();
+			const root = astProxy.root();
 			root.children = root.children.filter(
 				(child) => !isEntryNode(child) || !duplicates.entries.has(child.block),
 			);

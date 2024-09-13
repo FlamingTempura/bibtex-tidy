@@ -1,7 +1,7 @@
 import { equal } from "node:assert";
 import { describe, it } from "node:test";
 import { getEntries } from ".";
-import { ASTProxy } from "./cache";
+import { ASTProxy } from "./ASTProxy";
 import { checkForDuplicates } from "./duplicates";
 import { parseBibTeX } from "./parsers/bibtexParser";
 
