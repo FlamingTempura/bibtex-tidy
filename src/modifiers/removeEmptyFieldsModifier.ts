@@ -1,6 +1,7 @@
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
-export const removeEmptyFieldsModifier: Modifier = {
+export const removeEmptyFieldsModifier: Transformation = {
+	name: "remove-empty-fields",
 	type: "RootModifier",
 	condition: (options) => Boolean(options.removeEmptyFields),
 	modifyRoot: (root, cache) => {

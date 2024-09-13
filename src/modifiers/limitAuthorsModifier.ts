@@ -1,15 +1,23 @@
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
-export const limitAuthorsModifier: Modifier<number> = {
-	type: "FieldModifier",
-	condition: (fieldName, options) =>
-		fieldName === "author" && options.maxAuthors ? options.maxAuthors : false,
-	modifyRenderedValue: (str, maxAuthors) => {
-		// TODO: use author parser?
-		const authors = str.split(" and ");
-		if (authors.length > maxAuthors) {
-			return [...authors.slice(0, maxAuthors), "others"].join(" and ");
-		}
-		return str;
-	},
-};
+export function createLimitAuthorsTransformation(
+	maxAuthors: number,
+): Transformation {
+	return {
+		name: "limit-authors",
+		apply: (astProxy) => {
+			astProxy.mutateValues((node) => {
+				if (node.parent.parent.name.toLocaleLowerCase() === "author") {
+					// TODO: use author parser?
+					const authors = node.value.split(" and ");
+					if (authors.length > maxAuthors) {
+						node.value = [...authors.slice(0, maxAuthors), "others"].join(
+							" and ",
+						);
+					}
+				}
+			});
+			return undefined;
+		},
+	};
+}

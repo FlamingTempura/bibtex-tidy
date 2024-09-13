@@ -1,7 +1,8 @@
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
 // must happen before sorting
-export const preferNumericModifier: Modifier = {
+export const preferNumericModifier: Transformation = {
+	name: "prefer-numeric",
 	type: "FieldModifier",
 	condition: (_, options) => options.numeric ?? false,
 	modifyNode: (node) => {

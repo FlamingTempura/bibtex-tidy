@@ -1,4 +1,4 @@
-import type { Cache } from "./cache";
+import type { ASTProxy } from "./cache";
 import { MONTH_MACROS } from "./months";
 import type {
 	BlockNode,
@@ -9,7 +9,11 @@ import type {
 
 type SortIndex = Map<string, string | number>;
 
-export function sortEntries(ast: RootNode, cache: Cache, sort: string[]): void {
+export function sortEntries(
+	ast: RootNode,
+	cache: ASTProxy,
+	sort: string[],
+): void {
 	// Map of items to sort values e.g. { year: 2009, author: 'West', ... }
 	const sortIndexes = new Map<TextNode | BlockNode, SortIndex>();
 

@@ -1,20 +1,20 @@
-import { getEntries } from "..";
 import { generateKeys } from "../generateKeys";
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
-export const generateKeysModifier: Modifier<string> = {
-	type: "RootModifier",
-	condition: (options) => options.generateKeys ?? false,
-	modifyRoot: (root, cache, entryKeyTemplate) => {
-		const newKeys = generateKeys(getEntries(root), cache, entryKeyTemplate);
-		for (const node of root.children) {
-			if (node.type === "block" && node.block?.type === "entry") {
-				const newKey = newKeys.get(node.block);
+export function createGenerateKeysTransformation(
+	template: string,
+): Transformation {
+	return {
+		name: "generate-keys",
+		apply: (astProxy) => {
+			const newKeys = generateKeys(astProxy.allEntries(), astProxy, template);
+			for (const entry of astProxy.allEntries()) {
+				const newKey = newKeys.get(entry);
 				if (newKey) {
-					node.block.key = newKey;
+					entry.key = newKey;
 				}
 			}
-		}
-		return undefined;
-	},
-};
+			return undefined;
+		},
+	};
+}

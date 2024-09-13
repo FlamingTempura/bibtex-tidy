@@ -1,6 +1,7 @@
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
-export const preferCurlyModifier: Modifier<boolean> = {
+export const preferCurlyModifier: Transformation = {
+	name: "prefer-curly",
 	type: "FieldModifier",
 	condition: (_, options) => options.curly ?? false,
 	modifyNode: (node) => {

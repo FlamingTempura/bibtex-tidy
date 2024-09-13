@@ -1,4 +1,4 @@
-import type { Cache } from "./cache";
+import type { ASTProxy } from "./cache";
 import type { EntryNode } from "./parsers/bibtexParser";
 import {
 	type EntryKeyTemplateToken,
@@ -130,7 +130,7 @@ class MissingRequiredData extends Error {}
  */
 export function generateKeys(
 	entries: EntryNode[],
-	cache: Cache,
+	cache: ASTProxy,
 	entryKeyTemplate: string,
 ): Map<EntryNode, string> {
 	let template = entryKeyTemplate;

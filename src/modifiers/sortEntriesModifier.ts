@@ -1,12 +1,13 @@
 import { sortEntries } from "../sort";
-import type { Modifier } from "../types";
+import type { Transformation } from "../types";
 
-// Must happen after generate keys and merging
-export const sortEntriesModifier: Modifier<string[]> = {
-	type: "RootModifier",
-	condition: (options) => options.sort ?? false,
-	modifyRoot: (...args) => {
-		sortEntries(...args);
-		return undefined;
-	},
-};
+export function createSortEntriesModifier(sort: string[]): Transformation {
+	return {
+		name: "sort-entries",
+		dependencies: ["generate-keys", "merge-entries"],
+		apply: (astProxy) => {
+			sortEntries(astProxy.getAst(), astProxy, sort);
+			return undefined;
+		},
+	};
+}

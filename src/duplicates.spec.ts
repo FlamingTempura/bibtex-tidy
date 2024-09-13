@@ -1,7 +1,7 @@
 import { equal } from "node:assert";
 import { describe, it } from "node:test";
 import { getEntries } from ".";
-import { Cache } from "./cache";
+import { ASTProxy } from "./cache";
 import { checkForDuplicates } from "./duplicates";
 import { parseBibTeX } from "./parsers/bibtexParser";
 
@@ -15,7 +15,7 @@ describe("checkForDuplicates", () => {
 				].join(""),
 			),
 		);
-		const result = checkForDuplicates(entries, new Cache(), ["citation"]);
+		const result = checkForDuplicates(entries, new ASTProxy(), ["citation"]);
 		equal(result.warnings.length, 1);
 	});
 });
