@@ -13,14 +13,7 @@ export function createMergeEntriesTransform(
 		dependencies: ["generate-keys", "sort-entries"],
 
 		apply: (astProxy) => {
-			const entries = astProxy.entries();
-
-			const duplicates = checkForDuplicates(
-				entries,
-				astProxy,
-				duplicatesOpt,
-				merge,
-			);
+			const duplicates = checkForDuplicates(astProxy, duplicatesOpt, merge);
 
 			const root = astProxy.root();
 			root.children = root.children.filter(

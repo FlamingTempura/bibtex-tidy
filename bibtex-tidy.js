@@ -237,50 +237,41 @@ __name(isEntryNode, "isEntryNode");
 
 // src/format.ts
 function formatBibtex(ast, options) {
-  const indent = options.tab ? "	" : " ".repeat(options.space);
-  const bibtex = ast.children.map((child) => formatNode(child, options, indent)).join("").trimEnd();
+  const bibtex = ast.children.map((child) => formatNode(child, options)).join("").trimEnd();
   return `${bibtex}
 `;
 }
 __name(formatBibtex, "formatBibtex");
-function formatNode(child, options, indent) {
+function formatNode(child, options) {
   if (child.type === "text") {
-    return formatComment(child.text);
+    return `${child.whitespacePrefix}${child.text}`;
   }
   if (!child.block) throw new Error("FATAL!");
   switch (child.block.type) {
     case "preamble":
     case "string":
-      return `${child.block.raw}
-${options.blankLines ? "\n" : ""}`;
     case "comment":
-      return formatComment(child.block.raw);
+      return `${child.whitespacePrefix}${child.block.raw}`;
     case "entry":
-      return formatEntry(child.command, child.block, options, indent) + (options.blankLines ? "\n" : "");
+      return `${child.whitespacePrefix}${formatEntry(child.command, child.block, options)}`;
   }
 }
 __name(formatNode, "formatNode");
-function formatEntry(entryType, entry, options, indent) {
+function formatEntry(entryType, entry, options) {
   let bibtex = `@${entryType}{`;
   if (entry.key) bibtex += `${entry.key},`;
   for (const [i, field] of entry.fields.entries()) {
-    bibtex += `
-${indent}${field.name}`;
+    bibtex += `${field.whitespacePrefix}${field.name}`;
     const value = formatValue(field, options);
     if (value) {
-      const gap = Math.max(options.align - field.name.length, 1);
-      bibtex += `${" ".repeat(gap)}= ${value}`;
+      bibtex += `${field.value.whitespacePrefix}= ${value}`;
     }
-    if (i < entry.fields.length - 1 || options.trailingCommas) bibtex += ",";
+    if (field.hasComma) bibtex += ",";
   }
-  bibtex += "\n}\n";
+  bibtex += "\n}";
   return bibtex;
 }
 __name(formatEntry, "formatEntry");
-function formatComment(comment) {
-  return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
-}
-__name(formatComment, "formatComment");
 function formatValue(field, options) {
   const { align, wrap, tab, space } = options;
   const indent = tab ? "	" : " ".repeat(space);
@@ -921,6 +912,53 @@ var ASTProxy = class {
   }
 };
 
+// src/debug.ts
+function logAST(node, depth = 0) {
+  const indent = "  ".repeat(depth);
+  let log = `
+${indent}${node.type} ws="${"whitespacePrefix" in node ? node.whitespacePrefix.replace(/\n/g, "\\n") : ""}"`;
+  switch (node.type) {
+    case "root":
+      for (const child of node.children) {
+        log += logAST(child, depth + 1);
+      }
+      break;
+    case "block":
+      log += ` command="${node.command}"`;
+      if (node.block) {
+        log += logAST(node.block, depth + 1);
+      }
+      break;
+    case "concat":
+      for (const value of node.concat) {
+        log += logAST(value, depth + 1);
+      }
+      break;
+    case "entry":
+      log += ` key="${node.key}"`;
+      for (const field of node.fields) {
+        log += logAST(field, depth + 1);
+      }
+      break;
+    case "field":
+      log += ` name="${node.name}"`;
+      log += logAST(node.value, depth + 1);
+      break;
+    case "text":
+      log += ` text="${node.text.replace(/\n/g, "\\n")}"`;
+      break;
+    case "braced":
+    case "quoted":
+    case "comment":
+    case "preamble":
+    case "string":
+    case "literal":
+      break;
+  }
+  return log;
+}
+__name(logAST, "logAST");
+
 // src/parsers/bibtexParser.ts
 var RootNode = class {
   constructor(children = []) {
@@ -932,9 +970,10 @@ var RootNode = class {
   }
 };
 var TextNode2 = class {
-  constructor(parent, text) {
+  constructor(parent, text, whitespacePrefix) {
     this.parent = parent;
     this.text = text;
+    this.whitespacePrefix = whitespacePrefix;
     this.type = "text";
     parent.children.push(this);
   }
@@ -943,8 +982,9 @@ var TextNode2 = class {
   }
 };
 var BlockNode2 = class {
-  constructor(parent) {
+  constructor(parent, whitespacePrefix) {
     this.parent = parent;
+    this.whitespacePrefix = whitespacePrefix;
     this.type = "block";
     this.command = "";
     parent.children.push(this);
@@ -1005,10 +1045,13 @@ var EntryNode = class {
   }
 };
 var FieldNode = class {
-  constructor(parent, name = "") {
+  // not filled in during parsing
+  constructor(parent, name = "", whitespacePrefix = "") {
     this.parent = parent;
     this.name = name;
+    this.whitespacePrefix = whitespacePrefix;
     this.type = "field";
+    this.hasComma = false;
     this.value = new ConcatNode(this);
   }
   static {
@@ -1016,10 +1059,12 @@ var FieldNode = class {
   }
 };
 var ConcatNode = class {
+  // not filled in during parsing
   constructor(parent) {
     this.parent = parent;
     this.type = "concat";
     this.canConsumeValue = true;
+    this.whitespacePrefix = "";
     this.concat = [];
   }
   static {
@@ -1083,6 +1128,12 @@ function parseBibTeX(input) {
   let node = rootNode;
   let line = 1;
   let column = 0;
+  let whitespace = "";
+  const flushWhitespace = /* @__PURE__ */ __name(() => {
+    const ws = whitespace;
+    whitespace = "";
+    return ws;
+  }, "flushWhitespace");
   for (let i = 0; i < input.length; i++) {
     const char = input[i] ?? "";
     const prev = input[i - 1] ?? "";
@@ -1093,12 +1144,18 @@ function parseBibTeX(input) {
     column++;
     switch (node.type) {
       case "root": {
-        node = char === "@" ? new BlockNode2(node) : new TextNode2(node, char);
+        if (char === "@") {
+          node = new BlockNode2(node, flushWhitespace());
+        } else if (isWhitespace(char)) {
+          whitespace += char;
+        } else {
+          node = new TextNode2(node, char, flushWhitespace());
+        }
         break;
       }
       case "text": {
         if (char === "@" && /[\s\r\n}]/.test(prev)) {
-          node = new BlockNode2(node.parent);
+          node = new BlockNode2(node.parent, "");
         } else {
           node.text += char;
         }
@@ -1111,7 +1168,11 @@ function parseBibTeX(input) {
             prevNode.text += `@${node.command}`;
           } else {
             node.parent.children.pop();
-            new TextNode2(node.parent, `@${node.command}`);
+            new TextNode2(
+              node.parent,
+              `@${node.command}`,
+              node.whitespacePrefix
+            );
             node.parent.children.push(node);
           }
           node.command = "";
@@ -1119,7 +1180,11 @@ function parseBibTeX(input) {
           const commandTrimmed = node.command.trim();
           if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
             node.parent.children.pop();
-            node = new TextNode2(node.parent, `@${node.command}${char}`);
+            node = new TextNode2(
+              node.parent,
+              `@${node.command}${char}`,
+              node.whitespacePrefix
+            );
           } else {
             node.command = commandTrimmed;
             const command = node.command.toLowerCase();
@@ -1142,7 +1207,11 @@ function parseBibTeX(input) {
           }
         } else if (char.match(/[=#,})[\]]/)) {
           node.parent.children.pop();
-          node = new TextNode2(node.parent, `@${node.command}${char}`);
+          node = new TextNode2(
+            node.parent,
+            `@${node.command}${char}`,
+            flushWhitespace()
+          );
         } else {
           node.command += char;
         }
@@ -1220,6 +1289,7 @@ function parseBibTeX(input) {
             node.parent.fields.push(node);
             node.name = char;
           } else {
+            node.whitespacePrefix += char;
           }
         } else {
           node.name += char;
@@ -1309,7 +1379,7 @@ function parseBibTeX(input) {
 }
 __name(parseBibTeX, "parseBibTeX");
 function isWhitespace(string) {
-  return /^[ \t\n\r]*$/.test(string);
+  return /^\s*$/.test(string);
 }
 __name(isWhitespace, "isWhitespace");
 function isValidKeyCharacter(char) {
@@ -1384,6 +1454,45 @@ function abbreviateMonth(month, months) {
   return months.get(month.toLowerCase());
 }
 __name(abbreviateMonth, "abbreviateMonth");
+
+// src/transforms/alignValues.ts
+function createAlignValuesTransform(column) {
+  return {
+    name: "align-values",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      const fields = astProxy.fields();
+      for (const field of fields) {
+        const gap = Math.max(column - field.name.length, 1);
+        field.value.whitespacePrefix = " ".repeat(gap);
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createAlignValuesTransform, "createAlignValuesTransform");
+
+// src/transforms/blankLines.ts
+function createBlankLinesTransform() {
+  return {
+    name: "blank-lines",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      const children = astProxy.root().children;
+      let prev;
+      for (const child of children) {
+        if (prev && !isComment(prev)) {
+          child.whitespacePrefix = "\n\n";
+        }
+        prev = child;
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createBlankLinesTransform, "createBlankLinesTransform");
+function isComment(node) {
+  return node.type === "text" || node.block?.type === "comment";
+}
+__name(isComment, "isComment");
 
 // src/transforms/dropAllCaps.ts
 function createDropAllCapsTransform() {
@@ -3832,6 +3941,24 @@ function escapeCharacters(value) {
 }
 __name(escapeCharacters, "escapeCharacters");
 
+// src/transforms/fieldCommas.ts
+function createFieldCommasTransform(trailing) {
+  return {
+    name: "field-commas",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      const entries = astProxy.entries();
+      for (const entry of entries) {
+        for (let i = 0; i < entry.fields.length; i++) {
+          const field = entry.fields[i];
+          field.hasComma = i < entry.fields.length - 1 || trailing;
+        }
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createFieldCommasTransform, "createFieldCommasTransform");
+
 // src/transforms/formatPageRange.ts
 function createFormatPageRangeTransform() {
   return {
@@ -4296,6 +4423,23 @@ function createGenerateKeysTransform(template) {
 }
 __name(createGenerateKeysTransform, "createGenerateKeysTransform");
 
+// src/transforms/indentFields.ts
+function createIndentFieldsTransform(type, spaceQty) {
+  const indent = type === "tab" ? "	" : " ".repeat(spaceQty);
+  return {
+    name: "indent",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      const fields = astProxy.fields();
+      for (const field of fields) {
+        field.whitespacePrefix = `
+${indent}`;
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createIndentFieldsTransform, "createIndentFieldsTransform");
+
 // src/transforms/limitAuthors.ts
 function createLimitAuthorsTransform(maxAuthors) {
   return {
@@ -4353,7 +4497,7 @@ function createLowercaseFieldsTransform() {
 __name(createLowercaseFieldsTransform, "createLowercaseFieldsTransform");
 
 // src/duplicates.ts
-function checkForDuplicates(entries, cache, duplicateRules, merge) {
+function checkForDuplicates(cache, duplicateRules, merge) {
   const rules = /* @__PURE__ */ new Map();
   if (duplicateRules) {
     for (const rule of duplicateRules) {
@@ -4369,7 +4513,7 @@ function checkForDuplicates(entries, cache, duplicateRules, merge) {
   const dois = /* @__PURE__ */ new Map();
   const citations = /* @__PURE__ */ new Map();
   const abstracts = /* @__PURE__ */ new Map();
-  for (const entry of entries) {
+  for (const entry of cache.entries()) {
     for (const [rule, doMerge] of rules) {
       let duplicateOf;
       let warning;
@@ -4478,13 +4622,7 @@ function createMergeEntriesTransform(duplicatesOpt, merge) {
     name: "merge-entries",
     dependencies: ["generate-keys", "sort-entries"],
     apply: /* @__PURE__ */ __name((astProxy) => {
-      const entries = astProxy.entries();
-      const duplicates = checkForDuplicates(
-        entries,
-        astProxy,
-        duplicatesOpt,
-        merge
-      );
+      const duplicates = checkForDuplicates(astProxy, duplicatesOpt, merge);
       const root = astProxy.root();
       root.children = root.children.filter(
         (child) => !isEntryNode(child) || !duplicates.entries.has(child.block)
@@ -4494,23 +4632,6 @@ function createMergeEntriesTransform(duplicatesOpt, merge) {
   };
 }
 __name(createMergeEntriesTransform, "createMergeEntriesTransform");
-
-// src/transforms/removeSpecifiedFields.ts
-function createRemoveSpecifiedFieldsTransform(omit) {
-  return {
-    name: "remove-specified-fields",
-    apply(ast) {
-      const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
-      for (const field of ast.fields()) {
-        if (set.has(field.name.toLocaleLowerCase())) {
-          field.parent.fields = field.parent.fields.filter((f) => f !== field);
-        }
-      }
-      return void 0;
-    }
-  };
-}
-__name(createRemoveSpecifiedFieldsTransform, "createRemoveSpecifiedFieldsTransform");
 
 // src/transforms/preferCurly.ts
 function createPreferCurlyTransform() {
@@ -4626,6 +4747,82 @@ function createRemoveEmptyFieldsTransform() {
   };
 }
 __name(createRemoveEmptyFieldsTransform, "createRemoveEmptyFieldsTransform");
+
+// src/transforms/removeEnclosingBraces.ts
+function createRemoveEnclosingBracesTransform() {
+  return {
+    name: "remove-enclosing-braces",
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const field of ast.fields()) {
+        for (const node of field.value.concat) {
+          if (node.type === "braced") {
+            node.value = node.value.replace(/^\{([^{}]*)\}$/g, "$1");
+          }
+          ast.invalidateField(field);
+        }
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createRemoveEnclosingBracesTransform, "createRemoveEnclosingBracesTransform");
+
+// src/transforms/removeSpecifiedFields.ts
+function createRemoveSpecifiedFieldsTransform(omit) {
+  return {
+    name: "remove-specified-fields",
+    apply(ast) {
+      const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
+      for (const field of ast.fields()) {
+        if (set.has(field.name.toLocaleLowerCase())) {
+          field.parent.fields = field.parent.fields.filter((f) => f !== field);
+        }
+      }
+      return void 0;
+    }
+  };
+}
+__name(createRemoveSpecifiedFieldsTransform, "createRemoveSpecifiedFieldsTransform");
+
+// src/transforms/resetWhitespace.ts
+function createResetWhitespaceTransform(keepCommentWhitespace) {
+  return {
+    name: "reset-whitespace",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      const children = astProxy.root().children;
+      let prev;
+      for (const child of children) {
+        const preserve = isComment2(child) && keepCommentWhitespace;
+        const preservePrev = prev && isComment2(prev) && keepCommentWhitespace;
+        if (keepCommentWhitespace && child.type === "block" && prev?.type === "text" && !prev.text.endsWith("\n")) {
+          prev.text = `${prev.text.trimEnd()}
+`;
+        }
+        if (!preserve) {
+          child.whitespacePrefix = prev && !preservePrev ? "\n" : "";
+          if (child.type === "text") {
+            child.text = child.text.trim();
+          } else if (child.block) {
+            if (child.block.type === "entry") {
+              for (const field of child.block.fields) {
+                field.whitespacePrefix = "";
+              }
+            } else if (child.block.type === "comment") {
+              child.block.raw = child.block.raw.trim();
+            }
+          }
+        }
+        prev = child;
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createResetWhitespaceTransform, "createResetWhitespaceTransform");
+function isComment2(node) {
+  return node.type === "text" || node.block?.type === "comment";
+}
+__name(isComment2, "isComment");
 
 // src/transforms/sortEntries.ts
 var MONTH_MACROS = [
@@ -4749,50 +4946,6 @@ function sortEntryFields(entries, fieldOrder) {
 }
 __name(sortEntryFields, "sortEntryFields");
 
-// src/transforms/removeEnclosingBraces.ts
-function createRemoveEnclosingBracesTransform() {
-  return {
-    name: "remove-enclosing-braces",
-    apply: /* @__PURE__ */ __name((ast) => {
-      for (const field of ast.fields()) {
-        for (const node of field.value.concat) {
-          if (node.type === "braced") {
-            node.value = node.value.replace(/^\{([^{}]*)\}$/g, "$1");
-          }
-          ast.invalidateField(field);
-        }
-      }
-      return void 0;
-    }, "apply")
-  };
-}
-__name(createRemoveEnclosingBracesTransform, "createRemoveEnclosingBracesTransform");
-
-// src/transforms/trimComments.ts
-function createTrimCommentsTransform() {
-  return {
-    name: "trim-comments",
-    apply: /* @__PURE__ */ __name((ast) => {
-      for (const child of ast.root().children) {
-        if (child.type === "text") {
-          child.text = tidyComment(child.text);
-        } else if (child.block?.type === "comment") {
-          child.block.raw = tidyComment(child.block.raw);
-        }
-      }
-      return void 0;
-    }, "apply")
-  };
-}
-__name(createTrimCommentsTransform, "createTrimCommentsTransform");
-function tidyComment(comment) {
-  const trimmed = comment.trim();
-  if (trimmed === "") return "";
-  return `${trimmed}
-`;
-}
-__name(tidyComment, "tidyComment");
-
 // src/pipeline.ts
 function sortPipeline(Transforms) {
   const sorted = [];
@@ -4875,14 +5028,21 @@ function generateTransformPipeline(options) {
   if (options.stripEnclosingBraces) {
     pipeline.push(createRemoveEnclosingBracesTransform());
   }
-  if (options.tidyComments) {
-    pipeline.push(createTrimCommentsTransform());
+  pipeline.push(createResetWhitespaceTransform(!options.tidyComments));
+  pipeline.push(
+    createIndentFieldsTransform(options.tab ? "tab" : "space", options.space)
+  );
+  if (options.blankLines) {
+    pipeline.push(createBlankLinesTransform());
   }
+  pipeline.push(createAlignValuesTransform(options.align));
+  pipeline.push(createFieldCommasTransform(options.trailingCommas ?? false));
   return sortPipeline(pipeline);
 }
 __name(generateTransformPipeline, "generateTransformPipeline");
 
 // src/tidy.ts
+var verbose = false;
 function tidy(input, options_ = {}) {
   const options = normalizeOptions(options_);
   const inputFixed = convertCRLF(input);
@@ -4893,20 +5053,24 @@ function tidy(input, options_ = {}) {
     code: "MISSING_KEY",
     message: `${entry.parent.command} entry does not have a citation key.`
   }));
-  for (const Transform of pipeline) {
-    const result = Transform.apply(cache);
+  if (verbose) {
+    console.log(logAST(ast));
+  }
+  for (const transform of pipeline) {
+    const result = transform.apply(cache);
+    if (verbose) {
+      console.log(`
+
+## Applying transform: ${transform.name}`);
+      console.log(logAST(ast));
+    }
     if (result) warnings.push(...result);
   }
   const bibtex = formatBibtex(ast, options);
   return { bibtex, warnings, count: cache.entries().length };
 }
 __name(tidy, "tidy");
-function getEntries(ast) {
-  return ast.children.filter(isEntryNode).map((node) => node.block);
-}
-__name(getEntries, "getEntries");
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  getEntries,
   tidy
 });

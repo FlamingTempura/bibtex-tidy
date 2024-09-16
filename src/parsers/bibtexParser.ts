@@ -8,6 +8,7 @@ export class TextNode {
 	constructor(
 		public parent: RootNode,
 		public text: string,
+		public whitespacePrefix: string,
 	) {
 		parent.children.push(this);
 	}
@@ -16,7 +17,10 @@ export class BlockNode {
 	type = "block" as const;
 	public command = "";
 	public block?: CommentNode | PreambleNode | StringNode | EntryNode;
-	constructor(public parent: RootNode) {
+	constructor(
+		public parent: RootNode,
+		public whitespacePrefix: string,
+	) {
 		parent.children.push(this);
 	}
 }
@@ -70,9 +74,11 @@ export class FieldNode {
 	type = "field" as const;
 	/** Each value is concatenated */
 	value: ConcatNode;
+	public hasComma = false; // not filled in during parsing
 	constructor(
 		public parent: EntryNode,
 		public name = "",
+		public whitespacePrefix = "",
 	) {
 		this.value = new ConcatNode(this);
 	}
@@ -81,6 +87,7 @@ export class ConcatNode {
 	type = "concat" as const;
 	concat: (LiteralNode | BracedNode | QuotedNode)[];
 	canConsumeValue = true;
+	public whitespacePrefix = ""; // not filled in during parsing
 	constructor(public parent: FieldNode) {
 		this.concat = [];
 	}
@@ -127,7 +134,7 @@ function createQuotedNode(parent: ConcatNode): QuotedNode {
 	return node;
 }
 
-type Node =
+export type Node =
 	| RootNode
 	| TextNode
 	| BlockNode
@@ -146,6 +153,13 @@ export function parseBibTeX(input: string): RootNode {
 	let node: Node = rootNode;
 	let line = 1;
 	let column = 0;
+	let whitespace = "";
+
+	const flushWhitespace = () => {
+		const ws = whitespace;
+		whitespace = "";
+		return ws;
+	};
 
 	for (let i = 0; i < input.length; i++) {
 		const char = input[i] ?? "";
@@ -159,7 +173,13 @@ export function parseBibTeX(input: string): RootNode {
 
 		switch (node.type) {
 			case "root": {
-				node = char === "@" ? new BlockNode(node) : new TextNode(node, char);
+				if (char === "@") {
+					node = new BlockNode(node, flushWhitespace());
+				} else if (isWhitespace(char)) {
+					whitespace += char;
+				} else {
+					node = new TextNode(node, char, flushWhitespace());
+				}
 				break;
 			}
 
@@ -168,7 +188,7 @@ export function parseBibTeX(input: string): RootNode {
 				// not be correct but allows parsing of "valid" bibtex files in the
 				// wild.
 				if (char === "@" && /[\s\r\n}]/.test(prev)) {
-					node = new BlockNode(node.parent);
+					node = new BlockNode(node.parent, "");
 				} else {
 					node.text += char;
 				}
@@ -185,7 +205,11 @@ export function parseBibTeX(input: string): RootNode {
 					} else {
 						// insert text node 1 from the end
 						node.parent.children.pop();
-						new TextNode(node.parent, `@${node.command}`);
+						new TextNode(
+							node.parent,
+							`@${node.command}`,
+							node.whitespacePrefix,
+						);
 						node.parent.children.push(node);
 					}
 					node.command = "";
@@ -195,7 +219,11 @@ export function parseBibTeX(input: string): RootNode {
 						// A block without a command is invalid. It's sometimes used in comments though, e.g. @(#)
 						// replace the block node
 						node.parent.children.pop();
-						node = new TextNode(node.parent, `@${node.command}${char}`);
+						node = new TextNode(
+							node.parent,
+							`@${node.command}${char}`,
+							node.whitespacePrefix,
+						);
 					} else {
 						node.command = commandTrimmed;
 						const command: string = node.command.toLowerCase();
@@ -219,7 +247,11 @@ export function parseBibTeX(input: string): RootNode {
 				} else if (char.match(/[=#,})[\]]/)) {
 					// replace the block node
 					node.parent.children.pop();
-					node = new TextNode(node.parent, `@${node.command}${char}`);
+					node = new TextNode(
+						node.parent,
+						`@${node.command}${char}`,
+						flushWhitespace(),
+					);
 				} else {
 					node.command += char;
 				}
@@ -306,7 +338,7 @@ export function parseBibTeX(input: string): RootNode {
 						node.parent.fields.push(node);
 						node.name = char;
 					} else {
-						// noop
+						node.whitespacePrefix += char;
 					}
 				} else {
 					node.name += char;
@@ -401,7 +433,7 @@ export function parseBibTeX(input: string): RootNode {
 }
 
 function isWhitespace(string: string): boolean {
-	return /^[ \t\n\r]*$/.test(string);
+	return /^\s*$/.test(string);
 }
 
 /**

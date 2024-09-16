@@ -6,7 +6,7 @@ const input = bibtex`
 foo@blah @article{bar,foo=bar}
 `;
 
-const output = bibtex`
+const expected = bibtex`
 @blah
 @article{foo,
   foo           = bar
@@ -18,6 +18,6 @@ foo@blah
 `;
 
 test("@ in comment", async () => {
-	const tidied = await bibtexTidy(input);
-	strictEqual(tidied.bibtex, output);
+	const output = await bibtexTidy(input);
+	strictEqual(output.bibtex, expected);
 });

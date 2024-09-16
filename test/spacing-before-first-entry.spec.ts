@@ -16,21 +16,19 @@ const input = bibtex`
 	}
 `;
 
-const output = bibtex`
+const expected = bibtex`
 @article{a,
   title         = {Something}
 }
-
 @article{b,
   title         = {Something}
 }
-
 @article{c,
   title         = {Something}
 }
 `;
 
 test("spacing before first entry", async () => {
-	const tidied = await bibtexTidy(input, { tidyComments: false });
-	strictEqual(tidied.bibtex, output);
+	const output = await bibtexTidy(input, { tidyComments: false });
+	strictEqual(output.bibtex, expected);
 });

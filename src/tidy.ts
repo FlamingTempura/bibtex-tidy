@@ -1,4 +1,5 @@
 import { ASTProxy } from "./ASTProxy";
+import { logAST } from "./debug";
 import { formatBibtex } from "./format";
 import { normalizeOptions } from "./optionUtils";
 import type { Options } from "./optionUtils";
@@ -10,6 +11,8 @@ import {
 import { generateTransformPipeline } from "./pipeline";
 import type { BibTeXTidyResult, Warning } from "./types";
 import { convertCRLF, isEntryNode } from "./utils";
+
+const verbose = false;
 
 export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	const options = normalizeOptions(options_);
@@ -26,19 +29,20 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 			message: `${entry.parent.command} entry does not have a citation key.`,
 		}));
 
-	for (const Transform of pipeline) {
-		const result = Transform.apply(cache);
+	if (verbose) {
+		console.log(logAST(ast));
+	}
+
+	for (const transform of pipeline) {
+		const result = transform.apply(cache);
+		if (verbose) {
+			console.log(`\n\n## Applying transform: ${transform.name}`);
+			console.log(logAST(ast));
+		}
 		if (result) warnings.push(...result);
 	}
 
 	const bibtex = formatBibtex(ast, options);
 
 	return { bibtex, warnings, count: cache.entries().length };
-}
-
-/**
- * @deprecated
- */
-export function getEntries(ast: RootNode): EntryNode[] {
-	return ast.children.filter(isEntryNode).map((node) => node.block);
 }
