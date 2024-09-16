@@ -3,14 +3,10 @@ import { logAST } from "./debug";
 import { formatBibtex } from "./format";
 import { normalizeOptions } from "./optionUtils";
 import type { Options } from "./optionUtils";
-import {
-	type EntryNode,
-	type RootNode,
-	parseBibTeX,
-} from "./parsers/bibtexParser";
+import { parseBibTeX } from "./parsers/bibtexParser";
 import { generateTransformPipeline } from "./pipeline";
 import type { BibTeXTidyResult, Warning } from "./types";
-import { convertCRLF, isEntryNode } from "./utils";
+import { convertCRLF } from "./utils";
 
 const verbose = false;
 
@@ -18,7 +14,7 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	const options = normalizeOptions(options_);
 	const inputFixed = convertCRLF(input);
 	const ast = parseBibTeX(inputFixed);
-	const cache = new ASTProxy(ast, options);
+	const cache = new ASTProxy(ast);
 	const pipeline = generateTransformPipeline(options);
 
 	const warnings: Warning[] = cache
@@ -42,7 +38,7 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 		if (result) warnings.push(...result);
 	}
 
-	const bibtex = formatBibtex(ast, options);
+	const bibtex = formatBibtex(ast);
 
 	return { bibtex, warnings, count: cache.entries().length };
 }

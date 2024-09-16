@@ -9,10 +9,7 @@ import type {
 import { parseLaTeX } from "./parsers/latexParser";
 
 export class ASTProxy {
-	constructor(
-		private ast: RootNode,
-		private tidyOptions: OptionsNormalized = normalizeOptions({}),
-	) {}
+	constructor(private ast: RootNode) {}
 
 	public root(): RootNode {
 		return this.ast;
@@ -65,7 +62,7 @@ export class ASTProxy {
 		}
 		let value = this.renderValueLookup.get(field);
 		if (value === undefined) {
-			const entryValue = formatValue(field, this.tidyOptions) ?? "";
+			const entryValue = formatValue(field) ?? "";
 			value = parseLaTeX(entryValue).renderAsText();
 			this.renderValueLookup.set(field, value);
 		}
