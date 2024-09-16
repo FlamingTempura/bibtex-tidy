@@ -1,10 +1,6 @@
 import type { Transform } from "../types";
 
-export function createIndentFieldsTransform(
-	type: "space" | "tab",
-	spaceQty: number,
-): Transform {
-	const indent: string = type === "tab" ? "\t" : " ".repeat(spaceQty);
+export function createIndentFieldsTransform(indent: string): Transform {
 	return {
 		name: "indent",
 		apply: (astProxy) => {

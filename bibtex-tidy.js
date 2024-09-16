@@ -203,46 +203,14 @@ function doubleEnclose(str) {
 }
 __name(doubleEnclose, "doubleEnclose");
 
-// src/utils.ts
-function alphaNum(str) {
-  return str.replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
-}
-__name(alphaNum, "alphaNum");
-function convertCRLF(str) {
-  return str.replace(/\r\n?/g, "\n");
-}
-__name(convertCRLF, "convertCRLF");
-function wrapText(line, lineWidth) {
-  const words2 = line.split(" ");
-  const lines = [];
-  let currLine = "";
-  for (const [i, word] of words2.entries()) {
-    if (currLine.length + word.length + 1 > lineWidth && i > 0) {
-      lines.push(currLine.trim());
-      currLine = "";
-    }
-    currLine += `${word} `;
-  }
-  return [...lines, currLine.trim()];
-}
-__name(wrapText, "wrapText");
-function unwrapText(str) {
-  return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
-}
-__name(unwrapText, "unwrapText");
-function isEntryNode(node) {
-  return node.type !== "text" && node.block?.type === "entry";
-}
-__name(isEntryNode, "isEntryNode");
-
 // src/format.ts
-function formatBibtex(ast, options) {
-  const bibtex = ast.children.map((child) => formatNode(child, options)).join("").trimEnd();
+function formatBibtex(ast) {
+  const bibtex = ast.children.map((child) => formatNode(child)).join("").trimEnd();
   return `${bibtex}
 `;
 }
 __name(formatBibtex, "formatBibtex");
-function formatNode(child, options) {
+function formatNode(child) {
   if (child.type === "text") {
     return `${child.whitespacePrefix}${child.text}`;
   }
@@ -253,16 +221,16 @@ function formatNode(child, options) {
     case "comment":
       return `${child.whitespacePrefix}${child.block.raw}`;
     case "entry":
-      return `${child.whitespacePrefix}${formatEntry(child.command, child.block, options)}`;
+      return `${child.whitespacePrefix}${formatEntry(child.command, child.block)}`;
   }
 }
 __name(formatNode, "formatNode");
-function formatEntry(entryType, entry, options) {
+function formatEntry(entryType, entry) {
   let bibtex = `@${entryType}{`;
   if (entry.key) bibtex += `${entry.key},`;
-  for (const [i, field] of entry.fields.entries()) {
+  for (const field of entry.fields) {
     bibtex += `${field.whitespacePrefix}${field.name}`;
-    const value = formatValue(field, options);
+    const value = formatValue(field);
     if (value) {
       bibtex += `${field.value.whitespacePrefix}= ${value}`;
     }
@@ -272,41 +240,16 @@ function formatEntry(entryType, entry, options) {
   return bibtex;
 }
 __name(formatEntry, "formatEntry");
-function formatValue(field, options) {
-  const { align, wrap, tab, space } = options;
-  const indent = tab ? "	" : " ".repeat(space);
+function formatValue(field) {
   return field.value.concat.map(({ type, value }) => {
-    if (type === "literal") {
-      return value;
+    switch (type) {
+      case "literal":
+        return value;
+      case "braced":
+        return doubleEnclose(value);
+      case "quoted":
+        return `"${value}"`;
     }
-    value = unwrapText(value);
-    if (type === "braced" && field.value.concat.length === 1) {
-      value = value.trim();
-    }
-    if (type === "braced") {
-      const lineLength = `${indent}${align}{${value}}`.length;
-      const multiLine = value.includes("\n\n");
-      if (wrap && lineLength > wrap || multiLine) {
-        let paragraphs = value.split("\n\n");
-        const valIndent = indent.repeat(2);
-        if (wrap) {
-          const wrapCol = wrap;
-          paragraphs = paragraphs.map(
-            (paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join(
-              `
-${valIndent}`
-            )
-          );
-        }
-        value = `
-${valIndent}${paragraphs.join(`
-
-${valIndent}`)}
-${indent}`;
-      }
-      return doubleEnclose(value);
-    }
-    return `"${value}"`;
   }).join(" # ");
 }
 __name(formatValue, "formatValue");
@@ -860,9 +803,8 @@ __name(normalizeOptions, "normalizeOptions");
 
 // src/ASTProxy.ts
 var ASTProxy = class {
-  constructor(ast, tidyOptions = normalizeOptions({})) {
+  constructor(ast) {
     this.ast = ast;
-    this.tidyOptions = tidyOptions;
     this.fieldLookup = /* @__PURE__ */ new Map();
     this.renderValueLookup = /* @__PURE__ */ new Map();
   }
@@ -897,7 +839,7 @@ var ASTProxy = class {
     }
     let value = this.renderValueLookup.get(field);
     if (value === void 0) {
-      const entryValue = formatValue(field, this.tidyOptions) ?? "";
+      const entryValue = formatValue(field) ?? "";
       value = parseLaTeX(entryValue).renderAsText();
       this.renderValueLookup.set(field, value);
     }
@@ -4424,8 +4366,7 @@ function createGenerateKeysTransform(template) {
 __name(createGenerateKeysTransform, "createGenerateKeysTransform");
 
 // src/transforms/indentFields.ts
-function createIndentFieldsTransform(type, spaceQty) {
-  const indent = type === "tab" ? "	" : " ".repeat(spaceQty);
+function createIndentFieldsTransform(indent) {
   return {
     name: "indent",
     apply: /* @__PURE__ */ __name((astProxy) => {
@@ -4495,6 +4436,38 @@ function createLowercaseFieldsTransform() {
   };
 }
 __name(createLowercaseFieldsTransform, "createLowercaseFieldsTransform");
+
+// src/utils.ts
+function alphaNum(str) {
+  return str.replace(/[^0-9A-Za-z]/g, "").toLocaleLowerCase();
+}
+__name(alphaNum, "alphaNum");
+function convertCRLF(str) {
+  return str.replace(/\r\n?/g, "\n");
+}
+__name(convertCRLF, "convertCRLF");
+function wrapText(line, lineWidth) {
+  const words2 = line.split(" ");
+  const lines = [];
+  let currLine = "";
+  for (const [i, word] of words2.entries()) {
+    if (currLine.length + word.length + 1 > lineWidth && i > 0) {
+      lines.push(currLine.trim());
+      currLine = "";
+    }
+    currLine += `${word} `;
+  }
+  return [...lines, currLine.trim()];
+}
+__name(wrapText, "wrapText");
+function unwrapText(str) {
+  return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
+}
+__name(unwrapText, "unwrapText");
+function isEntryNode(node) {
+  return node.type !== "text" && node.block?.type === "entry";
+}
+__name(isEntryNode, "isEntryNode");
 
 // src/duplicates.ts
 function checkForDuplicates(cache, duplicateRules, merge) {
@@ -4946,6 +4919,49 @@ function sortEntryFields(entries, fieldOrder) {
 }
 __name(sortEntryFields, "sortEntryFields");
 
+// src/transforms/wrapValues.ts
+function createWrapValuesTransform(indent, align, wrap) {
+  return {
+    name: "wrap-values",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      const fields = astProxy.fields();
+      for (const field of fields) {
+        for (const node of field.value.concat) {
+          let value = unwrapText(node.value);
+          if (node.type === "braced" && field.value.concat.length === 1) {
+            value = value.trim();
+          }
+          if (node.type === "braced") {
+            const lineLength = `${indent}${align}{${value}}`.length;
+            const multiLine = value.includes("\n\n");
+            if (wrap && lineLength > wrap || multiLine) {
+              let paragraphs = value.split("\n\n");
+              const valIndent = indent.repeat(2);
+              if (wrap) {
+                const wrapCol = wrap;
+                paragraphs = paragraphs.map(
+                  (paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join(
+                    `
+${valIndent}`
+                  )
+                );
+              }
+              value = `
+${valIndent}${paragraphs.join(`
+
+${valIndent}`)}
+${indent}`;
+            }
+            node.value = value;
+          }
+        }
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createWrapValuesTransform, "createWrapValuesTransform");
+
 // src/pipeline.ts
 function sortPipeline(Transforms) {
   const sorted = [];
@@ -5029,14 +5045,14 @@ function generateTransformPipeline(options) {
     pipeline.push(createRemoveEnclosingBracesTransform());
   }
   pipeline.push(createResetWhitespaceTransform(!options.tidyComments));
-  pipeline.push(
-    createIndentFieldsTransform(options.tab ? "tab" : "space", options.space)
-  );
+  const indent = options.tab ? "	" : " ".repeat(options.space);
+  pipeline.push(createIndentFieldsTransform(indent));
   if (options.blankLines) {
     pipeline.push(createBlankLinesTransform());
   }
   pipeline.push(createAlignValuesTransform(options.align));
   pipeline.push(createFieldCommasTransform(options.trailingCommas ?? false));
+  pipeline.push(createWrapValuesTransform(indent, options.align, options.wrap));
   return sortPipeline(pipeline);
 }
 __name(generateTransformPipeline, "generateTransformPipeline");
@@ -5047,7 +5063,7 @@ function tidy(input, options_ = {}) {
   const options = normalizeOptions(options_);
   const inputFixed = convertCRLF(input);
   const ast = parseBibTeX(inputFixed);
-  const cache = new ASTProxy(ast, options);
+  const cache = new ASTProxy(ast);
   const pipeline = generateTransformPipeline(options);
   const warnings = cache.entries().filter((entry) => !entry.key).map((entry) => ({
     code: "MISSING_KEY",
@@ -5066,7 +5082,7 @@ function tidy(input, options_ = {}) {
     }
     if (result) warnings.push(...result);
   }
-  const bibtex = formatBibtex(ast, options);
+  const bibtex = formatBibtex(ast);
   return { bibtex, warnings, count: cache.entries().length };
 }
 __name(tidy, "tidy");

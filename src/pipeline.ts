@@ -25,6 +25,7 @@ import { createRemoveSpecifiedFieldsTransform } from "./transforms/removeSpecifi
 import { createResetWhitespaceTransform } from "./transforms/resetWhitespace";
 import { createSortEntriesTransform } from "./transforms/sortEntries";
 import { createSortFieldsTransform } from "./transforms/sortFields";
+import { createWrapValuesTransform } from "./transforms/wrapValues";
 import type { Transform } from "./types";
 
 function sortPipeline(Transforms: Transform[]): Transform[] {
@@ -119,13 +120,13 @@ export function generateTransformPipeline(
 		pipeline.push(createRemoveEnclosingBracesTransform());
 	}
 	pipeline.push(createResetWhitespaceTransform(!options.tidyComments));
-	pipeline.push(
-		createIndentFieldsTransform(options.tab ? "tab" : "space", options.space),
-	);
+	const indent = options.tab ? "\t" : " ".repeat(options.space);
+	pipeline.push(createIndentFieldsTransform(indent));
 	if (options.blankLines) {
 		pipeline.push(createBlankLinesTransform());
 	}
 	pipeline.push(createAlignValuesTransform(options.align));
 	pipeline.push(createFieldCommasTransform(options.trailingCommas ?? false));
+	pipeline.push(createWrapValuesTransform(indent, options.align, options.wrap));
 	return sortPipeline(pipeline);
 }
