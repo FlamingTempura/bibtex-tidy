@@ -120,7 +120,7 @@ Book{landru21,
   year =   2003
 }`;
 
-const output = bibtex`
+const expected = bibtex`
 @comment{jabref-meta: groupsversion:3;}
 % zotero export
 
@@ -227,6 +227,6 @@ Book{landru21,
 `;
 
 test("complex bib", async () => {
-	const tidied = await bibtexTidy(input);
-	strictEqual(tidied.bibtex, output);
+	const output = await bibtexTidy(input);
+	strictEqual(output.bibtex, expected);
 });

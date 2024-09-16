@@ -111,7 +111,6 @@ const output = bibtex`
   journal       = {Journal of {B}lah},
   booktitle     = {blah}
 }
-
 @book{IP:1990,
   author        = "Prince, Ian",
   year          = {1990},

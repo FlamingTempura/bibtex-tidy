@@ -6,7 +6,6 @@ import type { Warning } from "./types";
 import { alphaNum } from "./utils";
 
 export function checkForDuplicates(
-	entries: EntryNode[],
 	cache: ASTProxy,
 	duplicateRules?: DuplicateRule[],
 	merge?: MergeStrategy,
@@ -34,7 +33,7 @@ export function checkForDuplicates(
 	const citations = new Map<string, EntryNode>();
 	const abstracts = new Map<string, EntryNode>();
 
-	for (const entry of entries) {
+	for (const entry of cache.entries()) {
 		for (const [rule, doMerge] of rules) {
 			let duplicateOf: EntryNode | undefined;
 			let warning: string | undefined;

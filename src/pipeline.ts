@@ -1,26 +1,30 @@
 import type { OptionsNormalized } from "./optionUtils";
 import { createAbbreviateMonthsTransform } from "./transforms/abbreviateMonths";
+import { createAlignValuesTransform } from "./transforms/alignValues";
+import { createBlankLinesTransform } from "./transforms/blankLines";
 import { createDropAllCapsTransform } from "./transforms/dropAllCaps";
 import { createEncloseBracesTransform } from "./transforms/encloseBraces";
 import { createEncodeUrlsTransform } from "./transforms/encodeUrls";
 import { createEscapeCharactersTransform } from "./transforms/escapeCharacters";
+import { createFieldCommasTransform } from "./transforms/fieldCommas";
 import { createFormatPageRangeTransform } from "./transforms/formatPageRange";
 import { createGenerateKeysTransform } from "./transforms/generateKeys";
+import { createIndentFieldsTransform } from "./transforms/indentFields";
 import { createLimitAuthorsTransform } from "./transforms/limitAuthors";
 import { createLowercaseEntryTypeTransform } from "./transforms/lowercaseEntryType";
 import { createLowercaseFieldsTransform } from "./transforms/lowercaseFields";
 import { createMergeEntriesTransform } from "./transforms/mergeEntries";
-import { createRemoveSpecifiedFieldsTransform } from "./transforms/removeSpecifiedFields";
 import { createPreferCurlyTransform } from "./transforms/preferCurly";
 import { createPreferNumericTransform } from "./transforms/preferNumeric";
 import { createRemoveBracesTransform } from "./transforms/removeBraces";
 import { createRemoveCommentsTransform } from "./transforms/removeComments";
 import { createRemoveDuplicateFieldsTransform } from "./transforms/removeDuplicateFields";
 import { createRemoveEmptyFieldsTransform } from "./transforms/removeEmptyFields";
+import { createRemoveEnclosingBracesTransform } from "./transforms/removeEnclosingBraces";
+import { createRemoveSpecifiedFieldsTransform } from "./transforms/removeSpecifiedFields";
+import { createResetWhitespaceTransform } from "./transforms/resetWhitespace";
 import { createSortEntriesTransform } from "./transforms/sortEntries";
 import { createSortFieldsTransform } from "./transforms/sortFields";
-import { createRemoveEnclosingBracesTransform } from "./transforms/removeEnclosingBraces";
-import { createTrimCommentsTransform } from "./transforms/trimComments";
 import type { Transform } from "./types";
 
 function sortPipeline(Transforms: Transform[]): Transform[] {
@@ -114,8 +118,14 @@ export function generateTransformPipeline(
 	if (options.stripEnclosingBraces) {
 		pipeline.push(createRemoveEnclosingBracesTransform());
 	}
-	if (options.tidyComments) {
-		pipeline.push(createTrimCommentsTransform());
+	pipeline.push(createResetWhitespaceTransform(!options.tidyComments));
+	pipeline.push(
+		createIndentFieldsTransform(options.tab ? "tab" : "space", options.space),
+	);
+	if (options.blankLines) {
+		pipeline.push(createBlankLinesTransform());
 	}
+	pipeline.push(createAlignValuesTransform(options.align));
+	pipeline.push(createFieldCommasTransform(options.trailingCommas ?? false));
 	return sortPipeline(pipeline);
 }

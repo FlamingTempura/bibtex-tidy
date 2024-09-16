@@ -12,15 +12,14 @@ import { unwrapText, wrapText } from "./utils";
 
 type WhitespaceOptions = Pick<
 	OptionsNormalized,
-	"tab" | "space" | "align" | "trailingCommas" | "blankLines" | "wrap"
+	"tab" | "space" | "align" | "wrap"
 >;
 export function formatBibtex(
 	ast: RootNode,
 	options: WhitespaceOptions,
 ): string {
-	const indent: string = options.tab ? "\t" : " ".repeat(options.space);
 	const bibtex: string = ast.children
-		.map((child) => formatNode(child, options, indent))
+		.map((child) => formatNode(child, options))
 		.join("")
 		.trimEnd();
 	return `${bibtex}\n`;
@@ -29,10 +28,9 @@ export function formatBibtex(
 function formatNode(
 	child: TextNode | BlockNode,
 	options: WhitespaceOptions,
-	indent: string,
 ): string {
 	if (child.type === "text") {
-		return formatComment(child.text);
+		return `${child.whitespacePrefix}${child.text}`;
 	}
 
 	if (!child.block) throw new Error("FATAL!");
@@ -40,15 +38,10 @@ function formatNode(
 	switch (child.block.type) {
 		case "preamble":
 		case "string":
-			// keep preambles as they were
-			return `${child.block.raw}\n${options.blankLines ? "\n" : ""}`;
 		case "comment":
-			return formatComment(child.block.raw);
+			return `${child.whitespacePrefix}${child.block.raw}`;
 		case "entry":
-			return (
-				formatEntry(child.command, child.block, options, indent) +
-				(options.blankLines ? "\n" : "")
-			);
+			return `${child.whitespacePrefix}${formatEntry(child.command, child.block, options)}`;
 	}
 }
 
@@ -56,27 +49,20 @@ function formatEntry(
 	entryType: string, // article, journal, etc
 	entry: EntryNode,
 	options: WhitespaceOptions,
-	indent: string,
 ) {
 	let bibtex = `@${entryType}{`;
 	if (entry.key) bibtex += `${entry.key},`;
 
 	for (const [i, field] of entry.fields.entries()) {
-		bibtex += `\n${indent}${field.name}`;
+		bibtex += `${field.whitespacePrefix}${field.name}`;
 		const value = formatValue(field, options);
 		if (value) {
-			const gap = Math.max(options.align - field.name.length, 1);
-			bibtex += `${" ".repeat(gap)}= ${value}`;
+			bibtex += `${field.value.whitespacePrefix}= ${value}`;
 		}
-		if (i < entry.fields.length - 1 || options.trailingCommas) bibtex += ",";
+		if (field.hasComma) bibtex += ",";
 	}
-	bibtex += "\n}\n";
+	bibtex += "\n}";
 	return bibtex;
-}
-
-function formatComment(comment: string): string {
-	// make sure that comment whitespace does not flow into the first line of an entry
-	return comment.replace(/^[ \t]*\n|[ \t]*$/g, "");
 }
 
 export function formatValue(

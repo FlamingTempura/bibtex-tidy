@@ -11,7 +11,7 @@ Comment
   title={Bar}
 }`;
 
-const output = bibtex`
+const expected = bibtex`
 @preamble{Foo}
 
 Comment
@@ -25,6 +25,6 @@ Comment
 `;
 
 test("insert blank lines between blocks", async () => {
-	const tidied = await bibtexTidy(input, { blankLines: true });
-	strictEqual(tidied.bibtex, output);
+	const output = await bibtexTidy(input, { blankLines: true });
+	strictEqual(output.bibtex, expected);
 });
