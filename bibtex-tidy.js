@@ -29,7 +29,6 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
-  getEntries: () => getEntries,
   tidy: () => tidy
 });
 module.exports = __toCommonJS(index_exports);
