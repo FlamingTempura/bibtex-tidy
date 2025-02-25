@@ -71,7 +71,7 @@ type BibTeXTidyRunResult = {
 export async function bibtexTidy(
 	inputs: string | string[] | { stdin: string },
 	options?: CLIOptions,
-	targets: ("api" | "cli" | "web")[] = ["api"], //, "cli", "web"],
+	targets: ("api" | "cli" | "web")[] = ["api", "cli", "web"],
 	testOptions?: { inputPaths: string[] },
 ): Promise<BibTeXTidyRunResult> {
 	if (typeof inputs === "string") {

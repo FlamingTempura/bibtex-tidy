@@ -4,7 +4,7 @@ import { env } from "node:process";
 import { generateDtsBundle } from "dts-bundle-generator";
 import { type BuildOptions, build, context } from "esbuild";
 import sveltePlugin from "esbuild-svelte";
-import autoPreprocess from "svelte-preprocess";
+import { sveltePreprocess } from "svelte-preprocess";
 import { author, homepage, version } from "./package.json";
 import { MODIFIERS, SPECIAL_MARKERS, functionWords } from "./src/generateKeys";
 import {
@@ -21,34 +21,48 @@ const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join(__dirname, "bin", "bibtex-tidy");
 /**
  * Browser features
  *
- * -----------------------------------------------------------
- *                            Chrome  Edge  Safari  FF   IE
- * -----------------------------------------------------------
- * Summary/details element      12     79      6    49  None
- * CSS variables                49     16     10    36  None
- * Flexbox                      21     12     6.1   28   11
- * WOFF2                        35     14     10    39  None
- * HTML main                    26     12      7    21  None
- * CSS appearance: none          4     12     3.1   2   None
- * Optional chaining            80*    80*    13.1* 74* None   *downlevel by esbuild
- * Template literals            41     13     9.1   34  None
- * let/const                    41     12     10    44   11
- * Nullish coalescing           80*    80*    13.1* 72* None   *downlevel by esbuild
- * for of                       38     12     7     13  None
- * Spread operator              46     12     8     16  None
- * Default arguments            49     14     10    15  None
- * Destructuring                49     14     8     41  None
- * -----------------------------------------------------------
- * Min supported                49     79     10    49  None
- * -----------------------------------------------------------
+ * ----------------------------------------------------
+ *                            Chrome  Edge  Safari  FF
+ * ----------------------------------------------------
+ * Summary/details element      12     79      6    49
+ * CSS variables                49     16     10    36
+ * Flexbox                      21     12     6.1   28
+ * WOFF2                        35     14     10    39
+ * HTML main                    26     12      7    21
+ * CSS appearance: none          4     12     3.1   2
+ * Template literals            41     13     9.1   34
+ * let/const                    41     12     10    44
+ * for of                       38     12     7     13
+ * Spread operator              46     12     8     16
+ * Default arguments            49     14     10    15
+ * Destructuring                49     14     8     41
+ * async function (svelte 5)    55     15     11    52
+ * Proxy (svelte 5)             49     12     10    18
+ * URLSearchParams              49     17     10.1  44
+ * ----------------------------------------------------
+ * Min supported                55     79     11    52
+ * ----------------------------------------------------
+ *
+ *
+ * Polyfills:
+ * ----------------------------------------------------
+ *                            Chrome  Edge  Safari  FF
+ * ----------------------------------------------------
+ * flatMap                      69     79     12    62    polyfilled by core-js
+ * fromEntries                  73     79     12.1  63    polyfilled by core-js
+ * trimEnd                      66     79     12    61    polyfilled by core-js
+ * Nullish coalescing           80     80     13.1  72    downlevel by esbuild
+ * Optional chaining            80     80     13.1  74    downlevel by esbuild
+ * :where (svelte 5)            88     88     14    78    not sure if needed
+ *
  */
 // TODO: test on browserstack
 
 const BROWSER_TARGETS: string[] = [
-	"chrome49",
+	"chrome55",
 	"edge79",
-	"safari10",
-	"firefox49",
+	"safari11",
+	"firefox52",
 ];
 
 const NODE_TARGET = "node12";
@@ -78,7 +92,7 @@ const webBuildOptions: BuildOptions = {
 	// esbuild replaces the extension, e.g. js for css
 	outfile: join(WEB_PATH, "bundle.js"),
 	platform: "browser",
-	plugins: [sveltePlugin({ preprocess: autoPreprocess() })],
+	plugins: [sveltePlugin({ preprocess: sveltePreprocess() })],
 	supported: {
 		// esbuild falsely identifies these as not supported for the target browsers
 		"for-of": true,
@@ -311,12 +325,7 @@ async function serveWeb() {
 		...webBuildOptions,
 		sourcemap: true,
 		write: false,
-		plugins: [
-			sveltePlugin({
-				preprocess: autoPreprocess(),
-				compilerOptions: { enableSourcemap: true },
-			}),
-		],
+		plugins: [sveltePlugin({ preprocess: sveltePreprocess() })],
 	});
 	const server = await ctx.serve({ servedir: WEB_PATH });
 	console.log(`Access on http://localhost:${server.port}`);
