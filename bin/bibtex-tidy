@@ -5329,7 +5329,7 @@ async function start() {
   if (unknownArgs.length > 0) {
     const plural = unknownArgs.length > 1 ? "s" : "";
     console.error(`Unknown option${plural}: ${unknownArgs.join(", ")}`);
-    console.error(`Try 'bibtex-tidy --help for more information.`);
+    console.error(`Try 'bibtex-tidy --help' for more information.`);
     (0, import_node_process.exit)(1);
   }
   if (options.version) {
