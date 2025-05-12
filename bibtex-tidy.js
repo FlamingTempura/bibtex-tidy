@@ -487,11 +487,11 @@ var optionDefinitions = [
       "Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."
     ],
     examples: [
-      "--duplicates doi (same DOIs)",
-      "--duplicates key (same IDs)",
-      "--duplicates abstract (similar abstracts)",
-      "--duplicates citation (similar author and titles)",
-      "--duplicates doi, key (identical DOI or keys)",
+      "--duplicates=doi (same DOIs)",
+      "--duplicates=key (same IDs)",
+      "--duplicates=abstract (similar abstracts)",
+      "--duplicates=citation (similar author and titles)",
+      "--duplicates=doi,key (identical DOI or keys)",
       "--duplicates (same DOI, key, abstract, or citation)"
     ],
     type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",

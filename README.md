@@ -139,9 +139,9 @@ bibtex-tidy references.bib
       author and title are the same.
       
       Examples:
-      --duplicates doi (same DOIs), --duplicates key (same IDs), --duplicates
-      abstract (similar abstracts), --duplicates citation (similar author and
-      titles), --duplicates doi, key (identical DOI or keys), --duplicates (same
+      --duplicates=doi (same DOIs), --duplicates=key (same IDs), --duplicates
+      abstract (similar abstracts), --duplicates=citation (similar author and
+      titles), --duplicates=doi,key (identical DOI or keys), --duplicates (same
       DOI, key, abstract, or citation)
       
   --merge, --no-merge
