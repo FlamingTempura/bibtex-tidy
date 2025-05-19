@@ -10,6 +10,7 @@ There are several ways you can use bibtex-tidy:
 * [As a pre-commit-hook](#sec-precommit)
 * [Javascript/Typescript API](#sec-api)
 * [Docker](#sec-docker)
+* [GitHub Action](#sec-action)
 
 ## Example
 
@@ -279,3 +280,9 @@ The web application can be deployed locally using the provided Docker configurat
 
 1. Build and start the container: `docker compose -f docker/docker-compose.yml up`
 2. Visit the web application at http://localhost:8080 and do your BibTeX work
+
+<a name="sec-action"></a>
+
+## GitHub Action
+
+The [bibtex-tidy-action](https://github.com/grayespinoza/bibtex-tidy-action) can install and run bibtex-tidy.
