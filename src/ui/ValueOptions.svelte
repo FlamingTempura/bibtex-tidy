@@ -14,6 +14,7 @@ let enableEscape = options.escape ?? false;
 let encodeUrls = options.encodeUrls ?? false;
 let removeEmptyFields = options.removeEmptyFields ?? false;
 let removeDuplicateFields = options.removeDuplicateFields ?? false;
+let removeURL = option.removeURL ?? false;
 
 let maxAuthorsChecked = options.maxAuthors !== undefined;
 let maxAuthorsValue = options.maxAuthors ?? 3;

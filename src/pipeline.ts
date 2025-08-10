@@ -22,6 +22,7 @@ import { createRemoveDuplicateFieldsTransform } from "./transforms/removeDuplica
 import { createRemoveEmptyFieldsTransform } from "./transforms/removeEmptyFields.ts";
 import { createRemoveEnclosingBracesTransform } from "./transforms/removeEnclosingBraces.ts";
 import { createRemoveSpecifiedFieldsTransform } from "./transforms/removeSpecifiedFields.ts";
+import { createRemoveUrlIfDoiExistsTransform } from "./transforms/removeURLifDOIExists.ts";
 import { createResetWhitespaceTransform } from "./transforms/resetWhitespace.ts";
 import { createSortEntriesTransform } from "./transforms/sortEntries.ts";
 import { createSortFieldsTransform } from "./transforms/sortFields.ts";
@@ -109,6 +110,9 @@ export function generateTransformPipeline(
 	}
 	if (options.removeEmptyFields) {
 		pipeline.push(createRemoveEmptyFieldsTransform());
+	}
+	if (options.removeURLifDOIExists) {
+		pipeline.push(createRemoveUrlIfDoiExistsTransform());
 	}
 	if (options.sort) {
 		pipeline.push(createSortEntriesTransform(options.sort));

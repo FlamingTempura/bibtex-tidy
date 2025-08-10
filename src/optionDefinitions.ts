@@ -519,6 +519,17 @@ export const optionDefinitions: OptionDefinition[] = [
 		convertBoolean: { true: ["title"], false: undefined },
 	},
 	{
+		key: "removeURLifDOIExists",
+		cli: {
+			"--removeURLifDOIExists": true,
+		},
+		toCLI: (val) => (val === true ? "--removeURLifDOIExists" : undefined),
+		title: "Remove duplicate fields",
+		description: ["remove URL field if a DOI field exists."],
+		type: "boolean",
+		defaultValue: false,
+	},
+	{
 		key: "wrap",
 		cli: {
 			"--wrap": (args) => (args.length > 0 ? Number(args[0]) : true),
