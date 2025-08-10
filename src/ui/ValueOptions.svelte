@@ -14,7 +14,7 @@ let enableEscape = options.escape ?? false;
 let encodeUrls = options.encodeUrls ?? false;
 let removeEmptyFields = options.removeEmptyFields ?? false;
 let removeDuplicateFields = options.removeDuplicateFields ?? false;
-let removeURL = option.removeURL ?? false;
+let removeURLifDOIExists = option.removeURLifDOIExists ?? false;
 
 let maxAuthorsChecked = options.maxAuthors !== undefined;
 let maxAuthorsValue = options.maxAuthors ?? 3;
@@ -37,6 +37,7 @@ $: {
 	options.encodeUrls = encodeUrls;
 	options.removeEmptyFields = removeEmptyFields;
 	options.removeDuplicateFields = removeDuplicateFields;
+	options.removeURLifDOIExists = removeURLifDOIExists;
 	options.maxAuthors = maxAuthorsChecked ? maxAuthorsValue : undefined;
 	options.enclosingBraces =
 		enclosingBracesChecked && enclosingBracesValue.length > 0
@@ -95,6 +96,8 @@ $: {
 	<Option option="removeEmptyFields" bind:checked={removeEmptyFields} />
 
 	<Option option="removeDuplicateFields" bind:checked={removeDuplicateFields} />
+
+	<Option option="removeURLifDOIExists" bind:checked={removeURLifDOIExists} />
 
 	<Option option="maxAuthors" bind:checked={maxAuthorsChecked}>
 		<label>
