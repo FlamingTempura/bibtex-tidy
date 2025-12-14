@@ -612,6 +612,7 @@ export const specialCharacters = new Map<string, string>([
 	["2009", "\\hspace{0.167em}"],
 	["200a", "\\mkern1mu{}"],
 	["2010", "-"],
+	["2011", "-"],
 	["2014", "--"],
 	["2015", "\\rule{1em}{1pt}"],
 	["2016", "\\Vert{}"],
