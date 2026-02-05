@@ -5303,7 +5303,7 @@ async function parseConfig(file) {
         arr.push(`--${split[0]}`);
       }
       if (split[1]) {
-        arr.push(...split[1].trim().split(","));
+        arr.push(...split[1].trim().split(",").map((e) => e.trim()));
       }
       return acc.concat(arr);
     }, [])

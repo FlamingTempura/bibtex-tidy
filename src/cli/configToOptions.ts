@@ -22,7 +22,7 @@ export async function parseConfig(file: string): Promise<string[]> {
 					arr.push(`--${split[0]}`);
 				}
 				if (split[1]) {
-					arr.push(...split[1].trim().split(","));
+					arr.push(...split[1].trim().split(",").map((e) => e.trim()));
 				}
 				return acc.concat(arr);
 			}, [] as string[]),
