@@ -5,7 +5,7 @@ import { manPage } from "../__generated__/manPage.ts";
 import type { BibTeXTidyOptions } from "../__generated__/optionsType.ts";
 import { version } from "../__generated__/version.ts";
 import { type BibTeXTidyResult, tidy } from "../index.ts";
-import { argsToOptions } from "./argsToOptions.ts";
+import { configArgsToOptions } from "./argsToOptions.ts";
 
 const { readFile, writeFile, copyFile } = fsp;
 
@@ -22,7 +22,7 @@ async function start(): Promise<void> {
 	// positive with pre-commit script.
 	const hasStdin = !process.stdin.isTTY && process.env.PRE_COMMIT !== "1";
 
-	const { inputFiles, options, unknownArgs } = argsToOptions(
+	const { inputFiles, options, unknownArgs } = await configArgsToOptions(
 		argv.slice(2),
 		hasStdin,
 	);

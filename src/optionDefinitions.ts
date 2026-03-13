@@ -556,4 +556,13 @@ export const optionDefinitions: OptionDefinition[] = [
 		defaultValue: true,
 		deprecated: true,
 	},
+	{
+		key: "config",
+		cli: { "--config": (args) => args[0], "-c": (args) => args[0] },
+		title: "Config",
+		description: [
+			"Reads the config from a .yaml config file. Current options passed along will surcharge the options defined in the config.",
+		],
+		type: "string",
+	},
 ];

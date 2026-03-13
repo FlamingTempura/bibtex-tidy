@@ -187,5 +187,9 @@ export const manPage = [
 	"  --quiet",
 	"      Suppress logs on stdout.",
 	"      ",
+	"  --config, -c",
+	"      Reads the config from a .yaml config file. Current options passed along will",
+	"      surcharge the options defined in the config.",
+	"      ",
 	"Full documentation <https://github.com/FlamingTempura/bibtex-tidy>"
 ];

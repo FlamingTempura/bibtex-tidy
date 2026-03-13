@@ -203,6 +203,10 @@ var manPage = [
   "  --quiet",
   "      Suppress logs on stdout.",
   "      ",
+  "  --config, -c",
+  "      Reads the config from a .yaml config file. Current options passed along will",
+  "      surcharge the options defined in the config.",
+  "      ",
   "Full documentation <https://github.com/FlamingTempura/bibtex-tidy>"
 ];
 
@@ -1031,6 +1035,15 @@ var optionDefinitions = [
     type: "boolean",
     defaultValue: true,
     deprecated: true
+  },
+  {
+    key: "config",
+    cli: { "--config": (args) => args[0], "-c": (args) => args[0] },
+    title: "Config",
+    description: [
+      "Reads the config from a .yaml config file. Current options passed along will surcharge the options defined in the config."
+    ],
+    type: "string"
   }
 ];
 
@@ -5271,6 +5284,32 @@ function parseLongCLIOption(arg) {
   return { key, values };
 }
 
+// src/cli/configToOptions.ts
+import { readFile } from "fs/promises";
+async function parseConfig(file) {
+  if (!file.endsWith(".yaml")) {
+    console.error("Expects a yaml file for the config");
+    process.exit(1);
+  }
+  return readFile(file, "utf8").then((data) => data.trim().split("\n")).then(
+    (lines) => lines.reduce((acc, line, index) => {
+      const split = line.split(":");
+      if (split.length !== 2) {
+        console.error("Invalid syntax on line", index + 1);
+        process.exit(1);
+      }
+      const arr = [];
+      if (split[0]) {
+        arr.push(`--${split[0]}`);
+      }
+      if (split[1]) {
+        arr.push(...split[1].trim().split(",").map((e) => e.trim()));
+      }
+      return acc.concat(arr);
+    }, [])
+  );
+}
+
 // src/cli/argsToOptions.ts
 var cliOptions = {};
 for (const opt of optionDefinitions) {
@@ -5297,9 +5336,26 @@ function argsToOptions(argv2, skipInputArgs) {
   }
   return { inputFiles, options, unknownArgs };
 }
+async function configArgsToOptions(argv2, skipInputArgs) {
+  const { inputFiles, options, unknownArgs } = argsToOptions(
+    argv2,
+    skipInputArgs
+  );
+  if (options.config) {
+    const configOptions = await parseConfig(options.config).then(
+      (cargv) => argsToOptions(cargv, true)
+    );
+    return {
+      inputFiles: configOptions.inputFiles.concat(inputFiles),
+      options: { ...configOptions.options, ...options },
+      unknownArgs: configOptions.unknownArgs.concat(unknownArgs)
+    };
+  }
+  return { inputFiles, options, unknownArgs };
+}
 
 // src/cli/cli.ts
-var { readFile, writeFile, copyFile } = fsp;
+var { readFile: readFile2, writeFile, copyFile } = fsp;
 var nodeVer = Number(versions.node.split(".")[0]);
 if (nodeVer < 12) {
   console.error("bibtex-tidy requires Node.js v12.0.0 or later");
@@ -5307,7 +5363,7 @@ if (nodeVer < 12) {
 }
 async function start() {
   const hasStdin = !process.stdin.isTTY && process.env.PRE_COMMIT !== "1";
-  const { inputFiles, options, unknownArgs } = argsToOptions(
+  const { inputFiles, options, unknownArgs } = await configArgsToOptions(
     argv.slice(2),
     hasStdin
   );
@@ -5380,7 +5436,7 @@ async function tidyInputFiles(inputFiles, options) {
     }
     console.log("Tidying...");
     for (const inputFile of inputFiles) {
-      const result = tidy(await readFile(inputFile, "utf8"), options);
+      const result = tidy(await readFile2(inputFile, "utf8"), options);
       await tidyToOutputFile(result, inputFile, options);
     }
   } else if (inputFiles.length > 1) {
@@ -5393,7 +5449,7 @@ async function tidyInputFiles(inputFiles, options) {
     }
     console.log("Tidying...");
     assert(inputFiles[0]);
-    const result = tidy(await readFile(inputFiles[0], "utf8"), options);
+    const result = tidy(await readFile2(inputFiles[0], "utf8"), options);
     if (options.outputPath) {
       await tidyToOutputFile(result, options.outputPath, options);
     } else {

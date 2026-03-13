@@ -223,6 +223,12 @@ export type BibTeXTidyOptions = {
 	 * Make a backup <filename>.original. Enabled by default (unless --modify is explicitly provided or outputting to a different file/stdio). Deprecated but provided for backward compatibility.
 	 */
 	backup?: boolean;
+	/**
+	 * Config
+	 *
+	 * Reads the config from a .yaml config file. Current options passed along will surcharge the options defined in the config.
+	 */
+	config?: string;
 };
 export type Options = Omit<BibTeXTidyOptions, "help" | "version" | "quiet" | "backup">;
 export type DuplicateRule = Exclude<BibTeXTidyOptions["duplicates"], boolean | undefined>[number];

@@ -238,6 +238,10 @@ bibtex-tidy references.bib
   --quiet
       Suppress logs on stdout.
       
+  --config, -c
+      Reads the config from a .yaml config file. Current options passed along will
+      surcharge the options defined in the config.
+      
 ```
 
 <a name="sec-api"></a>
