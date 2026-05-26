@@ -119,6 +119,8 @@ function stringifyBlock(block) {
         return stringifyCommand(node);
       case "text":
         return node.text;
+      default:
+        throw new Error(`Unknown node type: ${JSON.stringify(node)}`);
     }
   }).join("");
   switch (block.kind) {
@@ -224,6 +226,8 @@ function formatValue(field) {
         return doubleEnclose(value);
       case "quoted":
         return `"${value}"`;
+      default:
+        throw new Error(`Unknown value type: ${type}`);
     }
   }).join(" # ");
 }
@@ -2082,6 +2086,7 @@ var specialCharacters = /* @__PURE__ */ new Map([
   ["2009", "\\hspace{0.167em}"],
   ["200a", "\\mkern1mu{}"],
   ["2010", "-"],
+  ["2011", "-"],
   ["2014", "--"],
   ["2015", "\\rule{1em}{1pt}"],
   ["2016", "\\Vert{}"],

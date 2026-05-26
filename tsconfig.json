@@ -8,12 +8,12 @@
 		"erasableSyntaxOnly": true,
 		"resolveJsonModule": true,
 		"noUncheckedIndexedAccess": true,
-		"downlevelIteration": true,
 		"verbatimModuleSyntax": true,
 		"allowImportingTsExtensions": true,
 		"noEmit": true,
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
-		"target": "ES2018"
+		"target": "ES2018",
+		"types": ["node"]
 	},
 	"include": ["src/**/*", "test/**/*", "build.ts"]
 }

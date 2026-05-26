@@ -1,12 +1,11 @@
 import { spawnSync } from "node:child_process";
-import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
-
 import { randomBytes } from "node:crypto";
+import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { CLIOptions } from "../../../src/optionUtils.ts";
 import { optionsToCLIArgs } from "../../../src/optionsToCLIArgs.ts";
+import type { CLIOptions } from "../../../src/optionUtils.ts";
 
 export const TMP_DIR = tmpdir();
 export const BIN_PATH =

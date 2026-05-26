@@ -4,7 +4,7 @@ import test, { afterEach } from "node:test";
 import type { EditorView } from "@codemirror/view";
 import puppeteer, { type ElementHandle, type Page } from "puppeteer";
 import type { Warning } from "../../../src/index.ts";
-import { type Options, normalizeOptions } from "../../../src/optionUtils.ts";
+import { normalizeOptions, type Options } from "../../../src/optionUtils.ts";
 import type { Spec } from "./utils.ts";
 
 const WEB_ROOT = join(

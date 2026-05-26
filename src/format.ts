@@ -61,6 +61,8 @@ export function formatValue(field: FieldNode): string | undefined {
 					return doubleEnclose(value);
 				case "quoted":
 					return `"${value}"`;
+				default:
+					throw new Error(`Unknown value type: ${type}`);
 			}
 		})
 		.join(" # ");

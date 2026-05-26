@@ -1,16 +1,14 @@
 {
 	"files": {
-		"include": [
-			"src/**/*",
-			"test/**/*",
-			"build.ts",
-			"package.json",
-			"tsconfig.json",
-			"biome.json"
-		],
-		"ignore": [
-			"**/__generated__/**",
-			"src/ui/codemirrorExtensions/bibtex.terms.ts"
+		"includes": [
+			"**/src/**/*",
+			"**/test/**/*",
+			"**/build.ts",
+			"**/package.json",
+			"**/tsconfig.json",
+			"**/biome.json",
+			"!**/__generated__",
+			"!**/src/ui/codemirrorExtensions/bibtex.terms.ts"
 		]
 	},
 	"linter": {
@@ -22,9 +20,13 @@
 	},
 	"overrides": [
 		{
-			"include": ["*.svelte"],
+			"includes": ["**/*.svelte"],
 			"linter": {
 				"rules": {
+					"correctness": {
+						"noUnusedImports": "off",
+						"noUnusedVariables": "off"
+					},
 					"style": {
 						"useConst": "off",
 						"useImportType": "off"

@@ -10,8 +10,8 @@
 
 import {
 	HighlightStyle,
-	LRLanguage,
 	LanguageSupport,
+	LRLanguage,
 	syntaxHighlighting,
 } from "@codemirror/language";
 import { styleTags, tags as t } from "@lezer/highlight";

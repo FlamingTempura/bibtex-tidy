@@ -129,6 +129,8 @@ function stringifyBlock(block: BlockNode): string {
 					return stringifyCommand(node);
 				case "text":
 					return node.text;
+				default:
+					throw new Error(`Unknown node type: ${JSON.stringify(node)}`);
 			}
 		})
 		.join("");

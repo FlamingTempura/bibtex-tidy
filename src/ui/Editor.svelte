@@ -4,13 +4,13 @@ import { bracketMatching } from "@codemirror/language";
 import { linter } from "@codemirror/lint";
 import { Compartment, EditorState } from "@codemirror/state";
 import {
-	EditorView,
-	type ViewUpdate,
 	drawSelection,
 	dropCursor,
+	EditorView,
 	highlightActiveLineGutter,
 	keymap,
 	lineNumbers,
+	type ViewUpdate,
 } from "@codemirror/view";
 import { onMount } from "svelte";
 import type { BibTeXSyntaxError } from "../parsers/bibtexParser.ts";

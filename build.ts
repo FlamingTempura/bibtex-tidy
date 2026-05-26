@@ -7,9 +7,9 @@ import sveltePlugin from "esbuild-svelte";
 import { sveltePreprocess } from "svelte-preprocess";
 import pkg from "./package.json" with { type: "json" };
 import {
+	functionWords,
 	MODIFIERS,
 	SPECIAL_MARKERS,
-	functionWords,
 } from "./src/generateKeys.ts";
 import {
 	DEFAULT_KEY_TEMPLATE,
@@ -30,12 +30,12 @@ const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join("bin", "bibtex-tidy");
  * ----------------------------------------------------
  *                            Chrome  Edge  Safari  FF
  * ----------------------------------------------------
- * Summary/details element      12     79      6    49
+ * Summary/details element      12     79     6     49
  * CSS variables                49     16     10    36
  * Flexbox                      21     12     6.1   28
  * WOFF2                        35     14     10    39
- * HTML main                    26     12      7    21
- * CSS appearance: none          4     12     3.1   2
+ * HTML main                    26     12     7     21
+ * CSS appearance: none         4      12     3.1   2
  * Template literals            41     13     9.1   34
  * let/const                    41     12     10    44
  * for of                       38     12     7     13
@@ -45,8 +45,9 @@ const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join("bin", "bibtex-tidy");
  * async function (svelte 5)    55     15     11    52
  * Proxy (svelte 5)             49     12     10    18
  * URLSearchParams              49     17     10.1  44
+ * async generators             63     79     12    57
  * ----------------------------------------------------
- * Min supported                55     79     11    52
+ * Min supported                63     79     12    57
  * ----------------------------------------------------
  *
  *
@@ -56,7 +57,6 @@ const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join("bin", "bibtex-tidy");
  * ----------------------------------------------------
  * flatMap                      69     79     12    62    polyfilled by core-js
  * fromEntries                  73     79     12.1  63    polyfilled by core-js
- * trimEnd                      66     79     12    61    polyfilled by core-js
  * Nullish coalescing           80     80     13.1  72    downlevel by esbuild
  * Optional chaining            80     80     13.1  74    downlevel by esbuild
  * :where (svelte 5)            88     88     14    78    not sure if needed
@@ -65,10 +65,10 @@ const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join("bin", "bibtex-tidy");
 // TODO: test on browserstack
 
 const BROWSER_TARGETS: string[] = [
-	"chrome55",
+	"chrome63",
 	"edge79",
-	"safari11",
-	"firefox52",
+	"safari12",
+	"firefox57",
 ];
 
 const NODE_TARGET = "node12";
@@ -101,10 +101,7 @@ const webBuildOptions: BuildOptions = {
 	plugins: [sveltePlugin({ preprocess: sveltePreprocess() })],
 	supported: {
 		// esbuild falsely identifies these as not supported for the target browsers
-		"for-of": true,
 		destructuring: true,
-		"const-and-let": true,
-		"default-argument": true,
 	},
 	target: BROWSER_TARGETS,
 };

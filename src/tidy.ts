@@ -1,8 +1,8 @@
 import { ASTProxy } from "./ASTProxy.ts";
 import { logAST } from "./debug.ts";
 import { formatBibtex } from "./format.ts";
-import { normalizeOptions } from "./optionUtils.ts";
 import type { Options } from "./optionUtils.ts";
+import { normalizeOptions } from "./optionUtils.ts";
 import { parseBibTeX } from "./parsers/bibtexParser.ts";
 import { generateTransformPipeline } from "./pipeline.ts";
 import type { BibTeXTidyResult, Warning } from "./types.ts";

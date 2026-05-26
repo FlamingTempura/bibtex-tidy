@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { OptionsNormalized } from "../optionUtils.ts";
 import { optionsToCLIArgs } from "../optionsToCLIArgs.ts";
+import type { OptionsNormalized } from "../optionUtils.ts";
 import Collapsible from "./Collapsible.svelte";
 
 export let options: OptionsNormalized;

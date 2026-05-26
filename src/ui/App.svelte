@@ -1,10 +1,10 @@
 <script lang="ts">
 import { type BibTeXTidyResult, tidy } from "../index.ts";
-import { type OptionsNormalized, normalizeOptions } from "../optionUtils.ts";
+import { normalizeOptions, type OptionsNormalized } from "../optionUtils.ts";
 import { BibTeXSyntaxError } from "../parsers/bibtexParser.ts";
+import { DEFAULT_BIBTEX } from "./defaultBibtex.ts";
 import Editor from "./Editor.svelte";
 import Sidebar from "./Sidebar.svelte";
-import { DEFAULT_BIBTEX } from "./defaultBibtex.ts";
 
 // Unfortunatly when the UI was originally made public it had different
 // defaults to the CLI/JS API. In future it might be good to make the UI

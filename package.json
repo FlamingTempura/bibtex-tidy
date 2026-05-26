@@ -50,7 +50,7 @@
 		}
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.8.3",
+		"@biomejs/biome": "^2.4.15",
 		"@codemirror/commands": "^6.6.1",
 		"@codemirror/language": "^6.11.1",
 		"@codemirror/lint": "^6.8.1",
@@ -58,15 +58,15 @@
 		"@lezer/generator": "^1.7.3",
 		"@lezer/highlight": "^1.2.1",
 		"@tsconfig/svelte": "^5.0.4",
-		"@types/node": "^24.0.0",
-		"c8": "^10.1.2",
+		"@types/node": "^25.9.1",
+		"c8": "^11.0.0",
 		"core-js": "^3.43.0",
 		"dts-bundle-generator": "^9.5.1",
-		"esbuild": "^0.25.5",
+		"esbuild": "^0.28.0",
 		"esbuild-svelte": "^0.9.3",
-		"puppeteer": "^24.10.0",
+		"puppeteer": "^25.1.0",
 		"svelte-preprocess": "^6.0.3",
-		"typescript": "^5.8.3",
+		"typescript": "^6.0.3",
 		"yaml": "^2.8.0"
 	}
 }

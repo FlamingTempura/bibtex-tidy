@@ -1,4 +1,3 @@
-import type { FieldNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { unwrapText, wrapText } from "../utils.ts";
 
