@@ -1,9 +1,16 @@
 <script lang="ts">
-export let title: string | undefined = undefined;
-export let inset: boolean | undefined = undefined;
+import type { Snippet } from "svelte";
+
+type Props = {
+	children?: Snippet;
+	inset?: boolean;
+	title?: string;
+};
+
+let { children, inset, title }: Props = $props();
 </script>
 
-<label {title} class:inset><slot /></label>
+<label {title} class:inset>{@render children?.()}</label>
 
 <style>
 	label {
@@ -14,15 +21,15 @@ export let inset: boolean | undefined = undefined;
 		align-items: center;
 		gap: 16px;
 		cursor: pointer;
-	}
-	label:hover {
-		background: var(--hover-bg);
-		box-shadow: 0 0 0 1px var(--border-color);
-	}
-	label:first-of-type {
-		margin-top: 4px;
-	}
-	label:last-child {
-		margin-bottom: 0;
+		&:hover {
+			background: var(--hover-bg);
+			box-shadow: 0 0 0 1px var(--border-color);
+		}
+		&:first-of-type {
+			margin-top: 4px;
+		}
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 </style>

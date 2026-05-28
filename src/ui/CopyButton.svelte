@@ -1,14 +1,16 @@
 <script lang="ts">
+import { onDestroy } from "svelte";
+
 let resetCopyBtnTimeout: ReturnType<typeof setTimeout>;
-let showAsCopied = false;
-export let bibtex: string;
+let showAsCopied = $state(false);
+let { bibtex }: { bibtex: string } = $props();
 
 const handleCopy = () => {
 	navigator.clipboard
 		.writeText(bibtex)
 		.then(() => {
 			showAsCopied = true;
-			clearInterval(resetCopyBtnTimeout);
+			clearTimeout(resetCopyBtnTimeout);
 			resetCopyBtnTimeout = setTimeout(() => {
 				showAsCopied = false;
 			}, 3000);
@@ -17,6 +19,10 @@ const handleCopy = () => {
 			alert("Failed to copy");
 		});
 };
+
+onDestroy(() => {
+	clearTimeout(resetCopyBtnTimeout);
+});
 </script>
 
 <button
@@ -24,7 +30,7 @@ const handleCopy = () => {
 	id="copy"
 	title="Copy bibtex"
 	aria-label="Copy bibtex"
-	on:click={handleCopy}
+	onclick={handleCopy}
 	class:copied={showAsCopied}
 >
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
@@ -48,25 +54,25 @@ const handleCopy = () => {
 		padding: 8px 8px 8px 12px;
 		transition: width 0.5s ease;
 		width: 40px;
-	}
-	#copy:after {
-		content: 'Copy';
-		overflow: hidden;
-		white-space: nowrap;
-		text-indent: 6px;
-	}
-	#copy:hover {
-		width: 90px;
-	}
-	#copy.copied {
-		width: 110px;
-	}
-	#copy.copied:after {
-		content: 'Copied!';
-	}
-	#copy svg {
-		fill: currentColor;
-		width: 20px;
-		flex-shrink: 0;
+		&::after {
+			content: 'Copy';
+			overflow: hidden;
+			white-space: nowrap;
+			text-indent: 6px;
+		}
+		&:hover {
+			width: 90px;
+		}
+		&.copied {
+			width: 110px;
+			&::after {
+				content: 'Copied!';
+			}
+		}
+		svg {
+			fill: currentColor;
+			width: 20px;
+			flex-shrink: 0;
+		}
 	}
 </style>

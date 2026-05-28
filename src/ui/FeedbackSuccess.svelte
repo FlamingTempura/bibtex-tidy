@@ -2,11 +2,19 @@
 import type { BibTeXTidyResult } from "../index.ts";
 import type { OptionsNormalized } from "../optionUtils.ts";
 
-export let options: OptionsNormalized;
-export let result: BibTeXTidyResult;
+type Props = {
+	options: OptionsNormalized;
+	result: BibTeXTidyResult;
+};
 
-let warnings = result.warnings.filter((w) => w.code !== "DUPLICATE_ENTRY");
-let dupes = result.warnings.filter((w) => w.code === "DUPLICATE_ENTRY");
+let { options, result }: Props = $props();
+
+let warnings = $derived(
+	result.warnings.filter((w) => w.code !== "DUPLICATE_ENTRY"),
+);
+let dupes = $derived(
+	result.warnings.filter((w) => w.code === "DUPLICATE_ENTRY"),
+);
 </script>
 
 <div class="container">
@@ -73,9 +81,9 @@ let dupes = result.warnings.filter((w) => w.code === "DUPLICATE_ENTRY");
 	}
 	svg {
 		flex: 0 0 24px;
-	}
-	circle,
-	line {
-		stroke: var(--green);
+		circle,
+		line {
+			stroke: var(--green);
+		}
 	}
 </style>

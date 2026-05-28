@@ -1,10 +1,14 @@
 <script lang="ts">
-export let name: string | undefined;
-export let group: string;
-export let value: string | undefined = undefined;
+import type { HTMLInputAttributes } from "svelte/elements";
+
+let {
+	group = $bindable<string | undefined>(),
+	value,
+	...props
+}: Omit<HTMLInputAttributes, "type"> = $props();
 </script>
 
-<input type="radio" {name} {value} bind:group />
+<input {...props} type="radio" {value} bind:group />
 
 <style>
 	input {
@@ -18,19 +22,19 @@ export let value: string | undefined = undefined;
 		height: 17px;
 		position: relative;
 		flex: 0 0 17px;
-	}
-	input:checked {
-		border-color: var(--light-blue);
-		background: transparent;
-	}
-	input:checked:after {
-		content: '';
-		position: absolute;
-		background: var(--light-blue);
-		width: 7px;
-		height: 7px;
-		left: 3px;
-		top: 3px;
-		border-radius: 10px;
+		&:checked {
+			border-color: var(--light-blue);
+			background: transparent;
+			&::after {
+				content: "";
+				position: absolute;
+				background: var(--light-blue);
+				width: 7px;
+				height: 7px;
+				left: 3px;
+				top: 3px;
+				border-radius: 10px;
+			}
+		}
 	}
 </style>

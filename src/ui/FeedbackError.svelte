@@ -1,6 +1,7 @@
 <script lang="ts">
 import { BibTeXSyntaxError } from "../parsers/bibtexParser.ts";
-export let error: unknown;
+
+let { error }: { error: unknown } = $props();
 </script>
 
 <div class="container">
@@ -46,9 +47,9 @@ export let error: unknown;
 	}
 	svg {
 		flex: 0 0 24px;
-	}
-	circle,
-	line {
-		stroke: var(--red);
+		circle,
+		line {
+			stroke: var(--red);
+		}
 	}
 </style>

@@ -4,10 +4,12 @@ import type { OptionsNormalized } from "../optionUtils.ts";
 import FeedbackError from "./FeedbackError.svelte";
 import FeedbackSuccess from "./FeedbackSuccess.svelte";
 
-export let options: OptionsNormalized;
-export let status:
+type Status =
 	| { status: "success"; result: BibTeXTidyResult }
 	| { status: "error"; error: unknown };
+
+let { options, status }: { options: OptionsNormalized; status: Status } =
+	$props();
 </script>
 
 <div role="alert">

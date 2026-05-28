@@ -59,7 +59,7 @@ const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join("bin", "bibtex-tidy");
  * fromEntries                  73     79     12.1  63    polyfilled by core-js
  * Nullish coalescing           80     80     13.1  72    downlevel by esbuild
  * Optional chaining            80     80     13.1  74    downlevel by esbuild
- * :where (svelte 5)            88     88     14    78    not sure if needed
+ * :where (svelte 5)            88     88     14    78    custom transform
  * nested css                   120    120    17.2  117   compiled by svelte
  *
  */
@@ -320,6 +320,12 @@ async function buildCLI() {
 async function buildWebBundle() {
 	console.time("Web bundle built");
 	await build(webBuildOptions);
+	// https://svelte.dev/docs/svelte/v5-migration-guide#Other-breaking-changes-Scoped-CSS-uses-:where()
+	const cssFile = join(WEB_PATH, "bundle.css");
+	await writeFile(
+		cssFile,
+		(await readFile(cssFile, "utf8")).replaceAll(/:where\((.+?)\)/g, "$1"),
+	);
 	console.timeEnd("Web bundle built");
 }
 
