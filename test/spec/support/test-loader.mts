@@ -23,7 +23,7 @@ export async function load(
 	const text = await readFile(fileURLToPath(url), "utf8");
 	const scenarios = yaml.parseAllDocuments(text);
 
-	const platforms = ["api", "cli", "web"];
+	const platforms = ["api", "cli"];
 
 	const js = `
     const specs = ${JSON.stringify(scenarios)};

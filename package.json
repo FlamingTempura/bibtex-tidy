@@ -31,6 +31,7 @@
 		"test:cli": "node --disable-warning=ExperimentalWarning --test ./test/cli/*.test.ts",
 		"test:api": "node --disable-warning=ExperimentalWarning --test ./test/api/*.test.ts",
 		"test:spec": "node --disable-warning=ExperimentalWarning --import ./test/spec/support/test-register.mts --test-concurrency 1 --test ./test/spec/*.spec.yaml",
+		"test:spec:ui": "vitest run --config vitest.config.ts",
 		"test:corpus": "node --disable-warning=ExperimentalWarning --import ./test/corpus/support/test-register.mts --test ./test/corpus/**/*.bib",
 		"typecheck": "tsc --noEmit",
 		"cover": "c8 --reporter=lcov --reporter=text npm run test:unit",
@@ -64,9 +65,10 @@
 		"dts-bundle-generator": "^9.5.1",
 		"esbuild": "^0.28.0",
 		"esbuild-svelte": "^0.9.3",
-		"puppeteer": "^25.1.0",
+		"playwright": "^1.60.0",
 		"svelte-preprocess": "^6.0.3",
 		"typescript": "^6.0.3",
+		"vitest": "^4.1.7",
 		"yaml": "^2.8.0"
 	}
 }
