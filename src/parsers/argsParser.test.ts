@@ -1,4 +1,3 @@
-
 import { parseCLIArguments, parseLongCLIOption } from "./argsParser.ts";
 
 describe("parseCLIArguments", () => {
@@ -29,27 +28,33 @@ describe("parseCLIArguments", () => {
 	});
 
 	it("parses inputs paths and options", () => {
-		expect(parseCLIArguments(["moo.bib", "--arg", "foo", "bar", "-a"])).toEqual({
+		expect(parseCLIArguments(["moo.bib", "--arg", "foo", "bar", "-a"])).toEqual(
+			{
 				"": ["moo.bib"],
 				"--arg": ["foo", "bar"],
 				"-a": [],
-			});
+			},
+		);
 	});
 
 	it("parses trailing inputs paths", () => {
-		expect(parseCLIArguments(["--arg", "foo", "bar", "-a", "moo.bib"])).toEqual({
+		expect(parseCLIArguments(["--arg", "foo", "bar", "-a", "moo.bib"])).toEqual(
+			{
 				"": ["moo.bib"],
 				"--arg": ["foo", "bar"],
 				"-a": [],
-			});
+			},
+		);
 	});
 
 	it("does not parse trailing inputs paths if disabled", () => {
-		expect(parseCLIArguments(["--arg", "foo", "bar", "-a", "moo.bib"], true)).toEqual({
-				"": [],
-				"--arg": ["foo", "bar"],
-				"-a": ["moo.bib"],
-			});
+		expect(
+			parseCLIArguments(["--arg", "foo", "bar", "-a", "moo.bib"], true),
+		).toEqual({
+			"": [],
+			"--arg": ["foo", "bar"],
+			"-a": ["moo.bib"],
+		});
 	});
 
 	it("does not parse negated value as option", () => {

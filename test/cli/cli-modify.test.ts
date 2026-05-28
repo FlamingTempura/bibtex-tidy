@@ -42,6 +42,8 @@ test("CLI should not allow an output path and modified mode", async () => {
 	const proc = spawnSync(BIN_PATH, [path, "-m", "--output", "foo"], {
 		encoding: "utf8",
 	});
-	expect(proc.stderr).toMatch(/--modify\/-m is not valid when specifying an output file/);
+	expect(proc.stderr).toMatch(
+		/--modify\/-m is not valid when specifying an output file/,
+	);
 	expect(await readFile(path, "utf8")).toBe(input);
 });

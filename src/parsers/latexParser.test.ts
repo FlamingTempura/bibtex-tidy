@@ -52,7 +52,9 @@ describe("latex parser", () => {
 describe("flattening latex", () => {
 	it("flattens latex", () => {
 		for (const str of testStrings) {
-			expect(stringifyLaTeX(flattenLaTeX(parseLaTeX(str.input)))).toBe(str.flattened);
+			expect(stringifyLaTeX(flattenLaTeX(parseLaTeX(str.input)))).toBe(
+				str.flattened,
+			);
 		}
 	});
 });

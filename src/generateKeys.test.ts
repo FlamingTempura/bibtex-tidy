@@ -81,7 +81,9 @@ describe("generateKey", () => {
 			title: "A story of 2 foo and 1 bar: the best story",
 		});
 		const template = parseEntryKeyTemplate("[title]");
-		expect(generateKey(entry, template)).toBe("AStoryOf2FooAnd1BarTheBestStory");
+		expect(generateKey(entry, template)).toBe(
+			"AStoryOf2FooAnd1BarTheBestStory",
+		);
 	});
 
 	it("can output full title, verbatim", () => {
@@ -89,7 +91,9 @@ describe("generateKey", () => {
 			title: "A story of 2 foo and 1 bar: the best story",
 		});
 		const template = parseEntryKeyTemplate("[fulltitle]");
-		expect(generateKey(entry, template)).toBe("Astoryof2fooand1barthebeststory");
+		expect(generateKey(entry, template)).toBe(
+			"Astoryof2fooand1barthebeststory",
+		);
 	});
 
 	it("can output year", () => {

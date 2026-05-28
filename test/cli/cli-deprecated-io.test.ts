@@ -20,7 +20,9 @@ const output = `@article{a,
 
 test('CLI should accept stdin with "-" and show deprecated warning', () => {
 	const proc = spawnSync(BIN_PATH, ["-"], { input, encoding: "utf8" });
-	expect(proc.stderr).toMatch(/Interpreting "-" as stdin. NOTICE: as of v1.10.0 "-" can be omitted and will be invalid in v2. Stdin is read when no input file is specified./);
+	expect(proc.stderr).toMatch(
+		/Interpreting "-" as stdin. NOTICE: as of v1.10.0 "-" can be omitted and will be invalid in v2. Stdin is read when no input file is specified./,
+	);
 	expect(proc.stdout).toBe(output);
 });
 
@@ -36,7 +38,9 @@ test("CLI should modify input file by default (deprecated, will not modify in v2
 		stdio: ["inherit", "pipe", "pipe"],
 	});
 	expect(proc.stdout).toMatch(/Tidying.../);
-	expect(proc.stderr).toMatch(/NOTICE: In v2 you will need to specify --modify/);
+	expect(proc.stderr).toMatch(
+		/NOTICE: In v2 you will need to specify --modify/,
+	);
 	expect(await readFile(path, "utf8")).toBe(output);
 });
 

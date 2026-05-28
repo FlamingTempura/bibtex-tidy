@@ -49,7 +49,9 @@ test("strange characters in citation key", () => {
 			err = e;
 		}
 		expect(err).not.toBe(undefined);
-		expect(String(err).includes("The entry key cannot contain the character")).toBe(true);
+		expect(
+			String(err).includes("The entry key cannot contain the character"),
+		).toBe(true);
 	}
 	let err: unknown;
 	try {
@@ -58,5 +60,7 @@ test("strange characters in citation key", () => {
 		err = e;
 	}
 	expect(err).not.toBe(undefined);
-	expect(String(err).includes("The entry key cannot contain whitespace")).toBe(true);
+	expect(String(err).includes("The entry key cannot contain whitespace")).toBe(
+		true,
+	);
 });

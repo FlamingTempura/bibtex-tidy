@@ -25,5 +25,7 @@ test("CLI should not allow multiple input files without --modify (v2 flag)", asy
 		encoding: "utf8",
 	});
 	expect(proc.status).toBe(1);
-	expect(proc.stderr).toMatch(/Only one input file permitted unless using --modify\/-m/);
+	expect(proc.stderr).toMatch(
+		/Only one input file permitted unless using --modify\/-m/,
+	);
 });

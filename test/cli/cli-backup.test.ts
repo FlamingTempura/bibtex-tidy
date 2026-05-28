@@ -16,7 +16,9 @@ test("CLI should error if creating backup in non-modify mode", async () => {
 		encoding: "utf8",
 	});
 	expect(await readFile(path, "utf8")).toBe(input);
-	expect(proc.stderr).toMatch(/--backup is only permitted when --modify\/-m is provided/);
+	expect(proc.stderr).toMatch(
+		/--backup is only permitted when --modify\/-m is provided/,
+	);
 	expect(proc.stdout).toBe("");
 	expect(proc.status).toBe(1);
 });
