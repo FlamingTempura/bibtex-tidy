@@ -28,6 +28,7 @@
 		"serve": "node build.ts --serve",
 		"test": "vitest run --globals",
 		"test:unit": "npm run test -- src",
+		"test:update-snapshots": "UPDATE_VISUAL_SNAPSHOTS=1 npm test -- test/ui/ui-vr.test.ts",
 		"typecheck": "tsc --noEmit",
 		"cover": "c8 --reporter=lcov --reporter=text npm run test:unit",
 		"preversion": "git pull --rebase",

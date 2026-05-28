@@ -1,18 +1,7 @@
-import { join } from "node:path";
-import { pathToFileURL } from "node:url";
-import type { EditorView } from "@codemirror/view";
 import { type Browser, chromium, type Page } from "playwright";
 import { normalizeOptions, type Options } from "../../src/optionUtils.ts";
 import { loadSpecFiles } from "../support/spec-loader.ts";
-
-const WEB_ROOT = join(import.meta.dirname, "..", "..", "docs", "index.html");
-const WEB_URL = pathToFileURL(WEB_ROOT).href;
-
-declare global {
-	interface Window {
-		cmEditor: EditorView;
-	}
-}
+import { WEB_URL } from "./support.ts";
 
 type WebResult = {
 	bibtex: string;

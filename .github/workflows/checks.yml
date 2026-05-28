@@ -12,45 +12,26 @@ on:
 
 jobs:
   run-tests:
-    # Ubuntu 22.04 easiest way to get puppeteer working
-    # https://github.com/puppeteer/puppeteer/issues/12818
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24.x"
-          cache: "npm"
-      - name: Install dependencies
-        run: npm ci
-      - name: Test
-        run: script -e -c "npm run test"
-
-  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: "24.x"
           cache: "npm"
+
       - name: Install dependencies
         run: npm ci
+
+      - name: Typescript check
+        run: npx tsc --noEmit
+
       - name: Biome Linter
         run: npm run check
 
-  check-types:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24.x"
-          cache: "npm"
-      - name: Install dependencies
-        run: npm ci
-      - name: Typescript check
-        run: npx tsc --noEmit
+      - name: Test
+        run: npm run test
 
   check-deployed-binary:
     runs-on: ubuntu-latest
