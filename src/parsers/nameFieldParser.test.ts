@@ -1,10 +1,8 @@
-import { deepStrictEqual } from "node:assert";
-import { describe, it } from "node:test";
 import { parseName, parseNameList } from "./nameFieldParser.ts";
 
 describe("parseName", () => {
 	it('should parse authors of form "LastName"', () => {
-		deepStrictEqual(parseName("Jones"), {
+		expect(parseName("Jones")).toEqual({
 			first: "",
 			pre: "",
 			suf: "",
@@ -13,7 +11,7 @@ describe("parseName", () => {
 	});
 
 	it('should parse authors of form "FirstName LastName"', () => {
-		deepStrictEqual(parseName("John Jones"), {
+		expect(parseName("John Jones")).toEqual({
 			first: "John",
 			last: "Jones",
 			pre: "",
@@ -22,7 +20,7 @@ describe("parseName", () => {
 	});
 
 	it('should parse authors of form "FirstName LastNames"', () => {
-		deepStrictEqual(parseName("John Rees Jones"), {
+		expect(parseName("John Rees Jones")).toEqual({
 			first: "John",
 			last: "Rees Jones",
 			pre: "",
@@ -31,7 +29,7 @@ describe("parseName", () => {
 	});
 
 	it('should parse authors of form "FirstNames Prefixes LastNames"', () => {
-		deepStrictEqual(parseName("John Paul von der Rees Jones"), {
+		expect(parseName("John Paul von der Rees Jones")).toEqual({
 			first: "John Paul",
 			pre: "von der",
 			last: "Rees Jones",
@@ -40,7 +38,7 @@ describe("parseName", () => {
 	});
 
 	it('should parse authors of form "FirstNames Prefixes LastNames"', () => {
-		deepStrictEqual(parseName("John Paul von der Rees Jones"), {
+		expect(parseName("John Paul von der Rees Jones")).toEqual({
 			first: "John Paul",
 			pre: "von der",
 			last: "Rees Jones",
@@ -49,7 +47,7 @@ describe("parseName", () => {
 	});
 
 	it('should parse authors of form "LastNames, FirstNames Prefixes"', () => {
-		deepStrictEqual(parseName("Rees Jones, John Paul von der"), {
+		expect(parseName("Rees Jones, John Paul von der")).toEqual({
 			first: "John Paul",
 			pre: "von der",
 			last: "Rees Jones",
@@ -58,7 +56,7 @@ describe("parseName", () => {
 	});
 
 	it('should parse authors of form "LastNames, Suffixes, FirstNames Prefixes"', () => {
-		deepStrictEqual(parseName("Rees Jones, Sr. II, John Paul von der"), {
+		expect(parseName("Rees Jones, Sr. II, John Paul von der")).toEqual({
 			first: "John Paul",
 			pre: "von der",
 			last: "Rees Jones",
@@ -67,7 +65,7 @@ describe("parseName", () => {
 	});
 
 	it('should parse authors of form "others"', () => {
-		deepStrictEqual(parseName("others"), {
+		expect(parseName("others")).toEqual({
 			last: "others",
 			first: "",
 			pre: "",
@@ -76,7 +74,7 @@ describe("parseName", () => {
 	});
 
 	it("should parse authors which use initials", () => {
-		deepStrictEqual(parseName("Tolkien, J. J. R."), {
+		expect(parseName("Tolkien, J. J. R.")).toEqual({
 			first: "J. J. R.",
 			last: "Tolkien",
 			pre: "",
@@ -85,7 +83,7 @@ describe("parseName", () => {
 	});
 
 	it("should parse names with special characters", () => {
-		deepStrictEqual(parseName('{"O}fele, Jane'), {
+		expect(parseName('{"O}fele, Jane')).toEqual({
 			first: "Jane",
 			last: '{"O}fele',
 			pre: "",
@@ -94,7 +92,7 @@ describe("parseName", () => {
 	});
 
 	it("should parse names that start with non-alpha", () => {
-		deepStrictEqual(parseName('~[]()={"O}fele, Jane'), {
+		expect(parseName('~[]()={"O}fele, Jane')).toEqual({
 			first: "Jane",
 			last: '~[]()={"O}fele',
 			pre: "",
@@ -103,7 +101,7 @@ describe("parseName", () => {
 	});
 
 	it("should trim whitespace", () => {
-		deepStrictEqual(parseName(" Foo Bar , Moo Hoo "), {
+		expect(parseName(" Foo Bar , Moo Hoo ")).toEqual({
 			last: "Foo Bar",
 			first: "Moo Hoo",
 			pre: "",
@@ -114,27 +112,27 @@ describe("parseName", () => {
 
 describe("parseNameList", () => {
 	it("should pass a single name", () => {
-		deepStrictEqual(parseNameList("Angenendt, Arnold"), [
+		expect(parseNameList("Angenendt, Arnold")).toEqual([
 			{ first: "Arnold", last: "Angenendt", pre: "", suf: "" },
 		]);
 	});
 
 	it("should pass multiple names", () => {
-		deepStrictEqual(parseNameList("Feinberg, Andrew P and Vogelstein, Bert"), [
+		expect(parseNameList("Feinberg, Andrew P and Vogelstein, Bert")).toEqual([
 			{ first: "Andrew P", last: "Feinberg", pre: "", suf: "" },
 			{ first: "Bert", last: "Vogelstein", pre: "", suf: "" },
 		]);
 	});
 
 	it("should pass 'and others'", () => {
-		deepStrictEqual(parseNameList("Jones, John Paul and others"), [
+		expect(parseNameList("Jones, John Paul and others")).toEqual([
 			{ first: "John Paul", last: "Jones", pre: "", suf: "" },
 			{ first: "", last: "others", pre: "", suf: "" },
 		]);
 	});
 
 	it("should split with uppercase AND", () => {
-		deepStrictEqual(parseNameList("Jones, John Paul AND others"), [
+		expect(parseNameList("Jones, John Paul AND others")).toEqual([
 			{ first: "John Paul", last: "Jones", pre: "", suf: "" },
 			{ first: "", last: "others", pre: "", suf: "" },
 		]);

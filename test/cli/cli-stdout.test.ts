@@ -1,6 +1,4 @@
-import { strictEqual } from "node:assert";
 import { spawnSync } from "node:child_process";
-import test from "node:test";
 import { BIN_PATH } from "./support/cli.ts";
 
 const input = `@article{a,
@@ -16,5 +14,5 @@ const output = `@article{a,
 
 test("CLI should output to stdout if no out file specified", async () => {
 	const proc = spawnSync(BIN_PATH, [], { input, encoding: "utf8" });
-	strictEqual(proc.stdout, output);
+	expect(proc.stdout).toBe(output);
 });

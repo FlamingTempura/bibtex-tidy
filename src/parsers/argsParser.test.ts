@@ -1,21 +1,19 @@
-import { deepStrictEqual } from "node:assert";
 
-import { describe, it } from "node:test";
 import { parseCLIArguments, parseLongCLIOption } from "./argsParser.ts";
 
 describe("parseCLIArguments", () => {
 	it("parses 0 arguments", () => {
-		deepStrictEqual(parseCLIArguments([]), { "": [] });
+		expect(parseCLIArguments([])).toEqual({ "": [] });
 	});
 
 	it("parses input paths", () => {
-		deepStrictEqual(parseCLIArguments(["foo.bib", "something.txt"]), {
+		expect(parseCLIArguments(["foo.bib", "something.txt"])).toEqual({
 			"": ["foo.bib", "something.txt"],
 		});
 	});
 
 	it("parses options", () => {
-		deepStrictEqual(parseCLIArguments(["--arg", "-a"]), {
+		expect(parseCLIArguments(["--arg", "-a"])).toEqual({
 			"": [],
 			"--arg": [],
 			"-a": [],
@@ -23,7 +21,7 @@ describe("parseCLIArguments", () => {
 	});
 
 	it("parses options with values", () => {
-		deepStrictEqual(parseCLIArguments(["--arg", "foo", "bar", "-a"]), {
+		expect(parseCLIArguments(["--arg", "foo", "bar", "-a"])).toEqual({
 			"": [],
 			"--arg": ["foo", "bar"],
 			"-a": [],
@@ -31,47 +29,38 @@ describe("parseCLIArguments", () => {
 	});
 
 	it("parses inputs paths and options", () => {
-		deepStrictEqual(
-			parseCLIArguments(["moo.bib", "--arg", "foo", "bar", "-a"]),
-			{
+		expect(parseCLIArguments(["moo.bib", "--arg", "foo", "bar", "-a"])).toEqual({
 				"": ["moo.bib"],
 				"--arg": ["foo", "bar"],
 				"-a": [],
-			},
-		);
+			});
 	});
 
 	it("parses trailing inputs paths", () => {
-		deepStrictEqual(
-			parseCLIArguments(["--arg", "foo", "bar", "-a", "moo.bib"]),
-			{
+		expect(parseCLIArguments(["--arg", "foo", "bar", "-a", "moo.bib"])).toEqual({
 				"": ["moo.bib"],
 				"--arg": ["foo", "bar"],
 				"-a": [],
-			},
-		);
+			});
 	});
 
 	it("does not parse trailing inputs paths if disabled", () => {
-		deepStrictEqual(
-			parseCLIArguments(["--arg", "foo", "bar", "-a", "moo.bib"], true),
-			{
+		expect(parseCLIArguments(["--arg", "foo", "bar", "-a", "moo.bib"], true)).toEqual({
 				"": [],
 				"--arg": ["foo", "bar"],
 				"-a": ["moo.bib"],
-			},
-		);
+			});
 	});
 
 	it("does not parse negated value as option", () => {
-		deepStrictEqual(parseCLIArguments(["moo.bib", "--sort", "-foo"]), {
+		expect(parseCLIArguments(["moo.bib", "--sort", "-foo"])).toEqual({
 			"": ["moo.bib"],
 			"--sort": ["-foo"],
 		});
 	});
 
 	it("parses short args", () => {
-		deepStrictEqual(parseCLIArguments(["moo.bib", "-mo"]), {
+		expect(parseCLIArguments(["moo.bib", "-mo"])).toEqual({
 			"": ["moo.bib"],
 			"-m": [],
 			"-o": [],
@@ -79,7 +68,7 @@ describe("parseCLIArguments", () => {
 	});
 
 	it("parses short args with values", () => {
-		deepStrictEqual(parseCLIArguments(["moo.bib", "-mo", "foo"]), {
+		expect(parseCLIArguments(["moo.bib", "-mo", "foo"])).toEqual({
 			"": ["moo.bib"],
 			"-m": [],
 			"-o": ["foo"],
@@ -89,39 +78,39 @@ describe("parseCLIArguments", () => {
 
 describe("parseCLIOption", () => {
 	it("parses option without value", () => {
-		deepStrictEqual(parseLongCLIOption("-f"), {
+		expect(parseLongCLIOption("-f")).toEqual({
 			key: "-f",
 			values: [],
 		});
-		deepStrictEqual(parseLongCLIOption("--foo"), {
+		expect(parseLongCLIOption("--foo")).toEqual({
 			key: "--foo",
 			values: [],
 		});
 	});
 
 	it("parses option with a value", () => {
-		deepStrictEqual(parseLongCLIOption("--foo=bar"), {
+		expect(parseLongCLIOption("--foo=bar")).toEqual({
 			key: "--foo",
 			values: ["bar"],
 		});
 	});
 
 	it("parses option with multiple values", () => {
-		deepStrictEqual(parseLongCLIOption("--foo=bar,moo"), {
+		expect(parseLongCLIOption("--foo=bar,moo")).toEqual({
 			key: "--foo",
 			values: ["bar", "moo"],
 		});
 	});
 
 	it("parses option with quoted values", () => {
-		deepStrictEqual(parseLongCLIOption("--foo=\"bar\",'moo'"), {
+		expect(parseLongCLIOption("--foo=\"bar\",'moo'")).toEqual({
 			key: "--foo",
 			values: ["bar", "moo"],
 		});
 	});
 
 	it("parses option with values including spaces", () => {
-		deepStrictEqual(parseLongCLIOption('--foo="bar moo"'), {
+		expect(parseLongCLIOption('--foo="bar moo"')).toEqual({
 			key: "--foo",
 			values: ["bar moo"],
 		});

@@ -1,10 +1,8 @@
-import { equal } from "node:assert";
 import { spawn } from "node:child_process";
 import { join } from "node:path";
-import test from "node:test";
-import { optionsToCLIArgs } from "../../../src/optionsToCLIArgs.ts";
-import type { CLIOptions } from "../../../src/optionUtils.ts";
-import type { Spec } from "./utils.ts";
+import { optionsToCLIArgs } from "../../src/optionsToCLIArgs.ts";
+import type { CLIOptions } from "../../src/optionUtils.ts";
+import { loadSpecFiles } from "../support/spec-loader.ts";
 
 const BIN_PATH = join("bin", "bibtex-tidy");
 
@@ -13,10 +11,6 @@ type CLIResult = {
 	warnings: string[];
 };
 
-/**
- * Run bibtex-tidy through command line. Unlike API, this accepts multiple
- * bibtex files.
- */
 async function testCLI(
 	input: string,
 	options: CLIOptions = {},
@@ -24,11 +18,12 @@ async function testCLI(
 	const result = await new Promise<{ stdout: string; stderr: string }>(
 		(resolve, reject) => {
 			const proc = spawn(BIN_PATH, optionsToCLIArgs(options), {
-				timeout: 100000,
+				timeout: 100_000,
 				stdio: "pipe",
 			});
 			proc.stdin.write(input);
 			proc.stdin.end();
+
 			let stdout = "";
 			let stderr = "";
 
@@ -39,9 +34,9 @@ async function testCLI(
 				stderr += data.toString();
 			});
 			proc.on("error", reject);
-			proc.on("exit", (code) => {
+			proc.on("close", (code) => {
 				if (code !== 0) {
-					reject(new Error(`CLI error: ${proc.stderr}`));
+					reject(new Error(`CLI error: ${stderr}`));
 				} else {
 					resolve({ stdout, stderr });
 				}
@@ -57,19 +52,18 @@ async function testCLI(
 	return { output: result.stdout, warnings };
 }
 
-export function runTest(spec: Spec) {
-	test(`${spec.title} - CLI`, async () => {
-		const result = await testCLI(spec.input, spec.options);
-		if (spec.expected) {
-			equal(result.output, spec.expected);
+const specFiles = await loadSpecFiles();
+
+describe("CLI E2E specs", () => {
+	for (const { filename, specs } of specFiles) {
+		for (const [index, spec] of specs.entries()) {
+			test(`${filename} document ${index + 1}: ${spec.title}`, async () => {
+				const result = await testCLI(spec.input, spec.options);
+
+				if (spec.expected) {
+					expect(result.output).toBe(spec.expected);
+				}
+			});
 		}
-		// if (spec.warnings) {
-		// 	equal(result.warnings.length, spec.warnings.length);
-		// 	for (let i = 0; i < spec.warnings.length; i++) {
-		// 		for (const key in spec.warnings[i]) {
-		// 			equal(result.warnings[i][key], spec.warnings[i][key]);
-		// 		}
-		// 	}
-		// }
-	});
-}
+	}
+});

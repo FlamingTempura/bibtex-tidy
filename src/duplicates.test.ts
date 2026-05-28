@@ -1,5 +1,3 @@
-import { equal } from "node:assert";
-import { describe, it } from "node:test";
 import { ASTProxy } from "./ASTProxy.ts";
 import { checkForDuplicates } from "./duplicates.ts";
 import { parseBibTeX } from "./parsers/bibtexParser.ts";
@@ -13,6 +11,6 @@ describe("checkForDuplicates", () => {
 			].join(""),
 		);
 		const result = checkForDuplicates(new ASTProxy(ast), ["citation"]);
-		equal(result.warnings.length, 1);
+		expect(result.warnings.length).toBe(1);
 	});
 });

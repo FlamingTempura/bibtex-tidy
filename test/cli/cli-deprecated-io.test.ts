@@ -3,10 +3,8 @@
 //
 // $ cat mybib.bib | bibtex-tidy --quiet -
 
-import { match, strictEqual } from "node:assert";
 import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
-import test from "node:test";
 import { BIN_PATH, tmpfile } from "./support/cli.ts";
 
 const input = `@article{a,
@@ -22,16 +20,13 @@ const output = `@article{a,
 
 test('CLI should accept stdin with "-" and show deprecated warning', () => {
 	const proc = spawnSync(BIN_PATH, ["-"], { input, encoding: "utf8" });
-	match(
-		proc.stderr,
-		/Interpreting "-" as stdin. NOTICE: as of v1.10.0 "-" can be omitted and will be invalid in v2. Stdin is read when no input file is specified./,
-	);
-	strictEqual(proc.stdout, output);
+	expect(proc.stderr).toMatch(/Interpreting "-" as stdin. NOTICE: as of v1.10.0 "-" can be omitted and will be invalid in v2. Stdin is read when no input file is specified./);
+	expect(proc.stdout).toBe(output);
 });
 
 test('CLI should not accept input files when specifying "-"', () => {
 	const proc = spawnSync(BIN_PATH, ["-", "foo"], { input, encoding: "utf8" });
-	match(proc.stderr, /Input files cannot be specified with "-"/);
+	expect(proc.stderr).toMatch(/Input files cannot be specified with "-"/);
 });
 
 test("CLI should modify input file by default (deprecated, will not modify in v2)", async () => {
@@ -40,9 +35,9 @@ test("CLI should modify input file by default (deprecated, will not modify in v2
 		encoding: "utf8",
 		stdio: ["inherit", "pipe", "pipe"],
 	});
-	match(proc.stdout, /Tidying.../);
-	match(proc.stderr, /NOTICE: In v2 you will need to specify --modify/);
-	strictEqual(await readFile(path, "utf8"), output);
+	expect(proc.stdout).toMatch(/Tidying.../);
+	expect(proc.stderr).toMatch(/NOTICE: In v2 you will need to specify --modify/);
+	expect(await readFile(path, "utf8")).toBe(output);
 });
 
 test("CLI should create backup in deprecated modify-by-default mode", async () => {
@@ -51,5 +46,5 @@ test("CLI should create backup in deprecated modify-by-default mode", async () =
 		encoding: "utf8",
 		stdio: ["inherit", "pipe", "pipe"],
 	});
-	strictEqual(await readFile(`${path}.original`, "utf8"), input);
+	expect(await readFile(`${path}.original`, "utf8")).toBe(input);
 });

@@ -1,6 +1,4 @@
-import { match, strictEqual } from "node:assert";
 import { spawnSync } from "node:child_process";
-import test from "node:test";
 import { BIN_PATH, tmpfile } from "./support/cli.ts";
 
 const input = `@article{a,
@@ -17,7 +15,7 @@ const output = `@article{a,
 test("CLI should accept input from a file (v2 flag)", async () => {
 	const path = await tmpfile(input);
 	const proc = spawnSync(BIN_PATH, [path, "--v2"], { encoding: "utf8" });
-	strictEqual(proc.stdout, output);
+	expect(proc.stdout).toBe(output);
 });
 
 test("CLI should not allow multiple input files without --modify (v2 flag)", async () => {
@@ -26,6 +24,6 @@ test("CLI should not allow multiple input files without --modify (v2 flag)", asy
 	const proc = spawnSync(BIN_PATH, [path1, path2, "--v2"], {
 		encoding: "utf8",
 	});
-	strictEqual(proc.status, 1);
-	match(proc.stderr, /Only one input file permitted unless using --modify\/-m/);
+	expect(proc.status).toBe(1);
+	expect(proc.stderr).toMatch(/Only one input file permitted unless using --modify\/-m/);
 });

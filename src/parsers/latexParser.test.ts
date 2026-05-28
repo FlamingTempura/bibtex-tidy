@@ -1,5 +1,3 @@
-import assert from "node:assert";
-import { describe, it } from "node:test";
 import { flattenLaTeX, parseLaTeX, stringifyLaTeX } from "./latexParser.ts";
 
 const testStrings = [
@@ -46,7 +44,7 @@ const testStrings = [
 describe("latex parser", () => {
 	it("parses latex", () => {
 		for (const str of testStrings) {
-			assert.strictEqual(stringifyLaTeX(parseLaTeX(str.input)), str.input);
+			expect(stringifyLaTeX(parseLaTeX(str.input))).toBe(str.input);
 		}
 	});
 });
@@ -54,10 +52,7 @@ describe("latex parser", () => {
 describe("flattening latex", () => {
 	it("flattens latex", () => {
 		for (const str of testStrings) {
-			assert.strictEqual(
-				stringifyLaTeX(flattenLaTeX(parseLaTeX(str.input))),
-				str.flattened,
-			);
+			expect(stringifyLaTeX(flattenLaTeX(parseLaTeX(str.input)))).toBe(str.flattened);
 		}
 	});
 });

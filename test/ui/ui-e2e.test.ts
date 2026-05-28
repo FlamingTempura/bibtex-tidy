@@ -1,15 +1,11 @@
-import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { EditorView } from "@codemirror/view";
-import { chromium, type Browser, type Page } from "playwright";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import yaml from "yaml";
+import { type Browser, chromium, type Page } from "playwright";
 import { normalizeOptions, type Options } from "../../src/optionUtils.ts";
-import type { Spec } from "./support/utils.ts";
+import { loadSpecFiles } from "../support/spec-loader.ts";
 
-const SPEC_DIR = import.meta.dirname;
-const WEB_ROOT = join(SPEC_DIR, "..", "..", "docs", "index.html");
+const WEB_ROOT = join(import.meta.dirname, "..", "..", "docs", "index.html");
 const WEB_URL = pathToFileURL(WEB_ROOT).href;
 
 declare global {
@@ -21,22 +17,6 @@ declare global {
 type WebResult = {
 	bibtex: string;
 };
-
-async function loadSpecs(): Promise<{ filename: string; specs: Spec[] }[]> {
-	const filenames = (await readdir(SPEC_DIR))
-		.filter((filename) => filename.endsWith(".spec.yaml"))
-		.sort();
-
-	return Promise.all(
-		filenames.map(async (filename) => {
-			const text = await readFile(join(SPEC_DIR, filename), "utf8");
-			const specs = yaml
-				.parseAllDocuments(text)
-				.map((document) => document.toJSON() as Spec);
-			return { filename, specs };
-		}),
-	);
-}
 
 async function setCheckbox(
 	page: Page,
@@ -144,16 +124,8 @@ async function testWeb(page: Page, input: string, options_: Options = {}) {
 		await setCheckbox(page, "duplicates", true);
 		await setCheckbox(page, "uniqKEY", options.duplicates.includes("key"));
 		await setCheckbox(page, "uniqDOI", options.duplicates.includes("doi"));
-		await setCheckbox(
-			page,
-			"uniqCIT",
-			options.duplicates.includes("citation"),
-		);
-		await setCheckbox(
-			page,
-			"uniqABS",
-			options.duplicates.includes("abstract"),
-		);
+		await setCheckbox(page, "uniqCIT", options.duplicates.includes("citation"));
+		await setCheckbox(page, "uniqABS", options.duplicates.includes("abstract"));
 	} else {
 		await setCheckbox(page, "duplicates", false);
 	}
@@ -202,11 +174,13 @@ async function testWeb(page: Page, input: string, options_: Options = {}) {
 	await page.getByRole("button", { name: "Tidy" }).click();
 	await page.locator("[role=alert]").waitFor();
 
-	const bibtex = await page.evaluate(() => window.cmEditor.state.doc.toString());
+	const bibtex = await page.evaluate(() =>
+		window.cmEditor.state.doc.toString(),
+	);
 	return { bibtex } satisfies WebResult;
 }
 
-const specFiles = await loadSpecs();
+const specFiles = await loadSpecFiles();
 
 describe("UI E2E specs", () => {
 	let browser: Browser | undefined;

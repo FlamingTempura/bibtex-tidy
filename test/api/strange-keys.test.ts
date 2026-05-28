@@ -1,5 +1,3 @@
-import { equal, notEqual, strictEqual } from "node:assert";
-import test from "node:test";
 import { tidy } from "../../bibtex-tidy.js";
 
 const input = `@article{ strange(key)=(has_odd-characters?:*£"!<>/ ,
@@ -41,7 +39,7 @@ title={Foo}
 
 test("strange characters in citation key", () => {
 	const tidied = tidy(input);
-	strictEqual(tidied.bibtex, output);
+	expect(tidied.bibtex).toBe(output);
 
 	for (const input of invalidInputs) {
 		let err: unknown;
@@ -50,11 +48,8 @@ test("strange characters in citation key", () => {
 		} catch (e) {
 			err = e;
 		}
-		notEqual(err, undefined);
-		equal(
-			String(err).includes("The entry key cannot contain the character"),
-			true,
-		);
+		expect(err).not.toBe(undefined);
+		expect(String(err).includes("The entry key cannot contain the character")).toBe(true);
 	}
 	let err: unknown;
 	try {
@@ -62,6 +57,6 @@ test("strange characters in citation key", () => {
 	} catch (e) {
 		err = e;
 	}
-	notEqual(err, undefined);
-	equal(String(err).includes("The entry key cannot contain whitespace"), true);
+	expect(err).not.toBe(undefined);
+	expect(String(err).includes("The entry key cannot contain whitespace")).toBe(true);
 });
