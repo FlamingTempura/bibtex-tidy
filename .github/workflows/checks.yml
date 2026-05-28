@@ -36,6 +36,14 @@ jobs:
       - name: Test
         run: npm run test
 
+      - name: Upload visual regression artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-artifacts
+          path: test-results/ui-vr/
+          if-no-files-found: ignore
+
   check-deployed-binary:
     runs-on: ubuntu-latest
     steps:
