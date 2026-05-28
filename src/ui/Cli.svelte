@@ -3,15 +3,14 @@ import { optionsToCLIArgs } from "../optionsToCLIArgs.ts";
 import type { OptionsNormalized } from "../optionUtils.ts";
 import Collapsible from "./Collapsible.svelte";
 
-export let options: OptionsNormalized;
+let { options }: { options: OptionsNormalized } = $props();
 
-let args: string[][];
-$: {
-	args = optionsToCLIArgs(options).map((opt) => {
+let args = $derived(
+	optionsToCLIArgs(options).map((opt) => {
 		const i = opt.indexOf("=");
 		return i === -1 ? [opt] : [opt.slice(0, i), opt.slice(i + 1)];
-	});
-}
+	}),
+);
 </script>
 
 <Collapsible title="CLI">
@@ -20,7 +19,7 @@ $: {
 		bibtex-tidy {#each args as [key, value]}
 			<span class="opt-name">{key}</span>{#if value && value.length > 0}
 				=<span class="opt-val">{value}</span>
-			{/if}{' '}
+			{/if}{" "}
 		{/each} YOUR_FILE.bib
 	</code>
 </Collapsible>
@@ -30,12 +29,11 @@ $: {
 		display: block;
 		padding: 8px;
 		word-wrap: break-word;
-	}
-
-	#cli .opt-name {
-		color: var(--green);
-	}
-	#cli .opt-val {
-		color: var(--orange);
+		.opt-name {
+			color: var(--green);
+		}
+		.opt-val {
+			color: var(--orange);
+		}
 	}
 </style>

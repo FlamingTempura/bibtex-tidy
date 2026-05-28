@@ -25,7 +25,7 @@ const WEB_PATH = "docs";
 const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join("bin", "bibtex-tidy");
 
 /**
- * Browser features
+ * Required browser features
  *
  * ----------------------------------------------------
  *                            Chrome  Edge  Safari  FF
@@ -51,7 +51,7 @@ const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join("bin", "bibtex-tidy");
  * ----------------------------------------------------
  *
  *
- * Polyfills:
+ * Features that are polyfilled/downlevelled:
  * ----------------------------------------------------
  *                            Chrome  Edge  Safari  FF
  * ----------------------------------------------------
@@ -60,6 +60,7 @@ const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join("bin", "bibtex-tidy");
  * Nullish coalescing           80     80     13.1  72    downlevel by esbuild
  * Optional chaining            80     80     13.1  74    downlevel by esbuild
  * :where (svelte 5)            88     88     14    78    not sure if needed
+ * nested css                   120    120    17.2  117   compiled by svelte
  *
  */
 // TODO: test on browserstack

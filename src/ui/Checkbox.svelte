@@ -1,18 +1,10 @@
 <script lang="ts">
-import { createEventDispatcher } from "svelte";
+import type { HTMLInputAttributes } from "svelte/elements";
 
-export let name: string | undefined;
-export let checked: boolean | undefined = undefined;
-
-const dispatch = createEventDispatcher<{ change: undefined }>();
+let { checked = $bindable(), ...props }: HTMLInputAttributes = $props();
 </script>
 
-<input
-	type="checkbox"
-	{name}
-	bind:checked
-	on:change={() => dispatch("change")}
-/>
+<input type="checkbox" bind:checked {...props} />
 
 <style>
 	input {
@@ -25,28 +17,32 @@ const dispatch = createEventDispatcher<{ change: undefined }>();
 		width: 17px;
 		height: 17px;
 		position: relative;
-	}
-	input:checked {
-		border-color: var(--light-blue);
-		background: var(--light-blue);
-	}
-	input:checked:before,
-	input:checked:after {
-		content: "";
-		position: absolute;
-		background: var(--main-bg);
-		width: 2px;
-	}
-	input:checked:before {
-		height: 11px;
-		left: 7px;
-		top: 1px;
-		transform: rotate(45deg);
-	}
-	input:checked:after {
-		height: 5px;
-		left: 2px;
-		top: 5px;
-		transform: rotate(-45deg);
+
+		&:checked {
+			border-color: var(--light-blue);
+			background: var(--light-blue);
+
+			&:before,
+			&:after {
+				content: "";
+				position: absolute;
+				background: var(--main-bg);
+				width: 2px;
+			}
+
+			&:before {
+				height: 11px;
+				left: 7px;
+				top: 1px;
+				transform: rotate(45deg);
+			}
+
+			&:after {
+				height: 5px;
+				left: 2px;
+				top: 5px;
+				transform: rotate(-45deg);
+			}
+		}
 	}
 </style>

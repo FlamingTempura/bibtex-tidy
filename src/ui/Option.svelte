@@ -27,7 +27,7 @@ let def = optionDefinitionByKey[option];
 	<Checkbox
 		name={option}
 		bind:checked
-		on:change={() => dispatch('change', checked ?? false)}
+		onchange={() => dispatch('change', checked ?? false)}
 	/>
 	{def.title}
 </Label>
