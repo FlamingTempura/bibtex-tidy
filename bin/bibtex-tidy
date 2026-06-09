@@ -7,13 +7,1787 @@
  * using `npm run build`. Edit files in './src' then rebuild.
  **/
 
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __typeError = (msg) => {
   throw TypeError(msg);
 };
+var __commonJS = (cb, mod) => function __require() {
+  try {
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  } catch (e) {
+    throw mod = 0, e;
+  }
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 var __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
 var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
 var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
 var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), setter ? setter.call(obj, value) : member.set(obj, value), value);
+
+// node_modules/core-js/internals/global-this.js
+var require_global_this = __commonJS({
+  "node_modules/core-js/internals/global-this.js"(exports, module) {
+    "use strict";
+    var check = function(it) {
+      return it && it.Math === Math && it;
+    };
+    module.exports = // eslint-disable-next-line es/no-global-this -- safe
+    check(typeof globalThis == "object" && globalThis) || check(typeof window == "object" && window) || // eslint-disable-next-line no-restricted-globals -- safe
+    check(typeof self == "object" && self) || check(typeof global == "object" && global) || check(typeof exports == "object" && exports) || // eslint-disable-next-line no-new-func -- fallback
+    /* @__PURE__ */ (function() {
+      return this;
+    })() || Function("return this")();
+  }
+});
+
+// node_modules/core-js/internals/fails.js
+var require_fails = __commonJS({
+  "node_modules/core-js/internals/fails.js"(exports, module) {
+    "use strict";
+    module.exports = function(exec) {
+      try {
+        return !!exec();
+      } catch (error) {
+        return true;
+      }
+    };
+  }
+});
+
+// node_modules/core-js/internals/descriptors.js
+var require_descriptors = __commonJS({
+  "node_modules/core-js/internals/descriptors.js"(exports, module) {
+    "use strict";
+    var fails = require_fails();
+    module.exports = !fails(function() {
+      return Object.defineProperty({}, 1, { get: function() {
+        return 7;
+      } })[1] !== 7;
+    });
+  }
+});
+
+// node_modules/core-js/internals/function-bind-native.js
+var require_function_bind_native = __commonJS({
+  "node_modules/core-js/internals/function-bind-native.js"(exports, module) {
+    "use strict";
+    var fails = require_fails();
+    module.exports = !fails(function() {
+      var test = function() {
+      }.bind();
+      return typeof test != "function" || test.hasOwnProperty("prototype");
+    });
+  }
+});
+
+// node_modules/core-js/internals/function-call.js
+var require_function_call = __commonJS({
+  "node_modules/core-js/internals/function-call.js"(exports, module) {
+    "use strict";
+    var NATIVE_BIND = require_function_bind_native();
+    var call = Function.prototype.call;
+    module.exports = NATIVE_BIND ? call.bind(call) : function() {
+      return call.apply(call, arguments);
+    };
+  }
+});
+
+// node_modules/core-js/internals/object-property-is-enumerable.js
+var require_object_property_is_enumerable = __commonJS({
+  "node_modules/core-js/internals/object-property-is-enumerable.js"(exports) {
+    "use strict";
+    var $propertyIsEnumerable = {}.propertyIsEnumerable;
+    var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+    var NASHORN_BUG = getOwnPropertyDescriptor && !$propertyIsEnumerable.call({ 1: 2 }, 1);
+    exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
+      var descriptor = getOwnPropertyDescriptor(this, V);
+      return !!descriptor && descriptor.enumerable;
+    } : $propertyIsEnumerable;
+  }
+});
+
+// node_modules/core-js/internals/create-property-descriptor.js
+var require_create_property_descriptor = __commonJS({
+  "node_modules/core-js/internals/create-property-descriptor.js"(exports, module) {
+    "use strict";
+    module.exports = function(bitmap, value) {
+      return {
+        enumerable: !(bitmap & 1),
+        configurable: !(bitmap & 2),
+        writable: !(bitmap & 4),
+        value
+      };
+    };
+  }
+});
+
+// node_modules/core-js/internals/function-uncurry-this.js
+var require_function_uncurry_this = __commonJS({
+  "node_modules/core-js/internals/function-uncurry-this.js"(exports, module) {
+    "use strict";
+    var NATIVE_BIND = require_function_bind_native();
+    var FunctionPrototype = Function.prototype;
+    var call = FunctionPrototype.call;
+    var uncurryThisWithBind = NATIVE_BIND && FunctionPrototype.bind.bind(call, call);
+    module.exports = NATIVE_BIND ? uncurryThisWithBind : function(fn) {
+      return function() {
+        return call.apply(fn, arguments);
+      };
+    };
+  }
+});
+
+// node_modules/core-js/internals/classof-raw.js
+var require_classof_raw = __commonJS({
+  "node_modules/core-js/internals/classof-raw.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this();
+    var toString = uncurryThis({}.toString);
+    var stringSlice = uncurryThis("".slice);
+    module.exports = function(it) {
+      return stringSlice(toString(it), 8, -1);
+    };
+  }
+});
+
+// node_modules/core-js/internals/indexed-object.js
+var require_indexed_object = __commonJS({
+  "node_modules/core-js/internals/indexed-object.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this();
+    var fails = require_fails();
+    var classof = require_classof_raw();
+    var $Object = Object;
+    var split = uncurryThis("".split);
+    module.exports = fails(function() {
+      return !$Object("z").propertyIsEnumerable(0);
+    }) ? function(it) {
+      return classof(it) === "String" ? split(it, "") : $Object(it);
+    } : $Object;
+  }
+});
+
+// node_modules/core-js/internals/is-null-or-undefined.js
+var require_is_null_or_undefined = __commonJS({
+  "node_modules/core-js/internals/is-null-or-undefined.js"(exports, module) {
+    "use strict";
+    module.exports = function(it) {
+      return it === null || it === void 0;
+    };
+  }
+});
+
+// node_modules/core-js/internals/require-object-coercible.js
+var require_require_object_coercible = __commonJS({
+  "node_modules/core-js/internals/require-object-coercible.js"(exports, module) {
+    "use strict";
+    var isNullOrUndefined = require_is_null_or_undefined();
+    var $TypeError = TypeError;
+    module.exports = function(it) {
+      if (isNullOrUndefined(it)) throw new $TypeError("Can't call method on " + it);
+      return it;
+    };
+  }
+});
+
+// node_modules/core-js/internals/to-indexed-object.js
+var require_to_indexed_object = __commonJS({
+  "node_modules/core-js/internals/to-indexed-object.js"(exports, module) {
+    "use strict";
+    var IndexedObject = require_indexed_object();
+    var requireObjectCoercible = require_require_object_coercible();
+    module.exports = function(it) {
+      return IndexedObject(requireObjectCoercible(it));
+    };
+  }
+});
+
+// node_modules/core-js/internals/is-callable.js
+var require_is_callable = __commonJS({
+  "node_modules/core-js/internals/is-callable.js"(exports, module) {
+    "use strict";
+    var documentAll = typeof document == "object" && document.all;
+    module.exports = typeof documentAll == "undefined" && documentAll !== void 0 ? function(argument) {
+      return typeof argument == "function" || argument === documentAll;
+    } : function(argument) {
+      return typeof argument == "function";
+    };
+  }
+});
+
+// node_modules/core-js/internals/is-object.js
+var require_is_object = __commonJS({
+  "node_modules/core-js/internals/is-object.js"(exports, module) {
+    "use strict";
+    var isCallable = require_is_callable();
+    module.exports = function(it) {
+      return typeof it == "object" ? it !== null : isCallable(it);
+    };
+  }
+});
+
+// node_modules/core-js/internals/get-built-in.js
+var require_get_built_in = __commonJS({
+  "node_modules/core-js/internals/get-built-in.js"(exports, module) {
+    "use strict";
+    var globalThis2 = require_global_this();
+    var isCallable = require_is_callable();
+    var aFunction = function(argument) {
+      return isCallable(argument) ? argument : void 0;
+    };
+    module.exports = function(namespace, method) {
+      return arguments.length < 2 ? aFunction(globalThis2[namespace]) : globalThis2[namespace] && globalThis2[namespace][method];
+    };
+  }
+});
+
+// node_modules/core-js/internals/object-is-prototype-of.js
+var require_object_is_prototype_of = __commonJS({
+  "node_modules/core-js/internals/object-is-prototype-of.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this();
+    module.exports = uncurryThis({}.isPrototypeOf);
+  }
+});
+
+// node_modules/core-js/internals/environment-user-agent.js
+var require_environment_user_agent = __commonJS({
+  "node_modules/core-js/internals/environment-user-agent.js"(exports, module) {
+    "use strict";
+    var globalThis2 = require_global_this();
+    var navigator = globalThis2.navigator;
+    var userAgent = navigator && navigator.userAgent;
+    module.exports = userAgent ? String(userAgent) : "";
+  }
+});
+
+// node_modules/core-js/internals/environment-v8-version.js
+var require_environment_v8_version = __commonJS({
+  "node_modules/core-js/internals/environment-v8-version.js"(exports, module) {
+    "use strict";
+    var globalThis2 = require_global_this();
+    var userAgent = require_environment_user_agent();
+    var process2 = globalThis2.process;
+    var Deno = globalThis2.Deno;
+    var versions2 = process2 && process2.versions || Deno && Deno.version;
+    var v8 = versions2 && versions2.v8;
+    var match;
+    var version2;
+    if (v8) {
+      match = v8.split(".");
+      version2 = match[0] > 0 && match[0] < 4 ? 1 : +(match[0] + match[1]);
+    }
+    if (!version2 && userAgent) {
+      match = userAgent.match(/Edge\/(\d+)/);
+      if (!match || match[1] >= 74) {
+        match = userAgent.match(/Chrome\/(\d+)/);
+        if (match) version2 = +match[1];
+      }
+    }
+    module.exports = version2;
+  }
+});
+
+// node_modules/core-js/internals/symbol-constructor-detection.js
+var require_symbol_constructor_detection = __commonJS({
+  "node_modules/core-js/internals/symbol-constructor-detection.js"(exports, module) {
+    "use strict";
+    var V8_VERSION = require_environment_v8_version();
+    var fails = require_fails();
+    var globalThis2 = require_global_this();
+    var $String = globalThis2.String;
+    module.exports = !!Object.getOwnPropertySymbols && !fails(function() {
+      var symbol = /* @__PURE__ */ Symbol("symbol detection");
+      return !$String(symbol) || !(Object(symbol) instanceof Symbol) || // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
+      !Symbol.sham && V8_VERSION && V8_VERSION < 41;
+    });
+  }
+});
+
+// node_modules/core-js/internals/use-symbol-as-uid.js
+var require_use_symbol_as_uid = __commonJS({
+  "node_modules/core-js/internals/use-symbol-as-uid.js"(exports, module) {
+    "use strict";
+    var NATIVE_SYMBOL = require_symbol_constructor_detection();
+    module.exports = NATIVE_SYMBOL && !Symbol.sham && typeof Symbol.iterator == "symbol";
+  }
+});
+
+// node_modules/core-js/internals/is-symbol.js
+var require_is_symbol = __commonJS({
+  "node_modules/core-js/internals/is-symbol.js"(exports, module) {
+    "use strict";
+    var getBuiltIn = require_get_built_in();
+    var isCallable = require_is_callable();
+    var isPrototypeOf = require_object_is_prototype_of();
+    var USE_SYMBOL_AS_UID = require_use_symbol_as_uid();
+    var $Object = Object;
+    module.exports = USE_SYMBOL_AS_UID ? function(it) {
+      return typeof it == "symbol";
+    } : function(it) {
+      var $Symbol = getBuiltIn("Symbol");
+      return isCallable($Symbol) && isPrototypeOf($Symbol.prototype, $Object(it));
+    };
+  }
+});
+
+// node_modules/core-js/internals/try-to-string.js
+var require_try_to_string = __commonJS({
+  "node_modules/core-js/internals/try-to-string.js"(exports, module) {
+    "use strict";
+    var $String = String;
+    module.exports = function(argument) {
+      try {
+        return $String(argument);
+      } catch (error) {
+        return "Object";
+      }
+    };
+  }
+});
+
+// node_modules/core-js/internals/a-callable.js
+var require_a_callable = __commonJS({
+  "node_modules/core-js/internals/a-callable.js"(exports, module) {
+    "use strict";
+    var isCallable = require_is_callable();
+    var tryToString = require_try_to_string();
+    var $TypeError = TypeError;
+    module.exports = function(argument) {
+      if (isCallable(argument)) return argument;
+      throw new $TypeError(tryToString(argument) + " is not a function");
+    };
+  }
+});
+
+// node_modules/core-js/internals/get-method.js
+var require_get_method = __commonJS({
+  "node_modules/core-js/internals/get-method.js"(exports, module) {
+    "use strict";
+    var aCallable = require_a_callable();
+    var isNullOrUndefined = require_is_null_or_undefined();
+    module.exports = function(V, P) {
+      var func = V[P];
+      return isNullOrUndefined(func) ? void 0 : aCallable(func);
+    };
+  }
+});
+
+// node_modules/core-js/internals/ordinary-to-primitive.js
+var require_ordinary_to_primitive = __commonJS({
+  "node_modules/core-js/internals/ordinary-to-primitive.js"(exports, module) {
+    "use strict";
+    var call = require_function_call();
+    var isCallable = require_is_callable();
+    var isObject = require_is_object();
+    var $TypeError = TypeError;
+    module.exports = function(input, pref) {
+      var fn, val;
+      if (pref === "string" && isCallable(fn = input.toString) && !isObject(val = call(fn, input))) return val;
+      if (isCallable(fn = input.valueOf) && !isObject(val = call(fn, input))) return val;
+      if (pref !== "string" && isCallable(fn = input.toString) && !isObject(val = call(fn, input))) return val;
+      throw new $TypeError("Can't convert object to primitive value");
+    };
+  }
+});
+
+// node_modules/core-js/internals/is-pure.js
+var require_is_pure = __commonJS({
+  "node_modules/core-js/internals/is-pure.js"(exports, module) {
+    "use strict";
+    module.exports = false;
+  }
+});
+
+// node_modules/core-js/internals/define-global-property.js
+var require_define_global_property = __commonJS({
+  "node_modules/core-js/internals/define-global-property.js"(exports, module) {
+    "use strict";
+    var globalThis2 = require_global_this();
+    var defineProperty = Object.defineProperty;
+    module.exports = function(key, value) {
+      try {
+        defineProperty(globalThis2, key, { value, configurable: true, writable: true });
+      } catch (error) {
+        globalThis2[key] = value;
+      }
+      return value;
+    };
+  }
+});
+
+// node_modules/core-js/internals/shared-store.js
+var require_shared_store = __commonJS({
+  "node_modules/core-js/internals/shared-store.js"(exports, module) {
+    "use strict";
+    var IS_PURE = require_is_pure();
+    var globalThis2 = require_global_this();
+    var defineGlobalProperty = require_define_global_property();
+    var SHARED = "__core-js_shared__";
+    var store = module.exports = globalThis2[SHARED] || defineGlobalProperty(SHARED, {});
+    (store.versions || (store.versions = [])).push({
+      version: "3.49.0",
+      mode: IS_PURE ? "pure" : "global",
+      copyright: "\xA9 2013\u20132025 Denis Pushkarev (zloirock.ru), 2025\u20132026 CoreJS Company (core-js.io). All rights reserved.",
+      license: "https://github.com/zloirock/core-js/blob/v3.49.0/LICENSE",
+      source: "https://github.com/zloirock/core-js"
+    });
+  }
+});
+
+// node_modules/core-js/internals/shared.js
+var require_shared = __commonJS({
+  "node_modules/core-js/internals/shared.js"(exports, module) {
+    "use strict";
+    var store = require_shared_store();
+    module.exports = function(key, value) {
+      return store[key] || (store[key] = value || {});
+    };
+  }
+});
+
+// node_modules/core-js/internals/to-object.js
+var require_to_object = __commonJS({
+  "node_modules/core-js/internals/to-object.js"(exports, module) {
+    "use strict";
+    var requireObjectCoercible = require_require_object_coercible();
+    var $Object = Object;
+    module.exports = function(argument) {
+      return $Object(requireObjectCoercible(argument));
+    };
+  }
+});
+
+// node_modules/core-js/internals/has-own-property.js
+var require_has_own_property = __commonJS({
+  "node_modules/core-js/internals/has-own-property.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this();
+    var toObject = require_to_object();
+    var hasOwnProperty = uncurryThis({}.hasOwnProperty);
+    module.exports = Object.hasOwn || function hasOwn(it, key) {
+      return hasOwnProperty(toObject(it), key);
+    };
+  }
+});
+
+// node_modules/core-js/internals/uid.js
+var require_uid = __commonJS({
+  "node_modules/core-js/internals/uid.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this();
+    var id = 0;
+    var postfix = Math.random();
+    var toString = uncurryThis(1.1.toString);
+    module.exports = function(key) {
+      return "Symbol(" + (key === void 0 ? "" : key) + ")_" + toString(++id + postfix, 36);
+    };
+  }
+});
+
+// node_modules/core-js/internals/well-known-symbol.js
+var require_well_known_symbol = __commonJS({
+  "node_modules/core-js/internals/well-known-symbol.js"(exports, module) {
+    "use strict";
+    var globalThis2 = require_global_this();
+    var shared = require_shared();
+    var hasOwn = require_has_own_property();
+    var uid = require_uid();
+    var NATIVE_SYMBOL = require_symbol_constructor_detection();
+    var USE_SYMBOL_AS_UID = require_use_symbol_as_uid();
+    var Symbol2 = globalThis2.Symbol;
+    var WellKnownSymbolsStore = shared("wks");
+    var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol2["for"] || Symbol2 : Symbol2 && Symbol2.withoutSetter || uid;
+    module.exports = function(name) {
+      if (!hasOwn(WellKnownSymbolsStore, name)) {
+        WellKnownSymbolsStore[name] = NATIVE_SYMBOL && hasOwn(Symbol2, name) ? Symbol2[name] : createWellKnownSymbol("Symbol." + name);
+      }
+      return WellKnownSymbolsStore[name];
+    };
+  }
+});
+
+// node_modules/core-js/internals/to-primitive.js
+var require_to_primitive = __commonJS({
+  "node_modules/core-js/internals/to-primitive.js"(exports, module) {
+    "use strict";
+    var call = require_function_call();
+    var isObject = require_is_object();
+    var isSymbol = require_is_symbol();
+    var getMethod = require_get_method();
+    var ordinaryToPrimitive = require_ordinary_to_primitive();
+    var wellKnownSymbol = require_well_known_symbol();
+    var $TypeError = TypeError;
+    var TO_PRIMITIVE = wellKnownSymbol("toPrimitive");
+    module.exports = function(input, pref) {
+      if (!isObject(input) || isSymbol(input)) return input;
+      var exoticToPrim = getMethod(input, TO_PRIMITIVE);
+      var result;
+      if (exoticToPrim) {
+        if (pref === void 0) pref = "default";
+        result = call(exoticToPrim, input, pref);
+        if (!isObject(result) || isSymbol(result)) return result;
+        throw new $TypeError("Can't convert object to primitive value");
+      }
+      if (pref === void 0) pref = "number";
+      return ordinaryToPrimitive(input, pref);
+    };
+  }
+});
+
+// node_modules/core-js/internals/to-property-key.js
+var require_to_property_key = __commonJS({
+  "node_modules/core-js/internals/to-property-key.js"(exports, module) {
+    "use strict";
+    var toPrimitive = require_to_primitive();
+    var isSymbol = require_is_symbol();
+    module.exports = function(argument) {
+      var key = toPrimitive(argument, "string");
+      return isSymbol(key) ? key : key + "";
+    };
+  }
+});
+
+// node_modules/core-js/internals/document-create-element.js
+var require_document_create_element = __commonJS({
+  "node_modules/core-js/internals/document-create-element.js"(exports, module) {
+    "use strict";
+    var globalThis2 = require_global_this();
+    var isObject = require_is_object();
+    var document2 = globalThis2.document;
+    var EXISTS = isObject(document2) && isObject(document2.createElement);
+    module.exports = function(it) {
+      return EXISTS ? document2.createElement(it) : {};
+    };
+  }
+});
+
+// node_modules/core-js/internals/ie8-dom-define.js
+var require_ie8_dom_define = __commonJS({
+  "node_modules/core-js/internals/ie8-dom-define.js"(exports, module) {
+    "use strict";
+    var DESCRIPTORS = require_descriptors();
+    var fails = require_fails();
+    var createElement = require_document_create_element();
+    module.exports = !DESCRIPTORS && !fails(function() {
+      return Object.defineProperty(createElement("div"), "a", {
+        get: function() {
+          return 7;
+        }
+      }).a !== 7;
+    });
+  }
+});
+
+// node_modules/core-js/internals/object-get-own-property-descriptor.js
+var require_object_get_own_property_descriptor = __commonJS({
+  "node_modules/core-js/internals/object-get-own-property-descriptor.js"(exports) {
+    "use strict";
+    var DESCRIPTORS = require_descriptors();
+    var call = require_function_call();
+    var propertyIsEnumerableModule = require_object_property_is_enumerable();
+    var createPropertyDescriptor = require_create_property_descriptor();
+    var toIndexedObject = require_to_indexed_object();
+    var toPropertyKey = require_to_property_key();
+    var hasOwn = require_has_own_property();
+    var IE8_DOM_DEFINE = require_ie8_dom_define();
+    var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+    exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
+      O = toIndexedObject(O);
+      P = toPropertyKey(P);
+      if (IE8_DOM_DEFINE) try {
+        return $getOwnPropertyDescriptor(O, P);
+      } catch (error) {
+      }
+      if (hasOwn(O, P)) return createPropertyDescriptor(!call(propertyIsEnumerableModule.f, O, P), O[P]);
+    };
+  }
+});
+
+// node_modules/core-js/internals/v8-prototype-define-bug.js
+var require_v8_prototype_define_bug = __commonJS({
+  "node_modules/core-js/internals/v8-prototype-define-bug.js"(exports, module) {
+    "use strict";
+    var DESCRIPTORS = require_descriptors();
+    var fails = require_fails();
+    module.exports = DESCRIPTORS && fails(function() {
+      return Object.defineProperty(function() {
+      }, "prototype", {
+        value: 42,
+        writable: false
+      }).prototype !== 42;
+    });
+  }
+});
+
+// node_modules/core-js/internals/an-object.js
+var require_an_object = __commonJS({
+  "node_modules/core-js/internals/an-object.js"(exports, module) {
+    "use strict";
+    var isObject = require_is_object();
+    var $String = String;
+    var $TypeError = TypeError;
+    module.exports = function(argument) {
+      if (isObject(argument)) return argument;
+      throw new $TypeError($String(argument) + " is not an object");
+    };
+  }
+});
+
+// node_modules/core-js/internals/object-define-property.js
+var require_object_define_property = __commonJS({
+  "node_modules/core-js/internals/object-define-property.js"(exports) {
+    "use strict";
+    var DESCRIPTORS = require_descriptors();
+    var IE8_DOM_DEFINE = require_ie8_dom_define();
+    var V8_PROTOTYPE_DEFINE_BUG = require_v8_prototype_define_bug();
+    var anObject = require_an_object();
+    var toPropertyKey = require_to_property_key();
+    var $TypeError = TypeError;
+    var $defineProperty = Object.defineProperty;
+    var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+    var ENUMERABLE = "enumerable";
+    var CONFIGURABLE = "configurable";
+    var WRITABLE = "writable";
+    exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P, Attributes) {
+      anObject(O);
+      P = toPropertyKey(P);
+      anObject(Attributes);
+      if (typeof O === "function" && P === "prototype" && "value" in Attributes && WRITABLE in Attributes && !Attributes[WRITABLE]) {
+        var current = $getOwnPropertyDescriptor(O, P);
+        if (current && current[WRITABLE]) {
+          O[P] = Attributes.value;
+          Attributes = {
+            configurable: CONFIGURABLE in Attributes ? Attributes[CONFIGURABLE] : current[CONFIGURABLE],
+            enumerable: ENUMERABLE in Attributes ? Attributes[ENUMERABLE] : current[ENUMERABLE],
+            writable: false
+          };
+        }
+      }
+      return $defineProperty(O, P, Attributes);
+    } : $defineProperty : function defineProperty(O, P, Attributes) {
+      anObject(O);
+      P = toPropertyKey(P);
+      anObject(Attributes);
+      if (IE8_DOM_DEFINE) try {
+        return $defineProperty(O, P, Attributes);
+      } catch (error) {
+      }
+      if ("get" in Attributes || "set" in Attributes) throw new $TypeError("Accessors not supported");
+      if ("value" in Attributes) O[P] = Attributes.value;
+      return O;
+    };
+  }
+});
+
+// node_modules/core-js/internals/create-non-enumerable-property.js
+var require_create_non_enumerable_property = __commonJS({
+  "node_modules/core-js/internals/create-non-enumerable-property.js"(exports, module) {
+    "use strict";
+    var DESCRIPTORS = require_descriptors();
+    var definePropertyModule = require_object_define_property();
+    var createPropertyDescriptor = require_create_property_descriptor();
+    module.exports = DESCRIPTORS ? function(object, key, value) {
+      return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
+    } : function(object, key, value) {
+      object[key] = value;
+      return object;
+    };
+  }
+});
+
+// node_modules/core-js/internals/function-name.js
+var require_function_name = __commonJS({
+  "node_modules/core-js/internals/function-name.js"(exports, module) {
+    "use strict";
+    var DESCRIPTORS = require_descriptors();
+    var hasOwn = require_has_own_property();
+    var FunctionPrototype = Function.prototype;
+    var getDescriptor = DESCRIPTORS && Object.getOwnPropertyDescriptor;
+    var EXISTS = hasOwn(FunctionPrototype, "name");
+    var PROPER = EXISTS && function something() {
+    }.name === "something";
+    var CONFIGURABLE = EXISTS && (!DESCRIPTORS || DESCRIPTORS && getDescriptor(FunctionPrototype, "name").configurable);
+    module.exports = {
+      EXISTS,
+      PROPER,
+      CONFIGURABLE
+    };
+  }
+});
+
+// node_modules/core-js/internals/inspect-source.js
+var require_inspect_source = __commonJS({
+  "node_modules/core-js/internals/inspect-source.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this();
+    var isCallable = require_is_callable();
+    var store = require_shared_store();
+    var functionToString = uncurryThis(Function.toString);
+    if (!isCallable(store.inspectSource)) {
+      store.inspectSource = function(it) {
+        return functionToString(it);
+      };
+    }
+    module.exports = store.inspectSource;
+  }
+});
+
+// node_modules/core-js/internals/weak-map-basic-detection.js
+var require_weak_map_basic_detection = __commonJS({
+  "node_modules/core-js/internals/weak-map-basic-detection.js"(exports, module) {
+    "use strict";
+    var globalThis2 = require_global_this();
+    var isCallable = require_is_callable();
+    var WeakMap2 = globalThis2.WeakMap;
+    module.exports = isCallable(WeakMap2) && /native code/.test(String(WeakMap2));
+  }
+});
+
+// node_modules/core-js/internals/shared-key.js
+var require_shared_key = __commonJS({
+  "node_modules/core-js/internals/shared-key.js"(exports, module) {
+    "use strict";
+    var shared = require_shared();
+    var uid = require_uid();
+    var keys = shared("keys");
+    module.exports = function(key) {
+      return keys[key] || (keys[key] = uid(key));
+    };
+  }
+});
+
+// node_modules/core-js/internals/hidden-keys.js
+var require_hidden_keys = __commonJS({
+  "node_modules/core-js/internals/hidden-keys.js"(exports, module) {
+    "use strict";
+    module.exports = {};
+  }
+});
+
+// node_modules/core-js/internals/internal-state.js
+var require_internal_state = __commonJS({
+  "node_modules/core-js/internals/internal-state.js"(exports, module) {
+    "use strict";
+    var NATIVE_WEAK_MAP = require_weak_map_basic_detection();
+    var globalThis2 = require_global_this();
+    var isObject = require_is_object();
+    var createNonEnumerableProperty = require_create_non_enumerable_property();
+    var hasOwn = require_has_own_property();
+    var shared = require_shared_store();
+    var sharedKey = require_shared_key();
+    var hiddenKeys = require_hidden_keys();
+    var OBJECT_ALREADY_INITIALIZED = "Object already initialized";
+    var TypeError2 = globalThis2.TypeError;
+    var WeakMap2 = globalThis2.WeakMap;
+    var set;
+    var get;
+    var has;
+    var enforce = function(it) {
+      return has(it) ? get(it) : set(it, {});
+    };
+    var getterFor = function(TYPE) {
+      return function(it) {
+        var state;
+        if (!isObject(it) || (state = get(it)).type !== TYPE) {
+          throw new TypeError2("Incompatible receiver, " + TYPE + " required");
+        }
+        return state;
+      };
+    };
+    if (NATIVE_WEAK_MAP || shared.state) {
+      store = shared.state || (shared.state = new WeakMap2());
+      store.get = store.get;
+      store.has = store.has;
+      store.set = store.set;
+      set = function(it, metadata) {
+        if (store.has(it)) throw new TypeError2(OBJECT_ALREADY_INITIALIZED);
+        metadata.facade = it;
+        store.set(it, metadata);
+        return metadata;
+      };
+      get = function(it) {
+        return store.get(it) || {};
+      };
+      has = function(it) {
+        return store.has(it);
+      };
+    } else {
+      STATE = sharedKey("state");
+      hiddenKeys[STATE] = true;
+      set = function(it, metadata) {
+        if (hasOwn(it, STATE)) throw new TypeError2(OBJECT_ALREADY_INITIALIZED);
+        metadata.facade = it;
+        createNonEnumerableProperty(it, STATE, metadata);
+        return metadata;
+      };
+      get = function(it) {
+        return hasOwn(it, STATE) ? it[STATE] : {};
+      };
+      has = function(it) {
+        return hasOwn(it, STATE);
+      };
+    }
+    var store;
+    var STATE;
+    module.exports = {
+      set,
+      get,
+      has,
+      enforce,
+      getterFor
+    };
+  }
+});
+
+// node_modules/core-js/internals/make-built-in.js
+var require_make_built_in = __commonJS({
+  "node_modules/core-js/internals/make-built-in.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this();
+    var fails = require_fails();
+    var isCallable = require_is_callable();
+    var hasOwn = require_has_own_property();
+    var DESCRIPTORS = require_descriptors();
+    var CONFIGURABLE_FUNCTION_NAME = require_function_name().CONFIGURABLE;
+    var inspectSource = require_inspect_source();
+    var InternalStateModule = require_internal_state();
+    var enforceInternalState = InternalStateModule.enforce;
+    var getInternalState = InternalStateModule.get;
+    var $String = String;
+    var defineProperty = Object.defineProperty;
+    var stringSlice = uncurryThis("".slice);
+    var replace = uncurryThis("".replace);
+    var join = uncurryThis([].join);
+    var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function() {
+      return defineProperty(function() {
+      }, "length", { value: 8 }).length !== 8;
+    });
+    var TEMPLATE = String(String).split("String");
+    var makeBuiltIn = module.exports = function(value, name, options) {
+      if (stringSlice($String(name), 0, 7) === "Symbol(") {
+        name = "[" + replace($String(name), /^Symbol\(([^)]*)\).*$/, "$1") + "]";
+      }
+      if (options && options.getter) name = "get " + name;
+      if (options && options.setter) name = "set " + name;
+      if (!hasOwn(value, "name") || CONFIGURABLE_FUNCTION_NAME && value.name !== name) {
+        if (DESCRIPTORS) defineProperty(value, "name", { value: name, configurable: true });
+        else value.name = name;
+      }
+      if (CONFIGURABLE_LENGTH && options && hasOwn(options, "arity") && value.length !== options.arity) {
+        defineProperty(value, "length", { value: options.arity });
+      }
+      try {
+        if (options && hasOwn(options, "constructor") && options.constructor) {
+          if (DESCRIPTORS) defineProperty(value, "prototype", { writable: false });
+        } else if (value.prototype) value.prototype = void 0;
+      } catch (error) {
+      }
+      var state = enforceInternalState(value);
+      if (!hasOwn(state, "source")) {
+        state.source = join(TEMPLATE, typeof name == "string" ? name : "");
+      }
+      return value;
+    };
+    Function.prototype.toString = makeBuiltIn(function toString() {
+      return isCallable(this) && getInternalState(this).source || inspectSource(this);
+    }, "toString");
+  }
+});
+
+// node_modules/core-js/internals/define-built-in.js
+var require_define_built_in = __commonJS({
+  "node_modules/core-js/internals/define-built-in.js"(exports, module) {
+    "use strict";
+    var isCallable = require_is_callable();
+    var definePropertyModule = require_object_define_property();
+    var makeBuiltIn = require_make_built_in();
+    var defineGlobalProperty = require_define_global_property();
+    module.exports = function(O, key, value, options) {
+      if (!options) options = {};
+      var simple = options.enumerable;
+      var name = options.name !== void 0 ? options.name : key;
+      if (isCallable(value)) makeBuiltIn(value, name, options);
+      if (options.global) {
+        if (simple) O[key] = value;
+        else defineGlobalProperty(key, value);
+      } else {
+        try {
+          if (!options.unsafe) delete O[key];
+          else if (O[key]) simple = true;
+        } catch (error) {
+        }
+        if (simple) O[key] = value;
+        else definePropertyModule.f(O, key, {
+          value,
+          enumerable: false,
+          configurable: !options.nonConfigurable,
+          writable: !options.nonWritable
+        });
+      }
+      return O;
+    };
+  }
+});
+
+// node_modules/core-js/internals/math-trunc.js
+var require_math_trunc = __commonJS({
+  "node_modules/core-js/internals/math-trunc.js"(exports, module) {
+    "use strict";
+    var ceil = Math.ceil;
+    var floor = Math.floor;
+    module.exports = Math.trunc || function trunc(x) {
+      var n = +x;
+      return (n > 0 ? floor : ceil)(n);
+    };
+  }
+});
+
+// node_modules/core-js/internals/to-integer-or-infinity.js
+var require_to_integer_or_infinity = __commonJS({
+  "node_modules/core-js/internals/to-integer-or-infinity.js"(exports, module) {
+    "use strict";
+    var trunc = require_math_trunc();
+    module.exports = function(argument) {
+      var number = +argument;
+      return number !== number || number === 0 ? 0 : trunc(number);
+    };
+  }
+});
+
+// node_modules/core-js/internals/to-absolute-index.js
+var require_to_absolute_index = __commonJS({
+  "node_modules/core-js/internals/to-absolute-index.js"(exports, module) {
+    "use strict";
+    var toIntegerOrInfinity = require_to_integer_or_infinity();
+    var max = Math.max;
+    var min = Math.min;
+    module.exports = function(index, length) {
+      var integer = toIntegerOrInfinity(index);
+      return integer < 0 ? max(integer + length, 0) : min(integer, length);
+    };
+  }
+});
+
+// node_modules/core-js/internals/to-length.js
+var require_to_length = __commonJS({
+  "node_modules/core-js/internals/to-length.js"(exports, module) {
+    "use strict";
+    var toIntegerOrInfinity = require_to_integer_or_infinity();
+    var min = Math.min;
+    module.exports = function(argument) {
+      var len = toIntegerOrInfinity(argument);
+      return len > 0 ? min(len, 9007199254740991) : 0;
+    };
+  }
+});
+
+// node_modules/core-js/internals/length-of-array-like.js
+var require_length_of_array_like = __commonJS({
+  "node_modules/core-js/internals/length-of-array-like.js"(exports, module) {
+    "use strict";
+    var toLength = require_to_length();
+    module.exports = function(obj) {
+      return toLength(obj.length);
+    };
+  }
+});
+
+// node_modules/core-js/internals/array-includes.js
+var require_array_includes = __commonJS({
+  "node_modules/core-js/internals/array-includes.js"(exports, module) {
+    "use strict";
+    var toIndexedObject = require_to_indexed_object();
+    var toAbsoluteIndex = require_to_absolute_index();
+    var lengthOfArrayLike = require_length_of_array_like();
+    var createMethod = function(IS_INCLUDES) {
+      return function($this, el, fromIndex) {
+        var O = toIndexedObject($this);
+        var length = lengthOfArrayLike(O);
+        if (length === 0) return !IS_INCLUDES && -1;
+        var index = toAbsoluteIndex(fromIndex, length);
+        var value;
+        if (IS_INCLUDES && el !== el) while (length > index) {
+          value = O[index++];
+          if (value !== value) return true;
+        }
+        else for (; length > index; index++) {
+          if ((IS_INCLUDES || index in O) && O[index] === el) return IS_INCLUDES || index || 0;
+        }
+        return !IS_INCLUDES && -1;
+      };
+    };
+    module.exports = {
+      // `Array.prototype.includes` method
+      // https://tc39.es/ecma262/#sec-array.prototype.includes
+      includes: createMethod(true),
+      // `Array.prototype.indexOf` method
+      // https://tc39.es/ecma262/#sec-array.prototype.indexof
+      indexOf: createMethod(false)
+    };
+  }
+});
+
+// node_modules/core-js/internals/object-keys-internal.js
+var require_object_keys_internal = __commonJS({
+  "node_modules/core-js/internals/object-keys-internal.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this();
+    var hasOwn = require_has_own_property();
+    var toIndexedObject = require_to_indexed_object();
+    var indexOf = require_array_includes().indexOf;
+    var hiddenKeys = require_hidden_keys();
+    var push = uncurryThis([].push);
+    module.exports = function(object, names) {
+      var O = toIndexedObject(object);
+      var i = 0;
+      var result = [];
+      var key;
+      for (key in O) !hasOwn(hiddenKeys, key) && hasOwn(O, key) && push(result, key);
+      while (names.length > i) if (hasOwn(O, key = names[i++])) {
+        ~indexOf(result, key) || push(result, key);
+      }
+      return result;
+    };
+  }
+});
+
+// node_modules/core-js/internals/enum-bug-keys.js
+var require_enum_bug_keys = __commonJS({
+  "node_modules/core-js/internals/enum-bug-keys.js"(exports, module) {
+    "use strict";
+    module.exports = [
+      "constructor",
+      "hasOwnProperty",
+      "isPrototypeOf",
+      "propertyIsEnumerable",
+      "toLocaleString",
+      "toString",
+      "valueOf"
+    ];
+  }
+});
+
+// node_modules/core-js/internals/object-get-own-property-names.js
+var require_object_get_own_property_names = __commonJS({
+  "node_modules/core-js/internals/object-get-own-property-names.js"(exports) {
+    "use strict";
+    var internalObjectKeys = require_object_keys_internal();
+    var enumBugKeys = require_enum_bug_keys();
+    var hiddenKeys = enumBugKeys.concat("length", "prototype");
+    exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+      return internalObjectKeys(O, hiddenKeys);
+    };
+  }
+});
+
+// node_modules/core-js/internals/object-get-own-property-symbols.js
+var require_object_get_own_property_symbols = __commonJS({
+  "node_modules/core-js/internals/object-get-own-property-symbols.js"(exports) {
+    "use strict";
+    exports.f = Object.getOwnPropertySymbols;
+  }
+});
+
+// node_modules/core-js/internals/own-keys.js
+var require_own_keys = __commonJS({
+  "node_modules/core-js/internals/own-keys.js"(exports, module) {
+    "use strict";
+    var getBuiltIn = require_get_built_in();
+    var uncurryThis = require_function_uncurry_this();
+    var getOwnPropertyNamesModule = require_object_get_own_property_names();
+    var getOwnPropertySymbolsModule = require_object_get_own_property_symbols();
+    var anObject = require_an_object();
+    var concat = uncurryThis([].concat);
+    module.exports = getBuiltIn("Reflect", "ownKeys") || function ownKeys(it) {
+      var keys = getOwnPropertyNamesModule.f(anObject(it));
+      var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
+      return getOwnPropertySymbols ? concat(keys, getOwnPropertySymbols(it)) : keys;
+    };
+  }
+});
+
+// node_modules/core-js/internals/copy-constructor-properties.js
+var require_copy_constructor_properties = __commonJS({
+  "node_modules/core-js/internals/copy-constructor-properties.js"(exports, module) {
+    "use strict";
+    var hasOwn = require_has_own_property();
+    var ownKeys = require_own_keys();
+    var getOwnPropertyDescriptorModule = require_object_get_own_property_descriptor();
+    var definePropertyModule = require_object_define_property();
+    module.exports = function(target, source, exceptions) {
+      var keys = ownKeys(source);
+      var defineProperty = definePropertyModule.f;
+      var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        if (!hasOwn(target, key) && !(exceptions && hasOwn(exceptions, key))) {
+          defineProperty(target, key, getOwnPropertyDescriptor(source, key));
+        }
+      }
+    };
+  }
+});
+
+// node_modules/core-js/internals/is-forced.js
+var require_is_forced = __commonJS({
+  "node_modules/core-js/internals/is-forced.js"(exports, module) {
+    "use strict";
+    var fails = require_fails();
+    var isCallable = require_is_callable();
+    var replacement = /#|\.prototype\./;
+    var isForced = function(feature, detection) {
+      var value = data[normalize(feature)];
+      return value === POLYFILL ? true : value === NATIVE ? false : isCallable(detection) ? fails(detection) : !!detection;
+    };
+    var normalize = isForced.normalize = function(string) {
+      return String(string).replace(replacement, ".").toLowerCase();
+    };
+    var data = isForced.data = {};
+    var NATIVE = isForced.NATIVE = "N";
+    var POLYFILL = isForced.POLYFILL = "P";
+    module.exports = isForced;
+  }
+});
+
+// node_modules/core-js/internals/export.js
+var require_export = __commonJS({
+  "node_modules/core-js/internals/export.js"(exports, module) {
+    "use strict";
+    var globalThis2 = require_global_this();
+    var getOwnPropertyDescriptor = require_object_get_own_property_descriptor().f;
+    var createNonEnumerableProperty = require_create_non_enumerable_property();
+    var defineBuiltIn = require_define_built_in();
+    var defineGlobalProperty = require_define_global_property();
+    var copyConstructorProperties = require_copy_constructor_properties();
+    var isForced = require_is_forced();
+    module.exports = function(options, source) {
+      var TARGET = options.target;
+      var GLOBAL = options.global;
+      var STATIC = options.stat;
+      var FORCED, target, key, targetProperty, sourceProperty, descriptor;
+      if (GLOBAL) {
+        target = globalThis2;
+      } else if (STATIC) {
+        target = globalThis2[TARGET] || defineGlobalProperty(TARGET, {});
+      } else {
+        target = globalThis2[TARGET] && globalThis2[TARGET].prototype;
+      }
+      if (target) for (key in source) {
+        sourceProperty = source[key];
+        if (options.dontCallGetSet) {
+          descriptor = getOwnPropertyDescriptor(target, key);
+          targetProperty = descriptor && descriptor.value;
+        } else targetProperty = target[key];
+        FORCED = isForced(GLOBAL ? key : TARGET + (STATIC ? "." : "#") + key, options.forced);
+        if (!FORCED && targetProperty !== void 0) {
+          if (typeof sourceProperty == typeof targetProperty) continue;
+          copyConstructorProperties(sourceProperty, targetProperty);
+        }
+        if (options.sham || targetProperty && targetProperty.sham) {
+          createNonEnumerableProperty(sourceProperty, "sham", true);
+        }
+        defineBuiltIn(target, key, sourceProperty, options);
+      }
+    };
+  }
+});
+
+// node_modules/core-js/internals/is-array.js
+var require_is_array = __commonJS({
+  "node_modules/core-js/internals/is-array.js"(exports, module) {
+    "use strict";
+    var classof = require_classof_raw();
+    module.exports = Array.isArray || function isArray(argument) {
+      return classof(argument) === "Array";
+    };
+  }
+});
+
+// node_modules/core-js/internals/does-not-exceed-safe-integer.js
+var require_does_not_exceed_safe_integer = __commonJS({
+  "node_modules/core-js/internals/does-not-exceed-safe-integer.js"(exports, module) {
+    "use strict";
+    var $TypeError = TypeError;
+    var MAX_SAFE_INTEGER = 9007199254740991;
+    module.exports = function(it) {
+      if (it > MAX_SAFE_INTEGER) throw new $TypeError("Maximum allowed index exceeded");
+      return it;
+    };
+  }
+});
+
+// node_modules/core-js/internals/function-uncurry-this-clause.js
+var require_function_uncurry_this_clause = __commonJS({
+  "node_modules/core-js/internals/function-uncurry-this-clause.js"(exports, module) {
+    "use strict";
+    var classofRaw = require_classof_raw();
+    var uncurryThis = require_function_uncurry_this();
+    module.exports = function(fn) {
+      if (classofRaw(fn) === "Function") return uncurryThis(fn);
+    };
+  }
+});
+
+// node_modules/core-js/internals/function-bind-context.js
+var require_function_bind_context = __commonJS({
+  "node_modules/core-js/internals/function-bind-context.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this_clause();
+    var aCallable = require_a_callable();
+    var NATIVE_BIND = require_function_bind_native();
+    var bind = uncurryThis(uncurryThis.bind);
+    module.exports = function(fn, that) {
+      aCallable(fn);
+      return that === void 0 ? fn : NATIVE_BIND ? bind(fn, that) : function() {
+        return fn.apply(that, arguments);
+      };
+    };
+  }
+});
+
+// node_modules/core-js/internals/create-property.js
+var require_create_property = __commonJS({
+  "node_modules/core-js/internals/create-property.js"(exports, module) {
+    "use strict";
+    var DESCRIPTORS = require_descriptors();
+    var definePropertyModule = require_object_define_property();
+    var createPropertyDescriptor = require_create_property_descriptor();
+    module.exports = function(object, key, value) {
+      if (DESCRIPTORS) definePropertyModule.f(object, key, createPropertyDescriptor(0, value));
+      else object[key] = value;
+    };
+  }
+});
+
+// node_modules/core-js/internals/flatten-into-array.js
+var require_flatten_into_array = __commonJS({
+  "node_modules/core-js/internals/flatten-into-array.js"(exports, module) {
+    "use strict";
+    var isArray = require_is_array();
+    var lengthOfArrayLike = require_length_of_array_like();
+    var doesNotExceedSafeInteger = require_does_not_exceed_safe_integer();
+    var bind = require_function_bind_context();
+    var createProperty = require_create_property();
+    var flattenIntoArray = function(target, original, source, sourceLen, start2, depth, mapper, thisArg) {
+      var targetIndex = start2;
+      var sourceIndex = 0;
+      var mapFn = mapper ? bind(mapper, thisArg) : false;
+      var element, elementLen;
+      while (sourceIndex < sourceLen) {
+        if (sourceIndex in source) {
+          element = mapFn ? mapFn(source[sourceIndex], sourceIndex, original) : source[sourceIndex];
+          if (depth > 0 && isArray(element)) {
+            elementLen = lengthOfArrayLike(element);
+            targetIndex = flattenIntoArray(target, original, element, elementLen, targetIndex, depth - 1) - 1;
+          } else {
+            doesNotExceedSafeInteger(targetIndex + 1);
+            createProperty(target, targetIndex, element);
+          }
+          targetIndex++;
+        }
+        sourceIndex++;
+      }
+      return targetIndex;
+    };
+    module.exports = flattenIntoArray;
+  }
+});
+
+// node_modules/core-js/internals/to-string-tag-support.js
+var require_to_string_tag_support = __commonJS({
+  "node_modules/core-js/internals/to-string-tag-support.js"(exports, module) {
+    "use strict";
+    var wellKnownSymbol = require_well_known_symbol();
+    var TO_STRING_TAG = wellKnownSymbol("toStringTag");
+    var test = {};
+    test[TO_STRING_TAG] = "z";
+    module.exports = String(test) === "[object z]";
+  }
+});
+
+// node_modules/core-js/internals/classof.js
+var require_classof = __commonJS({
+  "node_modules/core-js/internals/classof.js"(exports, module) {
+    "use strict";
+    var TO_STRING_TAG_SUPPORT = require_to_string_tag_support();
+    var isCallable = require_is_callable();
+    var classofRaw = require_classof_raw();
+    var wellKnownSymbol = require_well_known_symbol();
+    var TO_STRING_TAG = wellKnownSymbol("toStringTag");
+    var $Object = Object;
+    var CORRECT_ARGUMENTS = classofRaw(/* @__PURE__ */ (function() {
+      return arguments;
+    })()) === "Arguments";
+    var tryGet = function(it, key) {
+      try {
+        return it[key];
+      } catch (error) {
+      }
+    };
+    module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function(it) {
+      var O, tag, result;
+      return it === void 0 ? "Undefined" : it === null ? "Null" : typeof (tag = tryGet(O = $Object(it), TO_STRING_TAG)) == "string" ? tag : CORRECT_ARGUMENTS ? classofRaw(O) : (result = classofRaw(O)) === "Object" && isCallable(O.callee) ? "Arguments" : result;
+    };
+  }
+});
+
+// node_modules/core-js/internals/is-constructor.js
+var require_is_constructor = __commonJS({
+  "node_modules/core-js/internals/is-constructor.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this();
+    var fails = require_fails();
+    var isCallable = require_is_callable();
+    var classof = require_classof();
+    var getBuiltIn = require_get_built_in();
+    var inspectSource = require_inspect_source();
+    var noop = function() {
+    };
+    var construct = getBuiltIn("Reflect", "construct");
+    var constructorRegExp = /^\s*(?:class|function)\b/;
+    var exec = uncurryThis(constructorRegExp.exec);
+    var INCORRECT_TO_STRING = !constructorRegExp.test(noop);
+    var isConstructorModern = function isConstructor(argument) {
+      if (!isCallable(argument)) return false;
+      try {
+        construct(noop, [], argument);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    };
+    var isConstructorLegacy = function isConstructor(argument) {
+      if (!isCallable(argument)) return false;
+      switch (classof(argument)) {
+        case "AsyncFunction":
+        case "GeneratorFunction":
+        case "AsyncGeneratorFunction":
+          return false;
+      }
+      try {
+        return INCORRECT_TO_STRING || !!exec(constructorRegExp, inspectSource(argument));
+      } catch (error) {
+        return true;
+      }
+    };
+    isConstructorLegacy.sham = true;
+    module.exports = !construct || fails(function() {
+      var called;
+      return isConstructorModern(isConstructorModern.call) || !isConstructorModern(Object) || !isConstructorModern(function() {
+        called = true;
+      }) || called;
+    }) ? isConstructorLegacy : isConstructorModern;
+  }
+});
+
+// node_modules/core-js/internals/array-species-constructor.js
+var require_array_species_constructor = __commonJS({
+  "node_modules/core-js/internals/array-species-constructor.js"(exports, module) {
+    "use strict";
+    var isArray = require_is_array();
+    var isConstructor = require_is_constructor();
+    var isObject = require_is_object();
+    var wellKnownSymbol = require_well_known_symbol();
+    var SPECIES = wellKnownSymbol("species");
+    var $Array = Array;
+    module.exports = function(originalArray) {
+      var C;
+      if (isArray(originalArray)) {
+        C = originalArray.constructor;
+        if (isConstructor(C) && (C === $Array || isArray(C.prototype))) C = void 0;
+        else if (isObject(C)) {
+          C = C[SPECIES];
+          if (C === null) C = void 0;
+        }
+      }
+      return C === void 0 ? $Array : C;
+    };
+  }
+});
+
+// node_modules/core-js/internals/array-species-create.js
+var require_array_species_create = __commonJS({
+  "node_modules/core-js/internals/array-species-create.js"(exports, module) {
+    "use strict";
+    var arraySpeciesConstructor = require_array_species_constructor();
+    module.exports = function(originalArray, length) {
+      return new (arraySpeciesConstructor(originalArray))(length === 0 ? 0 : length);
+    };
+  }
+});
+
+// node_modules/core-js/modules/es.array.flat-map.js
+var require_es_array_flat_map = __commonJS({
+  "node_modules/core-js/modules/es.array.flat-map.js"() {
+    "use strict";
+    var $ = require_export();
+    var flattenIntoArray = require_flatten_into_array();
+    var aCallable = require_a_callable();
+    var toObject = require_to_object();
+    var lengthOfArrayLike = require_length_of_array_like();
+    var arraySpeciesCreate = require_array_species_create();
+    $({ target: "Array", proto: true }, {
+      flatMap: function flatMap(callbackfn) {
+        var O = toObject(this);
+        var sourceLen = lengthOfArrayLike(O);
+        var A;
+        aCallable(callbackfn);
+        A = arraySpeciesCreate(O, 0);
+        flattenIntoArray(A, O, O, sourceLen, 0, 1, callbackfn, arguments.length > 1 ? arguments[1] : void 0);
+        return A;
+      }
+    });
+  }
+});
+
+// node_modules/core-js/internals/iterators.js
+var require_iterators = __commonJS({
+  "node_modules/core-js/internals/iterators.js"(exports, module) {
+    "use strict";
+    module.exports = {};
+  }
+});
+
+// node_modules/core-js/internals/is-array-iterator-method.js
+var require_is_array_iterator_method = __commonJS({
+  "node_modules/core-js/internals/is-array-iterator-method.js"(exports, module) {
+    "use strict";
+    var wellKnownSymbol = require_well_known_symbol();
+    var Iterators = require_iterators();
+    var ITERATOR = wellKnownSymbol("iterator");
+    var ArrayPrototype = Array.prototype;
+    module.exports = function(it) {
+      return it !== void 0 && (Iterators.Array === it || ArrayPrototype[ITERATOR] === it);
+    };
+  }
+});
+
+// node_modules/core-js/internals/get-iterator-method.js
+var require_get_iterator_method = __commonJS({
+  "node_modules/core-js/internals/get-iterator-method.js"(exports, module) {
+    "use strict";
+    var classof = require_classof();
+    var getMethod = require_get_method();
+    var isNullOrUndefined = require_is_null_or_undefined();
+    var Iterators = require_iterators();
+    var wellKnownSymbol = require_well_known_symbol();
+    var ITERATOR = wellKnownSymbol("iterator");
+    module.exports = function(it) {
+      if (!isNullOrUndefined(it)) return getMethod(it, ITERATOR) || getMethod(it, "@@iterator") || Iterators[classof(it)];
+    };
+  }
+});
+
+// node_modules/core-js/internals/get-iterator.js
+var require_get_iterator = __commonJS({
+  "node_modules/core-js/internals/get-iterator.js"(exports, module) {
+    "use strict";
+    var call = require_function_call();
+    var aCallable = require_a_callable();
+    var anObject = require_an_object();
+    var tryToString = require_try_to_string();
+    var getIteratorMethod = require_get_iterator_method();
+    var $TypeError = TypeError;
+    module.exports = function(argument, usingIterator) {
+      var iteratorMethod = arguments.length < 2 ? getIteratorMethod(argument) : usingIterator;
+      if (aCallable(iteratorMethod)) return anObject(call(iteratorMethod, argument));
+      throw new $TypeError(tryToString(argument) + " is not iterable");
+    };
+  }
+});
+
+// node_modules/core-js/internals/iterator-close.js
+var require_iterator_close = __commonJS({
+  "node_modules/core-js/internals/iterator-close.js"(exports, module) {
+    "use strict";
+    var call = require_function_call();
+    var anObject = require_an_object();
+    var getMethod = require_get_method();
+    module.exports = function(iterator, kind, value) {
+      var innerResult, innerError;
+      anObject(iterator);
+      try {
+        innerResult = getMethod(iterator, "return");
+        if (!innerResult) {
+          if (kind === "throw") throw value;
+          return value;
+        }
+        innerResult = call(innerResult, iterator);
+      } catch (error) {
+        innerError = true;
+        innerResult = error;
+      }
+      if (kind === "throw") throw value;
+      if (innerError) throw innerResult;
+      anObject(innerResult);
+      return value;
+    };
+  }
+});
+
+// node_modules/core-js/internals/iterate.js
+var require_iterate = __commonJS({
+  "node_modules/core-js/internals/iterate.js"(exports, module) {
+    "use strict";
+    var bind = require_function_bind_context();
+    var call = require_function_call();
+    var anObject = require_an_object();
+    var tryToString = require_try_to_string();
+    var isArrayIteratorMethod = require_is_array_iterator_method();
+    var lengthOfArrayLike = require_length_of_array_like();
+    var isPrototypeOf = require_object_is_prototype_of();
+    var getIterator = require_get_iterator();
+    var getIteratorMethod = require_get_iterator_method();
+    var iteratorClose = require_iterator_close();
+    var $TypeError = TypeError;
+    var Result = function(stopped, result) {
+      this.stopped = stopped;
+      this.result = result;
+    };
+    var ResultPrototype = Result.prototype;
+    module.exports = function(iterable, unboundFunction, options) {
+      var that = options && options.that;
+      var AS_ENTRIES = !!(options && options.AS_ENTRIES);
+      var IS_RECORD = !!(options && options.IS_RECORD);
+      var IS_ITERATOR = !!(options && options.IS_ITERATOR);
+      var INTERRUPTED = !!(options && options.INTERRUPTED);
+      var fn = bind(unboundFunction, that);
+      var iterator, iterFn, index, length, result, next, step;
+      var stop = function(condition) {
+        var $iterator = iterator;
+        iterator = void 0;
+        if ($iterator) iteratorClose($iterator, "normal");
+        return new Result(true, condition);
+      };
+      var callFn = function(value2) {
+        if (AS_ENTRIES) {
+          anObject(value2);
+          return INTERRUPTED ? fn(value2[0], value2[1], stop) : fn(value2[0], value2[1]);
+        }
+        return INTERRUPTED ? fn(value2, stop) : fn(value2);
+      };
+      if (IS_RECORD) {
+        iterator = iterable.iterator;
+      } else if (IS_ITERATOR) {
+        iterator = iterable;
+      } else {
+        iterFn = getIteratorMethod(iterable);
+        if (!iterFn) throw new $TypeError(tryToString(iterable) + " is not iterable");
+        if (isArrayIteratorMethod(iterFn)) {
+          for (index = 0, length = lengthOfArrayLike(iterable); length > index; index++) {
+            result = callFn(iterable[index]);
+            if (result && isPrototypeOf(ResultPrototype, result)) return result;
+          }
+          return new Result(false);
+        }
+        iterator = getIterator(iterable, iterFn);
+      }
+      next = IS_RECORD ? iterable.next : iterator.next;
+      while (!(step = call(next, iterator)).done) {
+        var value = step.value;
+        try {
+          result = callFn(value);
+        } catch (error) {
+          if (iterator) iteratorClose(iterator, "throw", error);
+          else throw error;
+        }
+        if (typeof result == "object" && result && isPrototypeOf(ResultPrototype, result)) return result;
+      }
+      return new Result(false);
+    };
+  }
+});
+
+// node_modules/core-js/modules/es.object.from-entries.js
+var require_es_object_from_entries = __commonJS({
+  "node_modules/core-js/modules/es.object.from-entries.js"() {
+    "use strict";
+    var $ = require_export();
+    var iterate = require_iterate();
+    var createProperty = require_create_property();
+    $({ target: "Object", stat: true }, {
+      fromEntries: function fromEntries(iterable) {
+        var obj = {};
+        iterate(iterable, function(k, v) {
+          createProperty(obj, k, v);
+        }, { AS_ENTRIES: true });
+        return obj;
+      }
+    });
+  }
+});
+
+// node_modules/core-js/internals/to-string.js
+var require_to_string = __commonJS({
+  "node_modules/core-js/internals/to-string.js"(exports, module) {
+    "use strict";
+    var classof = require_classof();
+    var $String = String;
+    module.exports = function(argument) {
+      if (classof(argument) === "Symbol") throw new TypeError("Cannot convert a Symbol value to a string");
+      return $String(argument);
+    };
+  }
+});
+
+// node_modules/core-js/internals/whitespaces.js
+var require_whitespaces = __commonJS({
+  "node_modules/core-js/internals/whitespaces.js"(exports, module) {
+    "use strict";
+    module.exports = "	\n\v\f\r \xA0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF";
+  }
+});
+
+// node_modules/core-js/internals/string-trim.js
+var require_string_trim = __commonJS({
+  "node_modules/core-js/internals/string-trim.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this();
+    var requireObjectCoercible = require_require_object_coercible();
+    var toString = require_to_string();
+    var whitespaces = require_whitespaces();
+    var replace = uncurryThis("".replace);
+    var ltrim = RegExp("^[" + whitespaces + "]+");
+    var rtrim = RegExp("(^|[^" + whitespaces + "])[" + whitespaces + "]+$");
+    var createMethod = function(TYPE) {
+      return function($this) {
+        var string = toString(requireObjectCoercible($this));
+        if (TYPE & 1) string = replace(string, ltrim, "");
+        if (TYPE & 2) string = replace(string, rtrim, "$1");
+        return string;
+      };
+    };
+    module.exports = {
+      // `String.prototype.{ trimLeft, trimStart }` methods
+      // https://tc39.es/ecma262/#sec-string.prototype.trimstart
+      start: createMethod(1),
+      // `String.prototype.{ trimRight, trimEnd }` methods
+      // https://tc39.es/ecma262/#sec-string.prototype.trimend
+      end: createMethod(2),
+      // `String.prototype.trim` method
+      // https://tc39.es/ecma262/#sec-string.prototype.trim
+      trim: createMethod(3)
+    };
+  }
+});
+
+// node_modules/core-js/internals/string-trim-forced.js
+var require_string_trim_forced = __commonJS({
+  "node_modules/core-js/internals/string-trim-forced.js"(exports, module) {
+    "use strict";
+    var PROPER_FUNCTION_NAME = require_function_name().PROPER;
+    var fails = require_fails();
+    var whitespaces = require_whitespaces();
+    var non = "\u200B\x85\u180E";
+    module.exports = function(METHOD_NAME) {
+      return fails(function() {
+        return !!whitespaces[METHOD_NAME]() || non[METHOD_NAME]() !== non || PROPER_FUNCTION_NAME && whitespaces[METHOD_NAME].name !== METHOD_NAME;
+      });
+    };
+  }
+});
+
+// node_modules/core-js/internals/string-trim-end.js
+var require_string_trim_end = __commonJS({
+  "node_modules/core-js/internals/string-trim-end.js"(exports, module) {
+    "use strict";
+    var $trimEnd = require_string_trim().end;
+    var forcedStringTrimMethod = require_string_trim_forced();
+    module.exports = forcedStringTrimMethod("trimEnd") ? function trimEnd() {
+      return $trimEnd(this);
+    } : "".trimEnd;
+  }
+});
+
+// node_modules/core-js/modules/es.string.trim-right.js
+var require_es_string_trim_right = __commonJS({
+  "node_modules/core-js/modules/es.string.trim-right.js"() {
+    "use strict";
+    var $ = require_export();
+    var trimEnd = require_string_trim_end();
+    $({ target: "String", proto: true, name: "trimEnd", forced: "".trimRight !== trimEnd }, {
+      trimRight: trimEnd
+    });
+  }
+});
+
+// node_modules/core-js/modules/es.string.trim-end.js
+var require_es_string_trim_end = __commonJS({
+  "node_modules/core-js/modules/es.string.trim-end.js"() {
+    "use strict";
+    require_es_string_trim_right();
+    var $ = require_export();
+    var trimEnd = require_string_trim_end();
+    $({ target: "String", proto: true, name: "trimEnd", forced: "".trimEnd !== trimEnd }, {
+      trimEnd
+    });
+  }
+});
+
+// node_modules/core-js/internals/map-helpers.js
+var require_map_helpers = __commonJS({
+  "node_modules/core-js/internals/map-helpers.js"(exports, module) {
+    "use strict";
+    var uncurryThis = require_function_uncurry_this();
+    var MapPrototype = Map.prototype;
+    module.exports = {
+      // eslint-disable-next-line es/no-map -- safe
+      Map,
+      set: uncurryThis(MapPrototype.set),
+      get: uncurryThis(MapPrototype.get),
+      has: uncurryThis(MapPrototype.has),
+      remove: uncurryThis(MapPrototype["delete"]),
+      proto: MapPrototype
+    };
+  }
+});
+
+// node_modules/core-js/modules/es.map.get-or-insert.js
+var require_es_map_get_or_insert = __commonJS({
+  "node_modules/core-js/modules/es.map.get-or-insert.js"() {
+    "use strict";
+    var $ = require_export();
+    var MapHelpers = require_map_helpers();
+    var IS_PURE = require_is_pure();
+    var get = MapHelpers.get;
+    var has = MapHelpers.has;
+    var set = MapHelpers.set;
+    $({ target: "Map", proto: true, real: true, forced: IS_PURE }, {
+      getOrInsert: function getOrInsert(key, value) {
+        if (has(this, key)) return get(this, key);
+        set(this, key, value);
+        return value;
+      }
+    });
+  }
+});
+
+// src/polyfills.ts
+var import_es_array = __toESM(require_es_array_flat_map(), 1);
+var import_es_object = __toESM(require_es_object_from_entries(), 1);
+var import_es_string = __toESM(require_es_string_trim_end(), 1);
+var import_es_map = __toESM(require_es_map_get_or_insert(), 1);
 
 // src/cli/cli.ts
 import assert from "assert";
@@ -4347,7 +6121,6 @@ var MODIFIERS = {
 var MissingRequiredData = class extends Error {
 };
 function generateKeys(entries, cache, entryKeyTemplate) {
-  var _a;
   let template = entryKeyTemplate;
   if (!entryKeyTemplate.includes("[duplicateLetter]") && !entryKeyTemplate.includes("[duplicateNumber]")) {
     template = `${entryKeyTemplate}[duplicateLetter]`;
@@ -4358,9 +6131,7 @@ function generateKeys(entries, cache, entryKeyTemplate) {
     const entryValues = cache.lookupRenderedEntryValues(entry);
     const key = generateKey(entryValues, parsedTemplate);
     if (!key) continue;
-    const entriesSoFar = (_a = entriesByKey.get(key)) != null ? _a : [];
-    entriesSoFar.push(entry);
-    entriesByKey.set(key, entriesSoFar);
+    entriesByKey.getOrInsert(key, []).push(entry);
   }
   const keys = /* @__PURE__ */ new Map();
   for (const [key, entries2] of entriesByKey) {

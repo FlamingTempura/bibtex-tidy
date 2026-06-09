@@ -32,43 +32,44 @@ const WEB_PATH = "docs";
 const CLI_BIN = env.BIBTEX_TIDY_BIN ?? join("bin", "bibtex-tidy");
 
 /**
- * Required browser features
+ * Required runtime features (N/A for features that are only used in the web bundle):
  *
- * ----------------------------------------------------
- *                            Chrome  Edge  Safari  FF
- * ----------------------------------------------------
- * Summary/details element      12     79     6     49
- * CSS variables                49     16     10    36
- * Flexbox                      21     12     6.1   28
- * WOFF2                        35     14     10    39
- * HTML main                    26     12     7     21
- * CSS appearance: none         4      12     3.1   2
- * Template literals            41     13     9.1   34
- * let/const                    41     12     10    44
- * for of                       38     12     7     13
- * Spread operator              46     12     8     16
- * Default arguments            49     14     10    15
- * Destructuring                49     14     8     41
- * async function (svelte 5)    55     15     11    52
- * Proxy (svelte 5)             49     12     10    18
- * URLSearchParams              49     17     10.1  44
- * async generators             63     79     12    57
- * ----------------------------------------------------
- * Min supported                63     79     12    57
- * ----------------------------------------------------
+ * ----------------------------------------------------------
+ *                            Chrome  Edge  Safari  FF  Node
+ * ----------------------------------------------------------
+ * Summary/details element      12     79     6     49   N/A
+ * CSS variables                49     16     10    36   N/A
+ * Flexbox                      21     12     6.1   28   N/A
+ * WOFF2                        35     14     10    39   N/A
+ * HTML main                    26     12     7     21   N/A
+ * CSS appearance: none         4      12     3.1   2    N/A
+ * Template literals            41     13     9.1   34   4
+ * let/const                    41     12     10    44   4
+ * for of                       38     12     7     13   6
+ * Spread operator              46     12     8     16   8
+ * Default arguments            49     14     10    15   6
+ * Destructuring                49     14     8     41   6
+ * async function (svelte 5)    55     15     11    52   N/A
+ * Proxy (svelte 5)             49     12     10    18   N/A
+ * URLSearchParams              49     17     10.1  44   N/A
+ * async generators (svelte)    63     79     12    57   N/A
+ * ----------------------------------------------------------
+ * Min supported                63     79     12    57   8
+ * ----------------------------------------------------------
  *
  *
  * Features that are polyfilled/downlevelled:
- * ----------------------------------------------------
- *                            Chrome  Edge  Safari  FF
- * ----------------------------------------------------
- * flatMap                      69     79     12    62    polyfilled by core-js
- * fromEntries                  73     79     12.1  63    polyfilled by core-js
- * Nullish coalescing           80     80     13.1  72    downlevel by esbuild
- * Optional chaining            80     80     13.1  74    downlevel by esbuild
- * :where (svelte 5)            88     88     14    78    custom transform
- * nested css                   120    120    17.2  117   compiled by svelte
- *
+ * ----------------------------------------------------------
+ *                            Chrome  Edge  Safari  FF  Node
+ * ----------------------------------------------------------
+ * array.flatMap                69     79     12    62   11    polyfilled by core-js
+ * Object.fromEntries           73     79     12.1  63   12    polyfilled by core-js
+ * string.trimEnd               66     79     61    61   10    polyfilled by core-js
+ * map.getOrInsert              145    145    26.2  144  26    polyfilled by core-js
+ * Nullish coalescing           80     80     13.1  72   14    downlevel by esbuild
+ * Optional chaining            80     80     13.1  74   14    downlevel by esbuild
+ * :where (svelte 5)            88     88     14    78   N/A   custom transform
+ * nested css                   120    120    17.2  117  N/A   compiled by svelte
  */
 // TODO: test on browserstack
 

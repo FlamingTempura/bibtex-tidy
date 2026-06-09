@@ -149,9 +149,7 @@ export function generateKeys(
 		const key = generateKey(entryValues, parsedTemplate);
 		if (!key) continue;
 
-		const entriesSoFar = entriesByKey.get(key) ?? [];
-		entriesSoFar.push(entry);
-		entriesByKey.set(key, entriesSoFar);
+		entriesByKey.getOrInsert(key, []).push(entry);
 	}
 
 	const keys = new Map<EntryNode, string>();

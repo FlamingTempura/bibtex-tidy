@@ -4234,9 +4234,7 @@ function generateKeys(entries, cache, entryKeyTemplate) {
     const entryValues = cache.lookupRenderedEntryValues(entry);
     const key = generateKey(entryValues, parsedTemplate);
     if (!key) continue;
-    const entriesSoFar = entriesByKey.get(key) ?? [];
-    entriesSoFar.push(entry);
-    entriesByKey.set(key, entriesSoFar);
+    entriesByKey.getOrInsert(key, []).push(entry);
   }
   const keys = /* @__PURE__ */ new Map();
   for (const [key, entries2] of entriesByKey) {

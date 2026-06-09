@@ -1,3 +1,4 @@
+import "../polyfills.ts";
 import assert from "node:assert";
 import { promises as fsp } from "node:fs"; // fs/promises not supported in node v12
 import { argv, exit, versions } from "node:process";
