@@ -37,14 +37,14 @@ let dupes = $derived(
 		/><line x1="12" y1="8" x2="12.01" y2="8" /></svg
 	>
 
-	<div class="text">
+	<div>
 		<strong>Successful!</strong><br />
 		Tidied {result.count} entries.
 
 		{#if warnings.length > 0}
 			<ul class="warning-list">
 				{#each warnings as warning}
-					<li>${warning.message}</li>
+					<li>{warning.message}</li>
 				{/each}
 			</ul>
 		{/if}
@@ -54,8 +54,8 @@ let dupes = $derived(
 		{:else}
 			<strong>
 				{dupes.length}
-				{dupes.length === 1 ? 'duplicate' : 'duplicates'}
-				{options.merge ? 'merged' : 'found'}:
+				{dupes.length === 1 ? "duplicate" : "duplicates"}
+				{options.merge ? "merged" : "found"}:
 			</strong>
 			<ul class="warning-list">
 				{#each dupes as dupe}
@@ -67,23 +67,20 @@ let dupes = $derived(
 </div>
 
 <style>
-	strong {
-		font: var(--sans-h2);
-	}
 	.container {
-		display: flex;
+		display: grid;
+		grid-template-columns: 24px auto;
 		gap: 20px;
 		margin-left: 8px;
 		align-items: center;
-	}
-	.warning-list {
-		padding-left: 18px;
-	}
-	svg {
-		flex: 0 0 24px;
-		circle,
-		line {
-			stroke: var(--green);
+		svg {
+			color: var(--green);
+		}
+		strong {
+			font: var(--sans-h2);
+		}
+		.warning-list {
+			padding-left: 18px;
 		}
 	}
 </style>

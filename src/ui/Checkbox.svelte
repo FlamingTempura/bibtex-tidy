@@ -1,10 +1,20 @@
 <script lang="ts">
 import type { HTMLInputAttributes } from "svelte/elements";
 
-let { checked = $bindable(), ...props }: HTMLInputAttributes = $props();
+type Props = Omit<HTMLInputAttributes, "type" | "checked" | "onchange"> & {
+	checked?: boolean;
+	onchange?: (value: boolean) => void;
+};
+
+let { checked = false, onchange, ...props }: Props = $props();
 </script>
 
-<input type="checkbox" bind:checked {...props} />
+<input
+	type="checkbox"
+	{checked}
+	onchange={(event) => onchange?.(event.currentTarget.checked)}
+	{...props}
+/>
 
 <style>
 	input {
@@ -17,27 +27,23 @@ let { checked = $bindable(), ...props }: HTMLInputAttributes = $props();
 		width: 17px;
 		height: 17px;
 		position: relative;
-
 		&:checked {
 			border-color: var(--light-blue);
 			background: var(--light-blue);
-
-			&:before,
-			&:after {
+			&::before,
+			&::after {
 				content: "";
 				position: absolute;
 				background: var(--main-bg);
 				width: 2px;
 			}
-
-			&:before {
+			&::before {
 				height: 11px;
 				left: 7px;
 				top: 1px;
 				transform: rotate(45deg);
 			}
-
-			&:after {
+			&::after {
 				height: 5px;
 				left: 2px;
 				top: 5px;

@@ -5,6 +5,7 @@ import { BibTeXSyntaxError } from "../parsers/bibtexParser.ts";
 import { DEFAULT_BIBTEX } from "./defaultBibtex.ts";
 import Editor from "./Editor.svelte";
 import Sidebar from "./Sidebar.svelte";
+import { getOptionsFromSearch } from "./urlOptions.ts";
 
 // Unfortunatly when the UI was originally made public it had different
 // defaults to the CLI/JS API. In future it might be good to make the UI
@@ -30,6 +31,21 @@ let status:
 	| undefined;
 let error: BibTeXSyntaxError | undefined;
 
+const updateBibtex = (next: string): void => {
+	bibtex = next;
+};
+
+const syncOptionsToURL = (next: OptionsNormalized): void => {
+	const optionsJSON = JSON.stringify(next);
+	const params = new URLSearchParams([["opt", optionsJSON]]);
+	window.history.pushState(next, "", `index.html?${params.toString()}`);
+};
+
+const updateOptions = (next: OptionsNormalized): void => {
+	options = next;
+	syncOptionsToURL(next);
+};
+
 function handleTidy() {
 	running = true;
 	status = undefined;
@@ -53,12 +69,8 @@ function handleTidy() {
 }
 
 function getOptionsFromURL(): OptionsNormalized | undefined {
-	const queryString = window.location.search;
-	const urlParams = new URLSearchParams(queryString);
-	const optionsJSON = urlParams.get("opt");
-	if (!optionsJSON) return;
 	try {
-		return normalizeOptions(JSON.parse(optionsJSON));
+		return getOptionsFromSearch(window.location.search, optionDefaults);
 	} catch (e) {
 		console.error("Error parsing options in URL");
 		return;
@@ -68,16 +80,16 @@ function getOptionsFromURL(): OptionsNormalized | undefined {
 window.addEventListener("popstate", () => {
 	options = getOptionsFromURL() ?? optionDefaults;
 });
-
-$: {
-	const optionsJSON = JSON.stringify(options);
-	const params = new URLSearchParams([["opt", optionsJSON]]);
-	window.history.pushState(options, "", `index.html?${params.toString()}`);
-}
 </script>
 
-<Editor bind:bibtex {error} />
-<Sidebar on:tidy={handleTidy} {status} {running} bind:options />
+<Editor bibtex={bibtex} onbibtexchange={updateBibtex} {error} />
+<Sidebar
+	{status}
+	{running}
+	{options}
+	onchange={updateOptions}
+	ontidy={handleTidy}
+/>
 
 <style>
 	@font-face {
@@ -153,17 +165,15 @@ $: {
 	:global(*) {
 		box-sizing: border-box;
 	}
-	:global(html) {
-		height: 100%;
-	}
 	:global(body) {
 		background: var(--main-bg);
 		color: var(--main-fg);
 		font: var(--sans-normal);
 		line-height: 1.5em;
 		margin: 0;
-		display: flex;
-		height: 100%;
+		display: grid;
+		grid-template-rows: 100vh;
+		grid-template-columns: minmax(0, 1fr) 400px;
 	}
 	:global(button) {
 		cursor: pointer;
@@ -179,17 +189,6 @@ $: {
 		font-size: 15px;
 		min-height: 24px;
 	}
-	:global(input[type='number']) {
-		-moz-appearance: textfield;
-		margin-left: 8px;
-	}
-	:global(input[type='number']::-webkit-inner-spin-button) {
-		-webkit-appearance: none;
-	}
-	:global(textarea) {
-		margin-top: 4px;
-		line-height: 1.4em;
-	}
 	:global(a) {
 		color: inherit;
 	}
@@ -199,7 +198,6 @@ $: {
 	:global(p:last-child) {
 		margin-bottom: 0;
 	}
-
 	:global(.btn) {
 		background: var(--main-bg);
 		border: 1px solid var(--border-color);

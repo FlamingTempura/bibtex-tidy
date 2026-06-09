@@ -1,5 +1,5 @@
 <script lang="ts">
-import { createEventDispatcher } from "svelte";
+import type { Snippet } from "svelte";
 import {
 	type OptionDefinition,
 	optionDefinitions,
@@ -9,10 +9,14 @@ import Checkbox from "./Checkbox.svelte";
 import Label from "./Label.svelte";
 import SubOptions from "./SubOptions.svelte";
 
-export let option: keyof OptionsNormalized;
-export let checked: boolean | undefined = undefined;
+type Props = {
+	option: keyof OptionsNormalized;
+	checked?: boolean;
+	onchange?: (value: boolean) => void;
+	children?: Snippet;
+};
 
-let dispatch = createEventDispatcher<{ change: boolean }>();
+let { option, checked = false, onchange, children }: Props = $props();
 
 export const optionDefinitionByKey: Record<keyof Options, OptionDefinition> =
 	Object.fromEntries(optionDefinitions.map((opt) => [opt.key, opt])) as Record<
@@ -20,19 +24,14 @@ export const optionDefinitionByKey: Record<keyof Options, OptionDefinition> =
 		OptionDefinition
 	>;
 
-let def = optionDefinitionByKey[option];
+const getDef = () => optionDefinitionByKey[option];
 </script>
 
-<Label title={def.description?.join('\n')} inset>
-	<Checkbox
-		name={option}
-		bind:checked
-		onchange={() => dispatch('change', checked ?? false)}
-	/>
-	{def.title}
+<Label title={getDef().description?.join("\n")} inset>
+	<Checkbox name={option} {checked} onchange={(v) => onchange?.(v)} />
+	{getDef().title}
 </Label>
-{#if $$slots.default}
-	{#if checked}
-		<SubOptions><slot /></SubOptions>
-	{/if}
+
+{#if children && checked}
+	<SubOptions>{@render children()}</SubOptions>
 {/if}

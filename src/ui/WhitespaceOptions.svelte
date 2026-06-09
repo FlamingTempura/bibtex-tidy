@@ -2,35 +2,60 @@
 import { DEFAULT_WRAP } from "../optionDefinitions.ts";
 import type { OptionsNormalized } from "../optionUtils.ts";
 import Collapsible from "./Collapsible.svelte";
+import NumberInput from "./NumberInput.svelte";
 import Option from "./Option.svelte";
 
-export let options: OptionsNormalized;
+type Props = {
+	options: OptionsNormalized;
+	onchange?: (options: OptionsNormalized) => void;
+};
 
-let alignChecked = options.align > 1; // FIXME: allow undefined
-let alignValue = alignChecked ? options.align : 13;
-let wrapChecked = options.wrap !== undefined;
-let wrapValue = options.wrap ?? DEFAULT_WRAP;
+let { options, onchange }: Props = $props();
 
-$: {
-	options.align = alignChecked ? alignValue : 1; // FIXME: allow undefined
-	options.wrap = wrapChecked ? wrapValue : undefined;
-}
+let alignChecked = $derived(options.align > 1); // FIXME: allow undefined
+let alignValue = $derived(alignChecked ? options.align : 13);
+let wrapChecked = $derived(options.wrap !== undefined);
+let wrapValue = $derived(options.wrap ?? DEFAULT_WRAP);
+
+const updateOptions = (changes: Partial<OptionsNormalized>): void => {
+	onchange?.({ ...options, ...changes });
+};
 </script>
 
 <Collapsible title="Whitespace" open={true}>
-	<Option option="align" bind:checked={alignChecked}>
+	<Option
+		option="align"
+		checked={alignChecked}
+		onchange={(v) => updateOptions({ align: v ? alignValue : 1 })}
+	>
 		<label>
 			Column:
-			<input name="alignnum" type="number" bind:value={alignValue} />
+			<NumberInput
+				name="alignnum"
+				value={alignValue}
+				oninput={(v) => updateOptions({ align: v })}
+			/>
 		</label>
 	</Option>
 
-	<Option option="wrap" bind:checked={wrapChecked}>
+	<Option
+		option="wrap"
+		checked={wrapChecked}
+		onchange={(v) => updateOptions({ wrap: v ? wrapValue : undefined })}
+	>
 		<label>
 			Column:
-			<input name="wrapnum" type="number" bind:value={wrapValue} />
+			<NumberInput
+				name="wrapnum"
+				value={wrapValue}
+				oninput={(v) => updateOptions({ wrap: v })}
+			/>
 		</label>
 	</Option>
 
-	<Option option="blankLines" bind:checked={options.blankLines} />
+	<Option
+		option="blankLines"
+		checked={options.blankLines}
+		onchange={(v) => updateOptions({ blankLines: v })}
+	/>
 </Collapsible>

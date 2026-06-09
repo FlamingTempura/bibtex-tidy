@@ -27,8 +27,10 @@ let { error }: { error: unknown } = $props();
 			{error.name} on line {error.line} column {error.column}<br />
 			{#if error.hint}
 				{error.hint}
+			{:else if error.char}
+				Unexpected {JSON.stringify(error.char)}.
 			{:else}
-				Unexpected {JSON.stringify(error.char)} in {error.node.type}.
+				Invalid BibTeX syntax.
 			{/if}
 		{:else}
 			<strong>There's a problem with the bibtex</strong><br />
@@ -40,16 +42,13 @@ let { error }: { error: unknown } = $props();
 
 <style>
 	.container {
-		display: flex;
+		display: grid;
+		grid-template-columns: 24px auto;
 		gap: 20px;
 		margin-left: 8px;
 		align-items: center;
-	}
-	svg {
-		flex: 0 0 24px;
-		circle,
-		line {
-			stroke: var(--red);
+		svg {
+			color: var(--red);
 		}
 	}
 </style>

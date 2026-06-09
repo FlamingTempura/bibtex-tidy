@@ -2,35 +2,54 @@
 import type { OptionsNormalized } from "../optionUtils.ts";
 import Collapsible from "./Collapsible.svelte";
 import Label from "./Label.svelte";
+import NumberInput from "./NumberInput.svelte";
 import Radio from "./Radio.svelte";
 import SubOptions from "./SubOptions.svelte";
 
-export let options: OptionsNormalized;
+type Props = {
+	options: OptionsNormalized;
+	onchange?: (options: OptionsNormalized) => void;
+};
 
-let indent: "tabs" | "spaces" = options.tab ? "tabs" : "spaces";
+let { options, onchange }: Props = $props();
 
-let spaceValue = options.space;
+let indent = $derived<"tabs" | "spaces">(options.tab ? "tabs" : "spaces");
+let spaceValue = $derived(options.space);
 
-$: {
-	options.space = spaceValue; // FIXME: allow undefined if tab
-	options.tab = indent === "tabs";
-}
+const updateOptions = (changes: Partial<OptionsNormalized>): void => {
+	onchange?.({ ...options, ...changes });
+};
 </script>
 
 <Collapsible title="Indent" open={true}>
 	<Label title="Indent fields with tabs">
-		<Radio name="indent" value="tabs" bind:group={indent} />
+		<Radio
+			name="indent"
+			value="tabs"
+			checked={indent === "tabs"}
+			onchange={() => updateOptions({ tab: true })}
+		/>
 		Indent with tabs
 	</Label>
 	<Label title="Indent fields with spaces">
-		<Radio name="indent" value="spaces" bind:group={indent} />
+		<Radio
+			name="indent"
+			value="spaces"
+			checked={indent === "spaces"}
+			onchange={() => updateOptions({ tab: false })}
+		/>
 		Indent with spaces
 	</Label>
 
 	{#if indent === 'spaces'}
 		<SubOptions>
 			<label>
-				Spaces: <input name="spaces" type="number" bind:value={spaceValue} />
+				Spaces:
+				<NumberInput
+					name="spaces"
+					value={spaceValue}
+					oninput={(v) => updateOptions({ space: v })}
+				/>
 			</label>
 		</SubOptions>
 	{/if}

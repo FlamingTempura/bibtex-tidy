@@ -2,60 +2,87 @@
 import type { OptionsNormalized } from "../optionUtils.ts";
 import Collapsible from "./Collapsible.svelte";
 import Option from "./Option.svelte";
+import TextAreaInput from "./TextAreaInput.svelte";
 
-export let options: OptionsNormalized;
+type Props = {
+	options: OptionsNormalized;
+	onchange?: (options: OptionsNormalized) => void;
+};
 
-let omitChecked = options.omit !== undefined && options.omit.length > 0;
-let omitValue = options.omit?.join(" ") ?? "";
-
-let stripComments = options.stripComments ?? false;
-let tidyComments = options.tidyComments ?? false;
-let lowercase = options.lowercase ?? false;
-let trailingCommasChecked = options.trailingCommas ?? false;
-
-let generateKeysChecked =
-	options.generateKeys !== undefined && options.generateKeys.length > 0;
-let generateKeysValue =
-	options.generateKeys ??
+const DEFAULT_KEY_TEMPLATE =
 	"[auth:required:lower][year:required][veryshorttitle:lower][duplicateNumber]";
 
-$: {
-	options.omit =
-		omitChecked && omitValue.length > 0
-			? omitValue.split(/[\n\t ,]+/)
-			: undefined;
+let { options, onchange }: Props = $props();
 
-	options.stripComments = stripComments;
-	options.tidyComments = tidyComments;
-	options.lowercase = lowercase;
-	options.trailingCommas = trailingCommasChecked;
-	options.generateKeys = generateKeysChecked ? generateKeysValue : undefined;
-}
+let omitChecked = $derived(options.omit !== undefined);
+let omitValue = $derived(options.omit?.join(" ") ?? "");
+let stripComments = $derived(options.stripComments ?? false);
+let tidyComments = $derived(options.tidyComments ?? false);
+let lowercase = $derived(options.lowercase ?? false);
+let trailingCommasChecked = $derived(options.trailingCommas ?? false);
+let generateKeysChecked = $derived(
+	options.generateKeys !== undefined && options.generateKeys.length > 0,
+);
+let generateKeysValue = $derived(options.generateKeys ?? DEFAULT_KEY_TEMPLATE);
+
+const updateOptions = (changes: Partial<OptionsNormalized>): void => {
+	onchange?.({ ...options, ...changes });
+};
+
+const getOmit = (checked: boolean, v: string): string[] | undefined => {
+	if (!checked) return undefined;
+	if (v.length === 0) return [];
+	return v.split(/[\n\t ,]+/);
+};
 </script>
 
 <Collapsible title="Clean up" open={true}>
-	<Option option="omit" bind:checked={omitChecked}>
+	<Option
+		option="omit"
+		checked={omitChecked}
+		onchange={(v) => updateOptions({ omit: getOmit(v, omitValue) })}
+	>
 		Fields to omit:
-		<textarea
+		<TextAreaInput
 			name="omitList"
-			class="omit"
 			placeholder="e.g. abstract keywords"
 			spellcheck="false"
-			bind:value={omitValue}
-		></textarea>
+			value={omitValue}
+			oninput={(v) => updateOptions({ omit: getOmit(omitChecked, v) })}
+		/>
 		<p>Space delimited, e.g: <code>id type publisher author</code></p>
 	</Option>
 
-	<Option option="stripComments" bind:checked={stripComments} />
+	<Option
+		option="stripComments"
+		checked={stripComments}
+		onchange={(v) => updateOptions({ stripComments: v })}
+	/>
 
-	<Option option="tidyComments" bind:checked={tidyComments} />
+	<Option
+		option="tidyComments"
+		checked={tidyComments}
+		onchange={(v) => updateOptions({ tidyComments: v })}
+	/>
 
-	<Option option="lowercase" bind:checked={lowercase} />
+	<Option
+		option="lowercase"
+		checked={lowercase}
+		onchange={(v) => updateOptions({ lowercase: v })}
+	/>
 
-	<Option option="generateKeys" bind:checked={generateKeysChecked}>
+	<Option
+		option="generateKeys"
+		checked={generateKeysChecked}
+		onchange={(v) => updateOptions({ generateKeys: v ? generateKeysValue : undefined })}
+	>
 		<label>
 			Template:
-			<textarea name="generateKeysTemplate" bind:value={generateKeysValue}></textarea>
+			<TextAreaInput
+				name="generateKeysTemplate"
+				value={generateKeysValue}
+				oninput={(v) => updateOptions({ generateKeys: v })}
+			/>
 		</label>
 		<p>
 			<a href="./manual/key-generation.html" target="_blank">
@@ -64,11 +91,9 @@ $: {
 		</p>
 	</Option>
 
-	<Option option="trailingCommas" bind:checked={trailingCommasChecked} />
+	<Option
+		option="trailingCommas"
+		checked={trailingCommasChecked}
+		onchange={(v) => updateOptions({ trailingCommas: v })}
+	/>
 </Collapsible>
-
-<style>
-	textarea.omit {
-		height: 50px;
-	}
-</style>

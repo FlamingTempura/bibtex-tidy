@@ -2,13 +2,27 @@
 import type { HTMLInputAttributes } from "svelte/elements";
 
 let {
-	group = $bindable<string | undefined>(),
+	checked = false,
+	onchange,
 	value,
 	...props
-}: Omit<HTMLInputAttributes, "type"> = $props();
+}: Omit<HTMLInputAttributes, "type" | "checked" | "onchange"> & {
+	checked?: boolean;
+	onchange?: (value: string) => void;
+} = $props();
 </script>
 
-<input {...props} type="radio" {value} bind:group />
+<input
+	{...props}
+	type="radio"
+	{value}
+	{checked}
+	onchange={(event) => {
+		if (event.currentTarget.checked) {
+			onchange?.(String(value ?? ""));
+		}
+	}}
+/>
 
 <style>
 	input {
@@ -17,24 +31,13 @@ let {
 		background: transparent;
 		margin: 0;
 		border: 2px solid var(--light6);
-		border-radius: 8.5px;
+		border-radius: 50%;
 		width: 17px;
 		height: 17px;
-		position: relative;
-		flex: 0 0 17px;
 		&:checked {
 			border-color: var(--light-blue);
-			background: transparent;
-			&::after {
-				content: "";
-				position: absolute;
-				background: var(--light-blue);
-				width: 7px;
-				height: 7px;
-				left: 3px;
-				top: 3px;
-				border-radius: 10px;
-			}
+			background: var(--light-blue);
+			box-shadow: inset 0 0 0 3.3px var(--main-bg);
 		}
 	}
 </style>

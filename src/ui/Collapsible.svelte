@@ -18,25 +18,23 @@ let { children, open = false, title }: Props = $props();
 <style>
 	details {
 		&[open] {
+			--summary-padding-bottom: 12px;
+			--icon: none;
 			padding-bottom: 20px;
-			summary {
-				&::after {
-					content: none;
-				}
-				&:hover::after {
-					content: "▼";
-				}
+			summary:hover {
+				--icon: "▼";
 			}
 		}
-		&:not([open]) summary {
-			padding-bottom: 20px;
+		&:not([open]) {
+			--summary-padding-bottom: 20px;
+			--icon: "►";
 		}
 		summary {
 			font: var(--sans-h2);
 			margin: 0 -20px;
 			cursor: pointer;
 			user-select: none;
-			padding: 20px 20px 12px 20px;
+			padding: 20px 20px var(--summary-padding-bottom) 20px;
 			border-top: 1px solid var(--border-color);
 			display: flex;
 			gap: 8px;
@@ -49,7 +47,7 @@ let { children, open = false, title }: Props = $props();
 				content: none;
 			}
 			&::after {
-				content: "►";
+				content: var(--icon);
 				font-size: 8px;
 				color: rgba(255, 255, 255, 0.6);
 			}

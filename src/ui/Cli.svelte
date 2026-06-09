@@ -6,9 +6,11 @@ import Collapsible from "./Collapsible.svelte";
 let { options }: { options: OptionsNormalized } = $props();
 
 let args = $derived(
-	optionsToCLIArgs(options).map((opt) => {
-		const i = opt.indexOf("=");
-		return i === -1 ? [opt] : [opt.slice(0, i), opt.slice(i + 1)];
+	optionsToCLIArgs(options).map((arg) => {
+		const eqIndex = arg.indexOf("=");
+		return eqIndex === -1
+			? { key: arg }
+			: { key: arg.slice(0, eqIndex), val: arg.slice(eqIndex + 1) };
 	}),
 );
 </script>
@@ -16,11 +18,11 @@ let args = $derived(
 <Collapsible title="CLI">
 	<p>To run this configuration on the command line:</p>
 	<code id="cli">
-		bibtex-tidy {#each args as [key, value]}
-			<span class="opt-name">{key}</span>{#if value && value.length > 0}
-				=<span class="opt-val">{value}</span>
-			{/if}{" "}
-		{/each} YOUR_FILE.bib
+		bibtex-tidy {#each args as { key, val }}
+			<span class="opt-name">{key}</span>{#if val}=<span class="opt-val"
+					>{val}</span
+				>{/if}{" "}
+		{/each}YOUR_FILE.bib
 	</code>
 </Collapsible>
 
