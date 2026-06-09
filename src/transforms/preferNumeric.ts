@@ -3,6 +3,7 @@ import type { Transform } from "../types.ts";
 export function createPreferNumericTransform(): Transform {
 	return {
 		name: "prefer-numeric",
+		dependencies: ["prefer-curly"],
 		apply: (ast) => {
 			for (const field of ast.fields()) {
 				for (const child of field.value.concat) {

@@ -1,0 +1,23 @@
+title: sort entries with numeric and curly values
+options:
+  sort: true
+  curly: true
+  numeric: true
+input: |
+  @book{b,
+    title = {Second},
+    year = {2003}
+  }
+  @book{a,
+    title = {First},
+    year = {2001}
+  }
+expected: |
+  @book{a,
+    title         = {First},
+    year          = 2001
+  }
+  @book{b,
+    title         = {Second},
+    year          = 2003
+  }

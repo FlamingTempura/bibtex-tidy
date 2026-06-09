@@ -4709,6 +4709,7 @@ function createPreferCurlyTransform() {
 function createPreferNumericTransform() {
   return {
     name: "prefer-numeric",
+    dependencies: ["prefer-curly"],
     apply: (ast) => {
       for (const field of ast.fields()) {
         for (const child of field.value.concat) {
@@ -4904,10 +4905,15 @@ function createSortEntriesTransform(sort) {
 function sortEntries(ast, cache, sort) {
   var _a, _b, _c, _d, _e;
   const sortIndexes = /* @__PURE__ */ new Map();
+  const fixedText = /* @__PURE__ */ new Set();
   const precedingMeta = [];
   for (const item of ast.children) {
-    if (item.type === "text" || ((_a = item.block) == null ? void 0 : _a.type) !== "entry" && !sort.includes("special")) {
+    if (item.type === "text" && isBibTeXComment(item) || item.type === "block" && ((_a = item.block) == null ? void 0 : _a.type) !== "entry" && !sort.includes("special")) {
       precedingMeta.push(item);
+      continue;
+    }
+    if (item.type === "text") {
+      fixedText.add(item);
       continue;
     }
     const sortIndex = /* @__PURE__ */ new Map();
@@ -4945,10 +4951,11 @@ function sortEntries(ast, cache, sort) {
       sortIndexes.set(index, sortIndex);
     }
   }
+  const sortableChildren = ast.children.filter((item) => !fixedText.has(item));
   for (const prefixedKey of [...sort].reverse()) {
     const desc = prefixedKey.startsWith("-");
     const key = desc ? prefixedKey.slice(1) : prefixedKey;
-    ast.children.sort((a, b) => {
+    sortableChildren.sort((a, b) => {
       var _a2, _b2, _c2, _d2;
       let ia = (_b2 = (_a2 = sortIndexes.get(a)) == null ? void 0 : _a2.get(key)) != null ? _b2 : "\uFFF0";
       let ib = (_d2 = (_c2 = sortIndexes.get(b)) == null ? void 0 : _c2.get(key)) != null ? _d2 : "\uFFF0";
@@ -4957,6 +4964,16 @@ function sortEntries(ast, cache, sort) {
       return (desc ? ib : ia).localeCompare(desc ? ia : ib);
     });
   }
+  const sorted = [...sortableChildren];
+  ast.children = ast.children.map((item) => {
+    if (fixedText.has(item)) return item;
+    const next = sorted.shift();
+    if (!next) throw new Error("FATAL!");
+    return next;
+  });
+}
+function isBibTeXComment(node) {
+  return node.text.trim().split(/\r?\n/).every((line) => line.trim().startsWith("%"));
 }
 var SPECIAL_ENTRIES = /* @__PURE__ */ new Set([
   "string",

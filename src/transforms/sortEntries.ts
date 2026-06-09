@@ -33,6 +33,7 @@ type SortIndex = Map<string, string | number>;
 function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 	// Map of items to sort values e.g. { year: 2009, author: 'West', ... }
 	const sortIndexes = new Map<TextNode | BlockNode, SortIndex>();
+	const fixedText = new Set<TextNode>();
 
 	// comments, preambles, and strings which should be kept with an entry
 	const precedingMeta: (TextNode | BlockNode)[] = [];
@@ -40,11 +41,17 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 	// first, create sort indexes
 	for (const item of ast.children) {
 		if (
-			item.type === "text" ||
-			(item.block?.type !== "entry" && !sort.includes("special"))
+			(item.type === "text" && isBibTeXComment(item)) ||
+			(item.type === "block" &&
+				item.block?.type !== "entry" &&
+				!sort.includes("special"))
 		) {
 			// if string, preamble, or comment, then use sort index of previous entry
 			precedingMeta.push(item);
+			continue;
+		}
+		if (item.type === "text") {
+			fixedText.add(item);
 			continue;
 		}
 		const sortIndex: SortIndex = new Map();
@@ -90,10 +97,13 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 	}
 
 	// Now iterate through sort keys and sort entries
+	const sortableChildren = ast.children.filter(
+		(item) => !fixedText.has(item as TextNode),
+	);
 	for (const prefixedKey of [...sort].reverse()) {
 		const desc = prefixedKey.startsWith("-");
 		const key = desc ? prefixedKey.slice(1) : prefixedKey;
-		ast.children.sort((a, b) => {
+		sortableChildren.sort((a, b) => {
 			// if no value, then use \ufff0 so entry will be last
 			let ia = sortIndexes.get(a)?.get(key) ?? "\ufff0";
 			let ib = sortIndexes.get(b)?.get(key) ?? "\ufff0";
@@ -102,6 +112,20 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 			return (desc ? ib : ia).localeCompare(desc ? ia : ib);
 		});
 	}
+	const sorted = [...sortableChildren];
+	ast.children = ast.children.map((item) => {
+		if (fixedText.has(item as TextNode)) return item;
+		const next = sorted.shift();
+		if (!next) throw new Error("FATAL!");
+		return next;
+	});
+}
+
+function isBibTeXComment(node: TextNode): boolean {
+	return node.text
+		.trim()
+		.split(/\r?\n/)
+		.every((line) => line.trim().startsWith("%"));
 }
 
 const SPECIAL_ENTRIES = new Set([
