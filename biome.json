@@ -1,14 +1,10 @@
 {
 	"files": {
 		"includes": [
-			"**/src/**/*",
-			"**/test/**/*",
-			"**/build.ts",
-			"**/package.json",
-			"**/tsconfig.json",
-			"**/biome.json",
+			"**/*.{ts,json,svelte,html}",
 			"!**/__generated__",
-			"!**/src/ui/codemirrorExtensions/bibtex.terms.ts"
+			"!bibtex-tidy.d.ts",
+			"!src/ui/codemirrorExtensions/bibtex.terms.ts"
 		]
 	},
 	"linter": {

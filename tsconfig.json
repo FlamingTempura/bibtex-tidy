@@ -13,7 +13,7 @@
 		"noEmit": true,
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"target": "ES2018",
-		"types": ["node", "vitest/globals"]
+		"types": ["node", "vitest/globals", "@testing-library/jest-dom"]
 	},
 	"include": ["src/**/*", "test/**/*", "build.ts"]
 }
