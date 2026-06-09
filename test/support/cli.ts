@@ -4,13 +4,13 @@ import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { optionsToCLIArgs } from "../../../src/optionsToCLIArgs.ts";
-import type { CLIOptions } from "../../../src/optionUtils.ts";
+import { optionsToCLIArgs } from "../../src/optionsToCLIArgs.ts";
+import type { CLIOptions } from "../../src/optionUtils.ts";
 
 export const TMP_DIR = tmpdir();
 export const BIN_PATH =
 	process.env.BIBTEX_TIDY_BIN ??
-	join(import.meta.dirname, "..", "..", "..", "bin", "bibtex-tidy");
+	join(import.meta.dirname, "..", "..", "bin", "bibtex-tidy");
 
 mkdirSync(TMP_DIR, { recursive: true });
 

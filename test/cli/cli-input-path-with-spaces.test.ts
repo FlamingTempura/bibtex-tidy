@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { BIN_PATH, tmpfile } from "./support/cli.ts";
+import { BIN_PATH, tmpfile } from "../support/cli.ts";
 
 const input = `@article{a,
     number={1}

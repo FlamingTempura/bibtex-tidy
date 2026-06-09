@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { BIN_PATH } from "./support/cli.ts";
+import { BIN_PATH } from "../support/cli.ts";
 
 test("CLI version", async () => {
 	const proc = spawnSync(BIN_PATH, ["--version"], { encoding: "utf8" });

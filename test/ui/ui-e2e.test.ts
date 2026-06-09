@@ -1,7 +1,7 @@
 import { type Browser, chromium, type Page } from "playwright";
 import { normalizeOptions, type Options } from "../../src/optionUtils.ts";
 import { loadSpecFiles } from "../support/spec-loader.ts";
-import { WEB_URL } from "./support.ts";
+import { WEB_URL } from "../support/ui.ts";
 
 type WebResult = {
 	bibtex: string;
