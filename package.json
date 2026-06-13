@@ -50,7 +50,6 @@
 		"@biomejs/biome": "^2.4.15",
 		"@codemirror/commands": "^6.6.1",
 		"@codemirror/language": "^6.11.1",
-		"@codemirror/lint": "^6.8.1",
 		"@codemirror/view": "^6.37.1",
 		"@lezer/generator": "^1.7.3",
 		"@lezer/highlight": "^1.2.1",

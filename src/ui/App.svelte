@@ -82,7 +82,7 @@ window.addEventListener("popstate", () => {
 });
 </script>
 
-<Editor bibtex={bibtex} onbibtexchange={updateBibtex} {error} />
+<Editor value={bibtex} onchange={updateBibtex} errorLine={error?.line} />
 <Sidebar
 	{status}
 	{running}

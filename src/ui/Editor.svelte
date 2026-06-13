@@ -1,145 +1,45 @@
 <script lang="ts">
-import { history, historyKeymap, indentWithTab } from "@codemirror/commands";
-import { bracketMatching } from "@codemirror/language";
-import { linter } from "@codemirror/lint";
-import { Compartment, EditorState } from "@codemirror/state";
-import {
-	drawSelection,
-	dropCursor,
-	EditorView,
-	highlightActiveLineGutter,
-	keymap,
-	lineNumbers,
-	type ViewUpdate,
-} from "@codemirror/view";
 import { onMount } from "svelte";
-import type { BibTeXSyntaxError } from "../parsers/bibtexParser.ts";
 import CopyButton from "./CopyButton.svelte";
-import {
-	bibtexLanguage,
-	bibtexSyntaxHighlighting,
-} from "./codemirrorExtensions/index.ts";
+import { createEditor, type Editor } from "./editor.ts";
 
 type Props = {
-	bibtex: string;
-	error: BibTeXSyntaxError | undefined;
-	onbibtexchange?: (bibtex: string) => void;
+	value: string;
+	errorLine?: number;
+	onchange: (value: string) => void;
 };
 
-let { bibtex, error, onbibtexchange }: Props = $props();
+let { value, errorLine, onchange }: Props = $props();
 
 let editorRef = $state<HTMLElement | undefined>(undefined);
-let cmEditor: EditorView | undefined;
-let lintCompartment: Compartment;
-
-const applyLint = (): void => {
-	if (!cmEditor || !lintCompartment) return;
-
-	cmEditor.dispatch({
-		effects: lintCompartment.reconfigure(
-			linter(() => {
-				if (error && cmEditor) {
-					const line = cmEditor.state.doc.line(error.line);
-					const from = line.from;
-					const to = line.to;
-					return [
-						{
-							from,
-							to,
-							severity: "error",
-							message: "Syntax Error",
-						},
-					];
-				}
-				return [];
-			}),
-		),
-	});
-};
-
-const applyExternalBibtex = (): void => {
-	if (!cmEditor || bibtex === cmEditor.state.doc.toString()) return;
-
-	cmEditor.dispatch({
-		changes: { from: 0, to: cmEditor.state.doc.length, insert: bibtex },
-	});
-};
+let editor = $state<Editor | undefined>();
 
 onMount(() => {
 	if (!editorRef) return;
 
-	const onUpdate = EditorView.updateListener.of((v: ViewUpdate) => {
-		if (cmEditor && v.docChanged) {
-			onbibtexchange?.(cmEditor.state.doc.toString());
-		}
-	});
-
-	lintCompartment = new Compartment();
-
-	cmEditor = new EditorView({
-		parent: editorRef,
-		state: EditorState.create({
-			doc: bibtex,
-			extensions: [
-				lineNumbers(),
-
-				highlightActiveLineGutter(),
-
-				// For dragging text onto the editor
-				dropCursor(),
-
-				EditorState.allowMultipleSelections.of(true),
-
-				EditorView.contentAttributes.of({
-					"aria-label": "BibTeX Editor",
-				}),
-
-				// Highlight matching brackets
-				bracketMatching(),
-
-				// Replace native selection with customisable one (e.g. background
-				// color)
-				drawSelection(),
-
-				bibtexLanguage(),
-				bibtexSyntaxHighlighting(),
-
-				keymap.of([...historyKeymap, indentWithTab]),
-				// Enables undo/redo. Without this, codemirror completely bugs out on
-				// undo/redo
-				history(),
-				// Listen for changes and propagate to state
-				onUpdate,
-
-				lintCompartment.of([]),
-			],
-		}),
-	});
-
-	cmEditor.focus();
+	editor = createEditor(editorRef, value);
+	editor.addEventListener("change", onchange);
 
 	// make editor available for tests
-	window.cmEditor = cmEditor;
-	applyLint();
-	applyExternalBibtex();
+	window.cmEditor = editor.view;
+
+	return () => {
+		editor?.destroy();
+		editor = undefined;
+	};
 });
 
 $effect(() => {
-	// Track 'error' so the lint markers update whenever the prop changes.
-	error;
-	applyLint();
+	editor?.setErrorLine(errorLine ?? null);
 });
 
 $effect(() => {
-	// Track 'bibtex' so the editor content is replaced whenever the prop
-	// changes externally (e.g. after pressing Tidy).
-	bibtex;
-	applyExternalBibtex();
+	editor?.setValue(value);
 });
 </script>
 
 <main id="editor" bind:this={editorRef}>
-	<CopyButton {bibtex} />
+	<CopyButton bibtex={value} />
 </main>
 
 <style>
@@ -176,9 +76,10 @@ $effect(() => {
 			:global(.cm-cursor) {
 				border-left: 2px solid #ffffec;
 			}
-			:global(.cm-lintRange-error) {
-				background: none;
-				border-bottom: 2px solid var(--red);
+			:global(.cm-error-line) {
+				text-decoration: underline wavy var(--red);
+				text-decoration-thickness: 1px;
+				text-underline-offset: 3px;
 			}
 		}
 	}
