@@ -1,18 +1,15 @@
 # Changelog
 
-### v1.3.1
-
-- add --quiet and --no-backup CLI options
-
-### v1.3.0
+## v1.3.0
 
 - Duplicate checking now checks whole title rather than just the first 50 characters.
 
-### v1.3.1
+## v1.3.1
 
 - #12 Added --quiet and --no-backup
+- add --quiet and --no-backup CLI options
 
-### v1.4.0
+## v1.4.0
 
 - #13 Allow multiple files on CLI. This will output multiple tidied files (ie this does not combine them) e.g. bibtex-tidy file1.bib file2.bib
 - #14 Add .pre-commit-hooks.yaml
@@ -20,30 +17,30 @@
 - #16 Option to remove empty fields
 - Add --no-lowercase option to prevent bibtex-tidy from changing case of field names and entry types
 
-### v1.4.1
+## v1.4.1
 
 No changes, aside from correcting version number at top of bibtex-tidy.js
 
-### v1.4.2
+## v1.4.2
 
 - #17 Restore --help option
 - Support for older browsers and node versions
 
-### v1.5.0
+## v1.5.0
 
 - Breaking change: paragraphs within field values will now be preserved
 - #18 --enclosing-braces option added to preserve case when compiling BibTeX
 - #19 --wrap option added for wrapping long values
 
-### v1.6.0
+## v1.6.0
 
 - #20 added --max-authors option for truncating long list of authors
 
-### v1.6.1
+## v1.6.1
 
 - Improve CLI help text for --max-authors
 
-### v1.7.0
+## v1.7.0
 
 - #23 #28 Prevent adding enclosing brace on each tidy
 - `--remove-dupe-fields` / `removeDuplicateFields` option added
@@ -53,11 +50,11 @@ No changes, aside from correcting version number at top of bibtex-tidy.js
 - Handle empty entry key
 - Handling empty entries
 
-### v1.7.1
+## v1.7.1
 
 - Add --version CLI option
 
-### v1.8.0
+## v1.8.0
 
 - Better handling of invalid CLI params
 - New higher performance bibtex parser
@@ -72,31 +69,31 @@ No changes, aside from correcting version number at top of bibtex-tidy.js
 - #27 Do not escape math expressions
 - #44 Option to generate standardised keys
 
-### v1.8.1
+## v1.8.1
 
 No changes, aside from correcting version number at top of bibtex-tidy.js
 
-### v1.8.2
+## v1.8.2
 
 Add type definitions
 
-### v1.8.3
+## v1.8.3
 
 No changes, aside from correcting version number at top of bibtex-tidy.js
 
-### v1.8.4
+## v1.8.4
 
 Remove npm prepare script
 
-### v1.8.5
+## v1.8.5
 
 - New release process, including tagging releases (#75)
 
-### v1.9.0
+## v1.9.0
 
 Features:
 
-- Bibtex keys can now be generated according to a JabRef template, such as `[auth:lower][year]`. See https://docs.jabref.org/setup/citationkeypatterns. Currently bibtex-tidy only supports a few markers and modifiers (see generateKeys.ts) (#179)
+- Bibtex keys can now be generated according to a JabRef template, such as `[auth:lower][year]`. See <https://docs.jabref.org/setup/citationkeypatterns>. Currently bibtex-tidy only supports a few markers and modifiers (see generateKeys.ts) (#179)
 - Add --blank-lines option to separate entries with a blank line (#245)
 - Docker configuration added (#371)
 - The web UI will now persist the user's bibtex-tidy configuration in the URL (#344)
@@ -120,7 +117,7 @@ Other enhancements:
 - DUPLICATE_ENTRY now has a 'rule' property (can be key, doi, citation, or abstract). Note: This includes the removal of DUPLICATE_KEY warning. Look for DUPLICATE_ENTRY with `rule: "key "` instead.
 - Make duplicate key check case insensitive to match [bibtex implementation](https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html)
 
-### v1.10.0
+## v1.10.0
 
 **Preview CLI changes**: bibtex-tidy v2 will introduce a breaking change to the CLI to enable working with stdio and prevent inadvertently overwriting files. This change can be enabled now by providing the `--v2` option.
 
@@ -145,11 +142,11 @@ See the table below for how v2 compares to v1:
 
 Providing multiple input files will only work in `--modify`/`-m` mode.
 
-### v1.10.1
+## v1.10.1
 
 - Fix options parsing when reading stdin
 
-### v1.11.0
+## v1.11.0
 
 - Fix latex parser not escaping command mode on whitespace (#406)
 - Allow sorting by 'special' entry type (#405)
@@ -157,13 +154,13 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 - Update node version in docker container ot prevent build error
 - Fix --sort-fields CLI command in web UI (#404)
 
-### v1.12.0
+## v1.12.0
 
 - Fix double braces adding closing braces (#410)
 - Upgrade dependencies
 - Accessibility tweaks
 
-### v1.13.0
+## v1.13.0
 
 - Parse authors when checking entry similarity (#424)
 - Fix font encoding
@@ -178,7 +175,7 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 - Accessibility tweak
 - Upgrade dependencies
 
-### v1.14
+## v1.14
 
 - Support filenames with spaces (#416, #428)
 - Do not flatten braces which contain commands (#407, #423)
