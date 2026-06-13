@@ -23,3 +23,21 @@ expected: |
     month         = {aug},
     publisher     = {Elsevier}
   }
+---
+title: remove empty fields preserves macro values
+options:
+  removeEmptyFields: true
+input: |
+  @ARTICLE{epsf,
+    title = {{Toward High-Precision Astrometry with WFPC2. I. Deriving an Accurate Point-Spread Function}},
+    journal = {\pasp},
+    pages = {},
+    year = {2000},
+    day
+  }
+expected: |
+  @article{epsf,
+    title         = {{Toward High-Precision Astrometry with WFPC2. I. Deriving an Accurate Point-Spread Function}},
+    journal       = {\pasp},
+    year          = {2000}
+  }

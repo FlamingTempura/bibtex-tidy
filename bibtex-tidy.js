@@ -4694,7 +4694,7 @@ function createRemoveEmptyFieldsTransform() {
         if (node.type === "block" && node.block?.type === "entry") {
           const entry = node.block;
           entry.fields = entry.fields.filter(
-            (field) => ast.lookupRenderedEntryValue(field) !== ""
+            (field) => field.value.concat.some((node2) => node2.value.trim() !== "")
           );
         }
       }
@@ -4854,7 +4854,9 @@ function sortEntries(ast, cache, sort) {
       sortIndexes.set(index, sortIndex);
     }
   }
-  const sortableChildren = ast.children.filter((item) => !fixedText.has(item));
+  const sortableChildren = ast.children.filter(
+    (item) => !fixedText.has(item)
+  );
   for (const prefixedKey of [...sort].reverse()) {
     const desc = prefixedKey.startsWith("-");
     const key = desc ? prefixedKey.slice(1) : prefixedKey;
