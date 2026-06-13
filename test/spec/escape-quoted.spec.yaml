@@ -1,4 +1,4 @@
-title: escape special characters in quoted values
+title: escape special characters in quoted values without invalid quotes (#493)
 options:
   escape: new
 input: |

@@ -3,18 +3,55 @@ options:
   escape: new
 input: |
   @misc{q,
-    author = {Chars \", _, $, @, &, é, ɛ, ū, ↳, {"}},
+    author = {Chars \", _, $, @, &, é, ɛ, ū, {"}},
     title = {Math expression $\\alpha$ stay unescaped}
   }
 expected: |
   @misc{q,
-    author        = {Chars \", \_, \$, \@, \&, \'{e}, ɛ, \={u}, ↳, {"}},
+    author        = {Chars \", \_, \$, \@, \&, \'{e}, ɛ, \={u}, {"}},
     title         = {Math expression $\\alpha$ stay unescaped}
   }
 warnings:
   - code: UNSUPPORTED_ESCAPE
     character: ɛ
     codepoint: "025b"
+---
+title: keep asterisk unescaped (#475)
+options:
+  escape: new
+input: |
+  @misc{asterisk,
+    title = {What the f*ck}
+  }
+expected: |
+  @misc{asterisk,
+    title         = {What the f*ck}
+  }
+---
+title: keep vertical bar unescaped (#458)
+options:
+  escape: new
+input: |
+  @misc{pipe,
+    title = {A | B}
+  }
+expected: |
+  @misc{pipe,
+    title         = {A | B}
+  }
+---
+title: leave unsupported unicode punctuation unchanged instead of ElsevierGlyph (#494)
+options:
+  escape: new
+input: |
+  @misc{punctuation,
+    title = {A ↳ B}
+  }
+expected: |
+  @misc{punctuation,
+    title         = {A ↳ B}
+  }
+warnings:
   - code: UNSUPPORTED_ESCAPE
     character: ↳
     codepoint: "21b3"

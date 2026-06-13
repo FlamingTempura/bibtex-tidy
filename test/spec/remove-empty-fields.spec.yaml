@@ -24,7 +24,7 @@ expected: |
     publisher     = {Elsevier}
   }
 ---
-title: remove empty fields preserves macro values
+title: remove empty fields preserves macro values (#502)
 options:
   removeEmptyFields: true
 input: |
