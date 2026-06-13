@@ -13,10 +13,21 @@ type Props = {
 	option: keyof OptionsNormalized;
 	checked?: boolean;
 	onchange?: (value: boolean) => void;
+	name?: string;
+	title?: string;
+	description?: string[];
 	children?: Snippet;
 };
 
-let { option, checked = false, onchange, children }: Props = $props();
+let {
+	option,
+	checked = false,
+	onchange,
+	name,
+	title,
+	description,
+	children,
+}: Props = $props();
 
 export const optionDefinitionByKey: Record<keyof Options, OptionDefinition> =
 	Object.fromEntries(optionDefinitions.map((opt) => [opt.key, opt])) as Record<
@@ -27,9 +38,9 @@ export const optionDefinitionByKey: Record<keyof Options, OptionDefinition> =
 const getDef = () => optionDefinitionByKey[option];
 </script>
 
-<Label title={getDef().description?.join("\n")} inset>
-	<Checkbox name={option} {checked} onchange={(v) => onchange?.(v)} />
-	{getDef().title}
+<Label title={(description ?? getDef().description)?.join("\n")} inset>
+	<Checkbox name={name ?? option} {checked} onchange={(v) => onchange?.(v)} />
+	{title ?? getDef().title}
 </Label>
 
 {#if children && checked}

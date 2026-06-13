@@ -829,6 +829,15 @@ var optionDefinitions = [
     defaultValue: true
   },
   {
+    key: "unescape",
+    cli: { "--unescape": true },
+    toCLI: /* @__PURE__ */ __name((val) => val ? "--unescape" : void 0, "toCLI"),
+    title: "Unescape special characters",
+    description: ["Convert LaTeX escapes to Unicode characters."],
+    type: "boolean",
+    defaultValue: false
+  },
+  {
     key: "sortFields",
     cli: { "--sort-fields": /* @__PURE__ */ __name((args) => args.length > 0 ? args : true, "--sort-fields") },
     toCLI: /* @__PURE__ */ __name((val) => {
@@ -1687,14 +1696,13 @@ function encodeUrl(url) {
 __name(encodeUrl, "encodeUrl");
 
 // src/unicodeCore.ts
-var coreSpecialCharacters = /* @__PURE__ */ new Map([
+var coreSpecialCharactersReversible = /* @__PURE__ */ new Map([
   ["0023", "\\#"],
   ["0024", "\\$"],
   ["0025", "\\%"],
   ["0026", "\\&"],
   ["0040", "\\@"],
   ["005f", "\\_"],
-  ["00a0", "~"],
   ["00c0", "\\`{A}"],
   ["00c1", "\\'{A}"],
   ["00c2", "\\^{A}"],
@@ -1799,8 +1807,6 @@ var coreSpecialCharacters = /* @__PURE__ */ new Map([
   ["012f", "\\k{\\i}"],
   ["0130", "\\.{I}"],
   ["0131", "\\i{}"],
-  ["0132", "IJ"],
-  ["0133", "ij"],
   ["0134", "\\^{J}"],
   ["0135", "\\^{\\j}"],
   ["0136", "\\c{K}"],
@@ -1869,17 +1875,23 @@ var coreSpecialCharacters = /* @__PURE__ */ new Map([
   ["017d", "\\v{Z}"],
   ["017e", "\\v{z}"],
   ["01f5", "\\'{g}"],
-  ["2010", "-"],
-  ["2011", "-"],
   ["2013", "--"],
   ["2014", "---"],
-  ["2018", "`"],
-  ["2019", "'"],
   ["201c", "``"],
   ["201d", "''"],
   ["2026", "\\ldots{}"],
-  ["202f", "~"],
   ["212b", "\\AA{}"]
+]);
+var coreSpecialCharacters = new Map([
+  ...coreSpecialCharactersReversible,
+  ["00a0", "~"],
+  ["0132", "IJ"],
+  ["0133", "ij"],
+  ["2010", "-"],
+  ["2011", "-"],
+  ["2018", "`"],
+  ["2019", "'"],
+  ["202f", "~"]
 ]);
 
 // src/unicode.ts
@@ -5193,6 +5205,45 @@ function sortEntryFields(entry, fieldOrder) {
 }
 __name(sortEntryFields, "sortEntryFields");
 
+// src/transforms/unescapeCharacters.ts
+var coreUnescapeCharacters = [...coreSpecialCharactersReversible].map(([codepoint, escaped]) => ({
+  character: String.fromCodePoint(Number.parseInt(codepoint, 16)),
+  escaped
+})).sort((a, b) => b.escaped.length - a.escaped.length);
+var coreQuotedUnescapeCharacters = coreUnescapeCharacters.filter(({ escaped }) => escaped.includes('"')).map(({ character, escaped }) => ({ character, escaped: `{${escaped}}` }));
+function unescapeCharacters(value, quoted = false) {
+  let result = value;
+  if (quoted) {
+    for (const { escaped, character } of coreQuotedUnescapeCharacters) {
+      result = result.replaceAll(escaped, character);
+    }
+  }
+  for (const { escaped, character } of coreUnescapeCharacters) {
+    result = result.replaceAll(escaped, character);
+  }
+  return result;
+}
+__name(unescapeCharacters, "unescapeCharacters");
+function createUnescapeCharactersTransform() {
+  return {
+    name: "unescape-characters",
+    apply: /* @__PURE__ */ __name((astProxy) => {
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "braced" || node.type === "quoted", "where"),
+        enter: /* @__PURE__ */ __name((node) => {
+          replaceValueNodeText(
+            node,
+            unescapeCharacters(renderValueNode(node), node.type === "quoted")
+          );
+          return [node];
+        }, "enter")
+      });
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createUnescapeCharactersTransform, "createUnescapeCharactersTransform");
+
 // src/transforms/wrapValues.ts
 function createWrapValuesTransform(indent, align, wrap) {
   return {
@@ -5263,7 +5314,9 @@ function generateTransformPipeline(options) {
   if (options.encodeUrls) {
     pipeline.push(createEncodeUrlsTransform());
   }
-  if (options.escape) {
+  if (options.unescape) {
+    pipeline.push(createUnescapeCharactersTransform());
+  } else if (options.escape) {
     pipeline.push(createEscapeCharactersTransform(options.escape === "new"));
   }
   pipeline.push(createFormatPageRangeTransform());

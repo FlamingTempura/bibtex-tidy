@@ -66,6 +66,12 @@ describe("argsToOptions", () => {
 			options: { escape: "new" },
 			unknownArgs: [],
 		});
+
+		expect(argsToOptions(["--unescape"])).toEqual({
+			inputFiles: [],
+			options: { unescape: true },
+			unknownArgs: [],
+		});
 	});
 
 	it("interprets duplicates CLI forms correctly (#456)", () => {

@@ -350,6 +350,15 @@ export const optionDefinitions: OptionDefinition[] = [
 		defaultValue: true,
 	},
 	{
+		key: "unescape",
+		cli: { "--unescape": true },
+		toCLI: (val) => (val ? "--unescape" : undefined),
+		title: "Unescape special characters",
+		description: ["Convert LaTeX escapes to Unicode characters."],
+		type: "boolean",
+		defaultValue: false,
+	},
+	{
 		key: "sortFields",
 		cli: { "--sort-fields": (args) => (args.length > 0 ? args : true) },
 		toCLI: (val) => {

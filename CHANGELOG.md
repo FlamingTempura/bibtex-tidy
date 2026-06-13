@@ -187,3 +187,4 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 ## Unreleased
 
 - `escape: "new"` / `--escape=new` opts into v2 escape behavior: only package-independent escapes are output and unsupported Unicode characters are left unchanged with warnings (#494).
+- Add `unescape: true` / `--unescape` to convert escapes back to Unicode (#180).

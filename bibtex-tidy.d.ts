@@ -122,6 +122,12 @@ declare type BibTeXTidyOptions = {
      */
     escape?: boolean | 'new';
     /**
+     * Unescape special characters
+     *
+     * Convert LaTeX escapes to Unicode characters.
+     */
+    unescape?: boolean;
+    /**
      * Sort fields
      *
      * Sort the fields within entries.

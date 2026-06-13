@@ -7,14 +7,13 @@
  * glyphs, or modern unicode-math support, leave the Unicode character unchanged
  * in new escape mode and emit a warning instead.
  */
-export const coreSpecialCharacters = new Map<string, string>([
+export const coreSpecialCharactersReversible = new Map<string, string>([
 	["0023", "\\#"],
 	["0024", "\\$"],
 	["0025", "\\%"],
 	["0026", "\\&"],
 	["0040", "\\@"],
 	["005f", "\\_"],
-	["00a0", "~"],
 	["00c0", "\\`{A}"],
 	["00c1", "\\'{A}"],
 	["00c2", "\\^{A}"],
@@ -119,8 +118,6 @@ export const coreSpecialCharacters = new Map<string, string>([
 	["012f", "\\k{\\i}"],
 	["0130", "\\.{I}"],
 	["0131", "\\i{}"],
-	["0132", "IJ"],
-	["0133", "ij"],
 	["0134", "\\^{J}"],
 	["0135", "\\^{\\j}"],
 	["0136", "\\c{K}"],
@@ -189,15 +186,22 @@ export const coreSpecialCharacters = new Map<string, string>([
 	["017d", "\\v{Z}"],
 	["017e", "\\v{z}"],
 	["01f5", "\\'{g}"],
-	["2010", "-"],
-	["2011", "-"],
 	["2013", "--"],
 	["2014", "---"],
-	["2018", "`"],
-	["2019", "'"],
 	["201c", "``"],
 	["201d", "''"],
 	["2026", "\\ldots{}"],
-	["202f", "~"],
 	["212b", "\\AA{}"],
+]);
+
+export const coreSpecialCharacters = new Map<string, string>([
+	...coreSpecialCharactersReversible,
+	["00a0", "~"],
+	["0132", "IJ"],
+	["0133", "ij"],
+	["2010", "-"],
+	["2011", "-"],
+	["2018", "`"],
+	["2019", "'"],
+	["202f", "~"],
 ]);

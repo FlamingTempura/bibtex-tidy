@@ -61,9 +61,15 @@ async function testWeb(page: Page, input: string, options_: Options = {}) {
 		!!options.stripEnclosingBraces,
 	);
 	await setCheckbox(page, "dropAllCaps", !!options.dropAllCaps);
-	await setCheckbox(page, "escape", !!options.escape);
-	if (options.escape) {
-		await setCheckbox(page, "escapeLegacy", options.escape === true);
+	await setCheckbox(
+		page,
+		"transformSpecialCharacters",
+		!!options.escape || !!options.unescape,
+	);
+	if (options.unescape) {
+		await setRadio(page, "unescape");
+	} else if (options.escape) {
+		await setRadio(page, options.escape === true ? "legacyEscape" : "escape");
 	}
 	await setCheckbox(page, "stripComments", !!options.stripComments);
 	await setCheckbox(page, "encodeUrls", !!options.encodeUrls);

@@ -5,6 +5,7 @@ import Collapsible from "./Collapsible.svelte";
 import Label from "./Label.svelte";
 import NumberInput from "./NumberInput.svelte";
 import Option from "./Option.svelte";
+import Radio from "./Radio.svelte";
 import TextAreaInput from "./TextAreaInput.svelte";
 
 type Props = {
@@ -19,10 +20,19 @@ let stripEnclosingBraces = $derived(options.stripEnclosingBraces ?? false);
 let numeric = $derived(options.numeric ?? false);
 let months = $derived(options.months ?? false);
 let dropAllCaps = $derived(options.dropAllCaps ?? false);
-let enableEscape = $derived(
-	options.escape !== undefined && options.escape !== false,
+let transformSpecialCharactersEnabled = $derived(
+	(options.escape !== undefined && options.escape !== false) ||
+		(options.unescape ?? false),
 );
-let legacyEscape = $derived(options.escape === true);
+let transformSpecialCharactersMode = $derived<
+	"escape" | "legacyEscape" | "unescape"
+>(
+	options.unescape
+		? "unescape"
+		: options.escape === true
+			? "legacyEscape"
+			: "escape",
+);
 let encodeUrls = $derived(options.encodeUrls ?? false);
 let removeEmptyFields = $derived(options.removeEmptyFields ?? false);
 let removeDuplicateFields = $derived(options.removeDuplicateFields ?? false);
@@ -44,6 +54,20 @@ let removeBracesValue = $derived(options.removeBraces?.join(" ") ?? "title");
 
 const updateOptions = (changes: Partial<OptionsNormalized>): void => {
 	onchange?.({ ...options, ...changes });
+};
+
+const updateSpecialCharactersMode = (
+	mode: "escape" | "legacyEscape" | "unescape",
+): void => {
+	if (mode === "unescape") {
+		updateOptions({ escape: false, unescape: true });
+		return;
+	}
+
+	updateOptions({
+		escape: mode === "legacyEscape" ? true : "new",
+		unescape: false,
+	});
 };
 
 const splitFields = (checked: boolean, value: string): string[] | undefined =>
@@ -126,20 +150,53 @@ const splitFields = (checked: boolean, value: string): string[] | undefined =>
 
 	<Option
 		option="escape"
-		checked={enableEscape}
+		name="transformSpecialCharacters"
+		title="Transform special characters"
+		description={[
+			"Escape special characters, such as umlauts, or convert package-independent LaTeX escapes back to Unicode characters.",
+		]}
+		checked={transformSpecialCharactersEnabled}
 		onchange={(v) =>
-			updateOptions({ escape: v ? (legacyEscape ? true : "new") : false })}
+			updateOptions(
+				v
+					? {
+							escape:
+								transformSpecialCharactersMode === "legacyEscape"
+									? true
+									: transformSpecialCharactersMode === "unescape"
+										? false
+										: "new",
+							unescape: transformSpecialCharactersMode === "unescape",
+					  }
+					: { escape: false, unescape: false },
+			)}
 	>
-		<Label
-			title="Use the old escape behavior, which may emit macros that require external LaTeX packages instead of leaving unsupported Unicode unchanged with warnings. New mode will become the default in v2; please raise a GitHub issue if you still need legacy behavior."
-			inset
-		>
-			<Checkbox
-				name="escapeLegacy"
-				checked={legacyEscape}
-				onchange={(v) => updateOptions({ escape: v ? true : "new" })}
+		<Label title="Escape special characters using package-independent LaTeX escapes when available.">
+			<Radio
+				name="transformSpecialCharactersMode"
+				value="escape"
+				checked={transformSpecialCharactersMode === "escape"}
+				onchange={() => updateSpecialCharactersMode("escape")}
 			/>
-			Use legacy package-dependent macros
+			Escape
+		</Label>
+		<Label title="Use the old escape behavior, which may emit macros that require external LaTeX packages instead of leaving unsupported Unicode unchanged with warnings. New mode will become the default in v2; please raise a GitHub issue if you still need legacy behavior.">
+			<Radio
+				name="transformSpecialCharactersMode"
+				value="legacyEscape"
+				checked={transformSpecialCharactersMode === "legacyEscape"}
+				onchange={() => updateSpecialCharactersMode("legacyEscape")}
+			/>
+			Legacy escape
+		</Label>
+		<Label title="Convert package-independent LaTeX escapes back to Unicode characters. Legacy package-dependent macros are left unchanged.">
+			<Radio
+				name="transformSpecialCharactersMode"
+				value="unescape"
+				checked={transformSpecialCharactersMode === "unescape"}
+				onchange={() => updateSpecialCharactersMode("unescape")}
+			/>
+			Unescape
 		</Label>
 	</Option>
 

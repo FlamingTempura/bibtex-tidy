@@ -25,6 +25,7 @@ import { createRemoveSpecifiedFieldsTransform } from "./transforms/removeSpecifi
 import { createResetWhitespaceTransform } from "./transforms/resetWhitespace.ts";
 import { createSortEntriesTransform } from "./transforms/sortEntries.ts";
 import { createSortFieldsTransform } from "./transforms/sortFields.ts";
+import { createUnescapeCharactersTransform } from "./transforms/unescapeCharacters.ts";
 import { createWrapValuesTransform } from "./transforms/wrapValues.ts";
 import type { Transform } from "./types.ts";
 
@@ -65,7 +66,9 @@ export function generateTransformPipeline(
 	if (options.encodeUrls) {
 		pipeline.push(createEncodeUrlsTransform());
 	}
-	if (options.escape) {
+	if (options.unescape) {
+		pipeline.push(createUnescapeCharactersTransform());
+	} else if (options.escape) {
 		pipeline.push(createEscapeCharactersTransform(options.escape === "new"));
 	}
 	pipeline.push(createFormatPageRangeTransform());

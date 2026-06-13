@@ -176,6 +176,9 @@ bibtex-tidy references.bib
       cannot be escaped. New mode will become the default in v2; please raise a
       GitHub issue if you still need the legacy behavior.
       
+  --unescape
+      Convert LaTeX escapes to Unicode characters.
+      
   --sort-fields
       Sort the fields within entries.
       

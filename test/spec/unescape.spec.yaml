@@ -1,0 +1,37 @@
+title: unescape core LaTeX escapes to Unicode (#180)
+options:
+  unescape: true
+input: |
+  @misc{q,
+    author = {G\"{u}lbahar and Dvo\v{r}ák},
+    title = {Chars \_, \$, \@, \&, \'{e}, \={u}, --, ---, ``quoted'', \ldots{}}
+  }
+expected: |
+  @misc{q,
+    author        = {Gülbahar and Dvořák},
+    title         = {Chars _, $, @, &, é, ū, –, —, “quoted”, …}
+  }
+---
+title: unescape quote-protected escapes in quoted values
+options:
+  unescape: true
+input: |
+  @misc{q,
+    author = "G{\"{u}}lbahar"
+  }
+expected: |
+  @misc{q,
+    author        = "Gülbahar"
+  }
+---
+title: unescape ignores legacy package-dependent escapes
+options:
+  unescape: true
+input: |
+  @misc{q,
+    title = {A \ElsevierGlyph{21B3} B and f\textasteriskcenteredck}
+  }
+expected: |
+  @misc{q,
+    title         = {A \ElsevierGlyph{21B3} B and f\textasteriskcenteredck}
+  }
