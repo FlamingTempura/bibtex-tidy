@@ -1,0 +1,11 @@
+title: escape special characters in quoted values
+options:
+  escape: new
+input: |
+  @misc{q,
+    author = "Gülbahar"
+  }
+expected: |
+  @misc{q,
+    author        = "G{\"{u}}lbahar"
+  }

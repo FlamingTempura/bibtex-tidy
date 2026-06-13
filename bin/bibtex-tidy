@@ -132,8 +132,14 @@ var manPage = [
   "      TEA} will become {Journal of Tea}. Roman numerals will be left unchanged.",
   "      ",
   "  --escape, --no-escape",
-  "      Escape special characters, such as umlaut. This ensures correct typesetting",
-  "      with latex. Enabled by default.",
+  "      Escape special characters, such as umlauts. This is usually unnecessary for",
+  "      modern toolchains like biber and biblatex. Enabled by default.",
+  "      ",
+  "      By default, the legacy escape list is used for v1 compatibility and may emit",
+  "      macros requiring external packages. Use --escape=new to only convert",
+  "      characters with package-independent LaTeX escapes and warn on characters that",
+  "      cannot be escaped. New mode will become the default in v2; please raise a",
+  "      GitHub issue if you still need the legacy behavior.",
   "      ",
   "  --sort-fields",
   "      Sort the fields within entries.",
@@ -813,13 +819,21 @@ var optionDefinitions = [
   },
   {
     key: "escape",
-    cli: { "--escape": true, "--no-escape": false },
-    toCLI: (val) => val === false ? "--no-escape" : void 0,
+    cli: {
+      "--escape": (args) => args[0] === "new" ? "new" : true,
+      "--no-escape": false
+    },
+    toCLI: (val) => {
+      if (val === false) return "--no-escape";
+      if (val === "new") return "--escape=new";
+      return void 0;
+    },
     title: "Escape special characters",
     description: [
-      "Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default."
+      "Escape special characters, such as umlauts. This is usually unnecessary for modern toolchains like biber and biblatex. Enabled by default.",
+      "By default, the legacy escape list is used for v1 compatibility and may emit macros requiring external packages. Use --escape=new to only convert characters with package-independent LaTeX escapes and warn on characters that cannot be escaped. New mode will become the default in v2; please raise a GitHub issue if you still need the legacy behavior."
     ],
-    type: "boolean",
+    type: "boolean | 'new'",
     defaultValue: true
   },
   {
@@ -1598,18 +1612,208 @@ function encodeUrl(url) {
   return url.replace(/\\?_/g, "\\%5F");
 }
 
-// src/unicode.ts
-var specialCharacters = /* @__PURE__ */ new Map([
+// src/unicodeCore.ts
+var coreSpecialCharacters = /* @__PURE__ */ new Map([
   ["0023", "\\#"],
   ["0024", "\\$"],
   ["0025", "\\%"],
   ["0026", "\\&"],
-  ["0027", "'"],
   ["0040", "\\@"],
-  ["002a", "\\textasteriskcentered"],
   ["005f", "\\_"],
-  ["007c", "\\vert{}"],
   ["00a0", "~"],
+  ["00c0", "\\`{A}"],
+  ["00c1", "\\'{A}"],
+  ["00c2", "\\^{A}"],
+  ["00c3", "\\~{A}"],
+  ["00c4", '\\"{A}'],
+  ["00c5", "\\AA{}"],
+  ["00c6", "\\AE{}"],
+  ["00c7", "\\c{C}"],
+  ["00c8", "\\`{E}"],
+  ["00c9", "\\'{E}"],
+  ["00ca", "\\^{E}"],
+  ["00cb", '\\"{E}'],
+  ["00cc", "\\`{I}"],
+  ["00cd", "\\'{I}"],
+  ["00ce", "\\^{I}"],
+  ["00cf", '\\"{I}'],
+  ["00d1", "\\~{N}"],
+  ["00d2", "\\`{O}"],
+  ["00d3", "\\'{O}"],
+  ["00d4", "\\^{O}"],
+  ["00d5", "\\~{O}"],
+  ["00d6", '\\"{O}'],
+  ["00d8", "\\O{}"],
+  ["00d9", "\\`{U}"],
+  ["00da", "\\'{U}"],
+  ["00db", "\\^{U}"],
+  ["00dc", '\\"{U}'],
+  ["00dd", "\\'{Y}"],
+  ["00df", "\\ss{}"],
+  ["00e0", "\\`{a}"],
+  ["00e1", "\\'{a}"],
+  ["00e2", "\\^{a}"],
+  ["00e3", "\\~{a}"],
+  ["00e4", '\\"{a}'],
+  ["00e5", "\\aa{}"],
+  ["00e6", "\\ae{}"],
+  ["00e7", "\\c{c}"],
+  ["00e8", "\\`{e}"],
+  ["00e9", "\\'{e}"],
+  ["00ea", "\\^{e}"],
+  ["00eb", '\\"{e}'],
+  ["00ec", "\\`{\\i}"],
+  ["00ed", "\\'{\\i}"],
+  ["00ee", "\\^{\\i}"],
+  ["00ef", '\\"{\\i}'],
+  ["00f1", "\\~{n}"],
+  ["00f2", "\\`{o}"],
+  ["00f3", "\\'{o}"],
+  ["00f4", "\\^{o}"],
+  ["00f5", "\\~{o}"],
+  ["00f6", '\\"{o}'],
+  ["00f8", "\\o{}"],
+  ["00f9", "\\`{u}"],
+  ["00fa", "\\'{u}"],
+  ["00fb", "\\^{u}"],
+  ["00fc", '\\"{u}'],
+  ["00fd", "\\'{y}"],
+  ["00ff", '\\"{y}'],
+  ["0100", "\\={A}"],
+  ["0101", "\\={a}"],
+  ["0102", "\\u{A}"],
+  ["0103", "\\u{a}"],
+  ["0104", "\\k{A}"],
+  ["0105", "\\k{a}"],
+  ["0106", "\\'{C}"],
+  ["0107", "\\'{c}"],
+  ["0108", "\\^{C}"],
+  ["0109", "\\^{c}"],
+  ["010a", "\\.{C}"],
+  ["010b", "\\.{c}"],
+  ["010c", "\\v{C}"],
+  ["010d", "\\v{c}"],
+  ["010e", "\\v{D}"],
+  ["010f", "\\v{d}"],
+  ["0112", "\\={E}"],
+  ["0113", "\\={e}"],
+  ["0114", "\\u{E}"],
+  ["0115", "\\u{e}"],
+  ["0116", "\\.{E}"],
+  ["0117", "\\.{e}"],
+  ["0118", "\\k{E}"],
+  ["0119", "\\k{e}"],
+  ["011a", "\\v{E}"],
+  ["011b", "\\v{e}"],
+  ["011c", "\\^{G}"],
+  ["011d", "\\^{g}"],
+  ["011e", "\\u{G}"],
+  ["011f", "\\u{g}"],
+  ["0120", "\\.{G}"],
+  ["0121", "\\.{g}"],
+  ["0122", "\\c{G}"],
+  ["0123", "\\c{g}"],
+  ["0124", "\\^{H}"],
+  ["0125", "\\^{h}"],
+  ["0128", "\\~{I}"],
+  ["0129", "\\~{\\i}"],
+  ["012a", "\\={I}"],
+  ["012b", "\\={\\i}"],
+  ["012c", "\\u{I}"],
+  ["012d", "\\u{\\i}"],
+  ["012e", "\\k{I}"],
+  ["012f", "\\k{\\i}"],
+  ["0130", "\\.{I}"],
+  ["0131", "\\i{}"],
+  ["0132", "IJ"],
+  ["0133", "ij"],
+  ["0134", "\\^{J}"],
+  ["0135", "\\^{\\j}"],
+  ["0136", "\\c{K}"],
+  ["0137", "\\c{k}"],
+  ["0139", "\\'{L}"],
+  ["013a", "\\'{l}"],
+  ["013b", "\\c{L}"],
+  ["013c", "\\c{l}"],
+  ["013d", "\\v{L}"],
+  ["013e", "\\v{l}"],
+  ["0141", "\\L{}"],
+  ["0142", "\\l{}"],
+  ["0143", "\\'{N}"],
+  ["0144", "\\'{n}"],
+  ["0145", "\\c{N}"],
+  ["0146", "\\c{n}"],
+  ["0147", "\\v{N}"],
+  ["0148", "\\v{n}"],
+  ["014c", "\\={O}"],
+  ["014d", "\\={o}"],
+  ["014e", "\\u{O}"],
+  ["014f", "\\u{o}"],
+  ["0150", "\\H{O}"],
+  ["0151", "\\H{o}"],
+  ["0152", "\\OE{}"],
+  ["0153", "\\oe{}"],
+  ["0154", "\\'{R}"],
+  ["0155", "\\'{r}"],
+  ["0156", "\\c{R}"],
+  ["0157", "\\c{r}"],
+  ["0158", "\\v{R}"],
+  ["0159", "\\v{r}"],
+  ["015a", "\\'{S}"],
+  ["015b", "\\'{s}"],
+  ["015c", "\\^{S}"],
+  ["015d", "\\^{s}"],
+  ["015e", "\\c{S}"],
+  ["015f", "\\c{s}"],
+  ["0160", "\\v{S}"],
+  ["0161", "\\v{s}"],
+  ["0162", "\\c{T}"],
+  ["0163", "\\c{t}"],
+  ["0164", "\\v{T}"],
+  ["0165", "\\v{t}"],
+  ["0168", "\\~{U}"],
+  ["0169", "\\~{u}"],
+  ["016a", "\\={U}"],
+  ["016b", "\\={u}"],
+  ["016c", "\\u{U}"],
+  ["016d", "\\u{u}"],
+  ["016e", "\\r{U}"],
+  ["016f", "\\r{u}"],
+  ["0170", "\\H{U}"],
+  ["0171", "\\H{u}"],
+  ["0172", "\\k{U}"],
+  ["0173", "\\k{u}"],
+  ["0174", "\\^{W}"],
+  ["0175", "\\^{w}"],
+  ["0176", "\\^{Y}"],
+  ["0177", "\\^{y}"],
+  ["0178", '\\"{Y}'],
+  ["0179", "\\'{Z}"],
+  ["017a", "\\'{z}"],
+  ["017b", "\\.{Z}"],
+  ["017c", "\\.{z}"],
+  ["017d", "\\v{Z}"],
+  ["017e", "\\v{z}"],
+  ["01f5", "\\'{g}"],
+  ["2010", "-"],
+  ["2011", "-"],
+  ["2013", "--"],
+  ["2014", "---"],
+  ["2018", "`"],
+  ["2019", "'"],
+  ["201c", "``"],
+  ["201d", "''"],
+  ["2026", "\\ldots{}"],
+  ["202f", "~"],
+  ["212b", "\\AA{}"]
+]);
+
+// src/unicode.ts
+var specialCharacters = new Map([
+  ...coreSpecialCharacters,
+  ["0027", "'"],
+  ["002a", "\\textasteriskcentered"],
+  ["007c", "\\vert{}"],
   ["00a1", "\\textexclamdown{}"],
   ["00a2", "\\textcent{}"],
   ["00a3", "\\textsterling{}"],
@@ -1641,203 +1845,29 @@ var specialCharacters = /* @__PURE__ */ new Map([
   ["00bd", "\\textonehalf{}"],
   ["00be", "\\textthreequarters{}"],
   ["00bf", "\\textquestiondown{}"],
-  ["00c0", "\\`{A}"],
-  ["00c1", "\\'{A}"],
-  ["00c2", "\\^{A}"],
-  ["00c3", "\\~{A}"],
-  ["00c4", '\\"{A}'],
-  ["00c5", "\\AA{}"],
-  ["00c6", "\\AE{}"],
-  ["00c7", "\\c{C}"],
-  ["00c8", "\\`{E}"],
-  ["00c9", "\\'{E}"],
-  ["00ca", "\\^{E}"],
-  ["00cb", '\\"{E}'],
-  ["00cc", "\\`{I}"],
-  ["00cd", "\\'{I}"],
-  ["00ce", "\\^{I}"],
-  ["00cf", '\\"{I}'],
   ["00d0", "\\DH{}"],
-  ["00d1", "\\~{N}"],
-  ["00d2", "\\`{O}"],
-  ["00d3", "\\'{O}"],
-  ["00d4", "\\^{O}"],
-  ["00d5", "\\~{O}"],
-  ["00d6", '\\"{O}'],
   ["00d7", "\\texttimes{}"],
-  ["00d8", "\\O{}"],
-  ["00d9", "\\`{U}"],
-  ["00da", "\\'{U}"],
-  ["00db", "\\^{U}"],
-  ["00dc", '\\"{U}'],
-  ["00dd", "\\'{Y}"],
   ["00de", "\\TH{}"],
-  ["00df", "\\ss{}"],
-  ["00e0", "\\`{a}"],
-  ["00e1", "\\'{a}"],
-  ["00e2", "\\^{a}"],
-  ["00e3", "\\~{a}"],
-  ["00e4", '\\"{a}'],
-  ["00e5", "\\aa{}"],
-  ["00e6", "\\ae{}"],
-  ["00e7", "\\c{c}"],
-  ["00e8", "\\`{e}"],
-  ["00e9", "\\'{e}"],
-  ["00ea", "\\^{e}"],
-  ["00eb", '\\"{e}'],
-  ["00ec", "\\`{\\i}"],
-  ["00ed", "\\'{\\i}"],
-  ["00ee", "\\^{\\i}"],
-  ["00ef", '\\"{\\i}'],
   ["00f0", "\\dh{}"],
-  ["00f1", "\\~{n}"],
-  ["00f2", "\\`{o}"],
-  ["00f3", "\\'{o}"],
-  ["00f4", "\\^{o}"],
-  ["00f5", "\\~{o}"],
-  ["00f6", '\\"{o}'],
   ["00f7", "\\div{}"],
-  ["00f8", "\\o{}"],
-  ["00f9", "\\`{u}"],
-  ["00fa", "\\'{u}"],
-  ["00fb", "\\^{u}"],
-  ["00fc", '\\"{u}'],
-  ["00fd", "\\'{y}"],
   ["00fe", "\\th{}"],
-  ["00ff", '\\"{y}'],
-  ["0100", "\\={A}"],
-  ["0101", "\\={a}"],
-  ["0102", "\\u{A}"],
-  ["0103", "\\u{a}"],
-  ["0104", "\\k{A}"],
-  ["0105", "\\k{a}"],
-  ["0106", "\\'{C}"],
-  ["0107", "\\'{c}"],
-  ["0108", "\\^{C}"],
-  ["0109", "\\^{c}"],
-  ["010a", "\\.{C}"],
-  ["010b", "\\.{c}"],
-  ["010c", "\\v{C}"],
-  ["010d", "\\v{c}"],
-  ["010e", "\\v{D}"],
-  ["010f", "\\v{d}"],
   ["0110", "\\DJ{}"],
   ["0111", "\\dj{}"],
-  ["0112", "\\={E}"],
-  ["0113", "\\={e}"],
-  ["0114", "\\u{E}"],
-  ["0115", "\\u{e}"],
-  ["0116", "\\.{E}"],
-  ["0117", "\\.{e}"],
-  ["0118", "\\k{E}"],
-  ["0119", "\\k{e}"],
-  ["011a", "\\v{E}"],
-  ["011b", "\\v{e}"],
-  ["011c", "\\^{G}"],
-  ["011d", "\\^{g}"],
-  ["011e", "\\u{G}"],
-  ["011f", "\\u{g}"],
-  ["0120", "\\.{G}"],
-  ["0121", "\\.{g}"],
-  ["0122", "\\c{G}"],
-  ["0123", "\\c{g}"],
-  ["0124", "\\^{H}"],
-  ["0125", "\\^{h}"],
   ["0126", "{\\fontencoding{LELA}\\selectfont\\char40}"],
   ["0127", "\\Elzxh{}"],
-  ["0128", "\\~{I}"],
-  ["0129", "\\~{\\i}"],
-  ["012a", "\\={I}"],
-  ["012b", "\\={\\i}"],
-  ["012c", "\\u{I}"],
-  ["012d", "\\u{\\i}"],
-  ["012e", "\\k{I}"],
-  ["012f", "\\k{i}"],
-  ["0130", "\\.{I}"],
-  ["0131", "\\i{}"],
-  ["0132", "IJ"],
-  ["0133", "ij"],
-  ["0134", "\\^{J}"],
-  ["0135", "\\^{\\j}"],
-  ["0136", "\\c{K}"],
-  ["0137", "\\c{k}"],
   ["0138", "{\\fontencoding{LELA}\\selectfont\\char91}"],
-  ["0139", "\\'{L}"],
-  ["013a", "\\'{l}"],
-  ["013b", "\\c{L}"],
-  ["013c", "\\c{l}"],
-  ["013d", "\\v{L}"],
-  ["013e", "\\v{l}"],
   ["013f", "{\\fontencoding{LELA}\\selectfont\\char201}"],
   ["0140", "{\\fontencoding{LELA}\\selectfont\\char202}"],
-  ["0141", "\\L{}"],
-  ["0142", "\\l{}"],
-  ["0143", "\\'{N}"],
-  ["0144", "\\'{n}"],
-  ["0145", "\\c{N}"],
-  ["0146", "\\c{n}"],
-  ["0147", "\\v{N}"],
-  ["0148", "\\v{n}"],
   ["0149", "'n"],
   ["014a", "\\NG{}"],
   ["014b", "\\ng{}"],
-  ["014c", "\\={O}"],
-  ["014d", "\\={o}"],
-  ["014e", "\\u{O}"],
-  ["014f", "\\u{o}"],
-  ["0150", "\\H{O}"],
-  ["0151", "\\H{o}"],
-  ["0152", "\\OE{}"],
-  ["0153", "\\oe{}"],
-  ["0154", "\\'{R}"],
-  ["0155", "\\'{r}"],
-  ["0156", "\\c{R}"],
-  ["0157", "\\c{r}"],
-  ["0158", "\\v{R}"],
-  ["0159", "\\v{r}"],
-  ["015a", "\\'{S}"],
-  ["015b", "\\'{s}"],
-  ["015c", "\\^{S}"],
-  ["015d", "\\^{s}"],
-  ["015e", "\\c{S}"],
-  ["015f", "\\c{s}"],
-  ["0160", "\\v{S}"],
-  ["0161", "\\v{s}"],
-  ["0162", "\\c{T}"],
-  ["0163", "\\c{t}"],
-  ["0164", "\\v{T}"],
-  ["0165", "\\v{t}"],
   ["0166", "{\\fontencoding{LELA}\\selectfont\\char47}"],
   ["0167", "{\\fontencoding{LELA}\\selectfont\\char63}"],
-  ["0168", "\\~{U}"],
-  ["0169", "\\~{u}"],
-  ["016a", "\\={U}"],
-  ["016b", "\\={u}"],
-  ["016c", "\\u{U}"],
-  ["016d", "\\u{u}"],
-  ["016e", "\\r{U}"],
-  ["016f", "\\r{u}"],
-  ["0170", "\\H{U}"],
-  ["0171", "\\H{u}"],
-  ["0172", "\\k{U}"],
-  ["0173", "\\k{u}"],
-  ["0174", "\\^{W}"],
-  ["0175", "\\^{w}"],
-  ["0176", "\\^{Y}"],
-  ["0177", "\\^{y}"],
-  ["0178", '\\"{Y}'],
-  ["0179", "\\'{Z}"],
-  ["017a", "\\'{z}"],
-  ["017b", "\\.{Z}"],
-  ["017c", "\\.{z}"],
-  ["017d", "\\v{Z}"],
-  ["017e", "\\v{z}"],
   ["0195", "\\texthvlig{}"],
   ["019e", "\\textnrleg{}"],
   ["01aa", "\\eth{}"],
   ["01ba", "{\\fontencoding{LELA}\\selectfont\\char195}"],
   ["01c2", "\\textdoublepipe{}"],
-  ["01f5", "\\'{g}"],
   ["0250", "\\Elztrna{}"],
   ["0252", "\\Elztrnsa{}"],
   ["0254", "\\Elzopeno{}"],
@@ -2210,22 +2240,14 @@ var specialCharacters = /* @__PURE__ */ new Map([
   ["2008", "\\hphantom{,}"],
   ["2009", "\\hspace{0.167em}"],
   ["200a", "\\mkern1mu{}"],
-  ["2010", "-"],
-  ["2011", "-"],
-  ["2014", "--"],
   ["2015", "\\rule{1em}{1pt}"],
   ["2016", "\\Vert{}"],
-  ["2018", "`"],
-  ["2019", "'"],
   ["201b", "\\Elzreapos{}"],
-  ["201c", "``"],
-  ["201d", "''"],
   ["201e", ",,"],
   ["2020", "\\textdagger{}"],
   ["2021", "\\textdaggerdbl{}"],
   ["2022", "\\textbullet{}"],
   ["2025", ".."],
-  ["2026", "\\ldots{}"],
   ["2030", "\\textperthousand{}"],
   ["2031", "\\textpertenthousand{}"],
   ["2032", "\\ensuremath{'}"],
@@ -2266,7 +2288,6 @@ var specialCharacters = /* @__PURE__ */ new Map([
   ["2127", "\\mho{}"],
   ["2128", "\\mathfrak{Z}"],
   ["2129", "\\ElsevierGlyph{2129}"],
-  ["212b", "\\AA{}"],
   ["212c", "\\mathscr{B}"],
   ["212d", "\\mathfrak{C}"],
   ["212f", "\\mathscr{e}"],
@@ -3940,53 +3961,81 @@ var VERBATIM_FIELDS = [
   "verbc",
   "pdf"
 ];
-function createEscapeCharactersTransform() {
+function createEscapeCharactersTransform(newMode = false) {
+  const characters = newMode ? coreSpecialCharacters : specialCharacters;
   return {
     name: "escape-characters",
     apply: (ast) => {
+      const warnings = [];
+      const warned = /* @__PURE__ */ new Set();
       for (const field of ast.fields()) {
         if (VERBATIM_FIELDS.includes(field.name)) {
           continue;
         }
         for (const entry of field.value.concat) {
-          entry.value = escapeCharacters(entry.value);
+          const result = escapeCharacters(
+            entry.value,
+            characters,
+            entry.type === "quoted"
+          );
+          entry.value = result.value;
+          for (const unsupported of result.unsupported) {
+            const key = `${field.name}:${unsupported.codepoint}`;
+            if (warned.has(key)) continue;
+            warned.add(key);
+            warnings.push({
+              code: "UNSUPPORTED_ESCAPE",
+              character: unsupported.character,
+              codepoint: unsupported.codepoint,
+              message: `Cannot escape character ${unsupported.character} (U+${unsupported.codepoint.toUpperCase()}) in ${field.name} without LaTeX packages or special fonts.`
+            });
+          }
         }
       }
-      return void 0;
+      return warnings;
     }
   };
 }
-function escapeCharacters(value) {
+function escapeCharacters(value, characters, protectQuotes = false) {
   var _a;
   let result = value;
   const mathExpressions = [];
+  const unsupported = [];
   result = result.replace(/\$[^$]+\$/g, (match) => {
     mathExpressions.push(match);
     return `MATH.EXP.${mathExpressions.length - 1}`;
   });
   let newstr = "";
   let escapeMode = false;
-  for (let i = 0; i < result.length; i++) {
+  for (const char of result) {
     if (escapeMode) {
       escapeMode = false;
-      newstr += result[i];
+      newstr += char;
       continue;
     }
-    if (result[i] === "\\") {
+    if (char === "\\") {
       escapeMode = true;
-      newstr += result[i];
+      newstr += char;
       continue;
     }
-    const c = result.charCodeAt(i).toString(16).padStart(4, "0");
-    newstr += (_a = specialCharacters.get(c)) != null ? _a : result[i];
-  }
-  return newstr.replace(
-    /MATH\.EXP\.(\d+)/g,
-    (_, i) => {
-      var _a2;
-      return (_a2 = mathExpressions[Number(i)]) != null ? _a2 : "";
+    const codepointValue = (_a = char.codePointAt(0)) != null ? _a : 0;
+    const codepoint = codepointValue.toString(16).padStart(4, "0");
+    const escaped = characters.get(codepoint);
+    newstr += protectQuotes && (escaped == null ? void 0 : escaped.includes('"')) ? `{${escaped}}` : escaped != null ? escaped : char;
+    if (!escaped && codepointValue > 127) {
+      unsupported.push({ character: char, codepoint });
     }
-  );
+  }
+  return {
+    value: newstr.replace(
+      /MATH\.EXP\.(\d+)/g,
+      (_, i) => {
+        var _a2;
+        return (_a2 = mathExpressions[Number(i)]) != null ? _a2 : "";
+      }
+    ),
+    unsupported
+  };
 }
 
 // src/transforms/fieldCommas.ts
@@ -5086,7 +5135,7 @@ function generateTransformPipeline(options) {
     pipeline.push(createEncodeUrlsTransform());
   }
   if (options.escape) {
-    pipeline.push(createEscapeCharactersTransform());
+    pipeline.push(createEscapeCharactersTransform(options.escape === "new"));
   }
   pipeline.push(createFormatPageRangeTransform());
   if (options.generateKeys) {

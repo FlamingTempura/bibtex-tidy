@@ -10,6 +10,7 @@ export type Transform = {
 export type Warning = (
 	| { code: "MISSING_KEY" }
 	| { code: "DUPLICATE_ENTRY"; rule: DuplicateRule }
+	| { code: "UNSUPPORTED_ESCAPE"; character: string; codepoint: string }
 ) & {
 	message: string;
 };

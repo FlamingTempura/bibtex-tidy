@@ -1,6 +1,8 @@
 <script lang="ts">
 import type { OptionsNormalized } from "../optionUtils.ts";
+import Checkbox from "./Checkbox.svelte";
 import Collapsible from "./Collapsible.svelte";
+import Label from "./Label.svelte";
 import Option from "./Option.svelte";
 
 export let options: OptionsNormalized;
@@ -10,7 +12,8 @@ let stripEnclosingBraces = options.stripEnclosingBraces ?? false;
 let numeric = options.numeric ?? false;
 let months = options.months ?? false;
 let dropAllCaps = options.dropAllCaps ?? false;
-let enableEscape = options.escape ?? false;
+let enableEscape = options.escape !== undefined && options.escape !== false;
+let legacyEscape = options.escape === true;
 let encodeUrls = options.encodeUrls ?? false;
 let removeEmptyFields = options.removeEmptyFields ?? false;
 let removeDuplicateFields = options.removeDuplicateFields ?? false;
@@ -32,7 +35,7 @@ $: {
 	options.numeric = numeric;
 	options.months = months;
 	options.dropAllCaps = dropAllCaps;
-	options.escape = enableEscape;
+	options.escape = enableEscape ? (legacyEscape ? true : "new") : false;
 	options.encodeUrls = encodeUrls;
 	options.removeEmptyFields = removeEmptyFields;
 	options.removeDuplicateFields = removeDuplicateFields;
@@ -87,7 +90,18 @@ $: {
 
 	<Option option="dropAllCaps" bind:checked={dropAllCaps} />
 
-	<Option option="escape" bind:checked={enableEscape} />
+	<Option option="escape" bind:checked={enableEscape}>
+		<Label
+			title="Use the old escape behavior, which may emit macros that require external LaTeX packages instead of leaving unsupported Unicode unchanged with warnings. New mode will become the default in v2; please raise a GitHub issue if you still need legacy behavior."
+			inset
+		>
+			<Checkbox
+				name="escapeLegacy"
+				bind:checked={legacyEscape}
+			/>
+			Use legacy package-dependent macros
+		</Label>
+	</Option>
 
 	<Option option="encodeUrls" bind:checked={encodeUrls} />
 

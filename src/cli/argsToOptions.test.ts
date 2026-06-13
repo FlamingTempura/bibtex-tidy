@@ -60,5 +60,11 @@ describe("argsToOptions", () => {
 			options: { align: false },
 			unknownArgs: [],
 		});
+
+		expect(argsToOptions(["--escape=new"])).toEqual({
+			inputFiles: [],
+			options: { escape: "new" },
+			unknownArgs: [],
+		});
 	});
 });

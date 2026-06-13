@@ -118,9 +118,10 @@ export type BibTeXTidyOptions = {
 	/**
 	 * Escape special characters
 	 *
-	 * Escape special characters, such as umlaut. This ensures correct typesetting with latex. Enabled by default.
+	 * Escape special characters, such as umlauts. This is usually unnecessary for modern toolchains like biber and biblatex. Enabled by default.
+	 * By default, the legacy escape list is used for v1 compatibility and may emit macros requiring external packages. Use --escape=new to only convert characters with package-independent LaTeX escapes and warn on characters that cannot be escaped. New mode will become the default in v2; please raise a GitHub issue if you still need the legacy behavior.
 	 */
-	escape?: boolean;
+	escape?: boolean | 'new';
 	/**
 	 * Sort fields
 	 *

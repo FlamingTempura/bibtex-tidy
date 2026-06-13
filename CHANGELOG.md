@@ -183,3 +183,7 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 - Pre-commit hook changed to script so that dev dependencies are not required (#427)
 - Fix math escaping (#430)
 - Upgrade dependencies
+
+## Unreleased
+
+- `escape: "new"` / `--escape=new` opts into v2 escape behavior: only package-independent escapes are output and unsupported Unicode characters are left unchanged with warnings (#494).

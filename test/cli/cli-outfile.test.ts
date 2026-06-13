@@ -29,3 +29,17 @@ test("CLI should output to specified file (from stdin)", async () => {
 	});
 	expect(await readFile(outfile, "utf8")).toBe(output);
 });
+
+test("CLI should output unsupported escape warnings when writing to a file", async () => {
+	const outfile = await tmpfile("");
+	const proc = spawnSync(BIN_PATH, ["--escape=new", "--output", outfile], {
+		input: "@misc{q, author={↳}}",
+		encoding: "utf8",
+	});
+
+	expect(await readFile(outfile, "utf8")).toBe(
+		`@misc{q,\n  author        = {↳}\n}\n`,
+	);
+	expect(proc.stderr).toContain("UNSUPPORTED_ESCAPE:");
+	expect(proc.stderr).toContain("Cannot escape character ↳ (U+21B3)");
+});

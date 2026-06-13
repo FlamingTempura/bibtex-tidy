@@ -2,13 +2,14 @@ import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import yaml from "yaml";
 import type { Options } from "../../src/optionUtils.ts";
+import type { Warning } from "../../src/types.ts";
 
 type Spec = {
 	title: string;
 	input: string;
 	expected?: string;
 	options: Options;
-	warnings?: { code: string; rule: string }[];
+	warnings?: Warning[];
 };
 
 const SPEC_DIR = join(import.meta.dirname, "..", "spec");

@@ -66,7 +66,7 @@ export function generateTransformPipeline(
 		pipeline.push(createEncodeUrlsTransform());
 	}
 	if (options.escape) {
-		pipeline.push(createEscapeCharactersTransform());
+		pipeline.push(createEscapeCharactersTransform(options.escape === "new"));
 	}
 	pipeline.push(createFormatPageRangeTransform());
 	if (options.generateKeys) {

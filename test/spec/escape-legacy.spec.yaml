@@ -1,0 +1,11 @@
+title: escape special characters with legacy package-dependent macros
+options:
+  escape: true
+input: |
+  @misc{q,
+    author = {Chars ↳}
+  }
+expected: |
+  @misc{q,
+    author        = {Chars \ElsevierGlyph{21B3}}
+  }

@@ -1,13 +1,20 @@
 title: escape special characters
 options:
-  escape: true
+  escape: new
 input: |
   @misc{q,
-    author = {Chars \", _, $, @, &, é, ɛ, ū, {"}},
+    author = {Chars \", _, $, @, &, é, ɛ, ū, ↳, {"}},
     title = {Math expression $\\alpha$ stay unescaped}
   }
 expected: |
   @misc{q,
-    author        = {Chars \", \_, \$, \@, \&, \'{e}, \varepsilon{}, \={u}, {"}},
+    author        = {Chars \", \_, \$, \@, \&, \'{e}, ɛ, \={u}, ↳, {"}},
     title         = {Math expression $\\alpha$ stay unescaped}
   }
+warnings:
+  - code: UNSUPPORTED_ESCAPE
+    character: ɛ
+    codepoint: "025b"
+  - code: UNSUPPORTED_ESCAPE
+    character: ↳
+    codepoint: "21b3"
