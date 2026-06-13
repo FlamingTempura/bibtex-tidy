@@ -67,4 +67,24 @@ describe("argsToOptions", () => {
 			unknownArgs: [],
 		});
 	});
+
+	it("interprets duplicates CLI forms correctly (#456)", () => {
+		expect(argsToOptions(["--duplicates=doi"])).toEqual({
+			inputFiles: [],
+			options: { duplicates: ["doi"] },
+			unknownArgs: [],
+		});
+
+		expect(argsToOptions(["--duplicates=doi,key"])).toEqual({
+			inputFiles: [],
+			options: { duplicates: ["doi", "key"] },
+			unknownArgs: [],
+		});
+
+		expect(argsToOptions(["--duplicates"])).toEqual({
+			inputFiles: [],
+			options: { duplicates: true },
+			unknownArgs: [],
+		});
+	});
 });
