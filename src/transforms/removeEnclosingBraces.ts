@@ -1,4 +1,4 @@
-import type { BracedNode } from "../parsers/bibtexParser.ts";
+import { isNodeType } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
@@ -8,7 +8,7 @@ export function createRemoveEnclosingBracesTransform(): Transform {
 		name: "remove-enclosing-braces",
 		apply: (ast) => {
 			ast.walk({
-				where: (node): node is BracedNode => node.type === "braced",
+				where: (node) => isNodeType(node, "braced"),
 				enter: (node) => {
 					replaceValueNodeText(
 						node,

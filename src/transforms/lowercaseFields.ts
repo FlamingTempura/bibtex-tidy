@@ -1,4 +1,4 @@
-import type { FieldNode } from "../parsers/bibtexParser.ts";
+import { isNodeType } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createLowercaseFieldsTransform(): Transform {
@@ -6,7 +6,7 @@ export function createLowercaseFieldsTransform(): Transform {
 		name: "lowercase-fields",
 		apply: (ast) => {
 			ast.walk({
-				where: (node): node is FieldNode => node.type === "field",
+				where: (node) => isNodeType(node, "field"),
 				enter: (field) => {
 					field.name = field.name.toLocaleLowerCase();
 					return [field];

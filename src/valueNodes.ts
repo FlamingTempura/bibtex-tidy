@@ -1,4 +1,4 @@
-import type { ValueNode } from "./parsers/bibtexParser.ts";
+import { isNodeType, type ValueNode } from "./parsers/bibtexParser.ts";
 import {
 	BlockNode,
 	parseLaTeX,
@@ -6,11 +6,13 @@ import {
 } from "./parsers/latexParser.ts";
 
 export function renderValueNode(node: ValueNode): string {
-	return node.type === "literal" ? node.value : stringifyLaTeX(node.latexAst);
+	return isNodeType(node, "literal")
+		? node.value
+		: stringifyLaTeX(node.latexAst);
 }
 
 export function replaceValueNodeText(node: ValueNode, value: string): void {
-	if (node.type === "literal") {
+	if (isNodeType(node, "literal")) {
 		node.value = value;
 	} else {
 		node.latexAst = parseLaTeX(value);

@@ -1,4 +1,8 @@
-import type { BlockNode, TextNode } from "../parsers/bibtexParser.ts";
+import {
+	type BlockNode,
+	isNodeType,
+	type TextNode,
+} from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createResetWhitespaceTransform(
@@ -9,16 +13,15 @@ export function createResetWhitespaceTransform(
 		apply: (astProxy) => {
 			let prev: TextNode | BlockNode | undefined;
 			astProxy.walk({
-				where: (node): node is TextNode | BlockNode =>
-					node.type === "text" || node.type === "block",
+				where: (node) => isNodeType(node, "text", "block"),
 				enter: (child) => {
 					const preserve = isComment(child) && keepCommentWhitespace;
 					const preservePrev = prev && isComment(prev) && keepCommentWhitespace;
 
 					if (
 						keepCommentWhitespace &&
-						child.type === "block" &&
-						prev?.type === "text" &&
+						isNodeType(child, "block") &&
+						isNodeType(prev, "text") &&
 						!prev.text.endsWith("\n")
 					) {
 						prev.text = `${prev.text.trimEnd()}\n`;
@@ -26,14 +29,14 @@ export function createResetWhitespaceTransform(
 
 					if (!preserve) {
 						child.whitespacePrefix = prev && !preservePrev ? "\n" : "";
-						if (child.type === "text") {
+						if (isNodeType(child, "text")) {
 							child.text = child.text.trim();
 						} else if (child.block) {
-							if (child.block.type === "entry") {
+							if (isNodeType(child.block, "entry")) {
 								for (const field of child.block.fields) {
 									field.whitespacePrefix = "";
 								}
-							} else if (child.block.type === "comment") {
+							} else if (isNodeType(child.block, "comment")) {
 								child.block.raw = child.block.raw.trim();
 							}
 						}
@@ -49,5 +52,5 @@ export function createResetWhitespaceTransform(
 }
 
 function isComment(node: TextNode | BlockNode): boolean {
-	return node.type === "text" || node.block?.type === "comment";
+	return isNodeType(node, "text") || isNodeType(node.block, "comment");
 }

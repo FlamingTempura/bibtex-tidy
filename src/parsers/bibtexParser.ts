@@ -182,6 +182,15 @@ export type Node =
 	| BracedNode
 	| QuotedNode;
 
+export type NodeType = Node["type"];
+
+export function isNodeType<T extends NodeType>(
+	node: Node | null | undefined,
+	...types: T[]
+): node is Extract<Node, { type: T }> {
+	return node !== null && node !== undefined && types.includes(node.type as T);
+}
+
 export function parseBibTeX(input: string): RootNode {
 	const rootNode = new RootNode();
 	let node: Node = rootNode;
@@ -235,7 +244,7 @@ export function parseBibTeX(input: string): RootNode {
 					// everything prior to this was a comment
 					const prevNode =
 						node.parent.children[node.parent.children.length - 2];
-					if (prevNode?.type === "text") {
+					if (isNodeType(prevNode, "text")) {
 						prevNode.text += `@${node.command}`;
 					} else {
 						// insert text node 1 from the end

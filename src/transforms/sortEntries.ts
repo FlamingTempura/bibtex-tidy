@@ -1,5 +1,10 @@
 import type { ASTProxy } from "../ASTProxy.ts";
-import type { BlockNode, RootNode, TextNode } from "../parsers/bibtexParser.ts";
+import {
+	type BlockNode,
+	isNodeType,
+	type RootNode,
+	type TextNode,
+} from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 const MONTH_MACROS = [
@@ -41,16 +46,16 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 	// first, create sort indexes
 	for (const item of ast.children) {
 		if (
-			(item.type === "text" && isBibTeXComment(item)) ||
-			(item.type === "block" &&
-				item.block?.type !== "entry" &&
+			(isNodeType(item, "text") && isBibTeXComment(item)) ||
+			(isNodeType(item, "block") &&
+				!isNodeType(item.block, "entry") &&
 				!sort.includes("special"))
 		) {
 			// if string, preamble, or comment, then use sort index of previous entry
 			precedingMeta.push(item);
 			continue;
 		}
-		if (item.type === "text") {
+		if (isNodeType(item, "text")) {
 			fixedText.add(item);
 			continue;
 		}
@@ -61,7 +66,7 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 			let val: string | number;
 			switch (key) {
 				case "key":
-					if (item.block?.type !== "entry") continue;
+					if (!isNodeType(item.block, "entry")) continue;
 					val = item.block.key ?? "";
 					break;
 
@@ -70,7 +75,7 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 					break;
 
 				case "month": {
-					if (item.block?.type !== "entry") continue;
+					if (!isNodeType(item.block, "entry")) continue;
 					const v = cache.lookupRenderedEntryValue(item.block, key);
 					const i = v ? (MONTH_MACROS as readonly string[]).indexOf(v) : -1;
 					val = i > -1 ? i : "";
@@ -82,7 +87,7 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 					break;
 
 				default:
-					if (item.block?.type !== "entry") continue;
+					if (!isNodeType(item.block, "entry")) continue;
 					val = cache.lookupRenderedEntryValue(item.block, key);
 			}
 			sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);

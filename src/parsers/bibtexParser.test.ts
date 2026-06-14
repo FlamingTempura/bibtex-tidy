@@ -1,4 +1,18 @@
-import { parseBibTeX } from "./bibtexParser.ts";
+import { isNodeType, parseBibTeX } from "./bibtexParser.ts";
+
+describe("isNodeType", () => {
+	it("matches any of the provided types and narrows the node", () => {
+		const node = parseBibTeX("@article{key}").children[0];
+
+		expect(isNodeType(node, "text", "block")).toBe(true);
+		expect(isNodeType(node, "text")).toBe(false);
+		expect(isNodeType(undefined, "block")).toBe(false);
+
+		if (isNodeType(node, "block")) {
+			expect(node.command).toBe("article");
+		}
+	});
+});
 
 describe("BibTeX parser", () => {
 	it("parses whitespace", () => {
@@ -7,13 +21,13 @@ describe("BibTeX parser", () => {
 
 		const blockNode = output.children[0];
 		expect(blockNode?.type).toBe("block");
-		if (blockNode?.type !== "block") throw new Error("Expected block node");
+		if (!isNodeType(blockNode, "block")) throw new Error("Expected block node");
 		expect(blockNode?.command).toBe("foo");
 		expect(blockNode?.whitespacePrefix).toBe(" ");
 
 		const entryNode = blockNode?.block;
 		expect(entryNode?.type).toBe("entry");
-		if (entryNode?.type !== "entry") throw new Error("Expected entry node");
+		if (!isNodeType(entryNode, "entry")) throw new Error("Expected entry node");
 
 		const fieldNode = entryNode.fields[0];
 		expect(fieldNode?.type).toBe("field");
@@ -32,7 +46,7 @@ describe("BibTeX parser", () => {
 		const output = parseBibTeX(input);
 		const blockNode = output.children[0];
 		expect(blockNode?.type).toBe("block");
-		if (blockNode?.type !== "block") throw new Error("Expected block node");
+		if (!isNodeType(blockNode, "block")) throw new Error("Expected block node");
 		expect(blockNode?.whitespacePrefix).toBe(" \n");
 	});
 
@@ -41,7 +55,7 @@ describe("BibTeX parser", () => {
 		const output = parseBibTeX(input);
 		const blockNode = output.children[0];
 		expect(blockNode?.type).toBe("block");
-		if (blockNode?.type !== "block") throw new Error("Expected block node");
+		if (!isNodeType(blockNode, "block")) throw new Error("Expected block node");
 		expect(blockNode?.whitespacePrefix).toBe("\uFEFF");
 	});
 
@@ -50,7 +64,10 @@ describe("BibTeX parser", () => {
 			'@article{key, title = {A $O(n \\log n)$ Title}, subtitle = "A \\Command{Value}", month = jan}',
 		);
 		const blockNode = output.children[0];
-		if (blockNode?.type !== "block" || blockNode.block?.type !== "entry") {
+		if (
+			!isNodeType(blockNode, "block") ||
+			!isNodeType(blockNode.block, "entry")
+		) {
 			throw new Error("Expected entry node");
 		}
 
@@ -60,12 +77,13 @@ describe("BibTeX parser", () => {
 		const monthValue = month?.value.concat[0];
 
 		expect(titleValue?.type).toBe("braced");
-		if (titleValue?.type !== "braced") throw new Error("Expected braced node");
+		if (!isNodeType(titleValue, "braced"))
+			throw new Error("Expected braced node");
 		expect(titleValue.latexAst.type).toBe("block");
 		expect(titleValue.latexAst.children[1]?.type).toBe("math");
 
 		expect(subtitleValue?.type).toBe("quoted");
-		if (subtitleValue?.type !== "quoted")
+		if (!isNodeType(subtitleValue, "quoted"))
 			throw new Error("Expected quoted node");
 		expect(subtitleValue.latexAst.type).toBe("block");
 		expect(subtitleValue.latexAst.children[1]?.type).toBe("command");

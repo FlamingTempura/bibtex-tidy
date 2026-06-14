@@ -5,6 +5,7 @@ import type {
 	RootNode,
 	TextNode,
 } from "./parsers/bibtexParser.ts";
+import { isNodeType } from "./parsers/bibtexParser.ts";
 import { doubleEncloseLatex, renderValueNode } from "./valueNodes.ts";
 
 export function formatBibtex(ast: RootNode): string {
@@ -16,7 +17,7 @@ export function formatBibtex(ast: RootNode): string {
 }
 
 function formatNode(child: TextNode | BlockNode): string {
-	if (child.type === "text") {
+	if (isNodeType(child, "text")) {
 		return `${child.whitespacePrefix}${child.text}`;
 	}
 

@@ -1,4 +1,4 @@
-import type { BracedNode } from "../parsers/bibtexParser.ts";
+import { isNodeType } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { unwrapText, wrapText } from "../utils.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
@@ -12,7 +12,7 @@ export function createWrapValuesTransform(
 		name: "wrap-values",
 		apply: (astProxy) => {
 			astProxy.walk({
-				where: (node): node is BracedNode => node.type === "braced",
+				where: (node) => isNodeType(node, "braced"),
 				enter: (node) => {
 					let value = unwrapText(renderValueNode(node));
 

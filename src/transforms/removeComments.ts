@@ -1,4 +1,8 @@
-import type { BlockNode, TextNode } from "../parsers/bibtexParser.ts";
+import {
+	type BlockNode,
+	isNodeType,
+	type TextNode,
+} from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createRemoveCommentsTransform(): Transform {
@@ -7,8 +11,8 @@ export function createRemoveCommentsTransform(): Transform {
 		apply: (astProxy) => {
 			astProxy.walk({
 				where: (node): node is TextNode | BlockNode =>
-					node.type === "text" ||
-					(node.type === "block" && node.block?.type === "comment"),
+					isNodeType(node, "text") ||
+					(isNodeType(node, "block") && isNodeType(node.block, "comment")),
 				enter: () => [],
 			});
 

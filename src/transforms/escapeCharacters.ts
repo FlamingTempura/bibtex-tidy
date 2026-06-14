@@ -1,4 +1,4 @@
-import type { ValueNode } from "../parsers/bibtexParser.ts";
+import { isNodeType, type ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform, Warning } from "../types.ts";
 import { specialCharacters } from "../unicode.ts";
 import { coreSpecialCharacters } from "../unicodeCore.ts";
@@ -31,12 +31,11 @@ export function createEscapeCharactersTransform(newMode = false): Transform {
 			const warned = new Set<string>();
 
 			ast.walk({
-				where: (node, ctx): node is ValueNode =>
-					(node.type === "braced" || node.type === "quoted") &&
-					ctx.hasAncestor(
-						(node) =>
-							node.type === "field" && !VERBATIM_FIELDS.includes(node.name),
-					),
+				where: (node, ctx): node is ValueNode => {
+					if (!isNodeType(node, "braced", "quoted")) return false;
+					const field = ctx.closestAncestor("field");
+					return field !== undefined && !VERBATIM_FIELDS.includes(field.name);
+				},
 				enter: (entry, ctx) => {
 					const field = ctx.closestAncestor("field");
 					if (!field) return [entry];
@@ -44,7 +43,7 @@ export function createEscapeCharactersTransform(newMode = false): Transform {
 					const result = escapeCharacters(
 						renderValueNode(entry),
 						characters,
-						entry.type === "quoted",
+						isNodeType(entry, "quoted"),
 					);
 					replaceValueNodeText(entry, result.value);
 

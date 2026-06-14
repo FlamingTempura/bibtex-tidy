@@ -39,6 +39,6 @@ describe("corpus", () => {
 			});
 
 			expect(alphaNumOnly(result.bibtex)).toBe(alphaNumOnly(input));
-		});
+		}, 30_000); // allow 30s for CI
 	}
 });

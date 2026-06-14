@@ -1,5 +1,3 @@
-import type { BlockNode, EntryNode, TextNode } from "./parsers/bibtexParser.ts";
-
 /**
  * Remove all non-alphanumeric characters
  */
@@ -36,10 +34,4 @@ export function unwrapText(str: string): string {
 		.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>")
 		.replace(/\s*\n\s*/g, " ")
 		.replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
-}
-
-export function isEntryNode(
-	node: TextNode | BlockNode,
-): node is BlockNode & { block: EntryNode } {
-	return node.type !== "text" && node.block?.type === "entry";
 }

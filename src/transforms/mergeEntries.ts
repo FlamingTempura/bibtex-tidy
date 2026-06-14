@@ -1,6 +1,6 @@
 import { checkForDuplicates } from "../duplicates.ts";
 import type { MergeStrategy, OptionsNormalized } from "../optionUtils.ts";
-import type { BlockNode } from "../parsers/bibtexParser.ts";
+import { type BlockNode, isNodeType } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createMergeEntriesTransform(
@@ -17,8 +17,8 @@ export function createMergeEntriesTransform(
 
 			astProxy.walk({
 				where: (node): node is BlockNode =>
-					node.type === "block" &&
-					node.block?.type === "entry" &&
+					isNodeType(node, "block") &&
+					isNodeType(node.block, "entry") &&
 					duplicates.entries.has(node.block),
 				enter: () => [],
 			});

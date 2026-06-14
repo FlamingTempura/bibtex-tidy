@@ -1,4 +1,4 @@
-import type { ValueNode } from "../parsers/bibtexParser.ts";
+import { isNodeType, type ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
@@ -9,12 +9,8 @@ export function createFormatPageRangeTransform(): Transform {
 		apply(ast) {
 			ast.walk({
 				where: (node, ctx): node is ValueNode =>
-					(node.type === "braced" || node.type === "quoted") &&
-					ctx.hasAncestor(
-						(node) =>
-							node.type === "field" &&
-							node.name.toLocaleLowerCase() === "pages",
-					),
+					isNodeType(node, "braced", "quoted") &&
+					ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "pages",
 				enter: (entry) => {
 					replaceValueNodeText(entry, formatPageRange(renderValueNode(entry)));
 					return [entry];

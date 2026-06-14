@@ -9,6 +9,7 @@ import type {
 	TextNode,
 	ValueNode,
 } from "./parsers/bibtexParser.ts";
+import { isNodeType } from "./parsers/bibtexParser.ts";
 import { parseLaTeX } from "./parsers/latexParser.ts";
 
 export type ReplaceableNode = TextNode | BlockNode | FieldNode | ValueNode;
@@ -22,8 +23,6 @@ export interface WalkContext {
 	closestAncestor<T extends Node["type"]>(
 		type: T,
 	): Extract<Node, { type: T }> | undefined;
-	hasAncestor<N extends Node>(predicate: (node: Node) => node is N): boolean;
-	hasAncestor(predicate: (node: Node) => boolean): boolean;
 }
 
 export class ASTProxy {
@@ -42,9 +41,9 @@ export class ASTProxy {
 
 	public entries(): EntryNode[] {
 		return this.#ast.children
-			.filter((node): node is BlockNode => node.type === "block")
+			.filter((node) => isNodeType(node, "block"))
 			.map((block) => block.block)
-			.filter((entry): entry is EntryNode => entry?.type === "entry");
+			.filter((entry) => isNodeType(entry, "entry"));
 	}
 
 	public walk<N extends ReplaceableNode>(rule: WalkRule<N>): void {
@@ -153,10 +152,6 @@ export class ASTProxy {
 		}
 	}
 
-	public invalidateField(field: FieldNode): void {
-		this.renderValueLookup.delete(field);
-	}
-
 	private fieldLookup = new Map<EntryNode, Map<string, FieldNode>>();
 	private lookupField(
 		entry: EntryNode,
@@ -179,10 +174,9 @@ export class ASTProxy {
 		node: EntryNode | FieldNode,
 		fieldName?: string,
 	): string {
-		const field =
-			node.type === "entry"
-				? this.lookupField(node, (fieldName ?? "").toLocaleLowerCase())
-				: node;
+		const field = isNodeType(node, "entry")
+			? this.lookupField(node, (fieldName ?? "").toLocaleLowerCase())
+			: node;
 
 		if (!field) {
 			return "";
@@ -217,23 +211,9 @@ class WalkContextImpl implements WalkContext {
 	): Extract<Node, { type: T }> | undefined {
 		for (let i = this.ancestors.length - 1; i >= 0; i--) {
 			const ancestor = this.ancestors[i];
-			if (ancestor?.type === type) {
-				return ancestor as Extract<Node, { type: T }>;
-			}
+			if (isNodeType(ancestor, type)) return ancestor;
 		}
 		return undefined;
-	}
-
-	public hasAncestor<N extends Node>(
-		predicate: (node: Node) => node is N,
-	): boolean;
-	public hasAncestor(predicate: (node: Node) => boolean): boolean;
-	public hasAncestor(predicate: (node: Node) => boolean): boolean {
-		for (let i = this.ancestors.length - 1; i >= 0; i--) {
-			const ancestor = this.ancestors[i];
-			if (ancestor && predicate(ancestor)) return true;
-		}
-		return false;
 	}
 }
 
@@ -244,16 +224,16 @@ function setParent(
 	switch (node.type) {
 		case "text":
 		case "block":
-			if (parent.type === "root") node.parent = parent;
+			if (isNodeType(parent, "root")) node.parent = parent;
 			break;
 		case "field":
-			if (parent.type === "entry") node.parent = parent;
+			if (isNodeType(parent, "entry")) node.parent = parent;
 			node.value.parent = node;
 			break;
 		case "literal":
 		case "braced":
 		case "quoted":
-			if (parent.type === "concat") node.parent = parent;
+			if (isNodeType(parent, "concat")) node.parent = parent;
 			break;
 	}
 }

@@ -1,4 +1,8 @@
-import type { BlockNode, TextNode } from "../parsers/bibtexParser.ts";
+import {
+	type BlockNode,
+	isNodeType,
+	type TextNode,
+} from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createBlankLinesTransform(): Transform {
@@ -8,7 +12,7 @@ export function createBlankLinesTransform(): Transform {
 			let prev: TextNode | BlockNode | undefined;
 			astProxy.walk({
 				where: (node): node is TextNode | BlockNode =>
-					node.type === "text" || node.type === "block",
+					isNodeType(node, "text", "block"),
 				enter: (child) => {
 					if (prev && !isComment(prev)) {
 						child.whitespacePrefix = "\n\n";
@@ -23,5 +27,5 @@ export function createBlankLinesTransform(): Transform {
 }
 
 function isComment(node: TextNode | BlockNode): boolean {
-	return node.type === "text" || node.block?.type === "comment";
+	return isNodeType(node, "text") || isNodeType(node.block, "comment");
 }

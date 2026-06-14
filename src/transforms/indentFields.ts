@@ -1,4 +1,4 @@
-import type { FieldNode } from "../parsers/bibtexParser.ts";
+import { isNodeType } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createIndentFieldsTransform(indent: string): Transform {
@@ -6,7 +6,7 @@ export function createIndentFieldsTransform(indent: string): Transform {
 		name: "indent",
 		apply: (astProxy) => {
 			astProxy.walk({
-				where: (node): node is FieldNode => node.type === "field",
+				where: (node) => isNodeType(node, "field"),
 				enter: (field) => {
 					field.whitespacePrefix = `\n${indent}`;
 					return [field];

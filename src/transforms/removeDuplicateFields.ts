@@ -1,4 +1,4 @@
-import type { EntryNode, FieldNode } from "../parsers/bibtexParser.ts";
+import { type EntryNode, isNodeType } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createRemoveDuplicateFieldsTransform(): Transform {
@@ -7,7 +7,7 @@ export function createRemoveDuplicateFieldsTransform(): Transform {
 		apply: (astProxy) => {
 			const seenFieldsByEntry = new WeakMap<EntryNode, Set<string>>();
 			astProxy.walk({
-				where: (node): node is FieldNode => node.type === "field",
+				where: (node) => isNodeType(node, "field"),
 				enter: (field) => {
 					const seenFields = seenFieldsByEntry.getOrInsert(
 						field.parent,

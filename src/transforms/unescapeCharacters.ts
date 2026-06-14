@@ -1,3 +1,4 @@
+import { isNodeType } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { coreSpecialCharactersReversible } from "../unicodeCore.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
@@ -34,11 +35,14 @@ export function createUnescapeCharactersTransform(): Transform {
 		name: "unescape-characters",
 		apply: (astProxy) => {
 			astProxy.walk({
-				where: (node) => node.type === "braced" || node.type === "quoted",
+				where: (node) => isNodeType(node, "braced", "quoted"),
 				enter: (node) => {
 					replaceValueNodeText(
 						node,
-						unescapeCharacters(renderValueNode(node), node.type === "quoted"),
+						unescapeCharacters(
+							renderValueNode(node),
+							isNodeType(node, "quoted"),
+						),
 					);
 					return [node];
 				},

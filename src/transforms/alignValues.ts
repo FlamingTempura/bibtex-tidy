@@ -1,4 +1,4 @@
-import type { FieldNode } from "../parsers/bibtexParser.ts";
+import { isNodeType } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createAlignValuesTransform(column: number): Transform {
@@ -6,7 +6,7 @@ export function createAlignValuesTransform(column: number): Transform {
 		name: "align-values",
 		apply: (astProxy) => {
 			astProxy.walk({
-				where: (node): node is FieldNode => node.type === "field",
+				where: (node) => isNodeType(node, "field"),
 				enter: (field) => {
 					const gap = Math.max(column - field.name.length, 1);
 					field.value.whitespacePrefix = " ".repeat(gap);

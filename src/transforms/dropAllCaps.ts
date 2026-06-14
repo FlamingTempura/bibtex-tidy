@@ -1,4 +1,4 @@
-import type { ValueNode } from "../parsers/bibtexParser.ts";
+import { isNodeType, type ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
@@ -7,13 +7,14 @@ export function createDropAllCapsTransform(): Transform {
 		name: "drop-all-caps",
 		apply: (astProxy) => {
 			astProxy.walk({
-				where: (node, ctx): node is ValueNode =>
-					(node.type === "braced" || node.type === "quoted") &&
-					ctx.hasAncestor(
-						(node) =>
-							node.type === "field" &&
-							!astProxy.lookupRenderedEntryValue(node).match(/[a-z]/),
-					),
+				where: (node, ctx): node is ValueNode => {
+					if (!isNodeType(node, "braced", "quoted")) return false;
+					const field = ctx.closestAncestor("field");
+					return (
+						field !== undefined &&
+						!astProxy.lookupRenderedEntryValue(field).match(/[a-z]/)
+					);
+				},
 				enter: (node) => {
 					replaceValueNodeText(node, titleCase(renderValueNode(node)));
 					return [node];

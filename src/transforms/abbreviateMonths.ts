@@ -1,4 +1,8 @@
-import { LiteralNode, type ValueNode } from "../parsers/bibtexParser.ts";
+import {
+	isNodeType,
+	LiteralNode,
+	type ValueNode,
+} from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode } from "../valueNodes.ts";
 
@@ -36,13 +40,8 @@ export function createAbbreviateMonthsTransform(): Transform {
 		apply: (astProxy) => {
 			astProxy.walk({
 				where: (node, ctx): node is ValueNode =>
-					(node.type === "literal" ||
-						node.type === "braced" ||
-						node.type === "quoted") &&
-					ctx.hasAncestor(
-						(node) =>
-							node.type === "field" && node.name.toLowerCase() === "month",
-					),
+					isNodeType(node, "literal", "braced", "quoted") &&
+					ctx.closestAncestor("field")?.name.toLowerCase() === "month",
 				enter: (node) => {
 					const abbr = abbreviateMonth(renderValueNode(node), months);
 					return abbr ? [new LiteralNode(node.parent, abbr)] : [node];

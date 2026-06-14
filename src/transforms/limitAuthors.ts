@@ -1,4 +1,4 @@
-import type { ValueNode } from "../parsers/bibtexParser.ts";
+import { isNodeType, type ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
@@ -8,12 +8,8 @@ export function createLimitAuthorsTransform(maxAuthors: number): Transform {
 		apply: (astProxy) => {
 			astProxy.walk({
 				where: (node, ctx): node is ValueNode =>
-					(node.type === "braced" || node.type === "quoted") &&
-					ctx.hasAncestor(
-						(node) =>
-							node.type === "field" &&
-							node.name.toLocaleLowerCase() === "author",
-					),
+					isNodeType(node, "braced", "quoted") &&
+					ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "author",
 				enter: (node) => {
 					// TODO: use author parser?
 					const authors = renderValueNode(node).split(" and ");

@@ -2,6 +2,7 @@ import { ASTProxy } from "./ASTProxy.ts";
 import { formatBibtex } from "./format.ts";
 import {
 	type FieldNode,
+	isNodeType,
 	LiteralNode,
 	parseBibTeX,
 	TextNode,
@@ -15,7 +16,7 @@ describe("ASTProxy", () => {
 
 		ast.walk({
 			where: (node, ctx): node is LiteralNode => {
-				if (node.type !== "literal") return false;
+				if (!isNodeType(node, "literal")) return false;
 
 				const field = ctx.closestAncestor("field");
 				return field?.name === "month";
@@ -28,18 +29,15 @@ describe("ASTProxy", () => {
 		);
 	});
 
-	it("checks ancestors with a predicate", () => {
+	it("finds the closest ancestor by type", () => {
 		const ast = new ASTProxy(
 			parseBibTeX("@article{key, month = jan, title = jan}"),
 		);
 
 		ast.walk({
 			where: (node, ctx): node is LiteralNode =>
-				node.type === "literal" &&
-				ctx.hasAncestor(
-					(node): node is FieldNode =>
-						node.type === "field" && node.name === "title",
-				),
+				isNodeType(node, "literal") &&
+				ctx.closestAncestor("field")?.name === "title",
 			enter: (node) => [new LiteralNode(node.parent, "feb")],
 		});
 
@@ -55,7 +53,7 @@ describe("ASTProxy", () => {
 
 		ast.walk({
 			where: (node): node is FieldNode =>
-				node.type === "field" && node.name === "note",
+				isNodeType(node, "field") && node.name === "note",
 			enter: () => [],
 		});
 
@@ -66,7 +64,7 @@ describe("ASTProxy", () => {
 		const ast = new ASTProxy(parseBibTeX("@article{key, month = jan}"));
 
 		ast.walk({
-			where: (node): node is LiteralNode => node.type === "literal",
+			where: (node): node is LiteralNode => isNodeType(node, "literal"),
 			enter: (node) => [
 				new LiteralNode(node.parent, "feb"),
 				new LiteralNode(node.parent, "mar"),
@@ -83,7 +81,7 @@ describe("ASTProxy", () => {
 
 		ast.walk({
 			where: (node): node is TextNode =>
-				node.type === "text" && node.text === "before ",
+				isNodeType(node, "text") && node.text === "before ",
 			enter: (node) => [new TextNode(node.parent, "prefix ", "")],
 		});
 
