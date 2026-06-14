@@ -1,3 +1,5 @@
+import { type BlockNode as LatexBlockNode, parseLaTeX } from "./latexParser.ts";
+
 export class RootNode {
 	type = "root" as const;
 	children: (TextNode | BlockNode)[];
@@ -103,7 +105,7 @@ export class FieldNode {
 }
 export class ConcatNode {
 	type = "concat" as const;
-	concat: (LiteralNode | BracedNode | QuotedNode)[];
+	concat: ValueNode[];
 	canConsumeValue = true;
 	whitespacePrefix = ""; // not filled in during parsing
 	parent: FieldNode;
@@ -130,12 +132,13 @@ function createLiteralNode(parent: ConcatNode, value: string): LiteralNode {
 
 export class BracedNode {
 	type = "braced" as const;
-	value = "";
+	latexAst: LatexBlockNode;
 	/** Used to count opening and closing braces */
 	depth = 0;
 	parent: ConcatNode;
 	constructor(parent: ConcatNode) {
 		this.parent = parent;
+		this.latexAst = parseLaTeX("");
 	}
 }
 
@@ -147,12 +150,13 @@ function createBracedNode(parent: ConcatNode): BracedNode {
 
 export class QuotedNode {
 	type = "quoted" as const;
-	value = "";
+	latexAst: LatexBlockNode;
 	/** Used to count opening and closing braces */
 	depth = 0;
 	parent: ConcatNode;
 	constructor(parent: ConcatNode) {
 		this.parent = parent;
+		this.latexAst = parseLaTeX("");
 	}
 }
 
@@ -161,6 +165,8 @@ function createQuotedNode(parent: ConcatNode): QuotedNode {
 	parent.concat.push(node);
 	return node;
 }
+
+export type ValueNode = LiteralNode | BracedNode | QuotedNode;
 
 export type Node =
 	| RootNode
@@ -182,6 +188,7 @@ export function parseBibTeX(input: string): RootNode {
 	let line = 1;
 	let column = 0;
 	let whitespace = "";
+	let latexInput = "";
 
 	const flushWhitespace = () => {
 		const ws = whitespace;
@@ -384,8 +391,10 @@ export function parseBibTeX(input: string): RootNode {
 					}
 					node.canConsumeValue = false;
 					if (char === "{") {
+						latexInput = "";
 						node = createBracedNode(node);
 					} else if (char === '"') {
+						latexInput = "";
 						node = createQuotedNode(node);
 					} else {
 						node = createLiteralNode(node, char);
@@ -424,6 +433,7 @@ export function parseBibTeX(input: string): RootNode {
 			// the value but they must be balanced.
 			case "braced":
 				if (char === "}" && node.depth === 0) {
+					node.latexAst = parseLaTeX(latexInput);
 					node = node.parent; // values
 					break;
 				}
@@ -432,7 +442,7 @@ export function parseBibTeX(input: string): RootNode {
 				} else if (char === "}") {
 					node.depth--;
 				}
-				node.value += char;
+				latexInput += char;
 				break;
 
 			// Values may be enclosed in double quotes. Curly braces may be used
@@ -442,6 +452,7 @@ export function parseBibTeX(input: string): RootNode {
 			// https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
 			case "quoted":
 				if (char === '"' && node.depth === 0) {
+					node.latexAst = parseLaTeX(latexInput);
 					node = node.parent; // values
 					break;
 				}
@@ -453,7 +464,7 @@ export function parseBibTeX(input: string): RootNode {
 						throw new BibTeXSyntaxError(input, node, i, line, column);
 					}
 				}
-				node.value += char;
+				latexInput += char;
 				break;
 		}
 	}

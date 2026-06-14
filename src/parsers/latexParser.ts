@@ -2,7 +2,7 @@ export class BlockNode {
 	type = "block" as const;
 	kind: "root" | "square" | "curly";
 	parent?: BlockNode | CommandNode;
-	children: (TextNode | CommandNode | BlockNode)[];
+	children: (TextNode | MathNode | CommandNode | BlockNode)[];
 	constructor(
 		kind: BlockNode["kind"],
 		parent?: BlockNode["parent"],
@@ -34,6 +34,19 @@ export class TextNode {
 		return this.text.replace(/"/g, ""); // HACK: latex parser should parse this properly as a block
 	}
 }
+export class MathNode {
+	type = "math" as const;
+	parent: BlockNode;
+	text: string;
+	constructor(parent: BlockNode, text = "") {
+		this.parent = parent;
+		this.text = text;
+		parent.children.push(this);
+	}
+	renderAsText(): string {
+		return this.text;
+	}
+}
 export class CommandNode {
 	type = "command" as const;
 	parent: BlockNode;
@@ -63,6 +76,14 @@ export function parseLaTeX(input: string): BlockNode {
 			case "block": {
 				if (char === "\\") {
 					node = new CommandNode(node);
+				} else if (char === "$") {
+					const math = parseMath(input, i);
+					if (math) {
+						new MathNode(node, math.text);
+						i = math.end;
+					} else {
+						node = new TextNode(node, char);
+					}
 				} else if (char === "{") {
 					node = new BlockNode("curly", node);
 				} else if (
@@ -78,7 +99,16 @@ export function parseLaTeX(input: string): BlockNode {
 			}
 
 			case "text": {
-				if (char === "\\" || char === "{") {
+				if (char === "$") {
+					const math = parseMath(input, i);
+					if (math) {
+						node = node.parent;
+						new MathNode(node, math.text);
+						i = math.end;
+					} else {
+						node.text += char;
+					}
+				} else if (char === "\\" || char === "{") {
 					node = node.parent;
 					i--; // repeat
 				} else if (
@@ -115,6 +145,24 @@ export function parseLaTeX(input: string): BlockNode {
 	return rootNode;
 }
 
+function parseMath(
+	input: string,
+	start: number,
+): { text: string; end: number } | undefined {
+	let escaped = false;
+	for (let i = start + 1; i < input.length; i++) {
+		const char = input[i];
+		if (escaped) {
+			escaped = false;
+		} else if (char === "\\") {
+			escaped = true;
+		} else if (char === "$") {
+			return { text: input.slice(start + 1, i), end: i };
+		}
+	}
+	return undefined;
+}
+
 export function stringifyLaTeX(ast: BlockNode): string {
 	return stringifyBlock(ast);
 }
@@ -127,6 +175,8 @@ function stringifyBlock(block: BlockNode): string {
 					return stringifyBlock(node);
 				case "command":
 					return stringifyCommand(node);
+				case "math":
+					return `$${node.text}$`;
 				case "text":
 					return node.text;
 				default:

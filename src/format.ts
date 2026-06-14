@@ -5,7 +5,7 @@ import type {
 	RootNode,
 	TextNode,
 } from "./parsers/bibtexParser.ts";
-import { doubleEnclose } from "./transforms/encloseBraces.ts";
+import { doubleEncloseLatex, renderValueNode } from "./valueNodes.ts";
 
 export function formatBibtex(ast: RootNode): string {
 	const bibtex: string = ast.children
@@ -53,16 +53,16 @@ function formatEntry(
 
 export function formatValue(field: FieldNode): string | undefined {
 	return field.value.concat
-		.map(({ type, value }) => {
-			switch (type) {
+		.map((node) => {
+			switch (node.type) {
 				case "literal":
-					return value;
+					return node.value;
 				case "braced":
-					return doubleEnclose(value);
+					return doubleEncloseLatex(node.latexAst);
 				case "quoted":
-					return `"${value}"`;
+					return `"${renderValueNode(node)}"`;
 				default:
-					throw new Error(`Unknown value type: ${type}`);
+					throw new Error(`Unknown value type: ${JSON.stringify(node)}`);
 			}
 		})
 		.join(" # ");

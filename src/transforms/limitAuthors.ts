@@ -1,4 +1,5 @@
 import type { Transform } from "../types.ts";
+import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
 export function createLimitAuthorsTransform(maxAuthors: number): Transform {
 	return {
@@ -9,10 +10,11 @@ export function createLimitAuthorsTransform(maxAuthors: number): Transform {
 				if (field.name.toLocaleLowerCase() === "author") {
 					for (const node of field.value.concat) {
 						// TODO: use author parser?
-						const authors = node.value.split(" and ");
+						const authors = renderValueNode(node).split(" and ");
 						if (authors.length > maxAuthors) {
-							node.value = [...authors.slice(0, maxAuthors), "others"].join(
-								" and ",
+							replaceValueNodeText(
+								node,
+								[...authors.slice(0, maxAuthors), "others"].join(" and "),
 							);
 						}
 					}

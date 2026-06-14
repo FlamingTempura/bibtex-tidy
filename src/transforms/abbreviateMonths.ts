@@ -1,6 +1,7 @@
 import type { ASTProxy } from "../ASTProxy.ts";
 import { type FieldNode, LiteralNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
+import { renderValueNode } from "../valueNodes.ts";
 
 /**
  * It’s generally recommended to store months in BibTeX files using the macros jan, feb,
@@ -50,7 +51,7 @@ function abbreviateMonthInField(
 	months: Map<string, string>,
 ) {
 	field.value.concat = field.value.concat.map((node) => {
-		const abbr = abbreviateMonth(node.value, months);
+		const abbr = abbreviateMonth(renderValueNode(node), months);
 		return abbr ? new LiteralNode(node.parent, abbr) : node;
 	});
 	astProxy.invalidateField(field);

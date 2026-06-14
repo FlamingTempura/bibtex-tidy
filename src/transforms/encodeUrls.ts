@@ -1,4 +1,5 @@
 import type { Transform } from "../types.ts";
+import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
 export function createEncodeUrlsTransform(): Transform {
 	return {
@@ -7,7 +8,7 @@ export function createEncodeUrlsTransform(): Transform {
 			for (const field of ast.fields()) {
 				if (field.name.toLocaleLowerCase() === "url") {
 					for (const entry of field.value.concat) {
-						entry.value = encodeUrl(entry.value);
+						replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)));
 					}
 					ast.invalidateField(field);
 				}

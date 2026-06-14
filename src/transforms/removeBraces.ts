@@ -1,8 +1,4 @@
-import {
-	flattenLaTeX,
-	parseLaTeX,
-	stringifyLaTeX,
-} from "../parsers/latexParser.ts";
+import { flattenLaTeX } from "../parsers/latexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createRemoveBracesTransform(fields: string[]): Transform {
@@ -14,7 +10,7 @@ export function createRemoveBracesTransform(fields: string[]): Transform {
 				if (set.has(field.name.toLocaleLowerCase())) {
 					for (const node of field.value.concat) {
 						if (node.type === "braced") {
-							node.value = stringifyLaTeX(flattenLaTeX(parseLaTeX(node.value)));
+							node.latexAst = flattenLaTeX(node.latexAst);
 						}
 					}
 				}

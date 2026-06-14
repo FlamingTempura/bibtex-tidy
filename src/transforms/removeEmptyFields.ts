@@ -1,4 +1,5 @@
 import type { Transform } from "../types.ts";
+import { renderValueNode } from "../valueNodes.ts";
 
 export function createRemoveEmptyFieldsTransform(): Transform {
 	return {
@@ -8,7 +9,9 @@ export function createRemoveEmptyFieldsTransform(): Transform {
 				if (node.type === "block" && node.block?.type === "entry") {
 					const entry = node.block;
 					entry.fields = entry.fields.filter((field) =>
-						field.value.concat.some((node) => node.value.trim() !== ""),
+						field.value.concat.some(
+							(node) => renderValueNode(node).trim() !== "",
+						),
 					);
 				}
 			}

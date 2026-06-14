@@ -1,4 +1,5 @@
 import type { Transform } from "../types.ts";
+import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
 /** Replace single dash with double dash in page range **/
 export function createFormatPageRangeTransform(): Transform {
@@ -8,7 +9,10 @@ export function createFormatPageRangeTransform(): Transform {
 			for (const field of ast.fields()) {
 				if (field.name.toLocaleLowerCase() === "pages") {
 					for (const entry of field.value.concat) {
-						entry.value = formatPageRange(entry.value);
+						replaceValueNodeText(
+							entry,
+							formatPageRange(renderValueNode(entry)),
+						);
 					}
 					ast.invalidateField(field);
 				}

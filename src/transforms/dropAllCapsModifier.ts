@@ -1,6 +1,7 @@
 import type { ASTProxy } from "../ASTProxy.ts";
 import type { FieldNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
+import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
 export function createDropAllCapsTransform(): Transform {
 	return {
@@ -18,7 +19,7 @@ function dropAllCapsInField(astProxy: ASTProxy, field: FieldNode) {
 	if (!astProxy.lookupRenderedEntryValue(field).match(/[a-z]/)) {
 		console.log(astProxy.lookupRenderedEntryValue(field));
 		for (const node of field.value.concat) {
-			node.value = titleCase(node.value);
+			replaceValueNodeText(node, titleCase(renderValueNode(node)));
 		}
 		astProxy.invalidateField(field);
 	}

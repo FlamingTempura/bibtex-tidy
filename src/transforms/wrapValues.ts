@@ -1,5 +1,6 @@
 import type { Transform } from "../types.ts";
 import { unwrapText, wrapText } from "../utils.ts";
+import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
 export function createWrapValuesTransform(
 	indent: string,
@@ -12,7 +13,7 @@ export function createWrapValuesTransform(
 			const fields = astProxy.fields();
 			for (const field of fields) {
 				for (const node of field.value.concat) {
-					let value = unwrapText(node.value);
+					let value = unwrapText(renderValueNode(node));
 
 					// Braced values should be trimmed, unless part of a concatenation
 					if (node.type === "braced" && field.value.concat.length === 1) {
@@ -44,7 +45,7 @@ export function createWrapValuesTransform(
 							value = `\n${valIndent}${paragraphs.join(`\n\n${valIndent}`)}\n${indent}`;
 						}
 
-						node.value = value;
+						replaceValueNodeText(node, value);
 					}
 				}
 			}

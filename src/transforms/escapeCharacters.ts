@@ -1,6 +1,7 @@
 import type { Transform, Warning } from "../types.ts";
 import { specialCharacters } from "../unicode.ts";
 import { coreSpecialCharacters } from "../unicodeCore.ts";
+import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
 /**
  * The following fields are listed in the BibLaTeX documentation as verbatim (may contain
@@ -34,11 +35,11 @@ export function createEscapeCharactersTransform(newMode = false): Transform {
 				}
 				for (const entry of field.value.concat) {
 					const result = escapeCharacters(
-						entry.value,
+						renderValueNode(entry),
 						characters,
 						entry.type === "quoted",
 					);
-					entry.value = result.value;
+					replaceValueNodeText(entry, result.value);
 
 					for (const unsupported of result.unsupported) {
 						const key = `${field.name}:${unsupported.codepoint}`;

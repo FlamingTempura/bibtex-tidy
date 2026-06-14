@@ -43,6 +43,20 @@ var TextNode = class {
     return this.text.replace(/"/g, "");
   }
 };
+var MathNode = class {
+  constructor(parent, text = "") {
+    this.type = "math";
+    this.parent = parent;
+    this.text = text;
+    parent.children.push(this);
+  }
+  static {
+    __name(this, "MathNode");
+  }
+  renderAsText() {
+    return this.text;
+  }
+};
 var CommandNode = class {
   constructor(parent, command = "", args = []) {
     this.type = "command";
@@ -68,6 +82,14 @@ function parseLaTeX(input) {
       case "block": {
         if (char === "\\") {
           node = new CommandNode(node);
+        } else if (char === "$") {
+          const math = parseMath(input, i);
+          if (math) {
+            new MathNode(node, math.text);
+            i = math.end;
+          } else {
+            node = new TextNode(node, char);
+          }
         } else if (char === "{") {
           node = new BlockNode("curly", node);
         } else if ((char === "}" && node.kind === "curly" || char === "]" && node.kind === "square") && node.parent) {
@@ -78,7 +100,16 @@ function parseLaTeX(input) {
         break;
       }
       case "text": {
-        if (char === "\\" || char === "{") {
+        if (char === "$") {
+          const math = parseMath(input, i);
+          if (math) {
+            node = node.parent;
+            new MathNode(node, math.text);
+            i = math.end;
+          } else {
+            node.text += char;
+          }
+        } else if (char === "\\" || char === "{") {
           node = node.parent;
           i--;
         } else if (char === "}" && node.parent.kind === "curly" || char === "]" && node.parent.kind === "square") {
@@ -106,6 +137,21 @@ function parseLaTeX(input) {
   return rootNode;
 }
 __name(parseLaTeX, "parseLaTeX");
+function parseMath(input, start) {
+  let escaped = false;
+  for (let i = start + 1; i < input.length; i++) {
+    const char = input[i];
+    if (escaped) {
+      escaped = false;
+    } else if (char === "\\") {
+      escaped = true;
+    } else if (char === "$") {
+      return { text: input.slice(start + 1, i), end: i };
+    }
+  }
+  return void 0;
+}
+__name(parseMath, "parseMath");
 function stringifyLaTeX(ast) {
   return stringifyBlock(ast);
 }
@@ -117,6 +163,8 @@ function stringifyBlock(block) {
         return stringifyBlock(node);
       case "command":
         return stringifyCommand(node);
+      case "math":
+        return `$${node.text}$`;
       case "text":
         return node.text;
       default:
@@ -151,34 +199,38 @@ function flattenLaTeX(block) {
 }
 __name(flattenLaTeX, "flattenLaTeX");
 
-// src/transforms/encloseBraces.ts
-function createEncloseBracesTransform(fields) {
-  const set = new Set(fields.map((f) => f.toLocaleLowerCase()));
-  return {
-    name: "enclose-braces",
-    dependencies: ["prefer-curly"],
-    apply: /* @__PURE__ */ __name((ast) => {
-      for (const field of ast.fields()) {
-        if (set.has(field.name.toLocaleLowerCase())) {
-          for (const node of field.value.concat) {
-            if (node.type === "braced") {
-              node.value = doubleEnclose(node.value);
-            }
-          }
-        }
-      }
-      return void 0;
-    }, "apply")
-  };
+// src/valueNodes.ts
+function renderValueNode(node) {
+  return node.type === "literal" ? node.value : stringifyLaTeX(node.latexAst);
 }
-__name(createEncloseBracesTransform, "createEncloseBracesTransform");
-function doubleEnclose(str) {
-  const latex = parseLaTeX(str);
+__name(renderValueNode, "renderValueNode");
+function replaceValueNodeText(node, value) {
+  if (node.type === "literal") {
+    node.value = value;
+  } else {
+    node.latexAst = parseLaTeX(value);
+  }
+}
+__name(replaceValueNodeText, "replaceValueNodeText");
+function doubleEncloseLatex(latex) {
   const alreadyDoubleEnclosed = latex.children.length === 1 && latex.children[0]?.type === "block" && latex.children[0]?.kind === "curly" && latex.children[0].children.length === 1 && latex.children[0].children[0]?.type === "block" && latex.children[0].children[0]?.kind === "curly";
   const result = stringifyLaTeX(latex);
   return alreadyDoubleEnclosed ? result : `{${result}}`;
 }
-__name(doubleEnclose, "doubleEnclose");
+__name(doubleEncloseLatex, "doubleEncloseLatex");
+function encloseLatexInCurly(latex) {
+  if (latex.children.length === 1 && latex.children[0]?.type === "block" && latex.children[0]?.kind === "curly" && latex.children[0].children.length === 1 && latex.children[0].children[0]?.type === "block" && latex.children[0].children[0]?.kind === "curly") {
+    return latex;
+  }
+  const result = new BlockNode("root");
+  const wrapper = new BlockNode("curly", result);
+  wrapper.children = latex.children;
+  for (const child of wrapper.children) {
+    child.parent = wrapper;
+  }
+  return result;
+}
+__name(encloseLatexInCurly, "encloseLatexInCurly");
 
 // src/format.ts
 function formatBibtex(ast) {
@@ -218,16 +270,16 @@ function formatEntry(entryType, entry) {
 }
 __name(formatEntry, "formatEntry");
 function formatValue(field) {
-  return field.value.concat.map(({ type, value }) => {
-    switch (type) {
+  return field.value.concat.map((node) => {
+    switch (node.type) {
       case "literal":
-        return value;
+        return node.value;
       case "braced":
-        return doubleEnclose(value);
+        return doubleEncloseLatex(node.latexAst);
       case "quoted":
-        return `"${value}"`;
+        return `"${renderValueNode(node)}"`;
       default:
-        throw new Error(`Unknown value type: ${type}`);
+        throw new Error(`Unknown value type: ${JSON.stringify(node)}`);
     }
   }).join(" # ");
 }
@@ -568,11 +620,11 @@ var optionDefinitions = [
       "Warn if duplicates are found, which are entries where DOI, abstract, or author and title are the same."
     ],
     examples: [
-      "--duplicates doi (same DOIs)",
-      "--duplicates key (same IDs)",
-      "--duplicates abstract (similar abstracts)",
-      "--duplicates citation (similar author and titles)",
-      "--duplicates doi, key (identical DOI or keys)",
+      "--duplicates=doi (same DOIs)",
+      "--duplicates=key (same IDs)",
+      "--duplicates=abstract (similar abstracts)",
+      "--duplicates=citation (similar author and titles)",
+      "--duplicates=doi,key (identical DOI or keys)",
       "--duplicates (same DOI, key, abstract, or citation)"
     ],
     type: "boolean | ('doi' | 'key' | 'abstract' | 'citation')[]",
@@ -1018,10 +1070,10 @@ __name(createLiteralNode, "createLiteralNode");
 var BracedNode = class {
   constructor(parent) {
     this.type = "braced";
-    this.value = "";
     /** Used to count opening and closing braces */
     this.depth = 0;
     this.parent = parent;
+    this.latexAst = parseLaTeX("");
   }
   static {
     __name(this, "BracedNode");
@@ -1036,10 +1088,10 @@ __name(createBracedNode, "createBracedNode");
 var QuotedNode = class {
   constructor(parent) {
     this.type = "quoted";
-    this.value = "";
     /** Used to count opening and closing braces */
     this.depth = 0;
     this.parent = parent;
+    this.latexAst = parseLaTeX("");
   }
   static {
     __name(this, "QuotedNode");
@@ -1057,6 +1109,7 @@ function parseBibTeX(input) {
   let line = 1;
   let column = 0;
   let whitespace = "";
+  let latexInput = "";
   const flushWhitespace = /* @__PURE__ */ __name(() => {
     const ws = whitespace;
     whitespace = "";
@@ -1234,8 +1287,10 @@ function parseBibTeX(input) {
           }
           node.canConsumeValue = false;
           if (char === "{") {
+            latexInput = "";
             node = createBracedNode(node);
           } else if (char === '"') {
+            latexInput = "";
             node = createQuotedNode(node);
           } else {
             node = createLiteralNode(node, char);
@@ -1271,6 +1326,7 @@ function parseBibTeX(input) {
       // the value but they must be balanced.
       case "braced":
         if (char === "}" && node.depth === 0) {
+          node.latexAst = parseLaTeX(latexInput);
           node = node.parent;
           break;
         }
@@ -1279,7 +1335,7 @@ function parseBibTeX(input) {
         } else if (char === "}") {
           node.depth--;
         }
-        node.value += char;
+        latexInput += char;
         break;
       // Values may be enclosed in double quotes. Curly braces may be used
       // within quoted values but they must be balanced.
@@ -1288,6 +1344,7 @@ function parseBibTeX(input) {
       // https://web.archive.org/web/20210422110817/https://maverick.inria.fr/~Xavier.Decoret/resources/xdkbibtex/bibtex_summary.html
       case "quoted":
         if (char === '"' && node.depth === 0) {
+          node.latexAst = parseLaTeX(latexInput);
           node = node.parent;
           break;
         }
@@ -1299,7 +1356,7 @@ function parseBibTeX(input) {
             throw new BibTeXSyntaxError(input, node, i, line, column);
           }
         }
-        node.value += char;
+        latexInput += char;
         break;
     }
   }
@@ -1372,7 +1429,7 @@ function createAbbreviateMonthsTransform() {
 __name(createAbbreviateMonthsTransform, "createAbbreviateMonthsTransform");
 function abbreviateMonthInField(astProxy, field, months) {
   field.value.concat = field.value.concat.map((node) => {
-    const abbr = abbreviateMonth(node.value, months);
+    const abbr = abbreviateMonth(renderValueNode(node), months);
     return abbr ? new LiteralNode(node.parent, abbr) : node;
   });
   astProxy.invalidateField(field);
@@ -1439,7 +1496,7 @@ function dropAllCapsInField(astProxy, field) {
   if (!astProxy.lookupRenderedEntryValue(field).match(/[a-z]/)) {
     console.log(astProxy.lookupRenderedEntryValue(field));
     for (const node of field.value.concat) {
-      node.value = titleCase(node.value);
+      replaceValueNodeText(node, titleCase(renderValueNode(node)));
     }
     astProxy.invalidateField(field);
   }
@@ -1458,6 +1515,28 @@ function isRomanNumeral(str) {
 }
 __name(isRomanNumeral, "isRomanNumeral");
 
+// src/transforms/encloseBraces.ts
+function createEncloseBracesTransform(fields) {
+  const set = new Set(fields.map((f) => f.toLocaleLowerCase()));
+  return {
+    name: "enclose-braces",
+    dependencies: ["prefer-curly"],
+    apply: /* @__PURE__ */ __name((ast) => {
+      for (const field of ast.fields()) {
+        if (set.has(field.name.toLocaleLowerCase())) {
+          for (const node of field.value.concat) {
+            if (node.type === "braced") {
+              node.latexAst = encloseLatexInCurly(node.latexAst);
+            }
+          }
+        }
+      }
+      return void 0;
+    }, "apply")
+  };
+}
+__name(createEncloseBracesTransform, "createEncloseBracesTransform");
+
 // src/transforms/encodeUrls.ts
 function createEncodeUrlsTransform() {
   return {
@@ -1466,7 +1545,7 @@ function createEncodeUrlsTransform() {
       for (const field of ast.fields()) {
         if (field.name.toLocaleLowerCase() === "url") {
           for (const entry of field.value.concat) {
-            entry.value = encodeUrl(entry.value);
+            replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)));
           }
           ast.invalidateField(field);
         }
@@ -3843,11 +3922,11 @@ function createEscapeCharactersTransform(newMode = false) {
         }
         for (const entry of field.value.concat) {
           const result = escapeCharacters(
-            entry.value,
+            renderValueNode(entry),
             characters,
             entry.type === "quoted"
           );
-          entry.value = result.value;
+          replaceValueNodeText(entry, result.value);
           for (const unsupported of result.unsupported) {
             const key = `${field.name}:${unsupported.codepoint}`;
             if (warned.has(key)) continue;
@@ -3931,7 +4010,10 @@ function createFormatPageRangeTransform() {
       for (const field of ast.fields()) {
         if (field.name.toLocaleLowerCase() === "pages") {
           for (const entry of field.value.concat) {
-            entry.value = formatPageRange(entry.value);
+            replaceValueNodeText(
+              entry,
+              formatPageRange(renderValueNode(entry))
+            );
           }
           ast.invalidateField(field);
         }
@@ -4410,10 +4492,11 @@ function createLimitAuthorsTransform(maxAuthors) {
       for (const field of fields) {
         if (field.name.toLocaleLowerCase() === "author") {
           for (const node of field.value.concat) {
-            const authors = node.value.split(" and ");
+            const authors = renderValueNode(node).split(" and ");
             if (authors.length > maxAuthors) {
-              node.value = [...authors.slice(0, maxAuthors), "others"].join(
-                " and "
+              replaceValueNodeText(
+                node,
+                [...authors.slice(0, maxAuthors), "others"].join(" and ")
               );
             }
           }
@@ -4635,9 +4718,12 @@ function createPreferCurlyTransform() {
         if (field.name.toLowerCase() === "month" && monthAliases[ast.lookupRenderedEntryValue(field)]) {
           continue;
         }
-        for (const child of field.value.concat) {
-          child.type = "braced";
-        }
+        field.value.concat = field.value.concat.map((child) => {
+          if (child.type === "braced") return child;
+          const braced = new BracedNode(child.parent);
+          replaceValueNodeText(braced, renderValueNode(child));
+          return braced;
+        });
         ast.invalidateField(field);
       }
       return void 0;
@@ -4653,12 +4739,13 @@ function createPreferNumericTransform() {
     dependencies: ["prefer-curly"],
     apply: /* @__PURE__ */ __name((ast) => {
       for (const field of ast.fields()) {
-        for (const child of field.value.concat) {
-          const isNumeric = child.value.match(/^[1-9][0-9]*$/);
+        field.value.concat = field.value.concat.map((child) => {
+          const isNumeric = renderValueNode(child).match(/^[1-9][0-9]*$/);
           if (isNumeric) {
-            child.type = "literal";
+            return new LiteralNode(child.parent, renderValueNode(child));
           }
-        }
+          return child;
+        });
         ast.invalidateField(field);
       }
       return void 0;
@@ -4677,7 +4764,7 @@ function createRemoveBracesTransform(fields) {
         if (set.has(field.name.toLocaleLowerCase())) {
           for (const node of field.value.concat) {
             if (node.type === "braced") {
-              node.value = stringifyLaTeX(flattenLaTeX(parseLaTeX(node.value)));
+              node.latexAst = flattenLaTeX(node.latexAst);
             }
           }
         }
@@ -4735,7 +4822,9 @@ function createRemoveEmptyFieldsTransform() {
         if (node.type === "block" && node.block?.type === "entry") {
           const entry = node.block;
           entry.fields = entry.fields.filter(
-            (field) => field.value.concat.some((node2) => node2.value.trim() !== "")
+            (field) => field.value.concat.some(
+              (node2) => renderValueNode(node2).trim() !== ""
+            )
           );
         }
       }
@@ -4753,7 +4842,10 @@ function createRemoveEnclosingBracesTransform() {
       for (const field of ast.fields()) {
         for (const node of field.value.concat) {
           if (node.type === "braced") {
-            node.value = node.value.replace(/^\{([^{}]*)\}$/g, "$1");
+            replaceValueNodeText(
+              node,
+              renderValueNode(node).replace(/^\{([^{}]*)\}$/g, "$1")
+            );
           }
           ast.invalidateField(field);
         }
@@ -4970,7 +5062,7 @@ function createWrapValuesTransform(indent, align, wrap) {
       const fields = astProxy.fields();
       for (const field of fields) {
         for (const node of field.value.concat) {
-          let value = unwrapText(node.value);
+          let value = unwrapText(renderValueNode(node));
           if (node.type === "braced" && field.value.concat.length === 1) {
             value = value.trim();
           }
@@ -4995,7 +5087,7 @@ ${valIndent}${paragraphs.join(`
 ${valIndent}`)}
 ${indent}`;
             }
-            node.value = value;
+            replaceValueNodeText(node, value);
           }
         }
       }

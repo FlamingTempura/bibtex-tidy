@@ -1,5 +1,5 @@
-import { parseLaTeX, stringifyLaTeX } from "../parsers/latexParser.ts";
 import type { Transform } from "../types.ts";
+import { encloseLatexInCurly } from "../valueNodes.ts";
 
 // if the user requested, wrap the value in braces (this forces bibtex
 // compiler to preserve case)
@@ -13,7 +13,7 @@ export function createEncloseBracesTransform(fields: string[]): Transform {
 				if (set.has(field.name.toLocaleLowerCase())) {
 					for (const node of field.value.concat) {
 						if (node.type === "braced") {
-							node.value = doubleEnclose(node.value);
+							node.latexAst = encloseLatexInCurly(node.latexAst);
 						}
 					}
 				}
@@ -21,23 +21,4 @@ export function createEncloseBracesTransform(fields: string[]): Transform {
 			return undefined;
 		},
 	};
-}
-
-/**
- * Remove all braces (unless part of a command) and enclose entire value in
- * braces
- */
-export function doubleEnclose(str: string): string {
-	const latex = parseLaTeX(str);
-
-	const alreadyDoubleEnclosed =
-		latex.children.length === 1 &&
-		latex.children[0]?.type === "block" &&
-		latex.children[0]?.kind === "curly" &&
-		latex.children[0].children.length === 1 &&
-		latex.children[0].children[0]?.type === "block" &&
-		latex.children[0].children[0]?.kind === "curly";
-
-	const result = stringifyLaTeX(latex);
-	return alreadyDoubleEnclosed ? result : `{${result}}`;
 }
