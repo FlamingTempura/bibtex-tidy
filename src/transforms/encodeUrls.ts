@@ -1,3 +1,4 @@
+import type { ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
@@ -5,14 +6,20 @@ export function createEncodeUrlsTransform(): Transform {
 	return {
 		name: "encode-urls",
 		apply: (ast) => {
-			for (const field of ast.fields()) {
-				if (field.name.toLocaleLowerCase() === "url") {
-					for (const entry of field.value.concat) {
-						replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)));
+			ast.walk({
+				where: (node, ctx): node is ValueNode => {
+					if (node.type !== "braced" && node.type !== "quoted") {
+						return false;
 					}
-					ast.invalidateField(field);
-				}
-			}
+
+					const field = ctx.closestAncestor("field");
+					return field?.name.toLocaleLowerCase() === "url";
+				},
+				enter: (entry) => {
+					replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)));
+					return [entry];
+				},
+			});
 			return undefined;
 		},
 	};

@@ -1,0 +1,73 @@
+import { ASTProxy } from "./ASTProxy.ts";
+import { formatBibtex } from "./format.ts";
+import {
+	type FieldNode,
+	LiteralNode,
+	parseBibTeX,
+	TextNode,
+} from "./parsers/bibtexParser.ts";
+
+describe("ASTProxy", () => {
+	it("walks matching nodes with ancestor context", () => {
+		const ast = new ASTProxy(
+			parseBibTeX("@article{key, month = jan, title = jan}"),
+		);
+
+		ast.walk({
+			where: (node, ctx): node is LiteralNode => {
+				if (node.type !== "literal") return false;
+
+				const field = ctx.closestAncestor("field");
+				return field?.name === "month";
+			},
+			enter: (node) => [new LiteralNode(node.parent, "feb")],
+		});
+
+		expect(formatBibtex(ast.root())).toBe(
+			"@article{key, month= feb title= jan\n}\n",
+		);
+	});
+
+	it("removes matching nodes", () => {
+		const ast = new ASTProxy(
+			parseBibTeX("@article{key, title = {Title}, note = {Note}}"),
+		);
+
+		ast.walk({
+			where: (node): node is FieldNode =>
+				node.type === "field" && node.name === "note",
+			enter: () => [],
+		});
+
+		expect(formatBibtex(ast.root())).toBe("@article{key, title= {Title}\n}\n");
+	});
+
+	it("expands matching value nodes", () => {
+		const ast = new ASTProxy(parseBibTeX("@article{key, month = jan}"));
+
+		ast.walk({
+			where: (node): node is LiteralNode => node.type === "literal",
+			enter: (node) => [
+				new LiteralNode(node.parent, "feb"),
+				new LiteralNode(node.parent, "mar"),
+			],
+		});
+
+		expect(formatBibtex(ast.root())).toBe(
+			"@article{key, month= feb # mar\n}\n",
+		);
+	});
+
+	it("replaces top-level nodes without constructor side effects", () => {
+		const ast = new ASTProxy(parseBibTeX("before @article{key} after"));
+
+		ast.walk({
+			where: (node): node is TextNode =>
+				node.type === "text" && node.text === "before ",
+			enter: (node) => [new TextNode(node.parent, "prefix ", "")],
+		});
+
+		expect(ast.root().children).toHaveLength(3);
+		expect(formatBibtex(ast.root())).toBe("prefix @article{key,\n} after\n");
+	});
+});

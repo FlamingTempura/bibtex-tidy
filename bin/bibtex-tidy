@@ -2259,6 +2259,91 @@ var ASTProxy = class {
   entries() {
     return __privateGet(this, _ast).children.filter((node) => node.type === "block").map((block) => block.block).filter((entry) => (entry == null ? void 0 : entry.type) === "entry");
   }
+  walk(rule) {
+    let mutated = false;
+    const replaceNodes = (nodes, index, replacements, parent) => {
+      for (const replacement of replacements) {
+        let existingIndex = nodes.indexOf(replacement);
+        while (existingIndex !== -1 && existingIndex !== index) {
+          nodes.splice(existingIndex, 1);
+          if (existingIndex < index) index--;
+          existingIndex = nodes.indexOf(replacement);
+        }
+      }
+      nodes.splice(index, 1, ...replacements);
+      for (const replacement of replacements) {
+        setParent(replacement, parent);
+      }
+      mutated = true;
+      return index;
+    };
+    const enter = (node, ancestors) => {
+      const ctx = new WalkContextImpl(ancestors);
+      if (rule.where ? rule.where(node, ctx) : true) {
+        return rule.enter(node, ctx);
+      }
+      return void 0;
+    };
+    const visitReplaceable = (nodes, index, ancestors, parent) => {
+      const node = nodes[index];
+      if (!node) return index + 1;
+      const replacements = enter(node, ancestors);
+      if (replacements) {
+        const replacementIndex = replaceNodes(
+          nodes,
+          index,
+          replacements,
+          parent
+        );
+        for (const replacement of replacements) {
+          visitChildren(replacement, [...ancestors, replacement]);
+        }
+        return replacementIndex + replacements.length;
+      }
+      visitChildren(node, [...ancestors, node]);
+      return index + 1;
+    };
+    const visitChildren = (node, ancestors) => {
+      switch (node.type) {
+        case "root":
+          for (let i = 0; i < node.children.length; ) {
+            i = visitReplaceable(node.children, i, ancestors, node);
+          }
+          break;
+        case "block":
+          if (node.block) {
+            visitChildren(node.block, [...ancestors, node.block]);
+          }
+          break;
+        case "entry":
+          for (let i = 0; i < node.fields.length; ) {
+            i = visitReplaceable(node.fields, i, ancestors, node);
+          }
+          break;
+        case "field":
+          visitChildren(node.value, [...ancestors, node.value]);
+          break;
+        case "concat":
+          for (let i = 0; i < node.concat.length; ) {
+            i = visitReplaceable(node.concat, i, ancestors, node);
+          }
+          break;
+        case "text":
+        case "comment":
+        case "preamble":
+        case "string":
+        case "literal":
+        case "braced":
+        case "quoted":
+          break;
+      }
+    };
+    visitChildren(__privateGet(this, _ast), [__privateGet(this, _ast)]);
+    if (mutated) {
+      this.fieldLookup.clear();
+      this.renderValueLookup.clear();
+    }
+  }
   invalidateField(field) {
     this.renderValueLookup.delete(field);
   }
@@ -2295,6 +2380,37 @@ var ASTProxy = class {
   }
 };
 _ast = new WeakMap();
+var WalkContextImpl = class {
+  constructor(ancestors) {
+    this.ancestors = ancestors;
+  }
+  closestAncestor(type) {
+    for (let i = this.ancestors.length - 1; i >= 0; i--) {
+      const ancestor = this.ancestors[i];
+      if ((ancestor == null ? void 0 : ancestor.type) === type) {
+        return ancestor;
+      }
+    }
+    return void 0;
+  }
+};
+function setParent(node, parent) {
+  switch (node.type) {
+    case "text":
+    case "block":
+      if (parent.type === "root") node.parent = parent;
+      break;
+    case "field":
+      if (parent.type === "entry") node.parent = parent;
+      node.value.parent = node;
+      break;
+    case "literal":
+    case "braced":
+    case "quoted":
+      if (parent.type === "concat") node.parent = parent;
+      break;
+  }
+}
 
 // src/debug.ts
 function logAST(node, depth = 0) {
@@ -3328,21 +3444,22 @@ function createAbbreviateMonthsTransform() {
   return {
     name: "abbreviate-months",
     apply: (astProxy) => {
-      for (const field of astProxy.fields()) {
-        if (field.name.toLowerCase() === "month") {
-          abbreviateMonthInField(astProxy, field, months);
+      astProxy.walk({
+        where: (node, ctx) => {
+          if (node.type !== "literal" && node.type !== "braced" && node.type !== "quoted") {
+            return false;
+          }
+          const field = ctx.closestAncestor("field");
+          return (field == null ? void 0 : field.name.toLowerCase()) === "month";
+        },
+        enter: (node) => {
+          const abbr = abbreviateMonth(renderValueNode(node), months);
+          return abbr ? [new LiteralNode(node.parent, abbr)] : [node];
         }
-      }
+      });
       return void 0;
     }
   };
-}
-function abbreviateMonthInField(astProxy, field, months) {
-  field.value.concat = field.value.concat.map((node) => {
-    const abbr = abbreviateMonth(renderValueNode(node), months);
-    return abbr ? new LiteralNode(node.parent, abbr) : node;
-  });
-  astProxy.invalidateField(field);
 }
 function abbreviateMonth(month, months) {
   return months.get(month.toLowerCase());
@@ -3353,11 +3470,14 @@ function createAlignValuesTransform(column) {
   return {
     name: "align-values",
     apply: (astProxy) => {
-      const fields = astProxy.fields();
-      for (const field of fields) {
-        const gap = Math.max(column - field.name.length, 1);
-        field.value.whitespacePrefix = " ".repeat(gap);
-      }
+      astProxy.walk({
+        where: (node) => node.type === "field",
+        enter: (field) => {
+          const gap = Math.max(column - field.name.length, 1);
+          field.value.whitespacePrefix = " ".repeat(gap);
+          return [field];
+        }
+      });
       return void 0;
     }
   };
@@ -3443,14 +3563,19 @@ function createEncodeUrlsTransform() {
   return {
     name: "encode-urls",
     apply: (ast) => {
-      for (const field of ast.fields()) {
-        if (field.name.toLocaleLowerCase() === "url") {
-          for (const entry of field.value.concat) {
-            replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)));
+      ast.walk({
+        where: (node, ctx) => {
+          if (node.type !== "braced" && node.type !== "quoted") {
+            return false;
           }
-          ast.invalidateField(field);
+          const field = ctx.closestAncestor("field");
+          return (field == null ? void 0 : field.name.toLocaleLowerCase()) === "url";
+        },
+        enter: (entry) => {
+          replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)));
+          return [entry];
         }
-      }
+      });
       return void 0;
     }
   };
@@ -6371,20 +6496,25 @@ function createLimitAuthorsTransform(maxAuthors) {
   return {
     name: "limit-authors",
     apply: (astProxy) => {
-      const fields = astProxy.fields();
-      for (const field of fields) {
-        if (field.name.toLocaleLowerCase() === "author") {
-          for (const node of field.value.concat) {
-            const authors = renderValueNode(node).split(" and ");
-            if (authors.length > maxAuthors) {
-              replaceValueNodeText(
-                node,
-                [...authors.slice(0, maxAuthors), "others"].join(" and ")
-              );
-            }
+      astProxy.walk({
+        where: (node, ctx) => {
+          if (node.type !== "braced" && node.type !== "quoted") {
+            return false;
           }
+          const field = ctx.closestAncestor("field");
+          return (field == null ? void 0 : field.name.toLocaleLowerCase()) === "author";
+        },
+        enter: (node) => {
+          const authors = renderValueNode(node).split(" and ");
+          if (authors.length > maxAuthors) {
+            replaceValueNodeText(
+              node,
+              [...authors.slice(0, maxAuthors), "others"].join(" and ")
+            );
+          }
+          return [node];
         }
-      }
+      });
       return void 0;
     }
   };
@@ -6395,9 +6525,16 @@ function createLowercaseEntryTypeTransform() {
   return {
     name: "lowercase-entry-type",
     apply: (ast) => {
-      for (const entry of ast.entries()) {
-        entry.parent.command = entry.parent.command.toLocaleLowerCase();
-      }
+      ast.walk({
+        where: (node) => {
+          var _a;
+          return node.type === "block" && ((_a = node.block) == null ? void 0 : _a.type) === "entry";
+        },
+        enter: (node) => {
+          node.command = node.command.toLocaleLowerCase();
+          return [node];
+        }
+      });
       return void 0;
     }
   };
@@ -6408,13 +6545,13 @@ function createLowercaseFieldsTransform() {
   return {
     name: "lowercase-fields",
     apply: (ast) => {
-      for (const field of ast.fields()) {
-        const newName = field.name.toLocaleLowerCase();
-        if (newName !== field.name) {
-          field.name = newName;
-          ast.invalidateField(field);
+      ast.walk({
+        where: (node) => node.type === "field",
+        enter: (field) => {
+          field.name = field.name.toLocaleLowerCase();
+          return [field];
         }
-      }
+      });
       return void 0;
     }
   };
@@ -6588,21 +6725,29 @@ function createPreferCurlyTransform() {
   return {
     name: "prefer-curly",
     apply: (ast) => {
-      for (const field of ast.fields()) {
-        if (field.name.toLowerCase() === "month" && monthAliases[ast.lookupRenderedEntryValue(field)]) {
-          continue;
-        }
-        field.value.concat = field.value.concat.map((child) => {
-          if (child.type === "braced") return child;
+      ast.walk({
+        where: (node, ctx) => {
+          if (node.type !== "literal" && node.type !== "quoted") {
+            return false;
+          }
+          const field = ctx.closestAncestor("field");
+          return !((field == null ? void 0 : field.name.toLowerCase()) === "month" && monthAliases[ast.lookupRenderedEntryValue(field)]);
+        },
+        enter: (child) => {
+          if (child.type === "braced") return [child];
           const braced = new BracedNode(child.parent);
-          replaceValueNodeText(braced, renderValueNode(child));
-          return braced;
-        });
-        ast.invalidateField(field);
-      }
+          braced.latexAst = child.type === "quoted" ? child.latexAst : createTextAst(child.value);
+          return [braced];
+        }
+      });
       return void 0;
     }
   };
+}
+function createTextAst(text) {
+  const ast = new BlockNode("root");
+  new TextNode(ast, text);
+  return ast;
 }
 
 // src/transforms/preferNumeric.ts
@@ -6611,16 +6756,10 @@ function createPreferNumericTransform() {
     name: "prefer-numeric",
     dependencies: ["prefer-curly"],
     apply: (ast) => {
-      for (const field of ast.fields()) {
-        field.value.concat = field.value.concat.map((child) => {
-          const isNumeric = renderValueNode(child).match(/^[1-9][0-9]*$/);
-          if (isNumeric) {
-            return new LiteralNode(child.parent, renderValueNode(child));
-          }
-          return child;
-        });
-        ast.invalidateField(field);
-      }
+      ast.walk({
+        where: (node) => (node.type === "braced" || node.type === "quoted") && /^[1-9][0-9]*$/.test(renderValueNode(node)),
+        enter: (node) => [new LiteralNode(node.parent, renderValueNode(node))]
+      });
       return void 0;
     }
   };
@@ -6632,15 +6771,17 @@ function createRemoveBracesTransform(fields) {
   return {
     name: "remove-braces",
     apply: (ast) => {
-      for (const field of ast.fields()) {
-        if (set.has(field.name.toLocaleLowerCase())) {
-          for (const node of field.value.concat) {
-            if (node.type === "braced") {
-              node.latexAst = flattenLaTeX(node.latexAst);
-            }
-          }
+      ast.walk({
+        where: (node, ctx) => {
+          if (node.type !== "braced") return false;
+          const field = ctx.closestAncestor("field");
+          return field !== void 0 && set.has(field.name.toLocaleLowerCase());
+        },
+        enter: (node) => {
+          node.latexAst = flattenLaTeX(node.latexAst);
+          return [node];
         }
-      }
+      });
       return void 0;
     }
   };

@@ -1,5 +1,4 @@
-import type { ASTProxy } from "../ASTProxy.ts";
-import { type FieldNode, LiteralNode } from "../parsers/bibtexParser.ts";
+import { LiteralNode, type ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode } from "../valueNodes.ts";
 
@@ -35,26 +34,27 @@ export function createAbbreviateMonthsTransform(): Transform {
 	return {
 		name: "abbreviate-months",
 		apply: (astProxy) => {
-			for (const field of astProxy.fields()) {
-				if (field.name.toLowerCase() === "month") {
-					abbreviateMonthInField(astProxy, field, months);
-				}
-			}
+			astProxy.walk({
+				where: (node, ctx): node is ValueNode => {
+					if (
+						node.type !== "literal" &&
+						node.type !== "braced" &&
+						node.type !== "quoted"
+					) {
+						return false;
+					}
+
+					const field = ctx.closestAncestor("field");
+					return field?.name.toLowerCase() === "month";
+				},
+				enter: (node) => {
+					const abbr = abbreviateMonth(renderValueNode(node), months);
+					return abbr ? [new LiteralNode(node.parent, abbr)] : [node];
+				},
+			});
 			return undefined;
 		},
 	};
-}
-
-function abbreviateMonthInField(
-	astProxy: ASTProxy,
-	field: FieldNode,
-	months: Map<string, string>,
-) {
-	field.value.concat = field.value.concat.map((node) => {
-		const abbr = abbreviateMonth(renderValueNode(node), months);
-		return abbr ? new LiteralNode(node.parent, abbr) : node;
-	});
-	astProxy.invalidateField(field);
 }
 
 function abbreviateMonth(
