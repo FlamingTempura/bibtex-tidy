@@ -35,18 +35,14 @@ export function createAbbreviateMonthsTransform(): Transform {
 		name: "abbreviate-months",
 		apply: (astProxy) => {
 			astProxy.walk({
-				where: (node, ctx): node is ValueNode => {
-					if (
-						node.type !== "literal" &&
-						node.type !== "braced" &&
-						node.type !== "quoted"
-					) {
-						return false;
-					}
-
-					const field = ctx.closestAncestor("field");
-					return field?.name.toLowerCase() === "month";
-				},
+				where: (node, ctx): node is ValueNode =>
+					(node.type === "literal" ||
+						node.type === "braced" ||
+						node.type === "quoted") &&
+					ctx.hasAncestor(
+						(node) =>
+							node.type === "field" && node.name.toLowerCase() === "month",
+					),
 				enter: (node) => {
 					const abbr = abbreviateMonth(renderValueNode(node), months);
 					return abbr ? [new LiteralNode(node.parent, abbr)] : [node];

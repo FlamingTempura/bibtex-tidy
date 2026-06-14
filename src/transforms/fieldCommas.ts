@@ -5,13 +5,14 @@ export function createFieldCommasTransform(trailing: boolean): Transform {
 	return {
 		name: "field-commas",
 		apply: (astProxy) => {
-			const entries = astProxy.entries();
-			for (const entry of entries) {
-				for (let i = 0; i < entry.fields.length; i++) {
-					const field = entry.fields[i] as FieldNode;
-					field.hasComma = i < entry.fields.length - 1 || trailing;
-				}
-			}
+			astProxy.walk({
+				where: (node): node is FieldNode => node.type === "field",
+				enter: (field) => {
+					const i = field.parent.fields.indexOf(field);
+					field.hasComma = i < field.parent.fields.length - 1 || trailing;
+					return [field];
+				},
+			});
 
 			return undefined;
 		},

@@ -1,7 +1,7 @@
 import { checkForDuplicates } from "../duplicates.ts";
 import type { MergeStrategy, OptionsNormalized } from "../optionUtils.ts";
+import type { BlockNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
-import { isEntryNode } from "../utils.ts";
 
 export function createMergeEntriesTransform(
 	duplicatesOpt: OptionsNormalized["duplicates"],
@@ -15,10 +15,13 @@ export function createMergeEntriesTransform(
 		apply: (astProxy) => {
 			const duplicates = checkForDuplicates(astProxy, duplicatesOpt, merge);
 
-			const root = astProxy.root();
-			root.children = root.children.filter(
-				(child) => !isEntryNode(child) || !duplicates.entries.has(child.block),
-			);
+			astProxy.walk({
+				where: (node): node is BlockNode =>
+					node.type === "block" &&
+					node.block?.type === "entry" &&
+					duplicates.entries.has(node.block),
+				enter: () => [],
+			});
 
 			return duplicates.warnings;
 		},

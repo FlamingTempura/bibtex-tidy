@@ -1,5 +1,4 @@
-import type { ASTProxy } from "../ASTProxy.ts";
-import type { FieldNode } from "../parsers/bibtexParser.ts";
+import type { ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
@@ -7,22 +6,22 @@ export function createDropAllCapsTransform(): Transform {
 	return {
 		name: "drop-all-caps",
 		apply: (astProxy) => {
-			for (const field of astProxy.fields()) {
-				dropAllCapsInField(astProxy, field);
-			}
+			astProxy.walk({
+				where: (node, ctx): node is ValueNode =>
+					(node.type === "braced" || node.type === "quoted") &&
+					ctx.hasAncestor(
+						(node) =>
+							node.type === "field" &&
+							!astProxy.lookupRenderedEntryValue(node).match(/[a-z]/),
+					),
+				enter: (node) => {
+					replaceValueNodeText(node, titleCase(renderValueNode(node)));
+					return [node];
+				},
+			});
 			return undefined;
 		},
 	};
-}
-
-function dropAllCapsInField(astProxy: ASTProxy, field: FieldNode) {
-	if (!astProxy.lookupRenderedEntryValue(field).match(/[a-z]/)) {
-		console.log(astProxy.lookupRenderedEntryValue(field));
-		for (const node of field.value.concat) {
-			replaceValueNodeText(node, titleCase(renderValueNode(node)));
-		}
-		astProxy.invalidateField(field);
-	}
 }
 
 function titleCase(str: string): string {

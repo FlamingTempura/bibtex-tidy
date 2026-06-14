@@ -1,3 +1,4 @@
+import type { ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
@@ -6,17 +7,19 @@ export function createFormatPageRangeTransform(): Transform {
 	return {
 		name: "format-page-range",
 		apply(ast) {
-			for (const field of ast.fields()) {
-				if (field.name.toLocaleLowerCase() === "pages") {
-					for (const entry of field.value.concat) {
-						replaceValueNodeText(
-							entry,
-							formatPageRange(renderValueNode(entry)),
-						);
-					}
-					ast.invalidateField(field);
-				}
-			}
+			ast.walk({
+				where: (node, ctx): node is ValueNode =>
+					(node.type === "braced" || node.type === "quoted") &&
+					ctx.hasAncestor(
+						(node) =>
+							node.type === "field" &&
+							node.name.toLocaleLowerCase() === "pages",
+					),
+				enter: (entry) => {
+					replaceValueNodeText(entry, formatPageRange(renderValueNode(entry)));
+					return [entry];
+				},
+			});
 			return undefined;
 		},
 	};

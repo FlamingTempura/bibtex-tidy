@@ -1,16 +1,16 @@
+import type { BlockNode, TextNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createRemoveCommentsTransform(): Transform {
 	return {
 		name: "remove-comments",
 		apply: (astProxy) => {
-			astProxy.root().children = astProxy
-				.root()
-				.children.filter(
-					(child) =>
-						child.type !== "text" &&
-						(child.type !== "block" || child.block?.type !== "comment"),
-				);
+			astProxy.walk({
+				where: (node): node is TextNode | BlockNode =>
+					node.type === "text" ||
+					(node.type === "block" && node.block?.type === "comment"),
+				enter: () => [],
+			});
 
 			return undefined;
 		},

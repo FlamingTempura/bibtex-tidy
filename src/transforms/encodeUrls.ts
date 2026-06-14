@@ -7,14 +7,12 @@ export function createEncodeUrlsTransform(): Transform {
 		name: "encode-urls",
 		apply: (ast) => {
 			ast.walk({
-				where: (node, ctx): node is ValueNode => {
-					if (node.type !== "braced" && node.type !== "quoted") {
-						return false;
-					}
-
-					const field = ctx.closestAncestor("field");
-					return field?.name.toLocaleLowerCase() === "url";
-				},
+				where: (node, ctx): node is ValueNode =>
+					(node.type === "braced" || node.type === "quoted") &&
+					ctx.hasAncestor(
+						(node) =>
+							node.type === "field" && node.name.toLocaleLowerCase() === "url",
+					),
 				enter: (entry) => {
 					replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)));
 					return [entry];

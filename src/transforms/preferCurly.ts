@@ -11,17 +11,14 @@ export function createPreferCurlyTransform(): Transform {
 		name: "prefer-curly",
 		apply: (ast) => {
 			ast.walk({
-				where: (node, ctx): node is ValueNode => {
-					if (node.type !== "literal" && node.type !== "quoted") {
-						return false;
-					}
-
-					const field = ctx.closestAncestor("field");
-					return !(
-						field?.name.toLowerCase() === "month" &&
-						monthAliases[ast.lookupRenderedEntryValue(field)]
-					);
-				},
+				where: (node, ctx): node is ValueNode =>
+					(node.type === "literal" || node.type === "quoted") &&
+					!ctx.hasAncestor(
+						(node) =>
+							node.type === "field" &&
+							node.name.toLowerCase() === "month" &&
+							monthAliases[ast.lookupRenderedEntryValue(node)] !== undefined,
+					),
 				enter: (child) => {
 					if (child.type === "braced") return [child];
 

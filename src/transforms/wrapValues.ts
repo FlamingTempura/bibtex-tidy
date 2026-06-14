@@ -1,3 +1,4 @@
+import type { BracedNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { unwrapText, wrapText } from "../utils.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
@@ -10,45 +11,44 @@ export function createWrapValuesTransform(
 	return {
 		name: "wrap-values",
 		apply: (astProxy) => {
-			const fields = astProxy.fields();
-			for (const field of fields) {
-				for (const node of field.value.concat) {
+			astProxy.walk({
+				where: (node): node is BracedNode => node.type === "braced",
+				enter: (node) => {
 					let value = unwrapText(renderValueNode(node));
 
 					// Braced values should be trimmed, unless part of a concatenation
-					if (node.type === "braced" && field.value.concat.length === 1) {
+					if (node.parent.concat.length === 1) {
 						value = value.trim();
 					}
 
-					if (node.type === "braced") {
-						const lineLength = `${indent}${align}{${value}}`.length;
-						const multiLine = value.includes("\n\n");
-						// If the value contains multiple paragraphs, then output the value at a separate indent level, e.g.
-						// abstract     = {
-						//   Paragraph 1
-						//
-						//   Paragraph 2
-						// }
-						if ((wrap && lineLength > wrap) || multiLine) {
-							let paragraphs = value.split("\n\n");
-							const valIndent = indent.repeat(2);
+					const lineLength = `${indent}${align}{${value}}`.length;
+					const multiLine = value.includes("\n\n");
+					// If the value contains multiple paragraphs, then output the value at a separate indent level, e.g.
+					// abstract     = {
+					//   Paragraph 1
+					//
+					//   Paragraph 2
+					// }
+					if ((wrap && lineLength > wrap) || multiLine) {
+						let paragraphs = value.split("\n\n");
+						const valIndent = indent.repeat(2);
 
-							if (wrap) {
-								const wrapCol = wrap;
-								paragraphs = paragraphs.map((paragraph) =>
-									wrapText(paragraph, wrapCol - valIndent.length).join(
-										`\n${valIndent}`,
-									),
-								);
-							}
-
-							value = `\n${valIndent}${paragraphs.join(`\n\n${valIndent}`)}\n${indent}`;
+						if (wrap) {
+							const wrapCol = wrap;
+							paragraphs = paragraphs.map((paragraph) =>
+								wrapText(paragraph, wrapCol - valIndent.length).join(
+									`\n${valIndent}`,
+								),
+							);
 						}
 
-						replaceValueNodeText(node, value);
+						value = `\n${valIndent}${paragraphs.join(`\n\n${valIndent}`)}\n${indent}`;
 					}
-				}
-			}
+
+					replaceValueNodeText(node, value);
+					return [node];
+				},
+			});
 
 			return undefined;
 		},

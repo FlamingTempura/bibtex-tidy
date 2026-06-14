@@ -7,14 +7,13 @@ export function createLimitAuthorsTransform(maxAuthors: number): Transform {
 		name: "limit-authors",
 		apply: (astProxy) => {
 			astProxy.walk({
-				where: (node, ctx): node is ValueNode => {
-					if (node.type !== "braced" && node.type !== "quoted") {
-						return false;
-					}
-
-					const field = ctx.closestAncestor("field");
-					return field?.name.toLocaleLowerCase() === "author";
-				},
+				where: (node, ctx): node is ValueNode =>
+					(node.type === "braced" || node.type === "quoted") &&
+					ctx.hasAncestor(
+						(node) =>
+							node.type === "field" &&
+							node.name.toLocaleLowerCase() === "author",
+					),
 				enter: (node) => {
 					// TODO: use author parser?
 					const authors = renderValueNode(node).split(" and ");

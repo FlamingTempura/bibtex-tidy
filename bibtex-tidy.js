@@ -439,6 +439,13 @@ var WalkContextImpl = class {
     }
     return void 0;
   }
+  hasAncestor(predicate) {
+    for (let i = this.ancestors.length - 1; i >= 0; i--) {
+      const ancestor = this.ancestors[i];
+      if (ancestor && predicate(ancestor)) return true;
+    }
+    return false;
+  }
 };
 function setParent(node, parent) {
   switch (node.type) {
@@ -1538,13 +1545,9 @@ function createAbbreviateMonthsTransform() {
     name: "abbreviate-months",
     apply: /* @__PURE__ */ __name((astProxy) => {
       astProxy.walk({
-        where: /* @__PURE__ */ __name((node, ctx) => {
-          if (node.type !== "literal" && node.type !== "braced" && node.type !== "quoted") {
-            return false;
-          }
-          const field = ctx.closestAncestor("field");
-          return field?.name.toLowerCase() === "month";
-        }, "where"),
+        where: /* @__PURE__ */ __name((node, ctx) => (node.type === "literal" || node.type === "braced" || node.type === "quoted") && ctx.hasAncestor(
+          (node2) => node2.type === "field" && node2.name.toLowerCase() === "month"
+        ), "where"),
         enter: /* @__PURE__ */ __name((node) => {
           const abbr = abbreviateMonth(renderValueNode(node), months);
           return abbr ? [new LiteralNode(node.parent, abbr)] : [node];
@@ -1584,14 +1587,17 @@ function createBlankLinesTransform() {
   return {
     name: "blank-lines",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      const children = astProxy.root().children;
       let prev;
-      for (const child of children) {
-        if (prev && !isComment(prev)) {
-          child.whitespacePrefix = "\n\n";
-        }
-        prev = child;
-      }
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "text" || node.type === "block", "where"),
+        enter: /* @__PURE__ */ __name((child) => {
+          if (prev && !isComment(prev)) {
+            child.whitespacePrefix = "\n\n";
+          }
+          prev = child;
+          return [child];
+        }, "enter")
+      });
       return void 0;
     }, "apply")
   };
@@ -1607,24 +1613,20 @@ function createDropAllCapsTransform() {
   return {
     name: "drop-all-caps",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      for (const field of astProxy.fields()) {
-        dropAllCapsInField(astProxy, field);
-      }
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node, ctx) => (node.type === "braced" || node.type === "quoted") && ctx.hasAncestor(
+          (node2) => node2.type === "field" && !astProxy.lookupRenderedEntryValue(node2).match(/[a-z]/)
+        ), "where"),
+        enter: /* @__PURE__ */ __name((node) => {
+          replaceValueNodeText(node, titleCase(renderValueNode(node)));
+          return [node];
+        }, "enter")
+      });
       return void 0;
     }, "apply")
   };
 }
 __name(createDropAllCapsTransform, "createDropAllCapsTransform");
-function dropAllCapsInField(astProxy, field) {
-  if (!astProxy.lookupRenderedEntryValue(field).match(/[a-z]/)) {
-    console.log(astProxy.lookupRenderedEntryValue(field));
-    for (const node of field.value.concat) {
-      replaceValueNodeText(node, titleCase(renderValueNode(node)));
-    }
-    astProxy.invalidateField(field);
-  }
-}
-__name(dropAllCapsInField, "dropAllCapsInField");
 function titleCase(str) {
   return str.replace(/(\w)(\S*)/g, (_, first, rest) => {
     const word = first + rest;
@@ -1645,15 +1647,15 @@ function createEncloseBracesTransform(fields) {
     name: "enclose-braces",
     dependencies: ["prefer-curly"],
     apply: /* @__PURE__ */ __name((ast) => {
-      for (const field of ast.fields()) {
-        if (set.has(field.name.toLocaleLowerCase())) {
-          for (const node of field.value.concat) {
-            if (node.type === "braced") {
-              node.latexAst = encloseLatexInCurly(node.latexAst);
-            }
-          }
-        }
-      }
+      ast.walk({
+        where: /* @__PURE__ */ __name((node, ctx) => node.type === "braced" && ctx.hasAncestor(
+          (node2) => node2.type === "field" && set.has(node2.name.toLocaleLowerCase())
+        ), "where"),
+        enter: /* @__PURE__ */ __name((node) => {
+          node.latexAst = encloseLatexInCurly(node.latexAst);
+          return [node];
+        }, "enter")
+      });
       return void 0;
     }, "apply")
   };
@@ -1666,13 +1668,9 @@ function createEncodeUrlsTransform() {
     name: "encode-urls",
     apply: /* @__PURE__ */ __name((ast) => {
       ast.walk({
-        where: /* @__PURE__ */ __name((node, ctx) => {
-          if (node.type !== "braced" && node.type !== "quoted") {
-            return false;
-          }
-          const field = ctx.closestAncestor("field");
-          return field?.name.toLocaleLowerCase() === "url";
-        }, "where"),
+        where: /* @__PURE__ */ __name((node, ctx) => (node.type === "braced" || node.type === "quoted") && ctx.hasAncestor(
+          (node2) => node2.type === "field" && node2.name.toLocaleLowerCase() === "url"
+        ), "where"),
         enter: /* @__PURE__ */ __name((entry) => {
           replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)));
           return [entry];
@@ -4044,11 +4042,13 @@ function createEscapeCharactersTransform(newMode = false) {
     apply: /* @__PURE__ */ __name((ast) => {
       const warnings = [];
       const warned = /* @__PURE__ */ new Set();
-      for (const field of ast.fields()) {
-        if (VERBATIM_FIELDS.includes(field.name)) {
-          continue;
-        }
-        for (const entry of field.value.concat) {
+      ast.walk({
+        where: /* @__PURE__ */ __name((node, ctx) => (node.type === "braced" || node.type === "quoted") && ctx.hasAncestor(
+          (node2) => node2.type === "field" && !VERBATIM_FIELDS.includes(node2.name)
+        ), "where"),
+        enter: /* @__PURE__ */ __name((entry, ctx) => {
+          const field = ctx.closestAncestor("field");
+          if (!field) return [entry];
           const result = escapeCharacters(
             renderValueNode(entry),
             characters,
@@ -4066,8 +4066,9 @@ function createEscapeCharactersTransform(newMode = false) {
               message: `Cannot escape character ${unsupported.character} (U+${unsupported.codepoint.toUpperCase()}) in ${field.name} without LaTeX packages or special fonts.`
             });
           }
-        }
-      }
+          return [entry];
+        }, "enter")
+      });
       return warnings;
     }, "apply")
   };
@@ -4117,13 +4118,14 @@ function createFieldCommasTransform(trailing) {
   return {
     name: "field-commas",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      const entries = astProxy.entries();
-      for (const entry of entries) {
-        for (let i = 0; i < entry.fields.length; i++) {
-          const field = entry.fields[i];
-          field.hasComma = i < entry.fields.length - 1 || trailing;
-        }
-      }
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "field", "where"),
+        enter: /* @__PURE__ */ __name((field) => {
+          const i = field.parent.fields.indexOf(field);
+          field.hasComma = i < field.parent.fields.length - 1 || trailing;
+          return [field];
+        }, "enter")
+      });
       return void 0;
     }, "apply")
   };
@@ -4135,17 +4137,15 @@ function createFormatPageRangeTransform() {
   return {
     name: "format-page-range",
     apply(ast) {
-      for (const field of ast.fields()) {
-        if (field.name.toLocaleLowerCase() === "pages") {
-          for (const entry of field.value.concat) {
-            replaceValueNodeText(
-              entry,
-              formatPageRange(renderValueNode(entry))
-            );
-          }
-          ast.invalidateField(field);
-        }
-      }
+      ast.walk({
+        where: /* @__PURE__ */ __name((node, ctx) => (node.type === "braced" || node.type === "quoted") && ctx.hasAncestor(
+          (node2) => node2.type === "field" && node2.name.toLocaleLowerCase() === "pages"
+        ), "where"),
+        enter: /* @__PURE__ */ __name((entry) => {
+          replaceValueNodeText(entry, formatPageRange(renderValueNode(entry)));
+          return [entry];
+        }, "enter")
+      });
       return void 0;
     }
   };
@@ -4583,12 +4583,16 @@ function createGenerateKeysTransform(template) {
     name: "generate-keys",
     apply: /* @__PURE__ */ __name((astProxy) => {
       const newKeys = generateKeys(astProxy.entries(), astProxy, template);
-      for (const entry of astProxy.entries()) {
-        const newKey = newKeys.get(entry);
-        if (newKey) {
-          entry.key = newKey;
-        }
-      }
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "block" && node.block?.type === "entry", "where"),
+        enter: /* @__PURE__ */ __name((node) => {
+          const newKey = newKeys.get(node.block);
+          if (newKey) {
+            node.block.key = newKey;
+          }
+          return [node];
+        }, "enter")
+      });
       return void 0;
     }, "apply")
   };
@@ -4600,11 +4604,14 @@ function createIndentFieldsTransform(indent) {
   return {
     name: "indent",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      const fields = astProxy.fields();
-      for (const field of fields) {
-        field.whitespacePrefix = `
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "field", "where"),
+        enter: /* @__PURE__ */ __name((field) => {
+          field.whitespacePrefix = `
 ${indent}`;
-      }
+          return [field];
+        }, "enter")
+      });
       return void 0;
     }, "apply")
   };
@@ -4617,13 +4624,9 @@ function createLimitAuthorsTransform(maxAuthors) {
     name: "limit-authors",
     apply: /* @__PURE__ */ __name((astProxy) => {
       astProxy.walk({
-        where: /* @__PURE__ */ __name((node, ctx) => {
-          if (node.type !== "braced" && node.type !== "quoted") {
-            return false;
-          }
-          const field = ctx.closestAncestor("field");
-          return field?.name.toLocaleLowerCase() === "author";
-        }, "where"),
+        where: /* @__PURE__ */ __name((node, ctx) => (node.type === "braced" || node.type === "quoted") && ctx.hasAncestor(
+          (node2) => node2.type === "field" && node2.name.toLocaleLowerCase() === "author"
+        ), "where"),
         enter: /* @__PURE__ */ __name((node) => {
           const authors = renderValueNode(node).split(" and ");
           if (authors.length > maxAuthors) {
@@ -4704,10 +4707,6 @@ function unwrapText(str) {
   return str.replace(/\s*\n\s*\n\s*/g, "<<BIBTEX_TIDY_PARA>>").replace(/\s*\n\s*/g, " ").replace(/<<BIBTEX_TIDY_PARA>>/g, "\n\n");
 }
 __name(unwrapText, "unwrapText");
-function isEntryNode(node) {
-  return node.type !== "text" && node.block?.type === "entry";
-}
-__name(isEntryNode, "isEntryNode");
 
 // src/duplicates.ts
 function checkForDuplicates(cache, duplicateRules, merge) {
@@ -4836,10 +4835,10 @@ function createMergeEntriesTransform(duplicatesOpt, merge) {
     dependencies: ["generate-keys", "sort-entries"],
     apply: /* @__PURE__ */ __name((astProxy) => {
       const duplicates = checkForDuplicates(astProxy, duplicatesOpt, merge);
-      const root = astProxy.root();
-      root.children = root.children.filter(
-        (child) => !isEntryNode(child) || !duplicates.entries.has(child.block)
-      );
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "block" && node.block?.type === "entry" && duplicates.entries.has(node.block), "where"),
+        enter: /* @__PURE__ */ __name(() => [], "enter")
+      });
       return duplicates.warnings;
     }, "apply")
   };
@@ -4852,13 +4851,9 @@ function createPreferCurlyTransform() {
     name: "prefer-curly",
     apply: /* @__PURE__ */ __name((ast) => {
       ast.walk({
-        where: /* @__PURE__ */ __name((node, ctx) => {
-          if (node.type !== "literal" && node.type !== "quoted") {
-            return false;
-          }
-          const field = ctx.closestAncestor("field");
-          return !(field?.name.toLowerCase() === "month" && monthAliases[ast.lookupRenderedEntryValue(field)]);
-        }, "where"),
+        where: /* @__PURE__ */ __name((node, ctx) => (node.type === "literal" || node.type === "quoted") && !ctx.hasAncestor(
+          (node2) => node2.type === "field" && node2.name.toLowerCase() === "month" && monthAliases[ast.lookupRenderedEntryValue(node2)] !== void 0
+        ), "where"),
         enter: /* @__PURE__ */ __name((child) => {
           if (child.type === "braced") return [child];
           const braced = new BracedNode(child.parent);
@@ -4901,11 +4896,9 @@ function createRemoveBracesTransform(fields) {
     name: "remove-braces",
     apply: /* @__PURE__ */ __name((ast) => {
       ast.walk({
-        where: /* @__PURE__ */ __name((node, ctx) => {
-          if (node.type !== "braced") return false;
-          const field = ctx.closestAncestor("field");
-          return field !== void 0 && set.has(field.name.toLocaleLowerCase());
-        }, "where"),
+        where: /* @__PURE__ */ __name((node, ctx) => node.type === "braced" && ctx.hasAncestor(
+          (node2) => node2.type === "field" && set.has(node2.name.toLocaleLowerCase())
+        ), "where"),
         enter: /* @__PURE__ */ __name((node) => {
           node.latexAst = flattenLaTeX(node.latexAst);
           return [node];
@@ -4922,9 +4915,10 @@ function createRemoveCommentsTransform() {
   return {
     name: "remove-comments",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      astProxy.root().children = astProxy.root().children.filter(
-        (child) => child.type !== "text" && (child.type !== "block" || child.block?.type !== "comment")
-      );
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "text" || node.type === "block" && node.block?.type === "comment", "where"),
+        enter: /* @__PURE__ */ __name(() => [], "enter")
+      });
       return void 0;
     }, "apply")
   };
@@ -4936,19 +4930,20 @@ function createRemoveDuplicateFieldsTransform() {
   return {
     name: "remove-duplicate-fields",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      for (const node of astProxy.root().children) {
-        if (node.type === "block" && node.block?.type === "entry") {
-          const fieldSeen = /* @__PURE__ */ new Set();
-          node.block.fields = node.block.fields.filter((field) => {
-            const nameLc = field.name.toLocaleLowerCase();
-            if (fieldSeen.has(nameLc)) {
-              return false;
-            }
-            fieldSeen.add(nameLc);
-            return true;
-          });
-        }
-      }
+      const seenFieldsByEntry = /* @__PURE__ */ new WeakMap();
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "field", "where"),
+        enter: /* @__PURE__ */ __name((field) => {
+          const seenFields = seenFieldsByEntry.getOrInsert(
+            field.parent,
+            /* @__PURE__ */ new Set()
+          );
+          const fieldName = field.name.toLocaleLowerCase();
+          if (seenFields.has(fieldName)) return [];
+          seenFields.add(fieldName);
+          return [field];
+        }, "enter")
+      });
       return void 0;
     }, "apply")
   };
@@ -4960,16 +4955,12 @@ function createRemoveEmptyFieldsTransform() {
   return {
     name: "remove-empty-fields",
     apply: /* @__PURE__ */ __name((ast) => {
-      for (const node of ast.root().children) {
-        if (node.type === "block" && node.block?.type === "entry") {
-          const entry = node.block;
-          entry.fields = entry.fields.filter(
-            (field) => field.value.concat.some(
-              (node2) => renderValueNode(node2).trim() !== ""
-            )
-          );
-        }
-      }
+      ast.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "field" && !node.value.concat.some(
+          (node2) => renderValueNode(node2).trim() !== ""
+        ), "where"),
+        enter: /* @__PURE__ */ __name(() => [], "enter")
+      });
       return void 0;
     }, "apply")
   };
@@ -4981,17 +4972,16 @@ function createRemoveEnclosingBracesTransform() {
   return {
     name: "remove-enclosing-braces",
     apply: /* @__PURE__ */ __name((ast) => {
-      for (const field of ast.fields()) {
-        for (const node of field.value.concat) {
-          if (node.type === "braced") {
-            replaceValueNodeText(
-              node,
-              renderValueNode(node).replace(/^\{([^{}]*)\}$/g, "$1")
-            );
-          }
-          ast.invalidateField(field);
-        }
-      }
+      ast.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "braced", "where"),
+        enter: /* @__PURE__ */ __name((node) => {
+          replaceValueNodeText(
+            node,
+            renderValueNode(node).replace(/^\{([^{}]*)\}$/g, "$1")
+          );
+          return [node];
+        }, "enter")
+      });
       return void 0;
     }, "apply")
   };
@@ -5004,11 +4994,10 @@ function createRemoveSpecifiedFieldsTransform(omit) {
     name: "remove-specified-fields",
     apply(ast) {
       const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
-      for (const field of ast.fields()) {
-        if (set.has(field.name.toLocaleLowerCase())) {
-          field.parent.fields = field.parent.fields.filter((f) => f !== field);
-        }
-      }
+      ast.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "field" && set.has(node.name.toLocaleLowerCase()), "where"),
+        enter: /* @__PURE__ */ __name(() => [], "enter")
+      });
       return void 0;
     }
   };
@@ -5020,31 +5009,34 @@ function createResetWhitespaceTransform(keepCommentWhitespace) {
   return {
     name: "reset-whitespace",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      const children = astProxy.root().children;
       let prev;
-      for (const child of children) {
-        const preserve = isComment2(child) && keepCommentWhitespace;
-        const preservePrev = prev && isComment2(prev) && keepCommentWhitespace;
-        if (keepCommentWhitespace && child.type === "block" && prev?.type === "text" && !prev.text.endsWith("\n")) {
-          prev.text = `${prev.text.trimEnd()}
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "text" || node.type === "block", "where"),
+        enter: /* @__PURE__ */ __name((child) => {
+          const preserve = isComment2(child) && keepCommentWhitespace;
+          const preservePrev = prev && isComment2(prev) && keepCommentWhitespace;
+          if (keepCommentWhitespace && child.type === "block" && prev?.type === "text" && !prev.text.endsWith("\n")) {
+            prev.text = `${prev.text.trimEnd()}
 `;
-        }
-        if (!preserve) {
-          child.whitespacePrefix = prev && !preservePrev ? "\n" : "";
-          if (child.type === "text") {
-            child.text = child.text.trim();
-          } else if (child.block) {
-            if (child.block.type === "entry") {
-              for (const field of child.block.fields) {
-                field.whitespacePrefix = "";
+          }
+          if (!preserve) {
+            child.whitespacePrefix = prev && !preservePrev ? "\n" : "";
+            if (child.type === "text") {
+              child.text = child.text.trim();
+            } else if (child.block) {
+              if (child.block.type === "entry") {
+                for (const field of child.block.fields) {
+                  field.whitespacePrefix = "";
+                }
+              } else if (child.block.type === "comment") {
+                child.block.raw = child.block.raw.trim();
               }
-            } else if (child.block.type === "comment") {
-              child.block.raw = child.block.raw.trim();
             }
           }
-        }
-        prev = child;
-      }
+          prev = child;
+          return [child];
+        }, "enter")
+      });
       return void 0;
     }, "apply")
   };
@@ -5173,26 +5165,31 @@ function createSortFieldsTransform(sortFields) {
   return {
     name: "sort-fields",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      const entries = astProxy.entries();
-      sortEntryFields(entries, sortFields);
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "block" && node.block?.type === "entry", "where"),
+        enter: /* @__PURE__ */ __name((node) => {
+          if (node.block?.type === "entry") {
+            sortEntryFields(node.block, sortFields);
+          }
+          return [node];
+        }, "enter")
+      });
       return void 0;
     }, "apply")
   };
 }
 __name(createSortFieldsTransform, "createSortFieldsTransform");
-function sortEntryFields(entries, fieldOrder) {
-  for (const entry of entries) {
-    entry.fields.sort((a, b) => {
-      const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
-      const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
-      if (orderA === -1 && orderB === -1) return 0;
-      if (orderA === -1) return 1;
-      if (orderB === -1) return -1;
-      if (orderB < orderA) return 1;
-      if (orderB > orderA) return -1;
-      return 0;
-    });
-  }
+function sortEntryFields(entry, fieldOrder) {
+  entry.fields.sort((a, b) => {
+    const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
+    const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
+    if (orderA === -1 && orderB === -1) return 0;
+    if (orderA === -1) return 1;
+    if (orderB === -1) return -1;
+    if (orderB < orderA) return 1;
+    if (orderB > orderA) return -1;
+    return 0;
+  });
 }
 __name(sortEntryFields, "sortEntryFields");
 
@@ -5201,38 +5198,37 @@ function createWrapValuesTransform(indent, align, wrap) {
   return {
     name: "wrap-values",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      const fields = astProxy.fields();
-      for (const field of fields) {
-        for (const node of field.value.concat) {
+      astProxy.walk({
+        where: /* @__PURE__ */ __name((node) => node.type === "braced", "where"),
+        enter: /* @__PURE__ */ __name((node) => {
           let value = unwrapText(renderValueNode(node));
-          if (node.type === "braced" && field.value.concat.length === 1) {
+          if (node.parent.concat.length === 1) {
             value = value.trim();
           }
-          if (node.type === "braced") {
-            const lineLength = `${indent}${align}{${value}}`.length;
-            const multiLine = value.includes("\n\n");
-            if (wrap && lineLength > wrap || multiLine) {
-              let paragraphs = value.split("\n\n");
-              const valIndent = indent.repeat(2);
-              if (wrap) {
-                const wrapCol = wrap;
-                paragraphs = paragraphs.map(
-                  (paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join(
-                    `
+          const lineLength = `${indent}${align}{${value}}`.length;
+          const multiLine = value.includes("\n\n");
+          if (wrap && lineLength > wrap || multiLine) {
+            let paragraphs = value.split("\n\n");
+            const valIndent = indent.repeat(2);
+            if (wrap) {
+              const wrapCol = wrap;
+              paragraphs = paragraphs.map(
+                (paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join(
+                  `
 ${valIndent}`
-                  )
-                );
-              }
-              value = `
+                )
+              );
+            }
+            value = `
 ${valIndent}${paragraphs.join(`
 
 ${valIndent}`)}
 ${indent}`;
-            }
-            replaceValueNodeText(node, value);
           }
-        }
-      }
+          replaceValueNodeText(node, value);
+          return [node];
+        }, "enter")
+      });
       return void 0;
     }, "apply")
   };

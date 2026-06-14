@@ -1,3 +1,4 @@
+import type { FieldNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createRemoveSpecifiedFieldsTransform(
@@ -7,11 +8,11 @@ export function createRemoveSpecifiedFieldsTransform(
 		name: "remove-specified-fields",
 		apply(ast) {
 			const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
-			for (const field of ast.fields()) {
-				if (set.has(field.name.toLocaleLowerCase())) {
-					field.parent.fields = field.parent.fields.filter((f) => f !== field);
-				}
-			}
+			ast.walk({
+				where: (node): node is FieldNode =>
+					node.type === "field" && set.has(node.name.toLocaleLowerCase()),
+				enter: () => [],
+			});
 			return undefined;
 		},
 	};

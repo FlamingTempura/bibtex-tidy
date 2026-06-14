@@ -8,12 +8,12 @@ export function createRemoveBracesTransform(fields: string[]): Transform {
 		name: "remove-braces",
 		apply: (ast) => {
 			ast.walk({
-				where: (node, ctx): node is BracedNode => {
-					if (node.type !== "braced") return false;
-
-					const field = ctx.closestAncestor("field");
-					return field !== undefined && set.has(field.name.toLocaleLowerCase());
-				},
+				where: (node, ctx): node is BracedNode =>
+					node.type === "braced" &&
+					ctx.hasAncestor(
+						(node) =>
+							node.type === "field" && set.has(node.name.toLocaleLowerCase()),
+					),
 				enter: (node) => {
 					node.latexAst = flattenLaTeX(node.latexAst);
 					return [node];

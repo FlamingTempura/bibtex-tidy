@@ -1,3 +1,4 @@
+import type { BracedNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { encloseLatexInCurly } from "../valueNodes.ts";
 
@@ -9,15 +10,18 @@ export function createEncloseBracesTransform(fields: string[]): Transform {
 		name: "enclose-braces",
 		dependencies: ["prefer-curly"],
 		apply: (ast) => {
-			for (const field of ast.fields()) {
-				if (set.has(field.name.toLocaleLowerCase())) {
-					for (const node of field.value.concat) {
-						if (node.type === "braced") {
-							node.latexAst = encloseLatexInCurly(node.latexAst);
-						}
-					}
-				}
-			}
+			ast.walk({
+				where: (node, ctx): node is BracedNode =>
+					node.type === "braced" &&
+					ctx.hasAncestor(
+						(node) =>
+							node.type === "field" && set.has(node.name.toLocaleLowerCase()),
+					),
+				enter: (node) => {
+					node.latexAst = encloseLatexInCurly(node.latexAst);
+					return [node];
+				},
+			});
 			return undefined;
 		},
 	};

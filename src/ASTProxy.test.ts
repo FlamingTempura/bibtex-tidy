@@ -28,6 +28,26 @@ describe("ASTProxy", () => {
 		);
 	});
 
+	it("checks ancestors with a predicate", () => {
+		const ast = new ASTProxy(
+			parseBibTeX("@article{key, month = jan, title = jan}"),
+		);
+
+		ast.walk({
+			where: (node, ctx): node is LiteralNode =>
+				node.type === "literal" &&
+				ctx.hasAncestor(
+					(node): node is FieldNode =>
+						node.type === "field" && node.name === "title",
+				),
+			enter: (node) => [new LiteralNode(node.parent, "feb")],
+		});
+
+		expect(formatBibtex(ast.root())).toBe(
+			"@article{key, month= jan title= feb\n}\n",
+		);
+	});
+
 	it("removes matching nodes", () => {
 		const ast = new ASTProxy(
 			parseBibTeX("@article{key, title = {Title}, note = {Note}}"),

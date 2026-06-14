@@ -1,3 +1,4 @@
+import type { ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform, Warning } from "../types.ts";
 import { specialCharacters } from "../unicode.ts";
 import { coreSpecialCharacters } from "../unicodeCore.ts";
@@ -29,11 +30,17 @@ export function createEscapeCharactersTransform(newMode = false): Transform {
 			const warnings: Warning[] = [];
 			const warned = new Set<string>();
 
-			for (const field of ast.fields()) {
-				if (VERBATIM_FIELDS.includes(field.name)) {
-					continue;
-				}
-				for (const entry of field.value.concat) {
+			ast.walk({
+				where: (node, ctx): node is ValueNode =>
+					(node.type === "braced" || node.type === "quoted") &&
+					ctx.hasAncestor(
+						(node) =>
+							node.type === "field" && !VERBATIM_FIELDS.includes(node.name),
+					),
+				enter: (entry, ctx) => {
+					const field = ctx.closestAncestor("field");
+					if (!field) return [entry];
+
 					const result = escapeCharacters(
 						renderValueNode(entry),
 						characters,
@@ -52,8 +59,9 @@ export function createEscapeCharactersTransform(newMode = false): Transform {
 							message: `Cannot escape character ${unsupported.character} (U+${unsupported.codepoint.toUpperCase()}) in ${field.name} without LaTeX packages or special fonts.`,
 						});
 					}
-				}
-			}
+					return [entry];
+				},
+			});
 			return warnings;
 		},
 	};

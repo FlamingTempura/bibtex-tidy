@@ -22,6 +22,8 @@ export interface WalkContext {
 	closestAncestor<T extends Node["type"]>(
 		type: T,
 	): Extract<Node, { type: T }> | undefined;
+	hasAncestor<N extends Node>(predicate: (node: Node) => node is N): boolean;
+	hasAncestor(predicate: (node: Node) => boolean): boolean;
 }
 
 export class ASTProxy {
@@ -220,6 +222,18 @@ class WalkContextImpl implements WalkContext {
 			}
 		}
 		return undefined;
+	}
+
+	public hasAncestor<N extends Node>(
+		predicate: (node: Node) => node is N,
+	): boolean;
+	public hasAncestor(predicate: (node: Node) => boolean): boolean;
+	public hasAncestor(predicate: (node: Node) => boolean): boolean {
+		for (let i = this.ancestors.length - 1; i >= 0; i--) {
+			const ancestor = this.ancestors[i];
+			if (ancestor && predicate(ancestor)) return true;
+		}
+		return false;
 	}
 }
 
