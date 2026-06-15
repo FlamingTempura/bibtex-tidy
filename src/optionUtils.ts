@@ -28,6 +28,7 @@ export type OptionsNormalized = Omit<
 	| "wrap"
 	| "enclosingBraces"
 	| "removeBraces"
+	| "removeURLifDOIExists"
 	| "generateKeys"
 	| "blankLines"
 > & {
@@ -40,6 +41,7 @@ export type OptionsNormalized = Omit<
 	wrap?: number;
 	enclosingBraces?: string[];
 	removeBraces?: string[];
+	removeURLifDOIExists?: boolean;
 	generateKeys?: string;
 	blankLines: boolean;
 };

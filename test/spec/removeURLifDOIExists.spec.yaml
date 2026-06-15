@@ -1,0 +1,28 @@
+title: remove URL field if DOI exists
+options:
+  space: true
+input: |
+  @article{gorwa_what_2019,
+    title        = {What is platform governance?},
+    author       = {Gorwa, Robert},
+    volume       = 22,
+    number       = 6,
+    pages        = {854--871},
+    doi          = {10.1080/1369118X.2019.1573914},
+    issn         = {1369-118X},
+    url          = {https://doi.org/10.1080/1369118X.2019.1573914},
+    journal = {Information, Communication \& Society},
+    date         = {2019-05-12},
+  }
+expected: |
+  @article{gorwa_what_2019,
+    title        = {What is platform governance?},
+    author       = {Gorwa, Robert},
+    volume       = 22,
+    number       = 6,
+    pages        = {854--871},
+    doi          = {10.1080/1369118X.2019.1573914},
+    issn         = {1369-118X},
+    journal = {Information, Communication \& Society},
+    date         = {2019-05-12},
+  }
