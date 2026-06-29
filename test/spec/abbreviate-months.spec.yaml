@@ -118,3 +118,25 @@ expected: |
     title         = {Foo},
     month         = "blah"
   }
+...
+title: abbreviate months (april, textual)
+options:
+  months: true
+input: |
+  @article{foo, title={Foo}, month = {april} }
+expected: |
+  @article{foo,
+    title         = {Foo},
+    month         = apr
+  }
+...
+title: abbreviate months (may, textual)
+options:
+  months: true
+input: |
+  @article{foo, title={Foo}, month = {may} }
+expected: |
+  @article{foo,
+    title         = {Foo},
+    month         = may
+  }
