@@ -56,7 +56,7 @@
 		"@lezer/highlight": "^1.2.1",
 		"@tsconfig/svelte": "^5.0.4",
 		"@types/jest-image-snapshot": "^6.4.1",
-		"@types/node": "^25.9.1",
+		"@types/node": "^26.1.0",
 		"@vitest/coverage-v8": "^4.1.7",
 		"core-js": "^3.43.0",
 		"dts-bundle-generator": "^9.5.1",
