@@ -1,7 +1,14 @@
-import { chmod, mkdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { spawnSync } from "node:child_process";
+import {
+	chmod,
+	mkdir,
+	mkdtempDisposable,
+	readFile,
+	writeFile,
+} from "node:fs/promises";
+import { join, resolve } from "node:path";
 import { env } from "node:process";
-import { generateDtsBundle } from "dts-bundle-generator";
+import { Extractor, ExtractorConfig } from "@microsoft/api-extractor";
 import { type BuildOptions, build, context } from "esbuild";
 import sveltePlugin from "esbuild-svelte";
 import { sveltePreprocess } from "svelte-preprocess";
@@ -302,11 +309,38 @@ async function buildJSBundle() {
 
 async function buildTypeDeclarations() {
 	console.time("Type declarations");
-	const typeFile = generateDtsBundle([
-		{ filePath: "./src/index.ts", output: { noBanner: true } },
-	])[0];
-	if (!typeFile) throw new Error("Failed to generate type file");
-	await writeFile("bibtex-tidy.d.ts", typeFile);
+	await using tmp = await mkdtempDisposable("bibtex-tidy-");
+
+	spawnSync(
+		"tsc",
+		["--declaration", "--emitDeclarationOnly", "--outDir", tmp.path],
+		{ stdio: "inherit" },
+	);
+
+	const result = Extractor.invoke(
+		ExtractorConfig.prepare({
+			configObject: {
+				projectFolder: import.meta.dirname,
+				mainEntryPointFilePath: join(tmp.path, "src/index.d.ts"),
+				compiler: {
+					tsconfigFilePath: join(import.meta.dirname, "tsconfig.json"),
+				},
+				dtsRollup: {
+					enabled: true,
+					untrimmedFilePath: resolve(import.meta.dirname, "bibtex-tidy.d.ts"),
+				},
+			},
+			packageJsonFullPath: resolve(import.meta.dirname, "package.json"),
+			configObjectFullPath: resolve(import.meta.dirname, "api-extractor.json"),
+		}),
+	);
+
+	if (!result.succeeded) {
+		throw new Error(
+			`API Extractor failed with ${result.errorCount} errors and ` +
+				`${result.warningCount} warnings`,
+		);
+	}
 	console.timeEnd("Type declarations");
 }
 

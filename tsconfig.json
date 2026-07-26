@@ -10,7 +10,6 @@
 		"noUncheckedIndexedAccess": true,
 		"verbatimModuleSyntax": true,
 		"allowImportingTsExtensions": true,
-		"noEmit": true,
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"target": "ES2018",
 		"types": ["node", "vitest/globals", "@testing-library/jest-dom"]
