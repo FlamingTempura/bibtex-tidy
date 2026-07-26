@@ -14,10 +14,7 @@ export function createRemoveBracesTransform(fields: string[]): Transform {
 					const field = ctx.closestAncestor("field");
 					return field !== undefined && set.has(field.name.toLocaleLowerCase());
 				},
-				enter: (node) => {
-					node.latexAst = flattenLaTeX(node.latexAst);
-					return [node];
-				},
+				enter: (node) => [node.with({ latexAst: flattenLaTeX(node.latexAst) })],
 			});
 			return undefined;
 		},

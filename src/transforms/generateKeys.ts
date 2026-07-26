@@ -12,13 +12,11 @@ export function createGenerateKeysTransform(template: string): Transform {
 					isNodeType(node, "block") && isNodeType(node.block, "entry"),
 				enter: (node) => {
 					const newKey = newKeys.get(node.block);
-					if (newKey) {
-						node.block.key = newKey;
-					}
-					return [node];
+					return newKey
+						? [node.with({ block: node.block.with({ key: newKey }) })]
+						: [node];
 				},
 			});
-			return undefined;
 		},
 	};
 }

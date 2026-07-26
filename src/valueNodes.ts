@@ -11,12 +11,14 @@ export function renderValueNode(node: ValueNode): string {
 		: stringifyLaTeX(node.latexAst);
 }
 
-export function replaceValueNodeText(node: ValueNode, value: string): void {
+export function replaceValueNodeText<T extends ValueNode>(
+	node: T,
+	value: string,
+): T {
 	if (isNodeType(node, "literal")) {
-		node.value = value;
-	} else {
-		node.latexAst = parseLaTeX(value);
+		return node.with({ value }) as T;
 	}
+	return node.with({ latexAst: parseLaTeX(value) }) as T;
 }
 
 export function doubleEncloseLatex(latex: BlockNode): string {

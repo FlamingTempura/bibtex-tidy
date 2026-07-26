@@ -1,4 +1,6 @@
-export class BlockNode {
+import { BaseNode } from "./baseNode.ts";
+
+export class BlockNode extends BaseNode {
 	type = "block" as const;
 	kind: "root" | "square" | "curly";
 	parent?: BlockNode | CommandNode;
@@ -8,6 +10,7 @@ export class BlockNode {
 		parent?: BlockNode["parent"],
 		children: BlockNode["children"] = [],
 	) {
+		super();
 		this.kind = kind;
 		this.parent = parent;
 		this.children = children;
@@ -21,11 +24,12 @@ export class BlockNode {
 		return this.children.map((child) => child.renderAsText()).join("");
 	}
 }
-export class TextNode {
+export class TextNode extends BaseNode {
 	type = "text" as const;
 	parent: BlockNode;
 	text: string;
 	constructor(parent: BlockNode, text = "") {
+		super();
 		this.parent = parent;
 		this.text = text;
 		parent.children.push(this);
@@ -34,11 +38,12 @@ export class TextNode {
 		return this.text.replace(/"/g, ""); // HACK: latex parser should parse this properly as a block
 	}
 }
-export class MathNode {
+export class MathNode extends BaseNode {
 	type = "math" as const;
 	parent: BlockNode;
 	text: string;
 	constructor(parent: BlockNode, text = "") {
+		super();
 		this.parent = parent;
 		this.text = text;
 		parent.children.push(this);
@@ -47,12 +52,13 @@ export class MathNode {
 		return this.text;
 	}
 }
-export class CommandNode {
+export class CommandNode extends BaseNode {
 	type = "command" as const;
 	parent: BlockNode;
 	command: string;
 	args: BlockNode[];
 	constructor(parent: BlockNode, command = "", args: BlockNode[] = []) {
+		super();
 		this.parent = parent;
 		this.command = command;
 		this.args = args;

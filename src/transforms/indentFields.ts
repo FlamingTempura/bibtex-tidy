@@ -7,12 +7,8 @@ export function createIndentFieldsTransform(indent: string): Transform {
 		apply: (astProxy) => {
 			astProxy.walk({
 				where: (node) => isNodeType(node, "field"),
-				enter: (field) => {
-					field.whitespacePrefix = `\n${indent}`;
-					return [field];
-				},
+				enter: (field) => [field.with({ whitespacePrefix: `\n${indent}` })],
 			});
-			return undefined;
 		},
 	};
 }

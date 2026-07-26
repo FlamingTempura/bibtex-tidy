@@ -26,11 +26,13 @@ export function createPreferCurlyTransform(): Transform {
 				enter: (child) => {
 					if (isNodeType(child, "braced")) return [child];
 
-					const braced = new BracedNode(child.parent);
-					braced.latexAst = isNodeType(child, "quoted")
-						? child.latexAst
-						: createTextAst(child.value);
-					return [braced];
+					return [
+						new BracedNode(child.parent).with({
+							latexAst: isNodeType(child, "quoted")
+								? child.latexAst
+								: createTextAst(child.value),
+						}),
+					];
 				},
 			});
 			return undefined;

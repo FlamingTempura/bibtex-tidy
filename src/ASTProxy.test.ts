@@ -88,4 +88,20 @@ describe("ASTProxy", () => {
 		expect(ast.root().children).toHaveLength(3);
 		expect(formatBibtex(ast.root())).toBe("prefix @article{key,\n} after\n");
 	});
+
+	it("replaces concat nodes", () => {
+		const ast = new ASTProxy(parseBibTeX("@article{key, title = {Title}}"));
+		const field = ast.entries()[0]?.fields[0];
+		const original = field?.value;
+
+		ast.walk({
+			where: (node) => isNodeType(node, "concat"),
+			enter: (node) => [node.with({ whitespacePrefix: " " })],
+		});
+
+		expect(field?.value).not.toBe(original);
+		expect(field?.value.whitespacePrefix).toBe(" ");
+		expect(original?.whitespacePrefix).toBe("");
+		expect(field?.value.concat[0]?.parent).toBe(field?.value);
+	});
 });

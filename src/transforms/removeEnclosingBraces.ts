@@ -9,13 +9,12 @@ export function createRemoveEnclosingBracesTransform(): Transform {
 		apply: (ast) => {
 			ast.walk({
 				where: (node) => isNodeType(node, "braced"),
-				enter: (node) => {
+				enter: (node) => [
 					replaceValueNodeText(
 						node,
 						renderValueNode(node).replace(/^\{([^{}]*)\}$/g, "$1"),
-					);
-					return [node];
-				},
+					),
+				],
 			});
 			return undefined;
 		},

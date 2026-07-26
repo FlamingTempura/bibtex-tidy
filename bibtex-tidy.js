@@ -9,9 +9,24 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
+// src/parsers/baseNode.ts
+var BaseNode = class {
+  static {
+    __name(this, "BaseNode");
+  }
+  with(properties) {
+    return Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this,
+      properties
+    );
+  }
+};
+
 // src/parsers/latexParser.ts
-var BlockNode = class _BlockNode {
+var BlockNode = class _BlockNode extends BaseNode {
   constructor(kind, parent, children = []) {
+    super();
     this.type = "block";
     this.kind = kind;
     this.parent = parent;
@@ -29,8 +44,9 @@ var BlockNode = class _BlockNode {
     return this.children.map((child) => child.renderAsText()).join("");
   }
 };
-var TextNode = class {
+var TextNode = class extends BaseNode {
   constructor(parent, text = "") {
+    super();
     this.type = "text";
     this.parent = parent;
     this.text = text;
@@ -43,8 +59,9 @@ var TextNode = class {
     return this.text.replace(/"/g, "");
   }
 };
-var MathNode = class {
+var MathNode = class extends BaseNode {
   constructor(parent, text = "") {
+    super();
     this.type = "math";
     this.parent = parent;
     this.text = text;
@@ -57,8 +74,9 @@ var MathNode = class {
     return this.text;
   }
 };
-var CommandNode = class {
+var CommandNode = class extends BaseNode {
   constructor(parent, command = "", args = []) {
+    super();
     this.type = "command";
     this.parent = parent;
     this.command = command;
@@ -200,8 +218,9 @@ function flattenLaTeX(block) {
 __name(flattenLaTeX, "flattenLaTeX");
 
 // src/parsers/bibtexParser.ts
-var RootNode = class {
+var RootNode = class extends BaseNode {
   constructor(children = []) {
+    super();
     this.type = "root";
     this.children = children;
   }
@@ -209,8 +228,9 @@ var RootNode = class {
     __name(this, "RootNode");
   }
 };
-var TextNode2 = class {
+var TextNode2 = class extends BaseNode {
   constructor(parent, text, whitespacePrefix) {
+    super();
     this.type = "text";
     this.parent = parent;
     this.text = text;
@@ -221,8 +241,9 @@ var TextNode2 = class {
     __name(this, "TextNode");
   }
 };
-var BlockNode2 = class {
+var BlockNode2 = class extends BaseNode {
   constructor(parent, whitespacePrefix) {
+    super();
     this.type = "block";
     this.command = "";
     this.parent = parent;
@@ -233,8 +254,9 @@ var BlockNode2 = class {
     __name(this, "BlockNode");
   }
 };
-var CommentNode = class {
+var CommentNode = class extends BaseNode {
   constructor(parent, raw, braces, parens) {
+    super();
     this.type = "comment";
     this.parent = parent;
     this.raw = raw;
@@ -246,8 +268,9 @@ var CommentNode = class {
     __name(this, "CommentNode");
   }
 };
-var PreambleNode = class {
+var PreambleNode = class extends BaseNode {
   constructor(parent, raw, braces, parens) {
+    super();
     this.type = "preamble";
     this.parent = parent;
     this.raw = raw;
@@ -259,8 +282,9 @@ var PreambleNode = class {
     __name(this, "PreambleNode");
   }
 };
-var StringNode = class {
+var StringNode = class extends BaseNode {
   constructor(parent, raw, braces, parens) {
+    super();
     this.type = "string";
     this.parent = parent;
     this.raw = raw;
@@ -272,8 +296,9 @@ var StringNode = class {
     __name(this, "StringNode");
   }
 };
-var EntryNode = class {
+var EntryNode = class extends BaseNode {
   constructor(parent, wrapType) {
+    super();
     this.type = "entry";
     this.parent = parent;
     this.wrapType = wrapType;
@@ -284,8 +309,9 @@ var EntryNode = class {
     __name(this, "EntryNode");
   }
 };
-var FieldNode = class {
+var FieldNode = class extends BaseNode {
   constructor(parent, name = "", whitespacePrefix = "") {
+    super();
     this.type = "field";
     this.hasComma = false;
     this.parent = parent;
@@ -297,8 +323,9 @@ var FieldNode = class {
     __name(this, "FieldNode");
   }
 };
-var ConcatNode = class {
+var ConcatNode = class extends BaseNode {
   constructor(parent) {
+    super();
     this.type = "concat";
     this.canConsumeValue = true;
     this.whitespacePrefix = "";
@@ -309,8 +336,9 @@ var ConcatNode = class {
     __name(this, "ConcatNode");
   }
 };
-var LiteralNode = class {
+var LiteralNode = class extends BaseNode {
   constructor(parent, value) {
+    super();
     this.type = "literal";
     this.parent = parent;
     this.value = value;
@@ -325,8 +353,9 @@ function createLiteralNode(parent, value) {
   return node;
 }
 __name(createLiteralNode, "createLiteralNode");
-var BracedNode = class {
+var BracedNode = class extends BaseNode {
   constructor(parent) {
+    super();
     this.type = "braced";
     /** Used to count opening and closing braces */
     this.depth = 0;
@@ -343,8 +372,9 @@ function createBracedNode(parent) {
   return node;
 }
 __name(createBracedNode, "createBracedNode");
-var QuotedNode = class {
+var QuotedNode = class extends BaseNode {
   constructor(parent) {
+    super();
     this.type = "quoted";
     /** Used to count opening and closing braces */
     this.depth = 0;
@@ -662,10 +692,9 @@ function renderValueNode(node) {
 __name(renderValueNode, "renderValueNode");
 function replaceValueNodeText(node, value) {
   if (isNodeType(node, "literal")) {
-    node.value = value;
-  } else {
-    node.latexAst = parseLaTeX(value);
+    return node.with({ value });
   }
+  return node.with({ latexAst: parseLaTeX(value) });
 }
 __name(replaceValueNodeText, "replaceValueNodeText");
 function doubleEncloseLatex(latex) {
@@ -805,6 +834,22 @@ var ASTProxy = class {
       visitChildren(node, [...ancestors, node]);
       return index + 1;
     }, "visitReplaceable");
+    const visitConcat = /* @__PURE__ */ __name((node, ancestors, parent) => {
+      const replacements = enter(node, ancestors);
+      if (!replacements) {
+        visitChildren(node, [...ancestors, node]);
+        return;
+      }
+      if (replacements.length !== 1) {
+        throw new Error("A concat node must be replaced by exactly one node");
+      }
+      const replacement = replacements[0];
+      if (!replacement) return;
+      parent.value = replacement;
+      setParent(replacement, parent);
+      mutated = true;
+      visitChildren(replacement, [...ancestors, replacement]);
+    }, "visitConcat");
     const visitChildren = /* @__PURE__ */ __name((node, ancestors) => {
       switch (node.type) {
         case "root":
@@ -823,20 +868,14 @@ var ASTProxy = class {
           }
           break;
         case "field":
-          visitChildren(node.value, [...ancestors, node.value]);
+          visitConcat(node.value, ancestors, node);
           break;
         case "concat":
           for (let i = 0; i < node.concat.length; ) {
             i = visitReplaceable(node.concat, i, ancestors, node);
           }
           break;
-        case "text":
-        case "comment":
-        case "preamble":
-        case "string":
-        case "literal":
-        case "braced":
-        case "quoted":
+        default:
           break;
       }
     }, "visitChildren");
@@ -876,10 +915,24 @@ function setParent(node, parent) {
     case "text":
     case "block":
       if (isNodeType(parent, "root")) node.parent = parent;
+      if (isNodeType(node, "block") && node.block) {
+        node.block.parent = node;
+        if (isNodeType(node.block, "entry")) {
+          for (const field of node.block.fields) {
+            setParent(field, node.block);
+          }
+        }
+      }
       break;
     case "field":
       if (isNodeType(parent, "entry")) node.parent = parent;
-      node.value.parent = node;
+      setParent(node.value, node);
+      break;
+    case "concat":
+      if (isNodeType(parent, "field")) node.parent = parent;
+      for (const child of node.concat) {
+        child.parent = node;
+      }
       break;
     case "literal":
     case "braced":
@@ -1532,7 +1585,6 @@ function createAbbreviateMonthsTransform() {
           return abbr ? [new LiteralNode(node.parent, abbr)] : [node];
         }, "enter")
       });
-      return void 0;
     }, "apply")
   };
 }
@@ -1548,14 +1600,15 @@ function createAlignValuesTransform(column) {
     name: "align-values",
     apply: /* @__PURE__ */ __name((astProxy) => {
       astProxy.walk({
-        where: /* @__PURE__ */ __name((node) => isNodeType(node, "field"), "where"),
-        enter: /* @__PURE__ */ __name((field) => {
-          const gap = Math.max(column - field.name.length, 1);
-          field.value.whitespacePrefix = " ".repeat(gap);
-          return [field];
-        }, "enter")
+        where: /* @__PURE__ */ __name((node) => isNodeType(node, "concat"), "where"),
+        enter: /* @__PURE__ */ __name((concat) => [
+          concat.with({
+            whitespacePrefix: " ".repeat(
+              Math.max(column - concat.parent.name.length, 1)
+            )
+          })
+        ], "enter")
       });
-      return void 0;
     }, "apply")
   };
 }
@@ -1566,18 +1619,18 @@ function createBlankLinesTransform() {
   return {
     name: "blank-lines",
     apply: /* @__PURE__ */ __name((astProxy) => {
-      let prev;
       astProxy.walk({
         where: /* @__PURE__ */ __name((node) => isNodeType(node, "text", "block"), "where"),
         enter: /* @__PURE__ */ __name((child) => {
-          if (prev && !isComment(prev)) {
-            child.whitespacePrefix = "\n\n";
-          }
-          prev = child;
-          return [child];
+          const index = child.parent.children.indexOf(child);
+          const prev = child.parent.children[index - 1];
+          return [
+            child.with({
+              whitespacePrefix: prev && !isComment(prev) ? "\n\n" : child.whitespacePrefix
+            })
+          ];
         }, "enter")
       });
-      return void 0;
     }, "apply")
   };
 }
@@ -1598,12 +1651,10 @@ function createDropAllCapsTransform() {
           const field = ctx.closestAncestor("field");
           return field !== void 0 && !astProxy.renderFieldValue(field).match(/[a-z]/);
         }, "where"),
-        enter: /* @__PURE__ */ __name((node) => {
-          replaceValueNodeText(node, titleCase(renderValueNode(node)));
-          return [node];
-        }, "enter")
+        enter: /* @__PURE__ */ __name((node) => [
+          replaceValueNodeText(node, titleCase(renderValueNode(node)))
+        ], "enter")
       });
-      return void 0;
     }, "apply")
   };
 }
@@ -1634,12 +1685,10 @@ function createEncloseBracesTransform(fields) {
           const field = ctx.closestAncestor("field");
           return field !== void 0 && set.has(field.name.toLocaleLowerCase());
         }, "where"),
-        enter: /* @__PURE__ */ __name((node) => {
-          node.latexAst = encloseLatexInCurly(node.latexAst);
-          return [node];
-        }, "enter")
+        enter: /* @__PURE__ */ __name((node) => [
+          node.with({ latexAst: encloseLatexInCurly(node.latexAst) })
+        ], "enter")
       });
-      return void 0;
     }, "apply")
   };
 }
@@ -1652,12 +1701,10 @@ function createEncodeUrlsTransform() {
     apply: /* @__PURE__ */ __name((ast) => {
       ast.walk({
         where: /* @__PURE__ */ __name((node, ctx) => isNodeType(node, "braced", "quoted") && ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "url", "where"),
-        enter: /* @__PURE__ */ __name((entry) => {
-          replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)));
-          return [entry];
-        }, "enter")
+        enter: /* @__PURE__ */ __name((entry) => [
+          replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)))
+        ], "enter")
       });
-      return void 0;
     }, "apply")
   };
 }
@@ -4009,7 +4056,7 @@ var specialCharacters = new Map([
 ]);
 
 // src/transforms/escapeCharacters.ts
-var VERBATIM_FIELDS = [
+var VERBATIM_FIELDS = /* @__PURE__ */ new Set([
   "url",
   "doi",
   "eprint",
@@ -4018,49 +4065,41 @@ var VERBATIM_FIELDS = [
   "verbb",
   "verbc",
   "pdf"
-];
+]);
 function createEscapeCharactersTransform(newMode = false) {
-  const characters = newMode ? coreSpecialCharacters : specialCharacters;
+  const chars = newMode ? coreSpecialCharacters : specialCharacters;
   return {
     name: "escape-characters",
     apply: /* @__PURE__ */ __name((ast) => {
-      const warnings = [];
-      const warned = /* @__PURE__ */ new Set();
+      const warnings = /* @__PURE__ */ new Map();
       ast.walk({
         where: /* @__PURE__ */ __name((node, ctx) => {
           if (!isNodeType(node, "braced", "quoted")) return false;
           const field = ctx.closestAncestor("field");
-          return field !== void 0 && !VERBATIM_FIELDS.includes(field.name);
+          return field !== void 0 && !VERBATIM_FIELDS.has(field.name);
         }, "where"),
-        enter: /* @__PURE__ */ __name((entry, ctx) => {
+        enter: /* @__PURE__ */ __name((node, ctx) => {
           const field = ctx.closestAncestor("field");
-          if (!field) return [entry];
-          const result = escapeCharacters(
-            renderValueNode(entry),
-            characters,
-            isNodeType(entry, "quoted")
-          );
-          replaceValueNodeText(entry, result.value);
+          if (!field) return [node];
+          const val = renderValueNode(node);
+          const result = escapeChars(val, chars, isNodeType(node, "quoted"));
           for (const unsupported of result.unsupported) {
-            const key = `${field.name}:${unsupported.codepoint}`;
-            if (warned.has(key)) continue;
-            warned.add(key);
-            warnings.push({
+            warnings.set(`${field.name}:${unsupported.codepoint}`, {
               code: "UNSUPPORTED_ESCAPE",
               character: unsupported.character,
               codepoint: unsupported.codepoint,
               message: `Cannot escape character ${unsupported.character} (U+${unsupported.codepoint.toUpperCase()}) in ${field.name} without LaTeX packages or special fonts.`
             });
           }
-          return [entry];
+          return [replaceValueNodeText(node, result.value)];
         }, "enter")
       });
-      return warnings;
+      return [...warnings.values()];
     }, "apply")
   };
 }
 __name(createEscapeCharactersTransform, "createEscapeCharactersTransform");
-function escapeCharacters(value, characters, protectQuotes = false) {
+function escapeChars(value, characters, protectQuotes = false) {
   let result = value;
   const mathExpressions = [];
   const unsupported = [];
@@ -4097,7 +4136,7 @@ function escapeCharacters(value, characters, protectQuotes = false) {
     unsupported
   };
 }
-__name(escapeCharacters, "escapeCharacters");
+__name(escapeChars, "escapeChars");
 
 // src/transforms/fieldCommas.ts
 function createFieldCommasTransform(trailing) {
@@ -4106,13 +4145,12 @@ function createFieldCommasTransform(trailing) {
     apply: /* @__PURE__ */ __name((astProxy) => {
       astProxy.walk({
         where: /* @__PURE__ */ __name((node) => isNodeType(node, "field"), "where"),
-        enter: /* @__PURE__ */ __name((field) => {
-          const i = field.parent.fields.indexOf(field);
-          field.hasComma = i < field.parent.fields.length - 1 || trailing;
-          return [field];
-        }, "enter")
+        enter: /* @__PURE__ */ __name((field) => [
+          field.with({
+            hasComma: field.parent.fields.indexOf(field) < field.parent.fields.length - 1 || trailing
+          })
+        ], "enter")
       });
-      return void 0;
     }, "apply")
   };
 }
@@ -4125,12 +4163,10 @@ function createFormatPageRangeTransform() {
     apply(ast) {
       ast.walk({
         where: /* @__PURE__ */ __name((node, ctx) => isNodeType(node, "braced", "quoted") && ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "pages", "where"),
-        enter: /* @__PURE__ */ __name((entry) => {
-          replaceValueNodeText(entry, formatPageRange(renderValueNode(entry)));
-          return [entry];
-        }, "enter")
+        enter: /* @__PURE__ */ __name((entry) => [
+          replaceValueNodeText(entry, formatPageRange(renderValueNode(entry)))
+        ], "enter")
       });
-      return void 0;
     }
   };
 }
@@ -4576,13 +4612,9 @@ function createGenerateKeysTransform(template) {
         where: /* @__PURE__ */ __name((node) => isNodeType(node, "block") && isNodeType(node.block, "entry"), "where"),
         enter: /* @__PURE__ */ __name((node) => {
           const newKey = newKeys.get(node.block);
-          if (newKey) {
-            node.block.key = newKey;
-          }
-          return [node];
+          return newKey ? [node.with({ block: node.block.with({ key: newKey }) })] : [node];
         }, "enter")
       });
-      return void 0;
     }, "apply")
   };
 }
@@ -4595,13 +4627,9 @@ function createIndentFieldsTransform(indent) {
     apply: /* @__PURE__ */ __name((astProxy) => {
       astProxy.walk({
         where: /* @__PURE__ */ __name((node) => isNodeType(node, "field"), "where"),
-        enter: /* @__PURE__ */ __name((field) => {
-          field.whitespacePrefix = `
-${indent}`;
-          return [field];
-        }, "enter")
+        enter: /* @__PURE__ */ __name((field) => [field.with({ whitespacePrefix: `
+${indent}` })], "enter")
       });
-      return void 0;
     }, "apply")
   };
 }
@@ -4617,10 +4645,12 @@ function createLimitAuthorsTransform(maxAuthors) {
         enter: /* @__PURE__ */ __name((node) => {
           const authors = renderValueNode(node).split(" and ");
           if (authors.length > maxAuthors) {
-            replaceValueNodeText(
-              node,
-              [...authors.slice(0, maxAuthors), "others"].join(" and ")
-            );
+            return [
+              replaceValueNodeText(
+                node,
+                [...authors.slice(0, maxAuthors), "others"].join(" and ")
+              )
+            ];
           }
           return [node];
         }, "enter")
@@ -4638,10 +4668,9 @@ function createLowercaseEntryTypeTransform() {
     apply: /* @__PURE__ */ __name((ast) => {
       ast.walk({
         where: /* @__PURE__ */ __name((node) => isNodeType(node, "block") && isNodeType(node.block, "entry"), "where"),
-        enter: /* @__PURE__ */ __name((node) => {
-          node.command = node.command.toLocaleLowerCase();
-          return [node];
-        }, "enter")
+        enter: /* @__PURE__ */ __name((node) => [
+          node.with({ command: node.command.toLocaleLowerCase() })
+        ], "enter")
       });
       return void 0;
     }, "apply")
@@ -4656,12 +4685,10 @@ function createLowercaseFieldsTransform() {
     apply: /* @__PURE__ */ __name((ast) => {
       ast.walk({
         where: /* @__PURE__ */ __name((node) => isNodeType(node, "field"), "where"),
-        enter: /* @__PURE__ */ __name((field) => {
-          field.name = field.name.toLocaleLowerCase();
-          return [field];
-        }, "enter")
+        enter: /* @__PURE__ */ __name((field) => [
+          field.with({ name: field.name.toLocaleLowerCase() })
+        ], "enter")
       });
-      return void 0;
     }, "apply")
   };
 }
@@ -4848,9 +4875,11 @@ function createPreferCurlyTransform() {
         }, "where"),
         enter: /* @__PURE__ */ __name((child) => {
           if (isNodeType(child, "braced")) return [child];
-          const braced = new BracedNode(child.parent);
-          braced.latexAst = isNodeType(child, "quoted") ? child.latexAst : createTextAst(child.value);
-          return [braced];
+          return [
+            new BracedNode(child.parent).with({
+              latexAst: isNodeType(child, "quoted") ? child.latexAst : createTextAst(child.value)
+            })
+          ];
         }, "enter")
       });
       return void 0;
@@ -4893,10 +4922,7 @@ function createRemoveBracesTransform(fields) {
           const field = ctx.closestAncestor("field");
           return field !== void 0 && set.has(field.name.toLocaleLowerCase());
         }, "where"),
-        enter: /* @__PURE__ */ __name((node) => {
-          node.latexAst = flattenLaTeX(node.latexAst);
-          return [node];
-        }, "enter")
+        enter: /* @__PURE__ */ __name((node) => [node.with({ latexAst: flattenLaTeX(node.latexAst) })], "enter")
       });
       return void 0;
     }, "apply")
@@ -4968,13 +4994,12 @@ function createRemoveEnclosingBracesTransform() {
     apply: /* @__PURE__ */ __name((ast) => {
       ast.walk({
         where: /* @__PURE__ */ __name((node) => isNodeType(node, "braced"), "where"),
-        enter: /* @__PURE__ */ __name((node) => {
+        enter: /* @__PURE__ */ __name((node) => [
           replaceValueNodeText(
             node,
             renderValueNode(node).replace(/^\{([^{}]*)\}$/g, "$1")
-          );
-          return [node];
-        }, "enter")
+          )
+        ], "enter")
       });
       return void 0;
     }, "apply")
@@ -5164,12 +5189,9 @@ function createSortFieldsTransform(sortFields) {
     apply: /* @__PURE__ */ __name((astProxy) => {
       astProxy.walk({
         where: /* @__PURE__ */ __name((node) => isNodeType(node, "block") && isNodeType(node.block, "entry"), "where"),
-        enter: /* @__PURE__ */ __name((node) => {
-          if (isNodeType(node.block, "entry")) {
-            sortEntryFields(node.block, sortFields);
-          }
-          return [node];
-        }, "enter")
+        enter: /* @__PURE__ */ __name((node) => [
+          node.with({ block: sortEntryFields(node.block, sortFields) })
+        ], "enter")
       });
       return void 0;
     }, "apply")
@@ -5177,7 +5199,7 @@ function createSortFieldsTransform(sortFields) {
 }
 __name(createSortFieldsTransform, "createSortFieldsTransform");
 function sortEntryFields(entry, fieldOrder) {
-  entry.fields.sort((a, b) => {
+  const fields = [...entry.fields].sort((a, b) => {
     const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
     const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
     if (orderA === -1 && orderB === -1) return 0;
@@ -5187,6 +5209,7 @@ function sortEntryFields(entry, fieldOrder) {
     if (orderB > orderA) return -1;
     return 0;
   });
+  return entry.with({ fields });
 }
 __name(sortEntryFields, "sortEntryFields");
 
@@ -5215,16 +5238,15 @@ function createUnescapeCharactersTransform() {
     apply: /* @__PURE__ */ __name((astProxy) => {
       astProxy.walk({
         where: /* @__PURE__ */ __name((node) => isNodeType(node, "braced", "quoted"), "where"),
-        enter: /* @__PURE__ */ __name((node) => {
+        enter: /* @__PURE__ */ __name((node) => [
           replaceValueNodeText(
             node,
             unescapeCharacters(
               renderValueNode(node),
               isNodeType(node, "quoted")
             )
-          );
-          return [node];
-        }, "enter")
+          )
+        ], "enter")
       });
       return void 0;
     }, "apply")
@@ -5264,8 +5286,7 @@ ${valIndent}${paragraphs.join(`
 ${valIndent}`)}
 ${indent}`;
           }
-          replaceValueNodeText(node, value);
-          return [node];
+          return [replaceValueNodeText(node, value)];
         }, "enter")
       });
       return void 0;

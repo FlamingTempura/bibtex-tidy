@@ -14,10 +14,12 @@ export function createLimitAuthorsTransform(maxAuthors: number): Transform {
 					// TODO: use author parser?
 					const authors = renderValueNode(node).split(" and ");
 					if (authors.length > maxAuthors) {
-						replaceValueNodeText(
-							node,
-							[...authors.slice(0, maxAuthors), "others"].join(" and "),
-						);
+						return [
+							replaceValueNodeText(
+								node,
+								[...authors.slice(0, maxAuthors), "others"].join(" and "),
+							),
+						];
 					}
 					return [node];
 				},

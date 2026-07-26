@@ -7,14 +7,14 @@ export function createFieldCommasTransform(trailing: boolean): Transform {
 		apply: (astProxy) => {
 			astProxy.walk({
 				where: (node) => isNodeType(node, "field"),
-				enter: (field) => {
-					const i = field.parent.fields.indexOf(field);
-					field.hasComma = i < field.parent.fields.length - 1 || trailing;
-					return [field];
-				},
+				enter: (field) => [
+					field.with({
+						hasComma:
+							field.parent.fields.indexOf(field) <
+								field.parent.fields.length - 1 || trailing,
+					}),
+				],
 			});
-
-			return undefined;
 		},
 	};
 }

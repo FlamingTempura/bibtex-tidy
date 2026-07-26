@@ -22,7 +22,12 @@ export function getField(
 	);
 }
 
-export type ReplaceableNode = TextNode | BlockNode | FieldNode | ValueNode;
+export type ReplaceableNode =
+	| TextNode
+	| BlockNode
+	| FieldNode
+	| ConcatNode
+	| ValueNode;
 
 export type WalkRule<N extends ReplaceableNode> = {
 	where?: (node: Node, ctx: WalkContext) => node is N;
@@ -108,6 +113,28 @@ export class ASTProxy {
 			return index + 1;
 		};
 
+		const visitConcat = (
+			node: ConcatNode,
+			ancestors: Node[],
+			parent: FieldNode,
+		): void => {
+			const replacements = enter(node, ancestors);
+			if (!replacements) {
+				visitChildren(node, [...ancestors, node]);
+				return;
+			}
+			if (replacements.length !== 1) {
+				throw new Error("A concat node must be replaced by exactly one node");
+			}
+
+			const replacement = replacements[0];
+			if (!replacement) return;
+			parent.value = replacement;
+			setParent(replacement, parent);
+			mutated = true;
+			visitChildren(replacement, [...ancestors, replacement]);
+		};
+
 		const visitChildren = (node: Node, ancestors: Node[]): void => {
 			switch (node.type) {
 				case "root":
@@ -126,20 +153,14 @@ export class ASTProxy {
 					}
 					break;
 				case "field":
-					visitChildren(node.value, [...ancestors, node.value]);
+					visitConcat(node.value, ancestors, node);
 					break;
 				case "concat":
 					for (let i = 0; i < node.concat.length; ) {
 						i = visitReplaceable(node.concat, i, ancestors, node);
 					}
 					break;
-				case "text":
-				case "comment":
-				case "preamble":
-				case "string":
-				case "literal":
-				case "braced":
-				case "quoted":
+				default:
 					break;
 			}
 		};
@@ -184,16 +205,30 @@ class WalkContext {
 
 function setParent(
 	node: ReplaceableNode,
-	parent: RootNode | EntryNode | ConcatNode,
+	parent: RootNode | EntryNode | FieldNode | ConcatNode,
 ): void {
 	switch (node.type) {
 		case "text":
 		case "block":
 			if (isNodeType(parent, "root")) node.parent = parent;
+			if (isNodeType(node, "block") && node.block) {
+				node.block.parent = node;
+				if (isNodeType(node.block, "entry")) {
+					for (const field of node.block.fields) {
+						setParent(field, node.block);
+					}
+				}
+			}
 			break;
 		case "field":
 			if (isNodeType(parent, "entry")) node.parent = parent;
-			node.value.parent = node;
+			setParent(node.value, node);
+			break;
+		case "concat":
+			if (isNodeType(parent, "field")) node.parent = parent;
+			for (const child of node.concat) {
+				child.parent = node;
+			}
 			break;
 		case "literal":
 		case "braced":

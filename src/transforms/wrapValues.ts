@@ -45,8 +45,7 @@ export function createWrapValuesTransform(
 						value = `\n${valIndent}${paragraphs.join(`\n\n${valIndent}`)}\n${indent}`;
 					}
 
-					replaceValueNodeText(node, value);
-					return [node];
+					return [replaceValueNodeText(node, value)];
 				},
 			});
 

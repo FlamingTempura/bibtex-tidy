@@ -10,12 +10,10 @@ export function createEncodeUrlsTransform(): Transform {
 				where: (node, ctx): node is ValueNode =>
 					isNodeType(node, "braced", "quoted") &&
 					ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "url",
-				enter: (entry) => {
-					replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)));
-					return [entry];
-				},
+				enter: (entry) => [
+					replaceValueNodeText(entry, encodeUrl(renderValueNode(entry))),
+				],
 			});
-			return undefined;
 		},
 	};
 }

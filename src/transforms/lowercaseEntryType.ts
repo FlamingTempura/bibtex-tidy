@@ -8,10 +8,9 @@ export function createLowercaseEntryTypeTransform(): Transform {
 			ast.walk({
 				where: (node): node is BlockNode =>
 					isNodeType(node, "block") && isNodeType(node.block, "entry"),
-				enter: (node) => {
-					node.command = node.command.toLocaleLowerCase();
-					return [node];
-				},
+				enter: (node) => [
+					node.with({ command: node.command.toLocaleLowerCase() }),
+				],
 			});
 			return undefined;
 		},

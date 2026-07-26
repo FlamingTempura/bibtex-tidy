@@ -1,44 +1,49 @@
+import { BaseNode } from "./baseNode.ts";
 import { type BlockNode as LatexBlockNode, parseLaTeX } from "./latexParser.ts";
 
-export class RootNode {
+export class RootNode extends BaseNode {
 	type = "root" as const;
 	children: (TextNode | BlockNode)[];
 	constructor(children: (TextNode | BlockNode)[] = []) {
+		super();
 		this.children = children;
 	}
 }
 
-export class TextNode {
+export class TextNode extends BaseNode {
 	type = "text" as const;
 	parent: RootNode;
 	text: string;
 	whitespacePrefix: string;
 	constructor(parent: RootNode, text: string, whitespacePrefix: string) {
+		super();
 		this.parent = parent;
 		this.text = text;
 		this.whitespacePrefix = whitespacePrefix;
 		parent.children.push(this);
 	}
 }
-export class BlockNode {
+export class BlockNode extends BaseNode {
 	type = "block" as const;
 	command = "";
 	block?: CommentNode | PreambleNode | StringNode | EntryNode;
 	parent: RootNode;
 	whitespacePrefix: string;
 	constructor(parent: RootNode, whitespacePrefix: string) {
+		super();
 		this.parent = parent;
 		this.whitespacePrefix = whitespacePrefix;
 		parent.children.push(this);
 	}
 }
-export class CommentNode {
+export class CommentNode extends BaseNode {
 	type = "comment" as const;
 	parent: BlockNode;
 	raw: string;
 	braces: number;
 	parens: number;
 	constructor(parent: BlockNode, raw: string, braces: number, parens: number) {
+		super();
 		this.parent = parent;
 		this.raw = raw;
 		this.braces = braces;
@@ -46,13 +51,14 @@ export class CommentNode {
 		parent.block = this;
 	}
 }
-class PreambleNode {
+class PreambleNode extends BaseNode {
 	type = "preamble" as const;
 	parent: BlockNode;
 	raw: string;
 	braces: number;
 	parens: number;
 	constructor(parent: BlockNode, raw: string, braces: number, parens: number) {
+		super();
 		this.parent = parent;
 		this.raw = raw;
 		this.braces = braces;
@@ -60,13 +66,14 @@ class PreambleNode {
 		parent.block = this;
 	}
 }
-class StringNode {
+class StringNode extends BaseNode {
 	type = "string" as const;
 	parent: BlockNode;
 	raw: string;
 	braces: number;
 	parens: number;
 	constructor(parent: BlockNode, raw: string, braces: number, parens: number) {
+		super();
 		this.parent = parent;
 		this.raw = raw;
 		this.braces = braces;
@@ -74,7 +81,7 @@ class StringNode {
 		parent.block = this;
 	}
 }
-export class EntryNode {
+export class EntryNode extends BaseNode {
 	type = "entry" as const;
 	key?: string;
 	keyEnded?: boolean;
@@ -82,13 +89,14 @@ export class EntryNode {
 	parent: BlockNode;
 	wrapType: "{" | "(";
 	constructor(parent: BlockNode, wrapType: "{" | "(") {
+		super();
 		this.parent = parent;
 		this.wrapType = wrapType;
 		parent.block = this;
 		this.fields = [];
 	}
 }
-export class FieldNode {
+export class FieldNode extends BaseNode {
 	type = "field" as const;
 	/** Each value is concatenated */
 	value: ConcatNode;
@@ -97,28 +105,31 @@ export class FieldNode {
 	name: string;
 	whitespacePrefix: string;
 	constructor(parent: EntryNode, name = "", whitespacePrefix = "") {
+		super();
 		this.parent = parent;
 		this.name = name;
 		this.whitespacePrefix = whitespacePrefix;
 		this.value = new ConcatNode(this);
 	}
 }
-export class ConcatNode {
+export class ConcatNode extends BaseNode {
 	type = "concat" as const;
 	concat: ValueNode[];
 	canConsumeValue = true;
 	whitespacePrefix = ""; // not filled in during parsing
 	parent: FieldNode;
 	constructor(parent: FieldNode) {
+		super();
 		this.parent = parent;
 		this.concat = [];
 	}
 }
-export class LiteralNode {
+export class LiteralNode extends BaseNode {
 	type = "literal" as const;
 	parent: ConcatNode;
 	value: string;
 	constructor(parent: ConcatNode, value: string) {
+		super();
 		this.parent = parent;
 		this.value = value;
 	}
@@ -130,13 +141,14 @@ function createLiteralNode(parent: ConcatNode, value: string): LiteralNode {
 	return node;
 }
 
-export class BracedNode {
+export class BracedNode extends BaseNode {
 	type = "braced" as const;
 	latexAst: LatexBlockNode;
 	/** Used to count opening and closing braces */
 	depth = 0;
 	parent: ConcatNode;
 	constructor(parent: ConcatNode) {
+		super();
 		this.parent = parent;
 		this.latexAst = parseLaTeX("");
 	}
@@ -148,13 +160,14 @@ function createBracedNode(parent: ConcatNode): BracedNode {
 	return node;
 }
 
-export class QuotedNode {
+export class QuotedNode extends BaseNode {
 	type = "quoted" as const;
 	latexAst: LatexBlockNode;
 	/** Used to count opening and closing braces */
 	depth = 0;
 	parent: ConcatNode;
 	constructor(parent: ConcatNode) {
+		super();
 		this.parent = parent;
 		this.latexAst = parseLaTeX("");
 	}

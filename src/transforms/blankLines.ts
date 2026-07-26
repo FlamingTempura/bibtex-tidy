@@ -9,19 +9,19 @@ export function createBlankLinesTransform(): Transform {
 	return {
 		name: "blank-lines",
 		apply: (astProxy) => {
-			let prev: TextNode | BlockNode | undefined;
 			astProxy.walk({
-				where: (node): node is TextNode | BlockNode =>
-					isNodeType(node, "text", "block"),
+				where: (node) => isNodeType(node, "text", "block"),
 				enter: (child) => {
-					if (prev && !isComment(prev)) {
-						child.whitespacePrefix = "\n\n";
-					}
-					prev = child;
-					return [child];
+					const index = child.parent.children.indexOf(child);
+					const prev = child.parent.children[index - 1];
+					return [
+						child.with({
+							whitespacePrefix:
+								prev && !isComment(prev) ? "\n\n" : child.whitespacePrefix,
+						}),
+					];
 				},
 			});
-			return undefined;
 		},
 	};
 }

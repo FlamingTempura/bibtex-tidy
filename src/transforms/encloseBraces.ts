@@ -16,12 +16,10 @@ export function createEncloseBracesTransform(fields: string[]): Transform {
 					const field = ctx.closestAncestor("field");
 					return field !== undefined && set.has(field.name.toLocaleLowerCase());
 				},
-				enter: (node) => {
-					node.latexAst = encloseLatexInCurly(node.latexAst);
-					return [node];
-				},
+				enter: (node) => [
+					node.with({ latexAst: encloseLatexInCurly(node.latexAst) }),
+				],
 			});
-			return undefined;
 		},
 	};
 }

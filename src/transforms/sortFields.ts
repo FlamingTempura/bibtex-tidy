@@ -11,22 +11,19 @@ export function createSortFieldsTransform(sortFields: string[]): Transform {
 		name: "sort-fields",
 		apply: (astProxy) => {
 			astProxy.walk({
-				where: (node): node is BlockNode =>
+				where: (node): node is BlockNode & { block: { type: "entry" } } =>
 					isNodeType(node, "block") && isNodeType(node.block, "entry"),
-				enter: (node) => {
-					if (isNodeType(node.block, "entry")) {
-						sortEntryFields(node.block, sortFields);
-					}
-					return [node];
-				},
+				enter: (node) => [
+					node.with({ block: sortEntryFields(node.block, sortFields) }),
+				],
 			});
 			return undefined;
 		},
 	};
 }
 
-function sortEntryFields(entry: EntryNode, fieldOrder: string[]): void {
-	entry.fields.sort((a, b) => {
+function sortEntryFields(entry: EntryNode, fieldOrder: string[]): EntryNode {
+	const fields = [...entry.fields].sort((a, b) => {
 		const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
 		const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
 		if (orderA === -1 && orderB === -1) return 0;
@@ -36,4 +33,5 @@ function sortEntryFields(entry: EntryNode, fieldOrder: string[]): void {
 		if (orderB > orderA) return -1;
 		return 0;
 	});
+	return entry.with({ fields });
 }

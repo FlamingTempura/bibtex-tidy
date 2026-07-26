@@ -15,12 +15,10 @@ export function createDropAllCapsTransform(): Transform {
 						!astProxy.renderFieldValue(field).match(/[a-z]/)
 					);
 				},
-				enter: (node) => {
-					replaceValueNodeText(node, titleCase(renderValueNode(node)));
-					return [node];
-				},
+				enter: (node) => [
+					replaceValueNodeText(node, titleCase(renderValueNode(node))),
+				],
 			});
-			return undefined;
 		},
 	};
 }

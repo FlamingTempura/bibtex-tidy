@@ -47,7 +47,6 @@ export function createAbbreviateMonthsTransform(): Transform {
 					return abbr ? [new LiteralNode(node.parent, abbr)] : [node];
 				},
 			});
-			return undefined;
 		},
 	};
 }

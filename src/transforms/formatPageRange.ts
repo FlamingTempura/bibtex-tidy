@@ -11,12 +11,10 @@ export function createFormatPageRangeTransform(): Transform {
 				where: (node, ctx): node is ValueNode =>
 					isNodeType(node, "braced", "quoted") &&
 					ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "pages",
-				enter: (entry) => {
-					replaceValueNodeText(entry, formatPageRange(renderValueNode(entry)));
-					return [entry];
-				},
+				enter: (entry) => [
+					replaceValueNodeText(entry, formatPageRange(renderValueNode(entry))),
+				],
 			});
-			return undefined;
 		},
 	};
 }

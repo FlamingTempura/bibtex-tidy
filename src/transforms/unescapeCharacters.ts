@@ -36,16 +36,15 @@ export function createUnescapeCharactersTransform(): Transform {
 		apply: (astProxy) => {
 			astProxy.walk({
 				where: (node) => isNodeType(node, "braced", "quoted"),
-				enter: (node) => {
+				enter: (node) => [
 					replaceValueNodeText(
 						node,
 						unescapeCharacters(
 							renderValueNode(node),
 							isNodeType(node, "quoted"),
 						),
-					);
-					return [node];
-				},
+					),
+				],
 			});
 			return undefined;
 		},

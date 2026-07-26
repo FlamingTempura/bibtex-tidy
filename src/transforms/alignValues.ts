@@ -6,14 +6,15 @@ export function createAlignValuesTransform(column: number): Transform {
 		name: "align-values",
 		apply: (astProxy) => {
 			astProxy.walk({
-				where: (node) => isNodeType(node, "field"),
-				enter: (field) => {
-					const gap = Math.max(column - field.name.length, 1);
-					field.value.whitespacePrefix = " ".repeat(gap);
-					return [field];
-				},
+				where: (node) => isNodeType(node, "concat"),
+				enter: (concat) => [
+					concat.with({
+						whitespacePrefix: " ".repeat(
+							Math.max(column - concat.parent.name.length, 1),
+						),
+					}),
+				],
 			});
-			return undefined;
 		},
 	};
 }

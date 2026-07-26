@@ -1992,9 +1992,21 @@ var manPage = [
 // src/__generated__/version.ts
 var version = "1.14.0";
 
+// src/parsers/baseNode.ts
+var BaseNode = class {
+  with(properties) {
+    return Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this,
+      properties
+    );
+  }
+};
+
 // src/parsers/latexParser.ts
-var BlockNode = class _BlockNode {
+var BlockNode = class _BlockNode extends BaseNode {
   constructor(kind, parent, children = []) {
+    super();
     this.type = "block";
     this.kind = kind;
     this.parent = parent;
@@ -2009,8 +2021,9 @@ var BlockNode = class _BlockNode {
     return this.children.map((child) => child.renderAsText()).join("");
   }
 };
-var TextNode = class {
+var TextNode = class extends BaseNode {
   constructor(parent, text = "") {
+    super();
     this.type = "text";
     this.parent = parent;
     this.text = text;
@@ -2020,8 +2033,9 @@ var TextNode = class {
     return this.text.replace(/"/g, "");
   }
 };
-var MathNode = class {
+var MathNode = class extends BaseNode {
   constructor(parent, text = "") {
+    super();
     this.type = "math";
     this.parent = parent;
     this.text = text;
@@ -2031,8 +2045,9 @@ var MathNode = class {
     return this.text;
   }
 };
-var CommandNode = class {
+var CommandNode = class extends BaseNode {
   constructor(parent, command = "", args = []) {
+    super();
     this.type = "command";
     this.parent = parent;
     this.command = command;
@@ -2165,14 +2180,16 @@ function flattenLaTeX(block) {
 }
 
 // src/parsers/bibtexParser.ts
-var RootNode = class {
+var RootNode = class extends BaseNode {
   constructor(children = []) {
+    super();
     this.type = "root";
     this.children = children;
   }
 };
-var TextNode2 = class {
+var TextNode2 = class extends BaseNode {
   constructor(parent, text, whitespacePrefix) {
+    super();
     this.type = "text";
     this.parent = parent;
     this.text = text;
@@ -2180,8 +2197,9 @@ var TextNode2 = class {
     parent.children.push(this);
   }
 };
-var BlockNode2 = class {
+var BlockNode2 = class extends BaseNode {
   constructor(parent, whitespacePrefix) {
+    super();
     this.type = "block";
     this.command = "";
     this.parent = parent;
@@ -2189,8 +2207,9 @@ var BlockNode2 = class {
     parent.children.push(this);
   }
 };
-var CommentNode = class {
+var CommentNode = class extends BaseNode {
   constructor(parent, raw, braces, parens) {
+    super();
     this.type = "comment";
     this.parent = parent;
     this.raw = raw;
@@ -2199,8 +2218,9 @@ var CommentNode = class {
     parent.block = this;
   }
 };
-var PreambleNode = class {
+var PreambleNode = class extends BaseNode {
   constructor(parent, raw, braces, parens) {
+    super();
     this.type = "preamble";
     this.parent = parent;
     this.raw = raw;
@@ -2209,8 +2229,9 @@ var PreambleNode = class {
     parent.block = this;
   }
 };
-var StringNode = class {
+var StringNode = class extends BaseNode {
   constructor(parent, raw, braces, parens) {
+    super();
     this.type = "string";
     this.parent = parent;
     this.raw = raw;
@@ -2219,8 +2240,9 @@ var StringNode = class {
     parent.block = this;
   }
 };
-var EntryNode = class {
+var EntryNode = class extends BaseNode {
   constructor(parent, wrapType) {
+    super();
     this.type = "entry";
     this.parent = parent;
     this.wrapType = wrapType;
@@ -2228,8 +2250,9 @@ var EntryNode = class {
     this.fields = [];
   }
 };
-var FieldNode = class {
+var FieldNode = class extends BaseNode {
   constructor(parent, name = "", whitespacePrefix = "") {
+    super();
     this.type = "field";
     this.hasComma = false;
     this.parent = parent;
@@ -2238,8 +2261,9 @@ var FieldNode = class {
     this.value = new ConcatNode(this);
   }
 };
-var ConcatNode = class {
+var ConcatNode = class extends BaseNode {
   constructor(parent) {
+    super();
     this.type = "concat";
     this.canConsumeValue = true;
     this.whitespacePrefix = "";
@@ -2247,8 +2271,9 @@ var ConcatNode = class {
     this.concat = [];
   }
 };
-var LiteralNode = class {
+var LiteralNode = class extends BaseNode {
   constructor(parent, value) {
+    super();
     this.type = "literal";
     this.parent = parent;
     this.value = value;
@@ -2259,8 +2284,9 @@ function createLiteralNode(parent, value) {
   parent.concat.push(node);
   return node;
 }
-var BracedNode = class {
+var BracedNode = class extends BaseNode {
   constructor(parent) {
+    super();
     this.type = "braced";
     /** Used to count opening and closing braces */
     this.depth = 0;
@@ -2273,8 +2299,9 @@ function createBracedNode(parent) {
   parent.concat.push(node);
   return node;
 }
-var QuotedNode = class {
+var QuotedNode = class extends BaseNode {
   constructor(parent) {
+    super();
     this.type = "quoted";
     /** Used to count opening and closing braces */
     this.depth = 0;
@@ -2581,10 +2608,9 @@ function renderValueNode(node) {
 }
 function replaceValueNodeText(node, value) {
   if (isNodeType(node, "literal")) {
-    node.value = value;
-  } else {
-    node.latexAst = parseLaTeX(value);
+    return node.with({ value });
   }
+  return node.with({ latexAst: parseLaTeX(value) });
 }
 function doubleEncloseLatex(latex) {
   var _a, _b, _c, _d;
@@ -2716,6 +2742,22 @@ var ASTProxy = class {
       visitChildren(node, [...ancestors, node]);
       return index + 1;
     };
+    const visitConcat = (node, ancestors, parent) => {
+      const replacements = enter(node, ancestors);
+      if (!replacements) {
+        visitChildren(node, [...ancestors, node]);
+        return;
+      }
+      if (replacements.length !== 1) {
+        throw new Error("A concat node must be replaced by exactly one node");
+      }
+      const replacement = replacements[0];
+      if (!replacement) return;
+      parent.value = replacement;
+      setParent(replacement, parent);
+      mutated = true;
+      visitChildren(replacement, [...ancestors, replacement]);
+    };
     const visitChildren = (node, ancestors) => {
       switch (node.type) {
         case "root":
@@ -2734,20 +2776,14 @@ var ASTProxy = class {
           }
           break;
         case "field":
-          visitChildren(node.value, [...ancestors, node.value]);
+          visitConcat(node.value, ancestors, node);
           break;
         case "concat":
           for (let i = 0; i < node.concat.length; ) {
             i = visitReplaceable(node.concat, i, ancestors, node);
           }
           break;
-        case "text":
-        case "comment":
-        case "preamble":
-        case "string":
-        case "literal":
-        case "braced":
-        case "quoted":
+        default:
           break;
       }
     };
@@ -2786,10 +2822,24 @@ function setParent(node, parent) {
     case "text":
     case "block":
       if (isNodeType(parent, "root")) node.parent = parent;
+      if (isNodeType(node, "block") && node.block) {
+        node.block.parent = node;
+        if (isNodeType(node.block, "entry")) {
+          for (const field of node.block.fields) {
+            setParent(field, node.block);
+          }
+        }
+      }
       break;
     case "field":
       if (isNodeType(parent, "entry")) node.parent = parent;
-      node.value.parent = node;
+      setParent(node.value, node);
+      break;
+    case "concat":
+      if (isNodeType(parent, "field")) node.parent = parent;
+      for (const child of node.concat) {
+        child.parent = node;
+      }
       break;
     case "literal":
     case "braced":
@@ -3442,7 +3492,6 @@ function createAbbreviateMonthsTransform() {
           return abbr ? [new LiteralNode(node.parent, abbr)] : [node];
         }
       });
-      return void 0;
     }
   };
 }
@@ -3456,14 +3505,15 @@ function createAlignValuesTransform(column) {
     name: "align-values",
     apply: (astProxy) => {
       astProxy.walk({
-        where: (node) => isNodeType(node, "field"),
-        enter: (field) => {
-          const gap = Math.max(column - field.name.length, 1);
-          field.value.whitespacePrefix = " ".repeat(gap);
-          return [field];
-        }
+        where: (node) => isNodeType(node, "concat"),
+        enter: (concat) => [
+          concat.with({
+            whitespacePrefix: " ".repeat(
+              Math.max(column - concat.parent.name.length, 1)
+            )
+          })
+        ]
       });
-      return void 0;
     }
   };
 }
@@ -3473,18 +3523,18 @@ function createBlankLinesTransform() {
   return {
     name: "blank-lines",
     apply: (astProxy) => {
-      let prev;
       astProxy.walk({
         where: (node) => isNodeType(node, "text", "block"),
         enter: (child) => {
-          if (prev && !isComment(prev)) {
-            child.whitespacePrefix = "\n\n";
-          }
-          prev = child;
-          return [child];
+          const index = child.parent.children.indexOf(child);
+          const prev = child.parent.children[index - 1];
+          return [
+            child.with({
+              whitespacePrefix: prev && !isComment(prev) ? "\n\n" : child.whitespacePrefix
+            })
+          ];
         }
       });
-      return void 0;
     }
   };
 }
@@ -3503,12 +3553,10 @@ function createDropAllCapsTransform() {
           const field = ctx.closestAncestor("field");
           return field !== void 0 && !astProxy.renderFieldValue(field).match(/[a-z]/);
         },
-        enter: (node) => {
-          replaceValueNodeText(node, titleCase(renderValueNode(node)));
-          return [node];
-        }
+        enter: (node) => [
+          replaceValueNodeText(node, titleCase(renderValueNode(node)))
+        ]
       });
-      return void 0;
     }
   };
 }
@@ -3536,12 +3584,10 @@ function createEncloseBracesTransform(fields) {
           const field = ctx.closestAncestor("field");
           return field !== void 0 && set.has(field.name.toLocaleLowerCase());
         },
-        enter: (node) => {
-          node.latexAst = encloseLatexInCurly(node.latexAst);
-          return [node];
-        }
+        enter: (node) => [
+          node.with({ latexAst: encloseLatexInCurly(node.latexAst) })
+        ]
       });
-      return void 0;
     }
   };
 }
@@ -3556,12 +3602,10 @@ function createEncodeUrlsTransform() {
           var _a;
           return isNodeType(node, "braced", "quoted") && ((_a = ctx.closestAncestor("field")) == null ? void 0 : _a.name.toLocaleLowerCase()) === "url";
         },
-        enter: (entry) => {
-          replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)));
-          return [entry];
-        }
+        enter: (entry) => [
+          replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)))
+        ]
       });
-      return void 0;
     }
   };
 }
@@ -5911,7 +5955,7 @@ var specialCharacters = new Map([
 ]);
 
 // src/transforms/escapeCharacters.ts
-var VERBATIM_FIELDS = [
+var VERBATIM_FIELDS = /* @__PURE__ */ new Set([
   "url",
   "doi",
   "eprint",
@@ -5920,48 +5964,40 @@ var VERBATIM_FIELDS = [
   "verbb",
   "verbc",
   "pdf"
-];
+]);
 function createEscapeCharactersTransform(newMode = false) {
-  const characters = newMode ? coreSpecialCharacters : specialCharacters;
+  const chars = newMode ? coreSpecialCharacters : specialCharacters;
   return {
     name: "escape-characters",
     apply: (ast) => {
-      const warnings = [];
-      const warned = /* @__PURE__ */ new Set();
+      const warnings = /* @__PURE__ */ new Map();
       ast.walk({
         where: (node, ctx) => {
           if (!isNodeType(node, "braced", "quoted")) return false;
           const field = ctx.closestAncestor("field");
-          return field !== void 0 && !VERBATIM_FIELDS.includes(field.name);
+          return field !== void 0 && !VERBATIM_FIELDS.has(field.name);
         },
-        enter: (entry, ctx) => {
+        enter: (node, ctx) => {
           const field = ctx.closestAncestor("field");
-          if (!field) return [entry];
-          const result = escapeCharacters(
-            renderValueNode(entry),
-            characters,
-            isNodeType(entry, "quoted")
-          );
-          replaceValueNodeText(entry, result.value);
+          if (!field) return [node];
+          const val = renderValueNode(node);
+          const result = escapeChars(val, chars, isNodeType(node, "quoted"));
           for (const unsupported of result.unsupported) {
-            const key = `${field.name}:${unsupported.codepoint}`;
-            if (warned.has(key)) continue;
-            warned.add(key);
-            warnings.push({
+            warnings.set(`${field.name}:${unsupported.codepoint}`, {
               code: "UNSUPPORTED_ESCAPE",
               character: unsupported.character,
               codepoint: unsupported.codepoint,
               message: `Cannot escape character ${unsupported.character} (U+${unsupported.codepoint.toUpperCase()}) in ${field.name} without LaTeX packages or special fonts.`
             });
           }
-          return [entry];
+          return [replaceValueNodeText(node, result.value)];
         }
       });
-      return warnings;
+      return [...warnings.values()];
     }
   };
 }
-function escapeCharacters(value, characters, protectQuotes = false) {
+function escapeChars(value, characters, protectQuotes = false) {
   var _a;
   let result = value;
   const mathExpressions = [];
@@ -6010,13 +6046,12 @@ function createFieldCommasTransform(trailing) {
     apply: (astProxy) => {
       astProxy.walk({
         where: (node) => isNodeType(node, "field"),
-        enter: (field) => {
-          const i = field.parent.fields.indexOf(field);
-          field.hasComma = i < field.parent.fields.length - 1 || trailing;
-          return [field];
-        }
+        enter: (field) => [
+          field.with({
+            hasComma: field.parent.fields.indexOf(field) < field.parent.fields.length - 1 || trailing
+          })
+        ]
       });
-      return void 0;
     }
   };
 }
@@ -6031,12 +6066,10 @@ function createFormatPageRangeTransform() {
           var _a;
           return isNodeType(node, "braced", "quoted") && ((_a = ctx.closestAncestor("field")) == null ? void 0 : _a.name.toLocaleLowerCase()) === "pages";
         },
-        enter: (entry) => {
-          replaceValueNodeText(entry, formatPageRange(renderValueNode(entry)));
-          return [entry];
-        }
+        enter: (entry) => [
+          replaceValueNodeText(entry, formatPageRange(renderValueNode(entry)))
+        ]
       });
-      return void 0;
     }
   };
 }
@@ -6467,13 +6500,9 @@ function createGenerateKeysTransform(template) {
         where: (node) => isNodeType(node, "block") && isNodeType(node.block, "entry"),
         enter: (node) => {
           const newKey = newKeys.get(node.block);
-          if (newKey) {
-            node.block.key = newKey;
-          }
-          return [node];
+          return newKey ? [node.with({ block: node.block.with({ key: newKey }) })] : [node];
         }
       });
-      return void 0;
     }
   };
 }
@@ -6485,13 +6514,9 @@ function createIndentFieldsTransform(indent) {
     apply: (astProxy) => {
       astProxy.walk({
         where: (node) => isNodeType(node, "field"),
-        enter: (field) => {
-          field.whitespacePrefix = `
-${indent}`;
-          return [field];
-        }
+        enter: (field) => [field.with({ whitespacePrefix: `
+${indent}` })]
       });
-      return void 0;
     }
   };
 }
@@ -6509,10 +6534,12 @@ function createLimitAuthorsTransform(maxAuthors) {
         enter: (node) => {
           const authors = renderValueNode(node).split(" and ");
           if (authors.length > maxAuthors) {
-            replaceValueNodeText(
-              node,
-              [...authors.slice(0, maxAuthors), "others"].join(" and ")
-            );
+            return [
+              replaceValueNodeText(
+                node,
+                [...authors.slice(0, maxAuthors), "others"].join(" and ")
+              )
+            ];
           }
           return [node];
         }
@@ -6529,10 +6556,9 @@ function createLowercaseEntryTypeTransform() {
     apply: (ast) => {
       ast.walk({
         where: (node) => isNodeType(node, "block") && isNodeType(node.block, "entry"),
-        enter: (node) => {
-          node.command = node.command.toLocaleLowerCase();
-          return [node];
-        }
+        enter: (node) => [
+          node.with({ command: node.command.toLocaleLowerCase() })
+        ]
       });
       return void 0;
     }
@@ -6546,12 +6572,10 @@ function createLowercaseFieldsTransform() {
     apply: (ast) => {
       ast.walk({
         where: (node) => isNodeType(node, "field"),
-        enter: (field) => {
-          field.name = field.name.toLocaleLowerCase();
-          return [field];
-        }
+        enter: (field) => [
+          field.with({ name: field.name.toLocaleLowerCase() })
+        ]
       });
-      return void 0;
     }
   };
 }
@@ -6731,9 +6755,11 @@ function createPreferCurlyTransform() {
         },
         enter: (child) => {
           if (isNodeType(child, "braced")) return [child];
-          const braced = new BracedNode(child.parent);
-          braced.latexAst = isNodeType(child, "quoted") ? child.latexAst : createTextAst(child.value);
-          return [braced];
+          return [
+            new BracedNode(child.parent).with({
+              latexAst: isNodeType(child, "quoted") ? child.latexAst : createTextAst(child.value)
+            })
+          ];
         }
       });
       return void 0;
@@ -6773,10 +6799,7 @@ function createRemoveBracesTransform(fields) {
           const field = ctx.closestAncestor("field");
           return field !== void 0 && set.has(field.name.toLocaleLowerCase());
         },
-        enter: (node) => {
-          node.latexAst = flattenLaTeX(node.latexAst);
-          return [node];
-        }
+        enter: (node) => [node.with({ latexAst: flattenLaTeX(node.latexAst) })]
       });
       return void 0;
     }
@@ -6844,13 +6867,12 @@ function createRemoveEnclosingBracesTransform() {
     apply: (ast) => {
       ast.walk({
         where: (node) => isNodeType(node, "braced"),
-        enter: (node) => {
+        enter: (node) => [
           replaceValueNodeText(
             node,
             renderValueNode(node).replace(/^\{([^{}]*)\}$/g, "$1")
-          );
-          return [node];
-        }
+          )
+        ]
       });
       return void 0;
     }
@@ -7034,19 +7056,16 @@ function createSortFieldsTransform(sortFields) {
     apply: (astProxy) => {
       astProxy.walk({
         where: (node) => isNodeType(node, "block") && isNodeType(node.block, "entry"),
-        enter: (node) => {
-          if (isNodeType(node.block, "entry")) {
-            sortEntryFields(node.block, sortFields);
-          }
-          return [node];
-        }
+        enter: (node) => [
+          node.with({ block: sortEntryFields(node.block, sortFields) })
+        ]
       });
       return void 0;
     }
   };
 }
 function sortEntryFields(entry, fieldOrder) {
-  entry.fields.sort((a, b) => {
+  const fields = [...entry.fields].sort((a, b) => {
     const orderA = fieldOrder.indexOf(a.name.toLocaleLowerCase());
     const orderB = fieldOrder.indexOf(b.name.toLocaleLowerCase());
     if (orderA === -1 && orderB === -1) return 0;
@@ -7056,6 +7075,7 @@ function sortEntryFields(entry, fieldOrder) {
     if (orderB > orderA) return -1;
     return 0;
   });
+  return entry.with({ fields });
 }
 
 // src/transforms/unescapeCharacters.ts
@@ -7082,16 +7102,15 @@ function createUnescapeCharactersTransform() {
     apply: (astProxy) => {
       astProxy.walk({
         where: (node) => isNodeType(node, "braced", "quoted"),
-        enter: (node) => {
+        enter: (node) => [
           replaceValueNodeText(
             node,
             unescapeCharacters(
               renderValueNode(node),
               isNodeType(node, "quoted")
             )
-          );
-          return [node];
-        }
+          )
+        ]
       });
       return void 0;
     }
@@ -7130,8 +7149,7 @@ ${valIndent}${paragraphs.join(`
 ${valIndent}`)}
 ${indent}`;
           }
-          replaceValueNodeText(node, value);
-          return [node];
+          return [replaceValueNodeText(node, value)];
         }
       });
       return void 0;

@@ -8,7 +8,7 @@ import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
  * The following fields are listed in the BibLaTeX documentation as verbatim (may contain
  * special characters). Source: Kime et al (2024) The biblatex Package (v3.20).
  */
-const VERBATIM_FIELDS = [
+const VERBATIM_FIELDS = new Set([
 	"url",
 	"doi",
 	"eprint",
@@ -17,56 +17,49 @@ const VERBATIM_FIELDS = [
 	"verbb",
 	"verbc",
 	"pdf",
-];
+]);
 
 // escape special characters like %. Do not do this on the url field, which is a
 // special bibtex field where special characters are output verbatim.
 export function createEscapeCharactersTransform(newMode = false): Transform {
-	const characters = newMode ? coreSpecialCharacters : specialCharacters;
+	const chars = newMode ? coreSpecialCharacters : specialCharacters;
 
 	return {
 		name: "escape-characters",
 		apply: (ast) => {
-			const warnings: Warning[] = [];
-			const warned = new Set<string>();
+			const warnings = new Map<string, Warning>();
 
 			ast.walk({
 				where: (node, ctx): node is ValueNode => {
 					if (!isNodeType(node, "braced", "quoted")) return false;
 					const field = ctx.closestAncestor("field");
-					return field !== undefined && !VERBATIM_FIELDS.includes(field.name);
+					return field !== undefined && !VERBATIM_FIELDS.has(field.name);
 				},
-				enter: (entry, ctx) => {
+				enter: (node, ctx) => {
 					const field = ctx.closestAncestor("field");
-					if (!field) return [entry];
+					if (!field) return [node];
 
-					const result = escapeCharacters(
-						renderValueNode(entry),
-						characters,
-						isNodeType(entry, "quoted"),
-					);
-					replaceValueNodeText(entry, result.value);
+					const val = renderValueNode(node);
+					const result = escapeChars(val, chars, isNodeType(node, "quoted"));
 
 					for (const unsupported of result.unsupported) {
-						const key = `${field.name}:${unsupported.codepoint}`;
-						if (warned.has(key)) continue;
-						warned.add(key);
-						warnings.push({
+						warnings.set(`${field.name}:${unsupported.codepoint}`, {
 							code: "UNSUPPORTED_ESCAPE",
 							character: unsupported.character,
 							codepoint: unsupported.codepoint,
 							message: `Cannot escape character ${unsupported.character} (U+${unsupported.codepoint.toUpperCase()}) in ${field.name} without LaTeX packages or special fonts.`,
 						});
 					}
-					return [entry];
+					return [replaceValueNodeText(node, result.value)];
 				},
 			});
-			return warnings;
+
+			return [...warnings.values()];
 		},
 	};
 }
 
-function escapeCharacters(
+function escapeChars(
 	value: string,
 	characters: Map<string, string>,
 	protectQuotes = false,
@@ -109,6 +102,7 @@ function escapeCharacters(
 			unsupported.push({ character: char, codepoint });
 		}
 	}
+
 	return {
 		value: newstr.replace(
 			/MATH\.EXP\.(\d+)/g,
