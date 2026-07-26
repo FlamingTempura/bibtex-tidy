@@ -44,6 +44,10 @@
 		"runtime": {
 			"name": "node",
 			"version": ">=26"
+		},
+		"packageManager": {
+			"name": "npm",
+			"version": ">=11.10.0"
 		}
 	},
 	"devDependencies": {
