@@ -1,4 +1,4 @@
-import type { ASTProxy } from "../ASTProxy.ts";
+import { type ASTProxy, getField } from "../ASTProxy.ts";
 import {
 	type BlockNode,
 	isNodeType,
@@ -76,7 +76,8 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 
 				case "month": {
 					if (!isNodeType(item.block, "entry")) continue;
-					const v = cache.lookupRenderedEntryValue(item.block, key);
+					const field = getField(item.block, key);
+					const v = field ? cache.renderFieldValue(field) : "";
 					const i = v ? (MONTH_MACROS as readonly string[]).indexOf(v) : -1;
 					val = i > -1 ? i : "";
 					break;
@@ -86,9 +87,11 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 					val = isBibLaTeXSpecialEntry(item) ? 0 : 1;
 					break;
 
-				default:
+				default: {
 					if (!isNodeType(item.block, "entry")) continue;
-					val = cache.lookupRenderedEntryValue(item.block, key);
+					const field = getField(item.block, key);
+					val = field ? cache.renderFieldValue(field) : "";
+				}
 			}
 			sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
 		}

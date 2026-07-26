@@ -143,9 +143,13 @@ export function generateKeys(
 
 	const parsedTemplate = parseEntryKeyTemplate(template);
 	const entriesByKey = new Map<string, EntryNode[]>();
+	const valuesByEntry = new Map<EntryNode, Map<string, string>>();
 
 	for (const entry of entries) {
-		const entryValues = cache.lookupRenderedEntryValues(entry);
+		const entryValues = new Map(
+			entry.fields.map((field) => [field.name, cache.renderFieldValue(field)]),
+		);
+		valuesByEntry.set(entry, entryValues);
 		const key = generateKey(entryValues, parsedTemplate);
 		if (!key) continue;
 
@@ -158,7 +162,8 @@ export function generateKeys(
 		for (let i = 0; i < entries.length; i++) {
 			const node = entries[i];
 			if (!node) continue;
-			const entryValues = cache.lookupRenderedEntryValues(node);
+			const entryValues = valuesByEntry.get(node);
+			if (!entryValues) continue;
 			const newKey = regenerateDuplicate
 				? generateKey(entryValues, parsedTemplate, i + 1)
 				: key;

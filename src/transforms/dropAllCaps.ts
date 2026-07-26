@@ -12,7 +12,7 @@ export function createDropAllCapsTransform(): Transform {
 					const field = ctx.closestAncestor("field");
 					return (
 						field !== undefined &&
-						!astProxy.lookupRenderedEntryValue(field).match(/[a-z]/)
+						!astProxy.renderFieldValue(field).match(/[a-z]/)
 					);
 				},
 				enter: (node) => {

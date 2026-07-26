@@ -10,7 +10,7 @@ const coreUnescapeCharacters = [...coreSpecialCharactersReversible]
 	}))
 	.sort((a, b) => b.escaped.length - a.escaped.length);
 
-export const coreQuotedUnescapeCharacters = coreUnescapeCharacters
+const coreQuotedUnescapeCharacters = coreUnescapeCharacters
 	.filter(({ escaped }) => escaped.includes('"'))
 	.map(({ character, escaped }) => ({ character, escaped: `{${escaped}}` }));
 

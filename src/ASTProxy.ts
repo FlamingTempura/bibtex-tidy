@@ -12,18 +12,22 @@ import type {
 import { isNodeType } from "./parsers/bibtexParser.ts";
 import { parseLaTeX } from "./parsers/latexParser.ts";
 
+export function getField(
+	entry: EntryNode,
+	fieldName: string,
+): FieldNode | undefined {
+	const fieldNameLc = fieldName.toLocaleLowerCase();
+	return entry.fields.find(
+		(field) => field.name.toLocaleLowerCase() === fieldNameLc,
+	);
+}
+
 export type ReplaceableNode = TextNode | BlockNode | FieldNode | ValueNode;
 
-export interface WalkRule<N extends ReplaceableNode> {
+export type WalkRule<N extends ReplaceableNode> = {
 	where?: (node: Node, ctx: WalkContext) => node is N;
 	enter: (node: N, ctx: WalkContext) => N[];
-}
-
-export interface WalkContext {
-	closestAncestor<T extends Node["type"]>(
-		type: T,
-	): Extract<Node, { type: T }> | undefined;
-}
+};
 
 export class ASTProxy {
 	#ast: RootNode;
@@ -33,10 +37,6 @@ export class ASTProxy {
 
 	public root(): RootNode {
 		return this.#ast;
-	}
-
-	public fields(): FieldNode[] {
-		return this.entries().flatMap((entry) => entry.fields);
 	}
 
 	public entries(): EntryNode[] {
@@ -75,11 +75,10 @@ export class ASTProxy {
 			node: T,
 			ancestors: Node[],
 		): T[] | undefined => {
-			const ctx = new WalkContextImpl(ancestors);
-			if (rule.where ? rule.where(node, ctx) : true) {
-				return rule.enter(node as unknown as N, ctx) as unknown as T[];
-			}
-			return undefined;
+			const ctx = new WalkContext(ancestors);
+			return !rule.where || rule.where(node, ctx)
+				? (rule.enter(node as unknown as N, ctx) as unknown as T[])
+				: undefined;
 		};
 
 		const visitReplaceable = <T extends ReplaceableNode>(
@@ -147,40 +146,14 @@ export class ASTProxy {
 
 		visitChildren(this.#ast, [this.#ast]);
 		if (mutated) {
-			this.fieldLookup.clear();
 			this.renderValueLookup.clear();
 		}
 	}
 
-	private fieldLookup = new Map<EntryNode, Map<string, FieldNode>>();
-	private lookupField(
-		entry: EntryNode,
-		fieldLc: string,
-	): FieldNode | undefined {
-		let fieldNode = this.fieldLookup.get(entry)?.get(fieldLc);
-		if (fieldNode === undefined) {
-			fieldNode = entry.fields.find(
-				(field) => field.name.toLocaleLowerCase() === fieldLc,
-			);
-		}
-		return fieldNode;
-	}
-
 	private renderValueLookup = new Map<FieldNode, string>();
 
-	public lookupRenderedEntryValue(entry: EntryNode, fieldname: string): string;
-	public lookupRenderedEntryValue(field: FieldNode): string;
-	public lookupRenderedEntryValue(
-		node: EntryNode | FieldNode,
-		fieldName?: string,
-	): string {
-		const field = isNodeType(node, "entry")
-			? this.lookupField(node, (fieldName ?? "").toLocaleLowerCase())
-			: node;
-
-		if (!field) {
-			return "";
-		}
+	/** Render a field's value as text. Results are memoized by FieldNode until the AST is mutated. */
+	public renderFieldValue(field: FieldNode): string {
 		let value = this.renderValueLookup.get(field);
 		if (value === undefined) {
 			const entryValue = formatValue(field) ?? "";
@@ -189,17 +162,9 @@ export class ASTProxy {
 		}
 		return value;
 	}
-
-	public lookupRenderedEntryValues(entry: EntryNode): Map<string, string> {
-		const values = new Map<string, string>();
-		for (const field of entry.fields) {
-			values.set(field.name, this.lookupRenderedEntryValue(field));
-		}
-		return values;
-	}
 }
 
-class WalkContextImpl implements WalkContext {
+class WalkContext {
 	private ancestors: Node[];
 
 	constructor(ancestors: Node[]) {

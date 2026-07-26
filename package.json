@@ -40,16 +40,7 @@
 	"engines": {
 		"node": ">12"
 	},
-	"devEngines": {
-		"runtime": {
-			"name": "node",
-			"version": ">=26"
-		},
-		"packageManager": {
-			"name": "npm",
-			"version": ">=11.10.0"
-		}
-	},
+	"devEngines": {},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.15",
 		"@codemirror/commands": "^6.6.1",

@@ -20,7 +20,7 @@ export function createPreferCurlyTransform(): Transform {
 					const field = ctx.closestAncestor("field");
 					return !(
 						field?.name.toLowerCase() === "month" &&
-						monthAliases[ast.lookupRenderedEntryValue(field)]
+						monthAliases[ast.renderFieldValue(field)]
 					);
 				},
 				enter: (child) => {
