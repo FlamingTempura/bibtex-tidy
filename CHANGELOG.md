@@ -175,7 +175,7 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 - Accessibility tweak
 - Upgrade dependencies
 
-## v1.14
+## v1.14.0
 
 - Support filenames with spaces (#416, #428)
 - Do not flatten braces which contain commands (#407, #423)
@@ -184,7 +184,18 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 - Fix math escaping (#430)
 - Upgrade dependencies
 
-## Unreleased
+## v1.15.0
 
 - `escape: "new"` / `--escape=new` opts into v2 escape behavior: only package-independent escapes are output and unsupported Unicode characters are left unchanged with warnings (#494).
 - Add `unescape: true` / `--unescape` to convert escapes back to Unicode (#180).
+- Duplicate warnings are now reported in the web UI and written to stderr by the CLI, including when duplicates are not merged (#450).
+- Add an escape for the non-breaking hyphen character (U+2011) (#487).
+- Preserve non-comment text blocks in place when sorting entries.
+- Preserve fields containing macros when removing empty fields (#502).
+- Protect LaTeX escapes containing quotes when they occur inside quoted values (#493).
+- Keep abbreviated month macros unbraced when `curly` is enabled.
+- Correct the CLI examples for selecting duplicate rules (#456).
+- Simplify the Docker Compose setup to serve the prebuilt web UI with nginx.
+- Update the API, pre-commit hook, CLI, and Docker documentation.
+- ESM support - `import { tidy } from "bibtex-tidy"` can be used
+- Upgrade dependencies and build tooling.
