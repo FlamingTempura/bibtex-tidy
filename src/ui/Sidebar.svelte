@@ -75,6 +75,8 @@ const updateOptions = (next: OptionsNormalized): void => {
 		border-left: 1px solid var(--border-color);
 		display: grid;
 		grid-template-rows: auto auto;
+		overflow-y: auto;
+		scrollbar-gutter: stable;
 		form {
 			padding: 20px;
 			overflow: auto;

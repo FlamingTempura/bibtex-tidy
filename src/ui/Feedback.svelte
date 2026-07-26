@@ -27,5 +27,7 @@ let { options, status }: { options: OptionsNormalized; status: Status } =
 		padding: 12px;
 		margin-bottom: 20px;
 		border-radius: 8px;
+		max-height: 50vh;
+		overflow-y: auto;
 	}
 </style>

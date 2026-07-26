@@ -171,8 +171,8 @@ window.addEventListener("popstate", () => {
 		font: var(--sans-normal);
 		line-height: 1.5em;
 		margin: 0;
+		height: 100vh;
 		display: grid;
-		grid-template-rows: 100vh;
 		grid-template-columns: minmax(0, 1fr) 400px;
 	}
 	:global(button) {

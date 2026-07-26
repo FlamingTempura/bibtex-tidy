@@ -69,12 +69,13 @@ onDestroy(() => {
 		.label {
 			opacity: var(--text-opacity);
 			transition: opacity 0.3s ease;
-			transform: translateX(-3px);
+			transform: translateX(-6px);
 		}
 		svg {
 			fill: currentColor;
 			width: 20px;
-			margin: 9px 6px 8px 12px;
+			transform: translateX(2px);
+			margin: 12px;
 		}
 	}
 </style>
