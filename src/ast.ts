@@ -53,8 +53,7 @@ export function closestAncestor<Type extends Node["type"]>(
 }
 
 /**
- * Walks structural AST children, excluding cyclic `parent` properties.
- * Changed branches are shallowly copied.
+ * Walks structural AST children and shallowly copies changed branches.
  */
 export function walkAst(root: RootNode, visitors: AstVisitors): RootNode {
 	const visitNode = (node: Node, path: Node[]): Node[] => {

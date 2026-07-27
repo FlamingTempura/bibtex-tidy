@@ -8,7 +8,7 @@ describe("walkAst", () => {
 		const ast = walkAst(original, {
 			literal: (node, context) => [
 				closestAncestor(context, "field")?.name === "month"
-					? new LiteralNode(node.parent, "feb")
+					? new LiteralNode("feb")
 					: node,
 			],
 		});
@@ -62,10 +62,7 @@ describe("walkAst", () => {
 			parseBibTeX("@article{key, month = jan, note = {remove}}"),
 			{
 				field: (node, ctx) => (node.name === "note" ? [] : ctx.next()),
-				literal: (node) => [
-					new LiteralNode(node.parent, "feb"),
-					new LiteralNode(node.parent, "mar"),
-				],
+				literal: () => [new LiteralNode("feb"), new LiteralNode("mar")],
 			},
 		);
 

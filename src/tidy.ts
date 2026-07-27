@@ -3,7 +3,7 @@ import { logAST } from "./debug.ts";
 import { formatBibtex } from "./format.ts";
 import type { Options } from "./optionUtils.ts";
 import { normalizeOptions } from "./optionUtils.ts";
-import { parseBibTeX } from "./parsers/bibtexParser.ts";
+import { isNodeType, parseBibTeX } from "./parsers/bibtexParser.ts";
 import { generateTransformPipeline } from "./pipeline.ts";
 import type { BibTeXTidyResult, Warning } from "./types.ts";
 import { convertCRLF } from "./utils.ts";
@@ -16,12 +16,18 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	let ast = parseBibTeX(inputFixed);
 	const pipeline = generateTransformPipeline(options);
 
-	const warnings: Warning[] = getEntries(ast)
-		.filter((entry) => !entry.key)
-		.map((entry) => ({
-			code: "MISSING_KEY",
-			message: `${entry.parent.command} entry does not have a citation key.`,
-		}));
+	const warnings: Warning[] = ast.children.flatMap((child) =>
+		isNodeType(child, "block") &&
+		isNodeType(child.block, "entry") &&
+		!child.block.key
+			? [
+					{
+						code: "MISSING_KEY" as const,
+						message: `${child.command} entry does not have a citation key.`,
+					},
+				]
+			: [],
+	);
 
 	if (verbose) {
 		console.log(logAST(ast));

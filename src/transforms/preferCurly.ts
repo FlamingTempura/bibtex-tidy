@@ -23,7 +23,7 @@ export function createPreferCurlyTransform(): Transform {
 			return [child];
 		}
 		return [
-			new BracedNode(child.parent).with({
+			new BracedNode().with({
 				latexAst: isNodeType(child, "quoted")
 					? child.latexAst
 					: createTextAst(child.value),
@@ -38,6 +38,6 @@ export function createPreferCurlyTransform(): Transform {
 
 function createTextAst(text: string): LatexBlockNode {
 	const ast = new LatexBlockNode("root");
-	new LatexTextNode(ast, text);
+	ast.children.push(new LatexTextNode(text));
 	return ast;
 }

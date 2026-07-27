@@ -47,9 +47,7 @@ export function encloseLatexInCurly(latex: BlockNode): BlockNode {
 	}
 
 	const result = new BlockNode("root");
-	const wrapper = new BlockNode("curly", result);
-	wrapper.children = latex.children.map((child) =>
-		child.with({ parent: wrapper }),
-	);
+	const wrapper = new BlockNode("curly", latex.children);
+	result.children.push(wrapper);
 	return result;
 }

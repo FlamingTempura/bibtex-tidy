@@ -6,7 +6,7 @@ import { renderValueNode } from "../valueNodes.ts";
 export function createPreferNumericTransform(): Transform {
 	const visit = (node: ValueNode) => [
 		/^[1-9][0-9]*$/.test(renderValueNode(node))
-			? new LiteralNode(node.parent, renderValueNode(node))
+			? new LiteralNode(renderValueNode(node))
 			: node,
 	];
 	return {

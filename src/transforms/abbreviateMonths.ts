@@ -37,7 +37,7 @@ export function createAbbreviateMonthsTransform(): Transform {
 			return [node];
 		}
 		const abbr = abbreviateMonth(renderValueNode(node), months);
-		return [abbr ? new LiteralNode(node.parent, abbr) : node];
+		return [abbr ? new LiteralNode(abbr) : node];
 	};
 	return {
 		name: "abbreviate-months",

@@ -12,73 +12,58 @@ export class RootNode extends BaseNode {
 
 export class TextNode extends BaseNode {
 	type = "text" as const;
-	parent: RootNode;
 	text: string;
 	whitespacePrefix: string;
-	constructor(parent: RootNode, text: string, whitespacePrefix: string) {
+	constructor(text: string, whitespacePrefix: string) {
 		super();
-		this.parent = parent;
 		this.text = text;
 		this.whitespacePrefix = whitespacePrefix;
-		parent.children.push(this);
 	}
 }
 export class BlockNode extends BaseNode {
 	type = "block" as const;
 	command = "";
 	block?: CommentNode | PreambleNode | StringNode | EntryNode;
-	parent: RootNode;
 	whitespacePrefix: string;
-	constructor(parent: RootNode, whitespacePrefix: string) {
+	constructor(whitespacePrefix: string) {
 		super();
-		this.parent = parent;
 		this.whitespacePrefix = whitespacePrefix;
-		parent.children.push(this);
 	}
 }
 export class CommentNode extends BaseNode {
 	type = "comment" as const;
-	parent: BlockNode;
 	raw: string;
 	braces: number;
 	parens: number;
-	constructor(parent: BlockNode, raw: string, braces: number, parens: number) {
+	constructor(raw: string, braces: number, parens: number) {
 		super();
-		this.parent = parent;
 		this.raw = raw;
 		this.braces = braces;
 		this.parens = parens;
-		parent.block = this;
 	}
 }
 class PreambleNode extends BaseNode {
 	type = "preamble" as const;
-	parent: BlockNode;
 	raw: string;
 	braces: number;
 	parens: number;
-	constructor(parent: BlockNode, raw: string, braces: number, parens: number) {
+	constructor(raw: string, braces: number, parens: number) {
 		super();
-		this.parent = parent;
 		this.raw = raw;
 		this.braces = braces;
 		this.parens = parens;
-		parent.block = this;
 	}
 }
 class StringNode extends BaseNode {
 	type = "string" as const;
-	parent: BlockNode;
 	raw: string;
 	braces: number;
 	parens: number;
-	constructor(parent: BlockNode, raw: string, braces: number, parens: number) {
+	constructor(raw: string, braces: number, parens: number) {
 		super();
-		this.parent = parent;
 		this.raw = raw;
 		this.braces = braces;
 		this.parens = parens;
-		parent.block = this;
 	}
 }
 export class EntryNode extends BaseNode {
@@ -86,13 +71,10 @@ export class EntryNode extends BaseNode {
 	key?: string;
 	keyEnded?: boolean;
 	fields: FieldNode[];
-	parent: BlockNode;
 	wrapType: "{" | "(";
-	constructor(parent: BlockNode, wrapType: "{" | "(") {
+	constructor(wrapType: "{" | "(") {
 		super();
-		this.parent = parent;
 		this.wrapType = wrapType;
-		parent.block = this;
 		this.fields = [];
 	}
 }
@@ -101,15 +83,13 @@ export class FieldNode extends BaseNode {
 	/** Each value is concatenated */
 	value: ConcatNode;
 	hasComma = false; // not filled in during parsing
-	parent: EntryNode;
 	name: string;
 	whitespacePrefix: string;
-	constructor(parent: EntryNode, name = "", whitespacePrefix = "") {
+	constructor(name = "", whitespacePrefix = "") {
 		super();
-		this.parent = parent;
 		this.name = name;
 		this.whitespacePrefix = whitespacePrefix;
-		this.value = new ConcatNode(this);
+		this.value = new ConcatNode();
 	}
 }
 export class ConcatNode extends BaseNode {
@@ -117,28 +97,18 @@ export class ConcatNode extends BaseNode {
 	values: ValueNode[];
 	canConsumeValue = true;
 	whitespacePrefix = ""; // not filled in during parsing
-	parent: FieldNode;
-	constructor(parent: FieldNode) {
+	constructor() {
 		super();
-		this.parent = parent;
 		this.values = [];
 	}
 }
 export class LiteralNode extends BaseNode {
 	type = "literal" as const;
-	parent: ConcatNode;
 	value: string;
-	constructor(parent: ConcatNode, value: string) {
+	constructor(value: string) {
 		super();
-		this.parent = parent;
 		this.value = value;
 	}
-}
-
-function createLiteralNode(parent: ConcatNode, value: string): LiteralNode {
-	const node = new LiteralNode(parent, value);
-	parent.values.push(node);
-	return node;
 }
 
 export class BracedNode extends BaseNode {
@@ -146,18 +116,10 @@ export class BracedNode extends BaseNode {
 	latexAst: LatexBlockNode;
 	/** Used to count opening and closing braces */
 	depth = 0;
-	parent: ConcatNode;
-	constructor(parent: ConcatNode) {
+	constructor() {
 		super();
-		this.parent = parent;
 		this.latexAst = parseLaTeX("");
 	}
-}
-
-function createBracedNode(parent: ConcatNode): BracedNode {
-	const node = new BracedNode(parent);
-	parent.values.push(node);
-	return node;
 }
 
 export class QuotedNode extends BaseNode {
@@ -165,18 +127,10 @@ export class QuotedNode extends BaseNode {
 	latexAst: LatexBlockNode;
 	/** Used to count opening and closing braces */
 	depth = 0;
-	parent: ConcatNode;
-	constructor(parent: ConcatNode) {
+	constructor() {
 		super();
-		this.parent = parent;
 		this.latexAst = parseLaTeX("");
 	}
-}
-
-function createQuotedNode(parent: ConcatNode): QuotedNode {
-	const node = new QuotedNode(parent);
-	parent.values.push(node);
-	return node;
 }
 
 export type ValueNode = LiteralNode | BracedNode | QuotedNode;
@@ -206,6 +160,50 @@ export function isNodeType<T extends NodeType>(
 
 export function parseBibTeX(input: string): RootNode {
 	const rootNode = new RootNode();
+	const parents = new WeakMap<Node, Node>();
+	const parentOf = <T extends Node>(child: T): Node => {
+		const parent = parents.get(child);
+		if (!parent) {
+			throw new Error(`Missing parser parent for ${child.type}`);
+		}
+		return parent;
+	};
+	const appendRootChild = <T extends TextNode | BlockNode>(
+		parent: RootNode,
+		child: T,
+	): T => {
+		parent.children.push(child);
+		parents.set(child, parent);
+		return child;
+	};
+	const setBlockChild = <
+		T extends CommentNode | PreambleNode | StringNode | EntryNode,
+	>(
+		parent: BlockNode,
+		child: T,
+	): T => {
+		parent.block = child;
+		parents.set(child, parent);
+		return child;
+	};
+	const createField = (
+		parent: EntryNode,
+		name = "",
+		whitespacePrefix = "",
+	): FieldNode => {
+		const field = new FieldNode(name, whitespacePrefix);
+		parents.set(field, parent);
+		parents.set(field.value, field);
+		return field;
+	};
+	const appendValue = <T extends ValueNode>(
+		parent: ConcatNode,
+		child: T,
+	): T => {
+		parent.values.push(child);
+		parents.set(child, parent);
+		return child;
+	};
 	let node: Node = rootNode;
 	let line = 1;
 	let column = 0;
@@ -231,11 +229,11 @@ export function parseBibTeX(input: string): RootNode {
 		switch (node.type) {
 			case "root": {
 				if (char === "@") {
-					node = new BlockNode(node, flushWhitespace());
+					node = appendRootChild(node, new BlockNode(flushWhitespace()));
 				} else if (isWhitespace(char)) {
 					whitespace += char;
 				} else {
-					node = new TextNode(node, char, flushWhitespace());
+					node = appendRootChild(node, new TextNode(char, flushWhitespace()));
 				}
 				break;
 			}
@@ -245,7 +243,8 @@ export function parseBibTeX(input: string): RootNode {
 				// not be correct but allows parsing of "valid" bibtex files in the
 				// wild.
 				if (char === "@" && /[\s\r\n}]/.test(prev)) {
-					node = new BlockNode(node.parent, "");
+					const root = parentOf(node) as RootNode;
+					node = appendRootChild(root, new BlockNode(""));
 				} else {
 					node.text += char;
 				}
@@ -255,19 +254,18 @@ export function parseBibTeX(input: string): RootNode {
 			case "block": {
 				if (char === "@") {
 					// everything prior to this was a comment
-					const prevNode =
-						node.parent.children[node.parent.children.length - 2];
+					const root = parentOf(node) as RootNode;
+					const prevNode = root.children[root.children.length - 2];
 					if (isNodeType(prevNode, "text")) {
 						prevNode.text += `@${node.command}`;
 					} else {
 						// insert text node 1 from the end
-						node.parent.children.pop();
-						new TextNode(
-							node.parent,
-							`@${node.command}`,
-							node.whitespacePrefix,
+						root.children.pop();
+						appendRootChild(
+							root,
+							new TextNode(`@${node.command}`, node.whitespacePrefix),
 						);
-						node.parent.children.push(node);
+						root.children.push(node);
 					}
 					node.command = "";
 				} else if (char === "{" || char === "(") {
@@ -275,11 +273,11 @@ export function parseBibTeX(input: string): RootNode {
 					if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
 						// A block without a command is invalid. It's sometimes used in comments though, e.g. @(#)
 						// replace the block node
-						node.parent.children.pop();
-						node = new TextNode(
-							node.parent,
-							`@${node.command}${char}`,
-							node.whitespacePrefix,
+						const root = parentOf(node) as RootNode;
+						root.children.pop();
+						node = appendRootChild(
+							root,
+							new TextNode(`@${node.command}${char}`, node.whitespacePrefix),
 						);
 					} else {
 						node.command = commandTrimmed;
@@ -288,26 +286,32 @@ export function parseBibTeX(input: string): RootNode {
 						const raw = `@${command}${char}`;
 						switch (command) {
 							case "string":
-								node = new StringNode(node, raw, braces, parens);
+								node = setBlockChild(node, new StringNode(raw, braces, parens));
 								break;
 							case "preamble":
-								node = new PreambleNode(node, raw, braces, parens);
+								node = setBlockChild(
+									node,
+									new PreambleNode(raw, braces, parens),
+								);
 								break;
 							case "comment":
-								node = new CommentNode(node, raw, braces, parens);
+								node = setBlockChild(
+									node,
+									new CommentNode(raw, braces, parens),
+								);
 								break;
 							default:
-								node = new EntryNode(node, char);
+								node = setBlockChild(node, new EntryNode(char));
 								break;
 						}
 					}
 				} else if (char.match(/[=#,})[\]]/)) {
 					// replace the block node
-					node.parent.children.pop();
-					node = new TextNode(
-						node.parent,
-						`@${node.command}${char}`,
-						flushWhitespace(),
+					const root = parentOf(node) as RootNode;
+					root.children.pop();
+					node = appendRootChild(
+						root,
+						new TextNode(`@${node.command}${char}`, flushWhitespace()),
 					);
 				} else {
 					node.command += char;
@@ -329,7 +333,7 @@ export function parseBibTeX(input: string): RootNode {
 				}
 				node.raw += char;
 				if (node.braces === 0 && node.parens === 0) {
-					node = node.parent.parent; // root
+					node = parentOf(parentOf(node)); // root
 				}
 				break;
 
@@ -342,15 +346,15 @@ export function parseBibTeX(input: string): RootNode {
 						node.keyEnded = true;
 					}
 				} else if (char === ",") {
-					node = new FieldNode(node);
+					node = createField(node);
 				} else if (
 					(node.wrapType === "{" && char === "}") ||
 					(node.wrapType === "(" && char === ")")
 				) {
-					node = node.parent.parent; // root
+					node = parentOf(parentOf(node)); // root
 				} else if (char === "=" && node.key && isValidFieldName(node.key)) {
 					// Entry has no key, this is a field name
-					const field: FieldNode = new FieldNode(node, node.key);
+					const field = createField(node, node.key);
 					node.fields.push(field);
 					node.key = undefined;
 					node = field.value;
@@ -381,18 +385,18 @@ export function parseBibTeX(input: string): RootNode {
 			case "field": {
 				if (char === "}" || char === ")") {
 					node.name = node.name.trim();
-					node = node.parent.parent.parent; // root
+					node = parentOf(parentOf(parentOf(node))); // root
 				} else if (char === "=") {
 					node.name = node.name.trim();
 					node = node.value;
 				} else if (char === ",") {
 					node.name = node.name.trim();
-					node = new FieldNode(node.parent);
+					node = createField(parentOf(node) as EntryNode);
 				} else if (!isValidFieldName(char)) {
 					throw new BibTeXSyntaxError(input, node, i, line, column);
 				} else if (!node.name) {
 					if (!isWhitespace(char)) {
-						node.parent.fields.push(node);
+						(parentOf(node) as EntryNode).fields.push(node);
 						node.name = char;
 					} else {
 						node.whitespacePrefix += char;
@@ -414,18 +418,18 @@ export function parseBibTeX(input: string): RootNode {
 					node.canConsumeValue = false;
 					if (char === "{") {
 						latexInput = "";
-						node = createBracedNode(node);
+						node = appendValue(node, new BracedNode());
 					} else if (char === '"') {
 						latexInput = "";
-						node = createQuotedNode(node);
+						node = appendValue(node, new QuotedNode());
 					} else {
-						node = createLiteralNode(node, char);
+						node = appendValue(node, new LiteralNode(char));
 					}
 				} else {
 					if (char === ",") {
-						node = new FieldNode(node.parent.parent);
+						node = createField(parentOf(parentOf(node)) as EntryNode);
 					} else if (char === "}" || char === ")") {
-						node = node.parent.parent.parent.parent; // root
+						node = parentOf(parentOf(parentOf(parentOf(node)))); // root
 					} else if (char === "#") {
 						node.canConsumeValue = true;
 					} else {
@@ -438,13 +442,16 @@ export function parseBibTeX(input: string): RootNode {
 			case "literal":
 				if (isWhitespace(char)) {
 					// end of literal
-					node = node.parent;
+					node = parentOf(node);
 				} else if (char === ",") {
-					node = new FieldNode(node.parent.parent.parent);
+					node = createField(parentOf(parentOf(parentOf(node))) as EntryNode);
 				} else if (char === "}") {
-					node = node.parent.parent.parent.parent.parent; // root
+					node = parentOf(parentOf(parentOf(parentOf(parentOf(node))))); // root
 				} else if (char === "#") {
-					node = node.parent;
+					node = parentOf(node);
+					if (!isNodeType(node, "concat")) {
+						throw new Error("Expected concat parser parent");
+					}
 					node.canConsumeValue = true;
 				} else {
 					node.value += char;
@@ -456,7 +463,7 @@ export function parseBibTeX(input: string): RootNode {
 			case "braced":
 				if (char === "}" && node.depth === 0) {
 					node.latexAst = parseLaTeX(latexInput);
-					node = node.parent; // values
+					node = parentOf(node); // values
 					break;
 				}
 				if (char === "{") {
@@ -475,7 +482,7 @@ export function parseBibTeX(input: string): RootNode {
 			case "quoted":
 				if (char === '"' && node.depth === 0) {
 					node.latexAst = parseLaTeX(latexInput);
-					node = node.parent; // values
+					node = parentOf(node); // values
 					break;
 				}
 				if (char === "{") {

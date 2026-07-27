@@ -3,22 +3,11 @@ import { BaseNode } from "./baseNode.ts";
 export class BlockNode extends BaseNode {
 	type = "latexBlock" as const;
 	kind: "root" | "square" | "curly";
-	parent?: BlockNode | CommandNode;
 	children: (TextNode | MathNode | CommandNode | BlockNode)[];
-	constructor(
-		kind: BlockNode["kind"],
-		parent?: BlockNode["parent"],
-		children: BlockNode["children"] = [],
-	) {
+	constructor(kind: BlockNode["kind"], children: BlockNode["children"] = []) {
 		super();
 		this.kind = kind;
-		this.parent = parent;
 		this.children = children;
-		if (parent instanceof BlockNode) {
-			parent.children.push(this);
-		} else if (parent instanceof CommandNode) {
-			parent.args.push(this);
-		}
 	}
 	renderAsText(): string {
 		return this.children.map((child) => child.renderAsText()).join("");
@@ -26,13 +15,10 @@ export class BlockNode extends BaseNode {
 }
 export class TextNode extends BaseNode {
 	type = "latexText" as const;
-	parent: BlockNode;
 	text: string;
-	constructor(parent: BlockNode, text = "") {
+	constructor(text = "") {
 		super();
-		this.parent = parent;
 		this.text = text;
-		parent.children.push(this);
 	}
 	renderAsText(): string {
 		return this.text.replace(/"/g, ""); // HACK: latex parser should parse this properly as a block
@@ -40,13 +26,10 @@ export class TextNode extends BaseNode {
 }
 export class MathNode extends BaseNode {
 	type = "latexMath" as const;
-	parent: BlockNode;
 	text: string;
-	constructor(parent: BlockNode, text = "") {
+	constructor(text = "") {
 		super();
-		this.parent = parent;
 		this.text = text;
-		parent.children.push(this);
 	}
 	renderAsText(): string {
 		return this.text;
@@ -54,15 +37,12 @@ export class MathNode extends BaseNode {
 }
 export class CommandNode extends BaseNode {
 	type = "latexCommand" as const;
-	parent: BlockNode;
 	command: string;
 	args: BlockNode[];
-	constructor(parent: BlockNode, command = "", args: BlockNode[] = []) {
+	constructor(command = "", args: BlockNode[] = []) {
 		super();
-		this.parent = parent;
 		this.command = command;
 		this.args = args;
-		parent.children.push(this);
 	}
 	renderAsText(): string {
 		return this.args.map((arg) => arg.renderAsText()).join("");
@@ -74,6 +54,36 @@ type ParserNode = Exclude<LatexNode, MathNode>;
 
 export function parseLaTeX(input: string): BlockNode {
 	const rootNode = new BlockNode("root");
+	const parents = new WeakMap<ParserNode, BlockNode | CommandNode>();
+	const parentOf = (child: ParserNode): BlockNode | CommandNode => {
+		const parent = parents.get(child);
+		if (!parent) {
+			throw new Error(`Missing parser parent for ${child.type}`);
+		}
+		return parent;
+	};
+	const appendChild = <T extends Exclude<LatexNode, BlockNode>>(
+		parent: BlockNode,
+		child: T,
+	): T => {
+		parent.children.push(child);
+		if (child.type !== "latexMath") {
+			parents.set(child, parent);
+		}
+		return child;
+	};
+	const appendBlock = (
+		parent: BlockNode | CommandNode,
+		child: BlockNode,
+	): BlockNode => {
+		if (parent.type === "latexBlock") {
+			parent.children.push(child);
+		} else {
+			parent.args.push(child);
+		}
+		parents.set(child, parent);
+		return child;
+	};
 	let node: ParserNode = rootNode;
 	for (let i = 0; i < input.length; i++) {
 		const char = input[i];
@@ -82,47 +92,48 @@ export function parseLaTeX(input: string): BlockNode {
 		switch (node.type) {
 			case "latexBlock": {
 				if (char === "\\") {
-					node = new CommandNode(node);
+					node = appendChild(node, new CommandNode());
 				} else if (char === "$") {
 					const math = parseMath(input, i);
 					if (math) {
-						new MathNode(node, math.text);
+						appendChild(node, new MathNode(math.text));
 						i = math.end;
 					} else {
-						node = new TextNode(node, char);
+						node = appendChild(node, new TextNode(char));
 					}
 				} else if (char === "{") {
-					node = new BlockNode("curly", node);
+					node = appendBlock(node, new BlockNode("curly"));
 				} else if (
 					((char === "}" && node.kind === "curly") ||
 						(char === "]" && node.kind === "square")) &&
-					node.parent
+					parents.has(node)
 				) {
-					node = node.parent;
+					node = parentOf(node);
 				} else {
-					node = new TextNode(node, char);
+					node = appendChild(node, new TextNode(char));
 				}
 				break;
 			}
 
 			case "latexText": {
+				const parent = parentOf(node) as BlockNode;
 				if (char === "$") {
 					const math = parseMath(input, i);
 					if (math) {
-						node = node.parent;
-						new MathNode(node, math.text);
+						node = parent;
+						appendChild(node, new MathNode(math.text));
 						i = math.end;
 					} else {
 						node.text += char;
 					}
 				} else if (char === "\\" || char === "{") {
-					node = node.parent;
+					node = parent;
 					i--; // repeat
 				} else if (
-					(char === "}" && node.parent.kind === "curly") ||
-					(char === "]" && node.parent.kind === "square")
+					(char === "}" && parent.kind === "curly") ||
+					(char === "]" && parent.kind === "square")
 				) {
-					node = node.parent;
+					node = parent;
 					i--;
 				} else {
 					node.text += char;
@@ -131,17 +142,18 @@ export function parseLaTeX(input: string): BlockNode {
 			}
 
 			case "latexCommand": {
+				const parent = parentOf(node) as BlockNode;
 				if (char === "{") {
-					node = new BlockNode("curly", node);
+					node = appendBlock(node, new BlockNode("curly"));
 				} else if (char === "[") {
-					node = new BlockNode("square", node);
+					node = appendBlock(node, new BlockNode("square"));
 				} else if (
-					(char === "}" && node.parent.kind === "curly") ||
-					(char === "]" && node.parent.kind === "square") ||
+					(char === "}" && parent.kind === "curly") ||
+					(char === "]" && parent.kind === "square") ||
 					/\s/.test(char) ||
 					node.args.length > 0
 				) {
-					node = node.parent;
+					node = parent;
 					i--;
 				} else {
 					node.command += char;

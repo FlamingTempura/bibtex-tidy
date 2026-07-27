@@ -1,9 +1,5 @@
 import { closestAncestor, walkAst } from "../ast.ts";
-import {
-	type BlockNode as LatexBlockNode,
-	type LatexNode,
-	parseLaTeX,
-} from "../parsers/latexParser.ts";
+import { type LatexNode, parseLaTeX } from "../parsers/latexParser.ts";
 import type { Transform, Warning } from "../types.ts";
 import { specialCharacters } from "../unicode.ts";
 import { coreSpecialCharacters } from "../unicodeCore.ts";
@@ -67,7 +63,7 @@ export function createEscapeCharactersTransform(newMode = false): Transform {
 									return templates.map((tpl) =>
 										tpl.type === "latexText" // TODO: extend isNodeType so it can be used for latex and use it here
 											? tpl.text
-											: cloneLatexNode(tpl, node.parent),
+											: tpl,
 									);
 								}
 
@@ -119,27 +115,4 @@ function parseEscapes(chars: Map<string, string>): Map<number, ParsedEscape> {
 			return [Number.parseInt(code, 16), { default: nodes, quoted }];
 		}),
 	);
-}
-
-// TODO: not needed if parent is removed from nodes
-function cloneLatexBlock(
-	block: LatexBlockNode,
-	parent: LatexBlockNode | Extract<LatexNode, { type: "latexCommand" }>,
-): LatexBlockNode {
-	const clone = block.with({ parent, children: [] });
-	clone.children = block.children.map((child) => cloneLatexNode(child, clone));
-	return clone;
-}
-
-// TODO: not needed if parent is removed from nodes
-function cloneLatexNode(node: LatexNode, parent: LatexBlockNode): LatexNode {
-	if (node.type === "latexBlock") {
-		return cloneLatexBlock(node, parent);
-	}
-	if (node.type === "latexCommand") {
-		const clone = node.with({ parent, args: [] });
-		clone.args = node.args.map((arg) => cloneLatexBlock(arg, clone));
-		return clone;
-	}
-	return node.with({ parent });
 }
