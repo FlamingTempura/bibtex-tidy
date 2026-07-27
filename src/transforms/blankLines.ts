@@ -1,3 +1,4 @@
+import { walkAst } from "../ast.ts";
 import {
 	type BlockNode,
 	isNodeType,
@@ -8,21 +9,21 @@ import type { Transform } from "../types.ts";
 export function createBlankLinesTransform(): Transform {
 	return {
 		name: "blank-lines",
-		apply: (ast) => {
-			ast.replace(
-				(node) => isNodeType(node, "text", "block"),
-				(child) => {
-					const index = child.parent.children.indexOf(child);
-					const prev = child.parent.children[index - 1];
-					return [
-						child.with({
-							whitespacePrefix:
-								prev && !isComment(prev) ? "\n\n" : child.whitespacePrefix,
+		apply: (ast) => ({
+			ast: walkAst(ast, {
+				root: (root) => [
+					root.with({
+						children: root.children.map((child, i) => {
+							const prev = root.children[i - 1];
+							return child.with({
+								whitespacePrefix:
+									prev && !isComment(prev) ? "\n\n" : child.whitespacePrefix,
+							});
 						}),
-					];
-				},
-			);
-		},
+					}),
+				],
+			}),
+		}),
 	};
 }
 

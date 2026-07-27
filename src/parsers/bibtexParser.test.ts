@@ -72,21 +72,21 @@ describe("BibTeX parser", () => {
 		}
 
 		const [title, subtitle, month] = blockNode.block.fields;
-		const titleValue = title?.value.concat[0];
-		const subtitleValue = subtitle?.value.concat[0];
-		const monthValue = month?.value.concat[0];
+		const titleValue = title?.value.values[0];
+		const subtitleValue = subtitle?.value.values[0];
+		const monthValue = month?.value.values[0];
 
 		expect(titleValue?.type).toBe("braced");
 		if (!isNodeType(titleValue, "braced"))
 			throw new Error("Expected braced node");
-		expect(titleValue.latexAst.type).toBe("block");
-		expect(titleValue.latexAst.children[1]?.type).toBe("math");
+		expect(titleValue.latexAst.type).toBe("latexBlock");
+		expect(titleValue.latexAst.children[1]?.type).toBe("latexMath");
 
 		expect(subtitleValue?.type).toBe("quoted");
 		if (!isNodeType(subtitleValue, "quoted"))
 			throw new Error("Expected quoted node");
-		expect(subtitleValue.latexAst.type).toBe("block");
-		expect(subtitleValue.latexAst.children[1]?.type).toBe("command");
+		expect(subtitleValue.latexAst.type).toBe("latexBlock");
+		expect(subtitleValue.latexAst.children[1]?.type).toBe("latexCommand");
 
 		expect(monthValue?.type).toBe("literal");
 	});

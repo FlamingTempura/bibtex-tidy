@@ -1,4 +1,4 @@
-import { ASTProxy } from "./ASTProxy.ts";
+import { getEntries } from "./ast.ts";
 import { logAST } from "./debug.ts";
 import { formatBibtex } from "./format.ts";
 import type { Options } from "./optionUtils.ts";
@@ -13,12 +13,10 @@ const verbose = false;
 export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	const options = normalizeOptions(options_);
 	const inputFixed = convertCRLF(input);
-	const ast = parseBibTeX(inputFixed);
-	const cache = new ASTProxy(ast);
+	let ast = parseBibTeX(inputFixed);
 	const pipeline = generateTransformPipeline(options);
 
-	const warnings: Warning[] = cache
-		.entries()
+	const warnings: Warning[] = getEntries(ast)
 		.filter((entry) => !entry.key)
 		.map((entry) => ({
 			code: "MISSING_KEY",
@@ -30,15 +28,16 @@ export function tidy(input: string, options_: Options = {}): BibTeXTidyResult {
 	}
 
 	for (const transform of pipeline) {
-		const result = transform.apply(cache);
+		const result = transform.apply(ast);
+		ast = result.ast;
 		if (verbose) {
 			console.log(`\n\n## Applying transform: ${transform.name}`);
 			console.log(logAST(ast));
 		}
-		if (result) warnings.push(...result);
+		if (result.warnings) warnings.push(...result.warnings);
 	}
 
 	const bibtex = formatBibtex(ast);
 
-	return { bibtex, warnings, count: cache.entries().length };
+	return { bibtex, warnings, count: getEntries(ast).length };
 }

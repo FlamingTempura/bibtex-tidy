@@ -1,21 +1,18 @@
-import { isNodeType, type ValueNode } from "../parsers/bibtexParser.ts";
+import { type AstContext, closestAncestor, walkAst } from "../ast.ts";
+import type { ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
 /** Replace single dash with double dash in page range **/
 export function createFormatPageRangeTransform(): Transform {
+	const visit = (node: ValueNode, ctx: AstContext) => [
+		closestAncestor(ctx, "field")?.name.toLocaleLowerCase() === "pages"
+			? replaceValueNodeText(node, formatPageRange(renderValueNode(node)))
+			: node,
+	];
 	return {
 		name: "format-page-range",
-		apply(ast) {
-			ast.replace(
-				(node, ctx): node is ValueNode =>
-					isNodeType(node, "braced", "quoted") &&
-					ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "pages",
-				(entry) => [
-					replaceValueNodeText(entry, formatPageRange(renderValueNode(entry))),
-				],
-			);
-		},
+		apply: (ast) => ({ ast: walkAst(ast, { braced: visit, quoted: visit }) }),
 	};
 }
 

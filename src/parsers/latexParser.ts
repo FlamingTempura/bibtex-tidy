@@ -1,7 +1,7 @@
 import { BaseNode } from "./baseNode.ts";
 
 export class BlockNode extends BaseNode {
-	type = "block" as const;
+	type = "latexBlock" as const;
 	kind: "root" | "square" | "curly";
 	parent?: BlockNode | CommandNode;
 	children: (TextNode | MathNode | CommandNode | BlockNode)[];
@@ -25,7 +25,7 @@ export class BlockNode extends BaseNode {
 	}
 }
 export class TextNode extends BaseNode {
-	type = "text" as const;
+	type = "latexText" as const;
 	parent: BlockNode;
 	text: string;
 	constructor(parent: BlockNode, text = "") {
@@ -39,7 +39,7 @@ export class TextNode extends BaseNode {
 	}
 }
 export class MathNode extends BaseNode {
-	type = "math" as const;
+	type = "latexMath" as const;
 	parent: BlockNode;
 	text: string;
 	constructor(parent: BlockNode, text = "") {
@@ -53,7 +53,7 @@ export class MathNode extends BaseNode {
 	}
 }
 export class CommandNode extends BaseNode {
-	type = "command" as const;
+	type = "latexCommand" as const;
 	parent: BlockNode;
 	command: string;
 	args: BlockNode[];
@@ -69,17 +69,18 @@ export class CommandNode extends BaseNode {
 	}
 }
 
-type Node = BlockNode | TextNode | CommandNode;
+export type LatexNode = BlockNode | TextNode | MathNode | CommandNode;
+type ParserNode = Exclude<LatexNode, MathNode>;
 
 export function parseLaTeX(input: string): BlockNode {
 	const rootNode = new BlockNode("root");
-	let node: Node = rootNode;
+	let node: ParserNode = rootNode;
 	for (let i = 0; i < input.length; i++) {
 		const char = input[i];
 		if (!char) break;
 
 		switch (node.type) {
-			case "block": {
+			case "latexBlock": {
 				if (char === "\\") {
 					node = new CommandNode(node);
 				} else if (char === "$") {
@@ -104,7 +105,7 @@ export function parseLaTeX(input: string): BlockNode {
 				break;
 			}
 
-			case "text": {
+			case "latexText": {
 				if (char === "$") {
 					const math = parseMath(input, i);
 					if (math) {
@@ -129,7 +130,7 @@ export function parseLaTeX(input: string): BlockNode {
 				break;
 			}
 
-			case "command": {
+			case "latexCommand": {
 				if (char === "{") {
 					node = new BlockNode("curly", node);
 				} else if (char === "[") {
@@ -177,13 +178,13 @@ function stringifyBlock(block: BlockNode): string {
 	const content = block.children
 		.map((node) => {
 			switch (node.type) {
-				case "block":
+				case "latexBlock":
 					return stringifyBlock(node);
-				case "command":
+				case "latexCommand":
 					return stringifyCommand(node);
-				case "math":
+				case "latexMath":
 					return `$${node.text}$`;
-				case "text":
+				case "latexText":
 					return node.text;
 				default:
 					throw new Error(`Unknown node type: ${JSON.stringify(node)}`);
@@ -214,9 +215,9 @@ export function flattenLaTeX(block: BlockNode): BlockNode {
 	const newBlock = new BlockNode(block.kind);
 	for (const child of block.children) {
 		if (
-			child.type === "block" &&
+			child.type === "latexBlock" &&
 			child.kind === "curly" &&
-			child.children.every((child) => child.type !== "command")
+			child.children.every((child) => child.type !== "latexCommand")
 		) {
 			const newChild = flattenLaTeX(child);
 			newBlock.children.push(...newChild.children);

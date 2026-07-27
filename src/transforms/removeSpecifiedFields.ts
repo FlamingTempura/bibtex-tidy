@@ -1,18 +1,17 @@
-import { type FieldNode, isNodeType } from "../parsers/bibtexParser.ts";
+import { walkAst } from "../ast.ts";
 import type { Transform } from "../types.ts";
 
 export function createRemoveSpecifiedFieldsTransform(
 	omit: string[],
 ): Transform {
+	const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
 	return {
 		name: "remove-specified-fields",
-		apply(ast) {
-			const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
-			ast.replace(
-				(node): node is FieldNode =>
-					isNodeType(node, "field") && set.has(node.name.toLocaleLowerCase()),
-				() => [],
-			);
-		},
+		apply: (ast) => ({
+			ast: walkAst(ast, {
+				field: (field) =>
+					set.has(field.name.toLocaleLowerCase()) ? [] : [field],
+			}),
+		}),
 	};
 }

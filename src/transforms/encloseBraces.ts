@@ -1,4 +1,4 @@
-import { type BracedNode, isNodeType } from "../parsers/bibtexParser.ts";
+import { closestAncestor, walkAst } from "../ast.ts";
 import type { Transform } from "../types.ts";
 import { encloseLatexInCurly } from "../valueNodes.ts";
 
@@ -9,15 +9,15 @@ export function createEncloseBracesTransform(fields: string[]): Transform {
 	return {
 		name: "enclose-braces",
 		dependencies: ["prefer-curly"],
-		apply: (ast) => {
-			ast.replace(
-				(node, ctx): node is BracedNode => {
-					if (!isNodeType(node, "braced")) return false;
-					const field = ctx.closestAncestor("field");
-					return field !== undefined && set.has(field.name.toLocaleLowerCase());
+		apply: (ast) => ({
+			ast: walkAst(ast, {
+				braced: (node, ctx) => {
+					const field = closestAncestor(ctx, "field");
+					return field && set.has(field.name.toLocaleLowerCase())
+						? [node.with({ latexAst: encloseLatexInCurly(node.latexAst) })]
+						: [node];
 				},
-				(node) => [node.with({ latexAst: encloseLatexInCurly(node.latexAst) })],
-			);
-		},
+			}),
+		}),
 	};
 }

@@ -1,4 +1,4 @@
-import { ASTProxy } from "./ASTProxy.ts";
+import { getEntries } from "./ast.ts";
 import { checkForDuplicates } from "./duplicates.ts";
 import { parseBibTeX } from "./parsers/bibtexParser.ts";
 
@@ -10,7 +10,7 @@ describe("checkForDuplicates", () => {
 				"@article{b, author={Smith, JA},title={Something blah blah}}",
 			].join(""),
 		);
-		const result = checkForDuplicates(new ASTProxy(ast), ["citation"]);
+		const result = checkForDuplicates(getEntries(ast), ["citation"]);
 		expect(result.warnings.length).toBe(1);
 	});
 });

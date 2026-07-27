@@ -1,23 +1,21 @@
+import { type AstContext, closestAncestor, walkAst } from "../ast.ts";
 import { renderFieldValue } from "../fieldValues.ts";
-import { isNodeType, type ValueNode } from "../parsers/bibtexParser.ts";
+import type { ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
 export function createDropAllCapsTransform(): Transform {
+	const visit = (node: ValueNode, ctx: AstContext) => {
+		const field = closestAncestor(ctx, "field");
+		return [
+			field && !renderFieldValue(field).match(/[a-z]/)
+				? replaceValueNodeText(node, titleCase(renderValueNode(node)))
+				: node,
+		];
+	};
 	return {
 		name: "drop-all-caps",
-		apply: (ast) => {
-			ast.replace(
-				(node, ctx): node is ValueNode => {
-					if (!isNodeType(node, "braced", "quoted")) return false;
-					const field = ctx.closestAncestor("field");
-					return field !== undefined && !renderFieldValue(field).match(/[a-z]/);
-				},
-				(node) => [
-					replaceValueNodeText(node, titleCase(renderValueNode(node))),
-				],
-			);
-		},
+		apply: (ast) => ({ ast: walkAst(ast, { braced: visit, quoted: visit }) }),
 	};
 }
 

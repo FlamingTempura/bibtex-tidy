@@ -1,8 +1,12 @@
-import { isNodeType, type ValueNode } from "../parsers/bibtexParser.ts";
+import { closestAncestor, walkAst } from "../ast.ts";
+import {
+	type BlockNode as LatexBlockNode,
+	type LatexNode,
+	parseLaTeX,
+} from "../parsers/latexParser.ts";
 import type { Transform, Warning } from "../types.ts";
 import { specialCharacters } from "../unicode.ts";
 import { coreSpecialCharacters } from "../unicodeCore.ts";
-import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
 /**
  * The following fields are listed in the BibLaTeX documentation as verbatim (may contain
@@ -19,95 +23,123 @@ const VERBATIM_FIELDS = new Set([
 	"pdf",
 ]);
 
-// escape special characters like %. Do not do this on the url field, which is a
-// special bibtex field where special characters are output verbatim.
+// Unicode's Basic Latin (ASCII) block ends at U+007F.
+// Source: https://www.unicode.org/charts/PDF/U0000.pdf
+const MAX_ASCII_CODE_POINT = 0x7f;
+
+type ParsedEscape = {
+	default: LatexNode[];
+	quoted: LatexNode[];
+};
+
+type LatexFragment = string | LatexNode;
+
 export function createEscapeCharactersTransform(newMode = false): Transform {
-	const chars = newMode ? coreSpecialCharacters : specialCharacters;
+	const escapes = parseEscapes(
+		newMode ? coreSpecialCharacters : specialCharacters,
+	);
 
 	return {
 		name: "escape-characters",
 		apply: (ast) => {
-			const warnings = new Map<string, Warning>();
+			const warnings: Warning[] = [];
 
-			ast.replace(
-				(node, ctx): node is ValueNode => {
-					if (!isNodeType(node, "braced", "quoted")) return false;
-					const field = ctx.closestAncestor("field");
-					return field !== undefined && !VERBATIM_FIELDS.has(field.name);
+			const result = walkAst(ast, {
+				// Preserve existing commands and prune their arguments.
+				latexCommand: (node) => [node],
+
+				latexText: (node, ctx) => {
+					const field = closestAncestor(ctx, "field");
+					if (!field || VERBATIM_FIELDS.has(field.name)) return [node];
+
+					const isQuoted = closestAncestor(ctx, "quoted") !== undefined;
+
+					return (
+						[...node.text]
+							// Escape each character
+							.flatMap((char) => {
+								const code = char.codePointAt(0);
+								if (code === undefined) throw new Error(`No codepoint ${char}`);
+
+								const esc = escapes.get(code);
+								if (esc) {
+									const templates = isQuoted ? esc.quoted : esc.default;
+									return templates.map((tpl) =>
+										tpl.type === "latexText" // TODO: extend isNodeType so it can be used for latex and use it here
+											? tpl.text
+											: cloneLatexNode(tpl, node.parent),
+									);
+								}
+
+								if (code > MAX_ASCII_CODE_POINT) {
+									const codepoint = code.toString(16).padStart(4, "0");
+									warnings.push({
+										code: "UNSUPPORTED_ESCAPE",
+										character: char,
+										codepoint,
+										message:
+											`Cannot escape character ${char} (U+${codepoint.toUpperCase()}) ` +
+											`in ${field.name} without LaTeX packages or special fonts.`,
+									});
+								}
+
+								return char;
+							})
+							// Merge consecutive strings into a single string
+							.reduce<LatexFragment[]>((merged, frag) => {
+								const prev = merged.at(-1);
+								if (typeof prev === "string" && typeof frag === "string") {
+									merged[merged.length - 1] = prev + frag;
+								} else {
+									merged.push(frag);
+								}
+								return merged;
+							}, [])
+							// Convert strings to TextNodes
+							.map((frag) =>
+								typeof frag === "string" ? node.with({ text: frag }) : frag,
+							)
+					);
 				},
-				(node, ctx) => {
-					const field = ctx.closestAncestor("field");
-					if (!field) return [node];
+			});
 
-					const val = renderValueNode(node);
-					const result = escapeChars(val, chars, isNodeType(node, "quoted"));
-
-					for (const unsupported of result.unsupported) {
-						warnings.set(`${field.name}:${unsupported.codepoint}`, {
-							code: "UNSUPPORTED_ESCAPE",
-							character: unsupported.character,
-							codepoint: unsupported.codepoint,
-							message: `Cannot escape character ${unsupported.character} (U+${unsupported.codepoint.toUpperCase()}) in ${field.name} without LaTeX packages or special fonts.`,
-						});
-					}
-					return [replaceValueNodeText(node, result.value)];
-				},
-			);
-
-			return [...warnings.values()];
+			return { ast: result, warnings };
 		},
 	};
 }
 
-function escapeChars(
-	value: string,
-	characters: Map<string, string>,
-	protectQuotes = false,
-): {
-	value: string;
-	unsupported: { character: string; codepoint: string }[];
-} {
-	let result = value;
-	const mathExpressions: string[] = [];
-	const unsupported: { character: string; codepoint: string }[] = [];
+function parseEscapes(chars: Map<string, string>): Map<number, ParsedEscape> {
+	return new Map(
+		[...chars].map(([code, escaped]) => {
+			const nodes = parseLaTeX(escaped).children;
+			const quoted = escaped.includes('"')
+				? parseLaTeX(`{${escaped}}`).children
+				: nodes;
 
-	result = result.replace(/\$[^$]+\$/g, (match) => {
-		mathExpressions.push(match);
-		return `MATH.EXP.${mathExpressions.length - 1}`;
-	});
+			return [Number.parseInt(code, 16), { default: nodes, quoted }];
+		}),
+	);
+}
 
-	let newstr = "";
-	let escapeMode = false;
+// TODO: not needed if parent is removed from nodes
+function cloneLatexBlock(
+	block: LatexBlockNode,
+	parent: LatexBlockNode | Extract<LatexNode, { type: "latexCommand" }>,
+): LatexBlockNode {
+	const clone = block.with({ parent, children: [] });
+	clone.children = block.children.map((child) => cloneLatexNode(child, clone));
+	return clone;
+}
 
-	for (const char of result) {
-		if (escapeMode) {
-			escapeMode = false;
-			newstr += char;
-			continue;
-		}
-		if (char === "\\") {
-			escapeMode = true;
-			newstr += char;
-			continue;
-		}
-		// iterate through each character and if it's a special char replace with latex code
-		const codepointValue = char.codePointAt(0) ?? 0;
-		const codepoint = codepointValue.toString(16).padStart(4, "0");
-		const escaped = characters.get(codepoint);
-		newstr +=
-			protectQuotes && escaped?.includes('"')
-				? `{${escaped}}`
-				: (escaped ?? char);
-		if (!escaped && codepointValue > 0x7f) {
-			unsupported.push({ character: char, codepoint });
-		}
+// TODO: not needed if parent is removed from nodes
+function cloneLatexNode(node: LatexNode, parent: LatexBlockNode): LatexNode {
+	if (node.type === "latexBlock") {
+		return cloneLatexBlock(node, parent);
 	}
-
-	return {
-		value: newstr.replace(
-			/MATH\.EXP\.(\d+)/g,
-			(_, i) => mathExpressions[Number(i)] ?? "",
-		),
-		unsupported,
-	};
+	if (node.type === "latexCommand") {
+		const clone = node.with({ parent, args: [] });
+		clone.args = node.args.map((arg) => cloneLatexBlock(arg, clone));
+		return clone;
+	}
+	return node.with({ parent });
 }

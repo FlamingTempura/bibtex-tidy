@@ -114,14 +114,14 @@ export class FieldNode extends BaseNode {
 }
 export class ConcatNode extends BaseNode {
 	type = "concat" as const;
-	concat: ValueNode[];
+	values: ValueNode[];
 	canConsumeValue = true;
 	whitespacePrefix = ""; // not filled in during parsing
 	parent: FieldNode;
 	constructor(parent: FieldNode) {
 		super();
 		this.parent = parent;
-		this.concat = [];
+		this.values = [];
 	}
 }
 export class LiteralNode extends BaseNode {
@@ -137,7 +137,7 @@ export class LiteralNode extends BaseNode {
 
 function createLiteralNode(parent: ConcatNode, value: string): LiteralNode {
 	const node = new LiteralNode(parent, value);
-	parent.concat.push(node);
+	parent.values.push(node);
 	return node;
 }
 
@@ -156,7 +156,7 @@ export class BracedNode extends BaseNode {
 
 function createBracedNode(parent: ConcatNode): BracedNode {
 	const node = new BracedNode(parent);
-	parent.concat.push(node);
+	parent.values.push(node);
 	return node;
 }
 
@@ -175,7 +175,7 @@ export class QuotedNode extends BaseNode {
 
 function createQuotedNode(parent: ConcatNode): QuotedNode {
 	const node = new QuotedNode(parent);
-	parent.concat.push(node);
+	parent.values.push(node);
 	return node;
 }
 
@@ -198,7 +198,7 @@ export type Node =
 export type NodeType = Node["type"];
 
 export function isNodeType<T extends NodeType>(
-	node: Node | null | undefined,
+	node: { type: string } | null | undefined,
 	...types: T[]
 ): node is Extract<Node, { type: T }> {
 	return node !== null && node !== undefined && types.includes(node.type as T);

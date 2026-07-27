@@ -1,10 +1,13 @@
-import type { ASTProxy } from "./ASTProxy.ts";
 import type { DuplicateRule } from "./optionUtils.ts";
+import type { RootNode } from "./parsers/bibtexParser.ts";
 
 export type Transform = {
 	name: string;
 	dependencies?: string[];
-	apply: (ast: ASTProxy) => Warning[] | undefined;
+	apply: (ast: RootNode) => {
+		ast: RootNode;
+		warnings?: Warning[];
+	};
 };
 
 export type Warning = (

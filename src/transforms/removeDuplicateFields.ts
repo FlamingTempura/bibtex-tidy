@@ -1,25 +1,25 @@
-import { type EntryNode, isNodeType } from "../parsers/bibtexParser.ts";
+import { closestAncestor, walkAst } from "../ast.ts";
+import type { EntryNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createRemoveDuplicateFieldsTransform(): Transform {
+	const seenByEntry = new WeakMap<EntryNode, Set<string>>();
 	return {
 		name: "remove-duplicate-fields",
-		apply: (ast) => {
-			const seenFieldsByEntry = new WeakMap<EntryNode, Set<string>>();
-			ast.replace(
-				(node) => isNodeType(node, "field"),
-				(field) => {
-					const seenFields = seenFieldsByEntry.getOrInsert(
-						field.parent,
-						new Set(),
-					);
-					const fieldName = field.name.toLocaleLowerCase();
-					if (seenFields.has(fieldName)) return [];
+		apply: (ast) => ({
+			ast: walkAst(ast, {
+				field: (field, ctx) => {
+					const entry = closestAncestor(ctx, "entry");
+					if (!entry) return [field];
 
-					seenFields.add(fieldName);
+					const seen = seenByEntry.getOrInsert(entry, new Set());
+					const name = field.name.toLocaleLowerCase();
+					if (seen.has(name)) return [];
+
+					seen.add(name);
 					return [field];
 				},
-			);
-		},
+			}),
+		}),
 	};
 }

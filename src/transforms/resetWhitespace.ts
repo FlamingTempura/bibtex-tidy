@@ -1,3 +1,4 @@
+import { walkAst } from "../ast.ts";
 import {
 	type BlockNode,
 	isNodeType,
@@ -10,43 +11,56 @@ export function createResetWhitespaceTransform(
 ): Transform {
 	return {
 		name: "reset-whitespace",
-		apply: (ast) => {
-			let prev: TextNode | BlockNode | undefined;
-			ast.replace(
-				(node) => isNodeType(node, "text", "block"),
-				(child) => {
-					const preserve = isComment(child) && keepCommentWhitespace;
-					const preservePrev = prev && isComment(prev) && keepCommentWhitespace;
+		apply: (ast) => ({
+			ast: walkAst(ast, {
+				root: (root) => {
+					const children: (TextNode | BlockNode)[] = [];
+					for (const original of root.children) {
+						let child = original;
+						let prev = children.at(-1);
+						const preserve = isComment(child) && keepCommentWhitespace;
+						const preservePrev =
+							prev && isComment(prev) && keepCommentWhitespace;
 
-					if (
-						keepCommentWhitespace &&
-						isNodeType(child, "block") &&
-						isNodeType(prev, "text") &&
-						!prev.text.endsWith("\n")
-					) {
-						prev.text = `${prev.text.trimEnd()}\n`;
-					}
+						if (
+							keepCommentWhitespace &&
+							isNodeType(child, "block") &&
+							isNodeType(prev, "text") &&
+							!prev.text.endsWith("\n")
+						) {
+							prev = prev.with({ text: `${prev.text.trimEnd()}\n` });
+							children[children.length - 1] = prev;
+						}
 
-					if (!preserve) {
-						child.whitespacePrefix = prev && !preservePrev ? "\n" : "";
-						if (isNodeType(child, "text")) {
-							child.text = child.text.trim();
-						} else if (child.block) {
-							if (isNodeType(child.block, "entry")) {
-								for (const field of child.block.fields) {
-									field.whitespacePrefix = "";
+						if (!preserve) {
+							child = child.with({
+								whitespacePrefix: prev && !preservePrev ? "\n" : "",
+							});
+							if (isNodeType(child, "text")) {
+								child = child.with({ text: child.text.trim() });
+							} else if (child.block) {
+								if (isNodeType(child.block, "entry")) {
+									child = child.with({
+										block: child.block.with({
+											fields: child.block.fields.map((field) =>
+												field.with({ whitespacePrefix: "" }),
+											),
+										}),
+									});
+								} else if (isNodeType(child.block, "comment")) {
+									child = child.with({
+										block: child.block.with({ raw: child.block.raw.trim() }),
+									});
 								}
-							} else if (isNodeType(child.block, "comment")) {
-								child.block.raw = child.block.raw.trim();
 							}
 						}
-					}
 
-					prev = child;
-					return [child];
+						children.push(child);
+					}
+					return [root.with({ children })];
 				},
-			);
-		},
+			}),
+		}),
 	};
 }
 

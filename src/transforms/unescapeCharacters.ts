@@ -1,4 +1,4 @@
-import { isNodeType } from "../parsers/bibtexParser.ts";
+import { walkAst } from "../ast.ts";
 import type { Transform } from "../types.ts";
 import { coreSpecialCharactersReversible } from "../unicodeCore.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
@@ -31,21 +31,14 @@ function unescapeCharacters(value: string, quoted = false): string {
 }
 
 export function createUnescapeCharactersTransform(): Transform {
+	const visit = (node: Parameters<typeof replaceValueNodeText>[0]) => [
+		replaceValueNodeText(
+			node,
+			unescapeCharacters(renderValueNode(node), node.type === "quoted"),
+		),
+	];
 	return {
 		name: "unescape-characters",
-		apply: (ast) => {
-			ast.replace(
-				(node) => isNodeType(node, "braced", "quoted"),
-				(node) => [
-					replaceValueNodeText(
-						node,
-						unescapeCharacters(
-							renderValueNode(node),
-							isNodeType(node, "quoted"),
-						),
-					),
-				],
-			);
-		},
+		apply: (ast) => ({ ast: walkAst(ast, { braced: visit, quoted: visit }) }),
 	};
 }

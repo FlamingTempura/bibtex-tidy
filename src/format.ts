@@ -53,7 +53,7 @@ function formatEntry(
 }
 
 export function formatValue(field: FieldNode): string | undefined {
-	return field.value.concat
+	return field.value.values
 		.map((node) => {
 			switch (node.type) {
 				case "literal":

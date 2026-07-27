@@ -55,3 +55,15 @@ warnings:
   - code: UNSUPPORTED_ESCAPE
     character: ↳
     codepoint: "21b3"
+---
+title: leave existing LaTeX commands and math expressions unchanged
+options:
+  escape: new
+input: |
+  @misc{latex,
+    title = {Outside é, inside \textit{é}, math $é$}
+  }
+expected: |
+  @misc{latex,
+    title         = {Outside \'{e}, inside \textit{é}, math $é$}
+  }

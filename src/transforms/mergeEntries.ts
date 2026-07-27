@@ -1,6 +1,7 @@
+import { getEntries, walkAst } from "../ast.ts";
 import { checkForDuplicates } from "../duplicates.ts";
 import type { MergeStrategy, OptionsNormalized } from "../optionUtils.ts";
-import { type BlockNode, isNodeType } from "../parsers/bibtexParser.ts";
+import { isNodeType } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createMergeEntriesTransform(
@@ -13,17 +14,24 @@ export function createMergeEntriesTransform(
 		dependencies: ["generate-keys", "sort-entries"],
 
 		apply: (ast) => {
-			const duplicates = checkForDuplicates(ast, duplicatesOpt, merge);
-
-			ast.replace(
-				(node): node is BlockNode =>
-					isNodeType(node, "block") &&
-					isNodeType(node.block, "entry") &&
-					duplicates.entries.has(node.block),
-				() => [],
+			// TODO: Make checkForDuplicates pure, then separate the merge logic
+			// into its own pure operation. Then _ can be removed.
+			const cloned = walkAst(ast, {
+				_: (node, ctx) => [(ctx.next()[0] ?? node).with({})],
+			});
+			const duplicates = checkForDuplicates(
+				getEntries(cloned),
+				duplicatesOpt,
+				merge,
 			);
+			const result = walkAst(cloned, {
+				block: (node) =>
+					isNodeType(node.block, "entry") && duplicates.entries.has(node.block)
+						? []
+						: [node],
+			});
 
-			return duplicates.warnings;
+			return { ast: result, warnings: duplicates.warnings };
 		},
 	};
 }

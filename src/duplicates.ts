@@ -1,4 +1,4 @@
-import { type ASTProxy, getField } from "./ASTProxy.ts";
+import { getField } from "./ast.ts";
 import { renderFieldValue } from "./fieldValues.ts";
 import type { DuplicateRule, MergeStrategy } from "./optionUtils.ts";
 import type { EntryNode } from "./parsers/bibtexParser.ts";
@@ -7,7 +7,7 @@ import type { Warning } from "./types.ts";
 import { alphaNum } from "./utils.ts";
 
 export function checkForDuplicates(
-	ast: ASTProxy,
+	entries: EntryNode[],
 	duplicateRules?: DuplicateRule[],
 	merge?: MergeStrategy,
 ): { entries: Set<EntryNode>; warnings: Warning[] } {
@@ -34,7 +34,7 @@ export function checkForDuplicates(
 	const citations = new Map<string, EntryNode>();
 	const abstracts = new Map<string, EntryNode>();
 
-	for (const entry of ast.entries()) {
+	for (const entry of entries) {
 		for (const [rule, doMerge] of rules) {
 			let duplicateOf: EntryNode | undefined;
 			let warning: string | undefined;

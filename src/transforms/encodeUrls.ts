@@ -1,20 +1,17 @@
-import { isNodeType, type ValueNode } from "../parsers/bibtexParser.ts";
+import { type AstContext, closestAncestor, walkAst } from "../ast.ts";
+import type { ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 
 export function createEncodeUrlsTransform(): Transform {
+	const visit = (node: ValueNode, ctx: AstContext) => [
+		closestAncestor(ctx, "field")?.name.toLocaleLowerCase() === "url"
+			? replaceValueNodeText(node, encodeUrl(renderValueNode(node)))
+			: node,
+	];
 	return {
 		name: "encode-urls",
-		apply: (ast) => {
-			ast.replace(
-				(node, ctx): node is ValueNode =>
-					isNodeType(node, "braced", "quoted") &&
-					ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "url",
-				(entry) => [
-					replaceValueNodeText(entry, encodeUrl(renderValueNode(entry))),
-				],
-			);
-		},
+		apply: (ast) => ({ ast: walkAst(ast, { braced: visit, quoted: visit }) }),
 	};
 }
 

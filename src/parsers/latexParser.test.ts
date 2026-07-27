@@ -59,21 +59,21 @@ describe("latex parser", () => {
 	it("parses math nodes", () => {
 		const ast = parseLaTeX("runtime $O(n \\log n)$ end");
 
-		expect(ast.children[0]?.type).toBe("text");
-		expect(ast.children[1]?.type).toBe("math");
-		if (ast.children[1]?.type !== "math") {
+		expect(ast.children[0]?.type).toBe("latexText");
+		expect(ast.children[1]?.type).toBe("latexMath");
+		if (ast.children[1]?.type !== "latexMath") {
 			throw new Error("Expected math node");
 		}
 		expect(ast.children[1].text).toBe("O(n \\log n)");
-		expect(ast.children[2]?.type).toBe("text");
+		expect(ast.children[2]?.type).toBe("latexText");
 	});
 
 	it("does not close math on escaped dollars", () => {
 		const ast = parseLaTeX("$a\\$b$");
 
 		expect(ast.children).toHaveLength(1);
-		expect(ast.children[0]?.type).toBe("math");
-		if (ast.children[0]?.type !== "math") {
+		expect(ast.children[0]?.type).toBe("latexMath");
+		if (ast.children[0]?.type !== "latexMath") {
 			throw new Error("Expected math node");
 		}
 		expect(ast.children[0].text).toBe("a\\$b");
@@ -83,7 +83,7 @@ describe("latex parser", () => {
 		const ast = parseLaTeX("Chars $, text");
 
 		expect(ast.children).toHaveLength(1);
-		expect(ast.children[0]?.type).toBe("text");
+		expect(ast.children[0]?.type).toBe("latexText");
 		expect(stringifyLaTeX(ast)).toBe("Chars $, text");
 	});
 

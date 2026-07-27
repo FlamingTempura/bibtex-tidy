@@ -24,10 +24,10 @@ export function replaceValueNodeText<T extends ValueNode>(
 export function doubleEncloseLatex(latex: BlockNode): string {
 	const alreadyDoubleEnclosed =
 		latex.children.length === 1 &&
-		latex.children[0]?.type === "block" &&
+		latex.children[0]?.type === "latexBlock" &&
 		latex.children[0]?.kind === "curly" &&
 		latex.children[0].children.length === 1 &&
-		latex.children[0].children[0]?.type === "block" &&
+		latex.children[0].children[0]?.type === "latexBlock" &&
 		latex.children[0].children[0]?.kind === "curly";
 
 	const result = stringifyLaTeX(latex);
@@ -37,10 +37,10 @@ export function doubleEncloseLatex(latex: BlockNode): string {
 export function encloseLatexInCurly(latex: BlockNode): BlockNode {
 	if (
 		latex.children.length === 1 &&
-		latex.children[0]?.type === "block" &&
+		latex.children[0]?.type === "latexBlock" &&
 		latex.children[0]?.kind === "curly" &&
 		latex.children[0].children.length === 1 &&
-		latex.children[0].children[0]?.type === "block" &&
+		latex.children[0].children[0]?.type === "latexBlock" &&
 		latex.children[0].children[0]?.kind === "curly"
 	) {
 		return latex;
@@ -48,9 +48,8 @@ export function encloseLatexInCurly(latex: BlockNode): BlockNode {
 
 	const result = new BlockNode("root");
 	const wrapper = new BlockNode("curly", result);
-	wrapper.children = latex.children;
-	for (const child of wrapper.children) {
-		child.parent = wrapper;
-	}
+	wrapper.children = latex.children.map((child) =>
+		child.with({ parent: wrapper }),
+	);
 	return result;
 }

@@ -16,7 +16,7 @@ export function logAST(node: Node, depth = 0) {
 			}
 			break;
 		case "concat":
-			for (const value of node.concat) {
+			for (const value of node.values) {
 				log += logAST(value, depth + 1);
 			}
 			break;

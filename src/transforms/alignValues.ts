@@ -1,20 +1,21 @@
-import { isNodeType } from "../parsers/bibtexParser.ts";
+import { closestAncestor, walkAst } from "../ast.ts";
 import type { Transform } from "../types.ts";
 
 export function createAlignValuesTransform(column: number): Transform {
+	const generatePrefix = (fieldName: string) =>
+		" ".repeat(Math.max(column - fieldName.length, 1));
 	return {
 		name: "align-values",
-		apply: (ast) => {
-			ast.replace(
-				(node) => isNodeType(node, "concat"),
-				(concat) => [
+		apply: (ast) => ({
+			ast: walkAst(ast, {
+				concat: (concat, ctx) => [
 					concat.with({
-						whitespacePrefix: " ".repeat(
-							Math.max(column - concat.parent.name.length, 1),
+						whitespacePrefix: generatePrefix(
+							closestAncestor(ctx, "field")?.name ?? "",
 						),
 					}),
 				],
-			);
-		},
+			}),
+		}),
 	};
 }

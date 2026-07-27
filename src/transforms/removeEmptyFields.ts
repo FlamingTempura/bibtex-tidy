@@ -1,19 +1,17 @@
-import { type FieldNode, isNodeType } from "../parsers/bibtexParser.ts";
+import { walkAst } from "../ast.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode } from "../valueNodes.ts";
 
 export function createRemoveEmptyFieldsTransform(): Transform {
 	return {
 		name: "remove-empty-fields",
-		apply: (ast) => {
-			ast.replace(
-				(node): node is FieldNode =>
-					isNodeType(node, "field") &&
-					!node.value.concat.some(
-						(node) => renderValueNode(node).trim() !== "",
-					),
-				() => [],
-			);
-		},
+		apply: (ast) => ({
+			ast: walkAst(ast, {
+				field: (field) =>
+					field.value.values.some((node) => renderValueNode(node).trim() !== "")
+						? [field]
+						: [],
+			}),
+		}),
 	};
 }

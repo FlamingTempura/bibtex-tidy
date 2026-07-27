@@ -1,4 +1,4 @@
-import { getField } from "../ASTProxy.ts";
+import { getField, walkAst } from "../ast.ts";
 import { renderFieldValue } from "../fieldValues.ts";
 import {
 	type BlockNode,
@@ -27,15 +27,15 @@ export function createSortEntriesTransform(sort: string[]): Transform {
 	return {
 		name: "sort-entries",
 		dependencies: ["generate-keys", "merge-entries", "prefer-numeric"],
-		apply: (ast) => {
-			sortEntries(ast.root(), sort);
-		},
+		apply: (ast) => ({
+			ast: walkAst(ast, { root: (root) => [sortEntries(root, sort)] }),
+		}),
 	};
 }
 
 type SortIndex = Map<string, string | number>;
 
-function sortEntries(root: RootNode, sort: string[]): void {
+function sortEntries(root: RootNode, sort: string[]): RootNode {
 	// Map of items to sort values e.g. { year: 2009, author: 'West', ... }
 	const sortIndexes = new Map<TextNode | BlockNode, SortIndex>();
 	const fixedText = new Set<TextNode>();
@@ -121,12 +121,13 @@ function sortEntries(root: RootNode, sort: string[]): void {
 		});
 	}
 	const sorted = [...sortableChildren];
-	root.children = root.children.map((item) => {
+	const children = root.children.map((item) => {
 		if (fixedText.has(item as TextNode)) return item;
 		const next = sorted.shift();
 		if (!next) throw new Error("FATAL!");
 		return next;
 	});
+	return root.with({ children });
 }
 
 function isBibTeXComment(node: TextNode): boolean {

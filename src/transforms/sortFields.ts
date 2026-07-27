@@ -1,23 +1,15 @@
-import {
-	type BlockNode,
-	type EntryNode,
-	isNodeType,
-} from "../parsers/bibtexParser.ts";
-
+import { walkAst } from "../ast.ts";
+import type { EntryNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 
 export function createSortFieldsTransform(sortFields: string[]): Transform {
 	return {
 		name: "sort-fields",
-		apply: (ast) => {
-			ast.replace(
-				(node): node is BlockNode & { block: { type: "entry" } } =>
-					isNodeType(node, "block") && isNodeType(node.block, "entry"),
-				(node) => [
-					node.with({ block: sortEntryFields(node.block, sortFields) }),
-				],
-			);
-		},
+		apply: (ast) => ({
+			ast: walkAst(ast, {
+				entry: (entry) => [sortEntryFields(entry, sortFields)],
+			}),
+		}),
 	};
 }
 
