@@ -7,14 +7,14 @@ export function createFormatPageRangeTransform(): Transform {
 	return {
 		name: "format-page-range",
 		apply(ast) {
-			ast.walk({
-				where: (node, ctx): node is ValueNode =>
+			ast.replace(
+				(node, ctx): node is ValueNode =>
 					isNodeType(node, "braced", "quoted") &&
 					ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "pages",
-				enter: (entry) => [
+				(entry) => [
 					replaceValueNodeText(entry, formatPageRange(renderValueNode(entry))),
 				],
-			});
+			);
 		},
 	};
 }

@@ -4,17 +4,17 @@ import type { Transform } from "../types.ts";
 export function createFieldCommasTransform(trailing: boolean): Transform {
 	return {
 		name: "field-commas",
-		apply: (astProxy) => {
-			astProxy.walk({
-				where: (node) => isNodeType(node, "field"),
-				enter: (field) => [
+		apply: (ast) => {
+			ast.replace(
+				(node) => isNodeType(node, "field"),
+				(field) => [
 					field.with({
 						hasComma:
 							field.parent.fields.indexOf(field) <
 								field.parent.fields.length - 1 || trailing,
 					}),
 				],
-			});
+			);
 		},
 	};
 }

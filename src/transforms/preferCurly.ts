@@ -1,7 +1,9 @@
+import { renderFieldValue } from "../fieldValues.ts";
 import {
 	BracedNode,
 	isNodeType,
-	type ValueNode,
+	type LiteralNode,
+	type QuotedNode,
 } from "../parsers/bibtexParser.ts";
 import {
 	BlockNode as LatexBlockNode,
@@ -14,28 +16,23 @@ export function createPreferCurlyTransform(): Transform {
 	return {
 		name: "prefer-curly",
 		apply: (ast) => {
-			ast.walk({
-				where: (node, ctx): node is ValueNode => {
+			ast.replace(
+				(node, ctx): node is QuotedNode | LiteralNode => {
 					if (!isNodeType(node, "literal", "quoted")) return false;
 					const field = ctx.closestAncestor("field");
 					return !(
 						field?.name.toLowerCase() === "month" &&
-						monthAliases[ast.renderFieldValue(field)]
+						monthAliases[renderFieldValue(field)]
 					);
 				},
-				enter: (child) => {
-					if (isNodeType(child, "braced")) return [child];
-
-					return [
-						new BracedNode(child.parent).with({
-							latexAst: isNodeType(child, "quoted")
-								? child.latexAst
-								: createTextAst(child.value),
-						}),
-					];
-				},
-			});
-			return undefined;
+				(child) => [
+					new BracedNode(child.parent).with({
+						latexAst: isNodeType(child, "quoted")
+							? child.latexAst
+							: createTextAst(child.value),
+					}) as unknown as QuotedNode | LiteralNode, // hack
+				],
+			);
 		},
 	};
 }

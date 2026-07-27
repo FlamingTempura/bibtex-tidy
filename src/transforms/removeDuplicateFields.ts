@@ -4,11 +4,11 @@ import type { Transform } from "../types.ts";
 export function createRemoveDuplicateFieldsTransform(): Transform {
 	return {
 		name: "remove-duplicate-fields",
-		apply: (astProxy) => {
+		apply: (ast) => {
 			const seenFieldsByEntry = new WeakMap<EntryNode, Set<string>>();
-			astProxy.walk({
-				where: (node) => isNodeType(node, "field"),
-				enter: (field) => {
+			ast.replace(
+				(node) => isNodeType(node, "field"),
+				(field) => {
 					const seenFields = seenFieldsByEntry.getOrInsert(
 						field.parent,
 						new Set(),
@@ -19,8 +19,7 @@ export function createRemoveDuplicateFieldsTransform(): Transform {
 					seenFields.add(fieldName);
 					return [field];
 				},
-			});
-			return undefined;
+			);
 		},
 	};
 }

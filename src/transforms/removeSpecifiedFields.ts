@@ -8,12 +8,11 @@ export function createRemoveSpecifiedFieldsTransform(
 		name: "remove-specified-fields",
 		apply(ast) {
 			const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
-			ast.walk({
-				where: (node): node is FieldNode =>
+			ast.replace(
+				(node): node is FieldNode =>
 					isNodeType(node, "field") && set.has(node.name.toLocaleLowerCase()),
-				enter: () => [],
-			});
-			return undefined;
+				() => [],
+			);
 		},
 	};
 }

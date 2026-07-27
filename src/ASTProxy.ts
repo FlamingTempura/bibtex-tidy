@@ -1,4 +1,3 @@
-import { formatValue } from "./format.ts";
 import type {
 	BlockNode,
 	ConcatNode,
@@ -10,7 +9,6 @@ import type {
 	ValueNode,
 } from "./parsers/bibtexParser.ts";
 import { isNodeType } from "./parsers/bibtexParser.ts";
-import { parseLaTeX } from "./parsers/latexParser.ts";
 
 export function getField(
 	entry: EntryNode,
@@ -29,10 +27,15 @@ export type ReplaceableNode =
 	| ConcatNode
 	| ValueNode;
 
-export type WalkRule<N extends ReplaceableNode> = {
-	where?: (node: Node, ctx: WalkContext) => node is N;
-	enter: (node: N, ctx: WalkContext) => N[];
-};
+export type ReplaceWhere<N extends ReplaceableNode> = (
+	node: Node,
+	ctx: WalkContext,
+) => node is N;
+
+export type ReplaceEnter<N extends ReplaceableNode> = (
+	node: N,
+	ctx: WalkContext,
+) => N[];
 
 export class ASTProxy {
 	#ast: RootNode;
@@ -51,9 +54,10 @@ export class ASTProxy {
 			.filter((entry) => isNodeType(entry, "entry"));
 	}
 
-	public walk<N extends ReplaceableNode>(rule: WalkRule<N>): void {
-		let mutated = false;
-
+	public replace<N extends ReplaceableNode>(
+		where: ReplaceWhere<N>,
+		enter: ReplaceEnter<N>,
+	): void {
 		const replaceNodes = <T extends ReplaceableNode>(
 			nodes: T[],
 			index: number,
@@ -72,17 +76,16 @@ export class ASTProxy {
 			for (const replacement of replacements) {
 				setParent(replacement, parent);
 			}
-			mutated = true;
 			return index;
 		};
 
-		const enter = <T extends ReplaceableNode>(
+		const getReplacements = <T extends ReplaceableNode>(
 			node: T,
 			ancestors: Node[],
 		): T[] | undefined => {
 			const ctx = new WalkContext(ancestors);
-			return !rule.where || rule.where(node, ctx)
-				? (rule.enter(node as unknown as N, ctx) as unknown as T[])
+			return where(node, ctx)
+				? (enter(node as unknown as N, ctx) as unknown as T[])
 				: undefined;
 		};
 
@@ -95,7 +98,7 @@ export class ASTProxy {
 			const node = nodes[index];
 			if (!node) return index + 1;
 
-			const replacements = enter(node, ancestors);
+			const replacements = getReplacements(node, ancestors);
 			if (replacements) {
 				const replacementIndex = replaceNodes(
 					nodes,
@@ -118,7 +121,7 @@ export class ASTProxy {
 			ancestors: Node[],
 			parent: FieldNode,
 		): void => {
-			const replacements = enter(node, ancestors);
+			const replacements = getReplacements(node, ancestors);
 			if (!replacements) {
 				visitChildren(node, [...ancestors, node]);
 				return;
@@ -131,7 +134,6 @@ export class ASTProxy {
 			if (!replacement) return;
 			parent.value = replacement;
 			setParent(replacement, parent);
-			mutated = true;
 			visitChildren(replacement, [...ancestors, replacement]);
 		};
 
@@ -166,22 +168,6 @@ export class ASTProxy {
 		};
 
 		visitChildren(this.#ast, [this.#ast]);
-		if (mutated) {
-			this.renderValueLookup.clear();
-		}
-	}
-
-	private renderValueLookup = new Map<FieldNode, string>();
-
-	/** Render a field's value as text. Results are memoized by FieldNode until the AST is mutated. */
-	public renderFieldValue(field: FieldNode): string {
-		let value = this.renderValueLookup.get(field);
-		if (value === undefined) {
-			const entryValue = formatValue(field) ?? "";
-			value = parseLaTeX(entryValue).renderAsText();
-			this.renderValueLookup.set(field, value);
-		}
-		return value;
 	}
 }
 

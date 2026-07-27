@@ -9,15 +9,14 @@ import type { Transform } from "../types.ts";
 export function createSortFieldsTransform(sortFields: string[]): Transform {
 	return {
 		name: "sort-fields",
-		apply: (astProxy) => {
-			astProxy.walk({
-				where: (node): node is BlockNode & { block: { type: "entry" } } =>
+		apply: (ast) => {
+			ast.replace(
+				(node): node is BlockNode & { block: { type: "entry" } } =>
 					isNodeType(node, "block") && isNodeType(node.block, "entry"),
-				enter: (node) => [
+				(node) => [
 					node.with({ block: sortEntryFields(node.block, sortFields) }),
 				],
-			});
-			return undefined;
+			);
 		},
 	};
 }

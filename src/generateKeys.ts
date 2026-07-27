@@ -1,4 +1,4 @@
-import type { ASTProxy } from "./ASTProxy.ts";
+import { renderFieldValue } from "./fieldValues.ts";
 import type { EntryNode } from "./parsers/bibtexParser.ts";
 import {
 	type EntryKeyTemplateToken,
@@ -130,7 +130,6 @@ class MissingRequiredData extends Error {}
  */
 export function generateKeys(
 	entries: EntryNode[],
-	cache: ASTProxy,
 	entryKeyTemplate: string,
 ): Map<EntryNode, string> {
 	let template = entryKeyTemplate;
@@ -147,7 +146,7 @@ export function generateKeys(
 
 	for (const entry of entries) {
 		const entryValues = new Map(
-			entry.fields.map((field) => [field.name, cache.renderFieldValue(field)]),
+			entry.fields.map((field) => [field.name, renderFieldValue(field)]),
 		);
 		valuesByEntry.set(entry, entryValues);
 		const key = generateKey(entryValues, parsedTemplate);

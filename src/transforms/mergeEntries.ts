@@ -12,16 +12,16 @@ export function createMergeEntriesTransform(
 		name: "merge-entries",
 		dependencies: ["generate-keys", "sort-entries"],
 
-		apply: (astProxy) => {
-			const duplicates = checkForDuplicates(astProxy, duplicatesOpt, merge);
+		apply: (ast) => {
+			const duplicates = checkForDuplicates(ast, duplicatesOpt, merge);
 
-			astProxy.walk({
-				where: (node): node is BlockNode =>
+			ast.replace(
+				(node): node is BlockNode =>
 					isNodeType(node, "block") &&
 					isNodeType(node.block, "entry") &&
 					duplicates.entries.has(node.block),
-				enter: () => [],
-			});
+				() => [],
+			);
 
 			return duplicates.warnings;
 		},

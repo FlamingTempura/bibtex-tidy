@@ -10,10 +10,10 @@ export function createWrapValuesTransform(
 ): Transform {
 	return {
 		name: "wrap-values",
-		apply: (astProxy) => {
-			astProxy.walk({
-				where: (node) => isNodeType(node, "braced"),
-				enter: (node) => {
+		apply: (ast) => {
+			ast.replace(
+				(node) => isNodeType(node, "braced"),
+				(node) => {
 					let value = unwrapText(renderValueNode(node));
 
 					// Braced values should be trimmed, unless part of a concatenation
@@ -47,9 +47,7 @@ export function createWrapValuesTransform(
 
 					return [replaceValueNodeText(node, value)];
 				},
-			});
-
-			return undefined;
+			);
 		},
 	};
 }

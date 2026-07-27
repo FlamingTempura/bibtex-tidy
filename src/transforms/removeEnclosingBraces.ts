@@ -7,16 +7,15 @@ export function createRemoveEnclosingBracesTransform(): Transform {
 	return {
 		name: "remove-enclosing-braces",
 		apply: (ast) => {
-			ast.walk({
-				where: (node) => isNodeType(node, "braced"),
-				enter: (node) => [
+			ast.replace(
+				(node) => isNodeType(node, "braced"),
+				(node) => [
 					replaceValueNodeText(
 						node,
 						renderValueNode(node).replace(/^\{([^{}]*)\}$/g, "$1"),
 					),
 				],
-			});
-			return undefined;
+			);
 		},
 	};
 }

@@ -8,10 +8,10 @@ import type { Transform } from "../types.ts";
 export function createBlankLinesTransform(): Transform {
 	return {
 		name: "blank-lines",
-		apply: (astProxy) => {
-			astProxy.walk({
-				where: (node) => isNodeType(node, "text", "block"),
-				enter: (child) => {
+		apply: (ast) => {
+			ast.replace(
+				(node) => isNodeType(node, "text", "block"),
+				(child) => {
 					const index = child.parent.children.indexOf(child);
 					const prev = child.parent.children[index - 1];
 					return [
@@ -21,7 +21,7 @@ export function createBlankLinesTransform(): Transform {
 						}),
 					];
 				},
-			});
+			);
 		},
 	};
 }

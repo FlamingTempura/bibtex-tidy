@@ -5,12 +5,10 @@ export function createLowercaseFieldsTransform(): Transform {
 	return {
 		name: "lowercase-fields",
 		apply: (ast) => {
-			ast.walk({
-				where: (node) => isNodeType(node, "field"),
-				enter: (field) => [
-					field.with({ name: field.name.toLocaleLowerCase() }),
-				],
-			});
+			ast.replace(
+				(node) => isNodeType(node, "field"),
+				(field) => [field.with({ name: field.name.toLocaleLowerCase() })],
+			);
 		},
 	};
 }

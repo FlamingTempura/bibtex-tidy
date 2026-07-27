@@ -5,12 +5,12 @@ import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 export function createLimitAuthorsTransform(maxAuthors: number): Transform {
 	return {
 		name: "limit-authors",
-		apply: (astProxy) => {
-			astProxy.walk({
-				where: (node, ctx): node is ValueNode =>
+		apply: (ast) => {
+			ast.replace(
+				(node, ctx): node is ValueNode =>
 					isNodeType(node, "braced", "quoted") &&
 					ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "author",
-				enter: (node) => {
+				(node) => {
 					// TODO: use author parser?
 					const authors = renderValueNode(node).split(" and ");
 					if (authors.length > maxAuthors) {
@@ -23,8 +23,7 @@ export function createLimitAuthorsTransform(maxAuthors: number): Transform {
 					}
 					return [node];
 				},
-			});
-			return undefined;
+			);
 		},
 	};
 }

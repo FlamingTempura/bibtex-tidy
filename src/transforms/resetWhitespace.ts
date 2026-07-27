@@ -10,11 +10,11 @@ export function createResetWhitespaceTransform(
 ): Transform {
 	return {
 		name: "reset-whitespace",
-		apply: (astProxy) => {
+		apply: (ast) => {
 			let prev: TextNode | BlockNode | undefined;
-			astProxy.walk({
-				where: (node) => isNodeType(node, "text", "block"),
-				enter: (child) => {
+			ast.replace(
+				(node) => isNodeType(node, "text", "block"),
+				(child) => {
 					const preserve = isComment(child) && keepCommentWhitespace;
 					const preservePrev = prev && isComment(prev) && keepCommentWhitespace;
 
@@ -45,8 +45,7 @@ export function createResetWhitespaceTransform(
 					prev = child;
 					return [child];
 				},
-			});
-			return undefined;
+			);
 		},
 	};
 }

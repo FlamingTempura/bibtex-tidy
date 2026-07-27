@@ -5,18 +5,18 @@ import type { Transform } from "../types.ts";
 export function createGenerateKeysTransform(template: string): Transform {
 	return {
 		name: "generate-keys",
-		apply: (astProxy) => {
-			const newKeys = generateKeys(astProxy.entries(), astProxy, template);
-			astProxy.walk({
-				where: (node): node is BlockNode & { block: { type: "entry" } } =>
+		apply: (ast) => {
+			const newKeys = generateKeys(ast.entries(), template);
+			ast.replace(
+				(node): node is BlockNode & { block: { type: "entry" } } =>
 					isNodeType(node, "block") && isNodeType(node.block, "entry"),
-				enter: (node) => {
+				(node) => {
 					const newKey = newKeys.get(node.block);
 					return newKey
 						? [node.with({ block: node.block.with({ key: newKey }) })]
 						: [node];
 				},
-			});
+			);
 		},
 	};
 }

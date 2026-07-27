@@ -33,10 +33,10 @@ function unescapeCharacters(value: string, quoted = false): string {
 export function createUnescapeCharactersTransform(): Transform {
 	return {
 		name: "unescape-characters",
-		apply: (astProxy) => {
-			astProxy.walk({
-				where: (node) => isNodeType(node, "braced", "quoted"),
-				enter: (node) => [
+		apply: (ast) => {
+			ast.replace(
+				(node) => isNodeType(node, "braced", "quoted"),
+				(node) => [
 					replaceValueNodeText(
 						node,
 						unescapeCharacters(
@@ -45,8 +45,7 @@ export function createUnescapeCharactersTransform(): Transform {
 						),
 					),
 				],
-			});
-			return undefined;
+			);
 		},
 	};
 }

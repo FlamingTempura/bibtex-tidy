@@ -37,16 +37,16 @@ export function createAbbreviateMonthsTransform(): Transform {
 	);
 	return {
 		name: "abbreviate-months",
-		apply: (astProxy) => {
-			astProxy.walk({
-				where: (node, ctx): node is ValueNode =>
+		apply: (ast) => {
+			ast.replace(
+				(node, ctx): node is ValueNode =>
 					isNodeType(node, "literal", "braced", "quoted") &&
 					ctx.closestAncestor("field")?.name.toLowerCase() === "month",
-				enter: (node) => {
+				(node) => {
 					const abbr = abbreviateMonth(renderValueNode(node), months);
 					return abbr ? [new LiteralNode(node.parent, abbr)] : [node];
 				},
-			});
+			);
 		},
 	};
 }

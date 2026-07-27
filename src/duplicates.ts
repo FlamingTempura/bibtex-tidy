@@ -1,4 +1,5 @@
 import { type ASTProxy, getField } from "./ASTProxy.ts";
+import { renderFieldValue } from "./fieldValues.ts";
 import type { DuplicateRule, MergeStrategy } from "./optionUtils.ts";
 import type { EntryNode } from "./parsers/bibtexParser.ts";
 import { parseNameList } from "./parsers/nameFieldParser.ts";
@@ -6,7 +7,7 @@ import type { Warning } from "./types.ts";
 import { alphaNum } from "./utils.ts";
 
 export function checkForDuplicates(
-	cache: ASTProxy,
+	ast: ASTProxy,
 	duplicateRules?: DuplicateRule[],
 	merge?: MergeStrategy,
 ): { entries: Set<EntryNode>; warnings: Warning[] } {
@@ -33,7 +34,7 @@ export function checkForDuplicates(
 	const citations = new Map<string, EntryNode>();
 	const abstracts = new Map<string, EntryNode>();
 
-	for (const entry of cache.entries()) {
+	for (const entry of ast.entries()) {
 		for (const [rule, doMerge] of rules) {
 			let duplicateOf: EntryNode | undefined;
 			let warning: string | undefined;
@@ -55,7 +56,7 @@ export function checkForDuplicates(
 
 				case "doi": {
 					const field = getField(entry, "doi");
-					const doi = alphaNum(field ? cache.renderFieldValue(field) : "");
+					const doi = alphaNum(field ? renderFieldValue(field) : "");
 					if (!doi) continue;
 					duplicateOf = dois.get(doi);
 					if (!duplicateOf) {
@@ -70,10 +71,10 @@ export function checkForDuplicates(
 					const title = getField(entry, "title");
 					const author = getField(entry, "author");
 					const number = getField(entry, "number");
-					const ttl = title ? cache.renderFieldValue(title) : "";
-					const aut = author ? cache.renderFieldValue(author) : "";
+					const ttl = title ? renderFieldValue(title) : "";
+					const aut = author ? renderFieldValue(author) : "";
 					// Author/title can be identical for numbered reports https://github.com/FlamingTempura/bibtex-tidy/issues/364
-					const num = number ? cache.renderFieldValue(number) : "";
+					const num = number ? renderFieldValue(number) : "";
 					if (!ttl || !aut) continue;
 					const cit: string = [
 						alphaNum(parseNameList(aut)[0]?.last ?? aut),
@@ -91,7 +92,7 @@ export function checkForDuplicates(
 
 				case "abstract": {
 					const field = getField(entry, "abstract");
-					const abstract = alphaNum(field ? cache.renderFieldValue(field) : "");
+					const abstract = alphaNum(field ? renderFieldValue(field) : "");
 					const abs = abstract.slice(0, 100);
 					if (!abs) continue;
 					duplicateOf = abstracts.get(abs);

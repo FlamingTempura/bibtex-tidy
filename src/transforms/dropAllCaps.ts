@@ -1,3 +1,4 @@
+import { renderFieldValue } from "../fieldValues.ts";
 import { isNodeType, type ValueNode } from "../parsers/bibtexParser.ts";
 import type { Transform } from "../types.ts";
 import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
@@ -5,20 +6,17 @@ import { renderValueNode, replaceValueNodeText } from "../valueNodes.ts";
 export function createDropAllCapsTransform(): Transform {
 	return {
 		name: "drop-all-caps",
-		apply: (astProxy) => {
-			astProxy.walk({
-				where: (node, ctx): node is ValueNode => {
+		apply: (ast) => {
+			ast.replace(
+				(node, ctx): node is ValueNode => {
 					if (!isNodeType(node, "braced", "quoted")) return false;
 					const field = ctx.closestAncestor("field");
-					return (
-						field !== undefined &&
-						!astProxy.renderFieldValue(field).match(/[a-z]/)
-					);
+					return field !== undefined && !renderFieldValue(field).match(/[a-z]/);
 				},
-				enter: (node) => [
+				(node) => [
 					replaceValueNodeText(node, titleCase(renderValueNode(node))),
 				],
-			});
+			);
 		},
 	};
 }

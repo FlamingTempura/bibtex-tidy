@@ -1,4 +1,5 @@
-import { type ASTProxy, getField } from "../ASTProxy.ts";
+import { getField } from "../ASTProxy.ts";
+import { renderFieldValue } from "../fieldValues.ts";
 import {
 	type BlockNode,
 	isNodeType,
@@ -26,16 +27,15 @@ export function createSortEntriesTransform(sort: string[]): Transform {
 	return {
 		name: "sort-entries",
 		dependencies: ["generate-keys", "merge-entries", "prefer-numeric"],
-		apply: (astProxy) => {
-			sortEntries(astProxy.root(), astProxy, sort);
-			return undefined;
+		apply: (ast) => {
+			sortEntries(ast.root(), sort);
 		},
 	};
 }
 
 type SortIndex = Map<string, string | number>;
 
-function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
+function sortEntries(root: RootNode, sort: string[]): void {
 	// Map of items to sort values e.g. { year: 2009, author: 'West', ... }
 	const sortIndexes = new Map<TextNode | BlockNode, SortIndex>();
 	const fixedText = new Set<TextNode>();
@@ -44,7 +44,7 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 	const precedingMeta: (TextNode | BlockNode)[] = [];
 
 	// first, create sort indexes
-	for (const item of ast.children) {
+	for (const item of root.children) {
 		if (
 			(isNodeType(item, "text") && isBibTeXComment(item)) ||
 			(isNodeType(item, "block") &&
@@ -77,7 +77,7 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 				case "month": {
 					if (!isNodeType(item.block, "entry")) continue;
 					const field = getField(item.block, key);
-					const v = field ? cache.renderFieldValue(field) : "";
+					const v = field ? renderFieldValue(field) : "";
 					const i = v ? (MONTH_MACROS as readonly string[]).indexOf(v) : -1;
 					val = i > -1 ? i : "";
 					break;
@@ -90,7 +90,7 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 				default: {
 					if (!isNodeType(item.block, "entry")) continue;
 					const field = getField(item.block, key);
-					val = field ? cache.renderFieldValue(field) : "";
+					val = field ? renderFieldValue(field) : "";
 				}
 			}
 			sortIndex.set(key, typeof val === "string" ? val.toLowerCase() : val);
@@ -105,7 +105,7 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 	}
 
 	// Now iterate through sort keys and sort entries
-	const sortableChildren = ast.children.filter(
+	const sortableChildren = root.children.filter(
 		(item) => !fixedText.has(item as TextNode),
 	);
 	for (const prefixedKey of [...sort].reverse()) {
@@ -121,7 +121,7 @@ function sortEntries(ast: RootNode, cache: ASTProxy, sort: string[]): void {
 		});
 	}
 	const sorted = [...sortableChildren];
-	ast.children = ast.children.map((item) => {
+	root.children = root.children.map((item) => {
 		if (fixedText.has(item as TextNode)) return item;
 		const next = sorted.shift();
 		if (!next) throw new Error("FATAL!");

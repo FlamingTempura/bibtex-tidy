@@ -29,13 +29,13 @@ export function createEscapeCharactersTransform(newMode = false): Transform {
 		apply: (ast) => {
 			const warnings = new Map<string, Warning>();
 
-			ast.walk({
-				where: (node, ctx): node is ValueNode => {
+			ast.replace(
+				(node, ctx): node is ValueNode => {
 					if (!isNodeType(node, "braced", "quoted")) return false;
 					const field = ctx.closestAncestor("field");
 					return field !== undefined && !VERBATIM_FIELDS.has(field.name);
 				},
-				enter: (node, ctx) => {
+				(node, ctx) => {
 					const field = ctx.closestAncestor("field");
 					if (!field) return [node];
 
@@ -52,7 +52,7 @@ export function createEscapeCharactersTransform(newMode = false): Transform {
 					}
 					return [replaceValueNodeText(node, result.value)];
 				},
-			});
+			);
 
 			return [...warnings.values()];
 		},

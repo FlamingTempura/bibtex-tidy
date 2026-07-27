@@ -11,13 +11,12 @@ export function createPreferNumericTransform(): Transform {
 		name: "prefer-numeric",
 		dependencies: ["prefer-curly"],
 		apply: (ast) => {
-			ast.walk({
-				where: (node): node is ValueNode =>
+			ast.replace(
+				(node): node is ValueNode =>
 					isNodeType(node, "braced", "quoted") &&
 					/^[1-9][0-9]*$/.test(renderValueNode(node)),
-				enter: (node) => [new LiteralNode(node.parent, renderValueNode(node))],
-			});
-			return undefined;
+				(node) => [new LiteralNode(node.parent, renderValueNode(node))],
+			);
 		},
 	};
 }
