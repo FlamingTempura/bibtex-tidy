@@ -199,3 +199,7 @@ Providing multiple input files will only work in `--modify`/`-m` mode.
 - Update the API, pre-commit hook, CLI, and Docker documentation.
 - ESM support - `import { tidy } from "bibtex-tidy"` can be used
 - Upgrade dependencies and build tooling.
+
+## v1.15.1
+
+- Support node versions earlier than 26
