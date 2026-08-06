@@ -33,7 +33,7 @@
 		"cover": "vitest run --coverage src",
 		"preversion": "git pull --rebase",
 		"version": "./scripts/prepare-release.sh",
-		"postversion": "git push --follow-tags && npm publish",
+		"postversion": "git push --follow-tags",
 		"codemirror-grammar": "lezer-generator src/ui/codemirrorExtensions/bibtex.grammar -o src/ui/codemirrorExtensions/__generated__/bibtex.ts",
 		"check": "npx @biomejs/biome check"
 	},
