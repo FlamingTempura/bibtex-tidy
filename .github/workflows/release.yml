@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - "*.*.*"
+      - "[0-9]*.[0-9]*.[0-9]*"
 
 jobs:
   release:
@@ -44,7 +44,6 @@ jobs:
           release_branch=""
           for candidate in master main; do
             if git ls-remote --exit-code --heads origin "$candidate" >/dev/null 2>&1; then
-              git fetch origin "refs/heads/$candidate:refs/remotes/origin/$candidate"
               release_branch="$candidate"
               break
             fi
@@ -54,6 +53,8 @@ jobs:
             echo "Could not find a main or master branch on origin."
             exit 1
           fi
+
+          git fetch origin "refs/heads/$release_branch:refs/remotes/origin/$release_branch"
 
           if ! git merge-base --is-ancestor "$GITHUB_SHA" "origin/$release_branch"; then
             echo "Release tag must point to a commit reachable from origin/$release_branch."
