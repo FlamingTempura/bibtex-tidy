@@ -66,6 +66,12 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Build
+        run: npm run build
+
+      - name: Verify generated files are committed
+        run: git diff --exit-code
+
       - name: Typescript check
         run: npm run typecheck
 
@@ -75,14 +81,13 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Build
-        run: npm run build
-
-      - name: Verify generated files are committed
-        run: git diff --exit-code
-
       - name: Publish package to npm
-        run: npm publish --provenance
+        run: |
+          if npm view "bibtex-tidy@$RELEASE_TAG" version >/dev/null 2>&1; then
+            echo "npm package bibtex-tidy@$RELEASE_TAG is already published."
+          else
+            npm publish --provenance
+          fi
 
       - name: Create GitHub release
         env:
