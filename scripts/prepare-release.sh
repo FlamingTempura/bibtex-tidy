@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# To trigger a release, use npm version patch
+# To trigger a release, use npm version patch and push the tag
 
 # Generate the change log from the git log
 echo "" >> CHANGELOG.md
