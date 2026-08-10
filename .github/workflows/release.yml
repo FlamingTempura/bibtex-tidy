@@ -19,7 +19,6 @@ jobs:
 
     environment:
       name: npm-publish
-      deployment: false
 
     permissions:
       contents: write # Needed to create the GitHub release
@@ -39,7 +38,7 @@ jobs:
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version-file: .nvmrc
-          package-manager-cache: false
+          cache: ''
           registry-url: 'https://registry.npmjs.org'
 
       - name: Validate release tag
