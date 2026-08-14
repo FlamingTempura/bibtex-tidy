@@ -2,6 +2,7 @@ import type { OptionsNormalized } from "./optionUtils.ts";
 import { createAbbreviateMonthsTransform } from "./transforms/abbreviateMonths.ts";
 import { createAlignValuesTransform } from "./transforms/alignValues.ts";
 import { createBlankLinesTransform } from "./transforms/blankLines.ts";
+import { createCleanDoiTransform } from "./transforms/cleanDoi.ts";
 import { createDropAllCapsTransform } from "./transforms/dropAllCaps.ts";
 import { createEncloseBracesTransform } from "./transforms/encloseBraces.ts";
 import { createEncodeUrlsTransform } from "./transforms/encodeUrls.ts";
@@ -129,6 +130,7 @@ export function generateTransformPipeline(
 		pipeline.push(createBlankLinesTransform());
 	}
 	pipeline.push(createAlignValuesTransform(options.align));
+	pipeline.push(createCleanDoiTransform());
 	pipeline.push(createFieldCommasTransform(options.trailingCommas ?? false));
 	pipeline.push(createWrapValuesTransform(indent, options.align, options.wrap));
 	return sortPipeline(pipeline);
