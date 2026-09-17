@@ -4740,7 +4740,7 @@ function checkForDuplicates(ast, duplicateRules, merge) {
         }
         case "doi": {
           const field = getField(entry, "doi");
-          const doi = alphaNum(field ? renderFieldValue(field) : "");
+          const doi = normalizeDoi(field);
           if (!doi) continue;
           duplicateOf = dois.get(doi);
           if (!duplicateOf) {
@@ -4801,6 +4801,29 @@ function checkForDuplicates(ast, duplicateRules, merge) {
   return { entries: duplicateEntries, warnings };
 }
 __name(checkForDuplicates, "checkForDuplicates");
+function normalizeDoi(entryField) {
+  if (!entryField) return "";
+  return entryField.value.concat.map(renderDoiValueNode).join("").replace(/[^0-9A-Za-z_]/g, "").toLocaleLowerCase();
+}
+__name(normalizeDoi, "normalizeDoi");
+function renderDoiValueNode(node) {
+  if (isNodeType(node, "literal")) return node.value;
+  return renderDoiLatex(node.latexAst);
+}
+__name(renderDoiValueNode, "renderDoiValueNode");
+function renderDoiLatex(block) {
+  return block.children.map((child) => {
+    switch (child.type) {
+      case "block":
+        return renderDoiLatex(child);
+      case "command":
+        return `${child.command.startsWith("_") ? `_${child.command.slice(1)}` : ""}${child.args.map(renderDoiLatex).join("")}`;
+      default:
+        return child.renderAsText();
+    }
+  }).join("");
+}
+__name(renderDoiLatex, "renderDoiLatex");
 function mergeEntries(merge, duplicateOf, entry) {
   if (!merge) return;
   switch (merge) {

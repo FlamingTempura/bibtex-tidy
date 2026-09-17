@@ -13,4 +13,37 @@ describe("checkForDuplicates", () => {
 		const result = checkForDuplicates(new ASTProxy(ast), ["citation"]);
 		expect(result.warnings.length).toBe(1);
 	});
+
+	it("should not flag distinct DOIs when they differ after an escaped underscore", () => {
+		const ast = parseBibTeX(
+			[
+				'@inproceedings{10.1007/978-3-031-38100-3_13, doi="10.1007/978-3-031-38100-3\\_13"}',
+				'@inproceedings{10.1007/978-3-031-38100-3_2, doi="10.1007/978-3-031-38100-3\\_2"}',
+			].join(""),
+		);
+		const result = checkForDuplicates(new ASTProxy(ast), ["doi"]);
+		expect(result.warnings).toHaveLength(0);
+	});
+
+	it("should still flag DOIs that only differ in punctuation and case", () => {
+		const ast = parseBibTeX(
+			[
+				'@article{a, doi="10.1000/ABC-123"}',
+				'@article{b, doi="10.1000/abc123"}',
+			].join(""),
+		);
+		const result = checkForDuplicates(new ASTProxy(ast), ["doi"]);
+		expect(result.warnings).toHaveLength(1);
+	});
+
+	it("should still flag equivalent concatenated DOIs", () => {
+		const ast = parseBibTeX(
+			[
+				'@article{a, doi="10.1000/ABC" # "123"}',
+				'@article{b, doi="10.1000/abc123"}',
+			].join(""),
+		);
+		const result = checkForDuplicates(new ASTProxy(ast), ["doi"]);
+		expect(result.warnings).toHaveLength(1);
+	});
 });
