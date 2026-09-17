@@ -129,7 +129,7 @@ function normalizeDoi(entryField: ReturnType<typeof getField>): string {
 		.map(renderValueNode)
 		.join(" # ")
 		.replace(/\\_/g, "_")
-		.replace(/\s+/g, "")
+		.replace(/[^0-9A-Za-z_]/g, "")
 		.toLocaleLowerCase();
 }
 

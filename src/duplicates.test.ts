@@ -24,4 +24,15 @@ describe("checkForDuplicates", () => {
 		const result = checkForDuplicates(new ASTProxy(ast), ["doi"]);
 		expect(result.warnings).toHaveLength(0);
 	});
+
+	it("should still flag DOIs that only differ in punctuation and case", () => {
+		const ast = parseBibTeX(
+			[
+				'@article{a, doi="10.1000/ABC-123"}',
+				'@article{b, doi="10.1000/abc123"}',
+			].join(""),
+		);
+		const result = checkForDuplicates(new ASTProxy(ast), ["doi"]);
+		expect(result.warnings).toHaveLength(1);
+	});
 });
