@@ -4803,7 +4803,7 @@ function checkForDuplicates(ast, duplicateRules, merge) {
 __name(checkForDuplicates, "checkForDuplicates");
 function normalizeDoi(entryField) {
   if (!entryField) return "";
-  return entryField.value.concat.map(renderDoiValueNode).join(" # ").replace(/[^0-9A-Za-z_]/g, "").toLocaleLowerCase();
+  return entryField.value.concat.map(renderDoiValueNode).join("").replace(/[^0-9A-Za-z_]/g, "").toLocaleLowerCase();
 }
 __name(normalizeDoi, "normalizeDoi");
 function renderDoiValueNode(node) {

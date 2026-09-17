@@ -128,7 +128,7 @@ function normalizeDoi(entryField: ReturnType<typeof getField>): string {
 	if (!entryField) return "";
 	return entryField.value.concat
 		.map(renderDoiValueNode)
-		.join(" # ")
+		.join("")
 		.replace(/[^0-9A-Za-z_]/g, "")
 		.toLocaleLowerCase();
 }

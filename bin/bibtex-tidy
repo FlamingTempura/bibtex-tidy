@@ -6721,7 +6721,7 @@ function checkForDuplicates(ast, duplicateRules, merge) {
 }
 function normalizeDoi(entryField) {
   if (!entryField) return "";
-  return entryField.value.concat.map(renderDoiValueNode).join(" # ").replace(/[^0-9A-Za-z_]/g, "").toLocaleLowerCase();
+  return entryField.value.concat.map(renderDoiValueNode).join("").replace(/[^0-9A-Za-z_]/g, "").toLocaleLowerCase();
 }
 function renderDoiValueNode(node) {
   if (isNodeType(node, "literal")) return node.value;
