@@ -5,6 +5,7 @@ import type { EntryNode } from "./parsers/bibtexParser.ts";
 import { parseNameList } from "./parsers/nameFieldParser.ts";
 import type { Warning } from "./types.ts";
 import { alphaNum } from "./utils.ts";
+import { renderValueNode } from "./valueNodes.ts";
 
 export function checkForDuplicates(
 	ast: ASTProxy,
@@ -56,7 +57,7 @@ export function checkForDuplicates(
 
 				case "doi": {
 					const field = getField(entry, "doi");
-					const doi = alphaNum(field ? renderFieldValue(field) : "");
+					const doi = normalizeDoi(field);
 					if (!doi) continue;
 					duplicateOf = dois.get(doi);
 					if (!duplicateOf) {
@@ -120,6 +121,16 @@ export function checkForDuplicates(
 	}
 
 	return { entries: duplicateEntries, warnings };
+}
+
+function normalizeDoi(entryField: ReturnType<typeof getField>): string {
+	if (!entryField) return "";
+	return entryField.value.concat
+		.map(renderValueNode)
+		.join(" # ")
+		.replace(/\\_/g, "_")
+		.replace(/\s+/g, "")
+		.toLocaleLowerCase();
 }
 
 function mergeEntries(

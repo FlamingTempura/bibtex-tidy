@@ -4740,7 +4740,7 @@ function checkForDuplicates(ast, duplicateRules, merge) {
         }
         case "doi": {
           const field = getField(entry, "doi");
-          const doi = alphaNum(field ? renderFieldValue(field) : "");
+          const doi = normalizeDoi(field);
           if (!doi) continue;
           duplicateOf = dois.get(doi);
           if (!duplicateOf) {
@@ -4801,6 +4801,11 @@ function checkForDuplicates(ast, duplicateRules, merge) {
   return { entries: duplicateEntries, warnings };
 }
 __name(checkForDuplicates, "checkForDuplicates");
+function normalizeDoi(entryField) {
+  if (!entryField) return "";
+  return entryField.value.concat.map(renderValueNode).join(" # ").replace(/\\_/g, "_").replace(/\s+/g, "").toLocaleLowerCase();
+}
+__name(normalizeDoi, "normalizeDoi");
 function mergeEntries(merge, duplicateOf, entry) {
   if (!merge) return;
   switch (merge) {
