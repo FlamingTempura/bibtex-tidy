@@ -1,7 +1,8 @@
 import { type ASTProxy, getField } from "./ASTProxy.ts";
 import { renderFieldValue } from "./fieldValues.ts";
 import type { DuplicateRule, MergeStrategy } from "./optionUtils.ts";
-import type { EntryNode } from "./parsers/bibtexParser.ts";
+import { isNodeType, type EntryNode, type ValueNode } from "./parsers/bibtexParser.ts";
+import { parseLaTeX } from "./parsers/latexParser.ts";
 import { parseNameList } from "./parsers/nameFieldParser.ts";
 import type { Warning } from "./types.ts";
 import { alphaNum } from "./utils.ts";
@@ -126,11 +127,15 @@ export function checkForDuplicates(
 function normalizeDoi(entryField: ReturnType<typeof getField>): string {
 	if (!entryField) return "";
 	return entryField.value.concat
-		.map(renderValueNode)
+		.map(renderDoiValueNode)
 		.join(" # ")
-		.replace(/\\_/g, "_")
 		.replace(/[^0-9A-Za-z_]/g, "")
 		.toLocaleLowerCase();
+}
+
+function renderDoiValueNode(node: ValueNode): string {
+	if (isNodeType(node, "literal")) return node.value;
+	return parseLaTeX(renderValueNode(node).replace(/\\_/g, "_")).renderAsText();
 }
 
 function mergeEntries(

@@ -4803,9 +4803,14 @@ function checkForDuplicates(ast, duplicateRules, merge) {
 __name(checkForDuplicates, "checkForDuplicates");
 function normalizeDoi(entryField) {
   if (!entryField) return "";
-  return entryField.value.concat.map(renderValueNode).join(" # ").replace(/\\_/g, "_").replace(/[^0-9A-Za-z_]/g, "").toLocaleLowerCase();
+  return entryField.value.concat.map(renderDoiValueNode).join(" # ").replace(/[^0-9A-Za-z_]/g, "").toLocaleLowerCase();
 }
 __name(normalizeDoi, "normalizeDoi");
+function renderDoiValueNode(node) {
+  if (isNodeType(node, "literal")) return node.value;
+  return parseLaTeX(renderValueNode(node).replace(/\\_/g, "_")).renderAsText();
+}
+__name(renderDoiValueNode, "renderDoiValueNode");
 function mergeEntries(merge, duplicateOf, entry) {
   if (!merge) return;
   switch (merge) {
