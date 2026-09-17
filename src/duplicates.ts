@@ -2,11 +2,10 @@ import { type ASTProxy, getField } from "./ASTProxy.ts";
 import { renderFieldValue } from "./fieldValues.ts";
 import type { DuplicateRule, MergeStrategy } from "./optionUtils.ts";
 import { isNodeType, type EntryNode, type ValueNode } from "./parsers/bibtexParser.ts";
-import { parseLaTeX } from "./parsers/latexParser.ts";
+import type { BlockNode } from "./parsers/latexParser.ts";
 import { parseNameList } from "./parsers/nameFieldParser.ts";
 import type { Warning } from "./types.ts";
 import { alphaNum } from "./utils.ts";
-import { renderValueNode } from "./valueNodes.ts";
 
 export function checkForDuplicates(
 	ast: ASTProxy,
@@ -135,7 +134,22 @@ function normalizeDoi(entryField: ReturnType<typeof getField>): string {
 
 function renderDoiValueNode(node: ValueNode): string {
 	if (isNodeType(node, "literal")) return node.value;
-	return parseLaTeX(renderValueNode(node).replace(/\\_/g, "_")).renderAsText();
+	return renderDoiLatex(node.latexAst);
+}
+
+function renderDoiLatex(block: BlockNode): string {
+	return block.children
+		.map((child) => {
+			switch (child.type) {
+				case "block":
+					return renderDoiLatex(child);
+				case "command":
+					return `${child.command.startsWith("_") ? `_${child.command.slice(1)}` : ""}${child.args.map(renderDoiLatex).join("")}`;
+				default:
+					return child.renderAsText();
+			}
+		})
+		.join("");
 }
 
 function mergeEntries(

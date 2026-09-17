@@ -4808,9 +4808,22 @@ function normalizeDoi(entryField) {
 __name(normalizeDoi, "normalizeDoi");
 function renderDoiValueNode(node) {
   if (isNodeType(node, "literal")) return node.value;
-  return parseLaTeX(renderValueNode(node).replace(/\\_/g, "_")).renderAsText();
+  return renderDoiLatex(node.latexAst);
 }
 __name(renderDoiValueNode, "renderDoiValueNode");
+function renderDoiLatex(block) {
+  return block.children.map((child) => {
+    switch (child.type) {
+      case "block":
+        return renderDoiLatex(child);
+      case "command":
+        return `${child.command.startsWith("_") ? `_${child.command.slice(1)}` : ""}${child.args.map(renderDoiLatex).join("")}`;
+      default:
+        return child.renderAsText();
+    }
+  }).join("");
+}
+__name(renderDoiLatex, "renderDoiLatex");
 function mergeEntries(merge, duplicateOf, entry) {
   if (!merge) return;
   switch (merge) {
