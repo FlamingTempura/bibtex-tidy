@@ -59,7 +59,7 @@
 		"core-js": "^3.43.0",
 		"esbuild": "^0.28.0",
 		"esbuild-svelte": "^0.9.3",
-		"happy-dom": "^20.9.0",
+		"happy-dom": "^21.0.4",
 		"jest-image-snapshot": "^6.5.2",
 		"playwright": "^1.60.0",
 		"svelte-preprocess": "^6.0.3",
