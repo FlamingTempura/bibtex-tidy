@@ -7,6 +7,12 @@ import { type Browser, chromium, type Page } from "playwright";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { WEB_URL } from "../support/ui.ts";
 
+declare module "vitest" {
+	interface Matchers<R> {
+		toMatchImageSnapshot(options?: MatchImageSnapshotOptions): R;
+	}
+}
+
 const SNAPSHOT_DIR = join(import.meta.dirname, "__snapshots__");
 const REPORT_DIR = join(process.cwd(), "test-results", "ui-vr");
 

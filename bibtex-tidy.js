@@ -24,18 +24,12 @@ var BaseNode = class {
 };
 
 // src/parsers/latexParser.ts
-var BlockNode = class _BlockNode extends BaseNode {
-  constructor(kind, parent, children = []) {
+var BlockNode = class extends BaseNode {
+  constructor(kind, children = []) {
     super();
-    this.type = "block";
+    this.type = "latexBlock";
     this.kind = kind;
-    this.parent = parent;
     this.children = children;
-    if (parent instanceof _BlockNode) {
-      parent.children.push(this);
-    } else if (parent instanceof CommandNode) {
-      parent.args.push(this);
-    }
   }
   static {
     __name(this, "BlockNode");
@@ -45,12 +39,10 @@ var BlockNode = class _BlockNode extends BaseNode {
   }
 };
 var TextNode = class extends BaseNode {
-  constructor(parent, text = "") {
+  constructor(text = "") {
     super();
-    this.type = "text";
-    this.parent = parent;
+    this.type = "latexText";
     this.text = text;
-    parent.children.push(this);
   }
   static {
     __name(this, "TextNode");
@@ -60,12 +52,10 @@ var TextNode = class extends BaseNode {
   }
 };
 var MathNode = class extends BaseNode {
-  constructor(parent, text = "") {
+  constructor(text = "") {
     super();
-    this.type = "math";
-    this.parent = parent;
+    this.type = "latexMath";
     this.text = text;
-    parent.children.push(this);
   }
   static {
     __name(this, "MathNode");
@@ -75,13 +65,11 @@ var MathNode = class extends BaseNode {
   }
 };
 var CommandNode = class extends BaseNode {
-  constructor(parent, command = "", args = []) {
+  constructor(command = "", args = []) {
     super();
-    this.type = "command";
-    this.parent = parent;
+    this.type = "latexCommand";
     this.command = command;
     this.args = args;
-    parent.children.push(this);
   }
   static {
     __name(this, "CommandNode");
@@ -92,59 +80,85 @@ var CommandNode = class extends BaseNode {
 };
 function parseLaTeX(input) {
   const rootNode = new BlockNode("root");
+  const parents = /* @__PURE__ */ new WeakMap();
+  const parentOf = /* @__PURE__ */ __name((child) => {
+    const parent = parents.get(child);
+    if (!parent) {
+      throw new Error(`Missing parser parent for ${child.type}`);
+    }
+    return parent;
+  }, "parentOf");
+  const appendChild = /* @__PURE__ */ __name((parent, child) => {
+    parent.children.push(child);
+    if (child.type !== "latexMath") {
+      parents.set(child, parent);
+    }
+    return child;
+  }, "appendChild");
+  const appendBlock = /* @__PURE__ */ __name((parent, child) => {
+    if (parent.type === "latexBlock") {
+      parent.children.push(child);
+    } else {
+      parent.args.push(child);
+    }
+    parents.set(child, parent);
+    return child;
+  }, "appendBlock");
   let node = rootNode;
   for (let i = 0; i < input.length; i++) {
     const char = input[i];
     if (!char) break;
     switch (node.type) {
-      case "block": {
+      case "latexBlock": {
         if (char === "\\") {
-          node = new CommandNode(node);
+          node = appendChild(node, new CommandNode());
         } else if (char === "$") {
           const math = parseMath(input, i);
           if (math) {
-            new MathNode(node, math.text);
+            appendChild(node, new MathNode(math.text));
             i = math.end;
           } else {
-            node = new TextNode(node, char);
+            node = appendChild(node, new TextNode(char));
           }
         } else if (char === "{") {
-          node = new BlockNode("curly", node);
-        } else if ((char === "}" && node.kind === "curly" || char === "]" && node.kind === "square") && node.parent) {
-          node = node.parent;
+          node = appendBlock(node, new BlockNode("curly"));
+        } else if ((char === "}" && node.kind === "curly" || char === "]" && node.kind === "square") && parents.has(node)) {
+          node = parentOf(node);
         } else {
-          node = new TextNode(node, char);
+          node = appendChild(node, new TextNode(char));
         }
         break;
       }
-      case "text": {
+      case "latexText": {
+        const parent = parentOf(node);
         if (char === "$") {
           const math = parseMath(input, i);
           if (math) {
-            node = node.parent;
-            new MathNode(node, math.text);
+            node = parent;
+            appendChild(node, new MathNode(math.text));
             i = math.end;
           } else {
             node.text += char;
           }
         } else if (char === "\\" || char === "{") {
-          node = node.parent;
+          node = parent;
           i--;
-        } else if (char === "}" && node.parent.kind === "curly" || char === "]" && node.parent.kind === "square") {
-          node = node.parent;
+        } else if (char === "}" && parent.kind === "curly" || char === "]" && parent.kind === "square") {
+          node = parent;
           i--;
         } else {
           node.text += char;
         }
         break;
       }
-      case "command": {
+      case "latexCommand": {
+        const parent = parentOf(node);
         if (char === "{") {
-          node = new BlockNode("curly", node);
+          node = appendBlock(node, new BlockNode("curly"));
         } else if (char === "[") {
-          node = new BlockNode("square", node);
-        } else if (char === "}" && node.parent.kind === "curly" || char === "]" && node.parent.kind === "square" || /\s/.test(char) || node.args.length > 0) {
-          node = node.parent;
+          node = appendBlock(node, new BlockNode("square"));
+        } else if (char === "}" && parent.kind === "curly" || char === "]" && parent.kind === "square" || /\s/.test(char) || node.args.length > 0) {
+          node = parent;
           i--;
         } else {
           node.command += char;
@@ -177,13 +191,13 @@ __name(stringifyLaTeX, "stringifyLaTeX");
 function stringifyBlock(block) {
   const content = block.children.map((node) => {
     switch (node.type) {
-      case "block":
+      case "latexBlock":
         return stringifyBlock(node);
-      case "command":
+      case "latexCommand":
         return stringifyCommand(node);
-      case "math":
+      case "latexMath":
         return `$${node.text}$`;
-      case "text":
+      case "latexText":
         return node.text;
       default:
         throw new Error(`Unknown node type: ${JSON.stringify(node)}`);
@@ -206,7 +220,7 @@ __name(stringifyCommand, "stringifyCommand");
 function flattenLaTeX(block) {
   const newBlock = new BlockNode(block.kind);
   for (const child of block.children) {
-    if (child.type === "block" && child.kind === "curly" && child.children.every((child2) => child2.type !== "command")) {
+    if (child.type === "latexBlock" && child.kind === "curly" && child.children.every((child2) => child2.type !== "latexCommand")) {
       const newChild = flattenLaTeX(child);
       newBlock.children.push(...newChild.children);
     } else {
@@ -229,80 +243,68 @@ var RootNode = class extends BaseNode {
   }
 };
 var TextNode2 = class extends BaseNode {
-  constructor(parent, text, whitespacePrefix) {
+  constructor(text, whitespacePrefix) {
     super();
     this.type = "text";
-    this.parent = parent;
     this.text = text;
     this.whitespacePrefix = whitespacePrefix;
-    parent.children.push(this);
   }
   static {
     __name(this, "TextNode");
   }
 };
 var BlockNode2 = class extends BaseNode {
-  constructor(parent, whitespacePrefix) {
+  constructor(whitespacePrefix) {
     super();
     this.type = "block";
     this.command = "";
-    this.parent = parent;
     this.whitespacePrefix = whitespacePrefix;
-    parent.children.push(this);
   }
   static {
     __name(this, "BlockNode");
   }
 };
 var CommentNode = class extends BaseNode {
-  constructor(parent, raw, braces, parens) {
+  constructor(raw, braces, parens) {
     super();
     this.type = "comment";
-    this.parent = parent;
     this.raw = raw;
     this.braces = braces;
     this.parens = parens;
-    parent.block = this;
   }
   static {
     __name(this, "CommentNode");
   }
 };
 var PreambleNode = class extends BaseNode {
-  constructor(parent, raw, braces, parens) {
+  constructor(raw, braces, parens) {
     super();
     this.type = "preamble";
-    this.parent = parent;
     this.raw = raw;
     this.braces = braces;
     this.parens = parens;
-    parent.block = this;
   }
   static {
     __name(this, "PreambleNode");
   }
 };
 var StringNode = class extends BaseNode {
-  constructor(parent, raw, braces, parens) {
+  constructor(raw, braces, parens) {
     super();
     this.type = "string";
-    this.parent = parent;
     this.raw = raw;
     this.braces = braces;
     this.parens = parens;
-    parent.block = this;
   }
   static {
     __name(this, "StringNode");
   }
 };
 var EntryNode = class extends BaseNode {
-  constructor(parent, wrapType) {
+  constructor(wrapType) {
     super();
     this.type = "entry";
-    this.parent = parent;
     this.wrapType = wrapType;
-    parent.block = this;
     this.fields = [];
   }
   static {
@@ -310,93 +312,100 @@ var EntryNode = class extends BaseNode {
   }
 };
 var FieldNode = class extends BaseNode {
-  constructor(parent, name = "", whitespacePrefix = "") {
+  constructor(name = "", whitespacePrefix = "") {
     super();
     this.type = "field";
     this.hasComma = false;
-    this.parent = parent;
     this.name = name;
     this.whitespacePrefix = whitespacePrefix;
-    this.value = new ConcatNode(this);
+    this.value = new ConcatNode();
   }
   static {
     __name(this, "FieldNode");
   }
 };
 var ConcatNode = class extends BaseNode {
-  constructor(parent) {
+  // not filled in during parsing
+  constructor() {
     super();
     this.type = "concat";
     this.canConsumeValue = true;
     this.whitespacePrefix = "";
-    this.parent = parent;
-    this.concat = [];
+    this.values = [];
   }
   static {
     __name(this, "ConcatNode");
   }
 };
 var LiteralNode = class extends BaseNode {
-  constructor(parent, value) {
+  constructor(value) {
     super();
     this.type = "literal";
-    this.parent = parent;
     this.value = value;
   }
   static {
     __name(this, "LiteralNode");
   }
 };
-function createLiteralNode(parent, value) {
-  const node = new LiteralNode(parent, value);
-  parent.concat.push(node);
-  return node;
-}
-__name(createLiteralNode, "createLiteralNode");
 var BracedNode = class extends BaseNode {
-  constructor(parent) {
+  constructor() {
     super();
     this.type = "braced";
     /** Used to count opening and closing braces */
     this.depth = 0;
-    this.parent = parent;
     this.latexAst = parseLaTeX("");
   }
   static {
     __name(this, "BracedNode");
   }
 };
-function createBracedNode(parent) {
-  const node = new BracedNode(parent);
-  parent.concat.push(node);
-  return node;
-}
-__name(createBracedNode, "createBracedNode");
 var QuotedNode = class extends BaseNode {
-  constructor(parent) {
+  constructor() {
     super();
     this.type = "quoted";
     /** Used to count opening and closing braces */
     this.depth = 0;
-    this.parent = parent;
     this.latexAst = parseLaTeX("");
   }
   static {
     __name(this, "QuotedNode");
   }
 };
-function createQuotedNode(parent) {
-  const node = new QuotedNode(parent);
-  parent.concat.push(node);
-  return node;
-}
-__name(createQuotedNode, "createQuotedNode");
 function isNodeType(node, ...types) {
   return node !== null && node !== void 0 && types.includes(node.type);
 }
 __name(isNodeType, "isNodeType");
 function parseBibTeX(input) {
   const rootNode = new RootNode();
+  const parents = /* @__PURE__ */ new WeakMap();
+  const parentOf = /* @__PURE__ */ __name((child) => {
+    const parent = parents.get(child);
+    if (!parent) {
+      throw new Error(`Missing parser parent for ${child.type}`);
+    }
+    return parent;
+  }, "parentOf");
+  const appendRootChild = /* @__PURE__ */ __name((parent, child) => {
+    parent.children.push(child);
+    parents.set(child, parent);
+    return child;
+  }, "appendRootChild");
+  const setBlockChild = /* @__PURE__ */ __name((parent, child) => {
+    parent.block = child;
+    parents.set(child, parent);
+    return child;
+  }, "setBlockChild");
+  const createField = /* @__PURE__ */ __name((parent, name = "", whitespacePrefix = "") => {
+    const field = new FieldNode(name, whitespacePrefix);
+    parents.set(field, parent);
+    parents.set(field.value, field);
+    return field;
+  }, "createField");
+  const appendValue = /* @__PURE__ */ __name((parent, child) => {
+    parent.values.push(child);
+    parents.set(child, parent);
+    return child;
+  }, "appendValue");
   let node = rootNode;
   let line = 1;
   let column = 0;
@@ -418,17 +427,18 @@ function parseBibTeX(input) {
     switch (node.type) {
       case "root": {
         if (char === "@") {
-          node = new BlockNode2(node, flushWhitespace());
+          node = appendRootChild(node, new BlockNode2(flushWhitespace()));
         } else if (isWhitespace(char)) {
           whitespace += char;
         } else {
-          node = new TextNode2(node, char, flushWhitespace());
+          node = appendRootChild(node, new TextNode2(char, flushWhitespace()));
         }
         break;
       }
       case "text": {
         if (char === "@" && /[\s\r\n}]/.test(prev)) {
-          node = new BlockNode2(node.parent, "");
+          const root = parentOf(node);
+          node = appendRootChild(root, new BlockNode2(""));
         } else {
           node.text += char;
         }
@@ -436,27 +446,27 @@ function parseBibTeX(input) {
       }
       case "block": {
         if (char === "@") {
-          const prevNode = node.parent.children[node.parent.children.length - 2];
+          const root = parentOf(node);
+          const prevNode = root.children[root.children.length - 2];
           if (isNodeType(prevNode, "text")) {
             prevNode.text += `@${node.command}`;
           } else {
-            node.parent.children.pop();
-            new TextNode2(
-              node.parent,
-              `@${node.command}`,
-              node.whitespacePrefix
+            root.children.pop();
+            appendRootChild(
+              root,
+              new TextNode2(`@${node.command}`, node.whitespacePrefix)
             );
-            node.parent.children.push(node);
+            root.children.push(node);
           }
           node.command = "";
         } else if (char === "{" || char === "(") {
           const commandTrimmed = node.command.trim();
           if (commandTrimmed === "" || /\s/.test(commandTrimmed)) {
-            node.parent.children.pop();
-            node = new TextNode2(
-              node.parent,
-              `@${node.command}${char}`,
-              node.whitespacePrefix
+            const root = parentOf(node);
+            root.children.pop();
+            node = appendRootChild(
+              root,
+              new TextNode2(`@${node.command}${char}`, node.whitespacePrefix)
             );
           } else {
             node.command = commandTrimmed;
@@ -465,25 +475,31 @@ function parseBibTeX(input) {
             const raw = `@${command}${char}`;
             switch (command) {
               case "string":
-                node = new StringNode(node, raw, braces, parens);
+                node = setBlockChild(node, new StringNode(raw, braces, parens));
                 break;
               case "preamble":
-                node = new PreambleNode(node, raw, braces, parens);
+                node = setBlockChild(
+                  node,
+                  new PreambleNode(raw, braces, parens)
+                );
                 break;
               case "comment":
-                node = new CommentNode(node, raw, braces, parens);
+                node = setBlockChild(
+                  node,
+                  new CommentNode(raw, braces, parens)
+                );
                 break;
               default:
-                node = new EntryNode(node, char);
+                node = setBlockChild(node, new EntryNode(char));
                 break;
             }
           }
         } else if (char.match(/[=#,})[\]]/)) {
-          node.parent.children.pop();
-          node = new TextNode2(
-            node.parent,
-            `@${node.command}${char}`,
-            flushWhitespace()
+          const root = parentOf(node);
+          root.children.pop();
+          node = appendRootChild(
+            root,
+            new TextNode2(`@${node.command}${char}`, flushWhitespace())
           );
         } else {
           node.command += char;
@@ -504,7 +520,7 @@ function parseBibTeX(input) {
         }
         node.raw += char;
         if (node.braces === 0 && node.parens === 0) {
-          node = node.parent.parent;
+          node = parentOf(parentOf(node));
         }
         break;
       case "entry": {
@@ -514,11 +530,11 @@ function parseBibTeX(input) {
             node.keyEnded = true;
           }
         } else if (char === ",") {
-          node = new FieldNode(node);
+          node = createField(node);
         } else if (node.wrapType === "{" && char === "}" || node.wrapType === "(" && char === ")") {
-          node = node.parent.parent;
+          node = parentOf(parentOf(node));
         } else if (char === "=" && node.key && isValidFieldName(node.key)) {
-          const field = new FieldNode(node, node.key);
+          const field = createField(node, node.key);
           node.fields.push(field);
           node.key = void 0;
           node = field.value;
@@ -548,18 +564,18 @@ function parseBibTeX(input) {
       case "field": {
         if (char === "}" || char === ")") {
           node.name = node.name.trim();
-          node = node.parent.parent.parent;
+          node = parentOf(parentOf(parentOf(node)));
         } else if (char === "=") {
           node.name = node.name.trim();
           node = node.value;
         } else if (char === ",") {
           node.name = node.name.trim();
-          node = new FieldNode(node.parent);
+          node = createField(parentOf(node));
         } else if (!isValidFieldName(char)) {
           throw new BibTeXSyntaxError(input, node, i, line, column);
         } else if (!node.name) {
           if (!isWhitespace(char)) {
-            node.parent.fields.push(node);
+            parentOf(node).fields.push(node);
             node.name = char;
           } else {
             node.whitespacePrefix += char;
@@ -580,18 +596,18 @@ function parseBibTeX(input) {
           node.canConsumeValue = false;
           if (char === "{") {
             latexInput = "";
-            node = createBracedNode(node);
+            node = appendValue(node, new BracedNode());
           } else if (char === '"') {
             latexInput = "";
-            node = createQuotedNode(node);
+            node = appendValue(node, new QuotedNode());
           } else {
-            node = createLiteralNode(node, char);
+            node = appendValue(node, new LiteralNode(char));
           }
         } else {
           if (char === ",") {
-            node = new FieldNode(node.parent.parent);
+            node = createField(parentOf(parentOf(node)));
           } else if (char === "}" || char === ")") {
-            node = node.parent.parent.parent.parent;
+            node = parentOf(parentOf(parentOf(parentOf(node))));
           } else if (char === "#") {
             node.canConsumeValue = true;
           } else {
@@ -602,13 +618,16 @@ function parseBibTeX(input) {
       }
       case "literal":
         if (isWhitespace(char)) {
-          node = node.parent;
+          node = parentOf(node);
         } else if (char === ",") {
-          node = new FieldNode(node.parent.parent.parent);
+          node = createField(parentOf(parentOf(parentOf(node))));
         } else if (char === "}") {
-          node = node.parent.parent.parent.parent.parent;
+          node = parentOf(parentOf(parentOf(parentOf(parentOf(node)))));
         } else if (char === "#") {
-          node = node.parent;
+          node = parentOf(node);
+          if (!isNodeType(node, "concat")) {
+            throw new Error("Expected concat parser parent");
+          }
           node.canConsumeValue = true;
         } else {
           node.value += char;
@@ -619,7 +638,7 @@ function parseBibTeX(input) {
       case "braced":
         if (char === "}" && node.depth === 0) {
           node.latexAst = parseLaTeX(latexInput);
-          node = node.parent;
+          node = parentOf(node);
           break;
         }
         if (char === "{") {
@@ -637,7 +656,7 @@ function parseBibTeX(input) {
       case "quoted":
         if (char === '"' && node.depth === 0) {
           node.latexAst = parseLaTeX(latexInput);
-          node = node.parent;
+          node = parentOf(node);
           break;
         }
         if (char === "{") {
@@ -685,7 +704,11 @@ ${input.slice(Math.max(0, pos - 20), pos)}>>${input[pos]}<<${input.slice(pos + 1
   }
 };
 
-// src/ASTProxy.ts
+// src/ast.ts
+function getEntries(root) {
+  return root.children.filter((node) => isNodeType(node, "block")).map((block) => block.block).filter((entry) => isNodeType(entry, "entry"));
+}
+__name(getEntries, "getEntries");
 function getField(entry, fieldName) {
   const fieldNameLc = fieldName.toLocaleLowerCase();
   return entry.fields.find(
@@ -693,153 +716,93 @@ function getField(entry, fieldName) {
   );
 }
 __name(getField, "getField");
-var ASTProxy = class {
-  static {
-    __name(this, "ASTProxy");
-  }
-  #ast;
-  constructor(ast) {
-    this.#ast = ast;
-  }
-  root() {
-    return this.#ast;
-  }
-  entries() {
-    return this.#ast.children.filter((node) => isNodeType(node, "block")).map((block) => block.block).filter((entry) => isNodeType(entry, "entry"));
-  }
-  replace(where, enter) {
-    const replaceNodes = /* @__PURE__ */ __name((nodes, index, replacements, parent) => {
-      for (const replacement of replacements) {
-        let existingIndex = nodes.indexOf(replacement);
-        while (existingIndex !== -1 && existingIndex !== index) {
-          nodes.splice(existingIndex, 1);
-          if (existingIndex < index) index--;
-          existingIndex = nodes.indexOf(replacement);
-        }
-      }
-      nodes.splice(index, 1, ...replacements);
-      for (const replacement of replacements) {
-        setParent(replacement, parent);
-      }
-      return index;
-    }, "replaceNodes");
-    const getReplacements = /* @__PURE__ */ __name((node, ancestors) => {
-      const ctx = new WalkContext(ancestors);
-      return where(node, ctx) ? enter(node, ctx) : void 0;
-    }, "getReplacements");
-    const visitReplaceable = /* @__PURE__ */ __name((nodes, index, ancestors, parent) => {
-      const node = nodes[index];
-      if (!node) return index + 1;
-      const replacements = getReplacements(node, ancestors);
-      if (replacements) {
-        const replacementIndex = replaceNodes(
-          nodes,
-          index,
-          replacements,
-          parent
-        );
-        for (const replacement of replacements) {
-          visitChildren(replacement, [...ancestors, replacement]);
-        }
-        return replacementIndex + replacements.length;
-      }
-      visitChildren(node, [...ancestors, node]);
-      return index + 1;
-    }, "visitReplaceable");
-    const visitConcat = /* @__PURE__ */ __name((node, ancestors, parent) => {
-      const replacements = getReplacements(node, ancestors);
-      if (!replacements) {
-        visitChildren(node, [...ancestors, node]);
-        return;
-      }
-      if (replacements.length !== 1) {
-        throw new Error("A concat node must be replaced by exactly one node");
-      }
-      const replacement = replacements[0];
-      if (!replacement) return;
-      parent.value = replacement;
-      setParent(replacement, parent);
-      visitChildren(replacement, [...ancestors, replacement]);
-    }, "visitConcat");
-    const visitChildren = /* @__PURE__ */ __name((node, ancestors) => {
-      switch (node.type) {
-        case "root":
-          for (let i = 0; i < node.children.length; ) {
-            i = visitReplaceable(node.children, i, ancestors, node);
-          }
-          break;
-        case "block":
-          if (node.block) {
-            visitChildren(node.block, [...ancestors, node.block]);
-          }
-          break;
-        case "entry":
-          for (let i = 0; i < node.fields.length; ) {
-            i = visitReplaceable(node.fields, i, ancestors, node);
-          }
-          break;
-        case "field":
-          visitConcat(node.value, ancestors, node);
-          break;
-        case "concat":
-          for (let i = 0; i < node.concat.length; ) {
-            i = visitReplaceable(node.concat, i, ancestors, node);
-          }
-          break;
-        default:
-          break;
-      }
-    }, "visitChildren");
-    visitChildren(this.#ast, [this.#ast]);
-  }
-};
-var WalkContext = class {
-  static {
-    __name(this, "WalkContext");
-  }
-  constructor(ancestors) {
-    this.ancestors = ancestors;
-  }
-  closestAncestor(type) {
-    for (let i = this.ancestors.length - 1; i >= 0; i--) {
-      const ancestor = this.ancestors[i];
-      if (isNodeType(ancestor, type)) return ancestor;
+function closestAncestor(ctx, type) {
+  for (let i = ctx.path.length - 1; i >= 0; i--) {
+    const node = ctx.path[i];
+    if (node?.type === type) {
+      return node;
     }
-    return void 0;
   }
-};
-function setParent(node, parent) {
+  return void 0;
+}
+__name(closestAncestor, "closestAncestor");
+function walkAst(root, visitors) {
+  const visitNode = /* @__PURE__ */ __name((node, path) => {
+    let descendants;
+    const astContext = {
+      next: /* @__PURE__ */ __name(() => {
+        descendants = [visitChildren(node, path, visitNode)];
+        return descendants;
+      }, "next"),
+      path
+    };
+    const visitor = visitors[node.type];
+    const selectedVisitor = visitor ?? visitors._;
+    if (selectedVisitor) {
+      return selectedVisitor(node, astContext);
+    }
+    return [visitChildren(node, path, visitNode)];
+  }, "visitNode");
+  return visit(root, [], visitNode);
+}
+__name(walkAst, "walkAst");
+function visit(node, path, visitNode) {
+  const result = visitNode(node, path);
+  if (result.length !== 1) {
+    throw new Error(
+      `Expected exactly one replacement for ${node.type}, received ${result.length}`
+    );
+  }
+  return result[0];
+}
+__name(visit, "visit");
+function visitArray(nodes, path, visitNode) {
+  const result = nodes.flatMap((node) => visitNode(node, path));
+  return result.length === nodes.length && result.every((node, index) => node === nodes[index]) ? nodes : result;
+}
+__name(visitArray, "visitArray");
+function visitChildren(node, path, visitNode) {
+  const childPath = [...path, node];
   switch (node.type) {
-    case "text":
-    case "block":
-      if (isNodeType(parent, "root")) node.parent = parent;
-      if (isNodeType(node, "block") && node.block) {
-        node.block.parent = node;
-        if (isNodeType(node.block, "entry")) {
-          for (const field of node.block.fields) {
-            setParent(field, node.block);
-          }
-        }
-      }
-      break;
-    case "field":
-      if (isNodeType(parent, "entry")) node.parent = parent;
-      setParent(node.value, node);
-      break;
-    case "concat":
-      if (isNodeType(parent, "field")) node.parent = parent;
-      for (const child of node.concat) {
-        child.parent = node;
-      }
-      break;
-    case "literal":
+    case "root": {
+      const children = visitArray(node.children, childPath, visitNode);
+      return children === node.children ? node : node.with({ children });
+    }
+    case "block": {
+      if (!node.block) return node;
+      const block = visit(node.block, childPath, visitNode);
+      return block === node.block ? node : node.with({ block });
+    }
+    case "entry": {
+      const fields = visitArray(node.fields, childPath, visitNode);
+      return fields === node.fields ? node : node.with({ fields });
+    }
+    case "field": {
+      const value = visit(node.value, childPath, visitNode);
+      return value === node.value ? node : node.with({ value });
+    }
+    case "concat": {
+      const values = visitArray(node.values, childPath, visitNode);
+      return values === node.values ? node : node.with({ values });
+    }
     case "braced":
-    case "quoted":
-      if (isNodeType(parent, "concat")) node.parent = parent;
-      break;
+    case "quoted": {
+      const latexAst = visit(node.latexAst, childPath, visitNode);
+      return latexAst === node.latexAst ? node : node.with({ latexAst });
+    }
+    case "latexBlock": {
+      const children = visitArray(node.children, childPath, visitNode);
+      return children === node.children ? node : node.with({ children });
+    }
+    case "latexCommand": {
+      const args = visitArray(node.args, childPath, visitNode);
+      return args === node.args ? node : node.with({ args });
+    }
+    default:
+      return node;
   }
 }
-__name(setParent, "setParent");
+__name(visitChildren, "visitChildren");
 
 // src/debug.ts
 function logAST(node, depth = 0) {
@@ -859,7 +822,7 @@ ${indent}${node.type} ws="${"whitespacePrefix" in node ? node.whitespacePrefix.r
       }
       break;
     case "concat":
-      for (const value of node.concat) {
+      for (const value of node.values) {
         log += logAST(value, depth + 1);
       }
       break;
@@ -901,21 +864,18 @@ function replaceValueNodeText(node, value) {
 }
 __name(replaceValueNodeText, "replaceValueNodeText");
 function doubleEncloseLatex(latex) {
-  const alreadyDoubleEnclosed = latex.children.length === 1 && latex.children[0]?.type === "block" && latex.children[0]?.kind === "curly" && latex.children[0].children.length === 1 && latex.children[0].children[0]?.type === "block" && latex.children[0].children[0]?.kind === "curly";
+  const alreadyDoubleEnclosed = latex.children.length === 1 && latex.children[0]?.type === "latexBlock" && latex.children[0]?.kind === "curly" && latex.children[0].children.length === 1 && latex.children[0].children[0]?.type === "latexBlock" && latex.children[0].children[0]?.kind === "curly";
   const result = stringifyLaTeX(latex);
   return alreadyDoubleEnclosed ? result : `{${result}}`;
 }
 __name(doubleEncloseLatex, "doubleEncloseLatex");
 function encloseLatexInCurly(latex) {
-  if (latex.children.length === 1 && latex.children[0]?.type === "block" && latex.children[0]?.kind === "curly" && latex.children[0].children.length === 1 && latex.children[0].children[0]?.type === "block" && latex.children[0].children[0]?.kind === "curly") {
+  if (latex.children.length === 1 && latex.children[0]?.type === "latexBlock" && latex.children[0]?.kind === "curly" && latex.children[0].children.length === 1 && latex.children[0].children[0]?.type === "latexBlock" && latex.children[0].children[0]?.kind === "curly") {
     return latex;
   }
   const result = new BlockNode("root");
-  const wrapper = new BlockNode("curly", result);
-  wrapper.children = latex.children;
-  for (const child of wrapper.children) {
-    child.parent = wrapper;
-  }
+  const wrapper = new BlockNode("curly", latex.children);
+  result.children.push(wrapper);
   return result;
 }
 __name(encloseLatexInCurly, "encloseLatexInCurly");
@@ -958,7 +918,7 @@ function formatEntry(entryType, entry) {
 }
 __name(formatEntry, "formatEntry");
 function formatValue(field) {
-  return field.value.concat.map((node) => {
+  return field.value.values.map((node) => {
     switch (node.type) {
       case "literal":
         return node.value;
@@ -1558,17 +1518,18 @@ function createAbbreviateMonthsTransform() {
       ([abbr, aliases]) => aliases.map((alias) => [alias, abbr])
     )
   );
+  const visit2 = /* @__PURE__ */ __name((node, ctx) => {
+    if (closestAncestor(ctx, "field")?.name.toLowerCase() !== "month") {
+      return [node];
+    }
+    const abbr = abbreviateMonth(renderValueNode(node), months);
+    return [abbr ? new LiteralNode(abbr) : node];
+  }, "visit");
   return {
     name: "abbreviate-months",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node, ctx) => isNodeType(node, "literal", "braced", "quoted") && ctx.closestAncestor("field")?.name.toLowerCase() === "month",
-        (node) => {
-          const abbr = abbreviateMonth(renderValueNode(node), months);
-          return abbr ? [new LiteralNode(node.parent, abbr)] : [node];
-        }
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, { literal: visit2, braced: visit2, quoted: visit2 })
+    }), "apply")
   };
 }
 __name(createAbbreviateMonthsTransform, "createAbbreviateMonthsTransform");
@@ -1579,20 +1540,20 @@ __name(abbreviateMonth, "abbreviateMonth");
 
 // src/transforms/alignValues.ts
 function createAlignValuesTransform(column) {
+  const generatePrefix = /* @__PURE__ */ __name((fieldName) => " ".repeat(Math.max(column - fieldName.length, 1)), "generatePrefix");
   return {
     name: "align-values",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "concat"),
-        (concat) => [
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        concat: /* @__PURE__ */ __name((concat, ctx) => [
           concat.with({
-            whitespacePrefix: " ".repeat(
-              Math.max(column - concat.parent.name.length, 1)
+            whitespacePrefix: generatePrefix(
+              closestAncestor(ctx, "field")?.name ?? ""
             )
           })
-        ]
-      );
-    }, "apply")
+        ], "concat")
+      })
+    }), "apply")
   };
 }
 __name(createAlignValuesTransform, "createAlignValuesTransform");
@@ -1601,20 +1562,20 @@ __name(createAlignValuesTransform, "createAlignValuesTransform");
 function createBlankLinesTransform() {
   return {
     name: "blank-lines",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "text", "block"),
-        (child) => {
-          const index = child.parent.children.indexOf(child);
-          const prev = child.parent.children[index - 1];
-          return [
-            child.with({
-              whitespacePrefix: prev && !isComment(prev) ? "\n\n" : child.whitespacePrefix
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        root: /* @__PURE__ */ __name((root) => [
+          root.with({
+            children: root.children.map((child, i) => {
+              const prev = root.children[i - 1];
+              return child.with({
+                whitespacePrefix: prev && !isComment(prev) ? "\n\n" : child.whitespacePrefix
+              });
             })
-          ];
-        }
-      );
-    }, "apply")
+          })
+        ], "root")
+      })
+    }), "apply")
   };
 }
 __name(createBlankLinesTransform, "createBlankLinesTransform");
@@ -1625,7 +1586,7 @@ __name(isComment, "isComment");
 
 // src/fieldValues.ts
 function renderFieldValue(field) {
-  return field.value.concat.map(
+  return field.value.values.map(
     (node) => isNodeType(node, "literal") ? node.value : node.latexAst.renderAsText()
   ).join(" # ");
 }
@@ -1633,20 +1594,15 @@ __name(renderFieldValue, "renderFieldValue");
 
 // src/transforms/dropAllCaps.ts
 function createDropAllCapsTransform() {
+  const visit2 = /* @__PURE__ */ __name((node, ctx) => {
+    const field = closestAncestor(ctx, "field");
+    return [
+      field && !renderFieldValue(field).match(/[a-z]/) ? replaceValueNodeText(node, titleCase(renderValueNode(node))) : node
+    ];
+  }, "visit");
   return {
     name: "drop-all-caps",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node, ctx) => {
-          if (!isNodeType(node, "braced", "quoted")) return false;
-          const field = ctx.closestAncestor("field");
-          return field !== void 0 && !renderFieldValue(field).match(/[a-z]/);
-        },
-        (node) => [
-          replaceValueNodeText(node, titleCase(renderValueNode(node)))
-        ]
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({ ast: walkAst(ast, { braced: visit2, quoted: visit2 }) }), "apply")
   };
 }
 __name(createDropAllCapsTransform, "createDropAllCapsTransform");
@@ -1669,32 +1625,26 @@ function createEncloseBracesTransform(fields) {
   return {
     name: "enclose-braces",
     dependencies: ["prefer-curly"],
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node, ctx) => {
-          if (!isNodeType(node, "braced")) return false;
-          const field = ctx.closestAncestor("field");
-          return field !== void 0 && set.has(field.name.toLocaleLowerCase());
-        },
-        (node) => [node.with({ latexAst: encloseLatexInCurly(node.latexAst) })]
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        braced: /* @__PURE__ */ __name((node, ctx) => {
+          const field = closestAncestor(ctx, "field");
+          return field && set.has(field.name.toLocaleLowerCase()) ? [node.with({ latexAst: encloseLatexInCurly(node.latexAst) })] : [node];
+        }, "braced")
+      })
+    }), "apply")
   };
 }
 __name(createEncloseBracesTransform, "createEncloseBracesTransform");
 
 // src/transforms/encodeUrls.ts
 function createEncodeUrlsTransform() {
+  const visit2 = /* @__PURE__ */ __name((node, ctx) => [
+    closestAncestor(ctx, "field")?.name.toLocaleLowerCase() === "url" ? replaceValueNodeText(node, encodeUrl(renderValueNode(node))) : node
+  ], "visit");
   return {
     name: "encode-urls",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node, ctx) => isNodeType(node, "braced", "quoted") && ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "url",
-        (entry) => [
-          replaceValueNodeText(entry, encodeUrl(renderValueNode(entry)))
-        ]
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({ ast: walkAst(ast, { braced: visit2, quoted: visit2 }) }), "apply")
   };
 }
 __name(createEncodeUrlsTransform, "createEncodeUrlsTransform");
@@ -4055,108 +4005,98 @@ var VERBATIM_FIELDS = /* @__PURE__ */ new Set([
   "verbc",
   "pdf"
 ]);
+var MAX_ASCII_CODE_POINT = 127;
 function createEscapeCharactersTransform(newMode = false) {
-  const chars = newMode ? coreSpecialCharacters : specialCharacters;
+  const escapes = parseEscapes(
+    newMode ? coreSpecialCharacters : specialCharacters
+  );
   return {
     name: "escape-characters",
     apply: /* @__PURE__ */ __name((ast) => {
-      const warnings = /* @__PURE__ */ new Map();
-      ast.replace(
-        (node, ctx) => {
-          if (!isNodeType(node, "braced", "quoted")) return false;
-          const field = ctx.closestAncestor("field");
-          return field !== void 0 && !VERBATIM_FIELDS.has(field.name);
-        },
-        (node, ctx) => {
-          const field = ctx.closestAncestor("field");
-          if (!field) return [node];
-          const val = renderValueNode(node);
-          const result = escapeChars(val, chars, isNodeType(node, "quoted"));
-          for (const unsupported of result.unsupported) {
-            warnings.set(`${field.name}:${unsupported.codepoint}`, {
-              code: "UNSUPPORTED_ESCAPE",
-              character: unsupported.character,
-              codepoint: unsupported.codepoint,
-              message: `Cannot escape character ${unsupported.character} (U+${unsupported.codepoint.toUpperCase()}) in ${field.name} without LaTeX packages or special fonts.`
-            });
-          }
-          return [replaceValueNodeText(node, result.value)];
-        }
-      );
-      return [...warnings.values()];
+      const warnings = [];
+      const result = walkAst(ast, {
+        // Preserve existing commands and prune their arguments.
+        latexCommand: /* @__PURE__ */ __name((node) => [node], "latexCommand"),
+        latexText: /* @__PURE__ */ __name((node, ctx) => {
+          const field = closestAncestor(ctx, "field");
+          if (!field || VERBATIM_FIELDS.has(field.name)) return [node];
+          const isQuoted = closestAncestor(ctx, "quoted") !== void 0;
+          return [...node.text].flatMap((char) => {
+            const code = char.codePointAt(0);
+            if (code === void 0) throw new Error(`No codepoint ${char}`);
+            const esc = escapes.get(code);
+            if (esc) {
+              const templates = isQuoted ? esc.quoted : esc.default;
+              return templates.map(
+                (tpl) => tpl.type === "latexText" ? tpl.text : tpl
+              );
+            }
+            if (code > MAX_ASCII_CODE_POINT) {
+              const codepoint = code.toString(16).padStart(4, "0");
+              warnings.push({
+                code: "UNSUPPORTED_ESCAPE",
+                character: char,
+                codepoint,
+                message: `Cannot escape character ${char} (U+${codepoint.toUpperCase()}) in ${field.name} without LaTeX packages or special fonts.`
+              });
+            }
+            return char;
+          }).reduce((merged, frag) => {
+            const prev = merged.at(-1);
+            if (typeof prev === "string" && typeof frag === "string") {
+              merged[merged.length - 1] = prev + frag;
+            } else {
+              merged.push(frag);
+            }
+            return merged;
+          }, []).map(
+            (frag) => typeof frag === "string" ? node.with({ text: frag }) : frag
+          );
+        }, "latexText")
+      });
+      return { ast: result, warnings };
     }, "apply")
   };
 }
 __name(createEscapeCharactersTransform, "createEscapeCharactersTransform");
-function escapeChars(value, characters, protectQuotes = false) {
-  let result = value;
-  const mathExpressions = [];
-  const unsupported = [];
-  result = result.replace(/\$[^$]+\$/g, (match) => {
-    mathExpressions.push(match);
-    return `MATH.EXP.${mathExpressions.length - 1}`;
-  });
-  let newstr = "";
-  let escapeMode = false;
-  for (const char of result) {
-    if (escapeMode) {
-      escapeMode = false;
-      newstr += char;
-      continue;
-    }
-    if (char === "\\") {
-      escapeMode = true;
-      newstr += char;
-      continue;
-    }
-    const codepointValue = char.codePointAt(0) ?? 0;
-    const codepoint = codepointValue.toString(16).padStart(4, "0");
-    const escaped = characters.get(codepoint);
-    newstr += protectQuotes && escaped?.includes('"') ? `{${escaped}}` : escaped ?? char;
-    if (!escaped && codepointValue > 127) {
-      unsupported.push({ character: char, codepoint });
-    }
-  }
-  return {
-    value: newstr.replace(
-      /MATH\.EXP\.(\d+)/g,
-      (_, i) => mathExpressions[Number(i)] ?? ""
-    ),
-    unsupported
-  };
+function parseEscapes(chars) {
+  return new Map(
+    [...chars].map(([code, escaped]) => {
+      const nodes = parseLaTeX(escaped).children;
+      const quoted = escaped.includes('"') ? parseLaTeX(`{${escaped}}`).children : nodes;
+      return [Number.parseInt(code, 16), { default: nodes, quoted }];
+    })
+  );
 }
-__name(escapeChars, "escapeChars");
+__name(parseEscapes, "parseEscapes");
 
 // src/transforms/fieldCommas.ts
 function createFieldCommasTransform(trailing) {
   return {
     name: "field-commas",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "field"),
-        (field) => [
-          field.with({
-            hasComma: field.parent.fields.indexOf(field) < field.parent.fields.length - 1 || trailing
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        entry: /* @__PURE__ */ __name((entry) => [
+          entry.with({
+            fields: entry.fields.map(
+              (field, i) => field.with({ hasComma: i < entry.fields.length - 1 || trailing })
+            )
           })
-        ]
-      );
-    }, "apply")
+        ], "entry")
+      })
+    }), "apply")
   };
 }
 __name(createFieldCommasTransform, "createFieldCommasTransform");
 
 // src/transforms/formatPageRange.ts
 function createFormatPageRangeTransform() {
+  const visit2 = /* @__PURE__ */ __name((node, ctx) => [
+    closestAncestor(ctx, "field")?.name.toLocaleLowerCase() === "pages" ? replaceValueNodeText(node, formatPageRange(renderValueNode(node))) : node
+  ], "visit");
   return {
     name: "format-page-range",
-    apply(ast) {
-      ast.replace(
-        (node, ctx) => isNodeType(node, "braced", "quoted") && ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "pages",
-        (entry) => [
-          replaceValueNodeText(entry, formatPageRange(renderValueNode(entry)))
-        ]
-      );
-    }
+    apply: /* @__PURE__ */ __name((ast) => ({ ast: walkAst(ast, { braced: visit2, quoted: visit2 }) }), "apply")
   };
 }
 __name(createFormatPageRangeTransform, "createFormatPageRangeTransform");
@@ -4596,14 +4536,18 @@ function createGenerateKeysTransform(template) {
   return {
     name: "generate-keys",
     apply: /* @__PURE__ */ __name((ast) => {
-      const newKeys = generateKeys(ast.entries(), template);
-      ast.replace(
-        (node) => isNodeType(node, "block") && isNodeType(node.block, "entry"),
-        (node) => {
-          const newKey = newKeys.get(node.block);
-          return newKey ? [node.with({ block: node.block.with({ key: newKey }) })] : [node];
-        }
-      );
+      const newKeys = generateKeys(getEntries(ast), template);
+      return {
+        ast: walkAst(ast, {
+          block: /* @__PURE__ */ __name((node) => {
+            if (!isNodeType(node.block, "entry")) return [node];
+            const key = newKeys.get(node.block);
+            return [
+              key ? node.with({ block: node.block.with({ key }) }) : node
+            ];
+          }, "block")
+        })
+      };
     }, "apply")
   };
 }
@@ -4613,38 +4557,32 @@ __name(createGenerateKeysTransform, "createGenerateKeysTransform");
 function createIndentFieldsTransform(indent) {
   return {
     name: "indent",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "field"),
-        (field) => [field.with({ whitespacePrefix: `
-${indent}` })]
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        field: /* @__PURE__ */ __name((field) => [field.with({ whitespacePrefix: `
+${indent}` })], "field")
+      })
+    }), "apply")
   };
 }
 __name(createIndentFieldsTransform, "createIndentFieldsTransform");
 
 // src/transforms/limitAuthors.ts
 function createLimitAuthorsTransform(maxAuthors) {
+  const visit2 = /* @__PURE__ */ __name((node, ctx) => {
+    const fieldName = closestAncestor(ctx, "field")?.name.toLocaleLowerCase();
+    if (fieldName !== "author") return [node];
+    const authors = renderValueNode(node).split(" and ");
+    return [
+      authors.length > maxAuthors ? replaceValueNodeText(
+        node,
+        [...authors.slice(0, maxAuthors), "others"].join(" and ")
+      ) : node
+    ];
+  }, "visit");
   return {
     name: "limit-authors",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node, ctx) => isNodeType(node, "braced", "quoted") && ctx.closestAncestor("field")?.name.toLocaleLowerCase() === "author",
-        (node) => {
-          const authors = renderValueNode(node).split(" and ");
-          if (authors.length > maxAuthors) {
-            return [
-              replaceValueNodeText(
-                node,
-                [...authors.slice(0, maxAuthors), "others"].join(" and ")
-              )
-            ];
-          }
-          return [node];
-        }
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({ ast: walkAst(ast, { braced: visit2, quoted: visit2 }) }), "apply")
   };
 }
 __name(createLimitAuthorsTransform, "createLimitAuthorsTransform");
@@ -4653,12 +4591,11 @@ __name(createLimitAuthorsTransform, "createLimitAuthorsTransform");
 function createLowercaseEntryTypeTransform() {
   return {
     name: "lowercase-entry-type",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "block") && isNodeType(node.block, "entry"),
-        (node) => [node.with({ command: node.command.toLocaleLowerCase() })]
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        block: /* @__PURE__ */ __name((node) => isNodeType(node.block, "entry") ? [node.with({ command: node.command.toLocaleLowerCase() })] : [node], "block")
+      })
+    }), "apply")
   };
 }
 __name(createLowercaseEntryTypeTransform, "createLowercaseEntryTypeTransform");
@@ -4667,12 +4604,13 @@ __name(createLowercaseEntryTypeTransform, "createLowercaseEntryTypeTransform");
 function createLowercaseFieldsTransform() {
   return {
     name: "lowercase-fields",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "field"),
-        (field) => [field.with({ name: field.name.toLocaleLowerCase() })]
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        field: /* @__PURE__ */ __name((field) => [
+          field.with({ name: field.name.toLocaleLowerCase() })
+        ], "field")
+      })
+    }), "apply")
   };
 }
 __name(createLowercaseFieldsTransform, "createLowercaseFieldsTransform");
@@ -4706,7 +4644,7 @@ function unwrapText(str) {
 __name(unwrapText, "unwrapText");
 
 // src/duplicates.ts
-function checkForDuplicates(ast, duplicateRules, merge) {
+function checkForDuplicates(entries, duplicateRules, merge) {
   const rules = /* @__PURE__ */ new Map();
   if (duplicateRules) {
     for (const rule of duplicateRules) {
@@ -4722,7 +4660,7 @@ function checkForDuplicates(ast, duplicateRules, merge) {
   const dois = /* @__PURE__ */ new Map();
   const citations = /* @__PURE__ */ new Map();
   const abstracts = /* @__PURE__ */ new Map();
-  for (const entry of ast.entries()) {
+  for (const entry of entries) {
     for (const [rule, doMerge] of rules) {
       let duplicateOf;
       let warning;
@@ -4834,12 +4772,18 @@ function createMergeEntriesTransform(duplicatesOpt, merge) {
     name: "merge-entries",
     dependencies: ["generate-keys", "sort-entries"],
     apply: /* @__PURE__ */ __name((ast) => {
-      const duplicates = checkForDuplicates(ast, duplicatesOpt, merge);
-      ast.replace(
-        (node) => isNodeType(node, "block") && isNodeType(node.block, "entry") && duplicates.entries.has(node.block),
-        () => []
+      const cloned = walkAst(ast, {
+        _: /* @__PURE__ */ __name((node, ctx) => [(ctx.next()[0] ?? node).with({})], "_")
+      });
+      const duplicates = checkForDuplicates(
+        getEntries(cloned),
+        duplicatesOpt,
+        merge
       );
-      return duplicates.warnings;
+      const result = walkAst(cloned, {
+        block: /* @__PURE__ */ __name((node) => isNodeType(node.block, "entry") && duplicates.entries.has(node.block) ? [] : [node], "block")
+      });
+      return { ast: result, warnings: duplicates.warnings };
     }, "apply")
   };
 }
@@ -4847,44 +4791,39 @@ __name(createMergeEntriesTransform, "createMergeEntriesTransform");
 
 // src/transforms/preferCurly.ts
 function createPreferCurlyTransform() {
+  const visit2 = /* @__PURE__ */ __name((child, ctx) => {
+    const field = closestAncestor(ctx, "field");
+    if (field?.name.toLowerCase() === "month" && monthAliases[renderFieldValue(field)]) {
+      return [child];
+    }
+    return [
+      new BracedNode().with({
+        latexAst: isNodeType(child, "quoted") ? child.latexAst : createTextAst(child.value)
+      })
+    ];
+  }, "visit");
   return {
     name: "prefer-curly",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node, ctx) => {
-          if (!isNodeType(node, "literal", "quoted")) return false;
-          const field = ctx.closestAncestor("field");
-          return !(field?.name.toLowerCase() === "month" && monthAliases[renderFieldValue(field)]);
-        },
-        (child) => [
-          new BracedNode(child.parent).with({
-            latexAst: isNodeType(child, "quoted") ? child.latexAst : createTextAst(child.value)
-          })
-          // hack
-        ]
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({ ast: walkAst(ast, { literal: visit2, quoted: visit2 }) }), "apply")
   };
 }
 __name(createPreferCurlyTransform, "createPreferCurlyTransform");
 function createTextAst(text) {
   const ast = new BlockNode("root");
-  new TextNode(ast, text);
+  ast.children.push(new TextNode(text));
   return ast;
 }
 __name(createTextAst, "createTextAst");
 
 // src/transforms/preferNumeric.ts
 function createPreferNumericTransform() {
+  const visit2 = /* @__PURE__ */ __name((node) => [
+    /^[1-9][0-9]*$/.test(renderValueNode(node)) ? new LiteralNode(renderValueNode(node)) : node
+  ], "visit");
   return {
     name: "prefer-numeric",
     dependencies: ["prefer-curly"],
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "braced", "quoted") && /^[1-9][0-9]*$/.test(renderValueNode(node)),
-        (node) => [new LiteralNode(node.parent, renderValueNode(node))]
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({ ast: walkAst(ast, { braced: visit2, quoted: visit2 }) }), "apply")
   };
 }
 __name(createPreferNumericTransform, "createPreferNumericTransform");
@@ -4894,16 +4833,14 @@ function createRemoveBracesTransform(fields) {
   const set = new Set(fields.map((f) => f.toLocaleLowerCase()));
   return {
     name: "remove-braces",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node, ctx) => {
-          if (!isNodeType(node, "braced")) return false;
-          const field = ctx.closestAncestor("field");
-          return field !== void 0 && set.has(field.name.toLocaleLowerCase());
-        },
-        (node) => [node.with({ latexAst: flattenLaTeX(node.latexAst) })]
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        braced: /* @__PURE__ */ __name((node, ctx) => {
+          const field = closestAncestor(ctx, "field");
+          return field && set.has(field.name.toLocaleLowerCase()) ? [node.with({ latexAst: flattenLaTeX(node.latexAst) })] : [node];
+        }, "braced")
+      })
+    }), "apply")
   };
 }
 __name(createRemoveBracesTransform, "createRemoveBracesTransform");
@@ -4912,36 +4849,34 @@ __name(createRemoveBracesTransform, "createRemoveBracesTransform");
 function createRemoveCommentsTransform() {
   return {
     name: "remove-comments",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "text") || isNodeType(node, "block") && isNodeType(node.block, "comment"),
-        () => []
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        text: /* @__PURE__ */ __name(() => [], "text"),
+        block: /* @__PURE__ */ __name((node) => isNodeType(node.block, "comment") ? [] : [node], "block")
+      })
+    }), "apply")
   };
 }
 __name(createRemoveCommentsTransform, "createRemoveCommentsTransform");
 
 // src/transforms/removeDuplicateFields.ts
 function createRemoveDuplicateFieldsTransform() {
+  const seenByEntry = /* @__PURE__ */ new WeakMap();
   return {
     name: "remove-duplicate-fields",
-    apply: /* @__PURE__ */ __name((ast) => {
-      const seenFieldsByEntry = /* @__PURE__ */ new WeakMap();
-      ast.replace(
-        (node) => isNodeType(node, "field"),
-        (field) => {
-          const seenFields = seenFieldsByEntry.getOrInsert(
-            field.parent,
-            /* @__PURE__ */ new Set()
-          );
-          const fieldName = field.name.toLocaleLowerCase();
-          if (seenFields.has(fieldName)) return [];
-          seenFields.add(fieldName);
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        field: /* @__PURE__ */ __name((field, ctx) => {
+          const entry = closestAncestor(ctx, "entry");
+          if (!entry) return [field];
+          const seen = seenByEntry.getOrInsert(entry, /* @__PURE__ */ new Set());
+          const name = field.name.toLocaleLowerCase();
+          if (seen.has(name)) return [];
+          seen.add(name);
           return [field];
-        }
-      );
-    }, "apply")
+        }, "field")
+      })
+    }), "apply")
   };
 }
 __name(createRemoveDuplicateFieldsTransform, "createRemoveDuplicateFieldsTransform");
@@ -4950,14 +4885,11 @@ __name(createRemoveDuplicateFieldsTransform, "createRemoveDuplicateFieldsTransfo
 function createRemoveEmptyFieldsTransform() {
   return {
     name: "remove-empty-fields",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "field") && !node.value.concat.some(
-          (node2) => renderValueNode(node2).trim() !== ""
-        ),
-        () => []
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        field: /* @__PURE__ */ __name((field) => field.value.values.some((node) => renderValueNode(node).trim() !== "") ? [field] : [], "field")
+      })
+    }), "apply")
   };
 }
 __name(createRemoveEmptyFieldsTransform, "createRemoveEmptyFieldsTransform");
@@ -4966,32 +4898,30 @@ __name(createRemoveEmptyFieldsTransform, "createRemoveEmptyFieldsTransform");
 function createRemoveEnclosingBracesTransform() {
   return {
     name: "remove-enclosing-braces",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "braced"),
-        (node) => [
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        braced: /* @__PURE__ */ __name((node) => [
           replaceValueNodeText(
             node,
             renderValueNode(node).replace(/^\{([^{}]*)\}$/g, "$1")
           )
-        ]
-      );
-    }, "apply")
+        ], "braced")
+      })
+    }), "apply")
   };
 }
 __name(createRemoveEnclosingBracesTransform, "createRemoveEnclosingBracesTransform");
 
 // src/transforms/removeSpecifiedFields.ts
 function createRemoveSpecifiedFieldsTransform(omit) {
+  const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
   return {
     name: "remove-specified-fields",
-    apply(ast) {
-      const set = new Set(omit.map((f) => f.toLocaleLowerCase()));
-      ast.replace(
-        (node) => isNodeType(node, "field") && set.has(node.name.toLocaleLowerCase()),
-        () => []
-      );
-    }
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        field: /* @__PURE__ */ __name((field) => set.has(field.name.toLocaleLowerCase()) ? [] : [field], "field")
+      })
+    }), "apply")
   };
 }
 __name(createRemoveSpecifiedFieldsTransform, "createRemoveSpecifiedFieldsTransform");
@@ -5000,36 +4930,48 @@ __name(createRemoveSpecifiedFieldsTransform, "createRemoveSpecifiedFieldsTransfo
 function createResetWhitespaceTransform(keepCommentWhitespace) {
   return {
     name: "reset-whitespace",
-    apply: /* @__PURE__ */ __name((ast) => {
-      let prev;
-      ast.replace(
-        (node) => isNodeType(node, "text", "block"),
-        (child) => {
-          const preserve = isComment2(child) && keepCommentWhitespace;
-          const preservePrev = prev && isComment2(prev) && keepCommentWhitespace;
-          if (keepCommentWhitespace && isNodeType(child, "block") && isNodeType(prev, "text") && !prev.text.endsWith("\n")) {
-            prev.text = `${prev.text.trimEnd()}
-`;
-          }
-          if (!preserve) {
-            child.whitespacePrefix = prev && !preservePrev ? "\n" : "";
-            if (isNodeType(child, "text")) {
-              child.text = child.text.trim();
-            } else if (child.block) {
-              if (isNodeType(child.block, "entry")) {
-                for (const field of child.block.fields) {
-                  field.whitespacePrefix = "";
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        root: /* @__PURE__ */ __name((root) => {
+          const children = [];
+          for (const original of root.children) {
+            let child = original;
+            let prev = children.at(-1);
+            const preserve = isComment2(child) && keepCommentWhitespace;
+            const preservePrev = prev && isComment2(prev) && keepCommentWhitespace;
+            if (keepCommentWhitespace && isNodeType(child, "block") && isNodeType(prev, "text") && !prev.text.endsWith("\n")) {
+              prev = prev.with({ text: `${prev.text.trimEnd()}
+` });
+              children[children.length - 1] = prev;
+            }
+            if (!preserve) {
+              child = child.with({
+                whitespacePrefix: prev && !preservePrev ? "\n" : ""
+              });
+              if (isNodeType(child, "text")) {
+                child = child.with({ text: child.text.trim() });
+              } else if (child.block) {
+                if (isNodeType(child.block, "entry")) {
+                  child = child.with({
+                    block: child.block.with({
+                      fields: child.block.fields.map(
+                        (field) => field.with({ whitespacePrefix: "" })
+                      )
+                    })
+                  });
+                } else if (isNodeType(child.block, "comment")) {
+                  child = child.with({
+                    block: child.block.with({ raw: child.block.raw.trim() })
+                  });
                 }
-              } else if (isNodeType(child.block, "comment")) {
-                child.block.raw = child.block.raw.trim();
               }
             }
+            children.push(child);
           }
-          prev = child;
-          return [child];
-        }
-      );
-    }, "apply")
+          return [root.with({ children })];
+        }, "root")
+      })
+    }), "apply")
   };
 }
 __name(createResetWhitespaceTransform, "createResetWhitespaceTransform");
@@ -5057,9 +4999,9 @@ function createSortEntriesTransform(sort) {
   return {
     name: "sort-entries",
     dependencies: ["generate-keys", "merge-entries", "prefer-numeric"],
-    apply: /* @__PURE__ */ __name((ast) => {
-      sortEntries(ast.root(), sort);
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, { root: /* @__PURE__ */ __name((root) => [sortEntries(root, sort)], "root") })
+    }), "apply")
   };
 }
 __name(createSortEntriesTransform, "createSortEntriesTransform");
@@ -5129,12 +5071,13 @@ function sortEntries(root, sort) {
     });
   }
   const sorted = [...sortableChildren];
-  root.children = root.children.map((item) => {
+  const children = root.children.map((item) => {
     if (fixedText.has(item)) return item;
     const next = sorted.shift();
     if (!next) throw new Error("FATAL!");
     return next;
   });
+  return root.with({ children });
 }
 __name(sortEntries, "sortEntries");
 function isBibTeXComment(node) {
@@ -5157,14 +5100,11 @@ __name(isBibLaTeXSpecialEntry, "isBibLaTeXSpecialEntry");
 function createSortFieldsTransform(sortFields) {
   return {
     name: "sort-fields",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "block") && isNodeType(node.block, "entry"),
-        (node) => [
-          node.with({ block: sortEntryFields(node.block, sortFields) })
-        ]
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        entry: /* @__PURE__ */ __name((entry) => [sortEntryFields(entry, sortFields)], "entry")
+      })
+    }), "apply")
   };
 }
 __name(createSortFieldsTransform, "createSortFieldsTransform");
@@ -5203,22 +5143,15 @@ function unescapeCharacters(value, quoted = false) {
 }
 __name(unescapeCharacters, "unescapeCharacters");
 function createUnescapeCharactersTransform() {
+  const visit2 = /* @__PURE__ */ __name((node) => [
+    replaceValueNodeText(
+      node,
+      unescapeCharacters(renderValueNode(node), node.type === "quoted")
+    )
+  ], "visit");
   return {
     name: "unescape-characters",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "braced", "quoted"),
-        (node) => [
-          replaceValueNodeText(
-            node,
-            unescapeCharacters(
-              renderValueNode(node),
-              isNodeType(node, "quoted")
-            )
-          )
-        ]
-      );
-    }, "apply")
+    apply: /* @__PURE__ */ __name((ast) => ({ ast: walkAst(ast, { braced: visit2, quoted: visit2 }) }), "apply")
   };
 }
 __name(createUnescapeCharactersTransform, "createUnescapeCharactersTransform");
@@ -5227,38 +5160,42 @@ __name(createUnescapeCharactersTransform, "createUnescapeCharactersTransform");
 function createWrapValuesTransform(indent, align, wrap) {
   return {
     name: "wrap-values",
-    apply: /* @__PURE__ */ __name((ast) => {
-      ast.replace(
-        (node) => isNodeType(node, "braced"),
-        (node) => {
-          let value = unwrapText(renderValueNode(node));
-          if (node.parent.concat.length === 1) {
-            value = value.trim();
-          }
-          const lineLength = `${indent}${align}{${value}}`.length;
-          const multiLine = value.includes("\n\n");
-          if (wrap && lineLength > wrap || multiLine) {
-            let paragraphs = value.split("\n\n");
-            const valIndent = indent.repeat(2);
-            if (wrap) {
-              const wrapCol = wrap;
-              paragraphs = paragraphs.map(
-                (paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join(
-                  `
+    apply: /* @__PURE__ */ __name((ast) => ({
+      ast: walkAst(ast, {
+        concat: /* @__PURE__ */ __name((concat) => [
+          concat.with({
+            values: concat.values.map((node) => {
+              if (node.type !== "braced") return node;
+              let value = unwrapText(renderValueNode(node));
+              if (concat.values.length === 1) {
+                value = value.trim();
+              }
+              const lineLength = `${indent}${align}{${value}}`.length;
+              const multiLine = value.includes("\n\n");
+              if (wrap && lineLength > wrap || multiLine) {
+                let paragraphs = value.split("\n\n");
+                const valIndent = indent.repeat(2);
+                if (wrap) {
+                  const wrapCol = wrap;
+                  paragraphs = paragraphs.map(
+                    (paragraph) => wrapText(paragraph, wrapCol - valIndent.length).join(
+                      `
 ${valIndent}`
-                )
-              );
-            }
-            value = `
+                    )
+                  );
+                }
+                value = `
 ${valIndent}${paragraphs.join(`
 
 ${valIndent}`)}
 ${indent}`;
-          }
-          return [replaceValueNodeText(node, value)];
-        }
-      );
-    }, "apply")
+              }
+              return replaceValueNodeText(node, value);
+            })
+          })
+        ], "concat")
+      })
+    }), "apply")
   };
 }
 __name(createWrapValuesTransform, "createWrapValuesTransform");
@@ -5267,16 +5204,16 @@ __name(createWrapValuesTransform, "createWrapValuesTransform");
 function sortPipeline(Transforms) {
   const sorted = [];
   const visited = /* @__PURE__ */ new Set();
-  const visit = /* @__PURE__ */ __name((Transform) => {
+  const visit2 = /* @__PURE__ */ __name((Transform) => {
     if (visited.has(Transform.name)) return;
     visited.add(Transform.name);
     for (const dep of Transform.dependencies ?? []) {
       const depTransform = Transforms.find((t) => t.name === dep);
-      if (depTransform) visit(depTransform);
+      if (depTransform) visit2(depTransform);
     }
     sorted.push(Transform);
   }, "visit");
-  Transforms.forEach(visit);
+  Transforms.forEach(visit2);
   return sorted;
 }
 __name(sortPipeline, "sortPipeline");
@@ -5365,28 +5302,32 @@ var verbose = false;
 function tidy(input, options_ = {}) {
   const options = normalizeOptions(options_);
   const inputFixed = convertCRLF(input);
-  const ast = parseBibTeX(inputFixed);
-  const cache = new ASTProxy(ast);
+  let ast = parseBibTeX(inputFixed);
   const pipeline = generateTransformPipeline(options);
-  const warnings = cache.entries().filter((entry) => !entry.key).map((entry) => ({
-    code: "MISSING_KEY",
-    message: `${entry.parent.command} entry does not have a citation key.`
-  }));
+  const warnings = ast.children.flatMap(
+    (child) => isNodeType(child, "block") && isNodeType(child.block, "entry") && !child.block.key ? [
+      {
+        code: "MISSING_KEY",
+        message: `${child.command} entry does not have a citation key.`
+      }
+    ] : []
+  );
   if (verbose) {
     console.log(logAST(ast));
   }
   for (const transform of pipeline) {
-    const result = transform.apply(cache);
+    const result = transform.apply(ast);
+    ast = result.ast;
     if (verbose) {
       console.log(`
 
 ## Applying transform: ${transform.name}`);
       console.log(logAST(ast));
     }
-    if (result) warnings.push(...result);
+    if (result.warnings) warnings.push(...result.warnings);
   }
   const bibtex = formatBibtex(ast);
-  return { bibtex, warnings, count: cache.entries().length };
+  return { bibtex, warnings, count: getEntries(ast).length };
 }
 __name(tidy, "tidy");
 export {
