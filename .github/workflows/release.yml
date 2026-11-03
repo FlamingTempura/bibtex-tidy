@@ -1,0 +1,121 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions: {}
+
+jobs:
+  publish:
+    name: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: false
+
+    environment:
+      name: npm-publish
+
+    permissions:
+      contents: write # Needed to create the GitHub release
+      id-token: write # Needed for npm trusted publishing (OIDC)
+
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: ''
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Validate release tag
+        run: |
+          if ! [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release tags must look like v1.2.3, got '$RELEASE_TAG'."
+            exit 1
+          fi
+
+          VERSION="${RELEASE_TAG#v}"
+
+          node --input-type=module <<NODE
+          import pkg from "./package.json" with { type: "json" };
+
+          const version = "$VERSION";
+
+          if (version !== pkg.version) {
+          	throw new Error(\`Release tag $VERSION does not match package.json version \${pkg.version}.\`);
+          }
+          NODE
+
+          release_branch=""
+          for candidate in master main; do
+            if git ls-remote --exit-code --heads origin "$candidate" >/dev/null 2>&1; then
+              release_branch="$candidate"
+              break
+            fi
+          done
+
+          if [[ -z "$release_branch" ]]; then
+            echo "Could not find a main or master branch on origin."
+            exit 1
+          fi
+
+          git fetch origin "refs/heads/$release_branch:refs/remotes/origin/$release_branch"
+
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" "origin/$release_branch"; then
+            echo "Release tag must point to a commit reachable from origin/$release_branch."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Build
+        run: npm run build --if-present
+
+      - name: Verify generated files are committed
+        run: git diff --exit-code
+
+      - name: Type check
+        run: npm run typecheck --if-present
+
+      - name: Biome Linter
+        run: npm run check --if-present
+
+      - name: Run tests
+        run: npm test --if-present
+
+      - name: Publish to npm
+        run: |
+          if npm view "bibtex-tidy@${RELEASE_TAG#v}" version >/dev/null 2>&1; then
+            echo "npm package bibtex-tidy@${RELEASE_TAG#v} is already published."
+          else
+            npm publish --provenance
+          fi
+
+      - name: Create GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "$RELEASE_TAG" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "GitHub release $RELEASE_TAG already exists."
+          else
+            gh release create "$RELEASE_TAG" --verify-tag --generate-notes --repo "${GITHUB_REPOSITORY}"
+          fi
