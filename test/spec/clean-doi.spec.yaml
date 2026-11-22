@@ -1,0 +1,21 @@
+title: cleans the doi, removing the https part
+input: |
+  @ARTICLE {test,
+    doi={10.0000/abcdefg}
+  }
+  @ARTICLE {test2,
+    doi={https://doi.org/10.0000/abcdefg}
+  }
+  @ARTICLE {test3,
+    doi={doi.org/10.0000/abcdefg}
+  }
+expected: |
+  @article{test,
+    doi           = {10.0000/abcdefg}
+  }
+  @article{test2,
+    doi           = {10.0000/abcdefg}
+  }
+  @article{test3,
+    doi           = {10.0000/abcdefg}
+  }
