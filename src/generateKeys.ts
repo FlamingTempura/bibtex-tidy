@@ -5,6 +5,7 @@ import {
 	parseEntryKeyTemplate,
 } from "./parsers/entryKeyTemplateParser.ts";
 import { parseNameList } from "./parsers/nameFieldParser.ts";
+import { transliterate } from "transliteration";
 
 export const SPECIAL_MARKERS: Record<
 	string,
@@ -115,6 +116,10 @@ export const MODIFIERS: Record<
 		description: "Capitalize first letter of each word",
 		callback: capitalize,
 	},
+	transliterate: {
+		description: "Transliterate to latin script",
+		callback: (words) => words.map((word) => transliterate(word)),
+	}
 };
 
 class MissingRequiredData extends Error {}
